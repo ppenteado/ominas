@@ -1,0 +1,52 @@
+;===========================================================================
+; map_map_to_image_mercator
+;
+; Forward Mercator projection for the oblate spheroid.  See [1], p.44.
+;
+; References:
+;	[1] Snyder (1987)
+;	    Map projections -- A working manual
+;	    USGS professional paper 1395
+;
+;===========================================================================
+function map_map_to_image_mercator, mdp, map_pts, valid=valid
+ md = nv_dereference(mdp)
+
+ ecc = map_radii_to_ecc(md.radii)
+
+ nt = n_elements(md)
+ sv = size(map_pts)
+ nv = 1
+ if(sv[0] GT 1) then nv = sv[2]
+
+ result = dblarr(2,nv,nt, /nozero)
+
+
+
+; The old approach was to force the scaling to be the same in both direcions, 
+; regardless of the map dimensions.  The new approach is to scale the full range
+; of lat and lon to each dimension, allowing the user to vary it using the
+; 'units' field.
+; a = min([md.size[0], 2d*md.size[1]])/2d/!dpi * md.scale * md.units
+ a = [md.size[1]/!dpi, md.size[0]/2d/!dpi] * md.scale * md.units
+
+ result[0,*,*] = a[1] * (map_pts[1,*,*]-md.center[1]) + md.origin[0]
+
+ result[1,*,*] = $
+         a[0] * alog( tan(0.25d*!dpi + 0.5d*map_pts[0,*,*]) * $
+                    ((1d - ecc*sin(map_pts[0,*,*])) / $ 
+                        (1d + ecc*sin(map_pts[0,*,*])))^(0.5d*ecc) ) + $
+                                                                    md.origin[1]
+
+
+
+ valid = internal_points(result, 0, md.size[0]-1, 0, md.size[1]-1)
+; valid = where((result[0,*] GE 0) AND (result[0,*] LT md.size[0]) $
+;                  AND (result[1,*] GE 0) AND (result[1,*] LT md.size[1]))
+; valid = lindgen(nv*nt)
+ return, result
+end
+;===========================================================================
+
+
+

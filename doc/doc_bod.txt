@@ -1,0 +1,3102 @@
+									12/05/15
+BOD Program Reference
+=====================
+
+ Summary
+ -------
+  - BODY_DESCRIPTOR__DEFINE
+	Class structure for the BODY class.
+
+  - BOD_ARRAY
+	Returns the array filename for each given body descriptor.
+
+  - BOD_AVEL
+	Returns the angular velocity for each given body descriptor.
+
+  - BOD_BODY_TO_INERTIAL
+	Transforms the given column vectors from the body coordinate
+	system to the inertial coordinate system.
+
+  - BOD_BODY_TO_INERTIAL_POS
+       Transforms the given column position vectors from the body
+       coordinate system to the inertial coordinate system.
+
+  - BOD_BODY_TO_INERTIAL_VEL
+       Transforms the given column velocity vectors from the body
+       coordinate system to the inertial coordinate system.
+
+  - BOD_BODY_TO_RADEC
+       Transforms the given column vectors from the body coordinate
+       system to the RA/DEC coordinate system associated to that
+       body.
+
+  - BOD_CLONE_DESCRIPTOR
+       Allocates new body descriptors as copies of the given
+       (existing) body descriptors.
+
+  - BOD_COPY_DESCRIPTOR
+	Copies all fields from the source body descriptors into the
+       destination body descriptors.
+
+  - BOD_CORE
+	Returns the core descriptor for each given body descriptor.
+
+  - BOD_DLIBDT
+       Returns the frequency of each libration vector for each given
+       body descriptor.
+
+  - BOD_EVOLVE
+	Computes new body descriptors at the given time offsets from the 
+	given body descriptors using the taylor series expansion 
+	corresponding to the derivatives contained in the given body 
+	descriptor.
+
+  - BOD_GET_RADEC_RANGES
+	Returns ranges of valid  radec coordinates for the given BODY object.
+
+  - BOD_INERTIAL
+	Returns a body descriptor defining te inertial coordinate system.
+
+  - BOD_INERTIAL_TO_BODY
+	Transforms the given column vectors from the inertial coordinate
+	system to the body coordinate system.
+
+  - BOD_INERTIAL_TO_BODY_POS
+       Transforms the given column position vectors from the inertial
+       coordinate system to the body coordinate system.
+
+  - BOD_INERTIAL_TO_BODY_VEL
+       Transforms the given column velocity vectors from the inertial
+       coordinate system to the body coordinate system.
+
+  - BOD_INIT_DESCRIPTORS
+	Init method for the BODY class.
+
+  - BOD_LIB
+       Returns the phase of the libration vector at body time for
+       each given body descriptor.
+
+  - BOD_LIBV
+	Returns the libration vector for each given body descriptor.
+
+  - BOD_NDV
+	Returns an integer indicating the maximum number of time derivatives
+	allowed in the vel and avel fields of the body descriptor.  This number
+	can be adjusted using the environment variable 'BOD_NDV'.  The default
+	is 4.
+
+  - BOD_OPAQUE
+	Returns the opaque value for each given body descriptor.
+
+  - BOD_ORIENT
+	Returns the orientation matrix for each given body descriptor.
+
+  - BOD_ORIENTT
+	Returns the transpose of the orientation matrix for each given body 
+	descriptor.
+
+  - BOD_POS
+       Returns the position of body center (in the inertial frame)
+       for each given body descriptor.
+
+  - BOD_RADEC_TO_BODY
+	Transforms the given column vectors from the RA/DEC coordinate
+       system associated to the body to the body coordinate system.
+
+  - BOD_RECENTER
+	Transforms a body descriptor into another body frame.
+
+  - BOD_REORIENT
+	Rotates the orientation matrix of each body such that the specified 
+	axis vector is parallel to the given vector.
+
+  - BOD_REPLICATE
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+  - BOD_ROTATE
+	Rotates a body about one its axes.
+
+  - BOD_SET_ARRAY
+	Replaces the array for the given body descriptor.
+
+  - BOD_SET_AVEL
+	Replaces the angular velocity vector of each given body descriptor.
+
+  - BOD_SET_DLIBDT
+       Replaces the frequency of each libration vector for each given
+       body descriptor.
+
+  - BOD_SET_LIB
+       Replaces the phase of the libration vector at body time for
+       each given body descriptor.
+
+  - BOD_SET_LIBV
+	Replaces the libration vector of each given body descriptor.
+
+  - BOD_SET_OPAQUE
+	Replaces the opaque flag of each given body descriptor.
+
+  - BOD_SET_ORIENT
+	Replaces the orientation matrix of each given body descriptor.
+
+  - BOD_SET_POS
+       Replaces the position of body center (in the inertial frame)
+       of each given body descriptor.
+
+  - BOD_SET_TIME
+	Replaces the time of each given body descriptor.
+
+  - BOD_SET_VEL
+       Replaces the velocity vector (of body center in the inertial
+       frame) of each given body descriptor.
+
+  - BOD_TIME
+	Returns the time for each given body descriptor.
+
+  - BOD_VEL
+       Returns the velocity of body center (in the inertial frame)
+       for each given body descriptor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BODY_DESCRIPTOR__DEFINE
+-----------------------
+
+
+ PURPOSE:
+	Class structure for the BODY class.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	N/A 
+
+
+ FIELDS:
+	crd:	CORE class descriptor.  
+
+		Methods: bod_core
+
+
+	opaque:	Flag describing whether a body is "easily visible".  
+
+		Methods: bod_opaque, bod_set_opaque
+
+
+	arrays_tlp: Pointer to a arrays of body-frame points, maintained in the 
+		   file given by array_fname. 
+
+			Methods: bod_array, bod_set_array
+
+
+	array_fnames: String giving the names for the each points file. 
+
+			Methods: bod_array_fname, bod_set_array_fname
+
+
+	time:	Time, at body position, at which this descriptor is valid.
+
+		Methods: bod_time, bod_set_time
+
+
+	orient:	Orientation matrix, transforms body to inertial.
+
+		Methods: bod_orient, bod_set_orient
+
+
+	avel:	Angular velocity vector.  Each higher-order vector is the 
+		angular velocity for the vector of the preceding order.
+
+		Methods: bod_avel, bod_set_avel
+
+
+	pos:	Position of body center in the inertial frame.
+
+		Methods: bod_pos, bod_set_pos
+
+
+	vel:	Velocity of body center in the inertial frame.
+
+		Methods: bod_vel, bod_set_vel
+
+
+	libv:	Libration vector.  Each higher-order vector is the libration 
+		for the vector of the preceding order.  The body librates about
+		the direction v_unit(libv), with an amplitude given by 
+		v_mag(libv).
+
+		Methods: bod_libv, bod_set_libv
+
+
+	lib:	Phase of the libraton vectors at body time.  
+
+		Methods: bod_lib, bod_set_lib
+
+
+	dlibdt:	Frequency for each libration vector.
+
+		Methods: bod_dlibdt, bod_set_dlibdt
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_ARRAY
+---------
+
+
+ PURPOSE:
+	Returns the array filename for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	array = bod_array(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	array filename associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2012
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_AVEL
+--------
+
+
+ PURPOSE:
+	Returns the angular velocity for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	avel = bod_avel(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Angular velocity value associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_BODY_TO_INERTIAL
+--------------------
+
+
+ PURPOSE:
+	Transforms the given column vectors from the body coordinate
+	system to the inertial coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	inertial_pts = bod_body_to_inertial(bx, body_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Any subclass of BODY.
+
+	body_pts:	Array (nv,3,nt) of column vectors in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) of column vectors in the bx inertial frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_BODY_TO_INERTIAL_POS
+------------------------
+
+
+ PURPOSE:
+       Transforms the given column position vectors from the body
+       coordinate system to the inertial coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	inertial_pts = bod_body_to_inertial(bx, body_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	body_pts:	Array (nv,3,nt) of column POSITION vectors in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column position vectors in the inertial
+       frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_BODY_TO_INERTIAL_VEL
+------------------------
+
+
+ PURPOSE:
+       Transforms the given column velocity vectors from the body
+       coordinate system to the inertial coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	inertial_vel = bod_body_to_inertial_vel(bx, body_vel)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	body_vel:	Array (nv,3,nt) of column velocity vectors in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column velocity vectors in the inertial
+       frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_BODY_TO_RADEC
+-----------------
+
+
+ PURPOSE:
+       Transforms the given column vectors from the body coordinate
+       system to the RA/DEC coordinate system associated to that
+       body.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	radec_pts = bod_body_to_radec(bx, body_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	body_pts:	Array (nv,3,nt) of column vectors in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column vectors in the bx radec frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_CLONE_DESCRIPTOR
+--------------------
+
+
+ PURPOSE:
+       Allocates new body descriptors as copies of the given
+       (existing) body descriptors.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	new_bx = bod_clone_descriptor(bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 Array (nt) of any subclass of BODY.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created body descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_COPY_DESCRIPTOR
+-------------------
+
+
+ PURPOSE:
+	Copies all fields from the source body descriptors into the
+       destination body descriptors.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_copy_descriptor, bx_dst, bx_src
+
+
+ ARGUMENTS:
+  INPUT:
+	bx_dst:	        Array (nt) of any subclass of BODY to copy to.
+
+	bx_src:	        Array (nt) of any subclass of BODY to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_CORE
+--------
+
+
+ PURPOSE:
+	Returns the core descriptor for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	crd = bod_core(bx)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Any subclass of BODY.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Core descriptor associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_DLIBDT
+----------
+
+
+ PURPOSE:
+       Returns the frequency of each libration vector for each given
+       body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	dlibdt = bod_dlibdt(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Values of the frequency of each libration vector associated
+       with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_EVOLVE
+----------
+
+
+ PURPOSE:
+	Computes new body descriptors at the given time offsets from the 
+	given body descriptors using the taylor series expansion 
+	corresponding to the derivatives contained in the given body 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bdt = bod_evolve(bx, dt)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Any subclass of BODY.
+
+	dt:	 Time offset.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	nodv:	 If set, derivatives will not be evolved.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nbd,ndt) of newly allocated descriptors, of class BODY,
+	evolved by time dt, where nbd is the number of bx, and ndt
+	is the number of dt.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_GET_RADEC_RANGES
+--------------------
+
+
+ PURPOSE:
+	Returns ranges of valid  radec coordinates for the given BODY object.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	ranges = bod_get_radec_ranges(bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 Any subclass of BODY.  One descriptor only.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2 x 3) giving the ranges in radius, RA and DEC.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_INERTIAL
+------------
+
+
+ PURPOSE:
+	Returns a body descriptor defining te inertial coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bd = bod_inertial()
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Body descriptor defining the inertial frame.  Note this descriptor is
+	not allocated on the heap, so it should not be freed by the caller.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_INERTIAL_TO_BODY
+--------------------
+
+
+ PURPOSE:
+	Transforms the given column vectors from the inertial coordinate
+	system to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	body_pts = bod_inertial_to_body(bx, inertial_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Any subclass of BODY.
+
+	inertial_pts:	Array (nv,3,nt) of column vectors in the inertial frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) of column vectors in the bx body frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_INERTIAL_TO_BODY_POS
+------------------------
+
+
+ PURPOSE:
+       Transforms the given column position vectors from the inertial
+       coordinate system to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	body_pts = bod_inertial_to_body_pos(bx, inertial_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	inertial_pts:	Array (nv,3,nt) of column POSITION vectors in the inertial frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column position vectors in the bx body
+       frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_INERTIAL_TO_BODY_VEL
+------------------------
+
+
+ PURPOSE:
+       Transforms the given column velocity vectors from the inertial
+       coordinate system to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	body_vel = bod_inertial_to_body_vel(bx, inertial_vel)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	inertial_vel:	Array (nv,3,nt) of column velocity vectors in the inertial frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column velocity vectors in the bx body
+       frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_INIT_DESCRIPTORS
+--------------------
+
+
+ PURPOSE:
+	Init method for the BODY class.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bd = bod_init_descriptors(n)
+
+
+ ARGUMENTS:
+  INPUT:
+	n:	Number of descriptors to create.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS (in addition to those accepted by all superclasses):
+  INPUT:  
+	bd:	Body descriptor(s) to initialize, instead of creating a new one.
+
+	crd:	Core descriptor(s) to pass to cor_init_descriptors.
+
+	time:	Array (n) of times, at body position, at which each descriptor 
+		is valid.
+
+	opaque:	Array (n) of flags describing whether each body is "easily 
+		visible".  
+
+	orient:	Array (3,3,n) of orientation matrices, transforming body to 
+		inertial for each body.
+
+	avel:	Array (ndv,3,n) of angular velocity vectors for each body. 
+
+	pos:	Array (ndv,3,n) of position vectors for each body. 
+
+	vel:	Array (ndv,3,n) of velocity vectors for each body. 
+
+	libv:	Array (ndv,3,n) of libration vectors for each body. 
+
+	lib:	Array (ndv,n) of libration phases for each body. 
+
+	dlibdt:	Array (ndv,n) of libration frequencies for each body. 
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Newly created or or freshly initialized body descriptors, depending
+	on the presence of the bd keyword.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_LIB
+-------
+
+
+ PURPOSE:
+       Returns the phase of the libration vector at body time for
+       each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	lib = bod_lib(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Phase of the libraton vectors at body time associated with
+       each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_LIBV
+--------
+
+
+ PURPOSE:
+	Returns the libration vector for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	libv = bod_libv(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Libration vector associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_NDV
+-------
+
+
+ PURPOSE:
+	Returns an integer indicating the maximum number of time derivatives
+	allowed in the vel and avel fields of the body descriptor.  This number
+	can be adjusted using the environment variable 'BOD_NDV'.  The default
+	is 4.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	ndv = bod_ndv()
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Current ndv value.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_OPAQUE
+----------
+
+
+ PURPOSE:
+	Returns the opaque value for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	opaque = bod_opaque(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Opaque value associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_ORIENT
+----------
+
+
+ PURPOSE:
+	Returns the orientation matrix for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	orient = bod_orient(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Orientation matrix associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_ORIENTT
+-----------
+
+
+ PURPOSE:
+	Returns the transpose of the orientation matrix for each given body 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	orient_T = bod_orientt(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Transpose of the orientation matrix associated with each given body 
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_POS
+-------
+
+
+ PURPOSE:
+       Returns the position of body center (in the inertial frame)
+       for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	pos = bod_pos(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Position of body center (in the inertial frame) associated
+       with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_RADEC_TO_BODY
+-----------------
+
+
+ PURPOSE:
+	Transforms the given column vectors from the RA/DEC coordinate
+       system associated to the body to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	body_pts = bod_radec_to_body(bx, radec_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	radec_pts:	Array (nv,3,nt) of column vectors in the bx radec frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) of column vectors in the bx body frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_RECENTER
+------------
+
+
+ PURPOSE:
+	Transforms a body descriptor into another body frame.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_recenter, bx, bx0
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	Descriptor to transform, array (nt) of any subclass of BODY.
+
+	bx0:	Frame to transform into, array (nt) of any subclass of BODY.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_REORIENT
+------------
+
+
+ PURPOSE:
+	Rotates the orientation matrix of each body such that the specified 
+	axis vector is parallel to the given vector.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_reorient, bx, index, v
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	Array (nt) of any subclass of BODY.
+
+	index:	Integer giving the reference body axis: 0, 1, or 2.
+
+	v:	Array (nv,3,nt) of column vectors to align with the
+		each reference axis.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_REPLICATE
+-------------
+
+
+ PURPOSE:
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	xd = bod_replicate(bx, dim)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 Any superclass of BODY.
+
+	dim:	 Dimensions of the result.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of the given dimensions containing cloned versions of the input 
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_ROTATE
+----------
+
+
+ PURPOSE:
+	Rotates a body about one its axes.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_rotate, bd, theta, axis=axis
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Any subclass of BODY (nt).
+
+	theta:		Angle of rotation (nt).
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: axis:		Body axis about which to rotate; default is 2.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2014
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_ARRAY
+-------------
+
+
+ PURPOSE:
+	Replaces the array for the given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_array, bx, array
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 BODY descriptor.
+
+	array:	 Array of points in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2012
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_AVEL
+------------
+
+
+ PURPOSE:
+	Replaces the angular velocity vector of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_avel, bx, avel
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	avel:	 Array (ndv,3,nt) of new angular velocity vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_DLIBDT
+--------------
+
+
+ PURPOSE:
+       Replaces the frequency of each libration vector for each given
+       body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_dlibdt, bx, dlibdt
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	dlibdt:	 Array (ndv,nt) of new frequencies.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_LIB
+-----------
+
+
+ PURPOSE:
+       Replaces the phase of the libration vector at body time for
+       each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_lib, bx, lib
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	lib:	 Array (ndv,nt) of new phases of the libration vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_LIBV
+------------
+
+
+ PURPOSE:
+	Replaces the libration vector of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_libv, bx, libv
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	libv:	 Array (ndv,3,nt) of new libration vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_OPAQUE
+--------------
+
+
+ PURPOSE:
+	Replaces the opaque flag of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_opaque, bx, opaque
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	avel:	 Array (nt) of new opaque values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_ORIENT
+--------------
+
+
+ PURPOSE:
+	Replaces the orientation matrix of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_orient, bx, orient
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	orient:	 Array (3,3,nt) of new orientation matrices.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_POS
+-----------
+
+
+ PURPOSE:
+       Replaces the position of body center (in the inertial frame)
+       of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_pos, bx, pos
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	pos:	 Array (1,3,nt) of new position vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_TIME
+------------
+
+
+ PURPOSE:
+	Replaces the time of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_time, bx, time
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Any subclass of BODY.
+
+	time:	 New time value.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_SET_VEL
+-----------
+
+
+ PURPOSE:
+       Replaces the velocity vector (of body center in the inertial
+       frame) of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_vel, bx, vel
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	vel:	 Array (ndv,3,nt) of new velocity vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_TIME
+--------
+
+
+ PURPOSE:
+	Returns the time for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	time = bod_time(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Any subclass of BODY.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Time value associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOD_VEL
+-------
+
+
+ PURPOSE:
+       Returns the velocity of body center (in the inertial frame)
+       for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	vel = bod_vel(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Velocity of body center (in the inertial frame) associated
+       with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

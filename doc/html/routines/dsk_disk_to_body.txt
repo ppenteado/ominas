@@ -1,0 +1,42 @@
+DSK_DISK_TO_BODY
+
+
+ PURPOSE:
+	Transforms vectors from the disk coordinate system to the body
+	coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	v_body = dsk_disk_to_body(dkx, v_dsk, frame_bd=frame_bd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkx:	 Array (nt) of any subclass of DISK.
+
+	v_disk:	 Array (nv x 3 x nt) of column vectors in the disk
+		 coordinate system.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv x 3 x nt) of column vectors in the body coordinate system.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

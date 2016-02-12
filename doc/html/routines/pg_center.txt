@@ -1,0 +1,55 @@
+PG_CENTER
+
+
+ PURPOSE:
+	Computes image coordinates of the center of each object.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	center_ps = pg_center(cd=cd, bx=bx)
+	center_ps = pg_center(gd=gd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	Array (n_timesteps) of camera descriptors.
+
+	bx:	Array (n_objects, n_timesteps) of descriptors of objects 
+		which must be a subclass of BODY.
+
+	gd:	Generic descriptor.  If given, the cd and bx inputs 
+		are taken from the cd and bx fields of this structure
+		instead of from those keywords.
+
+	fov:	 If set points are computed only within this many camera
+		 fields of view.
+
+	cull:	 If set, points structures excluded by the fov keyword
+		 are not returned.  Normally, empty points structures
+		 are returned as placeholders.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n_objects) of pg_points_struct containing image points and
+	the corresponding inertial vectors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	

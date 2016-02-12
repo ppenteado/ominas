@@ -1,0 +1,53 @@
+PG_COADD
+
+
+ PURPOSE:
+	Averages the given images and geometries. 
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	dd0 = pg_coadd(dd, bx0, cd=cd, bx=bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Array of data descriptors giving images to average.
+
+  OUTPUT: 
+	bx0:	Averaged bx body descriptors.
+
+
+ KEYWORDS:
+  INPUT:
+	bx:	Array [ndd] or [ndd,n] of descriptors of any superclass of BODY,
+		one for each input image, to be averaged.  Times, positions, and
+		orientations are average.  In addition, for any camera
+		descriptors, the optical axes are also averaged.
+
+	gd:	Generic descriptor containing the body descriptors or an 
+		array [ndd] of generic descriptors.
+
+	median: If set, the median is used instead of the average.
+
+	minimum: If set, the minimum is used instead of the average.
+
+	maximum: If set, the maximum is used instead of the average.
+
+	algorithm: String giving the alogrithm to use instead of specifying
+		   One of the above keyowrds.  Default is 'average".
+
+  OUTPUT: NONE
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 4/2014
+	

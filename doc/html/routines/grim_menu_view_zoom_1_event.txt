@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_ZOOM_1_EVENT
+
+
+ PURPOSE:
+	Fills active planet disks with a translucent color.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2007
+	

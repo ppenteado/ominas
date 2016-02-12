@@ -1,0 +1,67 @@
+WRITE_VICAR
+
+
+ PURPOSE:
+	Writes a vicar data file.
+
+
+ CATEGORY:
+	UTIL/VIC
+
+
+ CALLING SEQUENCE:
+	write_vicar, filename, data, label
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	String giving the name of the file to be written.
+
+	data:		Data to be written.
+
+	label:		String giving the vicar label.  System items
+			will be added or changed as appropriate.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	silent:	If set, no messages are printed.
+
+	swap:	If set, the data array will be byte-swapped.
+
+	flip:	If set, the data array will be subjected to a rotate(data, 7),
+		i.e., if its an image, it will be flipped vertically.
+
+       bpa:    Binary Prefix Array.
+
+	bha:	Binary Header Array.
+
+  OUTPUT:
+	status:	If no errors occur, status will be zero, otherwise
+		it will be a string giving an error message.
+
+
+ RETURN: NONE
+
+
+ RESTRICTIONS:
+	This program only writes band-sequential data with no binary header 
+	or prefixes.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	read_vicar
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/1996
+	Spitale 2/2004:	fixed bug where LBLSIZE wasn't always placed at the
+                       start of the header.
+	Spitale 6/2004:	added bpa and bha output.
+

@@ -1,0 +1,22 @@
+GRIM_TIEPOINTS_MODE_EVENT
+
+
+ PURPOSE:
+	Selects the spin cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Planes can be selected by clicking in the image window.  This option
+	is not useful unless planes other than the current plane are visible.
+	If more than one plane under the cursor contains data, the one with
+	the lowest plane number is selected, unless one of them is the current
+	plane.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2009
+	

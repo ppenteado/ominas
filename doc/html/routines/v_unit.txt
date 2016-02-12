@@ -1,0 +1,33 @@
+V_UNIT
+
+
+ PURPOSE:
+       Returns unit vectors in the directions given by v.
+
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = v_unit(v)
+
+
+ ARGUMENTS:
+  INPUT:
+       v:     An array of nv x nt column vectors (i.e. nv x 3 x nt).
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       An array of nv x nt unit vectors
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

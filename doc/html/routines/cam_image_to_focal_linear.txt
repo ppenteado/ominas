@@ -1,0 +1,45 @@
+CAM_IMAGE_TO_FOCAL_LINEAR
+
+
+ PURPOSE:
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using a linear model that assumes that
+       distances in the image are proportional to angles in the focal
+       plane.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	focal_pts = cam_image_to_focal_linear(cd, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	image_pts:	Array (2,nv,nt) of points in the image coordinate system.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the camera focal frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

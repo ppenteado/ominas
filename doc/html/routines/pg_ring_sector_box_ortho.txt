@@ -1,0 +1,54 @@
+PG_RING_SECTOR_BOX_ORTHO
+
+ PURPOSE:
+	Allows the user to select a box to use with pg_profile_ring.
+ 
+ CATEGORY:
+       NV/PG
+
+ CALLING SEQUENCE:
+     outline_ps = pg_ring_sector_box_ortho()
+     outline_ps = pg_ring_sector_box_ortho(corners)
+
+
+ ARGUMENTS:
+  INPUT:
+      corners:	    Array of image points giving the corners of the box.
+		    If not given, the user is prompted to select a box. 
+
+  OUTPUT:
+	NONE
+
+
+
+ KEYWORDS:
+  INPUT: 
+      win_num:     Window number of IDL graphics window in which to select
+                   box, default is current window.
+
+      restore:     Do not leave the box in the image.
+
+           p0:     First corner of box.  If set, then the routine immediately 
+                   begins to drag from that point until a button is released.
+
+        color:     Color to use for rectangle, default is !color.
+
+ xor_graphics:     If set, the sector outline is drawn and erased using xor
+                   graphics instead of a pixmap.
+
+    noverbose:     If set, messages are suppressed.
+
+       sample:     Grid sampling, default is 1.
+
+
+  OUTPUT:
+         NONE
+
+
+ RETURN: 
+      pg_points_struct containing points on the sector outline.  The point
+      spacing is determined by the sample keyword.
+
+
+ ORIGINAL AUTHOR : J. Spitale ; 6/2005
+

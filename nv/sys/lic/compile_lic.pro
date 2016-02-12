@@ -1,0 +1,14 @@
+.rnew get_tokens.pro
+.rnew it_solve.pro
+.rnew lic_filename.pro
+.rnew lic_gethost.pro
+.rnew lic_probe.pro
+.rnew lic_read.pro
+.rnew lic_tamper.pro
+.rnew lic_validate.pro
+.rnew lic_validate_pwd.pro
+.rnew maxz.pro
+.rnew optimize_2d.pro
+.rnew shape1.pro
+.rnew s_tree.pro
+.rnew tvhash.pro

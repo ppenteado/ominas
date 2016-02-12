@@ -1,0 +1,42 @@
+CLASS_GET_METHOD
+
+
+ PURPOSE:
+	Searches the object tree for a method corresponding to the 
+	corresponding string.
+
+
+ CATEGORY:
+	NV/LIB/CLASS
+
+
+ CALLING SEQUENCE:
+	fm = class_get_method(xd)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	 Descriptor of any class. 
+
+	name:    Name of method, without class prefix.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Method name.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

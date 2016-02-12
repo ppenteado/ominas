@@ -1,0 +1,35 @@
+XYZ_TO_RA
+
+
+ PURPOSE:
+	Convert an array of position vectors [x, y, z] to RA and DEC
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       xyz_to_ra, pos, ra, dec
+
+
+ ARGUMENTS:
+  INPUT:
+       pos:	An array of 1x3 column vectors (1,3,n)
+
+  OUTPUT:
+        ra:	Output array of Right Ascension (in degrees)
+
+       dec:	Output array of Declination (in degrees)
+
+ KEYWORDS:
+
+       NONE
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle 6/2000 
+                       

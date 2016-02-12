@@ -1,0 +1,17 @@
+;===========================================================================
+; glb_set_mass
+;
+;
+;===========================================================================
+pro glb_set_mass, gbxp, mass, nosynch=nosynch
+@nv_lib.include
+ gbdp = class_extract(gbxp, 'GLOBE')
+ gbd = nv_dereference(gbdp)
+
+ if(NOT keyword__set(nosynch)) then gbd.gm = gbd.gm * mass/gbd.mass
+ gbd.mass = mass
+
+ nv_rereference, gbdp, gbd
+ nv_notify, gbdp, type = 0
+end
+;===========================================================================

@@ -1,0 +1,14 @@
+GRIM_MENU_PLANE_OPEN_EVENT
+
+
+ PURPOSE:
+	Redraws the overlays on the graphics display. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

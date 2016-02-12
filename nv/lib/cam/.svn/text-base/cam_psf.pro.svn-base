@@ -1,0 +1,17 @@
+;===========================================================================
+; cam_psf
+;
+;
+;===========================================================================
+function cam_psf, cxp, x, y
+@nv_lib.include
+ if(NOT keyword_set(x)) then default = 1 
+
+ cdp = class_extract(cxp, 'CAMERA')
+ if(NOT keyword_set(cdp)) then return, 0
+ nv_notify, cdp, type = 1
+ cd = nv_dereference(cdp)
+ if(NOT keyword_set(cd[0].fn_psf)) then return, 0
+ return, call_function(cd[0].fn_psf, cdp, x, y, default=default)
+end
+;===========================================================================

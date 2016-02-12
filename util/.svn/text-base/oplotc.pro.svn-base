@@ -1,0 +1,38 @@
+;==================================================================================
+; oplotc
+;
+;==================================================================================
+pro oplotc, x, y, colors=colors, polar=polar, psyms=psyms, solid=solid, symsize=symsize
+
+ if(NOT keyword_set(symsize)) then symsize = 1 
+
+ ss = sort(colors)
+ col = colors[ss]
+ uu = uniq(col)
+ col = col[uu]
+
+ nk = 1
+ if(keyword_set(solid)) then nk = 3
+
+ for i=0, n_elements(col)-1 do $
+  begin
+   w = where(colors EQ col[i])
+
+   sym = psyms[w]
+   ss = sort(sym)
+   sym = sym[ss]
+   uu = uniq(sym)
+   sym = sym[uu]
+
+   for j=0, n_elements(sym)-1 do $
+    begin
+     ww = where(psyms[w] EQ sym[j])
+     for k=0, nk-1 do $
+      oplot, x[w[ww]], y[w[ww]], psym=sym[j], col=col[i], polar=polar, $
+            symsize=float((nk-k))/nk * symsize
+    end
+  end
+
+
+end
+;==================================================================================

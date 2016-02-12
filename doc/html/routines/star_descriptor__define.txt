@@ -1,0 +1,38 @@
+STAR_DESCRIPTOR__DEFINE
+
+
+ PURPOSE:
+	Class structure for the STAR class.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	N/A 
+
+
+ FIELDS:
+	gbd:	GLOBE class descriptor.  
+
+		Methods: str_globe, str_set_globe
+
+
+	lum:	Luminosity value.
+
+		Methods: str_lum, str_set_lum
+
+
+	sp:	Spectral class string.
+
+		Methods: str_sp, str_set_sp
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

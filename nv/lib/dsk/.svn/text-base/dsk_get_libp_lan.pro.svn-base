@@ -1,0 +1,18 @@
+;===========================================================================
+; dsk_get_libp_lan
+;
+;
+;===========================================================================
+function dsk_get_libp_lan, dkx, frame_bd
+@nv_lib.include
+ dkd = class_extract(dkx, 'DISK')
+
+ if(NOT keyword_set(frame_bd)) then $
+             nv_message, name='dsk_get_libp_lan', 'frame_bd required.'
+
+
+ libp_lan = orb_get_libp_lan(dkd, frame_bd)
+
+ return, libp_lan
+end
+;===========================================================================

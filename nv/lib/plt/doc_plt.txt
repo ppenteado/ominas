@@ -1,0 +1,594 @@
+									12/05/15
+PLT Program Reference
+=====================
+
+ Summary
+ -------
+  - PLANET_DESCRIPTOR__DEFINE
+	Class structure for the PLANET class.
+
+  - PLT_CLONE_DESCRIPTOR
+       Allocates new planet descriptors as copies of the given
+       (existing) planet descriptors.
+
+  - PLT_COPY_DESCRIPTOR
+	Copies all fields from the source planet descriptors into the
+       destination planet descriptors.
+
+  - PLT_EVOLVE
+	Computes new planet descriptors at the given time offsets from the 
+	given planet descriptors using the taylor series expansion 
+	corresponding to the derivatives contained in the given planet 
+	descriptor.
+
+  - PLT_GLOBE
+       Returns a globe descriptor for each given planet descriptor.
+
+  - PLT_INIT_DESCRIPTORS
+	Init method for the PLANET class.
+
+  - PLT_REPLICATE
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+  - PLT_SET_GLOBE
+	Replaces the globe descriptor in each given planet descriptor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PLANET_DESCRIPTOR__DEFINE
+-------------------------
+
+
+ PURPOSE:
+	Class structure for the PLANET class.
+
+
+ CATEGORY:
+	NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+	N/A 
+
+
+ FIELDS:
+	gbd:	GLOBE class descriptor.  
+
+		Methods: str_globe, str_set_globe
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PLT_CLONE_DESCRIPTOR
+--------------------
+
+
+ PURPOSE:
+       Allocates new planet descriptors as copies of the given
+       (existing) planet descriptors.
+
+
+ CATEGORY:
+	NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+	new_px = plt_clone_descriptor(px)
+
+
+ ARGUMENTS:
+  INPUT:
+	px:	 Array (nt) of any subclass of PLANET.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created planet descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PLT_COPY_DESCRIPTOR
+-------------------
+
+
+ PURPOSE:
+	Copies all fields from the source planet descriptors into the
+       destination planet descriptors.
+
+
+ CATEGORY:
+	NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+	plt_copy_descriptor, px_dst, px_src
+
+
+ ARGUMENTS:
+  INPUT:
+	px_dst:	        Array (nt) of any subclass of PLANET to copy to.
+
+	px_src:	        Array (nt) of any subclass of PLANET to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PLT_EVOLVE
+----------
+
+
+ PURPOSE:
+	Computes new planet descriptors at the given time offsets from the 
+	given planet descriptors using the taylor series expansion 
+	corresponding to the derivatives contained in the given planet 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+	pdt = plt_evolve(px, dt)
+
+
+ ARGUMENTS:
+  INPUT: 
+	px:	 Any subclass of PLANET.
+
+	dt:	 Time offset.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	nodv:	 If set, derivatives will not be evolved.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (npd,ndt) of newly allocated descriptors, of class PLANET,
+	evolved by time dt, where npd is the number of px, and ndt
+	is the number of dt.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PLT_GLOBE
+---------
+
+
+ PURPOSE:
+       Returns a globe descriptor for each given planet descriptor.
+
+
+ CATEGORY:
+       NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+       gbd = plt_globe(pd)
+
+
+ ARGUMENTS:
+  INPUT:
+       pd:    Array (nt) of planet descriptors
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+         NONE
+
+ RETURN:
+       An array (nt) of globe descriptors.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale; 1/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PLT_INIT_DESCRIPTORS
+--------------------
+
+
+ PURPOSE:
+	Init method for the PLANET class.
+
+
+ CATEGORY:
+       NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+       pd = plt_init_descriptors(n)
+
+
+ ARGUMENTS:
+  INPUT:
+       n:      Number of planet descriptors.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	pd:	Planet descriptor(s) to initialize, instead of creating new ones.
+
+	gbd:	Globe descriptor(s) to pass to glb_init_descriptors.
+
+	bd:	Body descriptor(s) to pass to bod_init_descriptors.
+
+	crd:	Core descriptor(s) to pass to cor_init_descriptors.
+
+  OUTPUT: NONE
+
+ RETURN:
+       An array (n) of planet descriptors.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PLT_REPLICATE
+-------------
+
+
+ PURPOSE:
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+
+ CATEGORY:
+	NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+	pds = plt_replicate(pd, dim)
+
+
+ ARGUMENTS:
+  INPUT:
+	pd:	 Planet descriptor.
+
+	dim:	 Dimensions of the result.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of the given dimensions containing cloned versions of the input 
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PLT_SET_GLOBE
+-------------
+
+
+ PURPOSE:
+	Replaces the globe descriptor in each given planet descriptor.
+
+
+ CATEGORY:
+	NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+	plt_set_globe, px, gbd
+
+
+ ARGUMENTS:
+  INPUT: 
+	px:	 Array (nt) of any subclass of PLANET.
+
+	gbd:	 Array (nt) of new globe descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

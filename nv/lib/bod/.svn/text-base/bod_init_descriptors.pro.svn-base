@@ -1,0 +1,55 @@
+;===========================================================================
+; bod_init_descriptors
+;
+;
+;===========================================================================
+function bod_init_descriptors, n, crd=crd, bd=bd, $
+@bod__keywords.include
+end_keywords
+@nv_lib.include
+
+ if(NOT keyword_set(bd)) then bd=replicate({body_descriptor}, n)
+ bd.class=decrapify(make_array(n, val='BODY'))
+
+ if(keyword_set(crd)) then bd.crd = crd $
+ else bd.crd=cor_init_descriptors(n, $
+@cor__keywords.include
+end_keywords)
+
+ bd.opaque = 1
+ if(defined(opaque)) then bd.opaque=decrapify(opaque)
+
+ if(keyword_set(time)) then bd.time=decrapify(time)
+ if(keyword_set(pos)) then bd.pos=pos
+ if(keyword_set(vel)) then bd.vel[0:(size(vel))[1]-1,*,*]=vel
+ if(keyword_set(avel)) then bd.avel[0:(size(avel))[1]-1,*,*]=avel
+ if(keyword_set(libv)) then bd.libv[0:(size(libv))[1]-1,*,*]=libv
+ if(keyword_set(libp)) then bd.libp[0:(size(libp))[1]-1,*]=libp
+ if(keyword_set(libt)) then bd.libt[0:(size(libt))[1]-1,*]=libt
+
+ if(NOT keyword_set(orient)) then $
+  begin
+   orient = [tr([1d,0d,0d]), tr([0d,1d,0d]), tr([0d,0d,1d])]
+   orient = orient[linegen3z(3,3,n)]
+  end
+ 
+
+
+ if(keyword_set(orient)) then $
+   begin
+    bd.orient=orient
+    if(n EQ 1) then bd.orientT=transpose(orient) $
+    else bd.orientT=transpose(orient, [1,0,2])
+   end
+
+
+ bdp = ptrarr(n)
+ nv_rereference, bdp, bd
+
+
+ return, bdp
+end
+;===========================================================================
+
+
+

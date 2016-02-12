@@ -1,0 +1,38 @@
+VTAYLOR
+
+
+ PURPOSE:
+       Evaluates a taylor series using the given t=0 derivatives, dv, at
+       each time t=dt.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = vtaylor(dv, dt)
+
+
+ ARGUMENTS:
+  INPUT:
+       dv:    dblarr(ndv,nelm)
+
+       dt:    dblarr(ndt)
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       dblarr(ndt,nelm)
+
+ RESTRICTIONS:
+       Works for column vectors - not scalars
+
+ STATUS:
+       Works, but coeff not implemented
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

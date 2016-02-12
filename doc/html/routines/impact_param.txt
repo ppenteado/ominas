@@ -1,0 +1,41 @@
+IMPACT_PARAM
+
+
+ PURPOSE:
+	Computes the impact parameter of a vector originating at the 
+	given camera, relative to the given planet object.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       B = impact_param(cd, pd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	pd:	Planet descriptor.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: 
+	p:	Image point specifying te ray to project.  If not given, 
+		the camera optic axis is used.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Shifted image.
+
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

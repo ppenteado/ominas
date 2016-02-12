@@ -1,0 +1,17 @@
+cam_name=cam__name, $         
+cam_time=cam__time, $         
+cam_orient=cam__orient, $         
+cam_avel=cam__avel, $         
+cam_pos=cam__pos, $
+cam_vel=cam__vel, $         
+cam_scale=cam__scale, $
+cam_oaxis=cam__oaxis, $
+cam_size=cam__size, $
+cam_fn_psf=cam__fn_psf, $
+cam_opaque=cam__opaque, $
+cam_exposure=cam__exposure, $
+cam_fn_focal_to_image=cam__fn_focal_to_image, $
+cam_fn_image_to_focal=cam__fn_image_to_focal, $
+cam_fn_data=cam__fn_data, $
+cam_filters=cam__filters, $
+cam_fn_filter=cam__fn_filter, $

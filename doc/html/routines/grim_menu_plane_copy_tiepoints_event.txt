@@ -1,0 +1,18 @@
+GRIM_MENU_PLANE_COPY_TIEPOINTS_EVENT
+
+
+ PURPOSE:
+	Allows the user modify settings for the loaded image planes.  
+	Each plane may displayed in any combination of the three color
+	channels.  Also, a plane may be made visible even when it is not
+	the current plane, instead of the default behavior, which is to 
+	display the plane only whenit is current.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2002
+	

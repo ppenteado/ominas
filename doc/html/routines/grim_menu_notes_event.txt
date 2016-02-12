@@ -1,0 +1,14 @@
+GRIM_MENU_NOTES_EVENT
+
+
+ PURPOSE:
+	Dumps all planes to png files entitled [filename].png.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2004
+	

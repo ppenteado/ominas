@@ -1,0 +1,24 @@
+# Sample spice target list file.  This file may be specified using the 
+#  'targets' translator keyword or by setting the environment variable
+#   [prefix_SPICE_TARGETS] where the valid prefixes are defined in
+#   spice_input.pro
+JUPITER
+ IO
+ EUROPA
+ GANYMEDE
+ CALLISTO
+ AMALTHEA
+ HIMALIA
+ ELARA
+ PASIPHAE
+ SINOPE
+ LYSITHEA
+ CARME
+ ANANKE
+ LEDA
+ THEBE
+ ADRASTEA
+ METIS
+VENUS
+EARTH
+ MOON

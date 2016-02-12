@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/minas/!svn/ver/2/trunk/config/fits
+END
+read_fits.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/config/fits/read_fits.pro
+END
+check_fits.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/config/fits/check_fits.pro
+END
+sxdelpar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/config/fits/sxdelpar.pro
+END
+mkhdr.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/config/fits/mkhdr.pro
+END
+conv_unix_vax.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/fits/conv_unix_vax.pro
+END
+conv_vax_unix.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/fits/conv_vax_unix.pro
+END
+host_to_ieee.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/fits/host_to_ieee.pro
+END
+ieee_to_host.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/fits/ieee_to_host.pro
+END
+strn.pro
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/minas/!svn/ver/2/trunk/config/fits/strn.pro
+END
+sxaddpar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/config/fits/sxaddpar.pro
+END
+doc_fits.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/config/fits/doc_fits.pro
+END
+get_date.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/config/fits/get_date.pro
+END
+sxpar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/config/fits/sxpar.pro
+END
+write_fits.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/config/fits/write_fits.pro
+END

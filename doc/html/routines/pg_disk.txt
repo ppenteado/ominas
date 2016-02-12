@@ -1,0 +1,71 @@
+PG_DISK
+
+
+ PURPOSE:
+	Computes image points on the inner and outer edges of each given disk
+	object at all given time steps.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_disk(cd=cd, dkx=dkx, gbx=gbx)
+	result = pg_disk(gd=gd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	 Array (n_timesteps) of camera descriptors.
+
+	dkx:	 Array (n_objects, n_timesteps) of descriptors of objects 
+		 which must be a subclass of DISK.
+
+	gbx:	 Array (n_objects, n_timesteps) of descriptors of objects 
+		 which must be a subclass of GLOBE, describing the primary 
+		 body.  For each timestep, only the primaryobject is used.
+
+	gd:	 Generic descriptor.  If given, the descriptor inputs 
+		 are taken from the this structure.
+
+	inner/outer: If either of these keywords are set, then only
+	             that edge is computed.
+
+	npoints: Number of points to compute around each edge.  Default is
+		 1000.
+
+	reveal:	 Normally, points computed for objects whose opaque flag
+		 is set are made invisible.  /reveal suppresses this behavior.
+
+	fov:	 If set points are computed only within this many camera
+		 fields of view.
+
+	cull:	 If set, points structures excluded by the fov keyword
+		 are not returned.  Normally, empty points structures
+		 are returned as placeholders.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2*n_objects) of pg_points_struct containing image points and
+	the corresponding inertial vectors.  The output array is arranged as
+	[inner, outer, inner, outer, ...] in the order that the disk
+	descriptors are given in the dkx argument.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	7/2004:		Added gbx input; Spitale
+	

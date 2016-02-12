@@ -1,0 +1,39 @@
+PG_DATA_ADJUST
+
+ PURPOSE:
+	Allows the user to adjust data values using the mouse.  A rectangle 
+	is selected height (positve or negative) gives the data value adjustment.
+	Works for 1-D or 2_d data sets.
+
+ CATEGORY:
+       NV/PG
+
+ CALLING SEQUENCE:
+     pg_data_adjust, dd
+
+
+ ARGUMENTS:
+  INPUT:
+      dd:	Data descriptor.
+
+  OUTPUT:
+	NONE
+
+
+
+ KEYWORDS:
+  INPUT: 
+         NONE
+
+
+
+  OUTPUT:
+         NONE
+
+
+ RETURN: 
+      NONE
+
+
+ ORIGINAL AUTHOR : J. Spitale ; 2/2014
+

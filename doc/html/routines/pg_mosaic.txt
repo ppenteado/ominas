@@ -1,0 +1,56 @@
+PG_MOSAIC
+
+
+ PURPOSE:
+	Combines two or more maps into one.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_mosaic(dds)
+
+
+ ARGUMENTS:
+  INPUT:
+	dds:	Array of data descriptors containing the maps to be combined.
+		Maps must all be of the same size and data type.
+
+  OUTPUT:
+	mosaic:	The mosaic image array.
+
+
+ KEYWORDS:
+  INPUT:
+	combine_fn:	Name of function to be called to combine the maps.  
+			Default is 'median'.
+
+	wt_fns:		Names of functions to be called to weight the maps.  
+
+	data:		Data to be passed to combine_fn.
+
+	weight:		Array of weights, one for each input dd.
+
+       pc_xsize:	x size of mosaic work pieces.  Smaller pieces save
+			memory, but increase run time.
+
+       pc_ysize:	y size of mosaic work pieces.
+
+
+  OUTPUT:
+	mosaic:		Image array giving the output mosiac.
+
+
+ RETURN:
+	Data descriptor containing the mosaic.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale 1/2002
+	

@@ -1,0 +1,27 @@
+;===========================================================================
+; nv_notify_list_struct__define
+;
+;
+;===========================================================================
+pro nv_notify_list_struct__define
+
+ struct = $
+    { nv_notify_list_struct, $
+	idp :		ptr_new(), $	; id pointer.
+	xd:		ptr_new(), $	; Pointer to top of object tree.
+	handler :	'', $		; Event handler routine.
+	compress :	0b, $		; If 1, compress events.
+	data_p:		ptr_new(), $	; Pointer to user data.
+	data:		0d, $		; Scalar user data.
+	dynamic:	0b, $		; 1 if pointer allocated for this item.
+	type :		0 $		; Type of event:
+					;  0 - set value
+					;  1 - get value
+    }
+
+
+end
+;===========================================================================
+
+
+

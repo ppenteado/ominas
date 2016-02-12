@@ -1,0 +1,37 @@
+PG_RANGE
+
+
+ PURPOSE:
+	Computes distance between the centers of two bodies.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	range = pg_center(bx1, bx2)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx1:	Array (n_objects, n_timesteps) of descriptors of objects 
+		which must be a subclass of BODY.
+
+	bx2:	Array (n_objects, n_timesteps) of descriptors of objects 
+		which must be a subclass of BODY.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n_objects) doubles giving the ranges.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2001
+	

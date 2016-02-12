@@ -1,0 +1,42 @@
+CAM_BODY_TO_FOCAL
+
+
+ PURPOSE:
+       Transforms the given column vectors from the body coordinate
+       system to the camera focal plane coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	focal_pts = cam_body_to_focal(cd, body_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	body_pts:	Array (nv,3,nt) of column vectors in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the camera focal plane frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

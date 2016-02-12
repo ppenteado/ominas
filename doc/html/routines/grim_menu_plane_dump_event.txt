@@ -1,0 +1,14 @@
+GRIM_MENU_PLANE_DUMP_EVENT
+
+
+ PURPOSE:
+	Clears all tiepoints from the current plane.  
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2004
+	

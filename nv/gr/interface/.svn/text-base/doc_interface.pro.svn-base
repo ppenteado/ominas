@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="INTERFACE Program Reference", $
+    "/home/joes/idl_pro/minas/nv/gr/interface/*.pro", $
+    "/home/joes/idl_pro/minas/nv/gr/interface/doc_interface.txt"

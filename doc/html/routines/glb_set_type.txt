@@ -1,0 +1,40 @@
+GLB_SET_TYPE
+
+
+ PURPOSE:
+       Replaces the type string for each given globe descriptor.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	glb_set_type, gbx, type
+
+
+ ARGUMENTS:
+  INPUT: 
+	gbx:	 Array (nt) of any subclass of GLOBE descriptors.
+
+	type:	 String array (nt) of new type strings.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

@@ -1,0 +1,14 @@
+;==================================================================================
+; image_shift
+;
+;==================================================================================
+function image_shift, image, dx, dy, cd=cd
+
+ s = size(image, /dim)
+
+ grid_x = (dindgen(s[0]) + dx)#make_array(s[1],val=1d)
+ grid_y = (dindgen(s[1]) + dy)##make_array(s[0],val=1d)
+
+ return, image_interp_cam(cd=cd, image, grid_x, grid_y)
+end
+;==================================================================================

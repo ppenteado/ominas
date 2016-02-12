@@ -1,0 +1,44 @@
+;=============================================================================
+;+
+; NAME:
+;       inertial_to_disk
+;
+;
+; PURPOSE:
+;       Transforms a vector in inertial coordinates to disk coordinates.
+;
+;
+; CATEGORY:
+;       NV/LIB/TOOLS
+;
+;
+; CALLING SEQUENCE:
+;       result = inertial_to_image(dkx, v)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;             dkx:       Subclass of DISK.
+;
+;              v:       An array of inertial vectors
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       An array of disk points.
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale, 2/2004
+;
+;-
+;=============================================================================
+function inertial_to_disk, dkx, v, frame_bd=frame_bd
+ return, dsk_body_to_disk(dkx, $
+           bod_inertial_to_body(dkx, v), frame_bd=frame_bd)
+end
+;=============================================================================

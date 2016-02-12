@@ -1,0 +1,5 @@
+common mem_block, mem0
+print, '-------------------------------------------'
+mem = get_mem()
+if(keyword__set(mem0)) then print, mem - mem0 $
+else print, '*****'

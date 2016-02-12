@@ -1,0 +1,40 @@
+DSK_SET_BODY
+
+
+ PURPOSE:
+	Replaces the body descriptor in each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	dsk_set_body, dkx, bd
+
+
+ ARGUMENTS:
+  INPUT: 
+	dkx:	 Array (nt) of any subclass of DISK.
+
+	bd:	 Array (nt) of new body descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

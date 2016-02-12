@@ -1,0 +1,47 @@
+MOVEGEN
+
+
+ PURPOSE:
+	Generates an array of subscripts to move the desired column or row
+	in an array with dimensions n x m.
+
+ CATEGORY:
+	UTIL/GEN
+
+
+ CALLING SEQUENCE:
+	sub = movegen(n, m, w1, w2)
+
+
+ ARGUMENTS:
+  INPUT:
+	n,m:		Dimensions of array from which to select.
+
+	w1:		Index of column or row to move.
+
+	w2:		Index giving new position of column or row.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	column:		If set, a column is moved (default).
+
+	row:		If set, a row is moved.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n x m) of subscripts that will move the row or column.
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

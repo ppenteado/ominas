@@ -1,0 +1,21 @@
+GRIM_MENU_VIEW_ZOOM_DOUBLE_EVENT
+
+
+ PURPOSE:
+	Selects or unselects a grim window.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	This option toggles a given grim instance between selected 
+	and unselected states, for use with functions that require 
+	input from more than one grim instance.  When a given instance 
+	is selected, this button displays an asterisk.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

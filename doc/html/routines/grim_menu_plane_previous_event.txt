@@ -1,0 +1,14 @@
+GRIM_MENU_PLANE_PREVIOUS_EVENT
+
+
+ PURPOSE:
+	Prompts the user for a new zoom factor. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2005
+	

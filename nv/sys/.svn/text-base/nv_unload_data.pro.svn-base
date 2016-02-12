@@ -1,0 +1,26 @@
+;=============================================================================
+; nv_unload_data
+;
+;=============================================================================
+pro nv_unload_data, ddp, all=all
+@nv_block.common
+@nv.include
+
+ if(keyword_set(all)) then ddp = *nv_state.dds_p
+ if(NOT ptr_valid(ddp)) then return
+ if(NOT keyword_set(*ddp[0])) then return
+
+ nddp = n_elements(ddp)
+ for i=0, nddp-1 do $
+  begin
+   dd = nv_dereference(ddp[i])
+
+;print, 'unloading'
+   data_archive_free, dd.data_dap
+
+   dds =*nv_state.dds_p
+   dds = rm_list_item(dds, 0, only=0)
+   *nv_state.dds_p = dds
+  end
+end
+;=============================================================================

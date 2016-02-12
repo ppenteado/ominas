@@ -1,0 +1,24 @@
+;==============================================================================
+; cor_clone_descriptor
+;
+;
+;==============================================================================
+function cor_clone_descriptor, crdp
+@nv_lib.include
+ nv_notify, crdp, type = 1
+ crd = nv_dereference(crdp)
+
+ n = n_elements(crd)
+
+ new_crd = crd
+ for i=0, n-1 do new_crd[i].tasks_p = ptr_new(*crd[i].tasks_p)
+ for i=0, n-1 do if(keyword__set(new_crd[i].udata_tlp)) then $
+                       new_crd[i].udata_tlp = tag_list_clone(crd[i].udata_tlp)
+ new_crdp = ptrarr(n_elements(crd))
+ nv_rereference, new_crdp, new_crd
+
+ return, new_crdp
+end
+;==============================================================================
+
+

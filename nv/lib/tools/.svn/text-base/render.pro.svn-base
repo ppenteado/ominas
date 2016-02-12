@@ -1,0 +1,632 @@
+;=================================================================================
+; rdr_smooth_globe
+;
+;=================================================================================
+function rdr_smooth_globe, data, i
+
+ if(keyword_set(data.smooth_gbx[i])) then return, data.smooth_gbx[i]
+
+ 
+ theta = $
+    v_mag(bod_pos(data.cd)-bod_pos(data.gbx[i]))*cam_scale(data.cd[0]) $
+        / (glb_radii(data.gbx[i]))[0]
+    
+ tvim, /silent, get_info=tvd
+ zoom = max(tvd.zoom)
+
+; note this assumes a rectangular map -- bad
+ smooth = fix(max(map_size(data.md_gbx[i])/[!dpi,2d*!dpi] * [theta,theta])) $
+                 * map_scale(data.md_gbx[i]) / zoom * data.sample
+
+ return, smooth * 4
+end
+;=================================================================================
+
+
+
+;=================================================================================
+; rdr_trace_globes
+;
+;=================================================================================
+pro rdr_trace_globes, data, image_pts=image_pts, $
+               body_pts=all_body_pts, ray_pts=all_ray_pts, $
+               body_indices=all_body_indices, dist=all_dist, indices=indices
+
+ gbx = data.gbx
+
+ ;---------------------------------------------
+ ; basic grid parameters
+ ;---------------------------------------------
+ xx = image_pts[0,*]
+ yy = image_pts[1,*]
+ xmin = min(xx) & xmax = max(xx)
+ ymin = min(yy) & ymax = max(yy)
+
+ xc = 0.5d*(xmax + xmin)
+ yc = 0.5d*(ymax + ymin)
+ xsize = xmax-xmin+1
+ ysize = ymax-ymin+1
+
+ nxy = n_elements(image_pts)/2l
+
+
+ ngbx = n_elements(gbx)
+ indices = lindgen(ngbx)
+
+ xyc = [xc, yc]#make_array(ngbx, val=1d)
+ cds = make_array(ngbx, val=data.cd)
+
+ center_ps = pg_center(cd=data.cd, bx=gbx)
+ center_pts = pg_points(center_ps)
+
+ distance = v_mag(bod_pos(gbx) - bod_pos(cds))
+ imrad = (glb_radii(gbx))[0,*]/distance/(cam_scale(data.cd))[0]
+
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; eliminate bodies which do not fall in FOV
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+ w = where(p_mag(center_pts - xyc) LT sqrt(xsize^2+ysize^2)/2d + imrad)
+ if(w[0] NE -1) then $
+  begin
+   gbx = gbx[w]
+   cds = cds[w]
+   indices = indices[w]
+   imrad = imrad[w]
+   distance = distance[w]
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; eliminate those smaller than one device pixel
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+   tvim, /silent, get_info=tvd
+   zoom = max(tvd.zoom)
+   w = where(imrad*zoom GT 1)
+   if(w[0] NE -1) then $
+    begin
+     gbx = gbx[w]
+     cds = cds[w]
+     indices = indices[w]
+     distance = distance[w]
+     ngbx = n_elements(gbx)
+
+     ss = sort(distance)
+     gbx = gbx[ss]
+     indices = indices[ss]
+     distance = distance[ss]
+
+     ray_pts = image_pts
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Trace remaining globes, closest first.  Remove rays as they hit globes.
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ii = lindgen(nxy)
+
+     all_body_pts = dblarr(nxy,3)
+     all_ray_pts = dblarr(2,nxy)
+     all_dist = make_array(nxy, val=1d100)
+     all_body_indices = make_array(nxy,val=-1)
+
+     for i=0, ngbx-1 do if(ii[0] NE -1) then $
+      begin
+       _ray_pts = ray_pts[*,ii]
+       n = n_elements(ii)
+
+       v = (bod_inertial_to_body_pos(gbx[i], bod_pos(data.cd)))##make_array(n,val=1d)
+
+       r_inertial = bod_body_to_inertial(data.cd, $
+                      cam_focal_to_body(data.cd, $
+                        cam_image_to_focal(data.cd, _ray_pts)))
+       r = bod_inertial_to_body(gbx[i], r_inertial)
+  
+       body_pts = glb_intersect(gbx[i], v, r, discriminant=discriminant)
+       hit = where(discriminant GE 0)
+
+       ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+       ; add results to intercept maps 
+       ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+       if(hit[0] NE -1) then $
+        begin
+         if(data.show) then plots, _ray_pts[*,hit], col=ctred(), psym=3
+         jj = ii[hit]
+
+;         all_body_pts[jj,*] = (body_pts[n:*,*])[hit,*]
+         all_body_pts[jj,*] = (body_pts[0:n-1,*])[hit,*]
+         all_ray_pts[*,jj] = _ray_pts[*,hit]
+         all_body_indices[jj] = i
+         all_dist[jj] = v_mag(v[hit,*] - all_body_pts[jj,*])
+
+         ii = rm_list_item(ii, hit, only=-1)
+        end
+
+;       ii = where(discriminant LT 0)
+      end
+    end
+  end
+
+end
+;=================================================================================
+
+
+
+;=================================================================================
+; rdr_trace_disks
+;
+;=================================================================================
+pro rdr_trace_disks, data, image_pts=image_pts, frame_bd=frame_bd, $
+               body_pts=all_body_pts, ray_pts=all_ray_pts, $
+               body_indices=all_body_indices, dist=all_dist, indices=indices
+
+ dkx = data.dkx
+
+ ;---------------------------------------------
+ ; basic grid parameters
+ ;---------------------------------------------
+ xx = image_pts[0,*]
+ yy = image_pts[1,*]
+ xmin = min(xx) & xmax = max(xx)
+ ymin = min(yy) & ymax = max(yy)
+
+ xc = 0.5d*(xmax + xmin)
+ yc = 0.5d*(ymax + ymin)
+ xsize = xmax-xmin+1
+ ysize = ymax-ymin+1
+
+ nxy = n_elements(image_pts)/2l
+
+ ndkx = n_elements(dkx)
+ indices = lindgen(ndkx)
+
+ xyc = [xc, yc]#make_array(ndkx, val=1d)
+ cds = make_array(ndkx, val=data.cd)
+
+ center_ps = pg_center(cd=data.cd, bx=dkx)
+ center_pts = pg_points(center_ps)
+
+ dr = xyc - center_pts
+ distance = v_mag(bod_pos(dkx) - bod_pos(cds))
+
+ imrad = (dsk_sma(dkx))[0,1,*] * (1d + (dsk_ecc(dkx))[0,1,*])/distance/(cam_scale(data.cd))[0]
+
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; eliminate bodies which do not fall in FOV
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+ w = where(p_mag(dr) LT sqrt(xsize^2+ysize^2)/2d + imrad)
+ if(w[0] NE -1) then $
+  begin
+   dkx = dkx[w]
+   cds = cds[w]
+   indices = indices[w]
+   imrad = imrad[w]
+   distance = distance[w]
+
+   r = p_unit(reform(get_image_vector(cds, v_cross((bod_orient(cds))[1,*,*], (bod_orient(dkx))[2,*,*]))))
+
+   d = p_mag((center_pts + p_inner(dr,r)##make_array(2,val=1d)*r) - xyc)
+   cos_phi = transpose(v_inner((bod_orient(dkx))[2,*,*], (bod_orient(cds))[1,*,*]))
+
+   w = where(d - imrad*cos_phi/2d LT sqrt(xsize^2+ysize^2)/2d)
+   if(w[0] NE -1) then $
+    begin
+     dkx = dkx[w]
+     cds = cds[w]
+     indices = indices[w]
+     imrad = imrad[w]
+     distance = distance[w]
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; eliminate those smaller than one device pixel
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+     tvim, /silent, get_info=tvd
+     zoom = max(tvd.zoom)
+     w = where(imrad*zoom GT 1)
+     if(w[0] NE -1) then $
+      begin
+       dkx = dkx[w]
+       cds = cds[w]
+       indices = indices[w]
+       distance = distance[w]
+       ndkx = n_elements(dkx)
+
+       ss = sort(distance)
+       dkx = dkx[ss]
+       indices = indices[ss]
+       distance = distance[ss]
+
+       ray_pts = image_pts
+
+       ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+       ; Trace remaining disks, closest first.  Remove rays as they hit bodies.
+       ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+       ii = lindgen(nxy)
+
+       all_body_pts = dblarr(nxy,3)
+       all_ray_pts = dblarr(2,nxy)
+       all_dist = make_array(nxy, val=1d100)
+       all_body_indices = make_array(nxy,val=-1)
+
+       for i=0, ndkx-1 do if(ii[0] NE -1) then $
+        begin
+         frame_bd = get_primary(data.cd, data.gbx, rx=dkx[i])
+
+         _ray_pts = ray_pts[*,ii]
+         n = n_elements(ii)
+
+         v = (bod_inertial_to_body_pos(dkx[i], bod_pos(data.cd)))##make_array(n,val=1d)
+
+         r_inertial = bod_body_to_inertial(data.cd, $
+                        cam_focal_to_body(data.cd, $
+                          cam_image_to_focal(data.cd, _ray_pts)))
+         r = bod_inertial_to_body(dkx[i], r_inertial)
+  
+         body_pts = dsk_intersect(dkx[i], v, r, hit=hit, frame_bd=frame_bd)
+
+         ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+         ; add results to intercept maps 
+         ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+         if(hit[0] NE -1) then $
+          begin
+           if(data.show) then plots, _ray_pts[*,hit], col=ctgreen(), psym=3
+           jj = ii[hit]
+
+           all_body_pts[jj,*] = body_pts[hit,*]
+           all_ray_pts[*,jj] = _ray_pts[*,hit]
+           all_body_indices[jj] = i
+           all_dist[jj] = v_mag(v[hit,*] - all_body_pts[jj,*])
+
+           ii = rm_list_item(ii, hit, only=-1)
+          end
+        end
+      end
+    end
+  end
+
+end
+;=================================================================================
+
+
+
+;=================================================================================
+; rdr_piece
+;
+;=================================================================================
+function rdr_piece, data, xsize=_xsize, ysize=_ysize, x0=x0, y0=y0, sample=sample, $
+                  cd=cd, gbx=_gbx, dkx=_dkx, sd=sd, sund=sund, show=show, $
+                  dd_gbx=_dd_gbx, md_gbx=_md_gbx, dd_dkx=_dd_dkx, md_dkx=_md_dkx
+
+ gbx = data.gbx
+ dkx = data.dkx
+ md_gbx = data.md_gbx
+ md_dkx = data.md_dkx
+ dd_gbx = data.dd_gbx
+ dd_dkx = data.dd_dkx
+
+ ;-------------------------------------
+ ; set up image grid
+ ;-------------------------------------
+ nx = _xsize/data.sample
+ ny = _ysize/data.sample
+
+ xx = (data.sample*lindgen(nx))#make_array(ny, val=1l) + x0
+ yy = (data.sample*lindgen(ny))##make_array(nx, val=1l) + y0
+ nxy = n_elements(xx)
+
+ if(data.show) then $
+  begin
+   device, set_graphics=6
+   plots, xx, yy, psym=3, col=ctgray(0.25), /device
+   device, set_graphics=3
+  end
+
+ device_pts = [reform(xx, 1,nxy, /over), reform(yy, 1,nxy,/over)]
+ image_pts = (convert_coord(device_pts, /device, /to_data))[0:1,*]
+
+
+ ;---------------------------------------------
+ ; trace rays to all objects
+ ;---------------------------------------------
+
+ ;- - - - - - - - - - -
+ ; globes
+ ;- - - - - - - - - - -
+ rdr_trace_globes, data, image_pts=image_pts, $
+	body_pts=body_pts_globe, $
+	body_indices=body_indices_globe, $
+	ray_pts=ray_pts_globe, $
+	dist=dist_globe, ind=igbx
+ if(keyword_set(dist_globe)) then $
+  begin
+   dist = append_array(dist, transpose(dist_globe))
+   body_indices = append_array(body_indices, transpose(body_indices_globe))
+   types = append_array(types, 'globe')
+  end
+
+ ;- - - - - - - - - - -
+ ; disks
+ ;- - - - - - - - - - -
+ rdr_trace_disks, data, image_pts=image_pts, $
+	body_pts=body_pts_disk, $
+	body_indices=body_indices_disk, $
+	ray_pts=ray_pts_disk, $
+	dist=dist_disk, ind=idkx
+ if(keyword_set(dist_disk)) then $
+  begin
+   dist = append_array(dist, transpose(dist_disk))
+   body_indices = append_array(body_indices, transpose(body_indices_disk))
+   types = append_array(types, 'disk')
+  end
+
+
+  piece = dblarr(nx, ny)
+
+
+ ;---------------------------------------------
+ ; map surfaces
+ ;---------------------------------------------
+ if(keyword_set(types)) then $
+  begin
+   dim = size(dist, /dim)
+   ntypes = dim[0] & np = dim[1]
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; determine nearest intercepts among all body types
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   nearest = make_array(np, val=-1)
+   w = where(body_indices[0,*] NE -1)
+   if(w[0] NE -1) then nearest[w] = 0
+
+   for i=1, ntypes-1 do $
+    begin
+     w = where(dist[i,*] LT dist[0,*])
+     if(w[0] NE -1) then $
+      begin
+       dist[0,w] = dist[i,w]
+       nearest[w] = i
+      end
+     end
+
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; map globes
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ii = where(types EQ 'globe')
+   if(ii[0] NE -1) then $
+    begin
+     w = where(nearest EQ ii[0])
+     if(w[0] NE -1) then $
+      begin
+       if(data.show) then plots, image_pts[*,w], psym=3, col=ctorange()
+
+       ngbx = n_elements(igbx)
+       for i=0, ngbx-1 do $
+        begin
+         ww = where(body_indices_globe[w] EQ i)
+         if(ww[0] NE -1) then $
+          begin
+           www = w[ww]
+           ii = igbx[i]
+
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+           ; photometry
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+           if(data.no_pht) then phot = 1d $
+           else $
+            begin
+             pht_angles, 0, data.cd, data.gbx[ii], data.sund, $
+                         body_pts=body_pts_globe[www,*], emm=mu, inc=mu0, g=g
+
+             refl_fn = glb_refl_fn(data.gbx[ii])
+             refl_parm = glb_refl_parm(data.gbx[ii])
+             if(NOT keyword_set(refl_fn)) then $
+              begin
+               refl_fn = 'pht_refl_lunar_lambert'
+               refl_parm = [0.5,0.5]
+              end
+
+             phase_fn = glb_phase_fn(data.gbx[ii])
+             phase_parm = glb_phase_parm(data.gbx[ii])
+             if(NOT keyword_set(phase_fn)) then $
+              begin
+               phase_fn = 'pht_phase_isotropic'
+               phase_parm = 0
+              end
+
+             refl_corr = call_function(refl_fn, mu0, mu, refl_parm)
+             phase_corr = call_function(phase_fn, g, phase_parm)
+
+             phot = refl_corr*phase_corr
+            end
+
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+           ; map
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+           if(NOT ptr_valid(data.dd_gbx[ii])) then piece[www] = phot $
+           else $
+            begin
+             ww = where(phot NE 0)
+             if(ww[0] NE -1) then $
+              begin
+               wwww = www[ww]
+
+               ;- - - - - - - - - - - - - - - -
+               ; compute map points
+               ;- - - - - - - - - - - - - - - -
+               im_pts_map = map_to_image(md=data.md_gbx[ii], $
+                 surface_to_map(data.md_gbx[ii], data.gbx[ii], $
+                   body_to_surface(data.gbx[ii], body_pts_globe[wwww,*])))
+
+               ;- - - - - - - - - - - - - - - -
+               ; sample map
+               ;- - - - - - - - - - - - - - - -
+               smooth = rdr_smooth_globe(data, ii)
+               map = nv_data(data.dd_gbx[ii])
+               md = data.md_gbx[ii]
+
+               dat = image_interp_cam(cd=data.md_gbx[ii], map, interp='mean', $
+                                  im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:smooth})
+
+               piece[www] = dat * (phot > data.pht_min)
+              end
+            end
+          end
+        end
+      end
+    end
+ 
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; map disks
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ii = where(types EQ 'disk')
+   if(ii[0] NE -1) then $
+    begin
+     w = where(nearest EQ ii[0])
+     if(w[0] NE -1) then $
+      begin
+       if(data.show) then plots, image_pts[*,w], psym=3, col=ctbrown()
+
+       ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+       ; photometry
+       ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+       ndkx = n_elements(idkx)
+       for i=0, ndkx-1 do $
+        begin
+         ww = where(body_indices_disk[w] EQ i)
+         if(ww[0] NE -1) then $
+          begin
+           www = w[ww]
+           ii = idkx[i]
+
+           frame_bd = get_primary(data.cd, data.gbx, rx=data.dkx[ii])
+           pht_angles_disk, 0, data.cd, data.dkx[ii], data.sund, frame_bd=frame_bd, $
+                         body_pts=body_pts_disk[www,*], emm=emm, inc=inc, g=g
+piece[www] = g
+          end
+        end
+
+      end
+    end
+
+  end
+
+
+ piece = congrid(piece, _xsize, _ysize)
+
+ return, piece
+end
+;=================================================================================
+
+
+
+;=================================================================================
+; render
+;
+;=================================================================================
+function render, cd=cd, gbx=gbx, dkx=dkx, sund=sund, $
+  xsize=image_xsize, ysize=image_ysize, offset=offset, $
+  pc_xsize=pc_xsize, pc_ysize=pc_ysize, $
+  dd_gbx=dd_gbx, md_gbx=md_gbx, dd_dkx=dd_dkx, md_dkx=md_dkx, sample=sample, $
+  show=show, pht_min=pht_min, no_pht=no_pht
+
+ if(NOT keyword_set(pht_min)) then pht_min = 0
+ if(NOT keyword_set(offset)) then offset = [0d,0d]
+
+ show = keyword_set(show)
+ if(NOT keyword_set(sample)) then sample = 1
+ sample = double(sample)
+ if(NOT keyword_set(image_xsize)) then image_xsize = !d.x_size
+ if(NOT keyword_set(image_ysize)) then image_ysize = !d.y_size
+
+ if(NOT keyword_set(dd_gbx)) then dd_gbx = 0
+ if(NOT keyword_set(md_gbx)) then md_gbx = 0
+ if(NOT keyword_set(dd_dkx)) then dd_dkx = 0
+ if(NOT keyword_set(md_dkx)) then md_dkx = 0
+
+ if(NOT keyword_set(pc_xsize)) then pc_xsize = 256
+ if(NOT keyword_set(pc_ysize)) then pc_ysize = 256
+
+ ngbx = n_elements(gbx)
+ ndkx = n_elements(dkx)
+
+
+ data = { $
+		cd		:	cd, $
+		gbx		:	gbx, $
+		dkx		:	dkx, $
+		sund		:	sund, $
+		dd_gbx		:	dd_gbx, $
+		md_gbx		:	md_gbx, $
+		smooth_gbx	:	lonarr(ngbx),$
+		dd_dkx		:	dd_dkx, $
+		md_dkx		:	md_dkx, $
+		smooth_dkx	:	lonarr(ndkx),$
+		sample		:	sample, $
+		pht_min		:	pht_min, $
+		no_pht		:	keyword_set(no_pht), $
+		show		:	show $
+	}
+
+
+ ;----------------------------------------
+ ; perform ray tracing piece-by-piece
+ ;----------------------------------------
+ pc_xsize = pc_xsize < image_xsize
+ pc_ysize = pc_ysize < image_ysize
+
+ pc_nx = image_xsize/pc_xsize
+ pc_ny = image_ysize/pc_ysize
+
+ pc_xsize = long(pc_xsize)
+ pc_ysize = long(pc_ysize)
+
+ if(pc_xsize*pc_nx LT image_xsize) then pc_nx = pc_nx + 1
+ if(pc_ysize*pc_ny LT image_ysize) then pc_ny = pc_ny + 1
+
+ map = dblarr(image_xsize, image_ysize)
+
+ for j=0, pc_ny-1 do $
+  for i=0, pc_nx-1 do $
+   begin
+    ;------------------------------------
+    ; determine the size of this piece
+    ;------------------------------------
+    xsize = pc_xsize
+    ysize = pc_ysize
+    if(i EQ pc_nx-1) then xsize = image_xsize - (pc_nx-1)*pc_xsize
+    if(j EQ pc_ny-1) then ysize = image_ysize - (pc_ny-1)*pc_ysize
+
+    ;------------------------------------
+    ; trace this piece
+    ;------------------------------------
+    x0 = i*pc_xsize + offset[0] & y0 = j*pc_ysize + offset[1]
+    piece = rdr_piece(data, xsize=xsize, ysize=ysize, x0=x0, y0=y0)
+    map[x0:x0+xsize-1, y0:y0+ysize-1] = piece
+   end
+
+
+ return, map
+end
+;=================================================================================
+
+
+
+pro test
+
+
+ ingrid, dd=dd, cd=cd, pd=pd, rd=rd, sund=sund
+
+ n = n_elements(pd)
+ dd_map = ptrarr(n)
+ md = ptrarr(n)
+
+ w = where(cor_name(pd) EQ 'ENCELADUS')
+
+ dd_map[w] = nv_read('~/projects/movie_080EN/EN_080611_DLR_basemap.vic', main=1)
+ md[w] = pg_get_maps(dd_map[w])
+
+ 
+ map = render(cd=cd, gbx=pd, dkx=rd, sund=sund, dd_gbx=dd_map, md_gbx=md, pht=0.05)
+ tvscl, smooth(map,2)
+
+
+end

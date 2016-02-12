@@ -1,0 +1,214 @@
+SPICE_INPUT
+
+
+ PURPOSE:
+	Generic NAIF/SPICE input translator core.  This routine is not a 
+	OMINAS input translator; it is intended to be called by an input
+	translator that is taylored to a specific mission. 
+
+
+ CATEGORY:
+	NV/CONFIG
+
+
+ CALLING SEQUENCE:
+	result = spice_input(dd, keyword, prefix)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	keyword:	String giving the name of the translator quantity.
+			The following keywords are recognized:
+
+			'CAM_DESCRIPTORS': The function [prefix]_spice_cameras
+					   Is called.
+
+			'PLT_DESCRIPTORS': The function [prefix]_spice_planets
+					   Is called.
+
+			'STR_DESCRIPTORS': The function [prefix]_spice_sun
+					   Is called.  Only the sun is
+				           recognized.
+
+	prefix:		String giving a prefix to use in constructing the names
+			of the input functions:
+
+			  [prefix]_spice_cameras
+			  [prefix]_spice_planets
+			  [prefix]_spice_sun
+
+			These functions are wrappers that prepare the relevant
+			inputs for a specific mission and call either
+			spice_cameras or spice_planets to obtain the appropriate
+			descriptors.  To obtain sun data, a planet descriptor is
+			obtained from spice_planets and converted to a star
+			descriptor.  See cas_spice_input for an example of how
+			to write such functions.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	key1:		Camera descriptor.
+
+	key7:		Requested object time.
+
+	key8:		Array of requested object names.  Planets are requested
+			in the order given, except that the primary target body
+			is placed at the front of the list.
+
+  OUTPUT:
+	status:		Zero if valid data is returned.
+
+	n_obj:		Number of objects returned.
+
+	dim:		Dimensions of return objects.
+
+
+  TRANSLATOR KEYWORDS:
+	ref:		Name of the reference frame for the output quantities.
+			Default is 'j2000'.
+
+	j2000:		/j2000 is equivalent to specifying ref=j2000.
+
+	b1950:		/b1950 is equivalent to specifying ref=b1950.
+
+	klist:		Name of a file giving a list of SPICE kernels to use.
+			If no path is included, the path is taken from the 
+			NV_SPICE_KER environment variable.  Note that this
+			keyword is effective only before any kernels have been
+			loaded or when /reload is specified.  This file 
+			contains a list of file specifications, one per line.  
+			Lines beginning with '#' are ignored.  Kernels may
+			also be selected by image time using the keywords
+			START_TIME, STOP_TIME, and DEFAULT as in the 
+			following example:
+
+
+			$NV_SPICE_SPK/010419_SE_SAT077.bsp
+			$NV_SPICE_CK/051008_051217_s15s16_port3_pa.bc
+
+			START_TIME = 2002-270T10:57:56.870
+			 $NV_SPICE_SPK/000331R_SK_LP0_V1P32.bsp
+			 $NV_SPICE_SPK/010419_SE_SAT077.bsp
+			STOP_TIME = 2002-281T20:57:56.870
+
+			START_TIME = 2002-290T20:57:56.870
+			 $NV_SPICE_SPK/000331R_SK_LP0_V1P32.bsp
+			 $NV_SPICE_SPK/010419_SE_SAT077.bsp
+			STOP_TIME = 2002-291T20:57:56.870
+
+			DEFAULT
+			 $NV_SPICE_SPK/000331R_SK_LP0_V1P32.bsp
+			 $NV_SPICE_SPK/010419_SE_SAT077.bsp-bb
+
+
+			Files appearing before the first START_TIME are always
+			loaded.  If the image time is not covered in a
+			START/STOP_TIME block, then the DEFAULT kernels are
+			loaded.  Keywords must appear at the beginning of
+			the line and DEFAULT must come last.
+
+	<type>_in:	List of input kernels of the given type; e,g, ck_in,
+			spk_in, lsk_in, etc.  List must be delineated by 
+			semimcolons with no space.  The kernel list
+			file is still used, but these kernels take
+			precedence.  Entries in this list may be file
+			specification strings.  On each call, kernels are 
+			loaded and unloaded such that the kernel pool will 
+			consist of the klist kernels and these kernels.  
+			If the value 'auto' is given, then an attempt may be 
+			made to detect the correct kernel file for the given
+			image, depending on the instrument.  Kernels specified 
+			explicitly by name here take precedence over those 
+			determined using the auto-detection.  If a path
+			is specified with 'auto', the kernels that path
+			is used to autodetection instead of the path given
+			by the relevant environment variable.
+
+	reverse:	If set, klist kernels are loaded last, causing them to
+			take precedence.
+
+	<type>_reverse:	If set, the type of kernel will be loaded before
+			the klist, demoting their precedence.
+
+	<type>_strict:	Causes /strict to be passed to the corresponding
+			kernel auto-detection routine.  The behavior 
+			depends on the routine, but typically this will
+			result in fewer kernels being loaded.  
+
+	<type>_all:	Causes /all to be passed to the corresponding
+			kernel auto-detection routine.  The behavior 
+			depends on the routine, but typically this should
+			result in all kernels of the given type being loaded.  
+
+	<type>_reject:	If set, the names of all kernels of the given type 
+			are placed in the data descriptor in a user value with 
+			a name of the form <type>_REJECTED_KERNELS.  
+
+	protect:	Semicolon-delimited list of file specifications.  All
+			kernels matched are left untouched in the kernel pool.
+			If a file specification starts with '!', then only 
+			kernels not matched will be left untouched in the
+			kernel pool.
+
+	kloaded:	If set, the names of all loaded kernels are placed 
+			in the data descriptor in a user value with the
+			name LOADED_SPICE_KERNELS.  
+
+	reload:		If set, all kernels are unloaded and the current 
+			kernel pool is loaded from scratch.  The interface
+			operates very reliably, but very inefficiently using
+			this option.
+
+	constants:	If set, only kernels containing constants are loaded.
+			Only those quantities are filled in.
+
+	targets:	Name of text file listing the targets to be requested
+			from the kernel pool.  If not given, the name of the
+			file is taken from the environment variable
+			[prefix]_SPICE_TARGETS.
+
+	nokernels:	If set, the kernel pool will not be modified.
+
+	name:		If given, objects names are taken from this keyword
+			rather than from key8.
+
+	obs:		Name or NAIF ID of observer.  Default is SSB.
+
+	pos:		Get only position information, not pointing.
+
+	silent:		If set, various diagnostic messages will be suppressed.
+
+	strict_priority:If set, previously loaded kernels are uncloded and 
+			reloaded in order to preserve thei priority.  This is
+			potentially very slow.
+
+
+  ENVIRONMENT VARIABLES:
+	NV_SPICE_KER:		Directory containing the kernel list file.
+
+	NV_SPICE_<type>:	Directory containing the kernel files specified
+				using <type>_in.  Multiple directories can be
+				delimited using the ':' character.
+
+
+ RETURN:
+	Data associated with the requested keyword.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	spice_output
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2002
+	

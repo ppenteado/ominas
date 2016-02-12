@@ -1,0 +1,62 @@
+NV_GET_VALUE
+
+
+ PURPOSE:
+	Calls input translators, supplying the given keyword, and builds 
+	a list of  returned values.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	values = nv_get_value(dd, keyword)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	keyword:	Keyword to pass to translators, describing the
+			requested quantity.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	trs:		Transient argument string.
+
+	tr_disable:	If set, nv_get_value returns without performing 
+			any action.
+
+	tr_override:	Comma-delimited list of translators to use instead
+			of those stored in dd.
+
+	tr_first:	If set, nv_get_value returns after the first
+			successful translator.
+
+  OUTPUT: 
+	status:		0 if at least one translator call was successful, 
+			-1 otherwise.
+
+
+ RETURN: 
+	Array of values returned from all successful translator calls.
+	Values are returned in the same order that the corresponding 
+	translators were called.  The dimensions are determined by the 
+	output of the first translator call.  Dimensions are (dim,n_values),
+	where n_objects is the total number of returned values (there may
+	be more than one per translator), and dim is the dimensions of 
+	each value.  If dim == 1, the dimensions of the nv_get_value result
+	are (n_values).
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

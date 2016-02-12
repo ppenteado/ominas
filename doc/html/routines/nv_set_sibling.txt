@@ -1,0 +1,41 @@
+NV_SET_SIBLING
+
+
+ PURPOSE:
+	Changes the sibling in a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_set_sibling, dd, dd_sibling
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	dd_sibling:	Data descriptor of new sibling.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

@@ -1,0 +1,39 @@
+;===========================================================================
+; map_lookup_transformations
+;
+;
+;===========================================================================
+pro map_lookup_transformations, md, fn_map_to_image, fn_image_to_map
+
+ n = n_elements(md)
+ fn_map_to_image = strarr(n)
+ fn_image_to_map = strarr(n)
+
+
+ for i=0, n-1 do $
+  begin
+   case md[i].type of
+    'RECTANGULAR' : $
+	begin
+	 fn_map_to_image[i] = 'map_map_to_image_rectangular'
+	 fn_image_to_map[i] = 'map_image_to_map_rectangular'
+	end
+
+    'MERCATOR' : $
+	begin
+	 fn_map_to_image[i] = 'map_map_to_image_mercator'
+	 fn_image_to_map[i] = 'map_image_to_map_mercator'
+	end
+
+
+    else: $
+	begin
+	 fn_map_to_image[i] = ''
+	 fn_image_to_map[i] = ''
+	end
+   endcase
+  end
+
+
+end
+;===========================================================================

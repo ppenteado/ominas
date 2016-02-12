@@ -1,0 +1,20 @@
+							;bitmaps/grim_deactivate_all_bitmap.array bitmap
+							;definition
+bitmaps/grim_deactivate_all_bitmap.array = 	[				$
+		[255B, 255B],			$
+		[255B, 252B],			$
+		[127B, 249B],			$
+		[191B, 240B],			$
+		[031B, 225B],			$
+		[007B, 242B],			$
+		[015B, 248B],			$
+		[007B, 252B],			$
+		[015B, 252B],			$
+		[007B, 254B],			$
+		[015B, 254B],			$
+		[007B, 254B],			$
+		[127B, 254B],			$
+		[255B, 254B],			$
+		[255B, 254B],			$
+		[255B, 255B]			$
+		]

@@ -1,0 +1,52 @@
+RADEC_IMAGE_BOUNDS
+
+
+ PURPOSE:
+	Determines radec coordinate ranges visible in an image described
+	by a given camera descriptor.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       radec_image_bounds, cd, $
+	        ramin=ramin, ramax=ramax, decmin=decmin, decmax=decmax
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descripor.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: 
+	corners:	Array(2,2) giving corers of image region to consider.
+
+	slop:	Number of pixels by which to expand the image in each
+		direction.
+
+
+  OUTPUT: 
+	ramin:	Minimum RA in image.
+
+	ramax:	Maximum RA in image.
+
+	decmin:	Minimum DEC in image.
+
+	decmax:	Maximum DEC in image.
+
+	border_pts_im:	Array (2,np) of points along the edge of the image.
+
+	status:	-1 if no globe in the image, 0 otherwise.
+
+
+ RETURN: NONE
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

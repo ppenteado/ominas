@@ -1,0 +1,50 @@
+CAS_DEBIAS
+
+
+ PURPOSE:
+	To remove horizontal banding in Cassini images
+
+
+ CATEGORY:
+	UTIL/CASSINI
+
+
+ CALLING SEQUENCE:
+	result = debias(image, label, bpa)
+
+
+ ARGUMENTS:
+  INPUT:
+	image:	Image data
+
+	label:	Image label from read_vicar
+
+	bpa:    Binary prefix bytes from read_vicar
+
+  OUTPUT:
+	bias:	Bias calculated	
+
+
+ KEYWORDS:
+  INPUT:
+	average: Use average of overclocked pixels
+
+
+ RETURN:
+	Real image with horizontal banding mostly subtracted.
+
+
+ PROCEDURE:
+	This routine applies a digital filter to the overclocked 
+	pixel value found in the Binary prefix array (bpa) and then
+	subtracts this from the image.
+
+
+
+ STATUS:
+	xx
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	V. Haemmerle, 3/2000
+	

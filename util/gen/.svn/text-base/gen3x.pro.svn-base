@@ -1,0 +1,12 @@
+;===========================================================================
+; gen3x.pro
+;
+; nx x ny x nz array with values incrementing in the x direction
+;
+;===========================================================================
+function gen3x, nx, ny, nz
+ return, reform(transpose((lindgen(ny*nz,nx)/(ny*nz))),nx,ny,nz,/over)
+end
+
+; note could also use reform( indgen(--) mod -- )
+;===========================================================================

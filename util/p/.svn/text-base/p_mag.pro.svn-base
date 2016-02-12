@@ -1,0 +1,42 @@
+;=============================================================================
+;+
+; NAME:
+;       p_mag
+;
+;
+; PURPOSE:
+;       Computes the magnitudes of the given array of image points.
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = p_mag(p)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       p:      An array of image points.
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Array of magnitudes.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale	6/2005
+;
+;-
+;=============================================================================
+function p_mag, p
+ return, sqrt(total(p*p, 1))
+end
+;===========================================================================

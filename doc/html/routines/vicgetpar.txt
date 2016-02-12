@@ -1,0 +1,59 @@
+VICGETPAR
+
+
+ PURPOSE:
+	Reads the value of a VICAR label keyword.
+
+
+ CATEGORY:
+	UTIL/VIC
+
+
+ CALLING SEQUENCE:
+	value = vicgetpar(label, keyword)
+
+
+ ARGUMENTS:
+  INPUT:
+	label:		String array giving the VICAR label.
+
+	keyword:	String giving the keyword whose value is to be obtained.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	string:		If set, the value will be returned as the exact string
+			read from the label instead of converting it based
+			quotes.
+
+  OUTPUT:
+	pos:		Position of keyword in label.
+
+	status:		If no errors occur, status will be zero, otherwise
+			it will be a string giving an error message.  If the
+			keyword is not found, status will contain a message.
+
+
+ RETURN:
+	The data array read from the file.
+
+
+ STATUS:
+	Complete
+
+
+ RESTRICTIONS:
+	Will not work for keyword values in which strings contain commas as
+	it is used as the delimiter.
+	
+
+ SEE ALSO:
+	vicsetpar
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/1996
+	Modified by:	Haemmerle, 10/2000  (add arrays)
+	

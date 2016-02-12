@@ -1,0 +1,104 @@
+;=======================================================================
+;                            GRIM.EXAMPLE
+;
+;  This example file demonstrates one way to use the graphical
+;  interface to minas.  Here, we use grim in a manner very similar 
+;  to the use of tvim, but the grim interface is somewhat more 
+;  convenient because the viewing parameters may be changed without 
+;  using tvzoom and tvmove and overlay points are automatically
+;  recomputed and redrawn whenever descriptors are modified
+;
+;  This example file can be executed from the UNIX command line using
+;
+;  	idl minas grim.example
+;
+;  or from within IDL using
+;
+;  	@grim.example
+;
+;  After the example stops, later code samples in this file may be executed by
+;  pasting them onto the IDL command line.
+;
+;
+; A similar result can be obtained using the following command:
+;
+;  grim, 'data/n1350122987.2', z=0.5, over=['planet_center','ring','limb','terminator']
+;
+;=======================================================================
+!quiet = 1
+;-------------------------------------
+; read a file using nv_read
+;-------------------------------------
+file = 'data/n1350122987.2'
+
+dd = nv_read(file, im, label, /silent)
+
+
+;-------------------------------------
+; display the image using grim
+;-------------------------------------
+grim, dd, zoom=0.5, /order
+
+;-------------------------------------
+; Obtain descriptors
+;-------------------------------------
+cd = pg_get_cameras(dd, 'ck_in=auto')
+pd = pg_get_planets(dd, od=cd, $
+       plt_name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
+rd = pg_get_rings(dd, pd=pd, od=cd)
+sund = pg_get_stars(dd, od=cd, str_name='SUN')
+
+gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+
+;-------------------------------------------------------------------------
+; Compute overlays
+;-------------------------------------------------------------------------
+limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
+          pg_hide, limb_ps, /limb, gd=gd, od=sund
+ring_ps = pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /globe
+term_ps = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ps, gd=gd, /limb
+
+center_ps = pg_center(gd=gd, bx=pd)
+object_ps = [center_ps,limb_ps,ring_ps,term_ps]
+
+;-------------------------------------------------------------------------
+; draw overlays on current grim window
+;
+; gr_draw provides an interface to grim that is analogous to that of 
+; pg_draw, the most important exception being that the relevant descriptors 
+; must be specified in addition to the overlay points.  Each given curve 
+; must correspond to a given descriptor.  For example, you cannot specify 
+; 5 planet descriptors and only 4 limb curves.
+;
+;-------------------------------------------------------------------------
+gr_draw, object_ps, gd=gd
+stop, '=== Auto-example complete.  Use cut & paste to continue.'
+
+
+;-------------------------------------------------------------------------
+;
+;                    First-cut Automatic repointing 
+;
+;-------------------------------------------------------------------------
+edge_ps = pg_edges(dd, edge=10)
+gr_draw, edge_ps, col=ctwhite()
+; pg_draw, edge_ps				; you could also do this
+dxy = pg_farfit(dd, edge_ps, [limb_ps[0]])
+pg_repoint, dxy, 0d, axis=center_ps[0], gd=gd
+
+
+;-------------------------------------------------------------------------
+;
+;                    Least-squares pointing refinement 
+;
+;-------------------------------------------------------------------------
+cvscan_ps = pg_cvscan(dd, gd=gd, [limb_ps[0]], edge=30, width=80, $
+             model=[ptr_new(edge_model_nav_limb(zero=lzero))], mzero=[lzero] )
+gr_draw, cvscan_ps, col=ctblue()
+; pg_draw, cvscan_ps				; you could also do this
+
+
+cvscan_cf = pg_cvscan_coeff(cvscan_ps, axis=center_ps[0], fix=2)
+dxy = pg_fit([cvscan_cf], dtheta=dtheta)
+pg_repoint, dxy, dtheta, axis=center_ps[0], gd=gd
+

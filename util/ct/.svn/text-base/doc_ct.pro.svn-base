@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="CT Program Reference", $
+    "/home/joes/idl_pro/minas/util/ct/*.pro", $
+    "/home/joes/idl_pro/minas/util/ct/doc_ct.txt"

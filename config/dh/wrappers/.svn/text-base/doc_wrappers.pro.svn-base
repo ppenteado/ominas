@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="WRAPPERS Program Reference", $
+    "/home/joes/idl_pro/minas/config/dh/wrappers/*.pro", $
+    "/home/joes/idl_pro/minas/config/dh/wrappers/doc_wrappers.txt"

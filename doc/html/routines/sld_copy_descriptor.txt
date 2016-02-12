@@ -1,0 +1,42 @@
+SLD_COPY_DESCRIPTOR
+
+
+ PURPOSE:
+	Copies all fields from the source solid descriptors into the
+       destination solid descriptors.
+
+
+ CATEGORY:
+	NV/LIB/SLD
+
+
+ CALLING SEQUENCE:
+	sld_copy_descriptor, slx_dst, slx_src
+
+
+ ARGUMENTS:
+  INPUT:
+	slx_dst:	Array (nt) of any subclass of SOLID descriptors to copy to.
+
+	slx_src:	Array (nt) of any subclass of SOLID descriptors to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

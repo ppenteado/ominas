@@ -1,0 +1,58 @@
+MISSION_NAME                 = "CASSINI"
+SPACECRAFT_NAME              = "CASSINI"
+DATA_SET_ID                  = "SPICE_SPK_FILE"
+KERNEL_TYPE_ID               = "SPK"
+PRODUCT_ID                   = "jup100s.xsp"
+PRODUCT_CREATION_TIME        = 1999-03-25T12:51:17
+PRODUCER_ID                  = "CASSINI_NAV_TEAM"
+MISSION_PHASE_NAME           = "LAUNCH"
+PRODUCT_VERSION_TYPE         = "TEST"
+PLATFORM_OR_MOUNTING_NAME    = "N/A"
+START_TIME                   = 2000-01-01T00:00:00
+STOP_TIME                    = 2002-01-01T00:00:00
+SPACECRAFT_CLOCK_START_COUNT = "N/A"
+SPACECRAFT_CLOCK_STOP_COUNT  = "N/A"
+TARGET_NAME                  = {
+                               "IO",
+                               "EUROPA",
+                               "GANYMEDE",
+                               "CALLISTO",
+                               "JUPITER"
+                               }
+INSTRUMENT_NAME              = "N/A"
+INSTRUMENT_ID                = "N/A"
+SOURCE_PRODUCT_ID            = "UNK"
+NOTE                         = "SPICE transfer format SPK file."
+ 
+; jup100s.bsp LOG FILE
+ 
+; Created 1999-03-25/12:46:36.00.
+;
+; BEGIN SPKMERGE COMMANDS
+ 
+LEAPSECONDS_KERNEL   = /cnav/software/internal/leapseconds.dat
+ 
+SPK_KERNEL           = jup100s.bsp
+  SOURCE_SPK_KERNEL  = jup100.bsp
+    INCLUDE_COMMENTS = NO
+    BODIES           = 599, 504, 503, 502, 501
+    BEGIN_TIME       = 2000 JAN 01 00:00:00.000
+    END_TIME         = 2002 JAN 01 00:00:00.000
+ 
+; END SPKMERGE COMMANDS
+ 
+COMMENTS: This ephemeris file can be used for planning purposes
+          Ephemeries accuracy: ~ 5 km.
+ 
+Brief.  Version: 2.1        (SPICE Toolkit N0051)
+ 
+ 
+Summary for: jup100s.bsp
+ 
+Bodies        Start of Interval (ET)          End of Interval (ET)
+-------       -----------------------------   -----------------------------
+501 IO        2000 JAN 01 00:01:04.183        2002 JAN 01 00:01:04.183
+502 EUROPA                Same coverage as previous object
+503 GANYMEDE              Same coverage as previous object
+504 CALLISTO              Same coverage as previous object
+599 JUPITER               Same coverage as previous object

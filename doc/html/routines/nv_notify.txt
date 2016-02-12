@@ -1,0 +1,64 @@
+NV_NOTIFY
+
+
+ PURPOSE:
+	Notify nv system of an event on some set of descriptors.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_notify, xd, type=type
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	Descriptor for which an event has occurred.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	type:	Type of event:
+		 0 - set value
+		 1 - get value
+		This input can have only one element.  If not given, the 
+		event type is assumed to be 0.
+
+	flush:	Flush the write event buffer -- call the handlers for each
+		unique event only once and clear the buffer. 
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	NONE
+
+
+ PROCEDURE:
+	By default, write events are buffered.  Handlers for write events are 
+	only called when /flush is specified.  For read events, all event 
+	handlers of the specified type are called as procedures with an
+ 	nv_event_struct as the argument.
+
+
+ COMMON BLOCKS:
+	nv_notify_block
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	nv_notify_register, nv_notify_unregister
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2002
+	

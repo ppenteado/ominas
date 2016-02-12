@@ -1,0 +1,41 @@
+MAP_CLONE_DESCRIPTOR
+
+
+ PURPOSE:
+       Allocates new map descriptors as copies of the given
+       (existing) map descriptors.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	new_md = map_clone_descriptor(md)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:	 Array (nt) of MAP descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created map descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

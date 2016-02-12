@@ -1,0 +1,15 @@
+.rnew dh_create.pro
+.rnew dh_fname.pro
+.rnew dh_get.pro
+.rnew dh_get_value.pro
+.rnew dhh_extract.pro
+.rnew dhh_insert.pro
+.rnew dhh_parse_keyword.pro
+.rnew dhh_parse_line.pro
+.rnew dhh_search.pro
+.rnew dhh_separate.pro
+.rnew dh_put_value.pro
+.rnew dh_read.pro
+.rnew dh_rm_value.pro
+.rnew dh_set.pro
+.rnew dh_write.pro

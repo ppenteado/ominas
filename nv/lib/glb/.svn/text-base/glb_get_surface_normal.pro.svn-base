@@ -1,0 +1,33 @@
+;===========================================================================
+; glb_get_surface_normal.pro
+;
+; Outputs are in body coordinates.
+; Note that the output vectors are NOT normalized.
+;
+;===========================================================================
+function glb_get_surface_normal, gbxp, lat, lon
+@nv_lib.include
+ gbdp = class_extract(gbxp, 'GLOBE')
+ nv_notify, gbdp, type = 1
+ gbd = nv_dereference(gbdp)
+
+ nt = n_elements(gbd)
+ np = (size(lat))[1]
+
+ M = make_array(np,val=1)
+
+ a2 = [(gbd.radii[0,*]^2)]##M
+ b2 = [(gbd.radii[1,*]^2)]##M
+ c2 = [(gbd.radii[2,*]^2)]##M
+
+ lon1 = lon-[(gbd.lora)]##M
+ cos_lat = cos(lat)
+
+ result = dblarr(np,3,nt, /nozero)
+ result[*,0,*] = cos_lat*cos(lon1)/a2
+ result[*,1,*] = cos_lat*sin(lon1)/b2
+ result[*,2,*] = sin(lat)/c2
+
+ return, result
+end
+;===========================================================================

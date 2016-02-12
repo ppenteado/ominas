@@ -1,0 +1,37 @@
+;===========================================================================
+; dsk_shape.pro
+;
+;
+;===========================================================================
+function dsk_shape, $
+	a, e, lp, $		; nt x nlon
+	dlon, $			; nlon
+	m, em, lpm, $		; nt x nlon x nm
+	mm=mm, mii=mii
+
+ r01 = a*(1d - e^2)/(1d + e*cos(dlon-lp))
+ if(NOT keyword_set(m)) then return, r01
+ if(m[0] EQ 0) then return, r01
+
+ nlon = n_elements(dlon)
+ nt = n_elements(a)/nlon
+ nm = n_elements(m) / nt / nlon
+
+ sub = linegen3z(nt,nlon,nm)
+ ddlon = (dlon##make_array(nt,val=1d))[sub]
+ aa = a[sub]
+
+ rm = -aa*em*cos(m*(ddlon-lpm))
+
+ if(defined(mii)) then return, rm[*,*,mii]		; nt x nlon
+
+ if(keyword_set(mm)) then $
+  begin
+   ii = where(m[0,0,*] EQ mm)
+   return, rm[*,*,ii]                                   ; nt x nlon
+  end
+
+ if(nm EQ 1) then return, r01 + rm
+ return, r01 + total(rm, 3)				; nt x nlon
+end
+;===========================================================================

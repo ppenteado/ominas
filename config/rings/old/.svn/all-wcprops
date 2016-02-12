@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/minas/!svn/ver/2/trunk/config/rings/old
+END
+get_rings.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/config/rings/old/get_rings.pro
+END
+ring_input-old.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/rings/old/ring_input-old.pro
+END
+ringcat_read-old.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/config/rings/old/ringcat_read-old.pro
+END

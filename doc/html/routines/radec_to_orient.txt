@@ -1,0 +1,39 @@
+RADEC_TO_ORIENT
+
+
+ PURPOSE:
+	Computes orientation matrices such that the optic axis (axis 1) 
+	points in the direction of the given radec and the image y direction 
+	(axis 2) points toward celestial north (inertial [0,0,1]).
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       M = radec_to_orient(radec)
+
+
+ ARGUMENTS:
+  INPUT:
+	radec:	Array (nt) giving the radec representations of the 
+		pointing vectors.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (3,3,nt) of orientation matrices.
+
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

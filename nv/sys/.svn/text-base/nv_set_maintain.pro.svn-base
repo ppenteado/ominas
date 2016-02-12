@@ -1,0 +1,17 @@
+;=============================================================================
+; nv_set_maintain
+;
+;=============================================================================
+pro nv_set_maintain, ddp, maintain
+@nv.include
+ dd = nv_dereference(ddp)
+
+ dd.maintain = maintain
+
+ if(maintain EQ 2) then nv_unload_data, dd
+
+ nv_rereference, ddp, dd
+ nv_notify, ddp, type = 0
+ nv_notify, /flush
+end
+;===========================================================================

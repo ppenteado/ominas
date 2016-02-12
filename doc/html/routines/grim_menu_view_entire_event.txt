@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_ENTIRE_EVENT
+
+
+ PURPOSE:
+	Sets the current zoom to 1/9, centered at the mouse cursor. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2008
+	

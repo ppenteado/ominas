@@ -1,0 +1,151 @@
+##############################################################################
+# minas default setup for csh
+#
+#  This script configures the environment for MINAS.  If you do not use csh 
+#  or tcsh, then you'll need to set these variables using syntax appropriate 
+#  to your preferred shell.
+#
+#  This file will be overwritten when you upgrade your minas installation 
+#  so you should copy it to another location before customizing it for 
+#  your system.  Then you can configure MINAS using:
+#
+#  source minas_env.csh
+#
+##############################################################################
+
+
+#-----------------------------------------------------------------------------#
+# Edit this variable to point to the top directory of your minas installation:
+#-----------------------------------------------------------------------------#
+setenv MINAS_DIR   	$HOME/idl_pro/minas/
+
+
+#---------------------------------------------------------------#
+# You can leave these variables alone unless you setup a custom
+# configuration in some other location. 
+#---------------------------------------------------------------#
+setenv NV_CONFIG	$MINAS_DIR/config/
+
+setenv NV_FTP_DETECT	$NV_CONFIG/tab/filetype_detectors.tab
+setenv NV_INS_DETECT	$NV_CONFIG/tab/instrument_detectors.tab
+setenv NV_TRANSLATORS	$NV_CONFIG/tab/translators.tab
+setenv NV_IO		$NV_CONFIG/tab/io.tab
+setenv NV_SPICE         $NV_CONFIG/spice/
+
+
+#--------------------------------------#
+# Edit this to reflect your platform:
+#--------------------------------------#
+setenv MINAS_PLATFORM	i386_linux 
+#setenv MINAS_PLATFORM	sun4_solaris 
+#setenv MINAS_PLATFORM	alpha_osf 
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+#                                                                             #
+#    Now you should be able to run the first example script.  cd to demo/     #
+#    and type:                                                                #
+#                                                                             #
+#    idl minas saturn.exmample                                                #
+#                                                                             #
+#    You should see an image of saturn with the limb and rings overlain.      #
+#    if this example does not work, then your MINAS_DIR variable may not      #
+#    be set correctly.                                                        #
+#                                                                             #
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+
+ 
+#-------------------------------------------------------------------------#
+# These variables point to the directories containing the spice kernels
+# required for the demo scripts.  You'll probably want to install a more
+# comprehensive set of kernels elsewhere, but the given paths contain some
+# sample kernels for use with the example scripts.
+#-------------------------------------------------------------------------#
+setenv NV_SPICE_PCK $MINAS_DIR/demo/data/kernels/pck/
+setenv NV_SPICE_FK  $MINAS_DIR/demo/data/kernels/fk/
+setenv NV_SPICE_IK  $MINAS_DIR/demo/data/kernels/ik/
+setenv NV_SPICE_SCK $MINAS_DIR/demo/data/kernels/sck/
+setenv NV_SPICE_LSK $MINAS_DIR/demo/data/kernels/lsk/
+setenv NV_SPICE_CK  $MINAS_DIR/demo/data/kernels/ck/
+setenv NV_SPICE_SPK $MINAS_DIR/demo/data/kernels/spk/
+setenv NV_SPICE_XK  $NV_SPICE/
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+#
+#   You can test your SPICE installation by running the example script
+#   jupiter.example.  If you're using a sun workstation, the spice interface 
+#   may not work properly unless you use the -32 flag, e.g.:
+#
+#   idl -32 minas jupiter.example
+#
+#   You should see an image of jupiter and some satellites with limbs and
+#   rings overlain, but not aligned correctly.
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+
+
+#------------------------------------------------------------------------#
+# This variable points to the directory containing the kernel list files,
+# which are not used in the default installation.
+#------------------------------------------------------------------------#
+setenv NV_SPICE_KER     $MINAS_DIR/demo/data/
+
+
+#----------------------------------------------------------------------------#
+# This variable points to the location of the ring catalogs, which are
+# provided in the default minas installation.
+#----------------------------------------------------------------------------#
+setenv NV_RING_DATA     $MINAS_DIR/config/rings/
+
+
+#----------------------------------------------------------------------------#
+# This variable points to the location of the orbit catalogs, which are
+# provided in the default minas installation.
+#----------------------------------------------------------------------------#
+setenv NV_ORBIT_DATA     $MINAS_DIR/config/orb/
+
+
+#----------------------------------------------------------------------------#
+# This variable points to the location of the station catalogs, which are
+# provided in the default minas installation.
+#----------------------------------------------------------------------------#
+setenv NV_STATION_DATA     $MINAS_DIR/config/stn/
+
+
+#----------------------------------------------------------------------------#
+# This variable points to the location of the sedr files, which are required
+# by some of the demo scripts, but not supplied in this default setup.
+#----------------------------------------------------------------------------#
+#setenv NV_SEDR_DATA     $HOME/data/SEDR/
+
+
+#----------------------------------------------------------------------------#
+# These variables point to the locations of various star catalogs, which are
+# required by some of the demo scripts, but not supplied in this default 
+# setup.  You only need one of these for a given catalog.
+#----------------------------------------------------------------------------#
+#setenv NV_GSC_DATA	$HOME/data/gsc/
+#setenv NV_TYCHO_DATA	$HOME/data/tycho/
+#setenv NV_SAO_DATA	$HOME/data/sao/
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+#
+#  Your SEDR and GSC installations can be tested using the example script
+#  stars.example.
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+
+#----------------------------------------------------------------------------#
+# This variable points to the location of maps for grim to use in rendering.
+# They are not supplied in this default setup.
+#----------------------------------------------------------------------------#
+setenv GRIM_MAPS     ~/projects/maps/
+
+
+#------------------------------------------------------------------------#
+# This adds your minas installation to your idl path.
+#------------------------------------------------------------------------#
+setenv IDL_PATH ${IDL_PATH}:+${MINAS_DIR}
+
+

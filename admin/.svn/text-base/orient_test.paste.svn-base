@@ -1,0 +1,42 @@
+ file = '/images/cassini/jupiter/1350/n1350122987.2'	
+
+
+ dd=nv_read(file, im, label, $
+      tab_tr='/home/joe/idl_pro/minas/nv/config/tab/translators1.tab')
+
+
+cd = pg_get_cameras(dd)
+pd = pg_get_planets(dd, ods=cd)
+
+
+gd={cd:cd, gbx:pd}
+
+
+center_ps=pg_center(gd=gd, bx=pd)
+pgs_points, center_ps[0], v=v, p=p
+
+
+orient = cd.bd.orient
+help, orient
+print, orient
+
+help, p
+print, p
+
+help, v
+print, v
+
+stop
+
+dxy = [100,100]
+pg_repoint, dxy, 0, gd=gd
+
+center_ps=pg_center(gd=gd, bx=pd)
+pgs_points, center_ps[0], v=v, p=p
+
+help, p
+print, p
+
+
+
+pg_put_cameras, dd, gd=gd

@@ -1,0 +1,27 @@
+;===========================================================================
+; surface_to_map
+;
+;  Note surface coordinates are just map coordinates plus an altitude.
+;
+;===========================================================================
+function surface_to_map, md, bx, surface_pts
+
+ if(NOT keyword_set(surface_pts)) then return, 0
+
+ nt = n_elements(md)
+ sv = size(surface_pts)
+ nv = sv[1]
+
+ result = dblarr(2,nv,nt, /nozero)
+ result[0,*,*] = surface_pts[*,0,*]
+ result[1,*,*] = surface_pts[*,1,*]
+
+
+ if(class_get(bx) EQ 'GLOBE') then $
+  if(class_get(md) EQ 'MAP') then $
+   if(map_graphic(md)) then $
+            result[0,*,*] = map_centric_to_graphic(md, surface_pts[*,0,*])
+ 
+ return, result
+end
+;===========================================================================

@@ -1,0 +1,48 @@
+ARRTRIM
+
+
+ PURPOSE:
+	Trims all elements matching the given item from an array.  Options 
+	are to trim all matching elements, just leading elements, just
+	trailing elements, or both leading and trailing elements.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	result = arrtrim(arr, code, match)
+
+
+ ARGUMENTS:
+  INPUT:
+	arr:		Array to be trimmed.
+
+	code:		Option code, 0 = trailing, 1=leading, 2=both, 3=all.
+			(See above).
+
+	match:		Object to be trimmed out of the array.  If not defined,
+			the null string '' will be matched.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	The updated array.  If there is only one item in the array,
+	it wil be returned unchanged.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/1995
+	

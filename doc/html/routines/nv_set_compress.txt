@@ -1,0 +1,41 @@
+NV_SET_COMPRESS
+
+
+ PURPOSE:
+	Replaces the name of the compression function in a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_set_compress, dd, compress
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	compress:	String giving the name of a new compression function.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

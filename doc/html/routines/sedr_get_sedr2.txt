@@ -1,0 +1,48 @@
+SEDR_GET_SEDR2
+
+
+ PURPOSE:
+	Converts a C matrix to NV definition.
+
+
+ CATEGORY:
+	UTIL/SEDR
+
+
+ CALLING SEQUENCE:
+	result = sedr_to_nv(matrix)
+
+
+ ARGUMENTS:
+  INPUT:
+
+	matrix:		A C matrix from sedr_buildcm()
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ PROCEDURE:
+	The C-matrix defines the optic axis as the Z or 3rd axis. However, nv
+	defines the optic axis as the Y (b1) or 2nd axis for the C-matrix
+	and the pole also as the 2nd axis.  This procedure switches the
+	2nd and third columns in a matrix given to it so that it follows
+	the nv definition.
+
+
+ RESTRICTIONS:
+	NONE.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Haemmerle, 1/1999
+	

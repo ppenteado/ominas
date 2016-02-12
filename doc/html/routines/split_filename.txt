@@ -1,0 +1,37 @@
+SPLIT_FILENAME
+
+
+ PURPOSE:
+	Divides a path in to directory and filename.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	split_filename, filename, dir, name
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	filenames to split
+
+  OUTPUT:
+	dir:	directories
+
+	name:	base filenames
+
+	ext:	If this argument is given, the file extension is returned
+		and the 'name' output contains only the base name without
+		the extension.
+
+
+ RETURN:
+	NONE
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2001
+	

@@ -1,0 +1,19 @@
+;===========================================================================
+; bod_set_time
+;
+;
+;===========================================================================
+pro bod_set_time, bxp, time
+@nv_lib.include
+ bdp = class_extract(bxp, 'BODY')
+ bd = nv_dereference(bdp)
+
+ bd.time=time
+
+ nv_rereference, bdp, bd
+ nv_notify, bdp, type = 0
+end
+;===========================================================================
+
+
+

@@ -1,0 +1,20 @@
+							;../nv/gr/bitmaps/grim_grid_bitmap.array bitmap
+							;definition
+../nv/gr/bitmaps/grim_grid_bitmap.array = 	[				$
+		[123B, 239B],			$
+		[239B, 191B],			$
+		[189B, 247B],			$
+		[255B, 254B],			$
+		[222B, 123B],			$
+		[251B, 239B],			$
+		[239B, 189B],			$
+		[191B, 255B],			$
+		[247B, 222B],			$
+		[254B, 251B],			$
+		[123B, 239B],			$
+		[239B, 191B],			$
+		[189B, 247B],			$
+		[255B, 254B],			$
+		[222B, 251B],			$
+		[251B, 239B]			$
+		]

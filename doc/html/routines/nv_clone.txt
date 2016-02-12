@@ -1,0 +1,41 @@
+NV_CLONE
+
+
+ PURPOSE:
+       Allocates a new object as a copy of the given (existing) 
+	object.  All pointers in the new object are newly allocated.  
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	new_xd = nv_clone(xd)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	 Object to clone.  May be any pointer or structure.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created object with all fields identical to
+       the input object, and new pointers.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

@@ -1,0 +1,51 @@
+NV_LOOKUP_TRANSLATORS
+
+
+ PURPOSE:
+	Looks up the names of the data input and output tranlators in
+	the translators table.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_lookup_translators, instrument, input_translators, output_translators
+
+
+ ARGUMENTS:
+  INPUT:
+	instrument:	Instrument string from nv_detect_instrument.
+
+  OUTPUT:
+	input_translators:	Array giving the names of the input translator 
+				functions.
+
+	output_translators:	Array giving the names of the output translator 
+				functions.
+
+	input_keyvals:	Array giving the keyword/value pairs the from the 
+			translators table, for each input translator.
+
+	output_keyvals:	Array giving the keyword/value pairs the from the 
+			translators table, for each output translator.
+
+
+ KEYWORDS:
+  INPUT: 
+	silent:	If set, messages are suppressed.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

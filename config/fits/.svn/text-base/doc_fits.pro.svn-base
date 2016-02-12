@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="FITS Program Reference", $
+    "/home/joes/idl_pro/minas/config/fits/*.pro", $
+    "/home/joes/idl_pro/minas/config/fits/doc_fits.txt"

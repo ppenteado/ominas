@@ -1,0 +1,15 @@
+GRIM_MENU_FILE_SAVE_ALL_TIE_PS_EVENT
+
+
+ PURPOSE:
+	Closes the current image plane.  All other image plane numbers 
+	remain the same.  If there is only one image plane, the grim exits. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

@@ -1,0 +1,6 @@
+PG User Interface Subroutines
+=============================
+
+This package defines and maintains data objects that are used by the PG
+command interface.  See the PG User Interface descriptio for information
+about those objects.

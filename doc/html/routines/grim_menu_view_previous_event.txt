@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_PREVIOUS_EVENT
+
+
+ PURPOSE:
+	Reverses the curent display order. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

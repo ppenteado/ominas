@@ -1,0 +1,48 @@
+MAP_GET_GRID_POINTS
+
+
+ PURPOSE:
+	Generates a lat/lon grid of points.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_get_grid_points(lat=lat, lon=lon)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	lat:	Array giving the latitudes for each constant latitude line.
+
+	lon:	Array giving the longitudes for each constant longitude line.
+
+	nt:	Number of grids to produce.
+
+	scan_lat:	Latitudes to scan for each constant longitude line.
+
+	scan_lon:	Longitudes to scan for each constant latitude line.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,np,nt) of map coordinate points where np is the number of
+	scan_lats times the number of scan_lons.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

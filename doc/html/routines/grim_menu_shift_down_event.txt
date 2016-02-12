@@ -1,0 +1,14 @@
+GRIM_MENU_SHIFT_DOWN_EVENT
+
+
+ PURPOSE:
+	Undoes the last data modification.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2006
+	

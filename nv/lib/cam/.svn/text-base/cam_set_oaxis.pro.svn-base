@@ -1,0 +1,19 @@
+;===========================================================================
+; cam_set_oaxis
+;
+;
+;===========================================================================
+pro cam_set_oaxis, cxp, oaxis
+@nv_lib.include
+ cdp = class_extract(cxp, 'CAMERA')
+ cd = nv_dereference(cdp)
+
+ cd.oaxis=oaxis
+
+ nv_rereference, cdp, cd
+ nv_notify, cdp, type = 0
+end
+;===========================================================================
+
+
+

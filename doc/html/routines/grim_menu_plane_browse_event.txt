@@ -1,0 +1,15 @@
+GRIM_MENU_PLANE_BROWSE_EVENT
+
+
+ PURPOSE:
+	Shifts the images on each plane so as to center the active object 
+	at the same pixel on each plane. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2002
+	

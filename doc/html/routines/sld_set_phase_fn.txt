@@ -1,0 +1,40 @@
+SLD_SET_PHASE_FN
+
+
+ PURPOSE:
+       Replaces the phase function for each given solid descriptor.
+
+
+ CATEGORY:
+	NV/LIB/SLD
+
+
+ CALLING SEQUENCE:
+	sld_set_phase_fn, slx, phase_fn
+
+
+ ARGUMENTS:
+  INPUT: 
+	slx:	 Array (nt) of any subclass of SOLID descriptors.
+
+	phase_fn: Array (nt) of new phase functions.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

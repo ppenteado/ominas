@@ -1,0 +1,14 @@
+GRIM_MENU_FILE_SAVE_PS_EVENT
+
+
+ PURPOSE:
+	Opens the image of the current plane in a new grim window.  
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2002
+	

@@ -1,0 +1,15 @@
+GRIM_MENU_VIEW_ZOOM_1_7_EVENT
+
+
+ PURPOSE:
+	Obtains the necessary descriptors through the translators and computes
+	star positions using pg_center. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

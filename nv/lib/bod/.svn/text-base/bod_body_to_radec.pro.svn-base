@@ -1,0 +1,25 @@
+;===========================================================================
+; bod_body_to_radec
+;
+; v is array (nv,3,nt) of column vectors.  result is array (nv,3,nt)
+;
+;===========================================================================
+function bod_body_to_radec, bxp, v
+@nv_lib.include
+ bdp = class_extract(bxp, 'BODY')
+ bd = nv_dereference(bdp)
+
+ nv = (size(v))[1]
+ nt = n_elements(bd)
+
+ result = dblarr(nv,3,nt, /nozero)
+ result[*,0,*] = atan(v[*,1,*], v[*,0,*])			; ra
+ result[*,2,*] = v_mag(v)					; distance
+ result[*,1,*] = !dpi/2d - acos(v[*,2,*]/result[*,2,*])		; dec
+
+ return, result
+end
+;===========================================================================
+
+
+

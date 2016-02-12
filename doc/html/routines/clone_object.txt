@@ -1,0 +1,43 @@
+CLONE_OBJECT
+
+
+ PURPOSE :
+
+ 	Clones a data object by recursively descending through pointers and 
+	structures, creating new pontersand copying data.
+
+
+ CATEGORY:
+	NV/UTIL
+
+
+ CALLING SEQUENCE :
+
+   result = clone_object(x)
+
+
+ ARGUMENTS
+  INPUT : 
+	x:	Object to be cloned.
+
+  OUTPUT : NONE
+
+
+
+ KEYWORDS 
+  INPUT : NONE
+
+  OUTPUT : NONE
+
+
+ RETURN : 
+	An object identical to the input, with all new pointers.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2015
+	

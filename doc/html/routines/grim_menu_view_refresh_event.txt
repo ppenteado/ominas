@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_REFRESH_EVENT
+
+
+ PURPOSE:
+	Opens a text window showing the image header. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2003
+	

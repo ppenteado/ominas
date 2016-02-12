@@ -1,0 +1,48 @@
+;=============================================================================
+;+
+; NAME:
+;       p_cross
+;
+;
+; PURPOSE:
+;       Computes the cross products between the given arrays image points.
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = p_cross(p1, p2)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       p1:     An array of image points.
+;
+;       p2:     An second array of image points.
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Out-of-image components of the cross products.  The in-plane
+;	components will always be zero.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale	6/2005
+;
+;-
+;=============================================================================
+function p_cross, p1, p2
+
+ z = p1[0,*,*]*p2[1,*,*] - p1[1,*,*]*p2[0,*,*]
+
+ return, z
+end
+;===========================================================================

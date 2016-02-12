@@ -1,0 +1,3894 @@
+									12/05/15
+MAP Program Reference
+=====================
+
+ Summary
+ -------
+  - MAP_CENTER
+	Returns the center for each given map descriptor.
+
+  - MAP_CENTRIC_TO_GRAPHIC
+	Converts latitudes from the planetocentric to the planetographic
+	convention.
+
+  - MAP_CLONE_DESCRIPTOR
+       Allocates new map descriptors as copies of the given
+       (existing) map descriptors.
+
+  - MAP_COPY_DESCRIPTOR
+	Copies all fields from the source map descriptors into the
+       destination map descriptors.
+
+  - MAP_CORE
+	Returns the core descriptor for each given map descriptor.
+
+  - MAP_DESCRIPTOR__DEFINE
+	Class structure fo the MAP class.
+
+  - MAP_FN_DATA_P
+	Returns the function data pointer for each given map descriptor.
+
+  - MAP_FN_IMAGE_TO_MAP
+	Returns the name of the image->map function for each given map 
+	descriptor.
+
+  - MAP_FN_MAP_TO_IMAGE
+	Returns the name of the map->image function for each given map 
+	descriptor.
+
+  - MAP_FN_VALID
+	Returns the name of the map->image validation function for each given 
+	map descriptor.
+
+  - MAP_GET_GRID_POINTS
+	Generates a lat/lon grid of points.
+
+  - MAP_GET_RANGES
+	Returns ranges of valid coordinates for the given MAP object.
+
+  - MAP_GRAPHIC
+	Returns the graphic flag for each given map descriptor.
+
+  - MAP_GRAPHIC_TO_CENTRIC
+	Converts latitudes from the planetographic to the planetocentric
+	convention.
+
+  - MAP_IMAGE_TO_MAP
+	Transforms the given image points to map coordinate points.
+
+  - MAP_IMAGE_TO_MAP_MERCATOR
+	Transforms the given image points to map coordinate points
+	using a mercator projection.
+
+  - MAP_IMAGE_TO_MAP_ORTHOGRAPHIC
+	Transforms the given image points to map coordinate points
+	using an orthographic projection.
+
+  - MAP_IMAGE_TO_MAP_RECTANGULAR
+	Transforms the given image points to map coordinate points
+	using a rectangular projection.
+
+  - MAP_IMAGE_TO_MAP_STEREOGRAPHIC
+	Transforms the given image points to map coordinate points
+	using an stereographic projection.
+
+  - MAP_INIT_DESCRIPTORS
+	Init method for the MAP class.
+
+  - MAP_MAP_TO_IMAGE
+	Transforms the given map points to map image points.
+
+  - MAP_MAP_TO_IMAGE_MERCATOR
+	Transforms the given map points to map image points using the
+	mercator projection.
+
+  - MAP_MAP_TO_IMAGE_ORTHOGRAPHIC
+	Transforms the given map points to map image points using the 
+	orthographic projection.
+
+  - MAP_MAP_TO_IMAGE_RECTANGULAR
+	Transforms the given map points to map image points using a
+	rectangular projection.
+
+  - MAP_MAP_TO_IMAGE_STEREOGRAPHIC
+	Transforms the given map points to map image points using the 
+	stereographic projection.
+
+  - MAP_OFFSET
+	Returns the offset for each given map descriptor.
+
+  - MAP_ORIGIN
+	Returns the origin for each given map descriptor.
+
+  - MAP_RADII
+	Returns the rference radii for each given map descriptor.
+
+  - MAP_REPLICATE
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+  - MAP_ROTATE
+	Returns the rotate value for each given map descriptor.
+
+  - MAP_SCALE
+	Returns the scale factor for each given map descriptor.
+
+  - MAP_SET_CENTER
+	Replaces the center for each given map descriptor.
+
+  - MAP_SET_FN_DATA_P
+	Replaces the function data pointer for each given map descriptor.
+
+  - MAP_SET_FN_IMAGE_TO_MAP
+	Replaces the name of the image->map function for each given map 
+	descriptor.
+
+  - MAP_SET_FN_MAP_TO_IMAGE
+	Replaces the name of the map->image function for each given map 
+	descriptor.
+
+  - MAP_SET_GRAPHIC
+	Replaces the graphic flag for each given map descriptor.
+
+  - MAP_SET_OFFSET
+	Replaces the offset for each given map descriptor.
+
+  - MAP_SET_ORIGIN
+	Replaces the origin for each given map descriptor.
+
+  - MAP_SET_RADII
+	Replaces the reference radii for each given map descriptor.
+
+  - MAP_SET_ROTATE
+	Replaces the rotate value for each given map descriptor.
+
+  - MAP_SET_SCALE
+	Replaces the scale factor for each given map descriptor.
+
+  - MAP_SET_SIZE
+	Replaces the size for each given map descriptor.
+
+  - MAP_SET_TYPE
+	Replaces the type name for each given map descriptor.
+
+  - MAP_SET_UNITS
+	Replaces the units for each given map descriptor.
+
+  - MAP_SIZE
+	Returns the size for each given map descriptor.
+
+  - MAP_TYPE
+	Returns the type name for each given map descriptor.
+
+  - MAP_UNITS
+	Returns the units for each given map descriptor.
+
+  - MAP_WRAP_POINTS
+	Forces all map image points to lie inside a specified map by wrapping
+	longitudes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_CENTER
+----------
+
+
+ PURPOSE:
+	Returns the center for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	center = map_center(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,nt) of centers associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_CENTRIC_TO_GRAPHIC
+----------------------
+
+
+ PURPOSE:
+	Converts latitudes from the planetocentric to the planetographic
+	convention.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts_g = map_centric_to_graphic(md, map_pts_c)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	Array (nt) of map descriptors.
+
+	map_pts_c:	Array (2,nv,nt) of map points in which the 
+			latitudes are planetocentric.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+	Array (2,nv,nt) of map points in which the latitudes are 
+	planetographic.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_CLONE_DESCRIPTOR
+--------------------
+
+
+ PURPOSE:
+       Allocates new map descriptors as copies of the given
+       (existing) map descriptors.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	new_md = map_clone_descriptor(md)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:	 Array (nt) of MAP descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created map descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_COPY_DESCRIPTOR
+-------------------
+
+
+ PURPOSE:
+	Copies all fields from the source map descriptors into the
+       destination map descriptors.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_copy_descriptor, md_dst, md_src
+
+
+ ARGUMENTS:
+  INPUT:
+	md_dst:	        Array (nt) of MAP descriptors to copy to.
+
+	md_src:	        Array (nt) of MAP descriptors to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_CORE
+--------
+
+
+ PURPOSE:
+	Returns the core descriptor for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	crd = map_core(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt) of core descriptors associated with each given map 
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_DESCRIPTOR__DEFINE
+----------------------
+
+
+ PURPOSE:
+	Class structure fo the MAP class.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	N/A 
+
+
+ FIELDS:
+	crd:	CORE class descriptor.  
+
+		Methods: map_core
+
+
+	type:	String giving the map type, e.g., RECTANGULAR, 
+		ORTHOGRAPHIC.  Map transformation functions are named
+		map_image_to_map_<type> and map_map_to_image_<type>.
+
+		Methods: map_type, map_set_type
+
+
+	units:	2-element array to converts map radians to other
+  		units (map radians/unit).
+
+		Methods: map_units, map_set_units
+
+
+	size:	2-element array giving the map size in pixels.
+
+		Methods: map_size, map_set_size
+
+
+	scale:	Map scale (units/angle) at the center of the map.
+
+		Methods: map_scale, map_set_scale
+
+
+	center:	2-element array giving the map coordinates of the
+		center of the map.
+
+		Methods: map_center, map_set_center
+
+
+	origin:	2-element array giving the image coordinates corresponding
+		to the center of the map.
+
+		Methods: map_origin, map_set_origin
+
+
+	offset:	2-element array giving a lat/lon offset to be applied in 
+		map transformations.
+
+		Methods: map_offset, map_set_offset
+
+
+	rotate:	Code specifying a rotation to be applied to the map, as in the
+		IDL 'rotate' function.
+
+
+	graphic:	Flag indicating whether latitudes are represented
+			using the planetocrntric or planetographic convention.
+
+	radii:	3-element array giving ellipsoid radii to use in projections.  
+		Only the relative ratios are important.  All elements are 
+		set to 1 by default.
+
+	fn_data_p:	Pointer to any data to be passed to transfrmation 
+			functions.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_FN_DATA_P
+-------------
+
+
+ PURPOSE:
+	Returns the function data pointer for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	fn_data_p = map_fn_data_p(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Function data pointer associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_FN_IMAGE_TO_MAP
+-------------------
+
+
+ PURPOSE:
+	Returns the name of the image->map function for each given map 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	fn_image_to_map = map_fn_image_to_map(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt) of image->map function names associated with each given 
+	map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_FN_MAP_TO_IMAGE
+-------------------
+
+
+ PURPOSE:
+	Returns the name of the map->image function for each given map 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	fn_image_to_map = map_fn_image_to_map(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt) of map->image function names associated with each given 
+	map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_FN_VALID
+------------
+
+
+ PURPOSE:
+	Returns the name of the map->image validation function for each given 
+	map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	fn_valid = map_fn_image_to_map(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt) of map->image validation function names associated with each given 
+	map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2012
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_GET_GRID_POINTS
+-------------------
+
+
+ PURPOSE:
+	Generates a lat/lon grid of points.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_get_grid_points(lat=lat, lon=lon)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	lat:	Array giving the latitudes for each constant latitude line.
+
+	lon:	Array giving the longitudes for each constant longitude line.
+
+	nt:	Number of grids to produce.
+
+	scan_lat:	Latitudes to scan for each constant longitude line.
+
+	scan_lon:	Longitudes to scan for each constant latitude line.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,np,nt) of map coordinate points where np is the number of
+	scan_lats times the number of scan_lons.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_GET_RANGES
+--------------
+
+
+ PURPOSE:
+	Returns ranges of valid coordinates for the given MAP object.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	ranges = map_get_ranges(md)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:	 MAP descriptor.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2 x 2) giving the ranges in latitude, longitude.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_GRAPHIC
+-----------
+
+
+ PURPOSE:
+	Returns the graphic flag for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	graphic = map_graphic(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt) of graphic flags associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_GRAPHIC_TO_CENTRIC
+----------------------
+
+
+ PURPOSE:
+	Converts latitudes from the planetographic to the planetocentric
+	convention.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts_c = map_graphic_to_centric(md, map_pts_g)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	Array (nt) of map descriptors.
+
+	map_pts_g:	Array (2,nv,nt) of map points in which the 
+			latitudes are planetographic.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+	Array (2,nv,nt) of map points in which the latitudes are 
+	planetocentric.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_IMAGE_TO_MAP
+----------------
+
+
+ PURPOSE:
+	Transforms the given image points to map coordinate points.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_image_to_map(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output map points.  If not set then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_IMAGE_TO_MAP_MERCATOR
+-------------------------
+
+
+ PURPOSE:
+	Transforms the given image points to map coordinate points
+	using a mercator projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_image_to_map_mercator(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output map points.  If not set then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in a mercator projection.
+	This projection results from projecting a sphere onto a cylinder
+	that is tangent at the equator.  The scale is true along the equator
+	only.  Areas are distorted, especially near the poles.  
+
+	With:
+ 
+		a = [size[1]/pi, size[0]/2pi] * scale * units,
+
+	and:
+
+		e = sqrt(1 - (A/(B+C)/2)^2),
+
+	where A, B, and C are the triaxial ellipsoid radii, the 
+	transformation is:
+
+		pi/2 - 2*atan(exp(-y/a[0]) * 
+		         ((1 - e*sin(lat))/(1 + e*sin(lat)))^(e/2)) 
+
+		lon = x/a[1] + center[1]
+
+	where the latitude equation is solved iteratively.
+
+	See [1], p. 45 for the mathematical derivation.
+
+	[1] Snyder (1987)
+	    Map projections -- A working manual
+	    USGS professional paper 1395
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_IMAGE_TO_MAP_ORTHOGRAPHIC
+-----------------------------
+
+
+ PURPOSE:
+	Transforms the given image points to map coordinate points
+	using an orthographic projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_image_to_map_orthographic(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output map points.  If not set then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in an orthographic 
+	projection.  This projection portrays a planet as seen from a
+	great distance.  Scale is true only at the map center.  Areas 
+	are distorted, especially away from the map center.  
+
+	With:
+ 
+	  R = min(size[0],size[1])/2 * scale,
+
+	and:
+
+	  rho = sqrt(x^2 + y^2),
+
+	and:
+
+	  c = asin(rho/R),
+
+	the transformation is:
+
+	  lat = asin( cos(c)*sin(center[0]) + 
+	                    y*sin(c)*cos(center[0])/rho ) / units[0]
+
+	  lon = center[1] + 
+	          atan( x*sin(c)/(rho*cos(center[0])*cos(c) - 
+	                        y*sin(center[0])*sin(c)) ) + units[1]
+
+
+	See [1], p. 150 for the mathematical derivation.
+
+	[1] Snyder (1987)
+	    Map projections -- A working manual
+	    USGS professional paper 1395
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_IMAGE_TO_MAP_RECTANGULAR
+----------------------------
+
+
+ PURPOSE:
+	Transforms the given image points to map coordinate points
+	using a rectangular projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_image_to_map_rectangular(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output map points.  If not set then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in a rectangular projection.
+	In this projection, latitudes map linearly to the the y image 
+	direction, and longitudes map linearly to the x image direction.
+
+	With:
+ 
+		a = [size[1]/pi, size[0]/2pi] * scale * units, 
+
+	the transformation is:
+
+		lat = (y - origin[1])/a[0] + center[0]
+
+		lon = (x - origin[0])/a[1] + center[1]
+
+	where the latitude equation is solved iteratively.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+MAP_IMAGE_TO_MAP_STEREOGRAPHIC
+------------------------------
+
+
+ PURPOSE:
+	Transforms the given image points to map coordinate points
+	using an stereographic projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_image_to_map_stereographic(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output map points.  If not set then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in an stereographic 
+	projection.  This projection results from the projection through
+	a sphere onto a plane, from a point on the surface of the sphere.
+	Scale is true only at the map center.  Areas are distorted, 
+	especially away from the map center.  
+
+	With:
+
+	  a = [size[0],size[1]]/4 * scale,
+
+	and:
+
+	  e = sqrt(1 - (A/(B+C)/2)^2),
+
+	where A, B, and C are the triaxial ellipsoid radii, and:
+
+	  m1 = cos(center[0]]) / sqrt(1 - e^2*sin(center[0])^2)
+
+	  rho = sqrt(x^2 + y^2)
+
+	  X1 = 2*atan(tan(pi/4 + center[0]/2) * 
+	       ((1 - e*sin(center[0]))/(1 + e*sin(center[0])))^(e/2)) - pi/2d
+ 
+	  ce = 2*atan(rho*cos(X1), 2*a*scale*m1)
+
+	  X = asin(cos(ce)*sin(X1) + y*sin(ce)*cos(X1)/rho)
+
+	the transformation is:
+
+	  2*atan(tan(pi/4 + X/2) * $
+	              ((1 + e*sin(lat))/(1 - e*sin(lat)))^(e/2) ) - pi/2
+
+	  lon = center[1] + atan( x*sin(ce) / 
+	          rho*cos(X1)*cos(ce) - y*sin(X1)*sin(ce) ) / units[1]
+
+	where the latitude equation is solved iteratively.
+
+	See [1], p. 161 for the mathematical derivation.
+
+	[1] Snyder (1987)
+	    Map projections -- A working manual
+	    USGS professional paper 1395
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_INIT_DESCRIPTORS
+--------------------
+
+
+ PURPOSE:
+	Init method for the MAP class.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	md = map_init_descriptors(n)
+
+
+ ARGUMENTS:
+  INPUT:
+	n:	Number of descriptors to create.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS (in addition to those accepted by all superclasses):
+  INPUT:  
+	md:	Map descriptor(s) to initialize, instead of creating a new one.
+
+	crd:	Core descriptor(s) to pass to cor_init_descriptors.
+
+	type:	Array (1 x n) of strings giving the map types.
+
+	units:	Array (2 x n) of strings giving the map units.
+
+	size:	Array (2 x n) of strings giving the map sizes.
+
+	scale:	Array (1 x n) of strings giving the map scales.
+
+	center:	Array (2 x n) of strings giving the map centers.
+
+	origin:	Array (2 x n) of strings giving the map origins.
+
+	offset:	Array (2 x n) of strings giving the map offsets.
+
+	rotate:	Array (1 x n) of strings giving the map rotate codes.
+
+	graphic:	Array (1 x n) of strings giving the map graphic flags.
+
+	radii:	Array (3 x n) of strings giving the map ellipsoid radii.
+
+	radii:	Array (1 x n) of pointers giving the map functon data.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Newly created or or freshly initialized disk descriptors, depending
+	on the presence of the dkd keyword.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_MAP_TO_IMAGE
+----------------
+
+
+ PURPOSE:
+	Transforms the given map points to map image points.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	image_pts = map_map_to_image(md, map_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	map_pts:	Array (2,nv,nt) of map points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	nowrap:	If set, then points that lie outide the map will not be
+		around to the other side.
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output image points.  If not se then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map image points.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_MAP_TO_IMAGE_MERCATOR
+-------------------------
+
+
+ PURPOSE:
+	Transforms the given map points to map image points using the
+	mercator projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	image_pts = map_map_to_image_mercator(md, map_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	map_pts:	Array (2,nv,nt) of map points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output image points.  If not se then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in a mercator projection.
+	This projection results from projecting a sphere onto a cylinder
+	that is tangent at the equator.  The scale is true along the equator
+	only.  Areas are distorted, especially near the poles.  
+
+	With:
+ 
+		a = [size[1]/pi, size[0]/2pi] * scale * units,
+
+	and:
+
+		e = sqrt(1 - (A/(B+C)/2)^2),
+
+	where A, B, and C are the triaxial ellipsoid radii, the 
+	transformation is:
+
+		x = a[1] * (lon - center[1]) + origin[0]
+
+		y = a[0] * log( tan(pi/4 + lat/2) * 
+		  ( (1 - e*sin(lat))/(1 + e*sin(lat)) )^(e/2) ) + origin[1]
+
+
+	See [1], p. 44 for the mathematical derivation.
+
+	[1] Snyder (1987)
+	    Map projections -- A working manual
+	    USGS professional paper 1395
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_MAP_TO_IMAGE_ORTHOGRAPHIC
+-----------------------------
+
+
+ PURPOSE:
+	Transforms the given map points to map image points using the 
+	orthographic projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	image_pts = map_map_to_image_orthographic(md, map_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	map_pts:	Array (2,nv,nt) of map points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	nowrap:	If set, then points that lie outide the map will not be
+		around to the other side.
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output image points.  If not se then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map image points in an orthographic 
+	projection.  This projection portrays a planet as seen from a
+	great distance.  Scale is true only at the map center.  Areas 
+	are distorted, especially away from the map center.  
+
+	With:
+ 
+	  R = min(size[0],size[1])/2 * scale
+
+	the transformation is:
+
+	  x = R * cos(lat/units[0]) * sin(lon/units[1] 0 center[1]) + origin[0]
+
+	  y = R * 
+	     ( cos(center[0])*sin(lat/units[0]) - 
+	        sin(center[0])*cos(lat/units[0])*cos(lon - center[1]) ) + 
+	                                                            origin[1]
+
+	See [1], p. 149 for the mathematical derivation.
+
+	[1] Snyder (1987)
+	    Map projections -- A working manual
+	    USGS professional paper 1395
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_MAP_TO_IMAGE_RECTANGULAR
+----------------------------
+
+
+ PURPOSE:
+	Transforms the given map points to map image points using a
+	rectangular projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	image_pts = map_map_to_image_rectangular(md, map_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	map_pts:	Array (2,nv,nt) of map points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	nowrap:	If set, then points that lie outide the map will not be
+		around to the other side.
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output image points.  If not se then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map image points in a rectangular projection.
+	In this projection, latitudes map linearly to the the y image 
+	direction, and longitudes map linearly to the x image direction.
+
+	With:
+ 
+		a = [size[1]/pi, size[0]/2pi] * scale * units, 
+
+	the transformation is:
+
+		x = a[1] * (lon - center[1]) + origin[0]
+
+		y = a[0] * (lat - center[0]) + origin[1]
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+MAP_MAP_TO_IMAGE_STEREOGRAPHIC
+------------------------------
+
+
+ PURPOSE:
+	Transforms the given map points to map image points using the 
+	stereographic projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	image_pts = map_map_to_image_stereographic(md, map_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	map_pts:	Array (2,nv,nt) of map points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	nowrap:	If set, then points that lie outide the map will not be
+		around to the other side.
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output image points.  If not se then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map image points in an stereographic 
+	projection.  This projection results from the projection through
+	a sphere onto a plane, from a point on the surface of the sphere.
+	Scale is true only at the map center.  Areas are distorted, 
+	especially away from the map center.  
+
+	With:
+
+	  a = [size[0],size[1]]/4 * scale,
+
+	and:
+
+	  e = sqrt(1 - (A/(B+C)/2)^2),
+
+	where A, B, and C are the triaxial ellipsoid radii, and:
+
+	  lat0 = lat / units[0]
+
+	  lon0 = lon / units[1]
+
+	  m1 = cos(center[0]]) / sqrt(1 - e^2*sin(center[0])^2)
+
+	  X = 2*atan(tan(pi/4 + lat/2) * $
+	       ((1 - e*sin(lat0))/(1 + e*sin(lat0)))^(e/2)) - pi/2
+
+	  X1 = 2*atan(tan(pi/4 + center[0]/2) * 
+	       ((1 - e*sin(center[0]))/(1 + e*sin(center[0])))^(e/2)) - pi/2d
+ 
+	  A = 2*a*scale*m1 / 
+	   ( cos(X1)*(1 + sin(X1)*sin(X) + cos(X1)*cos(X)*cos(lon0 - center[1])) )
+
+	the transformation is:
+
+	  x = A * cos(X)*sin(lon0 - center[1]) + origin[0]
+
+	  y = A * ( cos(X1)*sin(X) - sin(X1)*cos(X)*sin(lon0 - center[1]) ) + 
+	                                                              origin[1]
+
+	See [1], p. 160 for the mathematical derivation.
+
+	[1] Snyder (1987)
+	    Map projections -- A working manual
+	    USGS professional paper 1395
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_OFFSET
+----------
+
+
+ PURPOSE:
+	Returns the offset for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	offset = map_offset(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,nt) of offsets associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_ORIGIN
+----------
+
+
+ PURPOSE:
+	Returns the origin for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	origin = map_origin(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,nt) of origins associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_RADII
+---------
+
+
+ PURPOSE:
+	Returns the rference radii for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	radii = map_radii(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (3,nt) of refernce radii associated with each given map 
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_REPLICATE
+-------------
+
+
+ PURPOSE:
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	mds = map_replicate(md, dim)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:	 MAP descriptor.
+
+	dim:	 Dimensions of the result.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of the given dimensions containing cloned versions of the input 
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_ROTATE
+----------
+
+
+ PURPOSE:
+	Returns the rotate value for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	rotate = map_rotate(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt) of rotate values associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SCALE
+---------
+
+
+ PURPOSE:
+	Returns the scale factor for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	scale = map_scale(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt) of scale factors associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_CENTER
+--------------
+
+
+ PURPOSE:
+	Replaces the center for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_center, md, center
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	center:	 Array (2,nt) of new map centers.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_FN_DATA_P
+-----------------
+
+
+ PURPOSE:
+	Replaces the function data pointer for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_fn_data_p, md, fn_data_p
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	fn_data_p:	 Array (nt) of new function data pointers.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_FN_IMAGE_TO_MAP
+-----------------------
+
+
+ PURPOSE:
+	Replaces the name of the image->map function for each given map 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_fn_image_to_map, md, fn
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	Array (nt) of map descriptors.
+
+	fn:	Array (nt) of function names.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_FN_MAP_TO_IMAGE
+-----------------------
+
+
+ PURPOSE:
+	Replaces the name of the map->image function for each given map 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_fn_map_to_image, md, fn
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	Array (nt) of map descriptors.
+
+	fn:	Array (nt) of function names.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_GRAPHIC
+---------------
+
+
+ PURPOSE:
+	Replaces the graphic flag for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_graphic, md, graphic
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	graphic:	 Array (nt) of new graphic flags.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_OFFSET
+--------------
+
+
+ PURPOSE:
+	Replaces the offset for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_offset, md, offset
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	offset:	 Array (2,nt) of new map offsets.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_ORIGIN
+--------------
+
+
+ PURPOSE:
+	Replaces the origin for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_origin, md, origin
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	origin:	 Array (2,nt) of new map origins.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_RADII
+-------------
+
+
+ PURPOSE:
+	Replaces the reference radii for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_radii, md, radii
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	radii:	 Array (3,nt) of new reference radii.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_ROTATE
+--------------
+
+
+ PURPOSE:
+	Replaces the rotate value for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_rotate, md, rotate
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	rotate:	 Array (nt) of new rotate values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_SCALE
+-------------
+
+
+ PURPOSE:
+	Replaces the scale factor for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_scale, md, scale
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	scale:	 Array (2,nt) of new scale factors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_SIZE
+------------
+
+
+ PURPOSE:
+	Replaces the size for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_size, md, size
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	size:	 Array (2,nt) of new map sizes.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_TYPE
+------------
+
+
+ PURPOSE:
+	Replaces the type name for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_type, md, type
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	type:	 Array (nt) of new type names.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SET_UNITS
+-------------
+
+
+ PURPOSE:
+	Replaces the units for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_set_units, md, units
+
+
+ ARGUMENTS:
+  INPUT: 
+	md:	 Array (nt) of map descriptors.
+
+	units:	 Array (2,nt) of new map units.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_SIZE
+--------
+
+
+ PURPOSE:
+	Returns the size for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	size = map_size(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,nt) of sizes associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_TYPE
+--------
+
+
+ PURPOSE:
+	Returns the type name for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	type = map_type(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt) of type names associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_UNITS
+---------
+
+
+ PURPOSE:
+	Returns the units for each given map descriptor.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	units = map_units(md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	md:	 Array (nt) of map descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,nt) of units associated with each given map descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MAP_WRAP_POINTS
+---------------
+
+
+ PURPOSE:
+	Forces all map image points to lie inside a specified map by wrapping
+	longitudes.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	wrap_image_pts = map_wrap_points(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,nv,nt) of wrapped map image points.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

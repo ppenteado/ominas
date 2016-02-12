@@ -1,0 +1,15 @@
+;=============================================================================
+; map_units_disk
+;
+;  [resrad] = length/pixel, [reslon] = radians of lon/pixel
+;
+;=============================================================================
+function map_units_disk, md, resrad=resrad, reslon=reslon
+
+ size = map_size(md)
+
+ units = [!dpi/size[1] / resrad, 2d*!dpi/size[0] / reslon]
+
+ return, units
+end
+;=============================================================================

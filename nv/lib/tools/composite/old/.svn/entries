@@ -1,0 +1,41 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/nv/lib/tools/composite/old
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+image_to_ra_dec.pro
+file
+
+
+
+
+2009-10-27T16:30:04.000000Z
+75c761f0a7b1c42f596483e9d7b8b1d8
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+

@@ -1,0 +1,15 @@
+GRIM_MENU_PLANE_COADD_EVENT
+
+
+ PURPOSE:
+	Toggles highlighting of the current plane image.  Useful when 
+	multiple planes are visible simultaneously.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2008
+	

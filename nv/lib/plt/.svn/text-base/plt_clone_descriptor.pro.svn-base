@@ -1,0 +1,19 @@
+;==============================================================================
+; plt_clone_descriptor
+;
+;
+;==============================================================================
+function plt_clone_descriptor, pdp
+@nv_lib.include
+ nv_notify, pdp, type = 1
+ pd = nv_dereference(pdp)
+
+ new_pd = pd
+ new_pd.gbd = glb_clone_descriptor(pd.gbd)
+
+ new_pdp = ptrarr(n_elements(pd))
+ nv_rereference, new_pdp, new_pd
+
+ return, new_pdp
+end
+;==============================================================================

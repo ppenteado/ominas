@@ -1,0 +1,14 @@
+;===========================================================================
+; diaggen.pro
+;
+; returns 1d subscripts of diagonal elements of an array of nn nxn
+; matrices such that subscripting the array of matrices will produce
+; an array of column vectors with each column containing the diagonal
+; elements of the corresponding matrix.
+;
+;===========================================================================
+function diaggen, n, nn
+ return, transpose( $
+  reform(lindgen(n,nn)*(n+1)-(lindgen(nn)*n)##make_array(n,val=1), n,nn,/over) )
+end
+;===========================================================================

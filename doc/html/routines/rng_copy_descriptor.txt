@@ -1,0 +1,42 @@
+RNG_COPY_DESCRIPTOR
+
+
+ PURPOSE:
+	Copies all fields from the source ring descriptors into the
+       destination ring descriptors.
+
+
+ CATEGORY:
+	NV/LIB/RNG
+
+
+ CALLING SEQUENCE:
+	rng_copy_descriptor, rx_dst, rx_src
+
+
+ ARGUMENTS:
+  INPUT:
+	rx_dst:	        Array (nt) of any subclass of RING to copy to.
+
+	rx_src:	        Array (nt) of any subclass of RING to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

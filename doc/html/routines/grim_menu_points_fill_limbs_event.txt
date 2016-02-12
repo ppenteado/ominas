@@ -1,0 +1,14 @@
+GRIM_MENU_POINTS_FILL_LIMBS_EVENT
+
+
+ PURPOSE:
+	Sets the current zoom to 3, centered at the mouse cursor. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2008
+	

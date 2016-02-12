@@ -1,0 +1,16 @@
+;===========================================================================
+; glb_set_refl_fn
+;
+;
+;===========================================================================
+pro glb_set_refl_fn, gbxp, refl_fn
+@nv_lib.include
+ gbdp = class_extract(gbxp, 'GLOBE')
+ gbd = nv_dereference(gbdp)
+
+ gbd.refl_fn=refl_fn
+
+ nv_rereference, gbdp, gbd
+ nv_notify, gbdp, type = 0
+end
+;===========================================================================

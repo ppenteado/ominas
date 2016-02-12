@@ -1,0 +1,9 @@
+.rnew read_vicar_label.pro
+.rnew read_vicar_lite.pro
+.rnew read_vicar.pro
+.rnew vicdelpar.pro
+.rnew vicgetpar.pro
+.rnew vicsetpar.pro
+.rnew vic_str_pad.pro
+.rnew vic_str_sep.pro
+.rnew write_vicar.pro

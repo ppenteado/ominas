@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="V Program Reference", $
+    "/home/joes/idl_pro/minas/util/v/*.pro", $
+    "/home/joes/idl_pro/minas/util/v/doc_v.txt"

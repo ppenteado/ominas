@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_HOME_EVENT
+
+
+ PURPOSE:
+	Applies the 'entire' display parameters, as given in tvim. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

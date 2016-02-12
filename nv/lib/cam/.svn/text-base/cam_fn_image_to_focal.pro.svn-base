@@ -1,0 +1,16 @@
+;===========================================================================
+; cam_fn_image_to_focal
+;
+;
+;===========================================================================
+function cam_fn_image_to_focal, cxp
+@nv_lib.include
+ cdp = class_extract(cxp, 'CAMERA')
+ nv_notify, cdp, type = 1
+ cd = nv_dereference(cdp)
+ return, cd.fn_image_to_focal
+end
+;===========================================================================
+
+
+

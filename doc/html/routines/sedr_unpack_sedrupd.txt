@@ -1,0 +1,18 @@
+SEDR_UNPACK_SEDRUPD
+
+
+ PURPOSE:
+	To be called by Voyager SEDR input translator or similar procedure to
+	convert sedr values to an nv planet descriptor
+
+ CATEGORY:
+	UTIL/SEDR
+
+
+ RESTRICTIONS:
+	By default, Voyager values return B1950 co-ordinates
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 1/1999
+

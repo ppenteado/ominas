@@ -1,0 +1,18 @@
+
+file = '~/casIss/1586/W1586465035_1.IMG' 
+;file = '../demo/data/N1350122987_2.IMG'
+
+while(1) do $
+ begin &$
+
+  t0 = systime(/sec) &$
+  dd = nv_read(file, /silent) 		& tdd = systime(/sec) &$
+  cd = pg_get_cameras(dd) 		& tcd = systime(/sec) &$
+  pd = pg_get_planets(dd, od=cd) 	& tpd = systime(/sec) &$
+  rd = pg_get_rings(dd, pd=pd, od=cd) 	& trd = systime(/sec) &$
+
+  print, tdd-t0, tcd-tdd, tpd-tcd, trd-tpd &$
+
+  nv_free, [dd, cd, pd, rd] &$
+ end
+

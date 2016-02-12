@@ -1,0 +1,36 @@
+COR_CLONE_DESCRIPTOR
+
+
+ PURPOSE:
+	Allocates a new core descriptor as a copy of an existing descriptor.
+
+
+ CATEGORY:
+	NV/LIB/COR
+
+
+ CALLING SEQUENCE:
+	new_crd = cor_clone_descriptor(crd)
+
+
+ ARGUMENTS:
+  INPUT:
+	crd:	 Descriptor of class CORE.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Newly created core descriptor with all fields identical to the input
+	descriptor.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

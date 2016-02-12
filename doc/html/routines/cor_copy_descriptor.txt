@@ -1,0 +1,36 @@
+COR_COPY_DESCRIPTOR
+
+
+ PURPOSE:
+	Copies all fields from one core descriptor into another.
+
+
+ CATEGORY:
+	NV/LIB/COR
+
+
+ CALLING SEQUENCE:
+	cor_copy_descriptor, crd_dst, crd_src
+
+
+ ARGUMENTS:
+  INPUT:
+	crd_dst:	 Descriptor of class CORE to copy to.
+
+	crd_src:	 Descriptor of class CORE to copy from.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

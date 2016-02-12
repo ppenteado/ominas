@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="ICV Program Reference", $
+    "/home/joes/idl_pro/minas/util/icv/*.pro", $
+    "/home/joes/idl_pro/minas/util/icv/doc_icv.txt"

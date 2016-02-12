@@ -1,0 +1,70 @@
+PG_LIMB_SECTOR_OBLIQUE
+
+ PURPOSE:
+	Allows the user to select an image sector along lines of constant
+ 	azimuth and altitude above a planet by clicking and dragging.
+ 
+ CATEGORY:
+       NV/PG
+
+ CALLING SEQUENCE:
+     outline_ps=pg_limb_sector(cd=cd, gbx=gbx, dkd=dkd)
+
+
+ ARGUMENTS:
+  INPUT:
+      NONE
+
+  OUTPUT:
+	NONE
+
+
+
+ KEYWORDS:
+  INPUT: 
+           cd:     Camera descriptor.
+
+          gbx:     Globe descriptor for the planet whose limb is to be 
+                   scanned.
+
+           gd:     Generic descriptor containnig the above descriptors.
+
+      win_num:     Window number of IDL graphics window in which to select
+                   box, default is current window.
+
+      restore:     Do not leave the box in the image.
+
+           p0:     First corner of box.  If set, then the routine immediately 
+                   begins to drag from that point until a button is released.
+
+        color:     Color to use for rectangle, default is !color.
+
+       sample:     Sets the grid sampling in pixels.  Default is one.
+
+ xor_graphics:     If set, the sector outline is drawn and erased using xor
+                   graphics instead of a pixmap.
+
+
+  OUTPUT:
+         dkd:      Disk desriptor in the skyplane, centered on the planet
+                   with 0 axis along the skyplane projection of the north 
+                   pole.  For use with pg_profile_ring.
+
+         azimuths: Array giving azimuth at each sample.
+
+        altitudes: Array giving altitude at each sample.
+
+    limb_pts_body: Body coordinates of each limb points on planet surface.
+
+
+ RETURN: 
+      pg_points_struct containing points on the sector outline.  The point
+      spacing is determined by the sample keyword.  The points structure
+      also contains the disk coordinate for each point, relative to the
+      returned disk descriptor, and the user fields 'nrad' and 'nlon' 
+      giving the number of points in altitude and azimuth.
+
+
+ MODIFICATION HISTORY : 
+	Spitale; 1/2007		original version
+

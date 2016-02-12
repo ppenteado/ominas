@@ -1,0 +1,652 @@
+PDS_VERSION_ID              = PDS3                                            
+RECORD_TYPE                 = STREAM                                          
+OBJECT                      = TEXT                                            
+  NOTE                        = "New Release of READPDS"                      
+  SOFTWARE_VERSION_ID         = "4.4"                                       
+  PUBLICATION_DATE            = 2011-05-03                                    
+END_OBJECT                  = TEXT                                            
+END                                                                           
+                                                                              
+This document describes the modifications made to the IDL procedures since    
+first they were first written. It also describes any new procedures that have 
+been added since then. The modification history is listed by file name in     
+ascending order by name. All modifications to this version of READPDS are made
+by Puneet Khetarpal.                                                          
+                                                                              
+ADDEOBJ:                                                                      
+-------                                                                       
+   Description: This routine is invoked in the headpds routine when           
+       reading the label from the file name specified at the IDL prompt.      
+       Headpds passes each line of the PDS label into this routine, and       
+       that line is first padded to 80 bytes including carriage return and    
+       line feed character. The routine then inserts the appropriate value    
+       to the END_OBJECT keyword matching the corresponding OBJECT keyword,   
+       if present in the line.                                                
+                                                                              
+   First release: Introduced in version 4.0 by Puneet Khetarpal.              
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * corrected the use of logical negation operator (~) instead of (NOT)  
+                                                                              
+APPLY_BITMASK:                                                                
+-------------                                                                 
+   Description: This routine applies bitmask on signed or unsigned integer    
+       array or scalars if specified in the associated label. If bitmask      
+       keyword value is not properly defined, then no bitmask is applied and  
+       the original element is returned.                                      
+                                                                              
+   First release: Introduced in version 4.1 by Puneet Khetarpal.              
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+ARRCOLPDS:                                                                    
+---------                                                                     
+   Description: This routine reads an ARRAY or COLLECTION object from         
+       a binary file into an IDL structure. It gathers all required           
+       information of keywords, constructs the idl structure using            
+       ARRCOL_STRUCT routine and reads the data, and returns the structure.   
+                                                                              
+   First release: Introduced in version 4.1 by Puneet Khetarpal.              
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+ARRCOL_STRUCT:                                                                
+-------------                                                                 
+   Description: This routine populates an IDL structure for arrays            
+       and collection objects by recursively descending through any sub       
+       arrays or sub collections and generating a structure using             
+       ARR_STRUCT, COLL_STRUCT, and ELEM_STRUCT routines, and returns the     
+       structure                                                              
+                                                                              
+   First release: Introduced in version 4.1 by Puneet Khetarpal.              
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+ARR_STRUCT:                                                                   
+----------                                                                    
+   Description: This routine populates an IDL structure for just arrays       
+       and recursively constructs any sub arrays or collections objects       
+       and returns the structure.                                             
+                                                                              
+   First release: Introduced in version 4.1 by Puneet Khetarpal.              
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+ARASCPDS (Removed from distribution):                                         
+--------                                                                      
+   Description: This routine extracts the ASCII array object data from        
+       the file name specified. The label might have a nested array or        
+       collection object, which is also read recursively and returned to      
+       the main block.                                                        
+                                                                              
+   First release: Introduced in version 1.0 by Michael E. Haken, Apr-May 1996.
+       Some sections adapted from TASCPDS.PRO by John D. Koch.                
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+ARBINPDS (Removed from distribution):                                         
+--------                                                                      
+   Description: This routine extracts the BINARY array object data from       
+       the file name specified. The label might have a nested array or        
+       collection object, which is also read recursively and returned to the  
+       main block.                                                            
+                                                                              
+   First release: Introduced in version 1.0 by Michael E. Haken, Apr-May 1996.
+       Some sections adapted from TASCPDS.PRO and BTABVECT.PRO by John Koch.  
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * Puneet Khetarpal - Feb 25, 2004: edited portions of the code to meet 
+             readability of the Keck data, and other array object files with  
+             other non-array objects.                                         
+                                                                              
+ARBINPDS2 (Removed from distribution):                                        
+---------                                                                     
+   Description: This routine was written to supplement Keck data which        
+       was not supported by the original ARBINPDS.PRO routine. This routine   
+       reads in a 6-D array of image data and assembles into an IDL array     
+       and returns to main block.                                             
+                                                                              
+   First release: Introduced in version 3.3.x by Puneet Khetarpal, Mar 2004.  
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * changed GET_VIABLE routine name to OBJPDS in function call.          
+       * added flexibility of IDL versions use of obsolete function STR_SEP   
+         for version > 5.2. If version of IDL being used to invoke ARBINPDS2  
+         is > 5.2, then use STRSPLIT function, else use STR_SEP.              
+                                                                              
+BTABVECT (Removed from distribution):                                         
+--------                                                                      
+   Description: This routione extracts a desired column vector from a binary  
+       table array of type byte, converts into desired type and returns to    
+       the main block.                                                        
+                                                                              
+   First release: Introduced in version 1.0 by John D. Koch, Jan 1995.        
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+BTABVECT2:                                                                    
+---------                                                                     
+   Description: This routine is written to supplement the revised version of  
+       TBINPDS. It performs the conversions and ensures error protection. It  
+       is intended to replace BTABVECT.PRO in the next release of PDSREAD.    
+                                                                              
+   First release: Introduced in version 4.0 by Puneet Khetarpal, Jul 2004.    
+       Some sections adapted from BTABVECT.PRO by John D. Koch.               
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+CHECK_AXES (Removed from distribution):                                       
+----------                                                                    
+   Description: This routine number of axes for an array object PDS file. It  
+       is used primarily in READPDS.PRO to determine whether to use ARBINPDS  
+       or ARBINPDS2.                                                          
+                                                                              
+   First release: Introduced in version 3.3.x by Puneet Khetarpal, Mar 2004.  
+                                                                              
+   Modifications: none.                                                       
+
+CHECKPDS:
+---------
+   Description: This routine checks new versions of readpds against a bench-
+      marked copy. 
+   
+   First release: Introduced by Brian Prager, April 2011.
+   
+   Modifications: none
+   
+CLEAN:                                                                        
+-----                                                                         
+   Description: This routine removes all unprintable characters from the      
+       given string, including space if desired, and returns to main block.   
+                                                                              
+   First release: Introduced in version 3.0 by Puneet Khetarpal, Jan 2003.    
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * corrected use of logical negation operator (~) instead of (NOT)      
+       * Puneet Khetarpal - Feb 14, 2003: modified code to include option of  
+             removing space characters also and modified final processing of  
+             text for robustness.                                             
+       * Puneet Khetarpal - Aug 01, 2003: improved robustness of routine using
+             "where".                                                         
+       * Puneet Khetarpal - Sep 29, 2003: fixed case for when no viable       
+             characters are found in input string.                            
+       * Puneet Khetarpal - Oct 02, 2003: fixed if condition for space keyword
+                                                                              
+CLEANARR:                                                                     
+--------                                                                      
+   Description: This routine remove all unprintable characters from a given   
+       array of strings, including space if desired, and returns it.          
+                                                                              
+   First release: Introduced in version 3.1 by Puneet Khetarpal, Oct 2003.    
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+COLASPDS (Removed from distribution):                                         
+--------                                                                      
+   Description: This routine extracts an ASCII collection object into IDL     
+       structure from the file specified by user. It also recursively extracts
+       any nested collection and/or array objects.                            
+                                                                              
+   First release: Introduced in version 1.0 by Michael E. Haken, May-Jun 1996.
+       Portions adapted from TASCPDS by John D. Koch.                         
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+COLBIPDS (Removed from distribution):                                         
+--------                                                                      
+   Description: This routine extracts a BINARY collection object into IDL     
+       structure from the file specified by user. It also recursively extracts
+       any nested collection and/or array objects.                            
+                                                                              
+   First release: Introduced in version 1.0 by Michael E. Haken, May-Jun 1996.
+       Portions adapted from TBINPDS and BTABVECT by John D. Koch.            
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+COLL_STRUCT:                                                                  
+-----------                                                                   
+   Description: This routine populates an IDL structure for just collection   
+       and sub collection and sub arrays objects and returns the structure.   
+                                                                              
+   First release: Introduced in version 4.1 by Puneet Khetarpal.              
+                                                                              
+   Modifications: none.                                                       
+                                                                              
+ELEM_STRUCT:                                                                  
+-----------                                                                   
+   Description: This routien populates an IDL structure for just element      
+       objects and returns the structure.                                     
+                                                                              
+   First release: Introduced in version 4.1 by Puneet Khetarpal.              
+                                   
+   Modifications (this version):
+     S. Martinez
+	* Fixed to handle properly unsigned intergers in ARRAY objects. 
+          Function determine_element_type in elem_struct.pro modified to check 
+          if SIGNED or UNSIGNED integer and return correct type. Added  
+         "warning message" to flag if number of bytes is not correct 
+         (only 1-, 2- and 4-byte signed/unsigned integers allowed in 
+         PDS v3.8).                                           
+   Modifications (older versions): none.                                                       
+                                                                              
+GET_INDEX:                                                                    
+---------                                                                     
+   Description: This routine obtains the end_object index position for a      
+       specified PDS object in a PDS label. The user specifies the starting   
+       index of the PDS object in the label string array, and this routine    
+       returns the index in the string array where the definition of the      
+       object ends.                                                           
+                                                                              
+   First release: Introduced in version 3.3.x by Puneet Khetarpal, Feb 2004.  
+                                                                              
+   Modifications (this version): none                                         
+   Modifications (older versions):                                            
+       * changed GET_VIABLE routine name to OBJPDS in function call.          
+                                                                              
+HEADPDS:                                                                      
+-------                                                                       
+   Description: This routine reads a PDS label into an array variable.        
+                                                                              
+   First release: Introduced in version 1.0 by John D. Koch, Aug 1994         
+       Adapted from READFITS by Wayne Landsman.                               
+                                                                              
+   Re-release: Introduced in version 3.0 by Puneet Khetarpal, Jan 2003.       
+       Rewrote routine to enable several options and new technique of reading 
+       label.                                                                 
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * corrected use of logical negation operator (~) instead of (NOT)      
+     Puneet Khetarpal [August 1, 2004] -                                      
+       * Previous version (version 3.3.x) assumed that for all PDS OBJECTS    
+         there must exist an END_OBJECT keyword value. It is in-fact not      
+         required by PDS standards. That error checking subroutine was removed
+       * Invoked routine ADDEOBJ s.t. when the label lines are being read     
+         from the file, the OBJECT group will have an END_OBJECT keyword      
+         value corresponding to the value of OBJECT keyword. This is done     
+         temporarily for the purpose of making the parsing of PDS labels      
+         easier for processing objects later.                                 
+       * Checked the PDS standards for record lengths of labels to be 80      
+         bytes. Found that the 80 byte record length is not required, but     
+         recommended. So, the check for record lengths being 80 bytes is      
+         removed from code.                                                   
+       * Inserted compatibility to work with PDS labels that have first line  
+         indicating "XV_COMPATIBILITY."                                       
+       * Included new optional input keyword "FORMAT", which specifies whether
+         the file name that is input is a formatting file as passed in by the 
+         ^STRUCTURE keyword.                                                  
+       * Puneet Khetarpal - May 08, 2003: introduced the STRUCTURE object     
+             facility to read format files for some labels.                   
+                                                                              
+IMAGEPDS:                                                                     
+--------                                                                      
+   Description: This routine reads an image array from the file specified by  
+       the user and stores it into an IDL array. It can read multiple image   
+       arrays in the PDS file.                                                
+                                                                              
+   First release: Introduced in version 1.0 by John D. Koch, Dec 1994.        
+       Adapted from READFITS by Wayne Landsman.                               
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * inserted use of NOSCALE keyword, bitmask application, and LSB        
+         architecture compliance                                              
+     Puneet Khetarpal [August 1, 2004] -                                      
+       * Included LINE_DISPLAY_DIRECTION and SAMPLE_DISPLAY_DIRECTION keyword 
+         support:                                                             
+         - default: LINE_DISPLAY_DIRECTION = "DOWN"                           
+                    SAMPLE_DISPLAY_DIRECTION = "RIGHT"                        
+       * Rewrote the program to include level 1 and level 2 subroutines for   
+         processing data                                                      
+       * Rewrote OFFSET and SCALING_FACTOR keyword parsing s.t. flags are no  
+         longer required throughout the routine. Same with LINE_PREFIX/SUFFIX_
+         BYTES.                                                               
+       * Included IDL structure objects for required and optional PDS keywords
+         with the following attributes assigned to each keyword:              
+           "VAL": array of values or value                                    
+         "COUNT": # of elements in "VAL"                                      
+         "INDEX": array of integers specifying index in PDS label             
+          "FLAG": boolean indicating whether keyword value exists for object. 
+       * Rewrote image reading mechanism by invoking IDL structure objects:   
+          - data_read: IDL structure                                          
+          - readu, unit, data_read                                            
+       * Removed one level of if statement containing x, y, bit, sample       
+         keyword value tests that involved the rest of the image processing   
+         code.                                                                
+       * Included various levels of error protection, to improve functions    
+         robustness.                                                          
+                                                                              
+       * Anne Raugh - Sep 25, 1998: fixed bug which expected negative         
+         SAMPLE_BITS to be created rather than a fltarr; Fixed calculation of 
+         byte offsetes in detached PDS labels; Added lines to close and free  
+         logical units before return.                                         
+       * Anne Raugh - Oct 02, 1998: analyzed code and added comments          
+         throughout; Added code to deal properly with unsigned integers and   
+         signed bytes; Re-wrote pointer parsing code in to improve robustness.
+       * M. Barker - Jul 27, 1999: fixed bug that produced a negative skip    
+         when there was no offset provided in file pointer.                   
+       * Puneet Khetarpal - Aug 20, 2002: rewrote and modified the code to    
+         deal with multiple and non-image objects in the PDS file. Also       
+         modified to work with window sub-objects, prefix and suffix bytes in 
+         and image object.                                                    
+       * Puneet Khetarpal - Feb 14, 2003: fixed window-processing and         
+         multiple object processing. Rewrote the sample_type analysis for     
+         image objects.                                                       
+       * Puneet Khetarpal - Aug 20, 2003: fixed window-processing bug for     
+         multiple WINDOW objects.                                             
+       * Puneet Khetarpal - Sep 29, 2003: added offset and scaling factor     
+         keywords in the routine. Fixed code to remove unwanted characters    
+         from sample_type variable.                                           
+       * Puneet Khetarpal - Dec 10, 2003: fixed bug for the window-object     
+         structure when only one window object is present.                    
+                                                                              
+OBJPDS:                                                                       
+------                                                                        
+   Description: This routine extracts viable data objects from the PDS label  
+       supplied by the user, and returns them in an IDL structure. The        
+       viable data objects include ARRAY, COLLECTION, TABLE, SERIES, PALETTE, 
+       SPECTRUM, IMAGE, QUBE, and WINDOW.                                     
+                                                                              
+   First release: Introduced in version 3.0 by Puneet Khetarpal, Feb 2003.    
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+     Puneet Khetarpal [August 1, 2004] -                                      
+       * Rewrote routine to allow for subroutines and included comments       
+         throughout for a better understanding of the procedure.              
+       * Facilitated generation of objects count greater than regular int.    
+       * Included error checking at various steps for better error protection.
+       * Improved robustness of program.                                      
+                                                                              
+       * Puneet Khetarpal - Jul 20, 2003: included sorting of the object      
+         array and index in ascending order by index value. Also, included    
+         check for dublicate object names in the same PDS label.              
+       * Puneet Khetarpal - Aug 20, 2003: fixed error warning for duplicate   
+         object names to allow processing for WINDOW objects.                 
+                                                                              
+PDSPAR:                                                                       
+------                                                                        
+   Description: This routine extracts the parameter values from a PDS label   
+       as indicated by the input pds keyword. It searched through the label   
+       and finds all params, and indices matching the keyword, and returns    
+       them to the user. If no complete match found, then searches through    
+       substring to find any part of the string that is matched and returns   
+       it to the user. If no match is found, then the !ERR IDL variable is    
+       set to -1.                                                             
+                                                                              
+   First release: Introduced in version 1.0 by John D. Koch, Jul 1994.        
+       Adapted from SXPAR by DMS.                                             
+                                                                              
+   Modifications (this version):                                              
+       * Parin Choganwala - Nov 20, 2007: Fixed problem with = sign in 
+         description field and leading zero problem in pdspar.                  
+   Modifications (older versions):                                            
+       * Puneet Khetarpal - May 12, 2003: fixed the conversion of 10b into    
+         string for search in lines 126 and 129 of the code.                  
+                                                                              
+POINTPDS:                                                                     
+--------                                                                      
+   Description: This routine parses the pointer to a PDS object and returns   
+       the name of the file where the data for the object resides, the        
+       number of bytes to skip in the file before reading the file, and a     
+       flag field indicating whether the pointer was parsed properly or not.  
+                                                                              
+   First release: Introduced in version 3.0 by Puneet Khetarpal, Aug 2002.    
+                                                                              
+   Modifications (this version):
+     B. Prager [01/18/11]
+       * Streamlined and improved the logic for all previous quick fixes to pointpds.pro
+   Modifications (older versions):
+     B. Prager [01/13/11]
+       * Included checks for a file existing in a camelcase path, with either an
+         all caps filename, or an all lowercase filename.                                            
+     B. Prager [08/06/10]
+       * Changes made earlier this year interfered with ability to find .fmt files
+         in LABEL directory. pointpds now looks in all folders between where the data
+         lives and where readpds was run to find .fmt files. Each new directory it reaches
+         it looks in that directory, as well as any LABEL folders if found.                  
+     P.Choganwala [ April 27, 2008] 
+       * Enhanced the pointpds to look into label directory for .fmt files.
+     Puneet Khetarpal [August 1, 2004] -                                      
+       * Included a flag field in the structure to be returned so that if     
+         an error occurs in the program, the flag is set to -1, else stays 1. 
+                                                                              
+       * Puneet Khetarpal - Feb 14, 2003: rewrote routine to process one      
+         object pointer at a time. Also, instead of returning four variable   
+         info, the code is modified to return a struct with only needed       
+         variables. The datafile, if present is tested here so as not to put  
+         load on the main program module.                                     
+                                                                              
+QUBEPDS:                                                                      
+-------                                                                       
+   Description: This routine reads a 3-D image qube object into a 3-D IDL     
+       array.                                                                 
+                                                                              
+   First release: Introduced in version 3.0 by Puneet Khetarpal, Aug 2002     
+       Adapted from IMAGEPDS by Puneet Khetarpal.                             
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * modified suffix bytes parsing, applied LSB compliance, NOSCALE       
+         keyword use, and bit mask if any                                     
+     Puneet Khetarpal [August 1, 2004] -                                      
+       * Rewrote the routine to include reading of data using IDL structures. 
+       * Included comments throughout the routine for better debugging.       
+       * Included ability to read multiple qube objects in a single pds file. 
+       * Rewrote the processing of sideplane and bottomplane suffix bytes.    
+                                                                              
+       * Puneet Khetarpal - Feb 24, 2003: rewrote program to be compatible    
+         with other functions, i.e., GET_VIABLE, POINTPDS, CLEAN, and REMOVE. 
+         Also, removed the use of PROC_ITEMS subroutine.                      
+       * Puneet Khetarpal - Oct 01, 2003: fixed code to remove unwanted       
+         characters from scalar strings.                                      
+                                                                              
+READPDS:                                                                      
+-------                                                                       
+   Description: This is the main function of the entire PDSREAD package       
+       and calls other subroutines to read all the viable objects from a      
+       PDS file. After readig the objects, it packages them into a structure  
+       and returns them to the main block.                                    
+                                                                              
+   First release: Introduced in version 1.0 by John D. Koch, Aug 1994         
+       Adapted from READFITS by Wayne Landsman.                               
+                                                                              
+   Re-release: Introduced in version 3.0 by Puneet Khetarpal, Feb 2003.       
+       Rewrote the first release version with more robustness, and careful    
+       error-checking with new features.                                      
+         
+   Modifications (this version):
+     S. Martinez [07/05/2010]                                                       
+       * Updated to handle CONTAINER/BIT_COLUMN objects.              
+   Modifications (this version):                                              
+       * fixed changing of input filename by headpds routine.                 
+       * corrected use of logical negation operator (~) instead of (NOT)      
+       * wrote a new subroutine to obtain all viable objects and introduced   
+         error protection                                                     
+       * removed doimage, doarray, docollection, doqube routines              
+       * inserted use of NOSCALE keyword                                      
+       * applied use of ARRCOLPDS for reading array and collection objects    
+     Puneet Khetarpal [August 1, 2004] -                                      
+       * Added error protection to some parts of the routine                  
+       * Rewrote the for loop to clarify what was being done and reworked     
+         the handling of multiple pds objects in a file.                      
+       * Included extensive comments throughout the routine for better        
+         debugging.                                                           
+                                                                              
+       * Puneet Khetarpal - May 08, 2003: the subroutines for the array and   
+         collection objects were added to this program.                       
+       * Puneet Khetarpal - May 12, 2003: the program is fixed to allow for   
+         multiple objects to be read from the same file.                      
+                                                                              
+REMOVE:                                                                       
+------                                                                        
+   Description: This routine removes all characters from the given string as  
+       specified by the parameter array passed into the function. If all      
+       characters are removed in the process, then an empty string is returned
+                                                                              
+   First release: Introduced in version 3.0 by Puneet Khetarpal, Jan 2003.    
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * Puneet Khetarpal - Aug 01, 2003: modified routine for robustness     
+         using "where"                                                        
+       * Puneet Khetarpal - Oct 30, 2003: modified routine for condition when 
+         no viable characters are found in the string.                        
+                                                                              
+STR2NUM:                                                                      
+-------                                                                       
+   Description: This routine performs a conversion between a given string into
+       a number of appropriate type and returns to the main block.            
+                                                                              
+   First release: Introduced in version 1.0 by John D. Koch, Jul 1994.        
+                                                                              
+   Modifications (this version):
+     P.Chongwala
+       * Fixed to do not trim off leading zeros when reading keyword values.                                        
+   Modifications (older versions):                                            
+       * M. Barker - Jul 27, 1999: fixed bug that converted a date in format  
+         of 1991-05-12 to 1991, so that if a '-' is detected and neither 'e'  
+         nor 'E' are detected, the value is left as a string.                 
+                                                                              
+TASCPDS:                                                                      
+-------                                                                       
+   Description: This routine reads a PDS ascii table file into an IDL struct  
+       containing columns of the data table as elements. If an error is       
+       encountered at any level of the program, the program returns -1 after  
+       issuing an error.                                                      
+                                                                              
+   First release: Introduced in version 1.0 by John D. Koch, Dec 1994.        
+       Adapted from READFITS by Wayne Landsman.                               
+                                                                              
+   Re-release: Introduced in version 3.0 by Puneet Khetarpal, Feb 2003.       
+       Rewrote procedure for robustness and versatility.                      
+                                                                              
+   Modifications (this version):                                              
+     B. Prager [01/13/2011]
+       * Modified script to handle ITEMS = 1 columns.
+   Modifications (older versions):                                            
+     B. Prager [08/06/2010]
+       * Modified script to handle large file sizes much better. Previous versions
+         allowed new variables and structures to be made that were simply renamed
+         older variables. With larger data sets, this resulted in a peak memory usage
+         of ~6 times the file size. (7.5 GB of memory needed for 1.1 GB dataset). The
+         changes remove some of the new variables, as well as moving some functions to
+         the main body of script to reduce peak and idle memory usage. Speed for processing
+         a 1.1 GB dataset shown to drop from 30 minutes to 24-25 minutes on older machines. 
+     Other
+       * fixed problem with byte specification 
+       * Changed use of offset.val from a scalar to long array variable in    
+         "process_table_items" subroutine                                     
+       * Resolved row_suffix bytes conflict with carriage return and line     
+         feed characters when keyword is present. 
+     Puneet Khetarpal [August 1, 2004] -                                      
+       * Rewrote program, divided the program into subroutines of variuos     
+         levels of code.                                                      
+       * Incldued usage of IDL structures to read the data for each column,   
+         instead of reading the data into one huge n by m string array, and   
+         then parsing through the data to extract each column element from    
+         that array, and then converting into appropriate type. Rather, this  
+         new way of storing data involves a simple construction of an IDL     
+         structure with appropriate structures for each COLUMN object, and    
+         then reading the data into the structure, and then simply sorting    
+         out the structures into arrays and then performing a conversion.     
+         This reduces the processing time for the routine by about 50%.       
+       * Included thorough error checking at various levels in the program.   
+       * Included the checking of whether there are errors in data file, or   
+         the label is not written with correct information at certain stages  
+         of the program, and included a subroutine that checks whether there  
+         are appropriate numbers of cr and lf characters in the data file for 
+         each record.                                                         
+       * Added compatibility with ROW_PREFIX/SUFFIX bytes, and SPARE columns. 
+                                                                              
+       * Michael Haken - Mar, 1996: removed the prefix 'ASCII_' if part of    
+         data_type keyword in pds label. Tolerate improper line termination   
+         (carriage-return and/or line feed missing) in table but inform user  
+         of error.                                                            
+       * Puneet Khetarpal - Feb 21, 2003: rewrote procedure for robustness,   
+         and included sub-procedures to clean up table array for proper       
+         conversion. POINTPDS is used to contain pointer info. Many other     
+         changes have been made. The function now porperly reads all ascii    
+         table files as defined in the PDS Standards Reference.               
+       * Puneet Khetarpal - May 23, 2003: converted the capacity of the arrays
+         from simple integers to long integers for large data arrays.         
+       * Puneet Khetarpal - Jun 20, 2003: fixed the name array for the columns
+         to eliminate the name of the table if any.                           
+       * Puneet Khetarpal - Jul 01, 2003: revised the routine to enable       
+         multiple table reading from a single PDS file.                       
+       * Puneet Khetarpal - Jul 23, 2003: included the ability to read tables 
+         with ITEMS keyword in the COLUMN objects.                            
+       * Puneet Khetarpal - Oct 02, 2003: included use of CLEANARR routine    
+         for ITEMS in COLUMN objects.                                         
+       * Puneet Khetarpal - Oct 13, 2003: fixed problem with items for        
+         multiple table objects and fixed problem with long int number of     
+         rows and columns.                                                    
+                                                                              
+TBINPDS:                                                                      
+-------                                                                       
+   Description: This routine reads a PDS binary table file into an IDL struct 
+       containing columns of the data table as elements. If an error is       
+       encountered at any level of the program, the program returns -1 after  
+       issuing an error.                                                      
+                                                                              
+   First release: Introduced in version 1.0 by John D. Koch, Dec 1994.        
+       Adapted from READFITS by Wayne Landsman.                               
+                                                                              
+   Re-release: Introduced in version 3.0 by Puneet Khetarpal, Feb 2003.       
+       Rewrote procedure for robustness and versatility.                      
+                                                                              
+   Modifications (this version):
+     B. Prager [01/13/2011]
+       * Modified script to handle ITEMS = 1 columns.
+     S. Martinez
+       * Updated to handle CONTAINER/BIT_COLUMN objects.
+       * Updated to handle endianess correctly.
+   Modifications (older versions):                                            
+       * In OBTAIN_TBIN_REQ increased range of columns,rows,row_bytes
+	 data type by using ULONG and LONG64 
+	 Parin Choganwala [27 April, 2008]                                    
+       * Introduced LSB architecture compliance                               
+     Puneet Khetarpal [August 1, 2004] -                                      
+       * All modifications are similar to the ones mentioned in TASCPDS, excep
+         for a few changes.                                                   
+       * This routine does not check for cr or lf characters at the end of    
+         each record, and use BTABVECT2 procedure for conversion of columns   
+         into appropriate types.                                              
+                                                                              
+       * M. Barker - Oct 06, 1999: fixed bug that miscalculated offset.       
+       * M. Barker - Oct 15, 1999: added support of scaling and offset factors
+       * Puneet Khetarpal - Feb 21, 2003: rewrote procedure for robustness,   
+         and included sub-procedures to clean up table array for proper       
+         conversion. POINTPDS is used to obtain pointer info. Many other      
+         changes have been made. The function now properly reads all binary   
+         table files as defined in the PDS Standards Reference.               
+       * Puneet Khetarpal - Jul 01, 2003: revised routine to enable multiple  
+         table reading from a single PDS file.                                
+                                                                              
+TIMEPDS:                                                                      
+-------                                                                       
+   Description: This routine is used to extract time from a pds label or an   
+       ASCII table, express it as Julian Date, decimal day of year, or        
+       decimal day from some specific user-specified date. Then to store the  
+       date in an IDL variable.                                               
+                                                                              
+   First release: Introduced in version 1.0 by M. Barker, Jul 1999.           
+                                                                              
+   Modifications (this version): none.                                        
+   Modifications (older versions):                                            
+       * Fixed the IDL version problem with obsolete functions, i.e., STR_SEP.
+
+READPDSTEST:                                                                      
+-----------                                                                       
+   Description: This routine is the first attempt to automate the validation 
+       of every release of the READPDS routines.                                               
+                                                                              
+   First release: Introduced in version 4.3 by S. Martinez.
+                    
+   Modifications (this version):
+    S. Martinez 
+        * Fixed to print READPDS version used for validation.        * Modified to handle comments in configuration files.                                       

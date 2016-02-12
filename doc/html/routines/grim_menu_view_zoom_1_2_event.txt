@@ -1,0 +1,16 @@
+GRIM_MENU_VIEW_ZOOM_1_2_EVENT
+
+
+ PURPOSE:
+	Obtains the necessary descriptors through the translators and computes
+	limbs using pg_limbs for all active objects.  If no active objects, 
+	then all limbs are computed.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

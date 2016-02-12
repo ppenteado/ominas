@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_SAVE_EVENT
+
+
+ PURPOSE:
+	Toggles the ontext window On/Off. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 9/2005
+	

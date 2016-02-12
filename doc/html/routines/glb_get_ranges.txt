@@ -1,0 +1,36 @@
+GLB_GET_RANGES
+
+
+ PURPOSE:
+	Returns ranges of valid coordinates for the given GLOBE object.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	ranges = glb_get_ranges(gbx)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 Any subclass of GLOBE.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2 x 3) giving the ranges in globe coordinates.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

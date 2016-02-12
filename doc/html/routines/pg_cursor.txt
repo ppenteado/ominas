@@ -1,0 +1,91 @@
+PG_CURSOR
+
+
+ PURPOSE:
+	Allows the user to obtain information about image pixels selected 
+	using the mouse in the current graphics window.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	pg_cursor, dd
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor containing the image.  Multiple data 
+		descriptors may be given and the pixel values for each will 
+		be displayed.  However, descriptors for only one of the data
+		descriptors may be given.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	Camera descriptor.  Must be included for planet and ring
+		coordinate, RA/DEC, and photometric output.  A map descriptor
+		may be substitued for this argument, in which case ring
+		coordinates, RA/DEC, and photometric data are not output.
+
+	gbx:	Object descriptors, subclass of 'GLOBE'.  Must be included for 
+		planet coordinate output.
+
+	dkx:	Object descriptors, subclass of 'DISK'.  Must be included for 
+		ring coordinate output.
+
+	sund:	Star descriptor specifying the state of the sun.
+
+	sd:	Star descriptors.  Must be included for star otput.
+
+	gd:	Generic descriptor.  If given, the above object descriptors are
+		taken from this structure.
+
+	radec:	If set, right ascension and declination with respect to the
+		inertial coordinate system are output for each selected pixel. 
+
+	photom:	If set, photometric angles are output for each pixel that
+		intersects a planet or ring.  (Ring photometry is not yet
+		implememented)
+
+	fn:	Name of a function to be called whenever a ppoint is selected. 
+		The function is called as follows:
+
+		value = call_function(fn, p, image, gd=gd, $
+                                               format=_format, label=label)
+
+		p is the image coords of the select ed point, image is the 
+		input image and gd is a generic descriptor containing the 
+		object descriptors.  format and label are outputs used to label
+		the returned value.
+
+	silent:	If set, no string is printed, although the 'string' output
+		keyword remains valid.
+
+	xy:	If present, this image point is used and the user is not 
+		prompted to select a point.
+
+
+  OUTPUT:
+	string:	The string that's printed.  If /silent is specified, this
+		string is valid, but not printed.
+
+	values: Array (nfn,2,npoints) giving the numerical results in the order
+		that they appear in the output.
+
+
+ RETURN:
+	NONE
+
+
+ STATUS:
+	Ring photometry is not yet implemented.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2002
+	

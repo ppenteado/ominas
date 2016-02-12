@@ -1,0 +1,124 @@
+CW__BGROUP
+
+ PURPOSE:
+   CW__BGROUP is a compound widget that simplifies creating
+   a base of buttons. It handles the details of creating the
+   proper base (standard, exclusive, or non-exclusive) and filling
+   in the desired buttons. Events for the individual buttons are
+   handled transparently, and a CW__BGROUP event returned. This
+   event can return any one of the following:
+       - The Index of the button within the base.
+       - The widget ID of the button.
+       - The name of the button.
+       - An arbitrary value taken from an array of User values.
+
+ CATEGORY:
+   Compound widgets.
+
+ CALLING SEQUENCE:
+       Widget = CW__BGROUP(Parent, Names)
+
+   To get or set the value of a CW__BGROUP, use the GET_VALUE and
+   SET_VALUE keywords to WIDGET_CONTROL. The value of a CW__BGROUP
+   is:
+
+       -----------------------------------------------
+       Type        Value
+       -----------------------------------------------
+       normal      None
+       exclusive       Index of currently set button
+       non-exclusive   Vector indicating the position
+               of each button (1-set, 0-unset)
+       -----------------------------------------------
+
+
+ INPUTS:
+       Parent:     The ID of the parent widget.
+   Names:      A string array, containing one string per button,
+           giving the name of each button.
+
+ KEYWORD PARAMETERS:
+
+   BUTTON_UVALUE:  An array of user values to be associated with
+           each button and returned in the event structure.
+   COLUMN:     Buttons will be arranged in the number of columns
+           specified by this keyword.
+   EVENT_FUNCT:    The name of an optional user-supplied event function
+           for buttons. This function is called with the return
+           value structure whenever a button is pressed, and
+           follows the conventions for user-written event
+           functions.
+   EXCLUSIVE:  Buttons will be placed in an exclusive base, with
+           only one button allowed to be selected at a time.
+   FONT:       The name of the font to be used for the button
+           titles. If this keyword is not specified, the default
+           font is used.
+   FRAME:      Specifies the width of the frame to be drawn around
+           the base.
+   IDS:        A named variable into which the button IDs will be
+           stored, as a longword vector.
+   LABEL_LEFT: Creates a text label to the left of the buttons.
+   LABEL_TOP:  Creates a text label above the buttons.
+   MAP:        If set, the base will be mapped when the widget
+           is realized (the default).
+   NONEXCLUSIVE:   Buttons will be placed in an non-exclusive base.
+           The buttons will be independent.
+   NO_RELEASE: If set, button release events will not be returned.
+   RETURN_ID:  If set, the VALUE field of returned events will be
+           the widget ID of the button.
+   RETURN_INDEX:   If set, the VALUE field of returned events will be
+           the zero-based index of the button within the base.
+           THIS IS THE DEFAULT.
+   RETURN_NAME:    If set, the VALUE field of returned events will be
+           the name of the button within the base.
+   ROW:        Buttons will be arranged in the number of rows
+           specified by this keyword.
+   SCROLL:     If set, the base will include scroll bars to allow
+           viewing a large base through a smaller viewport.
+   SET_VALUE:  The initial value of the buttons. This is equivalent
+           to the later statement:
+
+           WIDGET_CONTROL, widget, set_value=value
+
+   SPACE:      The space, in pixels, to be left around the edges
+           of a row or column major base. This keyword is
+           ignored if EXCLUSIVE or NONEXCLUSIVE are specified.
+   UVALUE:     The user value to be associated with the widget.
+   UNAME:      The user name to be associated with the widget.
+   XOFFSET:    The X offset of the widget relative to its parent.
+   XPAD:       The horizontal space, in pixels, between children
+           of a row or column major base. Ignored if EXCLUSIVE
+           or NONEXCLUSIVE are specified.
+   XSIZE:      The width of the base.
+   X_SCROLL_SIZE:  The width of the viewport if SCROLL is specified.
+   YOFFSET:    The Y offset of the widget relative to its parent.
+   YPAD:       The vertical space, in pixels, between children of
+           a row or column major base. Ignored if EXCLUSIVE
+           or NONEXCLUSIVE are specified.
+   YSIZE:      The height of the base.
+   Y_SCROLL_SIZE:  The height of the viewport if SCROLL is specified.
+
+ OUTPUTS:
+       The ID of the created widget is returned.
+
+ SIDE EFFECTS:
+   This widget generates event structures with the following definition:
+
+       event = { ID:0L, TOP:0L, HANDLER:0L, SELECT:0, VALUE:0 }
+
+   The SELECT field is passed through from the button event. VALUE is
+   either the INDEX, ID, NAME, or BUTTON_UVALUE of the button,
+   depending on how the widget was created.
+
+ RESTRICTIONS:
+   Only buttons with textual names are handled by this widget.
+   Bitmaps are not understood.
+
+ MODIFICATION HISTORY:
+   15 June 1992, AB
+   7 April 1993, AB, Removed state caching.
+   6 Oct. 1994, KDB, Font keyword is not applied to the label.
+       10 FEB 1995, DJC  fixed bad bug in event procedure, getting
+                         id of stash widget.
+   11 April 1995, AB Removed Motif special cases.
+   Feb, 2012.	Spitale, copied from cw_bgroup.

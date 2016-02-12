@@ -1,0 +1,70 @@
+LOCMOD
+
+
+ PURPOSE:
+       Finds points in the image at which the correlation with the
+       given model is high.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = modloc(image, model, edge=edge, ccmin=ccmin, gdmax=gdmax)
+
+
+ ARGUMENTS:
+  INPUT:
+       image:  Input image.
+
+       model:  2-D array giving a model of the reseau image.
+
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+  INPUT:
+        edge:  Distance from edge within which points are ignored.
+
+       ccmin:  Minimum correlation coefficient to accept.  Default is 0.8 . 
+
+       gdmax:  Maximum gradiant of correlation coefficient to accept. 
+		Default is 0.25
+
+	dmax:	Maximum number of resultant points allowed within any region
+		of the image of size dbin * (size of the model).  Default is 2.
+
+	dbin:	Binning factor size for computing point density, default is 2.
+
+      double:  If set, image is converted to double in the function,
+               otherwise it is converted to float.
+
+
+  OUTPUT:
+       coeff:	Correlation coefficients of returned points. 
+
+
+ RETURN:
+       The points (x,y) in the image that best fits the model.  Returns 0
+       if no points are found.
+
+ PROCEDURE:
+	Modloc first computes computes maps of the correlation coefficient
+	between the model and the image with the model centered at each point
+	as well as the gradient of the correlation coefficient at each point. 
+	Points with high correlation and low gradient are selected as
+	candidates.  To select the final points, the point density is computed
+	using a bin size of twice the size of the model and points within
+	regions containing more than dmax candidates are deselected.
+	
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

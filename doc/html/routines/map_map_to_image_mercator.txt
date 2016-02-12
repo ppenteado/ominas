@@ -1,0 +1,71 @@
+MAP_MAP_TO_IMAGE_MERCATOR
+
+
+ PURPOSE:
+	Transforms the given map points to map image points using the
+	mercator projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	image_pts = map_map_to_image_mercator(md, map_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	map_pts:	Array (2,nv,nt) of map points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output image points.  If not se then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in a mercator projection.
+	This projection results from projecting a sphere onto a cylinder
+	that is tangent at the equator.  The scale is true along the equator
+	only.  Areas are distorted, especially near the poles.  
+
+	With:
+ 
+		a = [size[1]/pi, size[0]/2pi] * scale * units,
+
+	and:
+
+		e = sqrt(1 - (A/(B+C)/2)^2),
+
+	where A, B, and C are the triaxial ellipsoid radii, the 
+	transformation is:
+
+		x = a[1] * (lon - center[1]) + origin[0]
+
+		y = a[0] * log( tan(pi/4 + lat/2) * 
+		  ( (1 - e*sin(lat))/(1 + e*sin(lat)) )^(e/2) ) + origin[1]
+
+
+	See [1], p. 44 for the mathematical derivation.
+
+	[1] Snyder (1987)
+	    Map projections -- A working manual
+	    USGS professional paper 1395
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

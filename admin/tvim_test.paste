@@ -1,0 +1,40 @@
+bin = 101l
+
+
+ss = 11l
+image = bytarr(ss,ss)
+image[lindgen(ss*ss/2+1)*2] = 127
+image[ss/2,ss/2] = 255
+image = rebin(image, ss*bin, ss*bin, /sample)
+if(bin GT 1) then image[lindgen(ss*bin*ss*bin/2)*2] = 63
+dd = nv_init_descriptor(data=image)
+
+grim, dd, xs=500, ys=500, order=0
+
+n = 10
+nn = n*(ss) 
+zz = bin*dindgen(nn) / double(n) - 0.5
+
+xgrid_ps = replicate({pg_points_struct}, ss-1)
+ygrid_ps = replicate({pg_points_struct}, ss-1)
+p = dblarr(2,nn)
+for i=0, ss-1 do $
+ begin && $
+  p[0,*] = zz && p[1,*] = bin*float(i+1)-0.5 && $
+  xgrid_ps[i] = pgs_set_points(xgrid_ps[i], p=p, tag='xgrid') && $
+  p[1,*] = zz && p[0,*] = bin*float(i+1)-0.5 && $
+  ygrid_ps[i] = pgs_set_points(ygrid_ps[i], p=p, tag='ygrid') && $
+ end
+gr_draw, xgrid_ps, tag='xgrid', col=ctyellow()
+gr_draw, ygrid_ps, tag='ygrid', col=ctyellow()
+
+ss0 = bin*float(ss/2)-0.5
+ss1 = bin*float(ss/2 + 1)-0.5
+cc = [[ss1,ss1], [ss1,ss0], $
+      [ss0,ss1], [ss0,ss0]]
+sgrid_ps = pgs_set_points({pg_points_struct}, p=cc, tag='sgrid')
+gr_draw, sgrid_ps, tag='sgrid', col=ctyellow(), psym=1
+
+
+
+

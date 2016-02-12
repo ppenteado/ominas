@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="TOOLS Program Reference", $
+    "/home/joes/idl_pro/minas/nv/gr/tools/*.pro", $
+    "/home/joes/idl_pro/minas/nv/gr/tools/doc_tools.txt"

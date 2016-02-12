@@ -1,0 +1,15 @@
+;===========================================================================
+; cam_filter
+;
+;
+;===========================================================================
+function cam_filter, cxp, i, lambda, default=default
+@nv_lib.include
+ cdp = class_extract(cxp, 'CAMERA')
+ if(NOT keyword_set(cdp)) then return, 0
+ nv_notify, cdp, type = 1
+ cd = nv_dereference(cdp)
+ if(NOT keyword_set(cd[0].fn_filter)) then return, 0
+ return, call_function(cd[0].fn_filter, cdp, i, lambda, default=default)
+end
+;===========================================================================

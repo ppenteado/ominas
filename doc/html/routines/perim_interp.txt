@@ -1,0 +1,60 @@
+PERIM_INTERP
+
+
+ PURPOSE:
+	Interpolates within given ellipses in an image.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	result = perim_interp(image, center_pts, a, b, h)
+
+
+ ARGUMENTS:
+  INPUT:
+	image:		Input image.
+
+	center_pts:	Array (2,n) giving ellipse centers.
+
+	a:		Scalar giving the semimajor axis of the ellipses.
+
+	b:		Scalar giving the semiminor axis of the ellipses.
+
+	h:		Scalar giving the rotation of the ellipse semimajor axes
+			from horizontal.  (radians)
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	show:		If set, the outlines of the ellipses are plotted on 
+			the current graphics window.
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	Image array in which the pixels contained in the specified ellipses
+	havwe been interpolated from the pixels along the perimeters of the 
+	ellipses.
+
+
+ PROCEDURE:
+	Each point in each ellipse is replaced by an average of the points on
+	the perimeter, weighted by the inverse square of the point's distance
+	from each perimeter point. 
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2002
+	

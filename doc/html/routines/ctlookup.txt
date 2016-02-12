@@ -1,0 +1,25 @@
+CTLOOKUP
+
+ PURPOSE:
+       Returns a string giving the name of a color corresponding to a 
+	given color index.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       result = ctlookup(color)
+
+ ARGUMENTS:
+  INPUT:
+       color:	Color index to lookup.
+
+  OUTPUT:
+    NONE
+
+
+ RETURN:
+	String giving the color name or '' if not found.
+

@@ -1,0 +1,27 @@
+;===========================================================================
+; nv_add_transient_keyvals
+;
+;
+;===========================================================================
+pro nv_add_transient_keyvals, dd, trs
+@nv.include
+
+ if(ptr_valid(dd.transient_keyvals_p)) then ptr_free, dd.transient_keyvals_p
+
+ ;--------------------------------------------
+ ; parse any transient keyvals
+ ;--------------------------------------------
+ if(keyword_set(trs)) then $
+  begin
+   keyvals = transpose(nv_parse_transient_keyvals(trs))
+   if(keyword_set(keyvals)) then $
+                   dd.transient_keyvals_p = ptr_new(nv_parse_keyvals(keyvals))
+  end
+
+
+end
+;===========================================================================
+
+
+
+

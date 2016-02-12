@@ -1,0 +1,726 @@
+									12/05/15
+P Program Reference
+===================
+
+ Summary
+ -------
+  - P_ANGLE
+       Computes the angles between the given arrays of image vectors.
+
+  - P_CROSS
+       Computes the cross products between the given arrays image vectors.
+
+  - P_INNER
+       Computes inner products between the given arrays of image vectors.
+
+  - P_MAG
+       Computes the magnitudes of the given array of image vectors.
+
+  - P_MAG
+       Computes the squared magnitudes of the given array of image vectors.
+
+  - P_MEAN
+       Computes the mean values of the given array of points
+	in the y direction.
+
+  - P_ROTATE
+       Rotates the given image vectors about an axis projecting out of the 
+	image plane.
+
+  - P_SAMPLE
+       Resamples the given points such that their spacing is 
+	uniform.
+
+  - P_STDEV
+       Computes the standard deviations of the given array of column vectors
+	in the x direction.
+
+  - P_UNIT
+       Converts image vectors to unit image vectors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_ANGLE
+-------
+
+
+ PURPOSE:
+       Computes the angles between the given arrays of image vectors.
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_angle(p1, p2)
+
+
+ ARGUMENTS:
+  INPUT:
+	p1:	An array of np x nt image vectors (i.e., 2 x np x nt).
+
+	p2:	Another array of np x nt image vectors.
+
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of np x nt angles in radians.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_CROSS
+-------
+
+
+ PURPOSE:
+       Computes the cross products between the given arrays image vectors.
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_cross(p1, p2)
+
+
+ ARGUMENTS:
+  INPUT:
+	p1:	An array of np x nt image vectors (i.e., 2 x np x nt).
+
+	p2:	Another array of np x nt image vectors.
+
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of np x nt out-of-image components of the cross products.  
+	The in-plane components will always be zero.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_INNER
+-------
+
+
+ PURPOSE:
+       Computes inner products between the given arrays of image vectors.
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_inner(p1, p2)
+
+
+ ARGUMENTS:
+  INPUT:
+	p1:	An array of np x nt image vectors (i.e., 2 x np x nt).
+
+	p2:	Another array of np x nt image vectors.
+
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of np x nt inner products.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_MAG
+-----
+
+
+ PURPOSE:
+       Computes the magnitudes of the given array of image vectors.
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_mag(p)
+
+
+ ARGUMENTS:
+  INPUT:
+	p:	An array of np x nt image vectors (i.e., 2 x np x nt).
+
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of np x nt magnitudes.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_MAG
+-----
+
+
+ PURPOSE:
+       Computes the squared magnitudes of the given array of image vectors.
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_sqmag(p)
+
+
+ ARGUMENTS:
+  INPUT:
+	p:	An array of np x nt image vectors (i.e., 2 x np x nt).
+
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of np x nt squared magnitudes.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_MEAN
+------
+
+
+ PURPOSE:
+       Computes the mean values of the given array of points
+	in the y direction.
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_mean(v)
+
+
+ ARGUMENTS:
+  INPUT:
+       v:     An array of np x nt points (i.e. 2 x np x nt).
+
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of 1 x nt points (i.e., 2 x 1 x nt).
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_ROTATE
+--------
+
+
+ PURPOSE:
+       Rotates the given image vectors about an axis projecting out of the 
+	image plane.
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_rotate(p, sin_theta, cos_theta)
+
+
+ ARGUMENTS:
+  INPUT:
+	p:	An array of np x nt image vectors (i.e., 2 x np x nt).
+
+	sin_theta:	Sines of np x nt rotation angles in radians.
+
+	cos_theta:	Cosines of np x nt rotation angles in radians.
+
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of np x nt image vectors.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_SAMPLE
+--------
+
+
+ PURPOSE:
+       Resamples the given points such that their spacing is 
+	uniform.
+
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_sample(p, spacing=spacing)
+
+
+ ARGUMENTS:
+  INPUT:
+               p:      An array of np points (i.e., 2 x np array) 
+			to resample.  Note that the reason there is no
+			nt direction is that unifrom spacing would impose
+			differing numbers of elements in that direction, which
+			is not permissible.
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of np uniformly-spaced points.
+
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale  10/2012
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_STDEV
+-------
+
+
+ PURPOSE:
+       Computes the standard deviations of the given array of column vectors
+	in the x direction.
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_stdev(v)
+
+
+ ARGUMENTS:
+  INPUT:
+       v:     An array of np x nt points (i.e. 2 x np x nt).
+
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of 1 x nt points (i.e., 2 x 1 x nt).
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+P_UNIT
+------
+
+
+ PURPOSE:
+       Converts image vectors to unit image vectors.
+
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_unit(p)
+
+
+ ARGUMENTS:
+  INPUT:
+	p:	An array of np x nt image vectors (i.e., 2 x np x nt).
+
+  OUTPUT:
+       mag:	Array of np x nt magnitudes.
+
+ RETURN:
+       An array of np x nt unit image vectors (i.e., 2 x np x nt).
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

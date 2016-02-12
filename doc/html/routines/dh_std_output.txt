@@ -1,0 +1,57 @@
+DH_STD_OUTPUT
+
+
+ PURPOSE:
+	Output translator for detached headers.
+
+
+ CATEGORY:
+	NV/CONFIG
+
+
+ CALLING SEQUENCE(only to be called by nv_put_value):
+	dh_std_output, dd, keyword, value
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	keyword:	String giving the name of the translator quantity to
+			write.
+
+	value:		The data to write.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	NONE
+
+  OUTPUT:
+	status:		Zero unless a problem occurs.
+
+
+  TRANSLATOR KEYWORDS:
+	format:		String giving the name of the output representation. 
+			Default is OMINAS internal representation.  The null  
+			string, '', indicates the default.
+
+
+ SIDE EFFECTS:
+	The detached header in the data descriptor is modified.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dh_std_input
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1998
+	

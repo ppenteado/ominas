@@ -1,0 +1,40 @@
+CLASS_HOMOGENIZE
+
+
+ PURPOSE:
+	Produces a set of descriptors of the highest common object class.
+
+
+ CATEGORY:
+	NV/LIB/CLASS
+
+
+ CALLING SEQUENCE:
+	odh = class_homogenize(od)
+
+
+ ARGUMENTS:
+  INPUT:
+	od:	 Array of descriptors of any class.
+
+  OUTPUT: 
+	class:	 String giving the name of the resulting class.
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	String array giving the names of all classes in od, in descending order.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

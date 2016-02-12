@@ -1,0 +1,16 @@
+;===========================================================================
+; pgs_valid
+;
+;===========================================================================
+function pgs_valid, ps
+
+ if(NOT keyword_set(ps)) then return, 0
+ if(n_elements(ps) GT 1) then return, 1 
+
+ if(NOT ptr_valid(ps.points_p)) then return, 0
+
+; if(pgs_npoints(ps) EQ 0) then return, 0 
+
+ return, 1
+end
+;===========================================================================

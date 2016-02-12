@@ -1,0 +1,41 @@
+CAS_WAC_TO_NAC
+
+
+ PURPOSE:
+	This procedure converts Cassini ISS WAC pixel locations into
+	ISS NAC pixel locations.
+
+
+ CATEGORY:
+       UTIL/CASSINI
+
+
+ CALLING SEQUENCE:
+       result = cas_wac_to_nac(points)
+
+
+ ARGUMENTS:
+  INPUT:
+       points:     Array of Position of sample (x) and line (y)
+
+
+  OUTPUT:
+       NONE 
+
+ KEYWORDS:
+
+          mark:     Mark sample,line positions
+
+
+ RETURN:
+        Array of Sample (x) and line (y) of the resulting transformation.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle 1/2000 
+       Updated by:     Haemmmerle 9/2000
+                       

@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="GLL Program Reference", $
+    "/home/joes/idl_pro/minas/config/spice/gll/*.pro", $
+    "/home/joes/idl_pro/minas/config/spice/gll/doc_gll.txt"

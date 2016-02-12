@@ -1,0 +1,68 @@
+PG_LIMB_SECTOR_LINEAR
+
+ PURPOSE:
+	Constructs a limb sector outline for use with pg_profile_image, given
+	altitude and length bounds.  The sector is rectangular, being tangent 
+	to the limb at a given azimuth.
+ 
+ CATEGORY:
+       NV/PG
+
+ CALLING SEQUENCE:
+     outline_ps = pg_limb_sector_line(cd=cd, gbx=gbx, alt, rim, az0)
+
+
+ ARGUMENTS:
+  INPUT:
+      alt:	2-elements array giving the lower and upper altitude bounds
+		for the sector.
+
+      rim:	2-element array giving the image-coordinate cylidrical coordinates
+		of the the ends of the sector.
+
+      az0:	Azimuth of the sector tangent point.
+
+  OUTPUT:
+	NONE
+
+
+
+ KEYWORDS:
+  INPUT: 
+           cd:     Camera descriptor.
+
+          gbx:     Globe descriptor giving the planet about whose limb
+                   the scan will be extracted.
+
+           gd:     Generic descriptor containig the above descriptors.
+
+       sample:     Sets the grid sampling in pixels.  Default is one.
+
+         nrim:     Total number of samples in the scan direction.  
+                   Determined by the 'sample' keyword by default.
+
+         nalt:     Total number of samples in the altitude direction.  
+                   Determined by the 'sample' keyword by default.
+
+      graphic:     If set, the sector is computed in the planetographic
+                   sense, i.e., lines of constant azimuth extend along 
+                   the local surface normal direction instead of the radial
+                   direction.
+
+
+  OUTPUT:
+             rims: Array giving azimuth at each sample.
+
+        altitudes: Array giving altitude at each sample.
+
+
+ RETURN: 
+      pg_points_struct containing points on the sector outline.  The point
+      spacing is determined by the sample keyword.  The points structure
+      also contains the user fields 'nl' and 'nw' giving the number of points 
+      in altitude and r.
+
+
+ ORIGINAL AUTHOR : 
+	Spitale; 1/2009
+

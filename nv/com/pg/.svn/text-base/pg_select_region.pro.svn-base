@@ -1,0 +1,99 @@
+;=============================================================================
+;+
+; NAME:
+;	pg_select_region
+;
+;
+; PURPOSE:
+;	Allows the user to select regions in an image using the mouse.
+;
+;
+; CATEGORY:
+;	NV/PG
+;
+;
+; CALLING SEQUENCE:
+;	region = pg_select_region(dd)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dd:	Data descriptor containing the image.
+;
+;  OUTPUT: NONE
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	noverbose: 	If set, turns off the notification that cursor
+;			movement is required.
+;
+;  OUTPUT: NONE
+;
+;
+; RETURN:
+;	Array of subscripts of all image points which lie within the selected
+;	region.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+; SEE ALSO:
+;	pg_trim
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2/1998
+;	
+;-
+;=============================================================================
+function pg_select_region, dd, color=color, $
+      select_button=select_button, cancel_button=cancel_button, $
+      end_button=end_button, noverbose=noverbose, p0=p0, autoclose=autoclose, $
+      points=_points
+
+ xsize = !d.x_size
+ ysize = !d.y_size
+ device = 1
+
+ if(keyword_set(dd)) then $
+  begin
+   image=nv_data(dd)
+   s=size(image)
+   xsize=s[1]
+   ysize=s[2]
+   device = 0
+  end
+
+ ;------------------------------------------
+ ; let user define region in device coords
+ ;------------------------------------------
+; tvcursor, /set
+ if(NOT keyword_set(noverbose)) then $
+   begin
+    nv_message, 'Use cursor and mouse buttons to select points -', $
+                 name='pg_select_region', /continue
+    nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', $
+                 name='pg_select_region', /continue
+   end
+ points = tvpath(/close, /copy, color=color, autoclose=autoclose, $
+              select_button=select_button, end_button=end_button, $
+              cancel_button=cancel_button, p0=p0, cancelled=cancelled)
+; tvcursor, /restore
+ if(cancelled) then return, [-1]
+
+ ;------------------------------------------
+ ; transform to data coords
+ ;------------------------------------------
+ if(NOT device) then points=(convert_coord(points, /device, /to_data))[0:1,*]
+ if(keyword_set(_points)) then return, points
+ 
+ xverts=transpose(points[0,*])
+ yverts=transpose(points[1,*])
+ indices=polyfillv(xverts, yverts, xsize, ysize)
+
+ return, indices
+end
+;=============================================================================

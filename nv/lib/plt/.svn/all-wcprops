@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt
+END
+plt_set_globe.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/plt_set_globe.pro
+END
+plt_init_descriptors.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/plt_init_descriptors.pro
+END
+doc_plt.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/doc_plt.pro
+END
+plt_copy_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/plt_copy_descriptor.pro
+END
+plt_globe.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/plt_globe.pro
+END
+plt_replicate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/plt_replicate.pro
+END
+plt__keywords.include
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/plt__keywords.include
+END
+planet_descriptor__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/planet_descriptor__define.pro
+END
+plt_clone_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/plt_clone_descriptor.pro
+END
+_plt_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/_plt_evolve.pro
+END
+plt_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/plt/plt_evolve.pro
+END

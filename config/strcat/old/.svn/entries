@@ -1,0 +1,41 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/config/strcat/old
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+strcat_ucact_input-old.pro
+file
+
+
+
+
+2009-10-27T16:31:08.000000Z
+69920a472a7c0c5b0059af957f865f73
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+

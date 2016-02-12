@@ -1,0 +1,89 @@
+EXTRACT_DOC_HTML
+
+
+ PURPOSE:
+	Extracts documentation headers from program files and creates
+	a text file containing a list of the procedures with a summary, 
+	and a list of all of the documentation headers.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+
+	extract_doc_html, filespec, html_fname 
+
+
+ ARGUMENTS
+  INPUT: 
+	filespec:	File specification string indicating all files
+ 			to be searched for documentation.  i.e; './*'.
+
+	html_fname:	Name of the documentation file to be created.
+
+  OUTPUT: NONE
+
+
+
+ KEYWORDS 
+  INPUT: 
+	no_summary:	If set, summaries will not be included in the output
+			file.
+
+	no_doc:		If set, only summaries will be included in the output
+			file.
+
+	delim:		If  set, a delimiting line will be placed between each
+			header in the output file.
+
+	conv_func:	Function to convert text format.  Input is array
+			of strings of text.  Returns array of new text.	
+
+	append:		If set, output will be appended to the existing file
+			instead of overwriting.
+
+	page:		If set, blank lines will be inserted such that each  
+			header starts on a new page.
+
+	type:		String indicating which documentation type to retrieve.
+			If set, only doc headers of that type will appear in the
+			output file.  Default type is ''.  If type is
+			'ALL_TYPES', then all types will be included in the
+			output.
+
+          
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ PROCEDURE:
+	For each file matching the filespec, extract_doc will attempt to
+	parse any text which lies between the symbols ";+" and ";-".  These
+	symbols are only recognized if there is nothing else on the line.
+	The routine name and purpose are treated specially, but all other text
+	is copied exactly, except that the first character on each line is
+	ignored since it is assumed to be ";".  The name and purpose are
+	extracted separately and used to create al list of routine summaries at
+	the beginning of the output.
+
+	The control symbol ";&" can be used to define documentation types, which
+	can then be filtered using the type keyword above.  Lines beginning
+	with this symbol will not appear in the output.
+
+	There is no limit to the number of documentation headers which can
+	be extracted from a program file.
+
+	doc_template.pro can be used as a template for documentation headers.
+
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/1995
+
+

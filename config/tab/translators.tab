@@ -1,0 +1,15 @@
+# instrument	input			output		keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  DEFAULT	dh_std_input		dh_std_output
+#  CTIO		eph_spice_input			-	 
+#	-       ring_input			-
+#	-  	strcat_ucact_input		-		/j2000
+#	-	station_input			-		
+
+#  SPDR		eph_spice_input			-	 
+#	-       ring_input			-
+#	-  	strcat_ucact_input		-		/j2000
+  MAP		dh_std_input		dh_std_output
+	-       station_input			-
+	-       array_input			-

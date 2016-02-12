@@ -1,0 +1,20 @@
+;===========================================================================
+; dsk_get_ap
+;
+;
+;===========================================================================
+function dsk_get_ap, dkx, frame_bd
+@nv_lib.include
+ dkd = class_extract(dkx, 'DISK')
+
+ if(NOT keyword_set(frame_bd)) then $
+             nv_message, name='dsk_get_ap', 'frame_bd required.'
+
+ ap = orb_get_ap(dkd, frame_bd)
+
+ return, ap
+end
+;===========================================================================
+
+
+

@@ -1,0 +1,16 @@
+;===========================================================================
+; map_centric_to_graphic
+;
+;===========================================================================
+function map_centric_to_graphic, mdp, map_pts0
+@nv_lib.include
+ md = nv_dereference(mdp)
+
+ ecc = map_radii_to_ecc(md.radii)
+
+ map_pts = map_pts0
+ map_pts[0,*] = centric_to_graphic(sqrt(1d - ecc^2), 1d, map_pts[0,*])
+
+ return, map_pts
+end
+;===========================================================================

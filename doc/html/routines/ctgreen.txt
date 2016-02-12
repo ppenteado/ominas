@@ -1,0 +1,16 @@
+CTGREEN
+
+ PURPOSE:
+       To allocate/return the color green.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctgreen()
+
+ RETURN:
+       The lookup table or true color value for green
+

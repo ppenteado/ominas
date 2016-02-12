@@ -1,0 +1,18 @@
+;=============================================================================
+; routine_exists
+;
+;  Returns 1 if the named procedure is found in the search path, 0 otherwise.
+;  Applies to functions instead if /fn.  Also, the routine is compiled if found.
+;
+;=============================================================================
+function routine_exists, name, fn=fn
+
+ catch, stat
+ if(stat NE 0) then return, 0
+
+ resolve_routine, name, is_fun=fn
+ catch, /cancel
+
+ return, 1
+end
+;=============================================================================

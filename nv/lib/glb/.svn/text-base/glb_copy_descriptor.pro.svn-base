@@ -1,0 +1,41 @@
+;==============================================================================
+; glb_copy_descriptor
+;
+;
+;==============================================================================
+pro _glb_copy_descriptor, gbdp_dst, gbdp_src
+ nv_notify, gbdp_src, type = 1
+ new_gbd = nv_dereference(gbdp_src)
+
+ bod_copy_descriptor, new_gbd.bd, glb_body(gbdp_src)
+
+ nv_rereference, gbdp_dst, new_gbd
+ nv_notify, gbdp_dst
+end
+;==============================================================================
+
+
+
+;==============================================================================
+; glb_copy_descriptor
+;
+;
+;==============================================================================
+pro glb_copy_descriptor, gbdp_dst, gbdp_src
+@nv_lib.include
+ nv_notify, gbdp_src, type = 1
+ gbd_src = nv_dereference(gbdp_src)
+ gbd_dst = nv_dereference(gbdp_dst)
+
+ new_gbd = gbd_src
+ new_gbd.bd = gbd_dst.bd
+
+ bod_copy_descriptor, new_gbd.bd, glb_body(gbdp_src)
+
+ nv_rereference, gbdp_dst, new_gbd
+ nv_notify, gbdp_dst
+end
+;==============================================================================
+
+
+

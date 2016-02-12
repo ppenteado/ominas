@@ -1,0 +1,33 @@
+CAT_VECTORS
+
+
+ PURPOSE:
+       To concatenate arrays of column vectors
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = cat_vectors(ps)
+
+
+ ARGUMENTS:
+  INPUT:
+       ps:     An array of vector arrays.
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Concatenated array of column vectors.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

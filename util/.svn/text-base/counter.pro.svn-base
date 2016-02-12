@@ -1,0 +1,13 @@
+;============================================================================
+; counter
+;
+;
+;============================================================================
+function counter, reset=reset
+common counter_block, count
+ if(NOT defined(count)) then count = 0 $
+ else count = count + 1
+ if(keyword_set(reset)) then count = 0
+ return, count
+end
+;============================================================================

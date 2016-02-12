@@ -1,0 +1,19 @@
+;===========================================================================
+; sub_latlon
+;
+;===========================================================================
+pro sub_latlon, gbx, v, sublat, sublon, body_pt=body_pt, graphic=graphic
+
+ if(keyword__set(graphic)) then body_pt = glb_sub_point_graphic(gbx, v)
+ body_pt = glb_sub_point(gbx, v)
+ surf_pt = glb_body_to_globe(gbx, body_pt)
+ if(keyword__set(graphic)) then surf_pt = glb_globe_to_graphic(gbx, surf_pt)
+ sublat = surf_pt[0] & sublon = surf_pt[1]
+
+ sublat = sublat
+ sublon = reduce_angle(sublon, max=!dpi)
+end
+;===========================================================================
+
+
+

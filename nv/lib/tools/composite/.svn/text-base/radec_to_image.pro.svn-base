@@ -1,0 +1,52 @@
+;=============================================================================
+;+
+; NAME:
+;       radec_to_image
+;
+;
+; PURPOSE:
+;       Transforms points in polar ra/dec coords w.r.t the inertial frame
+;	to image coords.
+;
+;
+; CATEGORY:
+;       NV/LIB/TOOLS
+;
+;
+; CALLING SEQUENCE:
+;       result = radec_to_image(cd, p)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;             cd:       Camera descriptor
+;
+;              p:       An array of radec points
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       An array of image points.
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale 3/2002
+;-
+;=============================================================================
+function radec_to_image, cd, p, body_pts=body_pts
+
+  cam_bd = class_extract(cd, 'BODY')
+
+  p_inertial = bod_radec_to_body(bod_inertial(), p)
+
+  body_pts = bod_inertial_to_body(cam_bd, p_inertial)
+
+  return, $
+     cam_focal_to_image(cd, $
+        cam_body_to_focal(cd, body_pts))
+end
+;==========================================================================

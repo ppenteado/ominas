@@ -1,0 +1,40 @@
+STR_SET_LUM
+
+
+ PURPOSE:
+	Replaces the luminosities for each given star descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	str_set_lum, sx, lum
+
+
+ ARGUMENTS:
+  INPUT: 
+	sx:	 Array (nt) of any subclass of STAR.
+
+	lum:	 Array (nt) of new luminosity values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

@@ -1,0 +1,66 @@
+CORRELATE_POINTS
+
+
+ PURPOSE:
+	Searches for offset dxy that translates a set of model points so as 
+	to obtain the maximum correlation with a set of base points.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	result = correlate_points(base_pts, model_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	base_pts:	Array (2,nbase) of points to remain stationary. 
+
+	model_pts:	Array (2,nmodel) of points to be offset.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	bin:		Initial point density bin size.  Default is 100.  See
+			procedure below.
+
+	nsamples:	Number of samples in each direction in the grid search. 
+			See image_correlate.
+
+	show:		If set, the grid search is displayed.  See
+			image_correlate.
+
+	xsize,ysize:	Dimensions of image from which points were extracted.
+
+	max_density:	Maximum model point density.  Default = 5.
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	2-element array giving the offset [dx,dy] that shifts the model points
+	so as to obtain the maxmimum correlation between the two sets of points.
+
+
+ PROCEDURE:
+	The points are fit by using image_correlate to align point-density maps
+	of the two arrays of points using a successively smaller bin size,
+	starting with that given by the 'bin' keyword.  The search grid is
+	narrowed as the bin size is reduced.  The procedure is repeated until
+	the bin size falls below one pixel.
+
+
+ STATUS:
+	Complete, but simulated annealing might be a better approach in some
+	cases.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 4/2002
+	

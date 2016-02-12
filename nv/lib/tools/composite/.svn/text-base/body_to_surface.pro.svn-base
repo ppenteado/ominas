@@ -1,0 +1,17 @@
+;===========================================================================
+; body_to_surface
+;
+;===========================================================================
+function body_to_surface, bx, p, frame_bd=frame_bd
+
+ if(NOT keyword_set(p)) then return, 0
+
+ gbd = class_extract(bx, 'GLOBE')
+ dkd = class_extract(bx, 'DISK')
+
+ if(keyword_set(gbd)) then return, glb_body_to_globe(gbd, p)
+ if(keyword_set(dkd)) then return, dsk_body_to_disk(dkd, p, frame_bd=frame_bd)
+ return, bod_body_to_radec(bx, p)
+
+end
+;===========================================================================

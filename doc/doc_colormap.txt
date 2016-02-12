@@ -1,0 +1,198 @@
+									12/05/15
+COLORMAP Program Reference
+==========================
+
+ Summary
+ -------
+  - APPLY_COLORMAP
+	Apply a colormap to an image.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+APPLY_COLORMAP
+--------------
+
+
+ PURPOSE:
+	Apply a colormap to an image.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	result = xx(xx, xx)
+	xx, xx, xx
+
+
+ ARGUMENTS:
+  INPUT:
+	xx:	xx
+
+	xx:	xx
+
+  OUTPUT:
+	xx:	xx
+
+	xx:	xx
+
+
+ KEYWORDS:
+  INPUT:
+	xx:	xx
+
+	xx:	xx
+
+  OUTPUT:
+	xx:	xx
+
+	xx:	xx
+
+
+ ENVIRONMENT VARIABLES:
+	xx:	xx
+
+	xx:	xx
+
+
+ RETURN:
+	xx
+
+
+ COMMON BLOCKS:
+	xx:	xx
+
+	xx:	xx
+
+
+ SIDE EFFECTS:
+	xx
+
+
+ RESTRICTIONS:
+	xx
+
+
+ PROCEDURE:
+	xx
+
+
+ EXAMPLE:
+	xx
+
+
+ STATUS:
+	xx
+
+
+ SEE ALSO:
+	xx, xx, xx
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 12/2002
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

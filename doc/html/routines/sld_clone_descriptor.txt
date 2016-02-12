@@ -1,0 +1,41 @@
+SLD_CLONE_DESCRIPTOR
+
+
+ PURPOSE:
+       Allocates new solid descriptors as copies of the given
+       (existing) solid descriptors.
+
+
+ CATEGORY:
+	NV/LIB/SLD
+
+
+ CALLING SEQUENCE:
+	new_sld = sld_clone_descriptor(slx)
+
+
+ ARGUMENTS:
+  INPUT:
+	slx:	 Array (nt) of any subclass of SOLID descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created solid descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

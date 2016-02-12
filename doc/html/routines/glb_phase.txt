@@ -1,0 +1,49 @@
+GLB_PHASE
+
+
+ PURPOSE:
+	Computes a phase function.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	phase = glb_phase(gbd, mu, mu0)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	 Globe descriptor.
+
+	mu:	 Cosine of the emission angle.
+
+	mu0:	 Cosine of the incidence angle.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Phase function value for the given mu and mu0 parameters.
+
+
+ PROCEDURE:
+	The function indicated by the phase_fn field of the globe descriptor
+	is called and its return value is passed through to the caller of
+	glb_phase.  
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

@@ -1,0 +1,16 @@
+##########################################################################
+# ephem.kernels
+#
+# Obtained through anonymous ftp from naif.jpl.nasa.gov
+#
+#  /pub/naif/generic_kernels/spk
+#
+##########################################################################
+
+ $NV_SPICE_NAIFKER/naif0007.tls
+ $NV_SPICE_NAIFKER/pck00007.tpc
+ $NV_SPICE_EPHEM/de405s.bsp
+ $NV_SPICE_EPHEM/jup171.bsp
+
+ /home/joe/kernels/eph/sat086.bsp
+ /home/joe/kernels/eph/de405.bsp

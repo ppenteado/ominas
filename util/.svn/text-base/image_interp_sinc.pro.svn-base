@@ -1,0 +1,138 @@
+;=============================================================================
+;+
+; NAME:
+;       image_interp_sinc
+;
+;
+; PURPOSE:
+;       Extracts a region from an image using sinc interpolation.
+;
+;
+; CATEGORY:
+;       UTIL
+;
+;
+; CALLING SEQUENCE:
+;       result = image_interp_sinc(image, grid_x, grid_y)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;        image:         An array of image point arrays.
+;
+;       grid_x:         The grid of x positions for interpolation
+;
+;       grid_y:         The grid of y positions for interpolation
+;
+;	     k:		"Half-width" of the convolution window.  The
+;			window actually covers the central pixel, plus
+;			k pixel in each direction.  Default is 3, which
+;			gives a 7x7 window.
+;
+;	fwhm:		If set, a gaussian with this half width is used for 
+;			the psf instead of caling the user-supplied function.
+;
+;  OUTPUT:
+;       NONE
+;
+;
+; KEYORDS:
+;  INPUT:
+;	psf_fn:		Name of a function to compute the psf:
+;
+;				psf_fn(psf_data, x,y)
+;
+;			where x and y are the location relative to the 
+;			center, and must accept arrays of any dimension.
+;
+;	psf_data:	Data for psf function as shown above.
+;
+;  OUTPUT:
+;       NONE
+;
+;
+; RETURN:
+;       Array of interpolated points at the (grid_x, grid_y) points.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function image_interp_sinc, image, grid_x, grid_y, k, fwhm, $
+                        psf_fn=psf_fn, psf_data=psf_data, psf_frac, kmax=kmax
+
+ if(NOT keyword_set(k)) then k = 3
+ if(NOT keyword_set(psf_frac)) then psf_frac = 0.95
+ if(NOT keyword_set(kmax)) then kmax = 2
+
+
+ ;----------------------------------------------------------------------
+ ; if using a psf function, then determine kernel width as size of box
+ ; containing some desired fraction of the psf power
+ ;----------------------------------------------------------------------
+ if(keyword_set(psf_fn)) then $
+  begin
+   if(keyword_set(psf_frac)) then $
+    begin
+     pp = call_function(psf_fn, psf_data)
+     nn = (size(pp))[1]/2
+     int = dblarr(nn)
+     for i=0, nn-1 do int[i] = total(pp[nn-i:nn+i, nn-i:nn+i])
+     k = min(where((int / total(pp)) GE psf_frac)) + 1
+    end
+  end
+
+ if(keyword_set(kmax)) then k = k<kmax
+ if(keyword_set(fwhm)) then sig = fwhm / 2.354d
+
+
+ ;----------------------------------------------------------------------
+ ; perform the interpolation
+ ;----------------------------------------------------------------------
+ s = size(image)
+
+ lgrid_x = long(grid_x)
+ lgrid_y = long(grid_y)
+
+ n = 0.
+ interp = 0
+ norm = 0
+
+ for i=-k+1, k do $
+  for j=-k+1, k do $
+   begin
+    grid_xi = lgrid_x + i
+    grid_yj = lgrid_y + j
+
+    sub = grid_xi + s[1]*grid_yj
+
+    x_xi = grid_x - grid_xi
+    y_yj = grid_y - grid_yj
+
+
+    if(keyword_set(psf_fn)) then $
+                      psf = call_function(psf_fn, psf_data, x_xi, y_yj) $
+    else psf = gauss2d(x_xi, y_yj, sig)
+
+    xsinc = sinc(x_xi)
+    ysinc = sinc(y_yj)
+
+    weight = psf*xsinc*ysinc 
+    norm = norm + weight
+
+    interp = interp + weight*image[sub]
+    n = n + 1
+   end
+
+
+ return, interp / norm
+end
+;===========================================================================
+
+

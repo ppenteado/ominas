@@ -1,0 +1,23 @@
+;===========================================================================
+; class_get_abbrev
+;
+;===========================================================================
+function class_get_abbrev, class
+
+ case strupcase(class) of
+  'CORE'	: return, 'COR'
+  'BODY' 	: return, 'BOD'
+  'MAP' 	: return, 'MAP'
+  'DISK' 	: return, 'DSK'
+  'GLOBE' 	: return, 'GLB'
+  'PLANET' 	: return, 'PLT'
+  'STAR'	: return, 'STR'
+  'RING' 	: return, 'RNG'
+  'CAMERA'	: return, 'CAM'
+ endcase
+
+end
+;===========================================================================
+
+
+

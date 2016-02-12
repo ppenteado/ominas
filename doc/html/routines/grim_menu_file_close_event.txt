@@ -1,0 +1,15 @@
+GRIM_MENU_FILE_CLOSE_EVENT
+
+
+ PURPOSE:
+	loads tie points for the current plane from a file called
+	[image name].tie_ps 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2004
+	

@@ -1,0 +1,41 @@
+CAM_CLONE_DESCRIPTOR
+
+
+ PURPOSE:
+       Allocates new camera descriptors as copies of the given
+       (existing) camera descriptors.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	new_cd = cam_clone_descriptor(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created camera descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

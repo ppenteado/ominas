@@ -1,0 +1,43 @@
+;==============================================================================
+; cam_copy_descriptor
+;
+;
+;==============================================================================
+pro _cam_copy_descriptor, cdp_dst, cdp_src
+ nv_notify, cdp_src, type = 1
+ new_cd = nv_dereference(cdp_src)
+
+ new_cd.fn_data_p = ptr_copy_recurse(new_cd.fn_data_p)
+ bod_copy_descriptor, new_cd.bd, cam_body(cdp_src)
+
+ nv_rereference, cdp_dst, new_cd
+ nv_notify, cdp_dst
+end
+;==============================================================================
+
+
+
+;==============================================================================
+; cam_copy_descriptor
+;
+;
+;==============================================================================
+pro cam_copy_descriptor, cdp_dst, cdp_src
+@nv_lib.include
+ nv_notify, cdp_src, type = 1
+ cd_src = nv_dereference(cdp_src)
+ cd_dst = nv_dereference(cdp_dst)
+
+ new_cd = cd_src
+ new_cd.bd = cd_dst.bd
+
+ new_cd.fn_data_p = ptr_copy_recurse(new_cd.fn_data_p)
+ bod_copy_descriptor, new_cd.bd, cam_body(cdp_src)
+
+ nv_rereference, cdp_dst, new_cd
+ nv_notify, cdp_dst
+end
+;==============================================================================
+
+
+

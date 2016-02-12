@@ -1,0 +1,19 @@
+;===========================================================================
+; dsk_set_lanl
+;
+;
+;===========================================================================
+pro dsk_set_lanl, dkxp, lanl
+@nv_lib.include
+ dkdp = class_extract(dkxp, 'DISK')
+ dkd = nv_dereference(dkdp)
+
+ dkd.lanl = lanl
+
+ nv_rereference, dkdp, dkd
+ nv_notify, dkdp, type = 0
+end
+;===========================================================================
+
+
+

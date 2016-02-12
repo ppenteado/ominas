@@ -1,0 +1,19 @@
+;==============================================================================
+; dsk_clone_descriptor
+;
+;
+;==============================================================================
+function dsk_clone_descriptor, dkdp
+@nv_lib.include
+ nv_notify, dkdp, type = 1
+ dkd = nv_dereference(dkdp)
+
+ new_dkd = dkd
+ new_dkd.bd = bod_clone_descriptor(dkd.bd)
+
+ new_dkdp = ptrarr(n_elements(dkd))
+ nv_rereference, new_dkdp, new_dkd
+
+ return, new_dkdp
+end
+;==============================================================================

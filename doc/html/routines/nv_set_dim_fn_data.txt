@@ -1,0 +1,45 @@
+NV_SET_DIM_FN_DATA
+
+
+ PURPOSE:
+	Replaces the dimension function data associated with a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_set_dim_fn_data, dd, dim_fn_data
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:			Data descriptor.
+
+	dim_fn_data:	New sampling function data.
+
+  OUTPUT:
+	dd:	Modified data descriptor.
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	nv_dim_fn_data
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2015
+	

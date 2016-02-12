@@ -1,0 +1,43 @@
+READ_CSV
+
+
+ PURPOSE:
+	Reads a CSV file.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	result = read_csv(filename)
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	Name of file to read
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	delim:	String giving character to use to delimit columns.
+		Defaults to ','.
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	Array (ncol, nrow) of strings.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 9/2012
+	

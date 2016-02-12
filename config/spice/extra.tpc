@@ -1,0 +1,51 @@
+---------------------
+Jupiter
+---------------------
+\begindata 
+      BODY599_REFL_FN  		=  ('PHT_REFL_MINNEART') 
+      BODY599_REFL_PARM  	=  (0.5) 
+      BODY599_ALBEDO 		=  (1.0) 
+\begintext
+
+
+---------------------
+Saturn
+---------------------
+\begindata 
+      BODY699_RREF  		=  (60330.) 
+      BODY699_REFL_FN  		=  ('PHT_REFL_MINNEART') 
+      BODY699_REFL_PARM  	=  (0.5) 
+      BODY699_ALBEDO 		=  (1.0) 
+\begintext
+
+
+---------------------
+Uranus
+---------------------
+\begindata 
+      BODY799_REFL_FN  		=  ('PHT_REFL_MINNEART') 
+      BODY799_REFL_PARM  	=  (0.5) 
+      BODY799_ALBEDO 		=  (1.0) 
+\begintext
+
+
+---------------------
+Neptune
+---------------------
+\begindata 
+      BODY899_REFL_FN  		=  ('PHT_REFL_MINNEART') 
+      BODY899_REFL_PARM  	=  (0.5) 
+      BODY899_ALBEDO 		=  (1.0) 
+\begintext
+
+
+---------------------
+Enceladus
+---------------------
+\begindata 
+      BODY602_REFL_FN  		=  ('PHT_REFL_LUNAR_LAMBERT') 
+      BODY602_REFL_PARM  	=  (0.5,0.5) 
+      BODY602_ALBEDO 		=  (0.25) 
+\begintext
+
+

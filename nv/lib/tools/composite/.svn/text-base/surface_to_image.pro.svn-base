@@ -1,0 +1,29 @@
+;=============================================================================
+; surface_to_image
+;
+;=============================================================================
+function surface_to_image, cd, bx, p, frame_bd=frame_bd, $
+                                        body_pts=body_pts, valid=valid
+
+ if(NOT keyword_set(p)) then return, 0
+
+ class = class_get(cd[0]) 
+
+ if(class EQ 'MAP') then $
+      return, map_map_to_image(cd, surface_to_map(cd, bx, p), valid=valid)
+
+
+ gbd = class_extract(bx, 'GLOBE')
+ dkd = class_extract(bx, 'DISK')
+
+ if(keyword_set(gbd)) then $
+         return, globe_to_image(cd, bx, p, body_pts=body_pts, valid=valid)
+
+ if(keyword_set(dkd)) then $
+      return, disk_to_image(cd, bx, p, frame_bd=frame_bd, body_pts=body_pts, valid=valid)
+
+ valid = lindgen(n_elements(p[0,*]))
+ return, radec_to_image(cd, p, body_pts=body_pts)
+
+end
+;==========================================================================

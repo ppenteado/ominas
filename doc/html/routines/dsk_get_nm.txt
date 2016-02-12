@@ -1,0 +1,39 @@
+DSK_GET_NM
+
+
+ PURPOSE:
+	Obtains the nm (number of radial harmonics) value from the enironment.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	nm = dsk_get_nm()
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Value for nm obtained from the DSK_NM environmet variable.  Default
+	is 4.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

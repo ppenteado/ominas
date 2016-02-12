@@ -1,0 +1,16 @@
+GRIM_MENU_VIEW_ZOOM_1_4_EVENT
+
+
+ PURPOSE:
+	Obtains the necessary descriptors through the translators and computes
+	planet stations for all active objects.  If no active objects, then 
+	all stations are computed.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2009
+	

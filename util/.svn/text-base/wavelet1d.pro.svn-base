@@ -1,0 +1,85 @@
+;=============================================================================
+; wavelet1d
+;
+;=============================================================================
+function wavelet1d, _x, w0, l=l, psi=psi, aspect=aspect, descale=descale
+
+ if(NOT keyword_set(descale)) then descale = 5d
+ if(NOT keyword_set(aspect)) then aspect = 1d
+ if(NOT keyword_set(w0)) then w0 = 2d*!dpi
+ i = dcomplex(0,1)
+nn = 3d
+nn = sqrt(2d)
+
+ n = n_elements(_x)
+ ns = n/aspect
+
+ x = dcomplex(double(_x), imaginary(_x))
+
+ ;--------------------------------------------
+ ; set up scales, translation
+ ;--------------------------------------------
+; l = dindgen(ns)+1					; wavelengths to sample
+ l = dindgen(ns)/double(ns)*double(n) + 1					; wavelengths to sample
+ l = l/descale
+ s = l*w0/2d/!dpi ## make_array(n, val=1d)		; convert to scales
+ r = dindgen(n) # make_array(ns, val=1d)
+
+
+ ;--------------------------------------------
+ ; set up morlet daughter wavelets
+ ;--------------------------------------------
+ r0 = (n-1)/2d
+ psi = sqrt(s)*sqrt(sqrt(!dpi)) * exp(i*w0*(r-r0)/s - (r-r0)^2/s^2)
+
+
+ ;--------------------------------------------
+ ; apply the transform
+ ;--------------------------------------------
+ result = complexarr(n,ns)
+ for j=0, ns-1 do $
+  begin
+   ss = s[0,j]
+   r1 = r0-nn*ss > 1
+   r2 = r0+nn*ss < n-2 > (r1+1)
+   kernel = psi[r1:r2,j]
+   hp = round((ss*descale) < (n-1) > 2)
+   if(hp GT 1) then xx = x - smooth(x, hp, /edge) $
+   else xx = x
+   result[*,j] = convol(xx, kernel, /center)
+  end
+
+ return, result
+end
+;=============================================================================
+
+
+pro test
+ n=1024d
+ yy = sin(dindgen(n)/n*2d*!dpi*100d) + $
+      sin(dindgen(n)/n*2d*!dpi*17d)
+
+ yy = sin(dindgen(n)/n*dindgen(n)) + sin(dindgen(n)/n*dindgen(n)*2d)
+ ff = wavelet1d(yy, l=l)
+ p = double(ff*conj(ff))			; power
+ phi = atan(imag(ff),real(ff))
+
+ ;-------------------------------------
+ ; resample in wavenumber space
+ ;-------------------------------------
+ kmax = 4d					; wavenumber for each s
+ k = dindgen(n)/n * kmax
+ ll = 2d*!dpi/k
+
+ mm = interpol(l, k, ll)
+
+ ii = dindgen(n)#make_array(n, val=1d)
+ jj = mm##make_array(n, val=1d)
+ pk = p[ii,jj]
+ phik = phi[ii,jj]
+
+ tvim, alog10(pk)>1, z=0.5
+end
+
+
+

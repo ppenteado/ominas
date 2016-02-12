@@ -1,0 +1,66 @@
+PGS_SET_POINTS
+
+
+ PURPOSE:
+	Set fields of a points structure.
+
+
+ CATEGORY:
+	NV/PGS
+
+
+ CALLING SEQUENCE:
+	new_ps = pgs_set_points(ps, name=name, points=points, vectors=vectors, $
+	                        flags=flags, ...)
+
+
+ ARGUMENTS:
+  INPUT:
+	ps:		Point structure whose fields are to be set.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	name:		Point structure name.
+
+	desc:		Point structure description.
+
+	input:		Description of input data.
+
+	assoc_idp:	ID pointer of associated descriptor.
+
+	points:		Array of image points; [2,np,nt].
+
+	vectors:	Array of column vectors; [np,3,nt].
+
+	flags:		Array of flags; [np,nt].
+
+	tags:		Tags for point data; [nd].  These strings may be used
+			by other programs to identify point-by-point data
+			given by the 'data' keyword.
+
+	data:		Data for each point; [nd,np,nt].
+
+	uname:		Name of a user data array.
+
+	udata:		User data to associate with uname.
+
+	
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	The returned point structure is identical to the input point structure
+	excet that the specified fields are modified.
+
+
+ SEE ALSO:
+	pgs_points
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1997
+	

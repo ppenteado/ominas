@@ -1,0 +1,3 @@
+common ct_block, _ctuser_r, _ctuser_g, _ctuser_b, _bw, _color
+if(NOT keyword_set(_bw)) then _bw = 0
+

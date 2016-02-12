@@ -1,0 +1,1048 @@
+;===============================================================================
+; grim_compute_planet_center
+;
+;===============================================================================
+function grim_compute_planet_center, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                              gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                              data=data, select=select, overwrite=overwrite, $
+                              npoints=npoints
+
+ grim_message, /clear
+
+ pds = class_extract(active_xds, 'PLANET')
+ if(NOT keyword_set(pds)) then pds = gd.pd
+ select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+; center_ps = pg_center(cd=gd.cd, bx=pds, fov=fov)
+ center_ps = pg_center(cd=gd.cd, bx=pds)
+ grim_message
+
+ return, center_ps
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_planet_center
+;
+;===============================================================================
+function grim_symsize_planet_center, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_planet_center
+;
+;===============================================================================
+function grim_shade_planet_center, data, ps
+ return, 1.0
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_limb
+;
+;===============================================================================
+function grim_compute_limb, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite, $
+                             npoints=npoints
+
+ if(keyword_set(gd.od)) then od = gd.od
+ grim_message, /clear
+
+ pds = class_extract(active_xds, 'GLOBE')
+ if(NOT keyword_set(pds)) then pds = gd.pd
+ select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+
+ npd = n_elements(pds)
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+help, od
+ limb_ps = pg_limb(cd=gd.cd, gbx=pds, od=od, fov=fov, npoints=npoints)
+ grim_message
+
+ ;--------------------------------
+ ; hide points
+ ;--------------------------------
+ 
+ if(keyword_set(gd.rd)) then $
+   pg_hide, limb_ps, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ps_disk, /cat
+ grim_message
+ if(hide) then hide_ps_disk = ptrarr(npd)
+
+ if(keyword_set(gd.sund)) then $
+     pg_hide, limb_ps, cd=gd.cd, gbx=pds, od=gd.sund, /limb, hide_ps_limb, /cat
+ grim_message
+
+ ;-------------------------------------
+ ; order points correctly
+ ;-------------------------------------
+ if(NOT keyword_set(hide_ps_disk)) then hide_ps_disk = ptr_new()
+ if(NOT keyword_set(hide_ps_limb)) then hide_ps_limb = ptr_new()
+
+ ps = [reform(limb_ps, 1,npd, /over), $
+       reform(hide_ps_limb, 1,npd, /over), $
+       reform(hide_ps_disk, 1,npd, /over)]
+
+ return, reform(ps, n_elements(ps))
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_limb
+;
+;===============================================================================
+function grim_symsize_limb, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_limb
+;
+;===============================================================================
+function grim_shade_limb, data, ps
+
+ desc = ps_desc(ps)
+ nps = n_elements(ps)
+
+ w = where(strpos(desc, 'hide_limb') NE -1)
+ ww = where(strpos(desc, 'hide_disk') NE -1)
+
+ shade = make_array(nps, val=1.0)
+ if(w[0] NE -1) then shade[w] = 0.5
+ if(ww[0] NE -1) then shade[ww] = 0.1
+
+ return, shade
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_terminator
+;
+;===============================================================================
+function grim_compute_terminator, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite, $
+                             npoints=npoints
+
+ grim_message, /clear
+
+ pds = class_extract(active_xds, 'PLANET')
+ if(NOT keyword_set(pds)) then pds = gd.pd
+ select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+
+ npd = n_elements(pds)
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+ term_ps = pg_limb(cd=gd.cd, od=gd.sund, gbx=pds, fov=fov, npoints=npoints)
+ grim_message
+
+ ;--------------------------------
+ ; hide points
+ ;--------------------------------
+ if(NOT map) then pg_hide, term_ps, cd=gd.cd, gbx=pds, /limb, hide_ps_limb, /cat
+ if(hide) then hide_ps_limb = ptrarr(npd)
+
+ if(keyword_set(gd.rd)) then $
+   pg_hide, term_ps, cd=gd.cd, gbx=pds, dkx=gd.rd, /disk, hide_ps_disk, /cat
+ grim_message
+ if(hide) then hide_ps_disk = ptrarr(npd)
+
+ ;-------------------------------------
+ ; order points correctly
+ ;-------------------------------------
+ if(NOT keyword_set(hide_ps_disk)) then hide_ps_disk = ptr_new()
+ if(NOT keyword_set(hide_ps_limb)) then hide_ps_limb = ptr_new()
+
+ ps = [reform(term_ps, 1,npd, /over), $
+       reform(hide_ps_limb, 1,npd, /over), $
+       reform(hide_ps_disk, 1,npd, /over)]
+
+ return, reform(ps, n_elements(ps))
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_terminator
+;
+;===============================================================================
+function grim_symsize_terminator, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_terminator
+;
+;===============================================================================
+function grim_shade_terminator, data, ps
+
+ desc = ps_desc(ps)
+ nps = n_elements(ps)
+
+ w = where(strpos(desc, 'hide_limb') NE -1)
+ ww = where(strpos(desc, 'hide_disk') NE -1)
+
+ shade = make_array(nps, val=1.0)
+ if(w[0] NE -1) then shade[w] = 0.5
+ if(ww[0] NE -1) then shade[ww] = 0.5
+
+ return, shade
+end
+;===============================================================================
+
+
+
+;=============================================================================
+; grim_compute_planet_grid
+;
+;=============================================================================
+function grim_compute_planet_grid, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite, $
+                             npoints=npoints
+
+ if(keyword_set(gd.od)) then od = gd.od
+ grim_message, /clear
+
+ pds = class_extract(active_xds, 'GLOBE')
+ if(NOT keyword_set(pds)) then pds = gd.pd
+ select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+
+ npd = n_elements(pds)
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+ grid_ps = pg_grid(cd=gd.cd, bx=pds, fov=fov, npoints=npoints)
+ grim_message
+
+ ;--------------------------------
+ ; hide points
+ ;--------------------------------
+ if(NOT map) then $
+  begin
+   pg_hide, grid_ps, cd=gd.cd, od=od, gbx=pds, /limb, hide_ps_limb, /cat
+   if(hide) then hide_ps_limb = ptrarr(npd)
+  end
+ grim_message
+
+ if(keyword_set(gd.rd)) then $
+   pg_hide, grid_ps, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ps_disk, /cat
+ grim_message
+ if(hide) then hide_ps_disk = ptrarr(npd)
+
+ if(keyword_set(gd.sund)) then $
+     pg_hide, grid_ps, cd=gd.cd, gbx=pds, od=gd.sund, /limb, hide_ps_term, /cat
+ grim_message
+
+ ;-------------------------------------
+ ; order points correctly
+ ;-------------------------------------
+ ps = reform(grid_ps, 1,npd, /over)
+ if(keyword_set(hide_ps_term)) then ps = [ps, reform(hide_ps_term, 1,npd, /over)]
+ if(keyword_set(hide_ps_disk)) then ps = [ps, reform(hide_ps_disk, 1,npd, /over)]
+ if(keyword_set(hide_ps_limb)) then ps = [ps, reform(hide_ps_limb, 1,npd, /over)]
+
+ return, reform(ps, n_elements(ps))
+end
+;=============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_planet_grid
+;
+;===============================================================================
+function grim_symsize_planet_grid, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_planet_grid
+;
+;===============================================================================
+function grim_shade_planet_grid, data, ps
+
+ desc = ps_desc(ps)
+ nps = n_elements(ps)
+
+ w = where(strpos(desc, 'hide_limb') NE -1)
+ ww = where(strpos(desc, 'hide_disk') NE -1)
+
+ shade = make_array(nps, val=1.0)
+ if(w[0] NE -1) then shade[w] = 0.5
+ if(ww[0] NE -1) then shade[ww] = 0.1
+
+ return, shade
+end
+;===============================================================================
+
+
+
+;=============================================================================
+; grim_compute_station
+;
+;=============================================================================
+function grim_compute_station, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite, $
+                             npoints=npoints
+
+ if(keyword_set(gd.od)) then od = gd.od
+ grim_message, /clear
+
+ ;--------------------------------------------------------
+ ; determine primary
+ ;--------------------------------------------------------
+ if(map) then primary = cor_name(gd.cd) $ 
+ else $
+  begin
+   pds = class_extract(active_xds, 'PLANET')
+   if(NOT keyword_set(pds)) then pd = gd.pd $
+   else pd = pds
+
+   primary = cor_name(pd)
+  end
+
+
+ stds = gd.std
+ if(NOT keyword_set(stds)) then return, 0
+
+ if(keyword_set(primary)) then $
+  begin
+   for i=0, n_elements(stds)-1 do $
+     if((where(stn_primary(stds[i]) EQ primary))[0] NE -1) then select = append_array(select, i, /def)
+   stds = stds[select]
+  end
+
+ nstd = n_elements(stds)
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+;;; station_ps = pg_center(cd=gd.cd, bx=stds, fov=fov)
+ station_ps = pg_station(cd=gd.cd, std=stds, bx=pd, fov=fov)
+ grim_message
+
+
+ ;--------------------------------
+ ; hide points
+ ;--------------------------------
+ if(NOT map) then $
+  begin
+   pg_hide, station_ps, cd=gd.cd, gbx=pd, /globe, hide_ps_globe, /cat, /one
+   grim_message
+   if(hide) then hide_ps_globe = ptrarr(nstd)
+  end
+ grim_message
+
+; if(keyword_set(gd.rd)) then $
+;   pg_hide, station_ps, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ps_disk, /cat, /one
+; grim_message
+; if(hide) then hide_ps_disk = ptrarr(nstd)
+
+ idp_each = nv_extract_idp(stds)
+
+
+ ;-------------------------------------
+ ; order points correctly
+ ;-------------------------------------
+ ps = reform(station_ps, 1,nstd, /over)
+ if(keyword_set(hide_ps_globe)) then ps = [ps, reform(hide_ps_globe, 1,nstd, /over)]
+ if(keyword_set(hide_ps_disk)) then ps = [ps, reform(hide_ps_disk, 1,nstd, /over)]
+
+ return, reform(ps, n_elements(ps))
+end
+;=============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_station
+;
+;===============================================================================
+function grim_symsize_station, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_station
+;
+;===============================================================================
+function grim_shade_station, data, ps
+ return, 1.0
+end
+;===============================================================================
+
+
+
+;=============================================================================
+; grim_compute_array
+;
+;=============================================================================
+function grim_compute_array, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite, $
+                             npoints=npoints
+
+ if(keyword_set(gd.od)) then od = gd.od
+ grim_message, /clear
+
+ ;--------------------------------------------------------
+ ; determine primary
+ ;--------------------------------------------------------
+ if(map) then primary = cor_name(gd.cd) $ 
+ else $
+  begin
+   pds = class_extract(active_xds, 'PLANET')
+   if(NOT keyword_set(pds)) then pd = gd.pd $
+   else pd = pds
+
+   primary = cor_name(pd)
+  end
+
+ ards = gd.ard
+ if(NOT keyword_set(ards)) then return, 0
+
+ if(keyword_set(primary)) then $
+  begin
+   for i=0, n_elements(ards)-1 do $
+     if((where(arr_primary(ards[i]) EQ primary))[0] NE -1) then select = append_array(select, i, /def)
+   ards = ards[select]
+  end
+
+ nard = n_elements(ards)
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+ array_ps = pg_array(cd=gd.cd, ard=ards, bx=pd, fov=fov)
+ grim_message
+
+
+ ;--------------------------------
+ ; hide points
+ ;--------------------------------
+ if(NOT map) then $
+  begin
+   pg_hide, array_ps, cd=gd.cd, gbx=pd, /globe, hide_ps_globe, /cat, /one
+   grim_message
+   if(hide) then hide_ps_globe = ptrarr(nard)
+  end
+ grim_message
+
+; if(keyword_set(gd.rd)) then $
+;   pg_hide, array_ps, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ps_disk, /cat, /one
+; grim_message
+; if(hide) then hide_ps_disk = ptrarr(npd)
+
+ idp_each = nv_extract_idp(ards)
+
+
+ ;-------------------------------------
+ ; order points correctly
+ ;-------------------------------------
+ ps = reform(array_ps, 1,nard, /over)
+ if(keyword_set(hide_ps_globe)) then ps = [ps, reform(hide_ps_globe, 1,nard, /over)]
+ if(keyword_set(hide_ps_disk)) then ps = [ps, reform(hide_ps_disk, 1,nard, /over)]
+
+ return, reform(ps, n_elements(ps))
+end
+;=============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_array
+;
+;===============================================================================
+function grim_symsize_array, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_array
+;
+;===============================================================================
+function grim_shade_array, data, ps
+ return, 1.0
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_star
+;
+;===============================================================================
+function grim_compute_star, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                            gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                            data=data, select=select, overwrite=overwrite, $
+                            npoints=npoints
+
+ grim_message, /clear
+
+ nsd = n_elements(gd.sd)
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+ if(NOT keyword_set(gd.sd)) then return, 0
+ star_ps = pg_center(cd=gd.cd, bx=gd.sd, fov=fov)
+ grim_message
+
+ ;--------------------------------
+ ; hide points
+ ;--------------------------------
+;;;; if(keyword__set(gd.rd)) then $
+;;;;                  pg_hide, star_ps, cd=gd.cd, dkx=gd.rd, gbx=gd.pd, /disk
+;;;; grim_message
+
+;;;; if(keyword_set(gd.pd)) then pg_hide, star_ps, cd=gd.cd, gbx=gd.pd, /globe, hide_ps_globe, /cat
+;;;; grim_message
+
+ if(hide) then hide_ps_globe = ptrarr(nsd)
+
+
+ ;--------------------------------
+ ; store some data
+ ;--------------------------------
+ if(keyword_set(data)) then _data = data $
+ else _data = {__str_data, name_p:ptr_new(0), mag_p:ptr_new(0)}
+ 
+ *_data.name_p = cor_name(gd.sd)
+ *_data.mag_p = str_get_mag(gd.sd)
+ data = _data
+
+
+ ;-------------------------------------
+ ; order points correctly
+ ;-------------------------------------
+ if(NOT keyword_set(hide_ps_globe)) then hide_ps_globe = ptr_new()
+
+ ps = [reform(star_ps, 1,nsd, /over), $
+       reform(hide_ps_globe, 1,nsd, /over)]
+
+ return, reform(ps, n_elements(ps))
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_star
+;
+;===============================================================================
+function grim_symsize_star, data
+ max = max(*data.mag_p) + 2
+ return, (max - *data.mag_p) / max
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_star
+;
+;===============================================================================
+function grim_shade_star, data, ps
+ max = max(*data.mag_p) + 2
+ return, (max - *data.mag_p) / max
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_shadow
+;
+;===============================================================================
+function grim_compute_shadow, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                     gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                     data=data, select=select, overwrite=overwrite, $
+                     npoints=npoints
+
+ if(map) then return, 0
+ if(NOT keyword__set(active_ps)) then return, 0
+
+
+ grim_message, /clear
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+ shadow_ps = pg_shadow(active_ps, $
+                         cd=gd.cd, od=gd.sund, dkx=gd.rd, gbx=gd.pd, fov=fov)
+ nshad = n_elements(shadow_ps)
+ grim_message
+
+ ;--------------------------------
+ ; hide points
+ ;--------------------------------
+ pg_hide, shadow_ps, cd=gd.cd, gbx=gd.pd, dkx=gd.rd, /disk, /globe, hide_ps, /cat
+ grim_message
+ if(hide) then hide_ps = ptrarr(nshad)
+
+;stop
+;;; idp_each = nv_extract_idp(active_ps)
+;; idp_each = nv_extract_idp(active_xds)
+; idp_each = ptrarr(nshad)
+; for i=0, nshad-1 do idp_each[i] = nv_extract_idp(active_xds[i])
+
+ ;-------------------------------------------------------------------
+ ; note we don't care about dimensions because shadows are not
+ ; associated with any objects and they are replaced each time
+ ; they are recomputed
+ ;-------------------------------------------------------------------
+ return, [shadow_ps, hide_ps]
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_shadow
+;
+;===============================================================================
+function grim_symsize_shadow, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_shadow
+;
+;===============================================================================
+function grim_shade_shadow, data, ps
+ return, 1.0
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_ring
+;
+;===============================================================================
+function grim_compute_ring, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite, $
+                             npoints=npoints
+
+ grim_message, /clear
+
+ ;--------------------------------------------------------
+ ; if no active planet, then try to determine primary
+ ;--------------------------------------------------------
+ pds = class_extract(active_xds, 'PLANET')
+; if(NOT keyword_set(pds)) then pd = get_primary(gd.cd, gd.pd) $
+; else pd = (get_primary(gd.cd, pds))[0]
+ if(NOT keyword_set(pds)) then pd = gd.pd $
+ else pd = pds
+
+ overwrite = 1
+ nrd = n_elements(gd.rd)
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+ ring_ps = pg_disk(cd=gd.cd, dkx=gd.rd, gbx=pd, fov=fov, npoints=npoints)
+ grim_message
+
+ pg_hide, ring_ps, cd=gd.cd, gbx=gd.pd, /globe, hide_ps_globe, /cat
+ grim_message
+ if(hide) then hide_ps_globe = ptrarr(2*nrd)
+
+ pg_hide, ring_ps, cd=gd.cd, od=gd.sund, gbx=gd.pd, /globe, hide_ps_shad, /cat
+ grim_message
+
+
+ ;-------------------------------------
+ ; order points correctly
+ ;-------------------------------------
+ if(NOT keyword_set(ps_valid(ring_ps))) then return, 0
+
+ ps = reform(ring_ps, 2,nrd, /over)
+ if(keyword_set(hide_ps_shad)) then $
+               ps = append_array(ps, reform(hide_ps_shad, 2,nrd, /over))
+ if(keyword_set(hide_ps_globe)) then $
+               ps = append_array(ps, reform(hide_ps_globe, 2,nrd, /over))
+
+ return, reform(ps, n_elements(ps))
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_ring
+;
+;===============================================================================
+function grim_symsize_ring, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_ring
+;
+;===============================================================================
+function grim_shade_ring, data, ps
+
+ desc = ps_desc(ps)
+ nps = n_elements(ps)
+
+ w = where(strpos(desc, 'hide_globe') NE -1)
+
+ shade = make_array(nps, val=1.0)
+ if(w[0] NE -1) then shade[w] = 0.5
+
+ return, shade
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_ring_grid
+;
+;===============================================================================
+function grim_compute_ring_grid, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite, $
+                             npoints=npoints
+
+ grim_message, /clear
+
+ ;--------------------------------------------------------
+ ; if no active planet, then try to determine primary
+ ;--------------------------------------------------------
+ rds = class_extract(active_xds, 'RING')
+ if(NOT keyword_set(rds)) then rds = gd.rd
+ select = nwhere(nv_extract_idp(gd.rd), nv_extract_idp(rds))
+
+ nrd = n_elements(rds)
+
+ ;--------------------------------
+ ; compute points
+ ;--------------------------------
+ grid_ps = pg_grid(cd=gd.cd, frame_bd=get_primary(gd.cd, gd.pd, rx=rds), bx=rds, fov=fov, npoints=npoints)
+ grim_message
+
+ pg_hide, grid_ps, cd=gd.cd, gbx=gd.pd, /globe, hide_ps_globe, /cat
+ grim_message
+ if(hide) then hide_ps_globe = ptrarr(nrd)
+
+ pg_hide, grid_ps, cd=gd.cd, od=gd.sund, gbx=gd.pd, /globe, hide_ps_shad, /cat
+ grim_message
+
+
+ ;-------------------------------------
+ ; order points correctly
+ ;-------------------------------------
+ if(NOT keyword_set(hide_ps_shad)) then hide_ps_shad = ptr_new()
+ if(NOT keyword_set(hide_ps_globe)) then hide_ps_globe = ptr_new()
+
+ ps = [reform(grid_ps, 1,nrd, /over), $
+       reform(hide_ps_shad, 1,nrd, /over), $
+       reform(hide_ps_globe, 1,nrd, /over)]
+
+ return, reform(ps, n_elements(ps))
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_ring_grid
+;
+;===============================================================================
+function grim_symsize_ring_grid, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_ring_grid
+;
+;===============================================================================
+function grim_shade_ring_grid, data, ps
+
+ desc = ps_desc(ps)
+ nps = n_elements(ps)
+
+ w = where(strpos(desc, 'hide_globe') NE -1)
+
+ shade = make_array(nps, val=1.0)
+ if(w[0] NE -1) then shade[w] = 0.5
+
+ return, shade
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_limb_fill
+;
+;===============================================================================
+function grim_compute_limb_fill, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite
+
+ if(keyword__set(gd.od)) then od = gd.od
+ grim_message, /clear
+
+ pds = class_extract(active_xds, 'PLANET')
+ if(NOT keyword__set(pds)) then pds = gd.pd
+ select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+
+ ;--------------------------------
+ ; limb points
+ ;--------------------------------
+ limb_ps = pg_limb(cd=gd.cd, gbx=pds, od=od, fov=fov)
+ grim_message
+
+ if(keyword__set(gd.rd)) then $
+        pg_hide, limb_ps, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ps_disk, /cat
+ grim_message
+ if(keyword_set(gd.sund)) then $
+     pg_hide, limb_ps, cd=gd.cd, gbx=pds, od=gd.sund, /limb, hide_ps_limb, /cat
+ grim_message
+
+
+ ;--------------------------------
+ ; term points
+ ;--------------------------------
+ term_ps = pg_limb(cd=gd.cd, od=gd.sund, gbx=pds, fov=fov)
+ grim_message
+
+ pg_hide, term_ps, cd=gd.cd, gbx=pds, /limb, hide_ps_term, /cat
+; if(keyword__set(gd.rd)) then $
+;      pg_hide, term_ps, cd=gd.cd, gbx=pds, dkx=gd.rd, /disk, hide_ps_disk, /cat
+ grim_message
+
+
+ ;--------------------------------
+ ; concatenate points
+ ;--------------------------------
+ n = n_elements(limb_ps)
+ fill_ps_lit = ptrarr(n)
+ fill_ps_unlit = ptrarr(n)
+ fill_ps = ptrarr(2, n)
+
+ for i=0, n-1 do $
+  begin
+   fill_ps_lit[i] = ps_compress([limb_ps[i], term_ps[i]])
+   fill_ps_unlit[i] = ps_compress([hide_ps_limb[i], term_ps[i]])
+   name = ps_name(limb_ps[i])
+
+   ps_set_desc, fill_ps_lit[i], 'limb_fill_lit'
+   ps_set_name, fill_ps_lit[i], name
+
+   ps_set_desc, fill_ps_unlit[i], 'limb_fill_unlit'
+   ps_set_name, fill_ps_unlit[i], name
+
+   ps_poly_rectify, fill_ps_unlit[i]
+   ps_poly_rectify, fill_ps_lit[i]
+
+   fill_ps[*,i] = [fill_ps_unlit[i], fill_ps_lit[i]]
+  end
+
+ return, fill_ps
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_limb_fill
+;
+;===============================================================================
+function grim_symsize_limb_fill, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_limb_fill
+;
+;===============================================================================
+function grim_shade_limb_fill, data, ps
+
+ desc = ps_desc(ps)
+ nps = n_elements(ps)
+
+ w = where(strpos(desc, 'unlit') NE -1)
+
+ shade = make_array(nps, val=0.7)
+ if(w[0] NE -1) then shade[w] = 0.2
+
+ return, shade
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_ring_fill
+;
+;===============================================================================
+function grim_compute_ring_fill, map=map, fov=fov, hide=hide, idp_each=idp_each, $
+                             gd=gd, active_xds=active_xds, active_ps=active_ps, $
+                             data=data, select=select, overwrite=overwrite
+
+ if(keyword__set(gd.od)) then od = gd.od
+ grim_message, /clear
+
+ pds = class_extract(active_xds, 'PLANET')
+ if(NOT keyword_set(pds)) then pd = gd.pd $
+ else pd = pds
+
+ ;--------------------------------
+ ; ring points
+ ;--------------------------------
+ ring_ps = pg_disk(cd=gd.cd, dkx=gd.rd, gbx=pd, fov=fov)
+ grim_message
+
+ ;- - - - - - - - - - - - - -
+ ; hide wrt planets
+ ;- - - - - - - - - - - - - -
+ ppd = get_primary(gd.cd, pd)
+ pg_hide, ring_ps, cd=gd.cd, gbx=ppd, /globe, hide_ps_globe, /cat
+ grim_message
+
+ limb_ps = pg_limb(cd=gd.cd, gbx=ppd, od=gd.cd, fov=fov)
+ r = ps_vectors(limb_ps)
+ np = n_elements(r)/3
+ v = bod_pos(gd.cd) ## make_array(np, val=1d)
+
+ n = n_elements(gd.rd)
+
+ ring_ps = reform(ring_ps, 2, n, /over)
+ fill_ps_lit = ptrarr(n)
+; fill_ps_unlit = ptrarr(n)
+; fill_ps = ptrarr(2, n)
+ fill_ps = ptrarr(1, n)
+
+ for i=0, n-1 do $
+  begin
+   ps = ring_ps[*,i]
+
+
+;grim ~/casIss/1542/N1542749329_1.IMG
+;if(cor_name(gd.rd[i]) EQ 'D_RING') then stop
+;   rr = bod_inertial_to_body_pos(gd.rd[i], r)
+;   vv = bod_inertial_to_body_pos(gd.rd[i], v)
+;   pp = dsk_intersect(gd.rd[i], vv, rr-vv, hit=hit, frame=ppd)
+;   if(hit[0] NE -1) then $
+;      ps = append_array(ps, $
+;        ps_init(p=body_to_image_pos(gd.cd, gd.rd[i], pp[hit,*]), v=pp[hit,*]))
+
+   rr = bod_inertial_to_body_pos(gd.rd[i], r)
+   vv = bod_inertial_to_body_pos(gd.rd[i], v)
+   ii = dsk_hide_points(/invert, gd.rd[i], vv, rr, frame=ppd)
+   if(ii[0] NE -1) then $
+      ps = append_array(ps, $
+           ps_init(p=body_to_image_pos(gd.cd, gd.rd[i], rr[ii,*]), v=rr[ii,*]))
+
+
+
+   fill_ps_lit[i] = ps_compress(ps)
+
+   ps_set_name, ring_ps[i], name
+   ps_set_desc, fill_ps_lit[i], 'ring_fill_lit'
+   ps_set_name, fill_ps_lit[i], name
+
+   ps_poly_rectify, fill_ps_lit[i]
+
+;   fill_ps[*,i] = [fill_ps_unlit[i], fill_ps_lit[i]]
+   fill_ps[*,i] = [fill_ps_lit[i]]
+  end
+
+
+; pg_hide, ring_ps, cd=gd.cd, od=gd.sund, gbx=gd.pd, /globe, hide_ps_shad, /cat
+; grim_message
+
+
+ return, fill_ps
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_symsize_ring_fill
+;
+;===============================================================================
+function grim_symsize_ring_fill, data
+ return, -1
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_shade_ring_fill
+;
+;===============================================================================
+function grim_shade_ring_fill, data, ps
+
+ desc = ps_desc(ps)
+ nps = n_elements(ps)
+
+ w = where(strpos(desc, 'unlit') NE -1)
+
+ shade = make_array(nps, val=0.7)
+ if(w[0] NE -1) then shade[w] = 0.2
+
+ return, shade
+end
+;===============================================================================
+
+
+
+

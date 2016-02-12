@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="BITMAPS Program Reference", $
+    "/home/joes/idl_pro/minas/nv/gr/bitmaps/*.pro", $
+    "/home/joes/idl_pro/minas/nv/gr/bitmaps/doc_bitmaps.txt"

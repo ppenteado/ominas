@@ -1,0 +1,2 @@
+mem0 = get_mem()
+print, mem0 - mem

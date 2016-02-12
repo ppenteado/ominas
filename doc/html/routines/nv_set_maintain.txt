@@ -1,0 +1,41 @@
+NV_SET_MAINTAIN
+
+
+ PURPOSE:
+	Replaces the maintain flag in a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_set_maintain, dd, maintain
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	maintain:	New maintain flag.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

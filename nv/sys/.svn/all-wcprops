@@ -1,0 +1,479 @@
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/minas/!svn/ver/2/trunk/nv/sys
+END
+nv_set_ndd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_ndd.pro
+END
+nv_free.pro
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_free.pro
+END
+nv_id_string.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_id_string.pro
+END
+nv_parse_keyval.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_parse_keyval.pro
+END
+nv_rereference.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_rereference.pro
+END
+nv_write.pro
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_write.pro
+END
+nv_state_struct__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_state_struct__define.pro
+END
+nv_manage_dd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_manage_dd.pro
+END
+nv_set_nhist.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_nhist.pro
+END
+nv_set_sibling.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_sibling.pro
+END
+nv_init_state.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_init_state.pro
+END
+nv_undo.pro
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_undo.pro
+END
+nv_suspend_events.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_suspend_events.pro
+END
+nv_load_data.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_load_data.pro
+END
+nv_notify.pro
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_notify.pro
+END
+nv_parse_keyvals.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_parse_keyvals.pro
+END
+nv_set_udata.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_udata.pro
+END
+nv_add_transient_keyvals.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_add_transient_keyvals.pro
+END
+nv_override.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_override.pro
+END
+nv_compress_events.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_compress_events.pro
+END
+nv_filetype.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_filetype.pro
+END
+nv_flush.pro
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_flush.pro
+END
+nv_update.pro
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_update.pro
+END
+nv_message.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_message.pro
+END
+nv_nhist.pro
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_nhist.pro
+END
+nv_lookup_transforms.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_lookup_transforms.pro
+END
+nv_header.pro
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_header.pro
+END
+nv_match.pro
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_match.pro
+END
+nv_udata.pro
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_udata.pro
+END
+nv_read_config.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_read_config.pro
+END
+nv_detect_instrument.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_detect_instrument.pro
+END
+nv_init_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_init_descriptor.pro
+END
+nv.include
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv.include
+END
+keyval_struct__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/sys/keyval_struct__define.pro
+END
+nv_extract_idp.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_extract_idp.pro
+END
+nv_copy_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_copy_descriptor.pro
+END
+nv_unload_data.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_unload_data.pro
+END
+nv_read.pro
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_read.pro
+END
+data_descriptor__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/sys/data_descriptor__define.pro
+END
+nv_get_sn.pro
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_get_sn.pro
+END
+nv_notify_unregister.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_notify_unregister.pro
+END
+nv_notify_list_struct__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_notify_list_struct__define.pro
+END
+tr_keyword_value.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/sys/tr_keyword_value.pro
+END
+nv_reset.pro
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_reset.pro
+END
+nv_resume_events.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_resume_events.pro
+END
+nv_compress.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_compress.pro
+END
+nv_clone_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_clone_descriptor.pro
+END
+nv_free_udata.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_free_udata.pro
+END
+nv_parse_transient_keyvals.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_parse_transient_keyvals.pro
+END
+doc_sys.pro
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/minas/!svn/ver/2/trunk/nv/sys/doc_sys.pro
+END
+nv_lookup_io.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_lookup_io.pro
+END
+nv_lookup_translators.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_lookup_translators.pro
+END
+nv_ndd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_ndd.pro
+END
+nv_set_compress.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_compress.pro
+END
+nv_replicate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_replicate.pro
+END
+nv_data.pro
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_data.pro
+END
+nv_detect_filetype.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_detect_filetype.pro
+END
+nv_extract_sn.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_extract_sn.pro
+END
+nv_notify_block.common
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_notify_block.common
+END
+nv_get_value.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_get_value.pro
+END
+nv_block.common
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_block.common
+END
+nv_set_data.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_data.pro
+END
+nv_test_dd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_test_dd.pro
+END
+nv_sibling.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_sibling.pro
+END
+nv_help.pro
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_help.pro
+END
+nv_set_id_string.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_id_string.pro
+END
+nv_set_update.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_update.pro
+END
+nv_valid_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_valid_descriptor.pro
+END
+nv_event_struct__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_event_struct__define.pro
+END
+nv_compress_data_mask.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_compress_data_mask.pro
+END
+nv_maintain.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_maintain.pro
+END
+nv_uncompress_data_mask.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_uncompress_data_mask.pro
+END
+nv_set_header.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_header.pro
+END
+nv_put_value.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_put_value.pro
+END
+nv_dereference.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_dereference.pro
+END
+nv_instrument.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_instrument.pro
+END
+nv_dim.pro
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_dim.pro
+END
+nv_set_maintain.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_set_maintain.pro
+END
+nv_notify_register.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/sys/nv_notify_register.pro
+END

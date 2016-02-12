@@ -1,0 +1,14 @@
+;=============================================================================
+; rowgen
+;
+; Generates an array of subscripts to select only the desired row n-vectors
+; from an array with dimensions n x nv x nt.  w is a 1-d array of nw subscripts
+; selecting from the (nv x nt) row vectors.  The resulting array has
+; dimensions n x nw.
+;
+;=============================================================================
+function rowgen, n, nv, nt, w
+ nw = n_elements(w)
+ ww = (n*w)##make_array(n,val=1l) + lindgen(n)#make_array(nw,val=1l)
+end
+;=============================================================================

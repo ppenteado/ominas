@@ -1,0 +1,19 @@
+;===========================================================================
+; dsk_set_lpm
+;
+;
+;===========================================================================
+pro dsk_set_lpm, dkxp, lpm
+@nv_lib.include
+ dkdp = class_extract(dkxp, 'DISK')
+ dkd = nv_dereference(dkdp)
+
+ dkd.lpm = lpm
+
+ nv_rereference, dkdp, dkd
+ nv_notify, dkdp, type = 0
+end
+;===========================================================================
+
+
+

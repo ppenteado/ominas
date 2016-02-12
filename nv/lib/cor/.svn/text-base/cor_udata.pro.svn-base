@@ -1,0 +1,37 @@
+;=============================================================================
+; cor_udata
+;
+;  If multiple descriptors, the trailing dimension represents each each
+;  descriptor.
+;
+;=============================================================================
+function cor_udata, crxp, name
+@nv_lib.include
+ crdp = class_extract(crxp, 'CORE')
+ nv_notify, crdp, type = 1
+ crd = nv_dereference(crdp)
+
+ n = n_elements(crd)
+
+ ;----------------------------
+ ; if only one crd
+ ;----------------------------
+ if(n EQ 1) then return, tag_list_get(crd.udata_tlp, name)
+
+ ;----------------------------
+ ; if more than one crd
+ ;----------------------------
+ xx = tag_list_get(crd[0].udata_tlp, name, index=index)
+ dim = size([xx], /dim)
+ xdim = prod(dim, 0)
+ type = size(xx, /type)
+
+ result = tr(reform([xx], xdim, /over))
+ for i=1, n-1 do $
+      result = [result, $
+        tr(reform([tag_list_get(crd[i].udata_tlp, index=index)], xdim, /over))]
+ result = reform(tr(result), [dim, n], /over)
+
+ return, result
+end
+;=============================================================================

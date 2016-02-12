@@ -1,0 +1,55 @@
+;===========================================================================
+; nv_detect_filetype.pro
+;
+;===========================================================================
+function nv_detect_filetype, filename, silent=silent, default=default, all=all, action=action
+@nv_block.common
+@nv.include
+
+
+ ;=====================================================
+ ; read the filetype table if it doesn't exist
+ ;=====================================================
+ if(NOT keyword_set(*nv_state.ftp_table_p)) then $
+   nv_read_config, 'NV_FTP_DETECT', $
+              nv_state.ftp_table_p, nv_state.ftp_detectors_filenames_p
+ table = *nv_state.ftp_table_p
+ actions = strupcase(table[*,2])
+
+ ;=====================================================
+ ; default type is the first entry that is not ignored
+ ;=====================================================
+ if(keyword_set(default)) then $
+  begin
+   w = where(actions NE 'IGNORE')
+   if(w[0] EQ -1) then return, ''
+   return, table[w[0],1] 
+  end
+
+
+ ;=====================================================
+ ; /all means just return all filetypes
+ ;=====================================================
+ if(keyword_set(all)) then return, table[*,1] 
+
+
+ ;=====================================================
+ ; call filetype detectors until true is returned
+ ;=====================================================
+ s = size(table)
+ n_ftp = s[1]
+ for i=0, n_ftp-1 do $
+  begin
+   detect_fn = table[i,0]
+   if(call_function(detect_fn, filename)) then $
+    begin
+     filetype = table[i,1]
+     action = actions[i]
+     return, filetype
+    end
+  end
+
+
+ return, ''
+end
+;===========================================================================

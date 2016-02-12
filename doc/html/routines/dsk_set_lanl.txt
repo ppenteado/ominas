@@ -1,0 +1,40 @@
+DSK_SET_LANL
+
+
+ PURPOSE:
+	Replaces lanl in each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	dsk_set_lanl, bx, lanl
+
+
+ ARGUMENTS:
+  INPUT: 
+	dkx:	 Array (nt) of any subclass of DISK.
+
+	lanl:	 New lanl value.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

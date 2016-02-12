@@ -1,0 +1,44 @@
+IMAGE_NORTHANGLE
+
+
+ PURPOSE:
+	Computes the image azimuth (see image_azimuth.pro) of the north 
+	direction on the surface of the given body at the specified pixel 
+	location p.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       result = image_northangle(cd, gbx, p)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	gbx:	Any subclass of GLOBE.
+
+	p:	Array (2) giving the image point.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indicates whether the result has a solution.  -1 if no
+		solution, 1 otherwise.
+
+
+ RETURN:
+       Angle in radians.
+
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="PF Program Reference", $
+    "/home/joe/idl_pro/minas/config/pf/*.pro", $
+    "/home/joe/idl_pro/minas/config/pf/doc_pf.txt"

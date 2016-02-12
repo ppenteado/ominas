@@ -1,0 +1,59 @@
+PG_BAD_DATA
+
+
+ PURPOSE:
+	Locates areas of bad data values like saturation and dropouts.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_bad_data(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor containing the image to be despiked.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	dropout:	Value to use for dropouts.  Default is 0
+
+	sat:		If given, value above which to flag as saturated, 
+			inclusive.
+
+	mask:		Byte image of the same size as the input image
+			in which nonzero pixel values indicate locations
+			where problems should not be flagged.
+
+	extend:		Number of pixels away from masked pixels before
+			locations may be flagged as spikes.
+
+	edge:		Regions closer than this to the edge of the image
+			will be ignored.  Default is 0.
+
+  OUTPUT:
+	subscripts:	Subscript of each bad point.
+
+
+ RETURN:
+	pg_points_struct containing the detected bad points.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pg_spikes
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2013
+	

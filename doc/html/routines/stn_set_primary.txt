@@ -1,0 +1,40 @@
+STN_SET_PRIMARY
+
+
+ PURPOSE:
+	Replaces the primary string in each given station descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STN
+
+
+ CALLING SEQUENCE:
+	stn_set_primary, std, primary
+
+
+ ARGUMENTS:
+  INPUT: 
+	std:	Array (nt) of STATION descriptors.
+
+	primary:	Array (nt) of primary strings.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

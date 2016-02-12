@@ -1,0 +1,15 @@
+GRIM_MENU_MOSAIC_EVENT
+
+
+ PURPOSE:
+	Writes user points for all planes to files called
+	[image name].user_ps 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2004
+	

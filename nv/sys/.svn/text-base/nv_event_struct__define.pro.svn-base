@@ -1,0 +1,26 @@
+;===========================================================================
+; nv_event_struct__define
+;
+;
+;===========================================================================
+pro nv_event_struct__define
+
+ struct = $
+    { nv_event_struct, $
+	idp :		ptr_new(), $	; id pointer.
+	xd:		ptr_new(), $	; Affected descriptor.
+	handler:	'', $		; Event handler procedure.
+	data_p :	ptr_new(), $	; Pointer to associated user data.
+	data:		0d, $		; Scalar user data.
+	desc :		'', $		; Event description
+	type :		0 $		; Type of event:
+					;  0 - set value
+					;  1 - get value
+    }
+
+
+end
+;===========================================================================
+
+
+

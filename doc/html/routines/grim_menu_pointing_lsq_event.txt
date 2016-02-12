@@ -1,0 +1,15 @@
+GRIM_MENU_POINTING_LSQ_EVENT
+
+
+ PURPOSE:
+	Loads user points for all planes from files called
+	[image name].user_ps 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2004
+	

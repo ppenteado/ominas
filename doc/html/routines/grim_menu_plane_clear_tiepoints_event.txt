@@ -1,0 +1,14 @@
+GRIM_MENU_PLANE_CLEAR_TIEPOINTS_EVENT
+
+
+ PURPOSE:
+	Averages all planes.  Not implemented.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2004
+	

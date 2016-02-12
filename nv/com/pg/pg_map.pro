@@ -1,0 +1,287 @@
+;=============================================================================
+;+
+; NAME:
+;	pg_map
+;
+;
+; PURPOSE:
+;	Generates map projections.
+;
+;
+; CATEGORY:
+;	NV/PG
+;
+;
+; CALLING SEQUENCE:
+;	result = pg_map(dd, md=md, cd=cd, gbx=gbx, sund=sund)
+;	result = pg_map(dd, gd=gd)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dd:	Data descriptor containing image to be projected.
+;
+; KEYWORDS:
+;  INPUT:
+;	md:	Map descriptor describing the projection.
+;
+;	cd:	Camera descriptor describing the image to be projected.
+;
+;	bx:	Subclass of BODY giving the body to be projected.  Can be
+;		GLOBE or RING.  Only bodies whose names match that in the
+;		map descriptor are mapped.
+;
+;	gbx:	Globe descriptor describing the body to be projected.  
+;		This argument is kept for compatibility with earlier
+;		code.  It is recommended that you use the 'bx' argument
+;		instead.
+;
+;	dkx:	Disk descriptor describing the body to be projected.  
+;		This argument is kept for compatibility with earlier
+;		code.  It is recommended that you use the 'bx' argument
+;		instead.
+;
+;	sund:	Star descriptor for the sun.  If given, points behind the
+;		terminator are excluded.
+;
+;	gd:	Generic descriptor.  If given, the above descriptor inputs 
+;		are taken from the corresponding fields of this structure
+;		instead of from those keywords.
+;
+;	hide_fn:	String giving the name of a function whose purpose
+;			is to exclude hidden points from the map.  The only
+;			function currently packaged is 'pm_hide_ring', which
+;			takes a ring descriptor as data (see next keyword).
+;
+;	hide_data_p:	Pointer to data for the hide function.
+;
+;	aux_names:	Array (naux) giving udata names for additional data
+;			descriptor planes to reproject.  The dimensions of these
+;			planes must be the same as the image. 
+;
+;	pc_xsize, pc_ysize:	The map is generated in pieces of size pc_xsize
+;				x pc_ysize.   Default is 100 x 100 pixels.
+;
+;	bounds:		Projection bounds specified as [lat0, lat1, lon0, lon1].
+;
+;	edge:	Minimum proximity to image edge.  Default is 0.
+;
+;	roi:	Subscripts in the output map specifying the map region
+;		to project, instead of the whole thing.
+;
+;	interp:	Type of interpolation, see image_interp_cam.
+;
+;	arg_interp:	Interpolation argument, see image_interp_cam.
+;
+;	offset:	Offset in [lat,lon] to apply to map coordinates before 
+;		projecting.
+;
+;	smooth:	If set, the input image is smoothed before reprojection.
+;
+;	test_factor:	If set, a test map, reduced in size by this factor,
+;			is projected to determine the roi.  For maps with
+;			large blank areas, this may speed up the projection
+;			greatly.
+;
+;
+;  OUTPUT:
+;	map:	For convenience, the generated map is returned here as
+;		well as in the returned data descriptor.
+;
+;
+; RETURN:
+;	Data descriptor containing the output map.  The instrument field is set
+;	to 'MAP'.  User data arrays are created for the reprojected aux_names
+;	arrays.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+; SEE ALSO:
+;	pg_mosaic
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 1998
+;	Modified:	Daiana DiNino; 7, 2011 : test_factor
+;	
+;-
+;=============================================================================
+function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
+                   hide_fn=hide_fn, hide_data_p=hide_data_p, map=map, $
+                   aux_names=aux_names, pc_xsize=pc_xsize, pc_ysize=pc_ysize, $ 
+                   bounds=bounds, interp=interp, arg_interp=arg_interp, $
+                   offset=offset, edge=edge, wind_fn=wind_fn, wind_data=wind_data, $
+                   smooth=smooth, roi=roi, test_factor=test_factor
+
+ ;-----------------------------------------------
+ ; dereference the generic descriptor if given
+ ;-----------------------------------------------
+ pgs_gd, gd, dd=dd, cd=cd, bx=bx, md=md, sund=sund, dkx=dkx, gbx=_gbx
+ if(keyword_set(_gbx)) then gbx = _gbx
+ if(NOT keyword_set(bx)) then $
+  begin
+   if(keyword_set(dkx)) then bx = dkx 
+   if(keyword_set(_gbx)) then bx = _gbx 
+  end
+
+ if(keyword_set(dkx)) then $
+  begin
+   if(NOT keyword_set(_gbx)) then $
+            nv_message, name='pg_map', 'Globe descriptor required.'
+   gbx = _gbx[0,*]
+   __gbx = get_primary(cd, _gbx, rx=dkx)
+   if(keyword_set(__gbx)) then gbx = __gbx  
+  end
+
+
+ ;---------------------------------------
+ ; create map data descriptor
+ ;---------------------------------------
+ dd_map = nv_init_descriptor(instrument='MAP', filetype=nv_filetype(dd))
+
+
+ ;------------------------------------------------------------------
+ ; combine any auxilliary arrays with image array for reprojection
+ ;------------------------------------------------------------------
+ naux = n_elements(aux_names)
+ if(naux GT 0) then $
+  begin
+   _image = nv_data(dd)
+   s = size(_image)
+   xsize = s[1] & ysize = s[2]
+
+   aux_flags = bytarr(naux)
+   image = dblarr(xsize, ysize, naux+1, /nozero)
+   image[*,*,0] = _image
+   nn = 1
+
+   for i=0, naux-1 do $
+    begin
+     temp = nv_udata(dd, aux_names[i])
+     if(keyword_set(temp)) then $
+      begin
+       aux_flags[i] = 1
+       image[*,*,nn] = temp
+       nn = nn + 1
+      end
+    end
+
+   if(nn LT naux) then image = image[*,*,0:nn+1]
+  end $
+ else image = nv_data(dd)
+
+
+ ;---------------------------------------
+ ; determine size of map pieces 
+ ;---------------------------------------
+ if(NOT keyword_set(pc_xsize)) then pc_xsize = 200
+ if(NOT keyword_set(pc_ysize)) then pc_ysize = 200
+
+
+; ;---------------------------------------
+; ; zero out pixels near image edge
+; ;---------------------------------------
+; if(keyword_set(edge)) then $
+;  begin
+;   s = size(image)
+;   image[0:edge-1,*] = 0
+;   image[*,0:edge-1] = 0
+;   image[s[1]-edge:*,*] = 0
+;   image[*,s[2]-edge:*] = 0
+;  end
+
+
+ ;-------------------------------------------------------------
+ ; If test_factor given, project a small map to find ROI.
+ ; This does not seem to work when md is a camera descriptor.
+ ;-------------------------------------------------------------
+ if(keyword_set(test_factor)) then $
+  begin
+   test_md = nv_clone(md)
+   map_size = image_size(md)
+   set_image_size, test_md, map_size/test_factor
+   set_image_origin, test_md, image_origin(md)/test_factor
+
+   if(class_get(test_md) EQ 'CAMERA') then cam_set_scale, test_md, cam_scale(md)*test_factor
+
+   test_map = project_map(image, bounds=bounds, frame_bd=gbx, interp=interp,  $
+            md=test_md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
+;            hide_fn=hide_fn, hide_data_p=hide_data_p, $
+            arg_interp=arg_interp, $
+            offset=offset, wind_fn=wind_fn, wind_data=wind_data, edge=edge, $
+            smooth=smooth, roi=roi, value=1)
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+   ; the smoothing routine seems to have a bug --> use shift in all
+   ; direction to enlarge the sample of pixels
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+   wt = where(test_map NE 0)
+   if(wt[0] EQ -1) then map = bytarr(image_size(md)) $
+   else $
+    begin
+     test_map = smooth(test_map, 5)
+     test_map = smooth(congrid(test_map,map_size[0],map_size[1]), test_factor)
+     roi = where(test_map NE 0)
+     if (roi[0] EQ -1) then roi = 0
+     nv_free, test_md
+     test_map = 0
+    end
+
+
+;   wt = where(test_map NE 0)
+;   if(wt[0] EQ -1) then map = bytarr(image_size(md)) $
+;   else $
+;    begin
+;     test_map[wt] = 1
+
+;     shifts = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]] * 1
+;     sh_test_map = test_map
+;     for i=0,7 do sh_test_map = sh_test_map + shift(test_map,shifts[*,i])
+
+;     test_map = smooth(congrid(sh_test_map,map_size[0],map_size[1]), test_factor)
+    
+;     roi = where(test_map NE 0)
+;     if (roi[0] EQ -1) then roi = 0
+
+;     nv_free, test_md
+;     test_map = 0
+;    end
+  end
+
+
+ ;---------------------------------------
+ ; create the map
+ ;---------------------------------------
+ if(NOT keyword_set(map)) then $
+    map = project_map(image, bounds=bounds, frame_bd=gbx, interp=interp,  $
+            md=md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
+            hide_fn=hide_fn, hide_data_p=hide_data_p, arg_interp=arg_interp, $
+            offset=offset, wind_fn=wind_fn, wind_data=wind_data, edge=edge, $
+            smooth=smooth, roi=roi)
+ map = map > 0
+
+
+ ;--------------------------------------------------------------------------
+ ; extract reprojected auxilliary arrays and store in new data descriptor
+ ;--------------------------------------------------------------------------
+ if(naux GT 0) then $
+  begin
+   nv_set_data, dd_map, map[*,*,0]
+
+   nn = 1
+   for i=0, naux-1 do $
+    if(aux_flags[i]) then $
+     begin
+      nv_set_udata, dd_map, map[*,*,nn], aux_names[i]
+      nn = nn + 1
+     end
+  end $
+ else nv_set_data, dd_map, map
+
+
+ return, dd_map
+end
+;=============================================================================

@@ -1,0 +1,50 @@
+PG_MOVE
+
+
+ PURPOSE:
+	Translates and rotates the given points.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	pg_move, object_ps, dxy, dtheta, axis_ps=axis_ps
+
+
+ ARGUMENTS:
+  INPUT:
+	object_ps:	Array (n_objects) of pg_points_struct containing the
+			image points to be moved.
+
+	dxy:		2-element array specifying the translation as [dx,dy].
+
+	dtheta:		Rotation angle in radians.
+
+  OUTPUT:
+	object_ps:	The input points are be modified on return.
+
+
+ KEYWORDS:
+  INPUT:
+	axis_ps:	pg_points_struct containing a single image point
+			to be used as the axis of rotation.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pg_drag
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	

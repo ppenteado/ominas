@@ -1,0 +1,53 @@
+NV_NOTIFY_UNREGISTER
+
+
+ PURPOSE:
+	Unregister a descriptor event handler.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_notify_unregister, xd, handler
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:		Descriptors for which to discontinue notification.
+
+	handler:	If given, names of event handler functions to remove
+			for each given descriptor.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	all:		If set, all handlers are unregistered.	
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	NONE
+
+
+ COMMON BLOCKS:
+	nv_notify_block
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	nv_notify_register
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2002
+	

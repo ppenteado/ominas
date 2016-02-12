@@ -1,0 +1,22 @@
+;===========================================================================
+; dsk_set_sma
+;
+;
+;===========================================================================
+pro dsk_set_sma, dkxp, sma
+@nv_lib.include
+ dkdp = class_extract(dkxp, 'DISK')
+ dkd = nv_dereference(dkdp)
+
+; dkd.sma[*,0,*] = sma[*,0,*]
+; dkd.sma[*,1,*] = sma[*,1,*]
+
+dkd.sma = sma
+
+ nv_rereference, dkdp, dkd
+ nv_notify, dkdp, type = 0
+end
+;===========================================================================
+
+
+

@@ -1,0 +1,13 @@
+;spawn, 'ls -F |grep /', dirs
+;ndirs = n_elements(dirs)
+
+
+
+spawn, 'ls -F *.pro', files
+nfiles = n_elements(files)
+
+for i=0, nfiles-1 do adm_change_doc, files[i]
+
+
+exit
+

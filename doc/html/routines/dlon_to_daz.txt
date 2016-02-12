@@ -1,0 +1,41 @@
+DLON_TO_DAZ
+
+
+ PURPOSE:
+	Computes azimuths relative to a given observer descriptor.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       result = dlon_to_daz(dlon, dkx, od)
+
+
+ ARGUMENTS:
+  INPUT:
+	dlon:	Longitude.
+
+	dkx:	Disk descriptor.
+
+	od:	Object descriptor (subclass of BODY) describing the observer.
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+   INPUT: NONE
+
+   OUTPUT: NONE
+
+
+ RETURN:
+       An array of azimuths.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale

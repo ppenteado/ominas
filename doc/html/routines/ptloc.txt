@@ -1,0 +1,52 @@
+PTLOC
+
+
+ PURPOSE:
+       To locate a point in an image that best fits a psf model.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = ptloc(image, model, width)
+
+
+ ARGUMENTS:
+  INPUT:
+       image:  Image, or subimage in which to find the point.
+               Size of image should be at least width + size of model.
+
+       model:  Model of the point spread function.
+
+       width:  Width of box around calculated point in which to
+               find the point.
+
+  OUTPUT:
+	sigma:	Position uncertainty.
+
+         ccp:  The correlation coefficient at the point found.
+
+
+ RETURN:
+       The point (x,y) in the image that best fits the model.
+
+
+ PROCEDURE:
+       The correlation between the image and the model is calculated.  
+	If possible, a gaussian is fit to the correlation peak and the
+	sub-pixel location of the center of the gaussian is the result.  
+	If that fit does not converge, then the location of the pixel with
+	the maximum correlation is returned and a warning is printed.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 6/1998
+	Modified:	Spitale, 9/2002 -- Fit to gaussian to determine
+				  subpixel location of correlation peak.
+

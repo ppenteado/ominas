@@ -1,0 +1,14 @@
+GRIM_MENU_FILE_SAVE_AS_EVENT
+
+
+ PURPOSE:
+	Changes to the previous-numbered image plane. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

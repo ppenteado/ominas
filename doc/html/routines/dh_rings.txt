@@ -1,0 +1,31 @@
+DH_RINGS
+
+
+ PURPOSE:
+	To be called by the make dh header routines to fill the ring
+	descriptor
+
+ CATEGORY:
+	UTIL/SPICE
+
+ USAGE:
+	dh_rings, dh, planet, et, pos, vel     
+
+ ARGUMENTS:
+	     dh:	Detatched header
+	 planet:	Planet of ring system
+	     et:	Ephemeris time
+	    pos:	Position of main planet
+	    vel:	Velocity of main planet
+
+ RESTRICTIONS:
+	This is a basic implementation only including one ring with the
+	inner and outer edges defined by the range of the entire planetary
+	ring system.  It does not include compenent rings including eccentric
+	rings.  This routine will implement RINGS as the VICAR program
+	NAV did some time in the future.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 12/2000
+

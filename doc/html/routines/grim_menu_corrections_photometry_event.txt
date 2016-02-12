@@ -1,0 +1,16 @@
+GRIM_MENU_CORRECTIONS_PHOTOMETRY_EVENT
+
+
+ PURPOSE:
+	Allows user to load images into new image planes using the brim 
+	browser.  Images are selected using the left mouse button and
+	each image is loaded on a new plane.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2002
+	

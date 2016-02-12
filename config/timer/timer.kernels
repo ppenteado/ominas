@@ -1,0 +1,8 @@
+
+$NV_SPICE_SPK/13-F7_extension_scpse.bsp
+##$NV_SPICE_CK/Europa_pred_EuropaOPSModel_Science_C.bc
+$NV_SPICE_CK/europa_pred_EuropaOPSModel_Science_C.bc
+$NV_SPICE_FK/Clipper.tf
+#$NV_SPICE_PCK/pck00010.tpc
+#$NV_SPICE_LSK/naif0010.tls
+$NV_SPICE_SCK/Clipper_SCLKSCET.00001.tsc

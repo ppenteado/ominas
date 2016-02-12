@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="PHOTOMETRY Program Reference", $
+    "/home/joes/idl_pro/minas/nv/lib/tools/photometry/*.pro", $
+    "/home/joes/idl_pro/minas/nv/lib/tools/photometry/doc_photometry.txt"

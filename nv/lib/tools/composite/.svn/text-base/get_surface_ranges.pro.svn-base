@@ -1,0 +1,20 @@
+;============================================================================
+; get_surface_ranges
+;
+;============================================================================
+function get_surface_ranges, od, bx
+           
+ gbd = class_extract(bx, 'GLOBE')
+ dkd = class_extract(bx, 'DISK')
+
+ if(keyword_set(gbd)) then return, glb_get_ranges(gbd)
+ if(keyword_set(dkd)) then return, dsk_get_ranges(dkd)
+ if(keyword_set(bx)) then return, bod_get_ranges(bx)
+
+ map_ranges = map_get_ranges(od)
+ if(keyword_set(map_ranges)) then $
+         return, transpose([map_ranges, transpose([0d, 0d])])
+
+ return, 0
+end
+;============================================================================

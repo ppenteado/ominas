@@ -1,0 +1,108 @@
+;=======================================================================
+;                            VOYAGER_CP.EXAMPLE
+;  
+;  The example requires the voyager SEDR files, which are not supplied 
+;  in the default OMINAS installation.
+;
+;  This example file demonstrates the use of OMINAS for Voyager image 
+;  geometric corrections using control points.  Compared with the 
+;  polynomial approach, this method is probably more precise (it forces 
+;  the control points to match exactly), but it requires the image to be
+;  geometrically corrected.
+;
+;  This example file can be executed from the UNIX command line using
+;
+;  	idl voyager_cp.example
+;
+;  or from within IDL using
+;
+;  	@voyager_cp.example
+;
+;=======================================================================
+!quiet = 1
+;=======================================
+; read and display a voyager image
+;=======================================
+zoom = 0.35
+
+dd = nv_read('./data/c3440346.img', im, label)
+
+ctmod, top=top
+tvim, im, zoom=zoom, /order, /new, top=top
+
+;========================================================================
+; Get a camera descriptor.  
+;
+; Because the image has not yet been corrected, the SEDR translator 
+; returns a camera descriptor that approximates the camera transformation 
+; using a linear scale.
+; 
+;========================================================================
+cd = pg_get_cameras(dd)
+
+
+;============================================================================
+; Determine more precise camera transformation  
+;
+;============================================================================
+
+;--------------------------------------------------------------------------
+; Scan for reseau marks
+;
+; The image is scanned for features matching a gaussian reseau model 
+; (other models may be input to pg_resloc if desired).  
+;
+;--------------------------------------------------------------------------
+scan_ps = pg_resloc(dd)
+pg_draw, scan_ps, psym=1, col=ctyellow()
+
+;--------------------------------------------------------------------------
+; Read known focal coords and nominal image coords.
+;
+; Note that the known reseau positions are given in the FOCAL 
+; coordinate system because it is linear and not affected by the
+; camera transformation that we are trying to derive.  
+;
+; The nominal will be used with pg_resfit to substitute for reseau that 
+; cannot be found in the image.
+;
+;--------------------------------------------------------------------------
+foc_ps = readrob('data/vgr1na.rob')
+nom_ps = readres('data/vgr1na.res')
+
+;--------------------------------------------------------------------------
+; Associate known reseau marks with scanned locations
+;
+; /assoc causes pg_resfit to return before performing the polynomial fit, 
+; which will not be needed here.  Instead, we will use the output arrays
+; fcp and scp, which give the associated known reseaus and scanned 
+; locations.
+;
+;--------------------------------------------------------------------------
+pg_resfit, scan_ps, foc_ps, nom_ps=nom_ps, cd=cd, fcp=fcp, scp=scp, /assoc
+
+;============================================================================
+; reproject image on linear scale
+;
+; Using the new camera transformation, a new image is projected with a 
+; linear scale and a corresponding camera descriptor is created.
+;
+;============================================================================
+dd3 = pg_linearize_image(dd, cd_new, cd=cd, fcp=fcp, scp=scp, im=im3, $
+                 size=[1000,1000], $
+                 oaxis=[499.,499.], scale=[7.8586540e-06,7.8586540e-06])
+
+tvim, im3, /order, /new, z=zoom
+; foc_pts = ps_points(foc_ps)
+; foc_pts_image = cam_focal_to_image(cd_new, foc_pts)
+; plots, foc_pts_image[*,*,0], psym=6
+
+
+
+stop
+dd1 = nv_read('./data/c3440346.gem', _im3, label)
+tvim, _im3, /order, /new, z=zoom
+.run ~/idl_pro/jblink
+jblink, im3, _im3
+
+

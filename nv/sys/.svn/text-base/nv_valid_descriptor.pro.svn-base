@@ -1,0 +1,17 @@
+;=============================================================================
+; nv_valid_descriptor
+;
+;=============================================================================
+function nv_valid_descriptor, ddp
+
+ if(size(ddp[0], /type) EQ 10) then dd = *ddp[0] $
+ else dd = ddp[0]
+
+ if(size(dd, /type) NE 8) then return, 0
+
+ fields = tag_names(dd)
+ if((where(strupcase(fields) EQ 'DATA_DAP'))[0] EQ -1) then return, 0
+
+ return, 1
+end
+;=============================================================================

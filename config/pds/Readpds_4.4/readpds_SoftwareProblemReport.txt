@@ -1,0 +1,543 @@
+READPDS Software Problem Report List		
+
+Version: READPDS CVS (IDL 6.x)
+Date: 10/04/08
+
+-----------------------------------------------------------------------------------------------------------------		
+SPR	DATE	
+-----------------------------------------------------------------------------------------------------------------
+XX	DD/MM/YY	DESCRIPTION: 
+
+			STATUS:		[ OPEN | REJECTED | INPROGRESS | CLOSED ]
+			TYPE: 		[ NEW | BUG ]
+			ORIGINATOR:	[ SBN | PSA | OTHER ]
+			DEVELOPER:	
+			UPDATED FILES:           
+			DATA:		         
+
+			HISTORY:             
+	DD/MM/YY	Open           
+-----------------------------------------------------------------------------------------------------------------
+1	08/08/07	DESCRIPTION: 
+			Implement BIT_COLUM Object     
+			
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:	smartinez
+			UPDATED FILES:  tbinpds.pro, readpds.pro         
+		
+			DATA:		Cassini images -- TLMTAB-original.FMT file             
+
+			HISTORY:             
+	08/08/07	Open
+			Not recommended for use in defining new data objects (PDS)	
+			SPR Status: Evaluating if it is worth implementing it. 
+
+			BIT_COLUMN Implementation Notes:
+			Files to be updated: tbinpds.pro
+
+			After reading the TABLE object and if any of the COLUMN objects contains 
+			BIT_COLUMN sub-objects, do the following:
+
+			(1) Split the column variable/structure into bit_column elements
+			(2) Calculate the value of each bit_column using the IDL ISHFT 
+			function: ISHFT(column_val, shift). Use positive or negative shifts 
+			depending on the START_BIT and BITS keywords within the BIT_COLUMN 
+			object.
+			(3) Convert values depending on the BIT_DATA_TYPE keyword.  				
+
+	21/08/07	BIT_COLUMN and BIT_ELEMENT, they are not recommended, 
+			but they are a part of PDS standards. There are already files that require 
+			them and there might be more in the future.	
+
+	10/04/08	Ready for local testing at PSA.
+			Changes will be added to the CVS repository as soon as posible. 
+			Expected date: 18 April 2008.	
+
+        05/07/10        Closed. Only binary version implemented. No ASCII sample files available.											
+-----------------------------------------------------------------------------------------------------------------				
+2	08/08/07	DESCRIPTION: 
+			Implement BIT_ELEMENT Object	
+
+			STATUS:		OPEN
+			TYPE: 		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:	
+			UPDATED FILES:          
+			DATA:
+
+			HISTORY:
+	08/08/07	Open
+			There is no BIT_ELEMENT description in the PDS Standard document. 
+			Under review.
+			
+	21/08/07 	BIT_COLUMN and BIT_ELEMENT, they are not recommended, 
+			but they are a part of PDS standards. There are already files that require 
+			them and there might be more in the future.
+
+	24/08/07	BIT_ELEMENT was accepted by PDS in 1996. See PDS Dictionary: 
+			"The bit_element object identifies a bit string embedded in a element".	
+
+        05/07/10        No sample files available.
+-----------------------------------------------------------------------------------------------------------------		
+3	08/08/07	DESCRIPTION: 
+			Implement CONTAINER Object
+
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:	smartinez
+			
+			UPDATED FILES:  tbinpds.pro, readpds.pro						
+			
+			DATA:		NEAR NIS spectra
+
+			HISTORY:
+	08/08/07	Open
+			
+	10/04/08	Ready for local testing. 
+			Changes will be added to the CVS repository as soon as posible. 
+			Expected date: 18 April 2008.
+
+        05/07/10        Closed. Only binary version implemented. No ASCII sample files available.	
+-----------------------------------------------------------------------------------------------------------------
+4	27/04/07	DESCRIPTION: 
+			Implement FILE Object
+
+			STATUS:		OPEN
+			TYPE: 		NEW
+			ORIGINATOR:	PSA
+			DEVELOPER:	
+			UPDATED FILES:          
+
+			DATA:		NEAR NIS spectra
+
+			HISTORY:
+	27/04/07	Open
+-----------------------------------------------------------------------------------------------------------------
+5	13/08/07	DESCRIPTION: 
+			sbnidl can not read ^STRUCTURE Pointers
+			SBNIDL is unable to open a data product with ^STRUCTURE pointers within TABLE objects
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+
+			UPDATED FILES:  headpds.pro        
+
+			DATA:		ROSINA COPS-SC
+					Cassini
+
+			HISTORY:
+	13/08/07	Open
+-----------------------------------------------------------------------------------------------------------------
+6	01/08/07	DESCRIPTION: 
+			pdspar removes leading 0 when the output is '000n'
+			Example:
+			RELEASE_ID=0001
+			Expected output: '0001'
+			Output: '   1'
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	SBN
+			DEVELOPER:      Parin
+			UPDATED FILES:  pdspar.pro 
+			DATA:		
+
+			HISTORY:
+	01/08/07	Open
+-----------------------------------------------------------------------------------------------------------------
+7	19/06/07	DESCRIPTION: 
+			Imagepds close&free file on io_error
+			Free and close previously allocated file units before exiting when an error occurs 
+			reading/using the file. This bug does not make the function to crash but precludes 
+			mass processing.
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+
+			UPDATED FILES:  imagepds.pro
+
+			DATA:		
+
+			HISTORY:
+	19/06/07	Open
+-----------------------------------------------------------------------------------------------------------------
+8	19/06/07	DESCRIPTION: 
+			Imagepds /SILENT option
+			When using the /SILENT option in the imagepds function some information messages are 
+			printed. This is critical to speed up the result when processing a number of files, 
+			writing on the screen can take much longer than reading the files.
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+
+			UPDATED FILES:  imagepds.pro
+
+			DATA:		
+
+			HISTORY:
+	19/06/07	Open
+-----------------------------------------------------------------------------------------------------------------
+9	19/06/07	DESCRIPTION: 
+			Implement SAMPLE_BIT_MASK keyword
+			This functionality is already implemented in the AMIE software as this keyword is used 
+			in the SMART1 AMIE images. I am adapting this source code to the SBNIDL software in 
+			order to add this new functionality.
+			
+			STATUS:		REJECTED
+			TYPE: 		NEW
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+
+			UPDATED FILES:  imagepds.pro
+
+			DATA:		
+
+			HISTORY:
+	19/06/07	Open
+
+        19/01/10        Rejected. Wrong interpretation of SAMPLE_BIT_MASK on PSA side. READPDS already handles 
+                        SAMPLE_BIT_MASK.
+-----------------------------------------------------------------------------------------------------------------	
+10	26/09/07	DESCRIPTION: 
+			Add the verify label functionality to the current CVS version as an optional 
+			functionality
+			
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:      Parin
+			UPDATED FILES:  readpds.pro
+			DATA:		
+
+			HISTORY:
+	26/09/07	Open
+-----------------------------------------------------------------------------------------------------------------	
+11	26/09/07	DESCRIPTION: 
+			Evaluate the differences between the SBNIDL 4.2 and the CVS version 			
+			
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	SBN/PSA
+			DEVELOPER:	
+			UPDATED FILES:  
+			DATA:		
+
+			HISTORY:
+	26/09/07	Open
+
+	10/04/08	Explanation: Add READPDS 4.2 functionalities/improvements not present in the current 
+			REAPDS CVS version. The starting point for the READPDS CVS repository was 
+			"READPDS 4.1.1 + PSA changes". So, new functionalities/bugs implemented in READPDS 4.2 
+			might not be present. An evaluation of the missing functionalities (and implementation 
+			if applicable) is needed.
+
+        19/01/10        Closed. Results to be discussed between SBN/PSA.
+-----------------------------------------------------------------------------------------------------------------	
+12	26/09/07	DESCRIPTION: 
+			Define and implement regression test routines		
+			
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	SBN/PSA
+			DEVELOPER:	smartinez
+			UPDATED FILES:  
+			DATA:		
+
+			HISTORY:
+	26/09/07	Open
+
+	10/04/08	Expected date: 25 April 2008.
+-----------------------------------------------------------------------------------------------------------------	
+13	26/09/07	DESCRIPTION: 
+			Define a collection of test files		
+			
+			STATUS:		OPEN
+			TYPE: 		NEW
+			ORIGINATOR:	SBN/PSA
+			DEVELOPER:	
+			UPDATED FILES:  
+			DATA:		
+
+			HISTORY:
+	26/09/07	Open
+-----------------------------------------------------------------------------------------------------------------
+14.	25/02/08	DESCRIPTION: 
+			BYTE specification problem while reading ASCII tables		
+			
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	SBN
+			DEVELOPER:	Parin
+			UPDATED FILES:  tascpds.pro 
+			DATA:           sdsrc_0001.zip
+
+			HISTORY:
+	25/02/08	Open
+-----------------------------------------------------------------------------------------------------------------
+15.	25/02/08	DESCRIPTION: 
+			"=" sign in description field of the .lbl files.
+			
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	SBN
+			DEVELOPER:	Parin
+			UPDATED FILES:  pdspar.pro 
+			DATA:           
+
+			HISTORY:
+	25/02/08	Open
+-----------------------------------------------------------------------------------------------------------------
+16.	03/04/08	DESCRIPTION:
+			Making readpds case-insensitive while reading ^STRUCTURE pointer.
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	SBN
+			DEVELOPER:	Parin
+			UPDATED FILES:  pointpds.pro 
+			DATA: 		MIRO data sets
+
+			HISTORY:
+	03/04/08	Open
+
+	10/04/08	To be discussed, as lowercase directory/file names are not PDS-compliant. The data 
+			directory structure should be always uppercase, as well as the file names. 
+	27/04/04	Added this functionality.
+-----------------------------------------------------------------------------------------------------------------
+17.	10/04/08	DESCRIPTION:
+			Compilation bug in qubepds.pro. The function "obtain_item_idltype" is coded after 
+			"obtain_qube_structure", the function that calls it.
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	SBN
+			DEVELOPER:	smartinez
+			UPDATED FILES:  qubepds.pro 
+			DATA: 		
+
+			HISTORY:
+	10/04/08	Open
+-----------------------------------------------------------------------------------------------------------------
+18.	10/04/08	DESCRIPTION:
+			Update QUBE routine to return suffix areas.
+
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:	Parin
+			UPDATED FILES:  pointpds.pro 
+			DATA: 		MIRO data sets
+
+			HISTORY:
+	10/04/08	Open
+-----------------------------------------------------------------------------------------------------------------
+19.	10/04/08	DESCRIPTION:
+			Incorporate VIRTIS reading software (as mission/instrument dependent) to the qube 
+			routines.
+
+			STATUS:		INPROGRESS
+			TYPE: 		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:	smartinez
+			UPDATED FILES:  qubepds.pro 
+			DATA: 		VIRTIS data sets
+
+			HISTORY:
+	10/04/08	Open
+			VIRTIS qube is a non PDS-compliant qube. To save disk space, the VIRTIS team reformatted 
+			the housekeeping parameters to an array with different dimensions before pasting it onto 
+			the qube data. Therefore, the READPDS library would need to reformat the array to 
+			correctly present the data. Use already existing VIRTIS software available in the latest
+			VIRTIS data set deliveries.
+
+------------------------------------------------------------------------------------------------------------------
+20.	25/04/08	DESCRIPTION:
+			Very large MIRO datasets exceeded the data type range for rows,
+			columns, row_bytes variables.
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	SBN
+			DEVELOPER:	parin
+			UPDATED FILES:  tbinpds.pro 
+			DATA: 		MIRO data sets
+
+			HISTORY:
+	27/04/08	In OBTAIN_TBIN_REQ increased range of columns,rows,row_bytes
+	 		data type by using ULONG and LONG64.
+------------------------------------------------------------------------------------------------------------------
+21.	28/05/08	DESCRIPTION:
+			headpds routine adds [LF,CR] to the end of the lines instead of [CR,LF]
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+			UPDATED FILES:  headpds, addeobj
+			DATA: 		All
+
+			HISTORY:
+	28/05/08	Open.
+------------------------------------------------------------------------------------------------------------------
+22.	28/05/08	DESCRIPTION:
+			Error message "ROWS OR ROW_BYTES OR COLUMNS <= 0" returned when no such keywords have a 
+                        value equal or lower than 0.
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+			UPDATED FILES:  tascpds, tbinpds
+			DATA: 		All
+
+			HISTORY:
+	28/05/08	Open.
+------------------------------------------------------------------------------------------------------------------
+23.	28/05/08	DESCRIPTION:
+			Close and free unit in TABLE objects on ioerror.
+
+			STATUS:		CLOSED
+			TYPE: 		BUG
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+			UPDATED FILES:  tascpds, tbinpds
+			DATA: 		All
+
+			HISTORY:
+	28/05/08	Open.------------------------------------------------------------------------------------------------------------------
+24.	28/05/08	DESCRIPTION:
+			Unable to read "big" tables. Unable to allocate memory.
+
+			STATUS:		OPEN
+			TYPE: 		BUG
+			ORIGINATOR:	PSA
+			DEVELOPER:	
+			UPDATED FILES: TASCPDS.PRO  
+			DATA: 		All
+
+			HISTORY:
+	28/05/08	Open.
+
+        03/08/10        Some memory allocation issues taken care of. Reduced current memory for a ~1 GB dataset 
+                        to 3.7 GB and the maximum memory needed to run the script down to 5.1 GB. Systems with 
+                        memory less than 5.1 are still unable to read in ~1GB ASCII tables, whereas before it 
+                        took 7.5GB.------------------------------------------------------------------------------------------------------------------
+25.	10/07/08	DESCRIPTION:
+			Reading data spanned across multiple lines.
+
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:	Parin
+			UPDATED FILES:  pdspar.pro 
+			DATA: 		
+
+			HISTORY:
+	10/07/08	Close
+------------------------------------------------------------------------------------------------------------------
+26.	29/01/09	DESCRIPTION:
+                        READPDS crashes when input label file does not exist.			
+
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+			UPDATED FILES:  headpds.pro 
+			DATA: 		
+
+			HISTORY:
+	29/01/09	Open and closed.
+------------------------------------------------------------------------------------------------------------------
+27.	11/02/09	DESCRIPTION:
+                        Data type range of ROW_PREFIX_BYTES and ROW_SUFFIX_BYTES exceeded. 			
+
+			STATUS:		CLOSED
+			TYPE: 		NEW
+			ORIGINATOR:	PSA
+			DEVELOPER:	smartinez
+			UPDATED FILES:  tascpds.pro, tbinpds.pro 
+			DATA: 		VEX:ASPERA (IMA)
+
+			HISTORY:
+	11/02/09	Open and fixed.
+------------------------------------------------------------------------------------------------------------------
+28.	03/06/09	DESCRIPTION:
+                        Can't open file with RECORD_TYPE=STREAM if RECORD_BYTES is missing. RECORD_BYTES should
+                        be optional for this type of records.			
+
+			STATUS:		OPEN
+			TYPE: 		NEW
+			ORIGINATOR:	PSA
+			DEVELOPER:	
+			UPDATED FILES:   
+			DATA: 		VEX:SPICAV 
+
+			HISTORY:
+	03/06/09	Open.
+------------------------------------------------------------------------------------------------------------------
+29.     07/10/09        DESCRIPTION:
+                        READPDS does not handle properly the endianess for binary tables. Wrong values for
+                        MSB architecture on little-endian machines. Check tbinpds.pro file.
+
+                        STATUS:         CLOSED
+                        TYPE:           BUG
+                        ORIGINATOR:     PSA
+                        DEVELOPER:      smartinez
+                        UPDATED FILES:  tbinpds.pro 
+                        DATA:           ROS:MIRO
+
+                        HISTORY:
+        07/10/09        Open.
+        12/01/10        Modified tbinpds to reverse byte order when needed.
+------------------------------------------------------------------------------------------------------------------
+30.     07/10/09        DESCRIPTION:
+                        UNSIGNED integers not correctly handled in ARRAY objects. Check elem_struct.pro file.   
+
+                        STATUS:         CLOSED
+                        TYPE:           BUG
+                        ORIGINATOR:     PSA
+                        DEVELOPER:      smartinez
+                        UPDATED FILES:  elem_struct.pro 
+                        DATA:           ROS:VIRTIS (example: VIRTIS_M_IR_RESP_10_V1)
+
+                        HISTORY:
+        07/10/09        Open.
+        12/01/10        Function determine_element_type in elem_struct.pro modified to check if SIGNED or UNSIGNED
+                        integer and return correct type. Added "warning message" to flag if number of bytes is not 
+                        correct (only 1-, 2- and 4-byte signed/unsigned integers allowed in PDS v3.8).
+------------------------------------------------------------------------------------------------------------------
+31.	07/21/10 DESCRIPTION:
+		        Table files with ASCII tables and attached labels cause carriage return and line feed
+			errors. Attached labels should be supported for these files.
+			STATUS:		OPEN
+			TYPE:		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:	Brian Prager
+			UPDATED FILES:	tascpds.pro
+
+			HISTORY:
+	07/21/10        Open. Found looking at COSIMA ASCII tables. First found in the HEAT table, which comes with 
+                        associated format files.
+------------------------------------------------------------------------------------------------------------------
+32.	01/11/11 DESCRIPTION:
+		        Files with ITEMS=1 will cause the program to choke when replicating item element structures.
+			STATUS:		CLOSED
+			TYPE:		NEW
+			ORIGINATOR:	SBN
+			DEVELOPER:	Brian Prager
+			UPDATED FILES:	btabvect2.pro
+
+			HISTORY:
+	01/11/11        Open. Found looking at New Horizons LEISA data. Found when trying to replicate item element
+                   structure.
+   05/03/11        Closed. btabvect2 was modified to allow 1-dimensional vectors.
+------------------------------------------------------------------------------------------------------------------

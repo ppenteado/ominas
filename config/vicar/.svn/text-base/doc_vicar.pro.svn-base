@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="VICAR Program Reference", $
+    "/home/joes/idl_pro/minas/config/vicar/*.pro", $
+    "/home/joes/idl_pro/minas/config/vicar/doc_vicar.txt"

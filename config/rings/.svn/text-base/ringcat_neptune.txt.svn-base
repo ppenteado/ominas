@@ -1,0 +1,12 @@
+# name			default?	fiducial?	opaque?	sma(m)		ecc		lp(deg)		dlpdt(deg/day)	inc(deg)	lan(deg)	dlandt(deg/day)	m	epoch(s past j2000)	description
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ADAMS/inner		yes		no		yes	62905000	0		0		0		0		0		0		0	0
+ADAMS/outer		yes		no		yes	62955000	0		0		0		0		0		0		0	0
+
+LE_VERRIER/inner	yes		no		yes	53175000	0		0		0		0		0		0		0	0
+LE_VERRIER/outer	yes		no		yes	53225000	0		0		0		0		0		0		0	0
+
+GALLE/inner		yes		no		yes	41150000	0		0		0		0		0		0		0	0
+GALLE/outer		yes		no		yes	42850000	0		0		0		0		0		0		0	0
+
+

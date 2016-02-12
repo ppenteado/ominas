@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/const
+END
+mks_const.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/const/mks_const.pro
+END
+pgc_set_units.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/const/pgc_set_units.pro
+END
+pgc_get_units.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/const/pgc_get_units.pro
+END
+pgc_block.common
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/const/pgc_block.common
+END
+pgc_const.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/const/pgc_const.pro
+END

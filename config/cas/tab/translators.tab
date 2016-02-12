@@ -1,0 +1,40 @@
+# instrument	input			output		keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  CAS_ISSNA	dh_std_input		dh_std_output
+	-       station_input			-
+	-       array_input			-
+	-	cas_spice_input		cas_spice_output \
+			                          klist=cassini.kernels \
+							ck_in=auto \
+							pck_in=auto \
+							lsk_in=auto \
+							fk_in=auto \
+							ik_in=auto \
+							sck_in=auto \
+							xk_in=extra.tpc  \
+							/spk_strict
+
+	-       ring_input			-
+	-	orb_input			-	suffix=-orb
+	-  	strcat_ucact_input		-		/j2000
+#	-  	strcat_tycho2_input		-		/j2000
+
+  CAS_ISSWA	dh_std_input		dh_std_output
+	-       station_input			-
+	-       array_input			-
+	-	cas_spice_input		cas_spice_output \
+			                          klist=cassini.kernels \
+							ck_in=auto \
+							pck_in=auto \
+							lsk_in=auto \
+							fk_in=auto \
+							ik_in=auto \
+							sck_in=auto \
+							xk_in=extra.tpc  \
+							/spk_strict
+	-       ring_input			-
+	-	orb_input			-	suffix=-orb
+	-  	strcat_ucact_input		-		/j2000
+#	-  	strcat_tycho2_input		-		/j2000
+

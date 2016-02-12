@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/minas/!svn/ver/2/trunk/config/util/cas
+END
+cas_blocklowfreq.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_blocklowfreq.pro
+END
+cas_dedark.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_dedark.pro
+END
+cas_relut.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_relut.pro
+END
+cas_wac_to_nac.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_wac_to_nac.pro
+END
+cas_nac_to_wac.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_nac_to_wac.pro
+END
+cas_reverse_lut.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_reverse_lut.pro
+END
+cas_mx_wac_to_nac.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_mx_wac_to_nac.pro
+END
+cas_lut.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_lut.pro
+END
+cas_psf-old.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_psf-old.pro
+END
+doc_cas.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/config/util/cas/doc_cas.pro
+END
+cas_removehum.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_removehum.pro
+END
+cas_nac_scale.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_nac_scale.pro
+END
+cas_nac_box.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_nac_box.pro
+END
+cas_delut.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_delut.pro
+END
+cas_desky.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_desky.pro
+END
+cas_wac_scale.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_wac_scale.pro
+END
+cas_debias.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_debias.pro
+END
+cas_removehum_oc.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_removehum_oc.pro
+END
+doc_cassini.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/util/cas/doc_cassini.pro
+END
+cas_query_lut.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/util/cas/cas_query_lut.pro
+END

@@ -1,0 +1,42 @@
+GLB_COPY_DESCRIPTOR
+
+
+ PURPOSE:
+	Copies all fields from the source globe descriptors into the
+       destination globe descriptors.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	glb_copy_descriptor, gbx_dst, gbx_src
+
+
+ ARGUMENTS:
+  INPUT:
+	gbx_dst:	Array (nt) of any subclass of GLOBE descriptors to copy to.
+
+	gbx_src:	Array (nt) of any subclass of GLOBE descriptors to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

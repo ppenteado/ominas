@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="PLT Program Reference", $
+    "/home/joes/idl_pro/minas/nv/lib/plt/*.pro", $
+    "/home/joes/idl_pro/minas/nv/lib/plt/doc_plt.txt"

@@ -1,0 +1,94 @@
+STRCAT_SAO_INPUT
+
+
+ PURPOSE:
+        Input translator for SAO star catalog.
+
+
+ CATEGORY:
+       NV/CONFIG
+
+
+ CALLING SEQUENCE(only to be called by nv_get_value):
+       result = strcat_sao_input(dd, keyword)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	keyword:	String giving the name of the translator quantity.
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+  INPUT:
+	key1:		Observer descriptor, must be of subclass CAMERA.
+
+  OUTPUT:
+	status:		Zero if valid data is returned.
+
+	n_obj:		Number of objects returned.
+
+	dim:		Dimensions of return objects.
+
+
+  TRANSLATOR KEYWORDS:
+ 	jtime:		Years since 1950 (the epoch of catalog) for precession
+			and proper motion correction.  If not given, it is taken
+			from the object descriptor bod_time, which is assumed to
+			be seconds past 1950 unless keyword /j2000 is set.
+
+	j2000:		If set, coordinates are output wrt j2000.
+
+	b1950:		If set, coordinates are output wrt b1950.
+
+	path_sao:	The directory of the star catalog, sao_idl.str.   
+			In the file, the data is grouped into 18 segments of 
+			10 degrees each.  Each star has a data record of 36
+			bytes.  RA (radians), RAMu (pm in sec time/year)
+			DEC (radians), DECMu (pm in sec arc/year)
+			Visual Magnitude,  13-byte Name and 3-byte Spectral type
+			The first 4 records of the output catalog are 18 sets
+			of pointers to the records for the start and end of
+			each segment.
+			The real values (RA, RAMu, DEC, DECMu and Mag) are in
+			XDR.  The pointer integers are in network byte order.
+
+	faint:		Stars with magnitudes fainter than this will not be
+			returned.
+
+	bright:		Stars with magnitudes brighter than this will not be
+			returned.
+
+
+  ENVIRONMENT VARIABLES:
+	NV_SAO_DATA:	Directory containing the SAO catalog data unless
+			overridden using the path_sao translator keyword.
+
+
+ RETURN:
+       Star descriptor containing all the stars found.
+
+ RESTRICTIONS:
+       Since the distance to stars are not given in the SAO catalog, the
+       position vector magnitude is set as 10 parsec and the luminosity
+       is calculated from the visual magnitude and the 10 parsec distance.
+
+
+ PROCEDURE:
+       Stars are found in a square area in RA and DEC around a given
+       or calculated center.  The star descriptor is filled with stars
+       that fit in this area.  If J2000 is selected, input RA, DEC and/or
+	ods orient matrix is assumed to be J2000 also, if not, input is
+	assumed to be B1950, like the catalog. 
+
+
+ MODIFICATION HISTORY:
+       Written by:     Vance Haemmerle, 5/1998
+	Modified:       1/1999
+       Modified:       Tiscareno, 7/2000 (stellar aberration added)
+       Modified:       Haemmerle, 12/2000
+       Modified:       Spitale 9/2001 - changed to strcat_sao_input.pro
+

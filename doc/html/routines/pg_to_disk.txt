@@ -1,0 +1,56 @@
+PG_TO_DISK
+
+
+ PURPOSE:
+       Converts image coordinates to disk plane coordinates.  Input
+       array can be array of image points or a pg_points_struct.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+       result = pg_to_disk(image_points, cd=cd, dkx=dkx) 
+       result = pg_to_disk(image_points, gd=gd)
+
+
+ ARGUMENTS:
+  INPUT:
+        image_points:     Array (n_points) of image points (x,y) or
+                          array of type pg_points_struct.
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+  INPUT:
+                  cd:     Array (n_timesteps) of camera descriptors.
+
+                 dkx:     Array (n_objects, n_timesteps) of descriptors of
+                          objects that must be a subclass of DISK.
+
+                  gd:     Generic descriptor.  If given, the cd and dkx
+                          inputs are taken from the cd and dkx fields of 
+                          this structure instead of from those keywords.
+
+                  ps:     If set, image_points is treated as a structure
+                          of type pg_points_struct.
+
+  OUTPUT:
+        NONE
+
+ RETURN:
+	Array (n_points) of disk points (radius and longitude).
+
+ STATUS:
+	Completed.
+
+
+ SEE ALSO:
+	pg_to_surface
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Haemmerle,  5/1998
+	

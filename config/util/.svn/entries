@@ -1,0 +1,102 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/config/util
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+doc_util.pro
+file
+
+
+
+
+2009-10-27T16:31:20.000000Z
+a78018433a7b9a9862add0554055a57e
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+readres.pro
+file
+
+
+
+
+2009-10-27T16:31:20.000000Z
+b964a69fa848b1d5c55ee396223144c7
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+cmat_to_orient.pro
+file
+
+
+
+
+2009-10-27T16:31:20.000000Z
+083f18b0340bd603170d35e16a72fd04
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+orient_to_cmat.pro
+file
+
+
+
+
+2009-10-27T16:31:20.000000Z
+9cf9a61992334fd1cdd469c953a551b1
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+cas
+dir
+
+readrob.pro
+file
+
+
+
+
+2009-10-27T16:31:20.000000Z
+e762e71b9a3f63fd3026100db390128c
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+gll
+dir
+
+vgr
+dir
+

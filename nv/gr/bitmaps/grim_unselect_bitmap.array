@@ -1,0 +1,20 @@
+							;../nv/gr/grim_unselect_bitmap.array bitmap
+							;definition
+../nv/gr/grim_unselect_bitmap.array = 	[				$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B]			$
+		]

@@ -1,0 +1,40 @@
+!quiet = 1
+
+;-------------------------------------------
+; read and display the image
+;-------------------------------------------
+file = '~/casIss/1470/N1470442477_2.IMG'
+
+dd = nv_read(file)
+grim, dd, xs=500, ys=500
+
+
+;---------------------------------------------
+; build a mask
+;  This assumes the image is well navigated.
+;  This step can be skipped.
+;---------------------------------------------
+cd= pg_get_cameras(dd)
+pd = pg_get_planets(dd, od=cd)
+sd = pg_get_stars(dd, od=cd, 'faint=9')
+sund = pg_get_stars(dd, od=cd, str_name='SUN')
+rd = pg_get_rings(dd, pd=pd)
+mask = pg_mask(dd, cd=cd, gbx=pd, sund=sund, sd=sd, dkx=rd)
+
+
+;-------------------------------------------
+; Locate the spikes.
+;-------------------------------------------
+if(keyword_set(mask)) then $
+        spike_ps = pg_spikes(dd, nsig=2, grad=2, scale=15, mask=mask) $
+else spike_ps = pg_spikes(dd, nsig=2, grad=0.3, scale=15)
+pg_draw, spike_ps, col=ctred()
+
+
+;-------------------------------------------
+; Remove the spikes and display new image.
+;-------------------------------------------
+ddd = pg_despike(dd, spike_ps)
+grim, ddd, /new, xs=500, ys=500
+
+

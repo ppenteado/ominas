@@ -1,0 +1,77 @@
+MAP_IMAGE_TO_MAP_ORTHOGRAPHIC
+
+
+ PURPOSE:
+	Transforms the given image points to map coordinate points
+	using an orthographic projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_image_to_map_orthographic(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output map points.  If not set then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in an orthographic 
+	projection.  This projection portrays a planet as seen from a
+	great distance.  Scale is true only at the map center.  Areas 
+	are distorted, especially away from the map center.  
+
+	With:
+ 
+	  R = min(size[0],size[1])/2 * scale,
+
+	and:
+
+	  rho = sqrt(x^2 + y^2),
+
+	and:
+
+	  c = asin(rho/R),
+
+	the transformation is:
+
+	  lat = asin( cos(c)*sin(center[0]) + 
+	                    y*sin(c)*cos(center[0])/rho ) / units[0]
+
+	  lon = center[1] + 
+	          atan( x*sin(c)/(rho*cos(center[0])*cos(c) - 
+	                        y*sin(center[0])*sin(c)) ) + units[1]
+
+
+	See [1], p. 150 for the mathematical derivation.
+
+	[1] Snyder (1987)
+	    Map projections -- A working manual
+	    USGS professional paper 1395
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

@@ -1,0 +1,19 @@
+!quiet=1
+file = '~/casIss/1465/N1465916231_2.IMG'
+
+dd = nv_read(file)
+cd = pg_get_cameras(dd)
+pd = pg_get_planets(dd, od=cd, plt_name='SATURN')
+
+
+v_body = tr([1d, 1d, 0d])
+v_inertial = bod_body_to_inertial_pos(pd, v_body)
+v_test = bod_inertial_to_body_pos(pd, v_inertial)
+print, v_test
+
+; this problem results from loos of precision because the planet position
+; is many orders of magnitude greater than the test position.
+
+
+
+

@@ -1,0 +1,19 @@
+;===========================================================================
+; rng_set_desc
+;
+;
+;===========================================================================
+pro rng_set_desc, rxp, desc
+@nv_lib.include
+ rdp = class_extract(rxp, 'RING')
+ rd = nv_dereference(rdp)
+
+ rd.desc=desc
+
+ nv_rereference, rdp, rd
+ nv_notify, rdp, type = 0
+end
+;===========================================================================
+
+
+

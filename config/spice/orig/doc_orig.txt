@@ -1,0 +1,264 @@
+									12/05/15
+ORIG Program Reference
+======================
+
+ Summary
+ -------
+  - DH_CAMERA
+	In conjunction with the detached header routine, write out
+	camera parameters.
+
+  - DH_RINGS
+	To be called by the make dh header routines to fill the ring
+	descriptor
+
+  - JUP_HEADER
+	To create ominas detached header files from Cassini Jupiter era
+	images using a FORTRAN program to interface to SPICE.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DH_CAMERA
+---------
+
+
+ PURPOSE:
+	In conjunction with the detached header routine, write out
+	camera parameters.
+
+
+ CATEGORY:
+       UTIL/SPICE
+
+
+ CALLING SEQUENCE:
+       dh_camera, dh, label, et, c_matrix
+
+
+ ARGUMENTS:
+  INPUT:
+             dh:     Detached header name
+	   label:     Vicar label from image
+	      et:     Ephemeris time
+	c_matrix:     C-matrix from SPICE
+
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+  INPUT:
+       NONE
+
+  OUTPUT:
+       NONE
+
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle 12/2000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DH_RINGS
+--------
+
+
+ PURPOSE:
+	To be called by the make dh header routines to fill the ring
+	descriptor
+
+ CATEGORY:
+	UTIL/SPICE
+
+ USAGE:
+	dh_rings, dh, planet, et, pos, vel     
+
+ ARGUMENTS:
+	     dh:	Detatched header
+	 planet:	Planet of ring system
+	     et:	Ephemeris time
+	    pos:	Position of main planet
+	    vel:	Velocity of main planet
+
+ RESTRICTIONS:
+	This is a basic implementation only including one ring with the
+	inner and outer edges defined by the range of the entire planetary
+	ring system.  It does not include compenent rings including eccentric
+	rings.  This routine will implement RINGS as the VICAR program
+	NAV did some time in the future.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 12/2000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+JUP_HEADER
+----------
+
+
+ PURPOSE:
+	To create ominas detached header files from Cassini Jupiter era
+	images using a FORTRAN program to interface to SPICE.
+
+ CATEGORY:
+	UTIL/SPICE
+
+ USAGE:
+	jup_header, filename
+
+ ARGUMENTS:
+	filename:	Cassini VICAR image
+
+ RESTRICTIONS:
+	This is a basic implementation.  It creates a detached header
+	with a Camera descriptor, Ring descriptor, Star descriptor for
+	the Sun and 5 planet descriptors of Jupiter, Io, Europa, Ganymede
+	and Callisto.  If the TARGET_NAME of the observation in the
+	label is not one of these, then a planet descriptor of the target
+	object is also made.  Dimensions use meters and meters/sec.  Time is
+	Ephemeris time (close to seconds past J2000).  Coordinate system
+	for Position and velocity and orientation matricies is J2000.
+	NAIF kernel names are named in a file jup_header.kernels.  If new
+	kernels are received, this file will have to be modified with the
+	new kernel names.
+
+       If no C kernel is available, the orientation matrix is set so
+	that the optic axis points torward the TARGET_NAME in the label.
+	and has the planets pole axis aligned in the line direction, with
+	North in the direction of decreasing line number.
+
+
+ MODIFICATION HISTORY:
+	Original version:  A. Vasavada (2000)
+       Major changes:     Haemmerle, 12/2000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

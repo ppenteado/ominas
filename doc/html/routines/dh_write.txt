@@ -1,0 +1,45 @@
+DH_WRITE
+
+
+ PURPOSE:
+	Writes a detached header file.
+
+
+ CATEGORY:
+	UTIL/DH
+
+
+ CALLING SEQUENCE:
+	dh_write, filename, dh
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	Name of file to be written.
+
+	dh:		String array giving the detached header to write.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	silent:		If set, suppress superfluous printed output.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dh_read
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/1998
+	

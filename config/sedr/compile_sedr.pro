@@ -1,0 +1,21 @@
+.rnew bcons__define.pro
+.rnew sedr2__define.pro
+.rnew sedr_buildcm.pro
+.rnew sedr_get_bcons.pro
+.rnew sedr_get_sedr2.pro
+.rnew sedr_get_sedrupd.pro
+.rnew sedr_list.pro
+.rnew sedr_read.pro
+.rnew sedr_time.pro
+.rnew sedr_to_nv.pro
+.rnew sedr_unpack_bcons.pro
+.rnew sedr_unpack_sedr2.pro
+.rnew sedr_unpack_sedrupd.pro
+.rnew sedrupd__define.pro
+.rnew sedr_vgr_cameras.pro
+.rnew sedr_vgr_input.pro
+.rnew sedr_vgr_planets.pro
+.rnew sedr_vgr_sun.pro
+.rnew sedr_vgr_targets.pro
+.rnew vicar_vgrkey.pro
+@compile_create

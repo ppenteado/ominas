@@ -1,0 +1,49 @@
+DSK_GET_EDGE_ELEVATION
+
+
+ PURPOSE:
+	Computes elevations along the edge of a disk.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	z = dsk_get_edge_elevation(dkx, lon, frame_bd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkx:	 Array (nt) of any subclass of DISK.
+
+	lon:	 Array (nlon) of longitudes at which to compute elevations.
+
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.  One for each dkx.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	inner:	If set, the inner edge is used.
+
+	outer:	If set, the outer edge is used.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt x nlon) of elevations computed at each longitude on each 
+	disk.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

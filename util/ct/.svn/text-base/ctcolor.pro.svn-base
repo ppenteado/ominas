@@ -1,0 +1,13 @@
+;======================================================================================
+; ctcolor
+;
+;======================================================================================
+function ctcolor, color, shade
+ nc = n_elements(color)
+ if(NOT keyword_set(shade)) then shade = make_array(nc, val=1.)
+
+ col = lonarr(nc)
+ for i=0, nc-1 do col[i] = call_function('ct'+color[i], shade[i])
+ return, col
+end
+;======================================================================================

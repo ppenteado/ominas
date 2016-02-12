@@ -1,0 +1,27 @@
+KEYVAL_STRUCT__DEFINE
+
+
+ PURPOSE:
+	Structure defining a keyword/value pair.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	N/A 
+
+
+ FIELDS:
+	keywords_p:	Pointer to list of keywords.
+
+	values_p:	Pointer to list of value strings.
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

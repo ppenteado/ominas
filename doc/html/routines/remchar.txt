@@ -1,0 +1,35 @@
+REMCHAR
+
+
+ PURPOSE:
+       Removes a character from a string
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       remchar, s, c
+
+
+ ARGUMENTS:
+  INPUT:
+       s:      An input string
+
+       c:      Character to remove
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+       NONE
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

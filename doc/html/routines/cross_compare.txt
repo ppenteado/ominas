@@ -1,0 +1,43 @@
+CROSS_COMPARE
+
+
+ PURPOSE:
+       To cross compare two lists generating two sets of indicies which
+       cross compare their elements.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       cross_compare, list1, list2, indices1=indices1, indices2=indices2
+
+
+ ARGUMENTS:
+  INPUT:
+       list1:  First list.
+
+       list2:  Second list.
+
+  OUTPUT:
+	NONE
+
+ KEYWORDS:
+  INPUT:
+	NONE
+
+  OUTPUT:
+    indices1:  Each element of indices1 gives the index of the list2
+               element which matches that element of list1, or -1.
+
+    indices2:  visa verse as above but with list1
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

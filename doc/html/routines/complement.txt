@@ -1,0 +1,35 @@
+COMPLEMENT
+
+
+ PURPOSE:
+       Determines the complement of an array of subscripts.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = complement(array, sub)
+
+
+ ARGUMENTS:
+  INPUT:
+       array:  An array, to find the range of subscripts.
+
+         sub:  An array of subscripts.
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       An array of subscripts giving the complement of the input subscripts.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

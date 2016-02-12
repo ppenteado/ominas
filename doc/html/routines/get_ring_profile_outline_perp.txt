@@ -1,0 +1,47 @@
+GET_RING_PROFILE_OUTLINE_PERP
+
+
+ PURPOSE:
+       Generates an outline of a ring sector perpendicular to the 
+	image-projected radial direction.
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+	result = get_ring_profile_outline_perp(cd, dkx, points)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	gbx:	Globe descriptor.
+
+	points:	Array (2,2) of image points defining corners of the sector.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.
+
+	nrad:	Number of points in the radial direction.
+
+	nlon:	Number of points in the longitudinal direction.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array of image points defining the outline of the sector.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 8/2006
+

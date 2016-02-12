@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/minas/!svn/ver/2/trunk/config/spice
+END
+read_klist.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/config/spice/read_klist.pro
+END
+spice_input.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_input.pro
+END
+spice_output.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_output.pro
+END
+spice_read_targets.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_read_targets.pro
+END
+doc_spice.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/config/spice/doc_spice.pro
+END
+spice_sort_kernels.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_sort_kernels.pro
+END
+spice_kernel_parse.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_kernel_parse.pro
+END
+spice_str2jed.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_str2jed.pro
+END
+spice_jed2et.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_jed2et.pro
+END
+spice_et2jed.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_et2jed.pro
+END
+spice_test.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_test.pro
+END
+spice_read_klist.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_read_klist.pro
+END
+spice_parse_strings.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_parse_strings.pro
+END
+ckcat.c
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/minas/!svn/ver/2/trunk/config/spice/ckcat.c
+END
+mspice.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/config/spice/mspice.h
+END
+spice_bin_path.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_bin_path.pro
+END
+spice_io.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/config/spice/spice_io.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/config/spice/Makefile
+END

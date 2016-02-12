@@ -1,0 +1,8 @@
+# instrument	input			output		keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  GLL_SSI	dh_std_input		dh_std_output		format=gll
+        -       station_input                   -
+	-       array_input			-
+	-	gll_spice_input			-	 klist=galileo.kernels
+	-  	strcat_ucact_input		-		/j2000

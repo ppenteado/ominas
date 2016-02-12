@@ -1,0 +1,329 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam
+END
+cam_set_nx.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_nx.pro
+END
+cam_set_ny.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_ny.pro
+END
+cam_body_to_focal.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_body_to_focal.pro
+END
+cam_image_to_focal_radial.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_image_to_focal_radial.pro
+END
+cam_focal_to_image_radial.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_focal_to_image_radial.pro
+END
+cam_replicate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_replicate.pro
+END
+cam_set_body.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_body.pro
+END
+cam_get_poly_matrices.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_get_poly_matrices.pro
+END
+cam_exposure.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_exposure.pro
+END
+cam_fn_data_p.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_fn_data_p.pro
+END
+cam_fn_psf.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_fn_psf.pro
+END
+cam_image_to_focal_linear.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_image_to_focal_linear.pro
+END
+cam_focal_to_image_linear.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_focal_to_image_linear.pro
+END
+cam_set_filters.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_filters.pro
+END
+cam_set_fn_filter.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_fn_filter.pro
+END
+cam_init_descriptors.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_init_descriptors.pro
+END
+cam_set_poly_matrices.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_poly_matrices.pro
+END
+cam_set_exposure.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_exposure.pro
+END
+cam_set_fn_image_to_focal.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_fn_image_to_focal.pro
+END
+cam_set_fn_focal_to_image.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_fn_focal_to_image.pro
+END
+cam_nfilters.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_nfilters.pro
+END
+cam_set_control_points.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_control_points.pro
+END
+cam__keywords.include
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam__keywords.include
+END
+cam_set_oaxis.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_oaxis.pro
+END
+cam_clone_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_clone_descriptor.pro
+END
+cam_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_evolve.pro
+END
+cam_set_scale.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_scale.pro
+END
+cam_set_psf.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_psf.pro
+END
+cam_focal_to_body.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_focal_to_body.pro
+END
+doc_cam.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/doc_cam.pro
+END
+cam_get_radec_twist.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_get_radec_twist.pro
+END
+cam_copy_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_copy_descriptor.pro
+END
+cam_filters.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_filters.pro
+END
+cam_fn_filter.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_fn_filter.pro
+END
+cam_size.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_size.pro
+END
+cam_fn_focal_to_image.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_fn_focal_to_image.pro
+END
+cam_fn_image_to_focal.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_fn_image_to_focal.pro
+END
+camera_descriptor__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/camera_descriptor__define.pro
+END
+cam_oaxis.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_oaxis.pro
+END
+cam_nx.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_nx.pro
+END
+cam_filter.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_filter.pro
+END
+cam_set_size.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_size.pro
+END
+cam_ny.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_ny.pro
+END
+cam_set_fn_data_p.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_set_fn_data_p.pro
+END
+cam_reorient.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_reorient.pro
+END
+cam_scale.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_scale.pro
+END
+cam_psf.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_psf.pro
+END
+cam_image_to_focal.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_image_to_focal.pro
+END
+cam_focal_to_image.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_focal_to_image.pro
+END
+cam_image_to_focal_poly.pro
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_image_to_focal_poly.pro
+END
+cam_focal_to_image_poly.pro
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_focal_to_image_poly.pro
+END
+cam_body.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_body.pro
+END
+cam_psf_attrib.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/cam_psf_attrib.pro
+END
+_cam_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/cam/_cam_evolve.pro
+END

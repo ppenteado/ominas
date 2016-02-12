@@ -1,0 +1,1268 @@
+;=============================================================================
+;+
+; NAME:
+;       get_username
+;
+;
+; PURPOSE:
+;       To obtain the username of the person running the function
+;
+;
+; CATEGORY:
+;       UTIL
+;
+;
+; CALLING SEQUENCE:
+;       result = get_username()
+;
+;
+; ARGUMENTS:
+;       NONE
+;
+; RETURN:
+;       String variable containing the username.  This routine is operating
+;       system dependent and only works for unix and VMS currently.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function get_username
+
+ case !version.os_family of $
+	'unix' :	return, getenv('USER')
+	'vms' :		return, getenv('USER')
+	'Windows':	return, 'Not Available'
+	'MacOS' :	return, 'Not Available'
+	default :	return, 'Not Available'
+ endcase
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; tag_list_clone
+;
+;===========================================================================
+function tag_list_clone, tlp
+
+ list = *tlp
+
+ n = n_elements(list)
+
+ new_list = list
+
+ for i=0, n-1 do new_list[i].data_p = ptr_copy_recurse(list[i].data_p)
+
+ return, ptr_new(new_list)
+end
+;===========================================================================
+;===========================================================================
+; tag_list_copy
+;
+;  NOTE both tag lists are assumed to contain the same number of elements 
+;  with the same field names.
+;
+;
+;===========================================================================
+pro tag_list_copy, tlp_dst, tlp_src
+
+ list_src = *tlp_src
+ list_dst = *tlp_dst
+ list_new = *tlp_dst
+
+ n = n_elements(list_new)
+ for i=0, n-1 do *list_new[i].data_p = *list_src[i].data_p
+
+
+ *tlp_dst = list_new
+end
+;===========================================================================
+;=============================================================================
+; NOTE: Remove the second '+' on the following line for this file to be
+;       included in the reference guide.
+;++
+; NAME:
+;	xx
+;
+;
+; PURPOSE:
+;	xx
+;
+;
+; CATEGORY:
+;	UTIL
+;
+;
+; CALLING SEQUENCE:
+;	result = xx(xx, xx)
+;	xx, xx, xx
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; ENVIRONMENT VARIABLES:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; RETURN:
+;	xx
+;
+;
+; COMMON BLOCKS:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; SIDE EFFECTS:
+;	xx
+;
+;
+; RESTRICTIONS:
+;	xx
+;
+;
+; PROCEDURE:
+;	xx
+;
+;
+; EXAMPLE:
+;	xx
+;
+;
+; STATUS:
+;	xx
+;
+;
+; SEE ALSO:
+;	xx, xx, xx
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	xx, xx/xx/xxxx
+;	
+;-
+;=============================================================================
+
+
+;=============================================================================
+; tag_list_get
+;
+;=============================================================================
+function tag_list_get, tlp, name, $
+                        index=index, reference=reference, prefix=prefix
+
+ ntlp = n_elements(tlp)
+
+ if(NOT ptr_valid(tlp)) then return, 0
+
+ if((NOT keyword__set(name)) AND (n_elements(index) EQ 0)) then return, 0
+
+ if(n_elements(index) EQ 0) then $
+                         index = tag_list_match(tlp, name, prefix=prefix)
+ if(index[0] EQ -1) then return, 0
+
+ if(keyword__set(reference)) then return, (*tlp)[index].data_p
+
+ n = n_elements(index)
+ if(n EQ 1) then return, *((*tlp)[index].data_p)
+
+ result = make_array(n, val=*((*tlp)[index[0]].data_p))
+ for i=0, n-1 do result[i] = *((*tlp)[index[i]].data_p)
+
+ return, result
+end
+;=============================================================================
+;=============================================================================
+; tag_list_match
+;
+;=============================================================================
+function tag_list_match, tlp, name, prefix=prefix
+
+ if(size(tlp, /type) EQ 10) then names = (*tlp).name $
+ else names = tlp
+
+ if(NOT keyword__set(prefix)) then return,  where(name EQ names)
+
+ return, where(strpos(names, name) EQ 0)
+end
+;=============================================================================
+
+
+;===========================================================================
+; tag_list_read
+;
+;===========================================================================
+function tag_list_read, filename, unit=unit, bin=bin
+
+ if(NOT keyword_set(unit)) then openr, unit, filename, /get_lun
+
+
+
+ ns = ''
+ readf, unit, ns
+ n = long(ns)
+
+ list = replicate({tag_list_struct}, n)
+
+ for i=0, n-1 do $
+  begin
+   name = ''
+   readf, unit, name
+
+   ss = ''
+   readf, unit, ss
+   ss = strtrim(strcompress(ss), 2)
+   s = long(str_nsplit(ss, ' '))
+   dim = s[1:s[0]]
+   type = s[s[0]+1]
+
+   line = ''
+   nn = round(prod(dim, 0))
+   data = make_array(nn, type=type)
+
+   if(keyword_set(bin)) then readu, unit, data $
+   else $
+    for j=0, nn-1 do $
+     begin
+      readf, unit, line
+      data[j] = str_convert(strtrim(line,2), type)
+     end
+
+   data = reform(data, dim)
+
+   list[i].name = name
+   list[i].data_p = ptr_new(data)
+  end
+
+
+
+
+ if(keyword_set(filename)) then $
+  begin
+   close, unit
+   free_lun, unit
+  end
+
+
+ return, ptr_new(list)
+end
+;===========================================================================
+;=============================================================================
+; NOTE: Remove the second '+' on the following line for this file to be
+;       included in the reference guide.
+;++
+; NAME:
+;	xx
+;
+;
+; PURPOSE:
+;	xx
+;
+;
+; CATEGORY:
+;	UTIL
+;
+;
+; CALLING SEQUENCE:
+;	result = xx(xx, xx)
+;	xx, xx, xx
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; ENVIRONMENT VARIABLES:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; RETURN:
+;	xx
+;
+;
+; COMMON BLOCKS:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; SIDE EFFECTS:
+;	xx
+;
+;
+; RESTRICTIONS:
+;	xx
+;
+;
+; PROCEDURE:
+;	xx
+;
+;
+; EXAMPLE:
+;	xx
+;
+;
+; STATUS:
+;	xx
+;
+;
+; SEE ALSO:
+;	xx, xx, xx
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	xx, xx/xx/xxxx
+;	
+;-
+;=============================================================================
+pro tag_list_rm, tlp, name
+
+ if(NOT ptr_valid(tlp)) then return
+
+ i = (where(name EQ (*tlp).name))[0]
+ if(i EQ -1) then return
+
+ ptr_free, (*tlp)[i].data_p
+ *tlp = rm_list_item(*tlp, i)
+
+ if(NOT keyword_set((*tlp)[0])) then ptr_free, tlp
+
+end
+;=============================================================================
+;=============================================================================
+; NOTE: Remove the second '+' on the following line for this file to be
+;       included in the reference guide.
+;++
+; NAME:
+;	xx
+;
+;
+; PURPOSE:
+;	xx
+;
+;
+; CATEGORY:
+;	UTIL
+;
+;
+; CALLING SEQUENCE:
+;	result = xx(xx, xx)
+;	xx, xx, xx
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; ENVIRONMENT VARIABLES:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; RETURN:
+;	xx
+;
+;
+; COMMON BLOCKS:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; SIDE EFFECTS:
+;	xx
+;
+;
+; RESTRICTIONS:
+;	xx
+;
+;
+; PROCEDURE:
+;	xx
+;
+;
+; EXAMPLE:
+;	xx
+;
+;
+; STATUS:
+;	xx
+;
+;
+; SEE ALSO:
+;	xx, xx, xx
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	xx, xx/xx/xxxx
+;	
+;-
+;=============================================================================
+pro tag_list_set, tlp, name, data, index=index, new=new
+
+ if(NOT ptr_valid(tlp)) then tlp = ptr_new({tag_list_struct})
+
+ if(n_elements(index) EQ 0) then index = (where(name EQ (*tlp).name))[0]
+ new = 0
+
+ if(index EQ -1) then $
+  begin
+   new = 1
+   if(keyword__set((*tlp)[0].name)) then *tlp = [*tlp, {tag_list_struct}]
+   index = n_elements(*tlp)-1
+  end
+
+ if(NOT ptr_valid((*tlp)[index].data_p)) then (*tlp)[index].data_p = ptr_new(0)
+ *((*tlp)[index].data_p) = data
+ (*tlp)[index].name = name
+
+end
+;=============================================================================
+;===========================================================================
+; tag_list_struct__define
+;
+;
+;===========================================================================
+pro tag_list_struct__define
+
+ struct = $
+    { tag_list_struct, $
+		name:		'', $
+		data_p:		ptr_new() $
+    }
+
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; tag_list_write
+;
+;===========================================================================
+pro tag_list_write, tlp, filename, unit=unit, bin=bin
+
+ if(NOT keyword_set(unit)) then openw, unit, filename, /get_lun
+
+
+ list = *tlp
+ n = n_elements(list)
+ printf, unit, string(n)
+
+ for i=0, n-1 do $
+  begin
+   printf, unit, list[i].name
+   data = [*list[i].data_p]
+   s = size(data)
+   printf, unit, string(s)
+   dim = s[1:s[0]]
+   data = reform(string(data), round(prod(dim, 0)))
+   if(keyword_set(bin)) then writeu, unit, data $
+   else printf, unit, tr(data)
+  end
+
+
+
+ if(keyword_set(filename)) then $
+  begin
+   close, unit
+   free_lun, unit
+  end
+
+end
+;===========================================================================
+;===========================================================================
+; reduce_angle
+;
+;===========================================================================
+function reduce_angle, theta, max=max, min=min
+
+ two_pi = 2d*!dpi
+
+ if(NOT keyword_set(max)) then max = two_pi
+
+ ;---------------------------------------------------
+ ; get angles within [0,2pi]
+ ;---------------------------------------------------
+ phi = theta mod two_pi
+ w = where(phi LE 0)
+ if(w[0] NE -1) then phi[w] = phi[w] + two_pi
+
+
+ ;---------------------------------------------------
+ ; apply max if given
+ ;---------------------------------------------------
+ if(n_elements(max) NE 0) then $
+  begin
+   w = where(phi GE max)
+   if(w[0] NE -1) then phi[w] = phi[w] - two_pi
+  end
+
+ return, phi
+end
+;===========================================================================
+extract_doc, /page, $
+    title="V Program Reference", $
+    "/home/joes/idl_pro/minas/util/v/*.pro", $
+    "/home/joes/idl_pro/minas/util/v/doc_v.txt"
+;=============================================================================
+;+
+; NAME:
+;       v_angle
+;
+;
+; PURPOSE:
+;       Computes the n angles between the given arrays of column
+;       vectors.
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_angle(v1, v2)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       v1:     An array of n column vectors
+;
+;       v2:     An second array of n column vectors
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Array of n angles in radians.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale	3/2002
+;
+;-
+;=============================================================================
+function v_angle, v1, v2
+
+ dot = -1d > v_inner(v_unit(v1), v_unit(v2)) < 1d
+
+ return, acos(dot)
+end
+;===========================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_cross
+;
+;
+; PURPOSE:
+;       Computes the n cross products between the given arrays of column
+;       vectors.
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_cross(v1, v2)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       v1:     An array of n column vectors
+;
+;       v2:     An second array of n column vectors
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Array of n cross products.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_cross, v1, v2
+
+ result=v1
+
+ result[*,0,*]=v1[*,1,*]*v2[*,2,*] - v1[*,2,*]*v2[*,1,*]
+ result[*,1,*]=v1[*,2,*]*v2[*,0,*] - v1[*,0,*]*v2[*,2,*]
+ result[*,2,*]=v1[*,0,*]*v2[*,1,*] - v1[*,1,*]*v2[*,0,*]
+
+ return, result
+end
+;===========================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_inner
+;
+;
+; PURPOSE:
+;       Computes the n inner products between the given arrays of column
+;       vectors.
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_inner(v1, v2)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       v1:     An array of n column vectors
+;
+;       v2:     An second array of n column vectors
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Array of n inner products.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_inner, v1, v2
+ return, total(v1*v2, 2)
+end
+;===========================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_mag
+;
+;
+; PURPOSE:
+;       Computes the n magnitudes of the given array of column vectors.
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_mag(v)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       v:      An array of n column vectors
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Array of n magnitudes.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_mag, v
+ return, sqrt(total(v*v, 2))
+end
+;===========================================================================
+;==============================================================================================
+; v_mean
+;
+;==============================================================================================
+function v_mean, v
+
+ dim = size(v, /dim)
+ nv = dim[0]
+ nt = 1
+ if(n_elements(dim) GT 2) then nt = dim[2]
+
+ return, reform(total(v,1), 1, 3, nt)/double(nv)/double(nt)
+end
+;==============================================================================================
+;==============================================================================================
+; v_median
+;
+;==============================================================================================
+function v_median, v
+
+ dim = size(v, /dim)
+ nv = dim[0]
+ nt = 1
+ if(n_elements(dim) GT 2) then nt = dim[2]
+
+ result = dblarr(1,3,nt)
+
+ for i=0, nt-1 do result[0,0,*] = median(v[*,0,*])
+ for i=0, nt-1 do result[0,1,*] = median(v[*,1,*])
+ for i=0, nt-1 do result[0,2,*] = median(v[*,2,*])
+ 
+ return, result
+end
+;==============================================================================================
+;==========================================================================
+; v_mxm
+;
+;  m1 and m2 are (3,3,nt)
+;
+;==========================================================================
+function v_mxm, m1, m2
+
+ s = size(m1)
+ nt = 1
+ if(s[0] EQ 3) then nt = s[3]
+
+ result = dblarr(3,3,nt, /nozero)
+
+ result[0,0,*] = m2[*,0,*] ## m1[0,*,*]
+ result[1,0,*] = m2[*,0,*] ## m1[1,*,*]
+ result[2,0,*] = m2[*,0,*] ## m1[2,*,*]
+
+ result[0,1,*] = m2[*,1,*] ## m1[0,*,*]
+ result[1,1,*] = m2[*,1,*] ## m1[1,*,*]
+ result[2,1,*] = m2[*,1,*] ## m1[2,*,*]
+
+ result[0,2,*] = m2[*,2,*] ## m1[0,*,*]
+ result[1,2,*] = m2[*,2,*] ## m1[1,*,*]
+ result[2,2,*] = m2[*,2,*] ## m1[2,*,*]
+
+ return, result
+
+end
+;==========================================================================
+;==========================================================================
+; v_mxxm
+;
+;  m1 and m2 are (3,3,nt)
+;
+;==========================================================================
+function v_mxxm, m1, m2
+
+ s = size(m1)
+ nt = 1
+ if(s[0] EQ 3) then nt = s[3]
+
+ result = dblarr(3,3,nt, /nozero)
+
+ result[0,0,*] = m1[*,0,*] ## m2[0,*,*]
+ result[1,0,*] = m1[*,0,*] ## m2[1,*,*]
+ result[2,0,*] = m1[*,0,*] ## m2[2,*,*]
+
+ result[0,1,*] = m1[*,1,*] ## m2[0,*,*]
+ result[1,1,*] = m1[*,1,*] ## m2[1,*,*]
+ result[2,1,*] = m1[*,1,*] ## m2[2,*,*]
+
+ result[0,2,*] = m1[*,2,*] ## m2[0,*,*]
+ result[1,2,*] = m1[*,2,*] ## m2[1,*,*]
+ result[2,2,*] = m1[*,2,*] ## m2[2,*,*]
+
+ return, result
+end
+;==========================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_rotate_11
+;
+;
+; PURPOSE:
+;       Rotates the (nv,3,nt) column vectors, v, about the (nv,3,nt) column
+;       vectors, n, by the (nv,nt) angles theta.  The sin and cos of theta are
+;       given in order to improve performance.  Each vector in v is rotated
+;       about the corresponding vector in n by the corresponding angle in theta.
+;
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_rotate_11(v, n, sin_theta, cos_theta)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;               v:      An array of N column vectors
+;
+;               n:      An array of N column vectors
+;
+;       sin_theta:      Sine of rotation angle theta
+;
+;       cos_theta:      Cosine of rotation angle theta
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       If the arguments have dimensions v(nv,3,nt), n(nv,3,nt) and
+;       sin_theta(nv,nt), cos_theta(nv,nt) then the result has dimensions
+;       (nv,3,nt).
+;
+;
+; RESTRICTIONS:
+;       v and n must have exactly the same dimensions.
+;       sin_theta and cos_theta must be 1-dimensional arrays of any length
+;       as long as the lengths are the same.  Note that if only one theta
+;       is specified, the arguments must be given as [sin_theta], [cos_theta]
+;       instead of as scalars.
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_rotate_11, v, n, sin_theta, cos_theta
+
+ n_dot_v_x_1_cos_theta = total(n*v, 2)*(1d - cos_theta)
+
+ sv = size(v)
+ nv = sv[1]
+ nt = 1
+ if(sv[0] EQ 3) then nt = sv[3]
+
+ r = dblarr(nv,3,nt, /nozero)
+ r[*,0,*] = v[*,0,*]*cos_theta + n[*,0,*]*n_dot_v_x_1_cos_theta + $
+                            (n[*,1,*]*v[*,2,*] - n[*,2,*]*v[*,1,*])*sin_theta
+ r[*,1,*] = v[*,1,*]*cos_theta + n[*,1,*]*n_dot_v_x_1_cos_theta + $
+                            (n[*,2,*]*v[*,0,*] - n[*,0,*]*v[*,2,*])*sin_theta
+ r[*,2,*] = v[*,2,*]*cos_theta + n[*,2,*]*n_dot_v_x_1_cos_theta + $
+                            (n[*,0,*]*v[*,1,*] - n[*,1,*]*v[*,0,*])*sin_theta
+
+ return, r
+end
+;===========================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_rotate
+;
+;
+; PURPOSE:
+;       Rotates the (N,3) column vectors, v, about the (N,3) column vectors,
+;       n, by the angles theta.  The sin and cos of theta are given in
+;       order to improve performance.
+;
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_rotate(v, n, sin_theta, cos_theta)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;               v:      An array of N column vectors
+;
+;               n:      An array of N column vectors
+;
+;       sin_theta:      Sine of rotation angle theta
+;
+;       cos_theta:      Cosine of rotation angle theta
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       If the arguments have dimensions v(N,3), n(N,3) and sin_theta(M),
+;       cos_theta(M) then the result has dimensions (N,3,M)
+;
+;
+; RESTRICTIONS:
+;       v and n must have exactly the same dimensions.
+;       sin_theta and cos_theta must be 1-dimensional arrays of any length
+;       as long as the lengths are the same.  Note that if only one theta
+;       is specified, the arguments must be given as [sin_theta], [cos_theta]
+;       instead of as scalars.
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_rotate, v, n, sin_theta, cos_theta
+
+;-------------------------------------------------------------
+; easier to read, but slower and can only have scalar theta : 
+;-------------------------------------------------------------
+; return, v*cos_theta + n*v_inner(n,v)*(1d - cos_theta) + v_cross(n,v)*sin_theta
+
+
+;-----------------------------------------------------
+; equivalent, except that there are no function calls 
+; and theta can have any number of elements : 
+;-----------------------------------------------------
+ n_dot_v_x_1_cos_theta = total(n*v, 2)#(1d - cos_theta)
+ s=size(v)
+
+ r = dblarr(s[1], s[2], n_elements(sin_theta), /nozero)
+ MM = make_array(n_elements(sin_theta), val=1d)
+ r[*,0,*] = v[*,0]#cos_theta + (n[*,0]#MM)*n_dot_v_x_1_cos_theta + $
+                                   (n[*,1]*v[*,2] - n[*,2]*v[*,1])#sin_theta
+ r[*,1,*] = v[*,1]#cos_theta + (n[*,1]#MM)*n_dot_v_x_1_cos_theta + $
+                                   (n[*,2]*v[*,0] - n[*,0]*v[*,2])#sin_theta
+ r[*,2,*] = v[*,2]#cos_theta + (n[*,2]#MM)*n_dot_v_x_1_cos_theta + $
+                                   (n[*,0]*v[*,1] - n[*,1]*v[*,0])#sin_theta
+
+ return, r
+end
+;===========================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_sqmag
+;
+;
+; PURPOSE:
+;       Computes the n squared magnitudes of the given array of column vectors.
+;
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_sqmag(v)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;               v:      An array of n column vectors
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       An array of n squared magnitudes
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_sqmag, v
+ return, total(v*v, 2)
+end
+;===========================================================================
+;==============================================================================================
+; v_stdev
+;
+;==============================================================================================
+function v_stdev, v, mean=mean, mean2=mean2
+
+ dim = size(v, /dim)
+ nv = dim[0]
+ nt = 1
+ if(n_elements(dim) GT 2) then nt = dim[2]
+
+ mean = v_mean(v)
+ mean2 = v_mean(v^2)
+
+ return, sqrt(mean2 - mean^2)
+end
+;==============================================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_transform_forward
+;
+;
+; PURPOSE:
+;       Transforms vectors given rotation matrices and translation vectors.
+;
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_transform_forward(M, p, v)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       M:      array of nt (nel x nel) rotation matrices
+;       p:      array of nt nel-element column vectors
+;       v:      v is array (nv,nel,nt) of nel-element column vectors
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Array (nv,nel,nt) of nel-element transformed column vectors.
+;
+; PROCEDURE:
+;       Vectors are first rotated using M and then translated using p.
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_transform_forward, M, p, v
+
+ nt = 1 
+ sp = size(p)
+ if(sp[0] EQ 3) then nt = sp[3]
+ nel = sp[2]
+ nv = (size(v))[1]
+
+ sub = linegen3x(nv,nel,nt)
+ r = dblarr(nv,nel,nt,/nozero)
+
+ for i=0, nel-1 do $
+  begin
+   MM = (M[*,i,*])[sub]
+   r[*,i,*] = total(MM*v,2)
+  end
+
+ return, r + p[sub]
+end
+;===========================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_transform_reverse
+;
+;
+; PURPOSE:
+;       Transforms vectors given rotation matrices and translation vectors.
+;
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_transform_reverse(M, p, v)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       M:      array of nt (nel x nel) rotation matrices
+;       p:      array of nt nel-element column vectors
+;       v:      v is array (nv,nel,nt) of nel-element column vectors
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Array (nv,nel,nt) of nel-element transformed column vectors.
+;
+; PROCEDURE:
+;       Vectors are first translated using p and then rotated using M.
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_transform_reverse, M, p, v
+
+ nt = 1 
+ sp = size(p)
+ if(sp[0] EQ 3) then nt = sp[3]
+ nel = sp[2]
+ nv = (size(v))[1]
+
+ sub = linegen3x(nv,nel,nt)
+ r = dblarr(nv,3,nt,/nozero)
+ vv = (v - (bd.pos)[sub])
+
+ for i=0, nel-1 do $
+  begin
+   MM = (M[*,i,*])[sub]
+   r[*,i,*] = total(MM*vv,2)
+  end
+
+ return, r
+end
+;===========================================================================
+;=============================================================================
+;+
+; NAME:
+;       v_unit
+;
+;
+; PURPOSE:
+;       Returns unit vectors in the directions given by v.
+;
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = v_unit(v)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;               v:      An array of n column vectors
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       An array of n unit vectors
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function v_unit, v, mag=vmag
+
+ dim = size(v, /dim)
+ nv = dim[0]
+ nt = 1
+ if(n_elements(dim) GT 2) then nt = dim[2]
+
+ vmag = sqrt(total(v*v, 2))
+
+ w = where(vmag EQ 0)
+ if(w[0] NE -1) then vmag[w] = 1d
+
+ u = v
+ u[*,0,*] = v[*,0,*]/vmag
+ u[*,1,*] = v[*,1,*]/vmag
+ u[*,2,*] = v[*,2,*]/vmag
+
+ if(w[0] NE -1) then u[colgen(nv,3,nt, w)] = 0
+
+ return, u
+end
+;===========================================================================

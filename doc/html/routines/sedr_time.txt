@@ -1,0 +1,31 @@
+SEDR_TIME
+
+
+ PURPOSE:
+	Find seconds past 1950 from sedr.
+
+
+ CATEGORY:
+       UTIL/SEDR
+
+
+ CALLING SEQUENCE:
+       result = sedr_time(sedr)
+
+
+ ARGUMENTS:
+  INPUT:
+
+	sedr:		A sedr2 type structure.
+
+
+  OUTPUT: NONE
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+	Written by:     Haemmerle, 1/1999
+

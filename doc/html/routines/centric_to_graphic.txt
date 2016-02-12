@@ -1,0 +1,39 @@
+CENTRIC_TO_GRAPHIC
+
+
+ PURPOSE:
+	Converts planetocentric surface coordinates to planetographic.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	result = centric_to_graphic(radii, latlon)
+
+
+ ARGUMENTS:
+  INPUT:
+	radii:	Array (3,nt) of Ellipsoid radii.
+
+	latlon:	Array (2,nv,nt) giving the planetocentric latitudes and
+		longitudes.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS: NONE
+
+
+ RETURN:
+	Planetocentric coordinates.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2014
+	

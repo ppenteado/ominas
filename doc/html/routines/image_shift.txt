@@ -1,0 +1,43 @@
+IMAGE_SHIFT
+
+
+ PURPOSE:
+	Shifts an image by a specified (non-integer) amount using 
+	interpolation.  If applicable, the camera pont-spread function 
+	is accounted for in the interpolation.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       result = image_shift(image, dx, dy)
+
+
+ ARGUMENTS:
+  INPUT:
+	image:	2-D array giving the image.
+
+	dx:	Offset in the x direction.
+
+	dy:	Offset in the y direction.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: 
+	cd:	Camera descriptor.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Shifted image.
+
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

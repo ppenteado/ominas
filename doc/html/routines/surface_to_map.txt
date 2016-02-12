@@ -1,0 +1,42 @@
+SURFACE_TO_MAP
+
+
+ PURPOSE:
+       Transforms points in any surface coordinate system to map
+	coordinates.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       result = surface_to_map(md, bx, surface_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:      Array of nt map descriptors.
+
+	bx:      Array of nt object descriptors (subclass of BODY.
+
+	surface_pts:       Array (nv x 3 x nt) of surface points
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+   INPUT: NONE
+
+   OUTPUT: NONE
+
+
+ RETURN:
+       Array (2 x nv x nt) of map coordinates.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale

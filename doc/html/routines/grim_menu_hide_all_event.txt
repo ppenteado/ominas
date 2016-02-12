@@ -1,0 +1,15 @@
+GRIM_MENU_HIDE_ALL_EVENT
+
+
+ PURPOSE:
+	Opens a brim browser showing all planes.  The left mouse button 
+	may be used to jump among planes.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2002
+	

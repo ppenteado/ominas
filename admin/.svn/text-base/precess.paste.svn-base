@@ -1,0 +1,77 @@
+;file = '../demo/data/n1350122987.2'
+file = '~/casIss/1532/W1532506579_1.IMG'
+dd = nv_read(file, im, label, /silent)
+
+ctmod, top=top
+tvim, im, zoom=0.45, /order, /new, top=top
+
+
+cd = pg_get_cameras(dd, 'ck_in=auto')
+pd = pg_get_planets(dd, od=cd, plt_name=['SATURN'])
+plt_bd = class_extract(pd, 'BODY')
+
+rd0 = pg_get_rings(dd, pd=pd, od=cd)
+gd={cd:cd, gbx:pd, dkx:rd0}
+
+limb_ps=pg_limb(gd=gd) && pg_hide, limb_ps, gd=gd, /rm, /disk
+ring0_ps=pg_disk(gd=gd) && pg_hide, ring0_ps, gd=gd, /globe
+
+pg_draw, limb_ps, col=ctblue()
+pg_draw, ring0_ps, col=ctred()
+
+
+
+inc = 20d * !dpi/180d
+ap = 0d * !dpi/180d
+lan = 90d * !dpi/180d
+dapdt = 8.41973488d / 86400d * !dpi/180d
+;dapdt = 0d
+;dlandt = -8.36407045d / 86400d * !dpi/180d
+dlandt = 0d
+
+vel = clget(pd, 'vel')
+vel[*] = 0
+rd = pg_get_rings(dd, pd=pd, /over, $
+	rng_name='TEST', $
+	rng_vel=vel, $
+	rng_sma=tr([128980673d,0]), $
+	rng_ecc=tr([0.5d, 0.0]) $
+	)
+
+orb_set_inc, rd, plt_bd, inc	
+orb_set_ap, rd, plt_bd, ap	
+orb_set_lan, rd, plt_bd, lan	
+orb_set_dlandt, rd, plt_bd, dlandt
+orb_set_dapdt, rd, plt_bd, dapdt
+
+
+stop
+
+day = 86400d
+dt = dindgen(60) * day
+rdt = tr(rng_evolve(rd, dt))
+ring_ps = pg_disk(gd=gd, dkx=rdt)
+pg_draw, ring_ps
+
+dkdt = rng_disk(rdt)
+dlp = dsk_get_dlp(dkdt)
+
+
+
+ring_ps = pg_disk(gd=gd, dkx=rd)
+pg_draw, ring_ps, col=ctgreen()
+plot_inertial, cd, clget(rd, 'pos'), clget(rd, 'orient')*1d8, col=ctgreen()
+orb_set_ap, rd, plt_bd, 10d*!dpi/180d
+ring_ps = pg_disk(gd=gd, dkx=rd)
+pg_draw, ring_ps, col=ctyellow()
+plot_inertial, cd, clget(rd, 'pos'), clget(rd, 'orient')*1d8, col=ctyellow()
+
+
+orient = clget(rd, 'orient')
+plot_inertial, cd, clget(rd, 'pos'), orient*1d8, col=ctgreen()
+theta = 60d *!dpi/180d
+axis = -((clget(cd, 'orient'))[1,*])
+vv = v_rotate(orient[0,*], axis, sin(theta), cos(theta))
+plot_inertial, cd, clget(rd, 'pos'), vv*1d8, col=ctred()
+
+

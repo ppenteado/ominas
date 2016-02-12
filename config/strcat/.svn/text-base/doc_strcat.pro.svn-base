@@ -1,0 +1,5 @@
+extract_doc, /page, $
+    title="STRCAT Program Reference", $
+    "/home/joes/idl_pro/minas/config/strcat/*.pro", $
+    "/home/joes/idl_pro/minas/config/strcat/doc_strcat.txt"
+@doc_gsc2

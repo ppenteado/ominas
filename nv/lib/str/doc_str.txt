@@ -1,0 +1,990 @@
+									12/05/15
+STR Program Reference
+=====================
+
+ Summary
+ -------
+  - STAR_DESCRIPTOR__DEFINE
+	Class structure for the STAR class.
+
+  - STR_CLONE_DESCRIPTOR
+       Allocates new star descriptors as copies of the given
+       (existing) star descriptors.
+
+  - STR_COPY_DESCRIPTOR
+	Copies all fields from the source star descriptors into the
+       destination star descriptors.
+
+  - STR_EVOLVE
+	Computes new star descriptors at the given time offsets from the 
+	given star descriptors using the taylor series expansion 
+	corresponding to the derivatives contained in the given star 
+	descriptor.
+
+  - STR_GET_MAG
+       Calculates the visual magnitude for each given star descriptor.
+
+  - STR_GLOBE
+       Returns a globe descriptor for each given star descriptor.
+
+  - STR_INIT_DESCRIPTORS
+	Init method for the STAR class.
+
+  - STR_LIMIT_MAG
+       Returns subscripts of stars with magnitudes within the min, max range.
+
+  - STR_LUM
+       Returns a luminosity for each given star descriptor.
+
+  - STR_REPLICATE
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+  - STR_SET_GLOBE
+	Replaces the globe descriptor in each given star descriptor.
+
+  - STR_SET_LUM
+	Replaces the luminosities for each given star descriptor.
+
+  - STR_SET_SP
+	Replaces the spectra class for each given star descriptor.
+
+  - STR_SP
+       Returns a spectral type for each given star descriptor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+STAR_DESCRIPTOR__DEFINE
+-----------------------
+
+
+ PURPOSE:
+	Class structure for the STAR class.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	N/A 
+
+
+ FIELDS:
+	gbd:	GLOBE class descriptor.  
+
+		Methods: str_globe, str_set_globe
+
+
+	lum:	Luminosity value.
+
+		Methods: str_lum, str_set_lum
+
+
+	sp:	Spectral class string.
+
+		Methods: str_sp, str_set_sp
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_CLONE_DESCRIPTOR
+--------------------
+
+
+ PURPOSE:
+       Allocates new star descriptors as copies of the given
+       (existing) star descriptors.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	new_sx = str_clone_descriptor(sx)
+
+
+ ARGUMENTS:
+  INPUT:
+	sx:	 Array (nt) of any subclass of STAR.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created star descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_COPY_DESCRIPTOR
+-------------------
+
+
+ PURPOSE:
+	Copies all fields from the source star descriptors into the
+       destination star descriptors.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	str_copy_descriptor, sx_dst, sx_src
+
+
+ ARGUMENTS:
+  INPUT:
+	sx_dst:	        Array (nt) of any subclass of STAR to copy to.
+
+	sx_src:	        Array (nt) of any subclass of STAR to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_EVOLVE
+----------
+
+
+ PURPOSE:
+	Computes new star descriptors at the given time offsets from the 
+	given star descriptors using the taylor series expansion 
+	corresponding to the derivatives contained in the given star 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	sdt = str_evolve(sx, dt)
+
+
+ ARGUMENTS:
+  INPUT: 
+	sx:	 Any subclass of STAR.
+
+	dt:	 Time offset.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	nodv:	 If set, derivatives will not be evolved.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nsd,ndt) of newly allocated descriptors, of class STAR,
+	evolved by time dt, where nsd is the number of sx, and ndt
+	is the number of dt.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_GET_MAG
+-----------
+
+
+ PURPOSE:
+       Calculates the visual magnitude for each given star descriptor.
+
+
+ CATEGORY:
+       NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+       result = str_get_mag(sd)
+
+
+ ARGUMENTS:
+  INPUT:
+       sd:    Array (nt) of star descriptors.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+         NONE
+
+ RETURN:
+       An array (nt) of magnitues.
+
+ PROCEDURE:
+       Calls str_body to get the position vector.  The position is assumed
+       to be in meters and the Luminosity (sds.lum) is in J/sec.  Absolute
+       visual magnitude is calculated by using the formula for the Sun.
+       Mv = 4.83 - 2.5 log (L/Lsun)
+       where Lsun = 3.826e+26 J/sec
+       Visual magnitude is corrected by using the distance modulus.
+       m = Mv + 5 log (dist/pc) - 5
+       where pc = 3.085678e+16 m  (parsec)
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 5/1998
+	Modified by:	Haemmerle, 12/2000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_GLOBE
+---------
+
+
+ PURPOSE:
+       Returns a globe descriptor for each given star descriptor.
+
+
+ CATEGORY:
+       NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+       gbd = str_globe(sd)
+
+
+ ARGUMENTS:
+  INPUT:
+       sd:    Array (nt) of star descriptors
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+         NONE
+
+ RETURN:
+       An array (nt) of globe descriptors.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 5/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_INIT_DESCRIPTORS
+--------------------
+
+
+ PURPOSE:
+	Init method for the STAR class.
+
+
+ CATEGORY:
+       NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+       sd = str_init_descriptors(n)
+
+
+ ARGUMENTS:
+  INPUT:
+       n:      Number of star descriptors.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	sd:	Star descriptor(s) to initialize, instead of creating new ones.
+
+	gbd:	Globe descriptor(s) to pass to glb_init_descriptors.
+
+	bd:	Body descriptor(s) to pass to bod_init_descriptors.
+
+	crd:	Core descriptor(s) to pass to cor_init_descriptors.
+
+	lum:	Array (n) of luminosity values.
+
+	sp:	Array (n) of spectral class strings.
+
+  OUTPUT: NONE
+
+ RETURN:
+       An array (n) of star descriptors.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 5/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_LIMIT_MAG
+-------------
+
+
+ PURPOSE:
+       Returns subscripts of stars with magnitudes within the min, max range.
+
+
+ CATEGORY:
+       NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+       result = str_limit_mag(sd, min=min, max=max)
+
+
+ ARGUMENTS:
+  INPUT:
+       sd:    Array of star descriptors.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:
+       min:    Minimum threshold for magnitude.
+
+       max:    Maximum threshold for magnitude.
+
+  OUTPUT:
+         NONE
+
+ RETURN:
+       An array of subscripts into sd for stars fitting 
+	min <=  magnitude <= max.
+
+
+ SEE ALSO:
+	pg_str_limit_mag
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 5/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_LUM
+-------
+
+
+ PURPOSE:
+       Returns a luminosity for each given star descriptor.
+
+
+ CATEGORY:
+       NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+       result = str_lum(sd)
+
+
+ ARGUMENTS:
+  INPUT:
+       sd:    Array (nt) of star descriptors
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+         NONE
+
+ RETURN:
+       An array (nt) of luminosities.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 5/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_REPLICATE
+-------------
+
+
+ PURPOSE:
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	sds = str_replicate(sd, dim)
+
+
+ ARGUMENTS:
+  INPUT:
+	sd:	 Star descriptor.
+
+	dim:	 Dimensions of the result.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of the given dimensions containing cloned versions of the input 
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_SET_GLOBE
+-------------
+
+
+ PURPOSE:
+	Replaces the globe descriptor in each given star descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	str_set_globe, sx, gbd
+
+
+ ARGUMENTS:
+  INPUT: 
+	sx:	 Array (nt) of any subclass of STAR.
+
+	gbd:	 Array (nt) of new globe descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_SET_LUM
+-----------
+
+
+ PURPOSE:
+	Replaces the luminosities for each given star descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	str_set_lum, sx, lum
+
+
+ ARGUMENTS:
+  INPUT: 
+	sx:	 Array (nt) of any subclass of STAR.
+
+	lum:	 Array (nt) of new luminosity values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_SET_SP
+----------
+
+
+ PURPOSE:
+	Replaces the spectra class for each given star descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	str_set_sp, sx, sp
+
+
+ ARGUMENTS:
+  INPUT: 
+	sx:	 Array (nt) of any subclass of STAR.
+
+	sp:	 Array (nt) of new sp strings.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_SP
+------
+
+
+ PURPOSE:
+       Returns a spectral type for each given star descriptor.
+
+
+ CATEGORY:
+       NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+       result = str_sp(sd)
+
+
+ ARGUMENTS:
+  INPUT:
+       sd:    Array (t) of star descriptors
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+         NONE
+
+ RETURN:
+       An array (nt) of spectral types which is a three character string.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 5/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

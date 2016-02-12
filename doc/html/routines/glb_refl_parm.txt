@@ -1,0 +1,41 @@
+GLB_REFL_PARM
+
+
+ PURPOSE:
+       Returns the reflection function parameters for each given globe 
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	mass = glb_refl_parm(gbx)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbx:	 Array (nt) of any subclass of GLOBE descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (npht,nt) of reflection function parameters associated with 
+	each given globe descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

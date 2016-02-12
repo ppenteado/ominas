@@ -1,0 +1,135 @@
+# name   default? fiducial? opaque? sma(m)  ecc  lp(deg)  dlpdt(deg/day) inc(deg) lan(deg) dlandt(deg/day) m epoch(s past j2000) comment
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#----------------rings and ringlets-------------------
+
+A_ring/inner  yes  yes  yes 122170000 0  0  0  0  0  0  0 0
+A_ring/outer  yes  no  yes 136780000 0  0  0  0  0  0  0 0
+
+B_ring/inner  yes  no  yes 92000001 0  0  0  0  0  0  0 0
+#B_ring/outer  yes  no  yes 117516000 0.0012  278.91891 5.05888238 0  0  0  0 0
+B_ring/outer  yes  no  yes 117516000 0  0  0  0  0  0  0 0
+-   -  no  - -  0.0005  0  382.2  -  -  -  2 0
+
+C_ring/inner  yes  no  yes 74510001 0  0  0  0  0  0  0 0
+C_ring/outer  yes  no  yes 92000000 0  0  0  0  0  0  0 0
+
+D_ring/inner  yes  no  yes 66970000 0  0  0  0  0  0  0 0
+D_ring/outer  yes  no  yes 74510000 0  0  0  0  0  0  0 0
+
+E_ring/inner  no  no  no 189870000 0  0  0  0  0  0  0 0
+E_ring/outer  no  no  no 420000000 0  0  0  0  0  0  0 0
+
+F_ring/inner  yes  no  yes 140178700 0.00254  24.1  2.7001  0.0065  16.1  -2.6876  0 0   Bosh et al. 2002
+F_ring/outer  yes  no  yes 140268700 0.00254  24.1  2.7001  0.0065  16.1  -2.6876  0 0   Bosh et al. 2002
+
+G_ring/inner  no  no  no 165000000 0  0  0  0  0  0  0 0
+G_ring/outer  no  no  no 176000000 0  0  0  0  0  0  0 0
+
+1.960_Rs_ringlet/inner no  no  yes 118256500 0  0  0  0  0  0  0 0 
+1.960_Rs_ringlet/outer no  no  yes 118229300 0  0  0  0  0  0  0 0 
+
+Huygens_ringlet/inner no  no  yes 117833700 0  0  0  0  0  0  0 0 
+Huygens_ringlet/outer no  no  yes 117814400 0  0  0  0  0  0  0 0 
+
+Maxwell_ringlet/inner no  no  yes 87486300 0  0  0  0  0  0  0 0 
+Maxwell_ringlet/outer no  no  yes 87557900 0  0  0  0  0  0  0 0 
+
+#1.994_Rs_Ringlet/inner no  no  yes 120305700 0  0  0  0  0  0  0 0 
+#1.994_Rs_Ringlet/outer no  yes  yes 120245000 0  0  0  0  0  0  0 0 
+
+#1.990_Rs_Ringlet/inner no  yes  yes 120076300 0  0  0  0  0  0  0 0 
+#1.990_Rs_Ringlet/outer no  no  yes 120039000 0  0  0  0  0  0  0 0 
+
+D68/inner  no  no  yes 67550000 0  0  0  0  0  0  0 0 
+D68/outer  no  no  yes 67650000 0  0  0  0  0  0  0 0 
+
+
+
+#------------------individual features-------------------
+
+FN6/inner  no  no  yes 122350500 0  0  0  0  0  0  0 0   FN93; radius not given
+FN7/inner  no  yes  yes 122052500 0  0  0  0  0  0  0 0   FN93; A-ring inner edge
+FN52/outer  no  no  yes 136780000 0  0  0  0  0  0  0 0   FN93; A-ring outer edge
+#FN55/outer  no  no  yes 117516000 0.0012  278.91891 5.05888238 0  0  0  0 0   FN93; B-ring outer edge
+FN55/outer  no  no  yes 117516000 0  0 0 0  0  0  0 0   FN93; B-ring outer edge
+FN22/inner  no  no  yes 91983200 0  0  0  0  0  0  0 0   FN93; B-ring inner edge
+FN17/outer  no  no  yes 118256500 0  0  0  0  0  0  0 0   FN93
+FN18/inner  no  no  yes 118229300 0  0  0  0  0  0  0 0   FN93
+FN53/outer  no  no  yes 117833700 0  0  0  0  0  0  0 0   FN93
+FN54/inner  no  no  yes 117814400 0  0  0  0  0  0  0 0   FN93
+FN10/outer  no  no  yes 120305700 0  0  0  0  0  0  0 0   FN93
+FN11/inner  no  yes  yes 120245000 0  0  0  0  0  0  0 0   FN93
+FN12/outer  no  yes  yes 120076300 0  0  0  0  0  0  0 0   FN93
+FN14/inner  no  no  yes 120039000 0  0  0  0  0  0  0 0   FN93
+FN16/inner  no  yes  yes 118283900 0  0  0  0  0  0  0 0   FN93
+FN19/outer  no  no  yes 118183200 0  0  0  0  0  0  0 0   FN93
+
+FN20/inner  no  yes  yes 117932200 0  0  0  0  0  0  0 0   FN93
+#FN20/inner  no  yes  yes 117902250 0  0  0  1d-3  210  0  0 0   FN93 Fit by eye to image N1524964907_1.IMG
+
+FN1/inner  no  yes  yes 136522000 0  0  0  0  0  0  0 0   FN93; Keeler_Gap
+FN2/outer  no  no  yes 136488200 0  0  0  0  0  0  0 0   FN93; Keeler_Gap
+FN3/inner  no  yes  yes 133745200 0  0  0  0  0  0  0 0   FN93; Encke_Gap
+FN4/outer  no  yes  yes 133423500 0  0  0  0  0  0  0 0   FN93; Encke_Gap
+FN9/inner  no  no  yes 120316500 0  0  0  0  0  0  0 0   FN93; 1.994_Rs_Gap
+FN15/inner  no  yes  yes 118968300 0  0  0  0  0  0  0 0   FN93
+FN13/inner  no  yes  yes 118629100 0  0  0  0  0  0  0 0   FN93
+FN71/inner  no  yes  yes 104083400 0  0  0  0  0  0  0 0   FN93
+FN72/outer  no  yes  yes 103673200 0  0  0  0  0  0  0 0   FN93
+FN73/outer  no  no  yes 103009200 0  0  0  0  0  0  0 0   FN93
+FN74/inner  no  no  yes 101741500 0  0  0  0  0  0  0 0   FN93
+FN75/outer  no  yes  yes 101549300 0  0  0  0  0  0  0 0   FN93
+FN76/outer  no  yes  yes 101009700 0  0  0  0  0  0  0 0   FN93
+FN77/inner  no  no  yes 100024100 0  0  0  0  0  0  0 0   FN93
+FN78/outer  no  yes  yes 98287200 0  0  0  0  0  0  0 0   FN93
+FN80/inner  no  no  yes 97212900 0  0  0  0  0  0  0 0   FN93
+FN81/outer  no  yes  yes 96899600 0  0  0  0  0  0  0 0   FN93
+FN82/inner  no  no  yes 95358300 0  0  0  0  0  0  0 0   FN93
+FN83/outer  no  no  yes 94444100 0  0  0  0  0  0  0 0   FN93
+
+FN23/outer  no  yes  yes 90614900 0  0  0  0  0  0  0 0   FN93 
+FN24/inner  no  yes  yes 90405700 0  0  0  0  0  0  0 0   FN93
+FN25/outer  no  yes  yes 89938800 0  0  0  0  0  0  0 0   FN93
+FN26/inner  no  yes  yes 89788300 0  0  0  0  0  0  0 0   FN93
+FN27/inner  no  yes  yes 89190400 0  0  0  0  0  0  0 0   FN93
+FN28/outer  no  yes  yes 88594300 0  0  0  0  0  0  0 0   FN93
+FN41/outer  no  yes  yes 89295300 0  0  0  0  0  0  0 0   FN93
+
+FN56/outer  no  no  yes 90197300 0  0  0  0  0  0  0 0    
+FN57/inner  no  no  yes 90133700 0  0  0  0  0  0  0 0    
+FN58/outer  no  no  yes 88720300 0  0  0  0  0  0  0 0    
+FN59/inner  no  no  yes 88701700 0  0  0  0  0  0  0 0    
+FN60/outer  no  no  yes 87557900 0  0  0  0  0  0  0 0    
+FN61/inner  no  no  yes 87486300 0  0  0  0  0  0  0 0    
+FN29/outer  no  yes  yes 86602400 0  0  0  0  0  0  0 0    
+FN30/inner  no  yes  yes 86371900 0  0  0  0  0  0  0 0    
+FN31/inner  no  yes  yes 85923600 0  0  0  0  0  0  0 0    
+FN42/outer  no  yes  yes 85758700 0  0  0  0  0  0  0 0    
+FN33/inner  no  yes  yes 85661500 0  0  0  0  0  0  0 0    
+FN34/outer  no  yes  yes 84949200 0  0  0  0  0  0  0 0    
+FN35/inner  no  yes  yes 84750300 0  0  0  0  0  0  0 0    
+#FN36/???  no  yes  yes 82041600 0  0  0  0  0  0  0 0    
+FN37/outer  no  yes  yes 79265100 0  0  0  0  0  0  0 0    
+FN38/inner  no  yes  yes 79221000 0  0  0  0  0  0  0 0    
+FN43/inner  no  no  yes 77918000 0  0  0  0  0  0  0 0    
+FN62/outer  no  no  yes 77872100 0  0  0  0  0  0  0 0    
+FN63/inner  no  no  yes 77854900 0  0  0  0  0  0  0 0    
+FN39/outer  no  yes  yes 77164400 0  0  0  0  0  0  0 0    
+FN40/outer  no  yes  yes 76262900 0  0  0  0  0  0  0 0    
+FN44/inner  no  yes  yes 74490000 0  0  0  0  0  0  0 0    
+
+SP1/outer  no  no  yes 117100000 0  0  0  0  0  0  0 0   Spitale/Porco; feature 1 
+SP2/outer  no  no  yes 116600000 0  0  0  0  0  0  0 0   Spitale/Porco; feature 2 
+#SP3/trough  no  no  yes 115900000 0  0  0  0  0  0  0 0   Spitale/Porco; feature 3 
+#SP4/trough  no  no  yes 115350000 0  0  0  0  0  0  0 0   Spitale/Porco; feature 4 
+
+SP5/inner  no  no  yes 88686241 0  0  0  0  0  0  0 0   Spitale/Porco; feature 5 inner edge of 1.470 gap 
+
+SP6/inner  no  no  yes 117900000 0  0  0  0  0  0  0 0   Spitale/Porco; strange ringlet; inner edge
+SP7/outer  no  no  yes 117910000 0  0  0  0  0  0  0 0   Spitale/Porco; strange ringlet; outer edge
+#Strange_ringlet no  no  yes 117910170 0  0  0  0.00043178513 250.38713 -4.9849391 0 0   Spitale/Porco; strange ringlet; center
+Strange_ringlet   no    no    yes  117909310  8.0775348d-5   7.4155792  0    0.00045856110  257.81178  -4.9849391  0  0      Spitale/Porco; strange ringlet; center
+
+SP8/outer  no  yes  yes 86756739 0  0  0  0  0  0  0 0   Spitale/Porco; apparently circular feature near maxwell; might make a good fiducial
+

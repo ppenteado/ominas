@@ -1,0 +1,20 @@
+							;../nv/gr/bitmaps/grim_hide_bitmap.array bitmap
+							;definition
+../nv/gr/bitmaps/grim_hide_bitmap.array = 	[				$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 199B],			$
+		[255B, 195B],			$
+		[255B, 205B],			$
+		[255B, 238B],			$
+		[127B, 247B],			$
+		[191B, 251B],			$
+		[223B, 253B],			$
+		[239B, 254B],			$
+		[119B, 255B],			$
+		[163B, 255B],			$
+		[205B, 255B],			$
+		[235B, 255B],			$
+		[247B, 255B],			$
+		[255B, 255B]			$
+		]

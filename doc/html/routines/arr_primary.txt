@@ -1,0 +1,39 @@
+ARR_PRIMARY
+
+
+ PURPOSE:
+	Returns the primary string for each given array descriptor.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	primary = arr_primary(ard)
+
+
+ ARGUMENTS:
+  INPUT: 
+	ard:	 Array (nt) of ARRAY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Primary string associated with each given array descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

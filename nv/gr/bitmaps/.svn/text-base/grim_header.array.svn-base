@@ -1,0 +1,20 @@
+							;/home/joe/idl_pro/minas/nv/gr/bitmaps/grim_header.array bitmap
+							;definition
+/home/joe/idl_pro/minas/nv/gr/bitmaps/grim_header.array = 	[				$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[065B, 194B],			$
+		[255B, 255B],			$
+		[009B, 132B],			$
+		[255B, 255B],			$
+		[033B, 228B],			$
+		[255B, 255B],			$
+		[081B, 136B],			$
+		[255B, 255B],			$
+		[033B, 137B],			$
+		[255B, 255B],			$
+		[009B, 194B],			$
+		[255B, 255B],			$
+		[145B, 146B],			$
+		[255B, 255B]			$
+		]

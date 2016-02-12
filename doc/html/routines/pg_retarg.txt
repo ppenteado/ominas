@@ -1,0 +1,58 @@
+PG_RETARG
+
+
+ PURPOSE:
+	Modifies the camera orientation such that the optic axis points 
+	along a given vector, or toward a specified body.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	pg_retarg, cd=cd, bx=bx
+
+
+ ARGUMENTS:
+  INPUT: 
+	v:	Inertial vector giving new optic axis direction.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	 cd:	 Camera descriptor to repoint.
+
+	 bx:	 Body descriptor at which to point.
+
+	 gd:	 Generic descriptor.  If given, the cd and bx inputs are 
+		 taken from this structure instead of the argument list.
+
+	 toward: Camera should be pointed toward bx (default).
+
+	 away:   Camera should be pointed away from bx.
+
+	along:   Index of bx axis along which to point.
+
+
+  OUTPUT:
+	NONE.
+
+
+ RETURN: NONE
+
+
+ SIDE EFFECTS:
+	pg_retarg modifies cd and adds its name to the task list of each given
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2007
+	

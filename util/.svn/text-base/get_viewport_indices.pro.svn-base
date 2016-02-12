@@ -1,0 +1,59 @@
+;==================================================================================
+; get_viewport_indices
+;
+;  Valid indices are returned in ascending order so that uniq() can be used 
+;  without sort().
+;
+;==================================================================================
+function get_viewport_indices, dim, p=data_xy, device_indices=iii, device_size=device_size
+
+ device_size = [!d.x_size,!d.y_size]
+ device_offset = [0l,0l]
+
+ device_x = (lindgen(device_size[0]) + device_offset[0]) # $
+                                          make_array(device_size[1], val=1l)
+ device_y = (lindgen(device_size[1]) + device_offset[1]) ## $
+                                          make_array(device_size[0], val=1l)
+
+ data_xy = convert_coord(double(device_x), double(device_y), /device, /to_data)
+
+ data_x = round(data_xy[0,*])
+ data_y = round(data_xy[1,*])
+
+; data_x = fix(data_xy[0,*])
+; data_y = fix(data_xy[1,*])
+
+; data_x = data_xy[0,*]
+; data_y = data_xy[1,*]
+
+
+ n = n_elements(data_x)
+
+ data_xy = [reform(data_x, 1,n, /over), reform(data_y, 1,n, /over)]
+ device_xy = [reform(device_x, 1,n, /over), reform(device_y, 1,n, /over)]
+
+ w = where( (data_x GE 0) AND (data_x LT dim[0]) AND $
+            (data_y GE 0) AND (data_y LT dim[1]) )
+
+ iii = -1
+ if(w[0] EQ -1) then return, -1
+
+ ii = xy_to_w(dim, data_xy[*,w])
+ iii = xy_to_w([device_size[0], device_size[1]], device_xy[*,w])
+
+;stop
+
+; Shouldn't need to do this.  However, when a data pixel encompasses many device
+; pixels, there result many lines of identical indices, ii, which keep
+; wrapping back instead of monotonicaly ascending.
+ss = sort(ii)
+ii = ii[ss]
+iii = iii[ss]
+
+
+ return, ii
+end
+;==================================================================================
+
+
+

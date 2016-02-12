@@ -1,0 +1,43 @@
+CLASS_EXTRACT
+
+
+ PURPOSE:
+	Extracts the object descriptor of the specified class.
+
+
+ CATEGORY:
+	NV/LIB/CLASS
+
+
+ CALLING SEQUENCE:
+	odc = class_extract(od)
+
+
+ ARGUMENTS:
+  INPUT:
+	od:	 Descriptor of any class.  Arrays may be inhomogeneous.
+
+	class:	 String giving the name of the class to extract.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	rm:	If set, the identified descriptors are removed from the 
+	        input array.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Descriptors of the desired class.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

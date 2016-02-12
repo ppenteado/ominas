@@ -1,0 +1,50 @@
+;===========================================================================
+; dsk_shape_vertical.pro
+;
+;
+;===========================================================================
+function dsk_shape_vertical, dkx=dkx, frame_bd=frame_bd, $
+	a, i, lan, $		; nt x nlon
+	dlon, $			; nlon
+	l, il, lanl, $		; nt x nlon x nm
+	ll=ll, lii=lii
+
+ if(keyword_set(dkx)) then $
+  begin						; keyword__set intentional here
+   if(NOT keyword__set(a)) then a = (dsk_sma(dkx))[0]
+   if(NOT keyword__set(e)) then e = (dsk_ecc(dkx))[0]
+   if(NOT keyword__set(lp)) then $
+       lp = orb_arg_to_lon(dkx, dsk_get_ap(dkx, frame_bd), frame_bd)
+   if(NOT keyword__set(m)) then m = (dsk_m(dkx))[*,0]
+   if(NOT keyword__set(em)) then em = (dsk_em(dkx))[*,0]
+   if(NOT keyword__set(lpm)) then lpm = (dsk_lpm(dkx))[*,0]
+  end
+
+ nlon = n_elements(dlon)
+ nt = n_elements(a)/nlon
+
+ z00 = dblarr(nt, nlon)	
+
+ if(NOT keyword_set(l)) then return, z00
+ if(l[0] EQ 0) then return, z00
+
+ nl = n_elements(l) / nt / nlon
+
+ sub = linegen3z(nt,nlon,nl)
+ ddlon = (dlon##make_array(nt,val=1d))[sub]
+ aa = a[sub]
+
+ zl = aa*sin(il)*sin(l*(ddlon-lanl))
+
+ if(defined(lii)) then return, zl[*,*,lii]		; nt x nlon
+
+ if(keyword_set(ll)) then $
+  begin
+   ii = where(l[0,0,*] EQ ll)
+   return, zl[*,*,ii]                                   ; nt x nlon
+  end
+
+ if(nl EQ 1) then return, zl
+ return, total(zl, 3)					; nt x nlon
+end
+;===========================================================================

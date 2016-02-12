@@ -1,0 +1,16 @@
+CTRED
+
+ PURPOSE:
+       To allocate/return the color red.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctred()
+
+ RETURN:
+       The lookup table or true color value for red
+

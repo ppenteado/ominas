@@ -1,0 +1,15 @@
+
+#cp ../*/doc_*.txt .
+#cp ../*/*/doc_*.txt .
+#cp ../*/*/*/doc_*.txt .
+#cp ../*/*/*/*/doc_*.txt .
+
+
+#cp ../*/*_description.txt .
+#cp ../*/*/*_description.txt .
+#cp ../*/*/*/*_description.txt .
+
+mv doc_sys.txt doc_nv.txt
+
+cp ../README.TXT .
+

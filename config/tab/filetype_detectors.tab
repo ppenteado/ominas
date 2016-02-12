@@ -1,0 +1,16 @@
+# The first filetype in this list is treated as a default.
+# detector fn			filetype	action
+# (returns T/F)
+
+  detect_mask			MASK		read
+  detect_dh                     DH		ignore
+  detect_occ			OCC		read
+  detect_vicar			VICAR		read
+  detect_fits			FITS		read
+  detect_vgr_cd			VGR_CD		read
+  detect_tdl			TDL		read
+  detect_multi			MULTI		read
+  detect_pds			PDS		read
+  detect_ext			EXT		read
+
+

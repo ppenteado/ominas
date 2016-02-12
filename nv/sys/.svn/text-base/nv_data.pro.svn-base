@@ -1,0 +1,94 @@
+;=============================================================================
+;+
+; NAME:
+;	nv_data
+;
+;
+; PURPOSE:
+;	Returns the data array associated with a data descriptor.
+;
+;
+; CATEGORY:
+;	NV/SYS
+;
+;
+; CALLING SEQUENCE:
+;	data = nv_data(dd)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dd:	Data descriptor.
+;
+;  OUTPUT: NONE
+;
+;
+; KEYWORDS:
+;  INPUT: NONE
+;
+;  OUTPUT: NONE
+;
+;
+; RETURN:
+;	The data array associated with the data descriptor.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+; SEE ALSO:
+;	nv_set_data
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2/1998
+;	
+;-
+;=============================================================================
+function nv_data, ddp, samples=samples
+@nv.include
+ nv_notify, ddp, type = 1
+ dd = nv_dereference(ddp)
+
+ sampled = 0
+
+ ;-----------------------------------------------
+ ; this is the fastest way to extract samples...
+ ;-----------------------------------------------
+ if(NOT keyword_set(dd.compress)) then $
+  begin
+   data = data_archive_get(dd.data_dap, dd.dap_index, samples=samples)
+   if(keyword_set(data)) then sampled = 1
+  end $
+ ;-----------------------------------------------
+ ; this is not so fast...
+ ;-----------------------------------------------
+ else $
+  begin
+   data = data_archive_get(dd.data_dap, dd.dap_index)
+   data = call_function('nv_uncompress_data_' + dd.compress, dd, data)
+  end
+
+ ;-----------------------------------------------
+ ; this is slower still...
+ ;-----------------------------------------------
+ if(NOT keyword_set(data)) then $
+  begin
+   data = nv_load_data(ddp)
+   if(dd.maintain LT 2) then $
+    begin
+     nv_suspend_events
+     nv_set_data, ddp, data, /silent
+     nv_resume_events
+    end
+  end
+
+ if(defined(samples)) then if(NOT sampled) then data = data[samples]
+
+ return, data
+end
+;===========================================================================
+
+
+

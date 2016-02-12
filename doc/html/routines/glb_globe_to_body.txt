@@ -1,0 +1,41 @@
+GLB_GLOBE_TO_BODY
+
+ PURPOSE:
+       Transforms the given column vectors from the globe coordinate
+       system to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	body_pts = glb_globe_to_body(gbx, globe_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	gbx:	        Array (nt) of any subclass of GLOBE descriptors.
+
+	globe_pts:	Array (nv,3,nt) of column vectors in the globe frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column vectors in the body frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

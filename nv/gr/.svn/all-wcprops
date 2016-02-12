@@ -1,0 +1,197 @@
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/minas/!svn/ver/2/trunk/nv/gr
+END
+grim_xyzoom_cursor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_xyzoom_cursor.pro
+END
+grim_pixel_readout.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_pixel_readout.pro
+END
+grim_planes.include
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_planes.include
+END
+grim_image.include
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_image.include
+END
+grim_trim_cursor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_trim_cursor.pro
+END
+brim.pro
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/minas/!svn/ver/2/trunk/nv/gr/brim.pro
+END
+grim_footprint_cursor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_footprint_cursor.pro
+END
+grim_rc_settings.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_rc_settings.pro
+END
+grim_descriptors.include
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_descriptors.include
+END
+grim_overlays.include
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_overlays.include
+END
+grim_remove_cursor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_remove_cursor.pro
+END
+grim_print.pro
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_print.pro
+END
+grim_data.include
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_data.include
+END
+grim_obsolete.include
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_obsolete.include
+END
+grim_compute.include
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_compute.include
+END
+grim_user_mode_struct__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_user_mode_struct__define.pro
+END
+grim_readout_cursor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_readout_cursor.pro
+END
+grim_mag_cursor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_mag_cursor.pro
+END
+grim_constants.common
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_constants.common
+END
+grim_no_cursor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_no_cursor.pro
+END
+grim_tiepoints_cursor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_tiepoints_cursor.pro
+END
+grim_colortool.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_colortool.pro
+END
+grim_block.include
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_block.include
+END
+doc_gr.pro
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/minas/!svn/ver/2/trunk/nv/gr/doc_gr.pro
+END
+grim_plane_settings.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_plane_settings.pro
+END
+grim.pro
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim.pro
+END
+grim_bitmaps.include
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_bitmaps.include
+END
+grim_message.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_message.pro
+END
+grim_default_menus.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_default_menus.pro
+END
+grim_util.include
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_util.include
+END
+grim_overlay_settings.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_overlay_settings.pro
+END
+grim_user.include
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/gr/grim_user.include
+END

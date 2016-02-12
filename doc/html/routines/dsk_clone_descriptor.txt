@@ -1,0 +1,36 @@
+DSK_CLONE_DESCRIPTOR
+
+
+ PURPOSE:
+	Allocates a new disk descriptor as a copy of an existing descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	new_dkd = dsk_clone_descriptor(dkd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Descriptor of class DISK.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Newly created disk descriptor with all fields identical to the input
+	descriptor.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

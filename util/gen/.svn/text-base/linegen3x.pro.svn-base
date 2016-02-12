@@ -1,0 +1,21 @@
+;===========================================================================
+; linegen3x.pro
+;
+; generates a 3d array which looks like indgen(l,m) in the y,z direction
+; and is replicated in the x-direction.
+;
+; example: for n=6,m=3,l=2
+;	0  0  0  0  0  0
+;	1  1  1  1  1  1
+;	2  2  2  2  2  2
+;
+;	3  3  3  3  3  3
+;	4  4  4  4  4  4
+;	5  5  5  5  5  5
+;
+;
+;===========================================================================
+function linegen3x, n, m, l
+ return, reform(lindgen(n,m,l)/n, n,m,l, /overwrite)
+end
+;===========================================================================

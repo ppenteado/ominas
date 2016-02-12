@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="ABBREV Program Reference", $
+    "/home/joes/idl_pro/minas/util/abbrev/*.pro", $
+    "/home/joes/idl_pro/minas/util/abbrev/doc_abbrev.txt"

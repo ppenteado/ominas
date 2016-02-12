@@ -1,0 +1,59 @@
+MAP_IMAGE_TO_MAP_RECTANGULAR
+
+
+ PURPOSE:
+	Transforms the given image points to map coordinate points
+	using a rectangular projection.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_image_to_map_rectangular(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	valid:	Indices of all input points that correspond to valid
+		output map points.  If not set then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in a rectangular projection.
+	In this projection, latitudes map linearly to the the y image 
+	direction, and longitudes map linearly to the x image direction.
+
+	With:
+ 
+		a = [size[1]/pi, size[0]/2pi] * scale * units, 
+
+	the transformation is:
+
+		lat = (y - origin[1])/a[0] + center[0]
+
+		lon = (x - origin[0])/a[1] + center[1]
+
+	where the latitude equation is solved iteratively.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

@@ -1,0 +1,54 @@
+NV_EXTRACT_SN
+
+
+ PURPOSE:
+	Extracts serial numbers from given descriptors.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	result = nv_extract_sn(xd)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	Array of descriptors.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	NONE
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	Array of extracted serial numbers; 0 if not found.
+
+
+ PROCEDURE:
+	If the second field of the given descriptor is a long, then it is 
+	assumed to be the serial number.  Otherwise, the first field is assumed
+	to be a descriptor and that one is checked for a long in the second
+	position.  The process is repeated until a serial number is found or 
+	no sub-descriptor is found.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	nv_get_sn
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2002
+	

@@ -1,0 +1,37 @@
+PGS_CULL
+
+
+ PURPOSE:
+	Cleans out an array of points structures by removing invisible points
+	and empty points structures.
+
+
+ CATEGORY:
+	NV/PGS
+
+
+ CALLING SEQUENCE:
+	new_pp = pgs_cull(pp)
+
+
+ ARGUMENTS:
+  INPUT:
+	pp:	Array of points structures.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array points structures, or 0 if all were empty.
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

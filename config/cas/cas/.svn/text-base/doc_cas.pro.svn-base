@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="CAS Program Reference", $
+    "/home/joes/idl_pro/minas/config/util/cas/*.pro", $
+    "/home/joes/idl_pro/minas/config/util/cas/doc_cas.txt"

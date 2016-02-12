@@ -1,0 +1,60 @@
+PG_PTASSOC
+
+
+ PURPOSE:
+	Associates points between two arrays by searching for the most
+	frequent offset between the two.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	assoc_scan_ps = pg_ptassoc(scan_ps, model_ps, assoc_model_ps)
+
+
+ ARGUMENTS:
+  INPUT:
+	scan_ps:	pg_points_struct(s) containing first array, typically
+			an array of candidate points detected in an image.
+
+	model_ps:	pg_points_struct(s) containing the second array, typically
+			an array of computed model points.
+
+  OUTPUT: 
+	assoc_model_ps:	pg_points_struct containing the output model points.  
+			Each of these points is associated with a point
+			in the returned array.  If this argument is not
+			present, the model_ps array is overwritten with
+			the output model points.
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	pg_points_struct containing an associated scan point for each output
+	model point in assoc_model_ps.  
+
+
+ PROCEDURE:
+	Points are associated by searching for the most frequent offset
+	between scan points and model points.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pg_cvscan, pg_cvscan_coeff, pg_ptscan, pg_ptscan_coeff, 
+	pg_cvchisq, pg_ptchisq, pg_threshold
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2004
+	

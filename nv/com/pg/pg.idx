@@ -1,0 +1,266 @@
+BLEMISHES, remove from image via interpolation		pg_blemish
+REMOVE imge blemishes via interpolation			pg_blemish
+INTERPOLATION, remove image blemishes via		pg_blemish
+IMAGE blemishes, remove via interpolation		pg_blemish
+
+CENTER, compute	coordinates of body			pg_center
+COMPUTE coordinates of body center			pg_center
+COORDINATES, compute body center			pg_center
+BODY center, compute coordinates of			pg_center
+
+COMPUTE chisq for fit					pg_chisq
+CHISQ, compute for fit					pg_chisq
+FIT, compute chisq for					pg_chisq
+
+CENTROID, compute near image feature			pg_cntrd
+COMPUTE centroid near image feature			pg_cntrd
+FEATURE, compute centroid near image			pg_cntrd
+
+COREGISTER images					pg_coregister
+IMAGES, coregister					pg_coregister
+
+COMPUTE covariance matrix				pg_covariance
+COVARIANCE matrix, compute				pg_covariance
+MATRIX, covariance, compute				pg_covariance
+
+CROP image points					pg_crop_points
+POINTS, crop image					pg_crop_points
+IMAGE points, crop					pg_crop_points
+
+CROP image						pg_crop
+IMAGE, crop						pg_crop
+
+CURSOR, obtain geometric info at			pg_cursor
+OBTAIN geometric info at cursor				pg_cursor
+GEOMETRIC info, obtain at cursor			pg_cursor
+
+COMPUTE cusp points					pg_cusps
+CUSP points, compute					pg_cusps
+POINTS, compute cusp					pg_cusps
+
+COMPUTE curve-fit chisq					pg_cvchisq
+CHISQ, compute curve-fit				pg_cvchisq
+CURVE-FIT, compute chisq				pg_cvchisq
+
+COMPUTE curve-fit least-square coefficients		pg_cvscan_coeff
+LEAST_SQUARE, compute curve-fit coefficients		pg_cvscan_coeff
+COEFFICIENTS, compute curve-fit least-square		pg_cvscan_coeff
+CURVE-FIT, compute least-square for curve-fit		pg_cvscan_coeff
+
+SCAN curve						pg_cvscan
+CURVE, scan						pg_cvscan
+
+DESPIKE image						pg_despike
+IMAGE, despike						pg_despike
+
+COMPUTE coordinates on disk edges			pg_disk
+DISK edges, compute coordinates on			pg_disk
+COORDINATES, compute on disk edges			pg_disk
+EDGES, compute coordinates on disk			pg_disk
+
+DRAG points via mouse					pg_drag
+POINTS, drag via mouse					pg_drag
+MOUSE, drag points via					pg_drag
+
+DRAW points						pg_draw_point
+POINTS, draw						pg_draw_point
+
+DRAW points or vectors					pg_draw
+POINTS or vector, draw					pg_draw
+VECTORS, draw points or					pg_draw
+
+DRAW vectors						pg_draw_vector
+VECTORS, draw						pg_draw_vector
+
+SCAN image for edges					pg_edges
+IMAGE, scan for edges					pg_edges
+EDGES, scan image for					pg_edges
+
+FIND best fit between sets of image points		pg_farfit
+IMAGE points, find best fit between sets of		pg_farfit
+POINTS, image, find best fit between sets of		pg_farfit
+FIT, find best between sets of image points		pg_farfit
+
+FIT, perform simultaneous least-square			pg_fit
+LEAST-SQUARE, perform simultaneous fit			pg_fit
+
+FREE all pointers in structure				pg_free
+POINTERS, free all in structure				pg_free
+STRUCTURE, free all pointers in				pg_free
+
+GET camera descriptor					pg_get_cameras
+CAMERA descriptor, get					pg_get_cameras
+DESCRIPTOR, camera, get					pg_get_cameras
+
+GET map descriptor					pg_get_maps
+MAP descriptor, get					pg_get_maps
+DESCRIPTOR, map, get					pg_get_maps
+
+GET planet descriptor					pg_get_planets
+PLANET descriptor, get					pg_get_planets
+DESCRIPTOR, planet, get					pg_get_planets
+
+GET ring descriptor					pg_get_rings
+RING descriptor, get					pg_get_rings
+DESCRIPTOR, ring, get					pg_get_rings
+
+GET star descriptor					pg_get_stars
+STAR descriptor, get					pg_get_stars
+DESCRIPTOR, star, get					pg_get_stars
+
+GET station descriptor					pg_get_stations
+STATION descriptor, get					pg_get_stations
+DESCRIPTOR, station, get				pg_get_stations
+
+COMPUTE coordinates on disk grid			pg_grid_disk
+DISK grid, compute coordinates on			pg_grid_disk
+COORDINATES, compute on disk grid			pg_grid_disk
+GRID, compute coordinates on disk			pg_grid_disk
+
+COMPUTE coordinates on globe grid			pg_grid_globe
+GLOBE grid, compute coordinates on			pg_grid_globe
+COORDINATES, compute on globe grid			pg_grid_globe
+GRID, compute coordinates on globe			pg_grid_globe
+
+COMPUTE coordinates on surface grid			pg_grid
+SURFACE grid, compute coordinates on			pg_grid
+COORDINATES, compute on surface grid			pg_grid
+GRID, compute coordinates on surface			pg_grid
+
+HIDE points wrt disk					pg_hide_disk
+DISK, hide points wrt					pg_hide_disk
+POINTS, hide wrt disk					pg_hide_disk
+
+HIDE points wrt globe					pg_hide_globe
+GLOBE, hide points wrt					pg_hide_globe
+POINTS, hide wrt globe					pg_hide_globe
+
+HIDE points wrt limb					pg_hide_limb
+LIMB, hide points wrt					pg_hide_limb
+POINTS, hide wrt limb					pg_hide_limb
+
+HIDE points wrt limb, globe or disk			pg_hide
+LIMB, globe or disk, hide points wrt			pg_hide
+GLOBE or disk, hide points wrt limb or			pg_hide
+DISK, hide points wrt limb, globe, or			pg_hide
+POINTS, hide wrt limb, globe or disk			pg_hide
+
+SELECT an image sector via the mouse			pg_image_sector
+IMAGE sector, select via the mouse			pg_image_sector
+SECTOR, image, select via the mouse			pg_image_sector
+MOUSE, select image sector via				pg_image_sector
+
+COMPUTE coordinates on limb				pg_limb
+LIMB, compute coordinates on				pg_limb
+COORDINATES, compute on limb				pg_limb
+
+COMPUTE limb sector for altitude / azimuth inputs	pg_limb_sector_altaz
+LIMB sector, compute for altitude / azimuth inputs	pg_limb_sector_altaz
+SECTOR, limb, compute for altitude / azimuth inputs	pg_limb_sector_altaz
+ALTITUDE / azimuth inputs, compute limb sector for	pg_limb_sector_altaz
+AZIMUTH inputs, compute limb sector for altitude /	pg_limb_sector_altaz
+
+COMPUTE limb sector for altitude / length inputs	pg_limb_sector_linear
+LIMB sector, compute for altitude / length inputs	pg_limb_sector_linear
+SECTOR, limb, compute for altitude / length inputs	pg_limb_sector_linear
+ALTITUDE / length inputs, compute limb sector for	pg_limb_sector_linear
+LENGTH inputs, compute limb sector for altitude /	pg_limb_sector_linear
+
+SELECT limb sector for altitude / azimuth inputs
+	via mouse					pg_limb_sector
+LIMB sector, select for altitude / azimuth inputs
+	via mouse					pg_limb_sector
+SECTOR, limb, select for altitude / azimuth inputs
+	via mouse					pg_limb_sector
+ALTITUDE / azimuth inputs, select limb sector for
+	via mouse					pg_limb_sector
+AZIMUTH inputs, select via mouse limb sector for 
+	altitude /					pg_limb_sector
+MOUSE, select limb sector for altitude / azimuth 
+	inputs via					pg_limb_sector
+
+REPROJECT image onto linear grid			pg_linearize_image
+IMAGE, reproject onto linear grid			pg_linearize_image
+LINEAR grid, reproject image onto			pg_linearize_image
+GRID, reproject image onto linear			pg_linearize_image
+
+REPROJECT image onto map grid				pg_map
+IMAGE, reproject onto map grid				pg_map
+MAP grid, reproject image onto				pg_map
+GRID, reproject image onto map				pg_map
+
+COMPUTE image mask for objects in scene			pg_mask
+IMAGE mask, compute for objects in scene		pg_mask
+MASK, image, compute for objects in scene		pg_mask
+SCENE, compute image mask for all objects in		pg_mask
+OBJECTS, compute image mask for all in scene		pg_mask
+
+MEASURE geometric relationships between image points	pg_measure
+	via mouse
+GEOMETRIC relationships, measure between image points	pg_measure
+	via mouse
+RELATIONSHIPS, geometric, measure between image points	pg_measure
+	via mouse
+IMAGE points, measure geometric relationships between 	pg_measure
+	via mouse
+POINTS, image, measure geometric relationships between 	pg_measure
+	via mouse
+MOUSE, measure geometric relationships between image 	pg_measure
+	points via 
+
+COMBINE maps into a mosaic				pg_mosaic
+MAPS, combine into a mosaic				pg_mosaic
+MOSAIC, combine maps into a				pg_mosaic
+
+TRANSLATE and rotate objects				pg_move
+ROTATE and translate objects				pg_move
+OBJECTS, translate and rotate				pg_move
+
+pg_nearest_points
+pg_exclude_points
+
+COMPUTE north angle					pg_northangle
+NORTH angle, compute					pg_northangle
+ANGLE, north, compute					pg_northangle
+
+PHOTOMETRICALLY correct disk in image			pg_photom_disk
+IMAGE, photometrically correct disk in			pg_photom_disk
+CORRECT disk in image photometrically			pg_photom_disk
+DISK, photometrically correct in image			pg_photom_disk
+
+PHOTOMETRICALLY correct globe in image			pg_photom_globe
+IMAGE, photometrically correct globe in			pg_photom_globe
+CORRECT globe in image photometrically			pg_photom_globe
+GLOBE, photometrically correct in image			pg_photom_globe
+
+PHOTOMETRICALLY correct globe or disk in image		pg_photom
+IMAGE, photometrically correct globe or disk in		pg_photom
+CORRECT globe or disk in image photometrically		pg_photom
+GLOBE or disk, photometrically correct in image		pg_photom
+DISK or globe, photometrically correct in image		pg_photom
+
+CONCATENATE points from pg_points_struct		pg_points
+POINTS from pg_points_struct, concatenate		pg_points
+PG_POINTS_STRUCT, concatenate points from		pg_points
+
+INTERPOLATE a profile from an image			pg_profile_image
+PROFILE, interpolate from an image			pg_profile_image
+IMAGE, interpolate a profile from			pg_profile_image
+
+INTERPOLATE a ring profile from an image		pg_profile_image
+PROFILE, ring, interpolate from an image		pg_profile_image
+IMAGE, interpolate a ring profile from			pg_profile_image
+
+ASSOCIATE points between arrays				pg_ptassoc
+POINTS, associate between arrays			pg_ptassoc
+ARRAYS, associate points between			pg_ptassoc
+
+COMPUTE point-fit chisq					pg_ptchisq
+CHISQ, compute point-fit				pg_ptchisq
+POINT-FIT, compute chisq				pg_ptchisq
+
+pg_ptcntrd
+
+
+
+

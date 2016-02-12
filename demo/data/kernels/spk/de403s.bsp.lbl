@@ -1,0 +1,148 @@
+MISSION_NAME                 = "CASSINI"
+SPACECRAFT_NAME              = "CASSINI"
+DATA_SET_ID                  = "SPICE_SPK_FILE"
+KERNEL_TYPE_ID               = "SPK"
+PRODUCT_ID                   = "de403s.xsp"
+PRODUCT_CREATION_TIME        = 1996-12-11T16:22:44
+PRODUCER_ID                  = "CASSINI_NAV_TEAM"
+MISSION_PHASE_NAME           = "LAUNCH"
+PRODUCT_VERSION_TYPE         = "TEST"
+PLATFORM_OR_MOUNTING_NAME    = "N/A"
+START_TIME                   = 1979-11-30T23:59:10
+STOP_TIME                    = 2011-01-06T23:58:58
+SPACECRAFT_CLOCK_START_COUNT = 0
+SPACECRAFT_CLOCK_STOP_COUNT  = 0
+TARGET_NAME                  = {
+                               "MERCURY BARYCENTER",
+                               "VENUS BARYCENTER",
+                               "EARTH BARYCENTER",
+                               "MARS BARYCENTER",
+                               "JUPITER BARYCENTER",
+                               "SATURN BARYCENTER",
+                               "URANUS BARYCENTER",
+                               "NEPTUNE BARYCENTER",
+                               "PLUTO BARYCENTER",
+                               "SUN",
+                               "MERCURY",
+                               "VENUS",
+                               "MOON",
+                               "EARTH",
+                               "MARS",
+                               }
+INSTRUMENT_NAME              = "N/A"
+INSTRUMENT_ID                = "N/A"
+SOURCE_PRODUCT_ID            = "UNK"
+NOTE                         = "SPICE transfer format SPK file."
+ 
+; de403s.bsp LOG FILE
+;
+; Created 1996-12-11/15:51:21.00.
+;
+; BEGIN NIOSPK COMMANDS
+ 
+SPK_FILE            = de403s.bsp
+  SOURCE_NIO_FILE   = /cnav/inputs/ephem/de403s.nio
+    BODIES          = 1 2 3 4 5 6 7 8 9 10 301 399 199 299 499
+    BEGIN_TIME      = CAL-ET 1979 DEC 01 00:00:00.000
+    END_TIME        = CAL-ET 2011 JAN 07 00:00:00.000
+ 
+; END NIOSPK COMMANDS
+ 
+\beginlabel
+MISSION_NAME                 = "CASSINI"
+SPACECRAFT_NAME              = "CASSINI"
+DATA_SET_ID                  = "SPICE_SPK_FILE"
+KERNEL_TYPE_ID               = "SPK"
+PRODUCT_ID                   = "de403s.xsp"
+PRODUCT_CREATION_TIME        = 1996-12-11T16:16:34
+PRODUCER_ID                  = "CASSINI_NAV_TEAM"
+MISSION_PHASE_NAME           = "LAUNCH"
+PRODUCT_VERSION_TYPE         = "TEST"
+PLATFORM_OR_MOUNTING_NAME    = "N/A"
+START_TIME                   = 1979-11-30T23:59:10
+STOP_TIME                    = 2011-01-06T23:58:58
+SPACECRAFT_CLOCK_START_COUNT = "N/A"
+SPACECRAFT_CLOCK_STOP_COUNT  = "N/A"
+TARGET_NAME                  = {
+                               "MERCURY BARYCENTER",
+                               "VENUS BARYCENTER",
+                               "EARTH BARYCENTER",
+                               "MARS BARYCENTER",
+                               "JUPITER BARYCENTER",
+                               "SATURN BARYCENTER",
+                               "URANUS BARYCENTER",
+                               "NEPTUNE BARYCENTER",
+                               "PLUTO BARYCENTER",
+                               "SUN",
+                               "MERCURY",
+                               "VENUS",
+                               "MOON",
+                               "EARTH",
+                               "MARS",
+                               }
+INSTRUMENT_NAME              = "N/A"
+INSTRUMENT_ID                = "N/A"
+SOURCE_PRODUCT_ID            = "UNK"
+NOTE                         = "SPICE transfer format SPK file."
+\endlabel
+ 
+\beginlabel
+MISSION_NAME                 = "CASSINI"
+SPACECRAFT_NAME              = "CASSINI"
+DATA_SET_ID                  = "SPICE_SPK_FILE"
+KERNEL_TYPE_ID               = "SPK"
+PRODUCT_ID                   = "de403s.xsp"
+PRODUCT_CREATION_TIME        = 1996-12-11T16:22:44
+PRODUCER_ID                  = "CASSINI_NAV_TEAM"
+MISSION_PHASE_NAME           = "LAUNCH"
+PRODUCT_VERSION_TYPE         = "TEST"
+PLATFORM_OR_MOUNTING_NAME    = "N/A"
+START_TIME                   = 1979-11-30T23:59:10
+STOP_TIME                    = 2011-01-06T23:58:58
+SPACECRAFT_CLOCK_START_COUNT = "N/A"
+SPACECRAFT_CLOCK_STOP_COUNT  = "N/A"
+TARGET_NAME                  = {
+                               "MERCURY BARYCENTER",
+                               "VENUS BARYCENTER",
+                               "EARTH BARYCENTER",
+                               "MARS BARYCENTER",
+                               "JUPITER BARYCENTER",
+                               "SATURN BARYCENTER",
+                               "URANUS BARYCENTER",
+                               "NEPTUNE BARYCENTER",
+                               "PLUTO BARYCENTER",
+                               "SUN",
+                               "MERCURY",
+                               "VENUS",
+                               "MOON",
+                               "EARTH",
+                               "MARS",
+                               }
+INSTRUMENT_NAME              = "N/A"
+INSTRUMENT_ID                = "N/A"
+SOURCE_PRODUCT_ID            = "UNK"
+NOTE                         = "SPICE transfer format SPK file."
+\endlabel
+ 
+Brief.  Version: 2.1        (SPICE Toolkit N0051)
+ 
+ 
+Summary for: de403s.bsp
+ 
+Bodies                Start of Interval (ET)          End of Interval (ET)
+-------               -----------------------------   -----------------------------
+1 MERCURY BARYCENTER  1979 DEC 01 00:00:00.000        2011 JAN 07 00:00:00.000
+2 VENUS BARYCENTER                Same coverage as previous object
+3 EARTH BARYCENTER                Same coverage as previous object
+4 MARS BARYCENTER                 Same coverage as previous object
+5 JUPITER BARYCENTER              Same coverage as previous object
+6 SATURN BARYCENTER               Same coverage as previous object
+7 URANUS BARYCENTER               Same coverage as previous object
+8 NEPTUNE BARYCENTER              Same coverage as previous object
+9 PLUTO BARYCENTER                Same coverage as previous object
+10 SUN                            Same coverage as previous object
+199 MERCURY                       Same coverage as previous object
+299 VENUS                         Same coverage as previous object
+301 MOON                          Same coverage as previous object
+399 EARTH                         Same coverage as previous object
+499 MARS                          Same coverage as previous object

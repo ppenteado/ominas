@@ -1,0 +1,41 @@
+NV_SET_MIN
+
+
+ PURPOSE:
+	Replaces the min value in a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_set_min, dd, min
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	min:	New min value.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

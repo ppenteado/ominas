@@ -1,0 +1,19 @@
+;===========================================================================
+; station_descriptor__define
+;
+;
+;===========================================================================
+pro station_descriptor__define
+
+ struct = $
+    { station_descriptor, $
+	bd:		 ptr_new(), $		; ptr to bodydescriptor
+	class:		 '', $			; Name of descriptor class
+        primary:         '' $                   ; Name of primary planet
+    }
+
+end
+;===========================================================================
+
+
+

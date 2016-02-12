@@ -1,0 +1,16 @@
+GRIM_MENU_VIEW_ZOOM_1_9_EVENT
+
+
+ PURPOSE:
+	Obtains the necessary descriptors through the translators and computes
+	planet center positions using pg_center for all active objects.  If no
+	active objects, then all centers are computed.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

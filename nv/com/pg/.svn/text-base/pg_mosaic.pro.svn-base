@@ -1,0 +1,866 @@
+;=============================================================================
+;+
+; NAME:
+;	pg_mosaic
+;
+;
+; PURPOSE:
+;	Combines two or more maps into one.
+;
+;
+; CATEGORY:
+;	NV/PG
+;
+;
+; CALLING SEQUENCE:
+;	result = pg_mosaic(dds)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dds:	Array of data descriptors containing the maps to be combined.
+;		Maps must all be of the same size and data type.
+;
+;  OUTPUT:
+;	mosaic:	The mosaic image array.
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	combine_fn:	Name of function to be called to combine the maps.  
+;			Default is 'image_median'.
+;
+;	data:		Data to be passed to combine_fn.
+;
+;	weight:		Array of weights, one for each input dd.
+;
+;  OUTPUT:
+;	NONE
+;
+;
+; RETURN:
+;	Data descriptor containing the mosaic.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale 1/2002
+;	
+;-
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_combine_edge1
+;
+;  This routine is obsolete.  It is now accomplished using 
+;  pgms_wt_edge1 and pgms_combine_mean.
+;
+;=============================================================================
+function pgms_combine_edge1, dd, maps, data
+
+ width = 15
+
+ if(keyword_set(data)) then $
+  begin
+  end
+
+ s = size(maps)
+ n = s[3]
+
+ wts = fltarr(s[1], s[2], s[3])
+ masks = fltarr(s[1], s[2], s[3])
+
+ ;--------------------------
+ ; compute weights
+ ;--------------------------
+ for i=0, n-1 do $
+  begin
+   map = maps[*,*,i]
+
+   ;- - - - - - - - - - - - - - - - -
+   ; compute mask
+   ;- - - - - - - - - - - - - - - - -
+   w0 = where(map NE 0)	
+   mask = masks[*,*,i]
+   mask[w0] = 1d
+   masks[*,*,i] = mask
+
+   ;- - - - - - - - - - - - - - - - -
+   ; compute weight
+   ;- - - - - - - - - - - - - - - - -
+   _mask = fltarr(s[1]+3d*width, s[2]+3d*width)
+   _mask[width+1:width+s[1],width+1:width+s[2]] = mask
+
+   kernel = gauss_2d(0, 0, width/2d, 2d*width, 2d*width)
+   _wt = convol(_mask, kernel, /center)
+   _wt = _wt[width+1:width+s[1],width+1:width+s[2]]
+   _wt = _wt - min(_wt)
+   wt = _wt & wt[*] = 0
+   wt[w0] = _wt[w0]
+
+   wts[*,*,i] = wt
+  end
+
+
+ ;--------------------------
+ ; normalize weights
+ ;--------------------------
+ wsum = total(wts,3)
+ for i=0, n-1 do $
+  begin
+   mask = masks[*,*,i]
+   w = where(mask EQ 1)
+   if(w[0] NE -1) then $
+    begin
+     wt = wts[*,*,i]
+     ww = where(wsum[w] NE 0)
+     wt[w[ww]] = wt[w[ww]] / wsum[w[ww]]
+     wts[*,*,i] = wt
+    end
+  end
+
+
+ ;--------------------------------
+ ; apply weights
+ ;--------------------------------
+ return, total(maps*wts,3)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_combine_edge
+;
+;  This routine is obsolete.  It is now accomplished using 
+;  pgms_wt_edge and pgms_combine_mean.
+;
+;=============================================================================
+function pgms_combine_edge, dd, maps, data
+
+ pp = 1d
+ if(defined(data)) then pp = data
+
+ s = size(maps)
+ n = s[3]
+
+ wts = fltarr(s[1], s[2], s[3])
+ masks = lonarr(s[1], s[2], s[3])
+
+ ;--------------------------
+ ; compute weights
+ ;--------------------------
+ for i=0, n-1 do $
+  begin
+   map = maps[*,*,i]
+
+   ;- - - - - - - - - - - - - - - - -
+   ; compute mask and bounds
+   ;- - - - - - - - - - - - - - - - -
+   w0 = where(map NE 0)				; basic mask; gives bounds
+   xy = w_to_xy(map, w0)
+
+   xmin = min(xy[0,*])
+   xmax = max(xy[0,*])
+   ymin = min(xy[1,*])
+   ymax = max(xy[1,*])
+
+   ; this mask ignores holes in the map
+   mask = masks[*,*,i]
+   ww = polyfillv([xmin, xmax, xmax, xmin], [ymin, ymin, ymax, ymax], s[1], s[2])
+   xxx = lindgen(s[1])#make_array(s[2],val=1l)
+   yyy = lindgen(s[2])##make_array(s[1],val=1l)
+   ww = where((xxx GE xmin) AND (xxx LE xmax) AND (yyy GE ymin) AND (yyy LE ymax))
+
+   if(ww[0] NE -1) then $
+    begin
+     mask[ww] = 1
+     masks[*,*,i] = mask
+     w = where(mask EQ 1)
+
+     ;- - - - - - - - - - - - - - - - - - - - - - 
+     ; compute weight
+     ;- - - - - - - - - - - - - - - - - - - - - - 
+     xx = fltarr(s[1], s[2])
+     xmm = xmax-xmin
+     ymm = ymax-ymin
+     xx[w] = findgen(xmm+1)#make_array(ymm+1, val=1d) + xmin
+     yy = fltarr(s[1], s[2])
+     yy[w] = findgen(ymax-ymin+1)##make_array(xmax-xmin+1, val=1d) + ymin
+
+     wtx = fltarr(s[1], s[2])
+     wty = fltarr(s[1], s[2])
+
+;     wtx[w] = (xx[w]-xmin)^pp*(xx[w]-xmax)^pp
+;     wty[w] = (yy[w]-ymin)^pp*(yy[w]-ymax)^pp
+xmax = xmax + 1
+xmin = xmin - 1
+     wtx[w] = abs((xx[w]-xmin)/xmm)^pp*abs((xx[w]-xmax)/xmm)^pp
+     wty[w] = abs((yy[w]-ymin)/ymm)^pp*abs((yy[w]-ymax)/ymm)^pp
+
+     wt = wtx*wty
+     wt = wt / max(wt)
+
+     ww0 = complement(map, w0)
+     wt[ww0] = 0				; mask out holes
+
+     wts[*,*,i] = wt
+    end
+  end
+
+
+;if(counter() EQ 50) then stop
+  wsum = total(wts,3)
+
+ ;--------------------------
+ ; normalize weights
+ ;--------------------------
+ for i=0, n-1 do $
+  begin
+   mask = masks[*,*,i]
+   w = where(mask EQ 1)
+   if(w[0] NE -1) then $
+    begin
+     wt = wts[*,*,i]
+     ww = where(wsum[w] NE 0)
+     wt[w[ww]] = wt[w[ww]] / wsum[w[ww]]
+     wts[*,*,i] = wt
+    end
+  end
+
+ ;--------------------------------
+ ; apply weights
+ ;--------------------------------
+ return, total(maps*wts,3)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_combine_emm
+;
+; emm^x weighting with emmision angle limits
+;
+; If data is given, it is taken to be a structure with the following 
+; possible fields:
+;
+; emm:	Emmission cosine arrays.  If not given, the emission cosines are 
+; 	taken as user data on dd with the name 'EMM'.
+; x:	Emmission cosine power for weighting. 
+; emm0:	Minimum allowable emission cosine. 
+;
+; This routine is obsolete.  It is now accomplished using 
+; pgms_wt_emm and pgms_combine_sum
+;
+;=============================================================================
+function pgms_combine_emm, dd, maps, data
+
+ s = size(maps)
+ xsize = s[1]
+ ysize = s[2]
+ n = 1
+ if(s[0] EQ 3) then n = s[3]
+
+ x = 5d
+ emm0 = 0d
+
+ if(keyword_set(data)) then $
+  begin
+   tags = tag_names(data)
+
+   w = where(tags EQ 'EMM')
+   if(w[0] NE -1) then emms = data.emm
+
+   w = where(tags EQ 'X')
+   if(w[0] NE -1) then x = data.x
+
+   w = where(tags EQ 'EMM0')
+   if(w[0] NE -1) then emm0 = data.emm0
+  end
+
+ if(NOT keyword_set(emms)) then $
+  begin
+   emms = fltarr(xsize,ysize,n)
+   for i=0, n-1 do emms[*,*,i] = nv_udata(dd[i], 'EMM')
+  end
+
+ w = where(emms LE emm0)
+ if(w[0] NE -1) then emms[w] = 0
+
+ wt = emms^x
+
+ norm = (total(wt, 3))[linegen3z(xsize,ysize,n)]
+ w = where(norm EQ 0)
+ if(w[0] NE -1) then norm[w] = 1
+ wt = wt / norm
+ if(w[0] NE -1) then wt[w] = 0
+
+ return, total(maps*wt,3)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_combine_emm5
+;
+; emm^5 weighting suggested by Ashwin Vasavada.
+;
+; If data is given, it is taken to be the emission angle array generated by
+; pg_photom and reprojected by pg_map.  Otherwise the emission angles are 
+; taken as user data on dd with the name 'EMM'.
+;
+; This routine is obsolete.  It is now accomplished using 
+; pgms_wt_emm5 and pgms_combine_sum
+;
+;=============================================================================
+function pgms_combine_emm5, dd, maps, data
+
+ s = size(maps)
+ xsize = s[1]
+ ysize = s[2]
+ n = 1
+ if(s[0] EQ 3) then n = s[3]
+
+ if(keyword_set(data)) then emms = data $
+ else $
+  begin
+   emms = fltarr(xsize,ysize,n)
+   for i=0, n-1 do emms[*,*,i] = nv_udata(dd[i], 'EMM')
+  end
+
+ wt = emms^5
+
+ norm = (total(wt, 3))[linegen3z(xsize,ysize,n)]
+ w = where(norm EQ 0)
+ if(w[0] NE -1) then norm[w] = 1
+ wt = wt / norm
+ if(w[0] NE -1) then wt[w] = 0
+
+ return, total(maps*wt,3)
+end
+;=============================================================================
+
+
+
+
+
+
+
+;=============================================================================
+; pgms_wt_edge1
+;
+;=============================================================================
+function pgms_wt_edge1, dd, maps, data
+
+ width = 15
+
+ if(keyword_set(data)) then $
+  begin
+  end
+
+ s = size(maps)
+ n = s[3]
+
+ wts = fltarr(s[1], s[2], s[3])
+ masks = fltarr(s[1], s[2], s[3])
+
+ ;--------------------------
+ ; compute weights
+ ;--------------------------
+ for i=0, n-1 do $
+  begin
+   map = maps[*,*,i]
+
+   ;- - - - - - - - - - - - - - - - -
+   ; compute mask
+   ;- - - - - - - - - - - - - - - - -
+   w0 = where(map NE 0)	
+   mask = masks[*,*,i]
+   mask[w0] = 1d
+   masks[*,*,i] = mask
+
+   ;- - - - - - - - - - - - - - - - -
+   ; compute weight
+   ;- - - - - - - - - - - - - - - - -
+   _mask = fltarr(s[1]+3d*width, s[2]+3d*width)
+   _mask[width+1:width+s[1],width+1:width+s[2]] = mask
+
+   kernel = gauss_2d(0, 0, width/2d, 2d*width, 2d*width)
+   _wt = convol(_mask, kernel, /center)
+   _wt = _wt[width+1:width+s[1],width+1:width+s[2]]
+   _wt = _wt - min(_wt)
+   wt = _wt & wt[*] = 0
+   wt[w0] = _wt[w0]
+
+   wts[*,*,i] = wt
+  end
+
+
+ ;--------------------------
+ ; normalize weights
+ ;--------------------------
+ wsum = total(wts,3)
+ for i=0, n-1 do $
+  begin
+   mask = masks[*,*,i]
+   w = where(mask EQ 1)
+   if(w[0] NE -1) then $
+    begin
+     wt = wts[*,*,i]
+     ww = where(wsum[w] NE 0)
+     wt[w[ww]] = wt[w[ww]] / wsum[w[ww]]
+     wts[*,*,i] = wt
+    end
+  end
+
+
+ ;--------------------------------
+ ; apply weights
+ ;--------------------------------
+ return, wts
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_wt_edge
+;
+;  Maps are weighted so as to contribute nothing at their edges.
+;
+;=============================================================================
+function pgms_wt_edge, dd, maps, data
+
+ pp = 1d
+ if(defined(data)) then pp = data
+
+ s = size(maps)
+ n = s[3]
+
+ wts = fltarr(s[1], s[2], s[3])
+ masks = lonarr(s[1], s[2], s[3])
+
+ ;--------------------------
+ ; compute weights
+ ;--------------------------
+ for i=0, n-1 do $
+  begin
+   map = maps[*,*,i]
+
+   ;- - - - - - - - - - - - - - - - -
+   ; compute mask and bounds
+   ;- - - - - - - - - - - - - - - - -
+   w0 = where(map NE 0)				; basic mask; gives bounds
+   xy = w_to_xy(map, w0)
+
+   xmin = min(xy[0,*])
+   xmax = max(xy[0,*])
+   ymin = min(xy[1,*])
+   ymax = max(xy[1,*])
+
+   ; this mask ignores holes in the map
+   mask = masks[*,*,i]
+   ww = polyfillv([xmin, xmax, xmax, xmin], [ymin, ymin, ymax, ymax], s[1], s[2])
+   xxx = lindgen(s[1])#make_array(s[2],val=1l)
+   yyy = lindgen(s[2])##make_array(s[1],val=1l)
+   ww = where((xxx GE xmin) AND (xxx LE xmax) AND (yyy GE ymin) AND (yyy LE ymax))
+
+   if(ww[0] NE -1) then $
+    begin
+     mask[ww] = 1
+     masks[*,*,i] = mask
+     w = where(mask EQ 1)
+
+     ;- - - - - - - - - - - - - - - - - - - - - - 
+     ; compute weight
+     ;- - - - - - - - - - - - - - - - - - - - - - 
+     xx = fltarr(s[1], s[2])
+     xmm = xmax-xmin
+     ymm = ymax-ymin
+     xx[w] = findgen(xmm+1)#make_array(ymm+1, val=1d) + xmin
+     yy = fltarr(s[1], s[2])
+     yy[w] = findgen(ymax-ymin+1)##make_array(xmax-xmin+1, val=1d) + ymin
+
+     wtx = fltarr(s[1], s[2])
+     wty = fltarr(s[1], s[2])
+
+;     wtx[w] = (xx[w]-xmin)^pp*(xx[w]-xmax)^pp
+;     wty[w] = (yy[w]-ymin)^pp*(yy[w]-ymax)^pp
+xmax = xmax + 1
+xmin = xmin - 1
+     wtx[w] = abs((xx[w]-xmin)/xmm)^pp*abs((xx[w]-xmax)/xmm)^pp
+     wty[w] = abs((yy[w]-ymin)/ymm)^pp*abs((yy[w]-ymax)/ymm)^pp
+
+     wt = wtx*wty
+     wt = wt / max(wt)
+
+     ww0 = complement(map, w0)
+     wt[ww0] = 0				; mask out holes
+
+     wts[*,*,i] = wt
+    end
+  end
+
+
+;if(counter() EQ 50) then stop
+  wsum = total(wts,3)
+
+ ;--------------------------
+ ; normalize weights
+ ;--------------------------
+ for i=0, n-1 do $
+  begin
+   mask = masks[*,*,i]
+   w = where(mask EQ 1)
+   if(w[0] NE -1) then $
+    begin
+     wt = wts[*,*,i]
+     ww = where(wsum[w] NE 0)
+     wt[w[ww]] = wt[w[ww]] / wsum[w[ww]]
+     wts[*,*,i] = wt
+    end
+  end
+
+ ;--------------------------------
+ ; apply weights
+ ;--------------------------------
+ return, wts
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_combine_median
+;
+;
+;=============================================================================
+function pgms_combine_median, dd, maps, data
+ return, image_median(maps)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_combine_sum
+;
+;
+;=============================================================================
+function pgms_combine_sum, dd, maps, data
+ return, total(maps,3)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_combine_mean
+;
+;
+;=============================================================================
+function pgms_combine_mean, dd, maps, data
+
+ dim = size(maps, /dim)
+ xsize = dim[0]
+ ysize = dim[1]
+ n = dim[2]
+
+ norm = make_array(dim=dim[0:1], val=0d)
+
+ for i=0, n-1 do $
+  begin
+   w = where(maps[*,*,i] NE 0)
+   if(w[0] NE -1) then norm[w] = norm[w] + 1
+  end
+
+ w = where(norm EQ 0)
+ if(w[0] NE -1) then norm[w] = 1
+
+ result = total(maps,3)/norm
+ if(w[0] NE -1) then result[w] = 0
+
+ return, result
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_combine_overlay
+;
+;  Each map is lain over the previous maps with no combination.
+;
+;=============================================================================
+function pgms_combine_overlay, dd, maps, data
+
+ s = size(maps)
+ n = s[3]
+
+ for i=0, n-1 do $
+  begin
+   if(i EQ 0) then result = maps[*,*,0] $
+   else $
+    begin
+     im = maps[*,*,i]
+     w = where(im NE 0)
+     if(w[0] NE -1) then result[w] = im[w]
+    end
+  end
+
+ return, result
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_wt_rescale
+;
+;  Map brightnesses are uniformaly scaled based on overlaps.
+;
+;=============================================================================
+function pgms_wt_rescale, dd, maps, data
+
+ dim = size(maps, /dim)
+ xsize = dim[0]
+ ysize = dim[1]
+ n = dim[2]
+
+ val = dblarr(n,n)			; total map-i dn in overlap of map i with map j
+
+ scratch = make_array(dim=dim[0:1], val=0d)
+
+
+ ;------------------------------------------------
+ ; find overlaps and compute totals
+ ;------------------------------------------------
+ for i=0, n-1 do $
+  for j=1+1, n-1 do $
+   begin
+    imi = maps[*,*,i]
+    imj = maps[*,*,j]
+    wi = where(imi NE 0)
+    wj = where(imj NE 0)
+
+    if((wi[0] NE -1) AND (wj[0] NE -1)) then $
+     begin
+      scratch[wi] = 1
+      scratch[wj] = scratch[wj] + 1
+      w = where(scratch EQ 2)
+      if(w[0] NE -1) then $
+       begin     
+        val[i,j] = total((maps[*,*,i])[w])
+        val[j,i] = total((maps[*,*,j])[w])
+       end
+     end
+
+    scratch[*] = 0    
+   end
+
+
+ ;-----------------------------------------
+ ; find optimum corrections
+ ;-----------------------------------------
+ tval = transpose(val)
+ A = - val*tval
+ ii = diaggen(n,1)
+ A[ii] = total(tval^2,1) - val[ii]^2
+ b = transpose(total(val*(val-tval),1))
+
+ delta = mbfit(A, b)
+ wt = (1d + transpose((delta#make_array(ysize, val=1d))[linegen3z(n,ysize,xsize)]))
+
+ return, wt
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_wt_emm
+;
+; emm^x weighting with emmision angle limits
+;
+; If data is given, it is taken to be a structure with the following 
+; possible fields:
+;
+; emm:	Emmission cosine arrays.  If not given, the emission cosines are 
+; 	taken as user data on dd with the name 'EMM'.
+; x:	Emmission cosine power for weighting. 
+; emm0:	Minimum allowable emission cosine.  
+;
+;=============================================================================
+function pgms_wt_emm, dd, maps, data
+
+ s = size(maps)
+ xsize = s[1]
+ ysize = s[2]
+ n = 1
+ if(s[0] EQ 3) then n = s[3]
+
+ x = 5d
+ emm0 = 0d
+
+ if(keyword_set(data)) then $
+  begin
+   tags = tag_names(data)
+
+   w = where(tags EQ 'EMM')
+   if(w[0] NE -1) then emms = data.emm
+
+   w = where(tags EQ 'X')
+   if(w[0] NE -1) then x = data.x
+
+   w = where(tags EQ 'EMM0')
+   if(w[0] NE -1) then emm0 = data.emm0
+  end
+
+ if(NOT keyword_set(emms)) then $
+  begin
+   emms = fltarr(xsize,ysize,n)
+   for i=0, n-1 do emms[*,*,i] = nv_udata(dd[i], 'EMM')
+  end
+
+ w = where(emms LE emm0)
+ if(w[0] NE -1) then emms[w] = 0
+
+ wt = emms^x
+
+ norm = (total(wt, 3))[linegen3z(xsize,ysize,n)]
+ w = where(norm EQ 0)
+ if(w[0] NE -1) then norm[w] = 1
+ wt = wt / norm
+ if(w[0] NE -1) then wt[w] = 0
+
+ return, wt
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgms_wt_emm5
+;
+; emm^5 weighting suggested by Ashwin Vasavada.
+;
+; If data is given, it is taken to be the emission angle array denerated by
+; pg_photom and reprojected by pg_map.  Otherwise the emission angles are 
+; taken as user data on dd with the name 'EMM'.
+;
+;=============================================================================
+function pgms_wt_emm5, dd, maps, data
+
+ s = size(maps)
+ xsize = s[1]
+ ysize = s[2]
+ n = 1
+ if(s[0] EQ 3) then n = s[3]
+
+ if(keyword_set(data)) then emms = data $
+ else $
+  begin
+   emms = fltarr(xsize,ysize,n)
+   for i=0, n-1 do emms[*,*,i] = nv_udata(dd[i], 'EMM')
+  end
+
+ wt = emms^5
+
+ norm = (total(wt, 3))[linegen3z(xsize,ysize,n)]
+ w = where(norm EQ 0)
+ if(w[0] NE -1) then norm[w] = 1
+ wt = wt / norm
+ if(w[0] NE -1) then wt[w] = 0
+
+ return, wt
+end
+;=============================================================================
+
+
+
+
+;=============================================================================
+; pg_mosaic
+;
+;=============================================================================
+function pg_mosaic, dd, combine_fn=combine_fn, wt_fns=wt_fns, data=data, mosaic=mosaic, $
+          weight=weight, serial=serial
+
+ if(NOT keyword_set(combine_fn)) then combine_fn = 'pgms_combine_median'
+
+ ;---------------------------------------------
+ ; construct array containing all of the maps
+ ;---------------------------------------------
+ n = n_elements(dd)
+
+ nwt = n_elements(wt_fns)
+
+ if(keyword_set(weight)) then weight = weight / total(weight) $
+ else weight = make_array(n, val=1.0)
+
+ im = nv_data(dd[0])
+ s = size(im)
+ xsize = s[1]
+ ysize = s[2]
+ type = s[s[0]+1]
+
+
+ ;-------------------------------------------------------------------------
+ ; if /serial, build up the mosaic one map at a time.  This can require 
+ ; much less memory if the the dd's have maintain > 0.   
+ ;-------------------------------------------------------------------------
+ if(keyword_set(serial)) then $
+  begin
+   maps = make_array(xsize, ysize, 2, type=type, /nozero)
+   mosaic = weight[0] * nv_data(dd[0])
+   for i=1, n-1 do $
+    begin
+     maps[*,*,0] = mosaic
+     maps[*,*,1] = weight[i] * nv_data(dd[i])
+
+     mosaic = call_function(combine_fn, dd, maps, data)
+    end
+  end $
+ ;------------------------------------------------------------------------
+ ; otherwise, do them all in one shot
+ ;------------------------------------------------------------------------
+ else $
+  begin
+   maps = make_array(xsize, ysize, n, type=type, /nozero)
+
+   for i=0, n-1 do maps[*,*,i] = weight[i] * nv_data(dd[i])
+   maps_mean = mean(maps)
+
+   for i=0, nwt-1 do maps = maps*call_function(wt_fns[i], dd, maps, data)
+
+   mosaic = call_function(combine_fn, dd, maps, data)
+  end
+
+
+ ;--------------------------------------
+ ; normalize to first map
+ ;--------------------------------------
+ map = nv_data(dd[0])
+ w = where(map NE 0)
+ if(w[0] NE -1) then mosaic = mosaic * mean(map[w])/mean(mosaic[w])
+
+
+ ;------------------------------------------------------------------------
+ ; store the result
+ ;------------------------------------------------------------------------
+ dd_mosaic = nv_init_descriptor(instrument='MAP', data=mosaic, filetype=nv_filetype(dd[0]))
+
+
+ return, dd_mosaic
+end
+;=============================================================================
+
+
+

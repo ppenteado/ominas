@@ -1,0 +1,24 @@
+;==============================================================================
+; pgs_clone_ps
+;
+;==============================================================================
+function pgs_clone_ps, ps
+
+ if(NOT keyword__set(ps)) then return, 0
+
+ n = n_elements(ps)
+
+ new_ps = replicate({pg_points_struct}, n)
+
+ for i=0, n-1 do $
+  begin
+   pgs_points, ps[i], p=p, v=v, f=f, tags=tags, name=name, desc=desc, input=input, $
+        assoc_idp=assoc_idp
+;   if(keyword_set(p)) then $
+       new_ps[i] = pgs_set_points(new_ps[i], p=p, v=v, f=f, tags=tags, $
+                          name=name, desc=desc, input=input, assoc_idp=assoc_idp)
+  end
+
+ return, new_ps
+end
+;==============================================================================

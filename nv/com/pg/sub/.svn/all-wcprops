@@ -1,0 +1,221 @@
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub
+END
+pgs_count_descriptors.pro
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_count_descriptors.pro
+END
+pgs_null.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_null.pro
+END
+pgs_clone_gd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_clone_gd.pro
+END
+pgs_points.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_points.pro
+END
+pgs_points_ps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_points_ps.pro
+END
+pg_fit_coeff_struct__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pg_fit_coeff_struct__define.pro
+END
+pgs_test_ps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_test_ps.pro
+END
+pgs_include.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_include.pro
+END
+pgs_set_points.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_set_points.pro
+END
+pgs_name_sort.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_name_sort.pro
+END
+pgs_make_gd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_make_gd.pro
+END
+pgs_visible_points.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_visible_points.pro
+END
+pgs_npoints.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_npoints.pro
+END
+pgs_compress.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_compress.pro
+END
+pgs_sn_to_gd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_sn_to_gd.pro
+END
+pgs_write_ps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_write_ps.pro
+END
+pgs_cull.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_cull.pro
+END
+pgs_poly_rectify.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_poly_rectify.pro
+END
+pgs_cat_ps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_cat_ps.pro
+END
+pgs_size.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_size.pro
+END
+pgs_trim_invisible_points.pro
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_trim_invisible_points.pro
+END
+pgs_uncat_ps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_uncat_ps.pro
+END
+pgs_cat_vectors.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_cat_vectors.pro
+END
+pgs_read_ps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_read_ps.pro
+END
+pgs_idp_to_ps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_idp_to_ps.pro
+END
+pgs_cat_gd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_cat_gd.pro
+END
+pgs_idp_to_gd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_idp_to_gd.pro
+END
+pgs_gd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_gd.pro
+END
+pgs_valid.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_valid.pro
+END
+pgs_desc_suffix.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_desc_suffix.pro
+END
+pgs_clone_ps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_clone_ps.pro
+END
+pgs.include
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs.include
+END
+pgs_cat_points.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_cat_points.pro
+END
+doc_sub.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/doc_sub.pro
+END
+pg_points_struct__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pg_points_struct__define.pro
+END
+pgs_uncat_points.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/com/pg/sub/pgs_uncat_points.pro
+END

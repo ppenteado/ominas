@@ -1,0 +1,16 @@
+CTBLACK
+
+ PURPOSE:
+       To allocate/return the color black.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctblack()
+
+ RETURN:
+       The lookup table or true color value for black
+

@@ -1,0 +1,16 @@
+GRIM_MENU_IMAGE_PROFILE_EVENT
+
+
+ PURPOSE:
+	This option allows you create a brightness profile in an arbitrary 
+	direction.  The left button selects the region's length and then 
+	width; the right button selects a region with a width of one-pixel.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2005
+	

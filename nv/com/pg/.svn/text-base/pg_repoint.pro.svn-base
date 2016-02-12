@@ -1,0 +1,137 @@
+;=============================================================================
+;+
+; NAME:
+;	pg_repoint
+;
+;
+; PURPOSE:
+;	Modifies the camera orientation matrix based on the given image
+;	coordinate translation and rotation.
+;
+;
+; CATEGORY:
+;	NV/PG
+;
+;
+; CALLING SEQUENCE:
+;	pg_repoint, cd=cd, dxy, dtheta, axis_ps=axis_ps
+;	pg_repoint, gd=gd, dxy, dtheta, axis_ps=axis_ps
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dxy:		Array (2,1,nt) or (2,1) specifying the
+;			translation as [dx,dy] in pixels.
+;
+;	dtheta:		Array (nt) specfying the rotation angle in radians.
+;
+;  OUTPUT: NONE
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	cd:	 Array (nt) of camera descriptors.
+;
+;	gd:	 Generic descriptor.  If given, the cd input is taken from the
+;		 cd field of this structure instead of from that keyword.
+;
+;	axis_ps: pg_points_struct containing a single image point
+;		 to be used as the axis of rotation.  Default is the camera
+;		 optic axis.
+;
+;	bore_cd:  Array (nt) of camera descriptors from which to copy the 
+;		  new orientation instead of using dxy, dtheta, and axis_ps.
+;
+;	bore_rot: If given, the orientation from bore_cd will be rotated
+;		  using this rotation matrix (3,3) before being copied.
+;
+;
+;  OUTPUT:
+;	cd:	 If given, the camera descriptor is modified with a new
+;		 orientation matrix.
+;
+;	gd:	 If given in this way, the camera descriptor contained in the
+;		 generic descriptor is modified with a new orientation matrix.
+;
+;
+; RETURN: NONE
+;
+;
+; SIDE EFFECTS:
+;	pg_repoint adds its name to the task list of each given camera
+;	descriptor.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+; SEE ALSO:
+;	pg_fit, pg_drag
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2/1998
+;	
+;-
+;=============================================================================
+pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ps=axis_ps, $
+                bore_cd=bore_cd, bore_rot=bore_rot
+
+
+ ;-----------------------------------------------
+ ; dereference the generic descriptor if given
+ ;-----------------------------------------------
+ if(keyword__set(gd)) then if(NOT keyword__set(cd)) then $
+  begin
+   cd=gd.cd
+;   use_gd=1
+  end
+
+ ;-----------------------------------
+ ; validate descriptors
+ ;-----------------------------------
+ nt = n_elements(cd)
+
+
+ ;---------------------------------------
+ ; check for boresight cd
+ ;---------------------------------------
+ if(keyword__set(bore_cd)) then $
+  begin
+   bd = class_extract(cd, 'BODY')
+   bore_bd = class_extract(bore_cd, 'BODY')
+   bore_orient = bod_orient(bore_bd)
+   if(NOT keyword_set(bore_rot)) then orient = bore_orient $
+   else orient = v_mxm(bore_rot[linegen3z(3,3, nt)], bore_orient)
+   bod_set_orient, bd, orient
+  end $
+ else $
+  begin
+   ;-----------------------------------
+   ; check number of parameters
+   ;-----------------------------------
+   if(n_elements(_dtheta) EQ 1) then dtheta = replicate(_dtheta[0], nt) $
+   else dtheta = _dtheta
+
+   if(n_elements(_dxy) EQ 2) then dxy = _dxy[linegen3z(2,1,nt)] $
+   else dxy = _dxy
+
+
+   ;------------------------------------------------
+   ; modify camera pointing for all times
+   ;------------------------------------------------
+   cam_bd = cam_body(cd)
+
+   if(keyword__set(axis_ps)) then pgs_points, axis_ps, points=axis $
+   else axis = cam_oaxis(cd)
+   cam_reorient, cd, axis, dxy[*,0,*], dtheta[*]
+  end
+
+
+ add_core_task, cd, 'pg_repoint'
+
+
+
+end
+;=============================================================================

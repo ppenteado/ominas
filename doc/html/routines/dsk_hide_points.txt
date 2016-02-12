@@ -1,0 +1,49 @@
+DSK_HIDE_POINTS
+
+
+ PURPOSE:
+	Hides points wrt a DISK object.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	sub = dsk_hide_points(dkx, r, points)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkx:	 Array (nt) of any subclass of DISK.
+
+	r:	 Column vector giving the position of the viewer in the disk
+		 body frame.
+
+	points:	 Array (nv x 3 x nt) of points to test, given in the disk
+		 body frame
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.
+
+	epsilon:	Distance in front of the disk for a point to be
+			considered "in front of" the disk.  Default is 1.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array Subscripts of all input vectors (points argument) that are hidden 
+	from the viewer at r by the given disk.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

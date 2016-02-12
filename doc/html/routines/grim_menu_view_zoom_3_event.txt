@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_ZOOM_3_EVENT
+
+
+ PURPOSE:
+	 Hides/unhides all overlay objects.
+
+
+ CATEGORY:
+	NV/GR
+	 
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/2003
+	

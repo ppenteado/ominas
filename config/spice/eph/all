@@ -1,0 +1,313 @@
+;===========================================================================
+; eph_spice_cameras
+;
+;===========================================================================
+function eph_spice_cameras, dd, ref, pos=pos, $
+                              n_obj=n_obj, dim=dim, status=status, time=time
+
+ return, 0
+end
+;===========================================================================
+;=============================================================================
+;+
+; NAME:
+;	eph_spice_input
+;
+;
+; PURPOSE:
+;	NAIF/SPICE input translator for Cassini. 
+;
+;
+; CATEGORY:
+;	NV/CONFIG
+;
+;
+; CALLING SEQUENCE:
+;	result = eph_spice_input(dd, keyword)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dd:		Data descriptor.
+;
+;	keyword:	String giving the name of the translator quantity.
+;
+;
+;  OUTPUT:
+;	NONE
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	key1:		Camera descriptor.
+;
+;  OUTPUT:
+;	status:		Zero if valid data is returned.
+;
+;	n_obj:		Number of objects returned.
+;
+;	dim:		Dimensions of return objects.
+;
+;
+;  TRANSLATOR KEYWORDS:
+;	ref:		Name of the reference frame for the output quantities.
+;			Default is 'j2000'.
+;
+;	j2000:		/j2000 is equivalent to specifying ref=j2000.
+;
+;	b1950:		/b1950 is equivalent to specifying ref=b1950.
+;
+;	klist:		Name of a file giving a list of SPICE kernels to use.
+;			If no path is included, the path is taken from the 
+;			NV_SPICE_KER environment variable.
+;
+;	planets:	List of planets to for which to request ephemeris.  
+;			Must be delineated by semicolons with no space.
+;
+;	reload:		If set, new kernels are loaded, as specified by the
+;			klist and ck_in keywords.
+;
+;
+; RETURN:
+;	Data associated with the requested keyword.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+; SEE ALSO:
+;	eph_spice_output
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 10/2002
+;	
+;-
+;=============================================================================
+
+
+;===========================================================================
+; eph_spice_input.pro
+;
+;
+;===========================================================================
+function eph_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+	end_keywords
+
+ return, spice_input(dd, keyword, 'eph', n_obj=n_obj, dim=dim, values=values, status=status, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+	end_keywords)
+
+end
+;===========================================================================
+;=============================================================================
+; eph_spice_lsk_detect
+;
+;=============================================================================
+function eph_spice_lsk_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
+
+ ;--------------------------------
+ ; new naming convention
+ ;--------------------------------
+ all_files = findfile(kpath + 'naif????.tls')
+; if(NOT keyword__set(all_files)) then nv_message, $
+;       name='eph_spice_lsk_detect', 'No kernel files found in ' + kpath + '.'
+
+ if(keyword_set(all)) then return, all_files
+
+ split_filename, all_files, dir, all_names
+ ver = long(strmid(all_names, 4, 4))
+
+ w = where(ver EQ max(ver))
+ return, all_files[w]
+end
+;=============================================================================
+;=============================================================================
+; eph_spice_pck_detect
+;
+;
+;=============================================================================
+function eph_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
+
+ kernels = ''
+
+ ;--------------------------------
+ ; new naming convention
+ ;--------------------------------
+ all_files = findfile(kpath + 'cpck*.tpc')
+ if(keyword__set(all_files)) then $
+  begin
+   if(keyword__set(all)) then kernels = append_array(kernels, all_files)
+
+   split_filename, all_files, dir, all_names
+   w = where(strlen(all_names) EQ 17)
+
+   if(w[0] NE -1) then $
+    begin
+     all_names = all_names[w] & all_files = all_files[w]
+     dates = strmid(all_names, 4, 9)
+     jd = ddmmmyyyy_to_jd(dates)
+     w = where(jd EQ max(jd))
+     kernels = append_array(kernels, all_files[w])
+    end
+  end
+
+ ;--------------------------------
+ ; old naming convention
+ ;--------------------------------
+ all_files = findfile(kpath + 'pck*.tpc')
+ if(keyword__set(all_files)) then $
+  begin
+   split_filename, all_files, dir, all_names
+   w = where(strlen(all_names) EQ 12)
+
+   if(w[0] NE -1) then $
+    begin
+     all_names = all_names[w] & all_files = all_files[w]
+     versions = long(strmid(all_names, 3, 5))
+     w = where(versions EQ max(versions))
+     kernels = append_array(kernels, all_files[w])
+    end
+
+  end
+
+ 
+; if(NOT keyword_set(kernels)) then $
+;    nv_message, name='eph_spice_pck_detect', $
+;                                'No kernel files found in ' + kpath + '.'
+
+
+ return, kernels
+end
+;=============================================================================
+;===========================================================================
+; eph_spice_planets
+;
+;===========================================================================
+function eph_spice_planets, dd, ref, target=target, time=sc_time, $
+                            planets=planets, $
+                            n_obj=n_obj, dim=dim, status=status, $ 
+                            targ_list=targ_list
+
+ if(NOT keyword_set(sc)) then sc = 0l
+
+ ;----------------------------------------------------------------
+ ; request all relevant planets if none specified
+ ; if no targ_list file, then spice interface will get all bodies
+ ;----------------------------------------------------------------
+ if(NOT keyword_set(planets)) then planets = spice_read_targets(targ_list)
+
+ ;----------------------------------------------------------------------------
+ ; Move primary target to front of list 
+ ;   If no planet names have been specified, or if TARGET_NAME was not in the
+ ;   list, then the spice interface will retrieve all possible bodies from
+ ;   the kernel pool.  In that case, TARGET_NAME is lost, so here, we 
+ ;   record that string in the data descriptor.  The value of TARGET_DESC
+ ;   is also provided as a backup.
+ ;----------------------------------------------------------------------------
+ if(NOT keyword_set(target)) then target = 'UNKNOWN' $
+ else $
+  begin
+   nv_set_udata, dd, target, 'TARGET'
+
+   w = where(planets EQ target)
+   if(w[0] NE -1) then $
+    begin
+     if(n_elements(planets) EQ 1) then planets = target $
+     else planets = [target, rm_list_item(planets, w[0], only='')]
+    end
+  end
+
+
+ ;-----------------------------------------------------------
+ ; get the descriptors 
+ ;-----------------------------------------------------------
+ return, eph_to_minas( $
+            spice_planets(dd, ref, $
+		time = sc_time, $
+		target = target, $
+		plt_name = planets, $
+		n_obj=n_obj, dim=dim, status=status) )
+
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; eph_spice_sun
+;
+;===========================================================================
+function eph_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
+                                   status=status, time=sc_time
+
+ if(NOT keyword_set(sc)) then sc = 0l
+
+ ;------------------------------
+ ; get planet descriptor for sun
+ ;------------------------------
+ pd = eph_to_minas( $
+	spice_planets(dd, ref, $
+		time = sc_time, $
+		plt_name = ['SUN'], $
+		n_obj=n_obj, dim=dim, status=status) )
+ if(status NE 0) then return, 0
+
+ ;------------------------------
+ ; convert to star descriptor
+ ;------------------------------
+ gbd = plt_globe(pd)
+ bd = glb_body(gbd)
+
+ sd = str_init_descriptors(n_obj, $
+		name=get_core_name(pd), $
+		orient=bod_orient(bd), $
+		avel=bod_avel(bd), $
+		pos=bod_pos(bd), $
+		lum=3.862d26, $
+		mass=1.98892d30, $
+		vel=bod_vel(bd), $
+		time=bod_time(bd), $
+		lref=glb_lref(gbd), $
+		radii=glb_radii(gbd), $
+		lora=glb_lora(gbd))
+
+ return, sd
+
+end
+;===========================================================================
+
+
+
+;=============================================================================
+; eph_to_minas
+;
+;=============================================================================
+function eph_to_minas, _od
+
+ if(NOT keyword__set(_od)) then return, 0
+
+ od = class_clone_descriptor(_od)
+
+ gbd = class_extract(od, 'GLOBE')
+
+ bd = glb_body(gbd)
+ bod_set_pos, bd, bod_pos(bd)*1000d           ; km --> m
+ bod_set_vel, bd, bod_vel(bd)*1000d           ; km/s --> m/s
+ glb_set_radii, gbd, glb_radii(gbd)*1000d     ; km --> m
+ glb_set_gm, gbd, glb_gm(gbd)*1d9, /nosynch   ; km3/s2kg --> m3/s2kg
+ glb_set_rref, gbd, glb_rref(gbd)*1000d       ; km --> m
+ glb_set_body, gbd, bd
+ return, od
+
+
+ return, od
+end
+;=============================================================================
+
+

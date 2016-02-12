@@ -1,0 +1,33 @@
+P_SQMAG
+
+
+ PURPOSE:
+       Computes the squared magnitudes of the given array of image points.
+
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_sqmag(p)
+
+
+ ARGUMENTS:
+  INPUT:
+               p:      An array of image points.
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       An array of squared magnitudes,
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+

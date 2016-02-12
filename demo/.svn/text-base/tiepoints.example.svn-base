@@ -1,0 +1,70 @@
+;==================================================================================
+; tiepoints.example
+;
+;  Correct the pointing of one or more images based on the pointing of a reference
+; image using tiepoints.
+;
+;==================================================================================
+!quiet = 1
+files = '~/casIss/1511/' + ['N1511803932_1.IMG', 'N1511803965_3.IMG']
+;files = '~/casIss/1597/' + ['N1597182533_1.IMG', 'N1597182568_1.IMG']
+
+;----------------------------------------
+; read images
+;----------------------------------------
+dd = nv_read(files)
+ndd = n_elements(dd)
+
+
+;------------------------------------
+; get descriptors
+;------------------------------------
+cd = ptrarr(ndd)
+pd = ptrarr(ndd)
+for i=0, ndd-1 do cd[i] = pg_get_cameras(dd[i])
+for i=0, ndd-1 do pd[i] = pg_get_planets(dd[i], od=cd[i], plt_name=['ENCELADUS'])
+
+
+;-------------------------------------------------------------------------
+; select tiepoints manually
+;  Use the tiepoints cursor mode to select tiepoints in each grim window.
+;  When finished, use ingrid to get the tiepoints; note the first argument
+;  to ingrid is the grim window number shown in the title bar of each grim 
+;  window.  Grim window numbers start at 2.  Deal with it.
+;-------------------------------------------------------------------------
+for i=0, ndd-1 do grim, /new, dd[i], cd=cd[i], pd=pd[i], over='limb', /order, z=0.5
+stop
+
+ps = replicate({pg_points_struct}, ndd)
+for i=0, ndd-1 do $
+ begin &$
+  ingrid, i+2, tie_ps=_ps &$
+  ps[i] = _ps &$
+ end
+
+
+
+;------------------------------------------------------------------------
+; correct the images
+;  Here we assume the pointing for the first image is correct.  If it's
+;  not, then correct it before proceeding.  Since body_pts is initially 
+;  undefined, they are computed on the first call to pg_tiepoints, then 
+;  used subsequently to compute the offsets for each fit.  Note that the
+;  reference image can also be a map projection, in which case cd[0]
+;  would be the corresponding map descriptor.  
+;------------------------------------------------------------------------
+body_pts = 0
+for i=0, ndd-1 do $
+ begin &$
+  tie_ps = pg_tiepoints(cd=cd[i], bx=pd[i], ps[i], body_pts=body_pts) &$
+  if(i GT 0) then $
+   begin &$
+    tpcoeff = pg_ptscan_coeff(tie_ps, fix=[2]) &$
+    dxy = pg_fit(tpcoeff) &$
+    pg_repoint, dxy, 0d, cd=cd[i] &$
+   end &$
+ end
+
+
+
+

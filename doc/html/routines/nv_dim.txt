@@ -1,0 +1,42 @@
+NV_DIM
+
+
+ PURPOSE:
+	Returns the dimensions of the data array in the given data 
+	descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dim = nv_dim(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	true:	If set, the dimension function is not called and the true
+	 	dimensions of the dat are returned.
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+	Array giving the dimensions of the data in the data descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

@@ -1,0 +1,54 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/util/tvgr
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+tvgr.pro
+file
+
+
+
+
+2009-10-27T16:31:54.000000Z
+52676933e54a5be02ffe97de177b6382
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+doc_tvgr.pro
+file
+
+
+
+
+2009-10-27T16:31:54.000000Z
+e214a7d90b6dffde350b2362050d77aa
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+

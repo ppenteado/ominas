@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng
+END
+rng_desc.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_desc.pro
+END
+rng_primary.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_primary.pro
+END
+rng_init_descriptors.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_init_descriptors.pro
+END
+rng_set_desc.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_set_desc.pro
+END
+rng__keywords.include
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng__keywords.include
+END
+rng_disk.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_disk.pro
+END
+rng_set_primary.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_set_primary.pro
+END
+rng_clone_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_clone_descriptor.pro
+END
+_rng_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/_rng_evolve.pro
+END
+rng_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_evolve.pro
+END
+ring_descriptor__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/ring_descriptor__define.pro
+END
+rng_set_disk.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_set_disk.pro
+END
+doc_rng.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/doc_rng.pro
+END
+rng_replicate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_replicate.pro
+END
+rng_copy_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/rng/rng_copy_descriptor.pro
+END

@@ -1,0 +1,20 @@
+GRIM_PLANE_MODE_EVENT
+
+
+ PURPOSE:
+	Selects the plot pan cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	The image offset is controlled by selecting an offset vector
+	using the left mouse button, or the middle button may be
+	used to center the image on a selected point.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

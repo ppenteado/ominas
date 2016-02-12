@@ -1,0 +1,41 @@
+NV_SET_MAX
+
+
+ PURPOSE:
+	Replaces the max value in a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_set_max, dd, max
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	max:	New max value.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

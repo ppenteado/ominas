@@ -1,0 +1,59 @@
+;===========================================================================
+; nv_put_value
+;
+;
+;===========================================================================
+pro nv_put_value, ddp, keyword, value, trs=trs, status=status, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+                             end_keywords
+@nv.include
+
+ status = 0
+
+ on_error, 1
+ dd = nv_dereference(ddp)
+
+ if(keyword__set(tr_disable)) then return
+
+ if(NOT ptr_valid(dd.output_translators_p)) then $
+  begin
+   status = -1
+   return
+  end
+;        nv_message, 'No output translator available for '+keyword+'.', $
+;                                                           name='nv_put_value'
+
+
+ ;--------------------------------------------
+ ; record any transient keyvals
+ ;--------------------------------------------
+ nv_add_transient_keyvals, dd, trs
+
+ ;--------------------------------------------
+ ; send value through all output translators
+ ;--------------------------------------------
+; i=0
+; translators=*dd.output_translators_p
+; n=n_elements(translators)
+
+ if(NOT keyword__set(tr_override)) then translators=*dd.output_translators_p $
+ else translators = $
+           nv_match(*dd.output_translators_p, str_nsplit(tr_override, ','))
+ n=n_elements(translators)
+
+ for i=0, n-1 do $
+  begin
+   dd.last_translator = [i,1]
+   nv_rereference, ddp, dd
+   call_procedure, translators[i], ddp, keyword, value, stat=stat, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+                      end_keywords
+   dd = nv_dereference(ddp)
+  end
+
+
+ nv_rereference, ddp, dd
+end
+;===========================================================================

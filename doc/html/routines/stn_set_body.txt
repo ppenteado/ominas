@@ -1,0 +1,40 @@
+STN_SET_BODY
+
+
+ PURPOSE:
+	Replaces the body descriptor in each given station descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STN
+
+
+ CALLING SEQUENCE:
+	stn_set_body, std, bd
+
+
+ ARGUMENTS:
+  INPUT: 
+	std:	 Array (nt) of STATION descriptors.
+
+	bd:	 Array (nt) of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

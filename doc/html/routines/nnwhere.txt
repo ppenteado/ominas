@@ -1,0 +1,41 @@
+NNWHERE
+
+
+ PURPOSE:
+       Finds subscripts where an element in the first array matches
+       elements in the second input array.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = nnwhere(ref, list)
+
+
+ ARGUMENTS:
+  INPUT:
+        ref:  Reference array
+
+       list:  Comparison array.
+
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+       NONE
+
+
+ RETURN:
+       An array of subscripts in list that match something in ref.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

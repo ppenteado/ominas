@@ -1,0 +1,45 @@
+STR_EXT
+
+ PURPOSE:
+       Extracts the substring which is delimited by the given tokens.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       return = str_ext(string, token1, token2, rstring, position=position)
+
+
+ ARGUMENTS:
+  INPUT:
+        string:        An input string
+
+        token1:        First token
+
+        token2:        Second token
+
+  OUTPUT:
+       rstring:        Original string minus the part which was extracted
+
+
+ KEYWORDS:
+  INPUT:
+       NONE
+
+  OUTPUT:
+      position:        Position at which the string was found
+
+
+ RETURN:
+       The extracted string is returned.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

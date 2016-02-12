@@ -1,0 +1,20 @@
+;===========================================================================
+; dsk_get_dapdt
+;
+;
+;===========================================================================
+function dsk_get_dapdt, dkx, frame_bd
+@nv_lib.include
+ dkd = class_extract(dkx, 'DISK')
+
+ if(NOT keyword_set(frame_bd)) then $
+             nv_message, name='dsk_get_dapdt', 'frame_bd required.'
+
+ dapdt = orb_get_dapdt(dkd, frame_bd)
+
+ return, dapdt
+end
+;===========================================================================
+
+
+

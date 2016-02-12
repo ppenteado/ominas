@@ -1,0 +1,52 @@
+STRUCT_SUB
+
+
+ PURPOSE:
+	Creates a new structure whise fields are the same as those in the 
+	given structure except for the specified substitutions.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	result = struct_sub(struct, sub_tags, sub_val_ps)
+
+
+ ARGUMENTS:
+  INPUT:
+	struct:		Input structure.
+
+	sub_tags:	Tags to substitute
+
+	sub_val_s:	Pointers to values for the substituted tags.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	NONE
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	A new structure is created that is the same as the input structure
+	except for the specified field substitutions.
+
+
+ RESTRICTIONS:
+	Currently only works for output structures with 10 or fewer fields.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2002
+

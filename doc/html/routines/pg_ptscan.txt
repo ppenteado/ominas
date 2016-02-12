@@ -1,0 +1,102 @@
+PG_PTSCAN
+
+
+ PURPOSE:
+	Attempts to find points of highest correlation with a given model
+	centered near given features in an image.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_ptscan(dd, object_ps)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor
+
+	object_ps: 	Array (n_pts) of pg_points_struct giving the points.
+			Only the image coordinates of the points need to be
+			specified.
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+  INPUT:
+       model:          Point spread model to be used in correlation.  If
+                       not given a default gaussian is used.
+
+	wmod:		x, ysize of default gaussian model.
+
+	wpsf:		Half-width of default gaussian psf model.
+
+       width:          Width to search around expected point location.  If
+                       not given, a default width of 20 pixels is used.
+
+	radius:		Width outside of which to exclude detections whose
+			offset varies too far from the most frequent offset.
+			Detections with offsets outside this radius receive
+			correlation coefficients of zero.
+
+       edge:           Distance from edge from which to ignore points.  If
+                       not given, an edge distance of 0 is used.
+
+       ccmin:          If given, points are discarded if the correlation
+                       is below this value.
+
+	chisqmax:	Max chisq between the model and the image.
+
+       gdmax:          If given, points are discarded if the gradiant of
+                       the correlation function is higher than this value.
+
+	smooth:		If given, the input image is smoothed using
+			this width before any further processing.
+
+	median:		If given, the input image is filtered using
+			a median filter of this width before any further
+			processing.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	An array of type pg_points_struct giving the detected position for
+       each object.  The correlation coeff value for each detection is
+       saved in the data portion of pg_points_struct with tag 'scan_cc'.
+       The x and y offset from the given position is also saved.
+
+
+ RESTRICTIONS:
+	Currently does not work for multiple time steps, only considers
+	one point per given pg_points_struct.
+
+
+ PROCEDURE:
+	For each visible object, a section of the image of size width +
+       the size of the model is extracted and sent to routine ptloc to
+       find the pixel offset with the highest correlation with the given
+       model.
+
+
+ EXAMPLE:
+	To find stellar positions with a correlation higher than 0.6...
+
+       star_ps=pg_center(bx=sd, gd=gd) & pg_hide, star_ps, gd=gd, /rm, /globe
+       ptscan_ps=pg_ptscan(dd, star_ps, edge=30, width=40, ccmin=0.6)
+
+ SEE ALSO:
+	pg_ptfarscan
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Haemmerle, 5/1998
+	Modified:	Spitale 9/2002 -- added twice model width to search
+			width.
+	

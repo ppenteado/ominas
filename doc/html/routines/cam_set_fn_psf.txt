@@ -1,0 +1,40 @@
+CAM_SET_FN_PSF
+
+
+ PURPOSE:
+	Sets the user-defined PSF function for the given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_fn_psf, cd, fn
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	 Camera descriptor.
+
+	fn:	 Name of user-defined PSF function.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

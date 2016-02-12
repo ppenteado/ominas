@@ -1,0 +1,15 @@
+GRIM_MENU_VIEW_ZOOM_8_EVENT
+
+
+ PURPOSE:
+	 Inverts current overlay activations.  Desccriptor activations are
+	 determined by the resulting overlay activations. 
+
+
+ CATEGORY:
+	NV/GR
+	 
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2002
+	

@@ -1,0 +1,45 @@
+STELLAB_POS
+
+
+ PURPOSE:
+	Corrects positions for stellar aberration.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       new_pos = stellab_pos(pos, vel)
+
+
+ ARGUMENTS:
+  INPUT:
+	pos:	Array (nv,3) of target inertial position vectors to be 
+		corrected.
+
+	vel:	Array (nv,3) of observer inertial velocity vectors.
+		Note observer is assumed to be at the origin.
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	c:	Speed of light.
+
+  OUTPUT: 
+	axis:	Array (nv,3) of rotation axes corresponding to each 
+		correction.
+
+	theta:	Array (nv) of rotation angles corresponding to each 
+		correction.
+
+
+ RETURN: 
+	Array (nv,3) of corrected position vectors.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

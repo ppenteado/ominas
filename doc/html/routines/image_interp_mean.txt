@@ -1,0 +1,37 @@
+IMAGE_INTERP_MEAN
+
+
+ PURPOSE:
+       Extracts a region from an image using averaging interpolation.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = image_interp(image, grid_x, grid_y)
+
+
+ ARGUMENTS:
+  INPUT:
+        image:         An array of image point arrays.
+
+       grid_x:         The grid of x positions for interpolation
+
+       grid_y:         The grid of y positions for interpolation
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       Array of interpolated points at the (grid_x, grid_y) points.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

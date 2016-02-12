@@ -1,0 +1,120 @@
+;=============================================================================
+;	NOTE:	remove the second '+' on the next line for this header
+;		to be recognized by extract_doc.
+;++
+; NAME:
+;	nv_parse_keyvals
+;
+;
+; PURPOSE:
+;	xx
+;
+;
+; CATEGORY:
+;	NV/SYS
+;
+;
+; CALLING SEQUENCE:
+;	result = xx(xx, xx)
+;	xx, xx, xx
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; RETURN:
+;	xx
+;
+;
+; COMMON BLOCKS:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; SIDE EFFECTS:
+;	xx
+;
+;
+; RESTRICTIONS:
+;	xx
+;
+;
+; PROCEDURE:
+;	xx
+;
+;
+; EXAMPLE:
+;	xx
+;
+;
+; STATUS:
+;	xx
+;
+;
+; SEE ALSO:
+;	xx, xx, xx
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	xx, xx/xx/xxxx
+;	
+;-
+;=============================================================================
+function nv_parse_keyvals, keyvals, keywords=keywords
+@nv.include
+
+ s = size(keyvals)
+ ntran = s[1]
+ max_nkey = s[2]
+
+ kv = {keyval_struct}
+ kv.keywords_p = ptr_new(ptrarr(ntran))
+ kv.values_p = ptr_new(ptrarr(ntran))
+
+ for i=0, ntran-1 do $
+  begin
+   w = where(keyvals[i,*] NE '')
+ 
+   if(w[0] NE -1) then $
+    begin
+     nkey = n_elements(w)
+     (*kv.keywords_p)[i] = ptr_new(strarr(nkey))
+     (*kv.values_p)[i] = ptr_new(strarr(nkey))
+     for j=0, nkey-1 do $
+      begin
+       nv_parse_keyval, keyvals[i,j], keyword, value
+       keywords = append_array(keywords, keyword)
+
+       (*(*kv.keywords_p)[i])[j] = keyword
+       (*(*kv.values_p)[i])[j] = value
+      end
+    end
+  end
+
+
+; return, ptr_new(kv)
+ return, kv
+end
+;=============================================================================

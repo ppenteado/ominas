@@ -1,0 +1,19 @@
+;==============================================================================
+; rng_clone_descriptor
+;
+;
+;==============================================================================
+function rng_clone_descriptor, rdp
+@nv_lib.include
+ nv_notify, rdp, type = 1
+ rd = nv_dereference(rdp)
+
+ new_rd = rd
+ new_rd.dkd = dsk_clone_descriptor(rd.dkd)
+
+ new_rdp = ptrarr(n_elements(rd))
+ nv_rereference, new_rdp, new_rd
+
+ return, new_rdp
+end
+;==============================================================================

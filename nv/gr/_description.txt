@@ -1,0 +1,8 @@
+GRIM Graphical interface to OMINAS
+=================================
+
+GRIM is a graphical interface to ominas, whose purpsose is to display and
+manipulate 1- and  2-dimensional data sets, while providing geometric
+overlays.   The GRIM package includes an image browser, BRIM, and a comand-line
+interface INGRID, which allows all of GRIM's geometry objects to be manipulated
+via the command line.

@@ -1,0 +1,8 @@
+extract_doc, /page, $
+    title="NV Program Reference", $
+    "/home/joes/idl_pro/minas/nv/*.pro", $
+    "/home/joes/idl_pro/minas/nv/doc_nv.txt"
+@doc_com
+@doc_gr
+@doc_lib
+@doc_sys

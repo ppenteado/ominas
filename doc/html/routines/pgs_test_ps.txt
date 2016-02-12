@@ -1,0 +1,37 @@
+PGS_TEST_PS
+
+
+ PURPOSE:
+	Determines whether the argument is a points structure.
+
+
+ CATEGORY:
+	NV/PGS
+
+
+ CALLING SEQUENCE:
+	status = pgs_test_ps(x)
+
+
+ ARGUMENTS:
+  INPUT:
+	x:		Point structure.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+	
+
+
+ RETURN: 
+	True if x is a points structure, false otherwise. 
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1997
+	

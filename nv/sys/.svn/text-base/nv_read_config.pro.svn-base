@@ -1,0 +1,23 @@
+;===========================================================================
+; nv_read_config.pro
+;
+;
+;===========================================================================
+pro nv_read_config, env, table_p, filenames_p, continue=continue
+@nv.include
+
+ filenames = str_nsplit(getenv(env), ':')
+ if(NOT keyword_set(filenames[0])) then $
+  begin
+;   nv_message, 'Unable to obtain ' + env +' from the environment.', $
+;                                      name='nv_read_config', continue=continue
+   return
+  end
+
+ n = n_elements(filenames)
+ for i=0, n-1 do table = append_array(table, read_txt_table(filenames[i]))
+
+ *filenames_p = filenames
+ *table_p = table
+end
+;===========================================================================

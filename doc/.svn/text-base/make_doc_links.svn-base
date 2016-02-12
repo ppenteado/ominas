@@ -1,0 +1,24 @@
+#ln -s ../*/doc_*.txt .
+#ln -s ../*/*/doc_*.txt .
+#ln -s ../*/*/*/doc_*.txt .
+#ln -s ../*/*/*/*/doc_*.txt .
+
+
+#ln -s ../*/*_description.txt .
+#ln -s ../*/*/*_description.txt .
+#ln -s ../*/*/*/*_description.txt .
+
+cp ../*/doc_*.txt .
+cp ../*/*/doc_*.txt .
+cp ../*/*/*/doc_*.txt .
+cp ../*/*/*/*/doc_*.txt .
+
+
+cp ../*/*_description.txt .
+cp ../*/*/*_description.txt .
+cp ../*/*/*/*_description.txt .
+
+mv doc_sys.txt doc_nv.txt
+
+cp ../MINAS_README.TXT .
+

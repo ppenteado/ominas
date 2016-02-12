@@ -1,0 +1,113 @@
+PG_PROFILE_RING
+
+
+ PURPOSE:
+	Generates radial or longitudinal ring profiles from the given image
+	using an image outline.
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+    result = pg_profile_ring(dd, cd=cd, dkx=dkx, gbx=gbx, outline_ps)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+       outline_ps:    pg_points_struct giving the outline of the sector to plot,
+                      as produced by the pg_ring_sector.
+
+  OUTPUT:
+        NONE
+
+ KEYWORDS:
+  INPUT:
+	  cd:	Camera descriptor.
+
+        dkx:   Disk descriptor.
+
+	 gbx:   Array  of descriptors of objects which must be a subclass 
+               of GLOBE, describing the primary body for dkx.  For each
+               timestep, only the first descriptor is used.
+
+         gd:   Generic descriptor, if used, cd and dkx taken from it unless
+               overriden by cd and dkx arguments.
+
+  azimuthal:   If set, the plot is longitudinal instead of radial.
+
+       bin:    If set, pixels in sector are binned according to
+               radius or longitude rather than dn averaged at equal
+               radius or longitude spacing
+
+    interp:    Type of interpolation to use: 'nearest', 'bilinear', 'cubic',
+               or 'sinc'.  'sinc' is the default.
+
+         bg:	Uniform value to subtract from profile.
+
+ arg_interp:   Arguments to pass to the interpolation function.
+
+   frame_bd:   Subclass of BODY giving the frame against which to 
+               measure inclinations and nodes, e.g., a planet 
+               descriptor.  One per bx.
+
+    anomaly:   If set, longitudes in outline_ps are interpreted instead
+               as anomalies.
+
+  OUTPUT:
+    profile:   The profile.
+
+    dsk_pts:	Array of disk coordinates corresponding to each value in the
+		returned dn profile.
+
+    im_pts:	Array of image coordinates corresponding to each value in the
+		returned dn profile.
+
+      sigma:   Array giving the standard deviation at each point in the
+		profile.
+
+      width:   Array giving the width of the scan, in pixels along the 
+               averaging direction, at each point in the profile.
+
+         nn:   Number of image samples averaged into each profile point.
+
+ RETURN:
+	Two data descriptors: the first contains the profile; the second contains
+	the profile sigma.
+
+
+ PROCEDURE:
+	The image points of the sector outline are first calculated.  If 
+       /outline is selected then this is output.  If not, then the
+       /azimuthal keyword determines if this is a radius or longitude 
+       profile.  The radius and longitude spacing for profile is then is 
+       determined. If n_lon or n_rad is given, then these are used.  If not,
+       then the outline is used to determine the spacing in radius and
+       longitude so that the maximum spacing is a pixel.  If oversamp is
+       given then the number of samples is multiplied by this factor.
+       Then the image is sampled with this radius x longitude grid and
+       the dn interpolated with the routine image_interp at each point.
+       The dn's are then averaged along the requested profile direction.
+       If /bin keyword is selected then the image is not interpolated but
+       rather each pixel is binned in a histogram with the calculated
+       spacing.
+
+
+ EXAMPLE:
+     lon = [175.,177.]
+     rad = [65000000.,138000000.]
+     outline_ps = pg_ring_sector(cd=cd, dkx=rd, gbx=pd, rad=rad, lon=lon)
+     pg_draw, outline_ps
+
+     profile = pg_profile_ring(dd, cd=cd, dkx=rd, gbx=pd, $
+                                          outline_ps, dsk_pts=dsk_pts)
+     window, /free, xs=500, ys=300
+     plot, dsk_pts[*,0], profile
+
+
+ MODIFICATION HISTORY:
+       Written by:     Vance Haemmerle & Spitale, 6/1998
+	Modified to use outline_ps instead of (rad,lon): Spitale 5/2005
+	

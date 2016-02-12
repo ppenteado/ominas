@@ -1,0 +1,45 @@
+;=============================================================================
+;+
+; NAME:
+;       inertial_to_image
+;
+;
+; PURPOSE:
+;       Translates a vector in inertial coordinates to image coordinates
+;
+;
+; CATEGORY:
+;       NV/LIB/TOOLS
+;
+;
+; CALLING SEQUENCE:
+;       result = inertial_to_image(cd, v)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;             cd:       Camera descriptor
+;
+;              v:       An array of inertial vectors
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       An array of image points.
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale
+;
+;-
+;=============================================================================
+function inertial_to_image, cd, v
+ return, cam_focal_to_image(cd, $
+           cam_body_to_focal(cd, $
+             bod_inertial_to_body(cam_body(cd), v)))
+end
+;=============================================================================

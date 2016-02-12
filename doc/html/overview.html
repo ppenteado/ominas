@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 
+Transitional//EN">
+<html>
+<head>
+  <title>OMINAS Overview</title>
+</head>
+<body style="color: rgb(0, 0, 0); 
+background-color: rgb(255, 255, 255);">
+<table
+ style="text-align: 
+left; margin-left: auto; margin-right: auto; width: 800px;"
+ 
+border="0" cellpadding="5" cellspacing="2">
+  <tbody>
+    <tr>
+ 
+<td
+ style="background-color: rgb(170, 170, 70); color: rgb(255, 255, 255); vertical-align: 
+middle; text-align: center;">
+      <div 
+align="right"><small><small><a 
+href="./index.html">Main
+Page</a></small></small> </div>
+ 
+<b>OMINAS Overview</b> </td>
+    </tr>
+    <tr>
+      <td 
+style="vertical-align: top;">
+      <div style="text-align: right;">
+ 
+
+
+<!--<pre>29-Feb-2008</pre>-->
+      </div>
+      <h1> Introduction </h1>
+ 
+<p>OMINAS is an IDL-based software environment for the reduction and analysis of data taken by any space-based or Earth-based system.  It was written by Joseph Spitale (jnspitale@psi.edu) under the direction of Carolyn Porco.  Other contributers include Vance Haemmerle, Matthew Tiscareno, John Weiss, and Daiana DiNino.  Funding for its initial development was provided through the Cassini mission.  </p>
+
+ 
+
+ <br />    
+      <h1>Functional requirements</h1>
+
+<p>OMINAS development is guided by the following functional requirements:
+</p>
+<ul>
+<p> <h2><li>Portability </h2></p>
+<p>OMINAS should operate on as many UNIX-based platforms as possible.  This requirement is easily (though not trivially) met using IDL.  To date, OMINAS has been tested on Alpha/OSF, Sun/Solaris, PC/Linux, and Mac/OS X.  However, note that a specific OMINAS configuration (see Architecture below) may contain platform dependencies.</p>
+
+
+</p>Note that it is desirable for OMINAS to remain backward compatible to the earliest possible IDL version so that  users are not forced to upgrade.</p>
+
+
+
+<p> <h2><li>Speed</h2>	</p>
+<p>OMINAS computational routines must be as fast as possible.  Although this requirement is the most difficult to meet using IDL, through the use of massive array operations, every existing routine in OMINAS operates at an acceptable speed, usually comparable to analogous code written in C.</p>
+
+
+<p> <h2><li>Modularity</h2>	</p>
+<p>OMINAS obeys object-oriented software concepts, so that it is highly modular and relatively easy to modify.  Although IDL directly provides for an object-oriented architecture, that packaged is not used in OMINAS, or reasons mainly having to do with flexibility</p>
+
+
+<p> <h2><li>Generality</h2>	</p>
+<p>OMINAS itself must not contain any code that is dependent upon the particular instrument that generated the input data, or upon the organization of the file in which the data resides.  Because IDL compiles code dynamically, this requirement is met in OMINAS by allowing for external "user"-written configuration code that contains all of the specifics of a particular data source.</p>
+
+
+<p> <h2><li>Scripting</h2>	</p>
+<p>OMINAS must maintain a lowest-level user interface that operates from a command line so that analyses may be constructed as command scripts.  Such a capability is necessary in order for jobs to be performed in batch mode with no user intervention.  Moreover, such a capability must not prevent the addition of a more user-friendly graphical interface. OMINAS contains a command level user interface known as <a href="./gen/nv/com/pg/topic.html">PG</a>, which consists of a number of IDL programs.  Those programs may be combined into IDL batch files and run autonomously.  There is also a graphical interface call <a href="./routines/grim.txt">GRIM</a> (GRaphical Interface to oMinas).</p>
+
+</ul>
+
+
+<br />
+<h1>Architecture</h1>
+
+<p>The following diagram illustrates the relationships among the various components of a OMINAS installation.
+</p>
+
+<p>
+<img src="arch.png" width="800">
+</p>
+
+<p> The core OMINAS code is completely independent of the source of the data and the type of file in which it is stored.  Those details are configured based on the intended purpose of a particular OMINAS installation.  For example, the Cassini ISS installation contains configuration code that reads and writes VICAR image files and SPICE kernels. </p> 
+
+<p> The separation between the data processing and I/O is maintained by a portion of the OMINAS system called NV.  NV uses application-specific configuration tables to determine how to transform ancillary data from external sources into the standard data objects recognized in OMINAS.  NV is described in detail in nv_description.txt.</p>
+
+<p> The OMINAS object library defines and manipulates the the basic data objects used to describe the various entities -- cameras, planets, rings, etc., -- of interest to the user.  The object library is described in lib_description.txt.</p>
+
+<p> The typical OMINAS user will operate at the command level, which consists of the image display program <a href="./routines/tvim.txt">TVIM</a>, the NV I/O commands <a href="./routines/nv_read.txt">NV_READ</a> and <a href="./routines/nv_write.txt">NV_WRITE</a>, and a set of programs based on the underlying object library and utility routines referred to as <a href="./gen/nv/com/pg/topic.html">PG</a>. </p>
+
+<p> The graphical interface to OMINAS is called <a href="./routines/grim.txt">GRIM</a>.  Although it's designed to be used along with the command line like a fancy TVIM, GRIM may be used on its own.</p>
+
+
+
+
+

@@ -1,0 +1,19 @@
+;===========================================================================
+; dsk_get_lan
+;
+;
+;===========================================================================
+function dsk_get_lan, dkx, frame_bd
+@nv_lib.include
+ dkd = class_extract(dkx, 'DISK')
+
+ if(NOT keyword_set(frame_bd)) then $
+             nv_message, name='dsk_get_lan', 'frame_bd required.'
+
+
+ ref0 = orb_get_ascending_node(frame_bd, bod_inertial())
+ lan = orb_get_lan(dkd, frame_bd, ref=ref0)
+
+ return, lan
+end
+;===========================================================================

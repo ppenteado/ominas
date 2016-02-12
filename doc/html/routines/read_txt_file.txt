@@ -1,0 +1,72 @@
+READ_TXT_FILE
+
+
+ PURPOSE:
+	Reads a text file, parsing some basic directives and removing
+	comments.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	text = read_txt_file(fname, notes)
+
+
+ ARGUMENTS:
+  INPUT:
+	fname:	Name of the file to read.
+
+  OUTPUT: 
+	notes:  Array of strings giving note text for each line.  This text is taken
+		from the 'note' input.
+
+
+ KEYWORDS:
+  INPUT: 
+	start:	If given, the returned text begins at the first line
+		in which this string appears.  Default is '--begin--'.
+
+	stop:	If given, the returned text ends at the first line
+		in which this string appears.  Default is '--end--'.
+
+       note:	If this string appears in the file, this line is used as the note 
+		for each returned line until this string appears again, and so on.
+		Default is '--note--'.
+
+	raw:	If set, the 'start' and 'stop' keywords are ignored.
+		Comments are also not removed.
+
+	all:	If set, the 'start' and 'stop' keywords are ignored.
+
+	sample:	If set, only every nth line is returned, where n is the value
+		of this keyword; the first line is always returned.  If there 
+		are notes, then this operation applies separately to each block 
+		of lines with the same note.
+
+	select: If set, only lines with the given note string will be returned.
+		
+
+  OUTPUT:
+	status:	0 if successful, -1 if file not found
+
+
+ RETURN:
+	String array containing the text read from the file.  Unless /raw
+	is specified, the returned text will not contain any characters
+	appearing after the comment character '#', and the start and stop
+	directoves are used to select the return block of text.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	write_txt_file
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/1994
+	

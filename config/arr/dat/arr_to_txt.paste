@@ -1,0 +1,43 @@
+filenames = findfiles('./raw/*.arr')
+nfiles = n_elements(filenames)
+
+
+for i=0, nfiles-1 do $
+ begin &$
+
+  ;----------------------------------
+  ; read file
+  ;----------------------------------
+  filename = filenames[i] &$
+  arr = arr_read(filename) &$
+
+
+  ;----------------------------------
+  ; convert corrds
+  ;----------------------------------
+  pd = pg_get_planets(/over, $
+	plt_name='ENCELADUS', $
+	plt_radii=[256600d, 251400d, 248300d]) &$
+
+  arr = glb_globe_to_graphic(pd, $
+        glb_body_to_globe(pd, arr))  &$
+
+
+  ;----------------------------------
+  ; build output table
+  ;----------------------------------
+  lines = 'Gr Lat,W Lon' &$
+
+  lines = append_array(lines, strtrim(arr[*,0]*180d/!dpi,2) + $
+        ',' + strtrim(east_to_west_longitude(arr[*,1])*180d/!dpi,2)) &$
+
+
+  ;----------------------------------
+  ; write output table
+  ;----------------------------------
+  split_filename, filename, dir, name, ext &$
+  fname = './dat/' + name + '.txt' &$
+
+  print, 'writing ' + fname &$
+  write_txt_file, fname, lines &$
+ end

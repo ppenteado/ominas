@@ -1,0 +1,16 @@
+CTCYAN
+
+ PURPOSE:
+	To allocate/return the color cyan.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+	return = ctcyan()
+
+ RETURN:
+	The lookup table or true color value for cyan
+

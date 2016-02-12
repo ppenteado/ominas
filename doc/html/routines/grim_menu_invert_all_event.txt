@@ -1,0 +1,15 @@
+GRIM_MENU_INVERT_ALL_EVENT
+
+
+ PURPOSE:
+	Displays all planes in sequence using xinteranimate.  This option is
+	useful or blinking as well.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2002
+	

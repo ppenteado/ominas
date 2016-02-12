@@ -1,0 +1,145 @@
+;=============================================================================
+;+
+; NAME:
+;	spice_output
+;
+;
+; PURPOSE:
+;	Generic NAIF/SPICE output translator core.  This routine is not a 
+;	OMINAS output translator; it is intended to be called by an output
+;	translator that is taylored to a specific mission.  This routine 
+;	works only for camera descriptors.
+;
+;
+; CATEGORY:
+;	NV/CONFIG
+;
+;
+; CALLING SEQUENCE:
+;	spice_output, dd, keyword, value, prefix
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dd:		Data descriptor.
+;
+;	keyword:	String giving the name of the translator quantity.
+;			Only 'CAM_DESCRIPTORS' is recognized and the routine
+;			[prefix]_spice_write_cameras is called.
+;
+;	value:		The data to write.
+;
+;	prefix:		String giving a prefix to use in contructing the names
+;			of the input function:
+;
+;			  [prefix]_spice_write_cameras
+;
+;			This function is a wrapper that prepares the relevant
+;			inputs for a specific mission and calls
+;			spice_write_cameras to write a C-kernel.  See
+;			cas_spice_output for an example of how to write such
+;			a function.
+;
+;  OUTPUT:
+;	NONE
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	key1:		Camera descriptor.
+;
+;  OUTPUT:
+;	status:		Zero unless a problem occurs.
+;
+;
+;  TRANSLATOR KEYWORDS:
+;	ref:		Name of the reference frame for the input quantities.
+;			Default is 'j2000'.
+;
+;	j2000:		/j2000 is equivalent to specifying ref=j2000.
+;
+;	b1950:		/b1950 is equivalent to specifying ref=b1950.
+;
+;	klist:		Name of a file giving a list of SPICE kernels to use.
+;			If no path is included, the path is taken from the 
+;			NV_SPICE environment variable.
+;
+;	ck_out:		String giving the name of the new C-kernel to write.
+;
+;	reload:		If set, new kernels are loaded, as specified by the
+;			klist keyword.
+;
+;
+;  ENVIRONMENT VARIABLES:
+;	NV_SPICE_KER:	Directory containing the kernel list file.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+; SEE ALSO:
+;	spice_input
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 10/2002
+;	
+;-
+;=============================================================================
+pro spice_output, dd, keyword, value, prefix, status=status, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+	end_keywords
+
+ status=0
+
+ ;-----------------------------------------------
+ ; translator arguments
+ ;-----------------------------------------------
+ ref = tr_keyword_value(dd, 'ref')
+ if(NOT keyword__set(ref)) then ref = 'j2000'
+
+ j2000 = tr_keyword_value(dd, 'j2000')
+ if(keyword__set(j2000)) then ref = 'j2000'
+
+ b1950 = tr_keyword_value(dd, 'b1950')
+ if(keyword__set(b1950)) then ref = 'b1950'
+
+ ck_file = tr_keyword_value(dd, 'ck_out')
+ if(NOT keyword__set(ck_file)) then $
+  begin
+   nv_message, /continue, name='spice_output', $
+         'No C-kernel file generated because ck_file not specified.'
+   status = -1
+   return
+  end
+
+ reload = tr_keyword_value(dd, 'reload')
+
+
+
+ ;-----------------------------------------------
+ ; observer descriptor passed as key1
+ ;-----------------------------------------------
+; if(keyword__set(key1)) then ods = key1 $
+; else nv_message, name='spice_input', 'No observer descriptor.'
+
+
+ ;--------------------------
+ ; match keyword
+ ;--------------------------
+ if(keyword NE 'CAM_DESCRIPTORS') then $
+  begin
+   status = -1
+   return
+  end
+
+
+ call_procedure, prefix + '_spice_write_cameras', $
+                  dd, value, ref, ck_file, n_obj=n_obj, dim=dim, status=status
+
+; if(keyword__set(klist_tmp)) then delete_file, klist
+
+end
+;===========================================================================

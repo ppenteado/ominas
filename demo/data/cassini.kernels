@@ -1,0 +1,26 @@
+###############################################################################
+# cassini.kernels
+#
+###############################################################################
+
+$NV_SPICE_LSK/naif0007.tls
+$NV_SPICE_CK/001011_001014ra.bc
+
+$NV_SPICE_PCK/cpck14Dec2001.tpc
+$NV_SPICE_SPK/010420R_SCPSE_EP1_JP83.bsp
+$NV_SPICE_FK/cas_v37.tf
+$NV_SPICE_IK/cas_iss_v08.ti
+$NV_SPICE_SCK/cas00083.tsc
+
+
+
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/lsk/naif0007.tls
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/ck/001011_001014ra.bc
+
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/pck/cpck14Dec2001.tpc
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/spk/010420R_SCPSE_EP1_JP83.bsp
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/fk/cas_v39.tf
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/ik/cas_iss_v10.ti
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/sclk/cas00106.tsc
+
+

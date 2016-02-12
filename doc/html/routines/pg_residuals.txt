@@ -1,0 +1,40 @@
+PG_RESIDUALS
+
+
+ PURPOSE:
+	Computes residuals value for given curve- or point-fit parameters.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	chisq = pg_residuals(scan_ps)
+
+
+ ARGUMENTS:
+  INPUT:
+	scan_ps:	Array (n_curves) of pg_points_struct output from
+			pg_cvscan or pg_ptscan containing scan data.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,n_curves) of residuals.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

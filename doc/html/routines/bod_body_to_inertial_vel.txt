@@ -1,0 +1,43 @@
+BOD_BODY_TO_INERTIAL_VEL
+
+
+ PURPOSE:
+       Transforms the given column velocity vectors from the body
+       coordinate system to the inertial coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	inertial_vel = bod_body_to_inertial_vel(bx, body_vel)
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	body_vel:	Array (nv,3,nt) of column velocity vectors in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column velocity vectors in the inertial
+       frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

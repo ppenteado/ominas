@@ -1,0 +1,3432 @@
+									12/05/15
+CAM Program Reference
+=====================
+
+ Summary
+ -------
+  - CAMERA_DESCRIPTOR__DEFINE
+	Class structure fo the CAMERA class.
+
+  - CAM_BODY
+	Returns the body descriptor for each given camera descriptor.
+
+  - CAM_BODY_TO_FOCAL
+       Transforms the given column vectors from the body coordinate
+       system to the camera focal plane coordinate system.
+
+  - CAM_CLONE_DESCRIPTOR
+       Allocates new camera descriptors as copies of the given
+       (existing) camera descriptors.
+
+  - CAM_COPY_DESCRIPTOR
+	Copies all fields from the source camera descriptors into the
+       destination camera descriptors.
+
+  - CAM_EVOLVE
+       Computes new camera descriptors at the given time offsets from
+       the given camera descriptors using the taylor series expansion
+       corresponding to the derivatives contained in the given camera
+       descriptor.
+
+  - CAM_EXPOSURE
+       Returns the exposure duration of each given camera descriptor.
+
+  - CAM_FILTERS
+	Returns the filter name(s) for a given camera descriptor.
+
+  - CAM_FN_DATA_P
+	For each given camera descriptor, returns the pointer to the
+       generic data intended to be used by the user-defined focal
+       <--> image transformation functions.
+
+  - CAM_FN_FOCAL_TO_IMAGE
+       Returns the name of the user-defined focal --> image
+       transformation function for each given camera descriptor.
+
+  - CAM_FN_IMAGE_TO_FOCAL
+       Returns the name of the user-defined image --> focal
+       transformation function for each given camera descriptor.
+
+  - CAM_FN_PSF
+	Returns the user-defined psf function for the given camera descriptor.
+
+  - CAM_FOCAL_TO_BODY
+       Transforms the given array of points from the camera focal
+       plane coordinate system to the body coordinate system.
+
+  - CAM_FOCAL_TO_IMAGE
+	Transforms the given array of points in the focal plane
+       coordinate system to an array of points in the image
+       coordinate system using the fn_focal_to_image function of the
+       camera descriptor.
+
+  - CAM_FOCAL_TO_IMAGE_LINEAR
+       Transforms the given array of points in the focal plane
+       coordinate system to an array of points in the image
+       coordinate system using a linear model that assumes that
+       distances in the image are proportional to angles in the focal
+       plane.
+
+  - CAM_FOCAL_TO_IMAGE_POLY
+       Transforms the given array of points in the focal plane
+       coordinate system to an array of points in the image
+       coordinate system using a polynomial distortion model.
+
+  - CAM_FOCAL_TO_IMAGE_RADIAL
+       Transforms the given array of points in the focal plane
+       coordinate system to an array of points in the image
+       coordinate system using a radial distortion model.
+
+  - CAM_GET_POLY_MATRICES
+       Obtains the camera function data for the polynomial distortion model.
+
+  - CAM_GET_RADEC_TWIST
+       Computes camera Euler angles relative to the inertial frame.
+
+  - CAM_IMAGE_TO_FOCAL
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using the fn_image_to_focal function of the
+       camera descriptor.
+
+  - CAM_IMAGE_TO_FOCAL_LINEAR
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using a linear model that assumes that
+       distances in the image are proportional to angles in the focal
+       plane.
+
+  - CAM_IMAGE_TO_FOCAL_POLY
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using a polynomial distortion model.
+
+  - CAM_IMAGE_TO_FOCAL_RADIAL
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using a radial distortion model.
+
+  - CAM_INIT_DESCRIPTORS
+	Init method for the CAMERA class.
+
+  - CAM_NFILTERS
+	Returns an integer indicating the maximum number of filters allowed 
+	in the 'filters' fields of the camera descriptor.  This number can 
+	be adjusted using the environment variable 'CAM_NFILTERS'.  The default
+	is 4.
+
+  - CAM_OAXIS
+       Returns the 2-element array giving the image coordinates (in
+       pixels) corresponding to the camera optic axis for each given
+       camera descriptor.
+
+  - CAM_ORIGIN
+       Returns the 2-element array giving the image coordinates (in
+       pixels) corresponding to the camera optic axis for each given
+       camera descriptor.
+
+  - CAM_PSF
+	Computes a point-spread function.
+
+  - CAM_PSF_ATTRIB
+	Computes attributes of a point-spread function.
+
+  - CAM_REBIN
+       Modifies the camera parameters to reflect a re-binning of the pixels.
+
+  - CAM_REORIENT
+       Repoints the camera orientiation matrix based on x,y, and theta 
+	image offsets.
+
+  - CAM_REPLICATE
+	Replicates the given camera descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+  - CAM_SCALE
+       Returns the 2-element array giving the camera scale
+       (radians/pixel) in each direction for each given camera
+       descriptor.
+
+  - CAM_SET_BODY
+	Replaces the body descriptor in each given camera descriptor.
+
+  - CAM_SET_EXPOSURE
+       Replaces the exposure duration for each given camera descriptor.
+
+  - CAM_SET_FILTERS
+	Sets the filter name(s) for a given camera descriptor.
+
+  - CAM_SET_FN_DATA_P
+       For each given camera descriptor, sets the pointer to the
+       generic data intended to be used by the user-defined focal
+       <--> image transformation functions.
+
+  - CAM_SET_FN_FOCAL_TO_IMAGE
+       Sets the user-defined focal --> image transformation function
+       for the given camera descriptor.
+
+  - CAM_SET_FN_IMAGE_TO_FOCAL
+       Sets the user-defined image --> focal transformation function
+       for the given camera descriptor.
+
+  - CAM_SET_FN_PSF
+	Sets the user-defined PSF function for the given camera descriptor.
+
+  - CAM_SET_OAXIS
+       Replaces the oaxis array for each given camera descriptor.
+
+  - CAM_SET_ORIGIN
+       Replaces the origin array for each given camera descriptor.
+
+  - CAM_SET_POLY_MATRICES
+       Sets up the camera function data for the polynomial distortion model.
+
+  - CAM_SET_SCALE
+       Replaces the scale array for each given camera descriptor.
+
+  - CAM_SET_SIZE
+       Replaces the size array for each given camera descriptor.
+
+  - CAM_SIZE
+	Returns the image size (in pixels) for each given camera descriptor.
+
+  - CAM_SUBIMAGE
+       Produces a new camera descriptor corresponding to dividing the 
+	associated image as specified.
+
+
+
+CAMERA_DESCRIPTOR__DEFINE
+-------------------------
+
+
+ PURPOSE:
+	Class structure fo the CAMERA class.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	N/A 
+
+
+ FIELDS:
+	bd:	BODY class descriptor.  
+
+		Methods: cam_body, cam_set_body
+
+
+	scale:	2-element array giving the camera scale (radians/pixel) in 
+		each direction.  The meaning of this quantity depends on the
+		distortion model.
+
+		Methods: cam_scale, cam_set_scale
+
+
+	oaxis:	2-element array giving the image coordinates corresponding 
+		to the camera optic axis.
+
+		Methods: cam_oaxis, cam_set_oaxis
+
+
+	exposure:	Exposure duration.  BODY time refers to the 
+			center of this interval.
+
+			Methods: cam_exposure, cam_set_exposure
+
+
+	size:	Image size in pixels.
+
+		Methods: cam_size, cam_set_size
+
+	filters:	String array giving the names of each filter.
+
+
+	fn_focal_to_image:	String giving the name of a function
+				that transforms points in the focal
+				plane coordinate system to points in 
+				the image coordinate system.  Default is
+				cam_image_to_focal_linear().
+
+				Methods: cam_fn_focal_to_image, 
+				         cam_set_fn_focal_to_image
+
+
+	fn_image_to_focal:	String giving the name of a function
+				that transforms points in the image
+				coordinate system to points in the focal-
+				plane coordinate system.  Default is
+				cam_image_to_focal_linear().
+
+				Methods: cam_fn_image_to_focal 
+				         cam_set_fn_image_to_focal
+
+
+	fn_data_p:	Pointer to generic data intended to be used by 
+			the above user-defined focal <--> image functions. 
+
+
+	fn_psf:	String giving the name of a function to be defined as 
+		follows:
+
+		function <name>, cd, x, y, default=default
+
+		The function should return an array of PSF values at the given 
+		coordinates, subject to the following rules:
+
+		1) If neither x nor y are given, then a PSF function is returned
+		   on some default grid, which is application-specific.
+
+		2) If only x is given, then PSF values are returned for each x, 
+		   with y values set to zero.
+
+		3) If x and y are given, then PSF values are returned at all 
+		   points (x,y).
+
+
+		Methods: cam_fn_psf, cam_set_fn_psf, cam_psf, cam_psf_attrib
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_BODY
+--------
+
+
+ PURPOSE:
+	Returns the body descriptor for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bd = cam_body(cd)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Body descriptor associated with each given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_BODY_TO_FOCAL
+-----------------
+
+
+ PURPOSE:
+       Transforms the given column vectors from the body coordinate
+       system to the camera focal plane coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	focal_pts = cam_body_to_focal(cd, body_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	body_pts:	Array (nv,3,nt) of column vectors in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the camera focal plane frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_CLONE_DESCRIPTOR
+--------------------
+
+
+ PURPOSE:
+       Allocates new camera descriptors as copies of the given
+       (existing) camera descriptors.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	new_cd = cam_clone_descriptor(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created camera descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_COPY_DESCRIPTOR
+-------------------
+
+
+ PURPOSE:
+	Copies all fields from the source camera descriptors into the
+       destination camera descriptors.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_copy_descriptor, cd_dst, cd_src
+
+
+ ARGUMENTS:
+  INPUT:
+	cd_dst:	        Array (nt) of CAMERA descriptors to copy to.
+
+	cd_src:	        Array (nt) of CAMERA descriptors to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_EVOLVE
+----------
+
+
+ PURPOSE:
+       Computes new camera descriptors at the given time offsets from
+       the given camera descriptors using the taylor series expansion
+       corresponding to the derivatives contained in the given camera
+       descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cdt = cam_evolve(cd, dt)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	 Array (ncd) of CAMERA descriptors.
+
+	dt:	 Array (ndt) of time offsets.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	nodv:	 If set, velocities will not be evolved.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (ncd,ndt) of newly allocated camera descriptors evolved
+       by time dt, where ncd is the number of cd, and ndt is the
+       number of dt.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_EXPOSURE
+------------
+
+
+ PURPOSE:
+       Returns the exposure duration of each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	exposure = cam_exposure(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Exposure duration associated with each given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FILTERS
+-----------
+
+
+ PURPOSE:
+	Returns the filter name(s) for a given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	filters = cam_filers(cd, index)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Camera descriptor.
+
+	index:	 Index of filter to return.  If not given, all are returned.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Names of requested filters.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FN_DATA_P
+-------------
+
+
+ PURPOSE:
+	For each given camera descriptor, returns the pointer to the
+       generic data intended to be used by the user-defined focal
+       <--> image transformation functions.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	data_p = cam_fn_data_p(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Pointer to user defined data associated with each given camera
+       descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FN_FOCAL_TO_IMAGE
+---------------------
+
+
+ PURPOSE:
+       Returns the name of the user-defined focal --> image
+       transformation function for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	fn = cam_fn_focal_to_image(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Focal --> image transformation function associated with each
+       given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FN_IMAGE_TO_FOCAL
+---------------------
+
+
+ PURPOSE:
+       Returns the name of the user-defined image --> focal
+       transformation function for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	fn = cam_fn_image_to_focal(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Image --> focal transformation function associated with each
+       given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FN_PSF
+----------
+
+
+ PURPOSE:
+	Returns the user-defined psf function for the given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	fn = cam_fn_psf(cd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	cd:	 Camera descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	PSF function associated with each given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FOCAL_TO_BODY
+-----------------
+
+
+ PURPOSE:
+       Transforms the given array of points from the camera focal
+       plane coordinate system to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	body_pts = cam_focal_to_body(cd, focal_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	focal_pts:	Array (2,nv,nt) of points in the camera focal plane frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column vectors in the body frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FOCAL_TO_IMAGE
+------------------
+
+
+ PURPOSE:
+	Transforms the given array of points in the focal plane
+       coordinate system to an array of points in the image
+       coordinate system using the fn_focal_to_image function of the
+       camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	image_pts = cam_focal_to_image(cd, focal_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	focal_pts:	Array (2,nv,nt) of points in the camera focal frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the image coordinate system.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FOCAL_TO_IMAGE_LINEAR
+-------------------------
+
+
+ PURPOSE:
+       Transforms the given array of points in the focal plane
+       coordinate system to an array of points in the image
+       coordinate system using a linear model that assumes that
+       distances in the image are proportional to angles in the focal
+       plane.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	image_pts = cam_focal_to_image_linear(cd, focal_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	focal_pts:	Array (2,nv,nt) of points in the camera focal frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the image coordinate system.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FOCAL_TO_IMAGE_POLY
+-----------------------
+
+
+ PURPOSE:
+       Transforms the given array of points in the focal plane
+       coordinate system to an array of points in the image
+       coordinate system using a polynomial distortion model.
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	image_pts = cam_focal_to_image_poly(cd, focal_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	focal_pts:	Array (2,nv,nt) of points in the camera focal frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the image coordinate system.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_FOCAL_TO_IMAGE_RADIAL
+-------------------------
+
+
+ PURPOSE:
+       Transforms the given array of points in the focal plane
+       coordinate system to an array of points in the image
+       coordinate system using a radial distortion model.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	image_pts = cam_focal_to_image_radial(cd, focal_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	focal_pts:	Array (2,nv,nt) of points in the camera focal frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the image coordinate system.
+
+
+ STATUS:
+	**Incomplete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_GET_POLY_MATRICES
+---------------------
+
+
+ PURPOSE:
+       Obtains the camera function data for the polynomial distortion model.
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_get_poly_matrices, cx, XX, YY, PP, QQ
+
+
+ ARGUMENTS:
+  INPUT: 
+	cx:	Array (nt) of and subclass of CAMERA.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+
+       XX:     Polynominal distortion coefficients in x.
+
+       YY:     Polynominal distortion coefficients in y.
+
+       PP:     Inverse polynominal distortion coefficients in x.
+
+       QQ:     Inverse polynominal distortion coefficients in y.
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_GET_RADEC_TWIST
+-------------------
+
+
+ PURPOSE:
+       Computes camera Euler angles relative to the inertial frame.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_get_radec_twist, cd, ra=ra, dec=dec, twist=twist
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	ra:	Array (nt) of RA angles.
+
+	dec:	Array (nt) of DEC angles.
+
+	twist:	Array (nt) of TWIST angles.
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_IMAGE_TO_FOCAL
+------------------
+
+
+ PURPOSE:
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using the fn_image_to_focal function of the
+       camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	focal_pts = cam_image_to_focal(cd, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	image_pts:	Array (2,nv,nt) of points in the image coordinate system.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the camera focal frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_IMAGE_TO_FOCAL_LINEAR
+-------------------------
+
+
+ PURPOSE:
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using a linear model that assumes that
+       distances in the image are proportional to angles in the focal
+       plane.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	focal_pts = cam_image_to_focal_linear(cd, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	image_pts:	Array (2,nv,nt) of points in the image coordinate system.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the camera focal frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_IMAGE_TO_FOCAL_POLY
+-----------------------
+
+
+ PURPOSE:
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using a polynomial distortion model.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	focal_pts = cam_image_to_focal_poly(cd, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	image_pts:	Array (2,nv,nt) of points in the image coordinate system.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the camera focal frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_IMAGE_TO_FOCAL_RADIAL
+-------------------------
+
+
+ PURPOSE:
+       Transforms the given array of points in the image coordinate
+       system to an array of points in the camera focal plane
+       coordinate system using a radial distortion model.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	focal_pts = cam_image_to_focal_radial(cd, image_pts)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	        Array (nt) of CAMERA descriptors.
+
+	image_pts:	Array (2,nv,nt) of points in the image coordinate system.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2,nv,nt) of points in the camera focal frame.
+
+
+ STATUS:
+	**Incomplete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_INIT_DESCRIPTORS
+--------------------
+
+
+ PURPOSE:
+	Init method for the CAMERA class.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cd = cam_init_descriptors(n)
+
+
+ ARGUMENTS:
+  INPUT:
+	n:	Number of descriptors to create.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS (in addition to those accepted by all superclasses):
+  INPUT:  
+	cd:	Camera descriptor(s) to initialize, instead of creating a new 
+		one.
+
+	bd:	Body descriptor(s) to pass to bod_init_descriptors.
+
+	crd:	Core descriptor(s) to pass to cor_init_descriptors.
+
+	scale:	Array (2,n) of scales for each camera.
+
+	oaxis:	Array (2,n) of optic axis values for each camera.
+
+	exposure:	Array (n) of exposure times for each camera.
+
+	size:	Array (2,n) of sizes for each camera.
+
+	filters:	Array (nfilt,n) of filter names for each camera.
+
+	fn_focal_to_image:	Array (n) of focal-to-image function names 
+				for each camera.
+
+	fn_image_to_focal:	Array (n) of image-to-focal function names 
+				for each camera.
+
+	fn_data_p:	Array (n) of data pointers for each camera.
+
+	fn_psf:	Array (n) of point-spread function names for each camera.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Newly created or or freshly initialized camera descriptors, depending
+	on the presence of the cd keyword.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_NFILTERS
+------------
+
+
+ PURPOSE:
+	Returns an integer indicating the maximum number of filters allowed 
+	in the 'filters' fields of the camera descriptor.  This number can 
+	be adjusted using the environment variable 'CAM_NFILTERS'.  The default
+	is 4.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	nfilters = cam_nfilters()
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Current nfilters value.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_OAXIS
+---------
+
+
+ PURPOSE:
+       Returns the 2-element array giving the image coordinates (in
+       pixels) corresponding to the camera optic axis for each given
+       camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	oaxis = cam_oaxis(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Oaxis array associated with each given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_ORIGIN
+----------
+
+
+ PURPOSE:
+       Returns the 2-element array giving the image coordinates (in
+       pixels) corresponding to the camera optic axis for each given
+       camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	origin = cam_origin(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	origin array associated with each given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_PSF
+-------
+
+
+ PURPOSE:
+	Computes a point-spread function.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	psf = cam_psf(cd, x, y)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Camera descriptor.
+
+	x:	 Array of x coordinates relative to the center of the PSF.
+
+	y:	 Array of y coordinates relative to the center of the PSF.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Point-spread function values at each point specified by the x and y 
+	arguments.
+
+
+ PROCEDURE:
+	The function indicated by the fn_psf field of the camera descriptor
+	is called and its return value is passed through to the caller of
+	cam_psf.  
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_PSF_ATTRIB
+--------------
+
+
+ PURPOSE:
+	Computes attributes of a point-spread function.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_psf_attrib, cd, <attribute keywords...>
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Camera descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: 
+	fwhm:	Full-width at half maximum of the point-spread function.
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_REBIN
+---------
+
+
+ PURPOSE:
+       Modifies the camera parameters to reflect a re-binning of the pixels.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_rebin, cd, bin
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	    Array (nt) of CAMERA descriptors.
+
+       bin:        Binning factor, can be non-integer.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/2015
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_REORIENT
+------------
+
+
+ PURPOSE:
+       Repoints the camera orientiation matrix based on x,y, and theta 
+	image offsets.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_reorient, cd, image_axis, dxy, dtheta
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	Array (nt) of CAMERA descriptors.
+
+	image_axis:	Array (2,1,nt) of image points corresponding to the
+			rotation axis for each descriptor.
+
+	dxy:	Array (2,1,nt) of image offsets in x and y.
+
+	dheta:	Array (1,1,nt) of rotation angles.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_REPLICATE
+-------------
+
+
+ PURPOSE:
+	Replicates the given camera descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	new_cd = cam_replicate(cd, dim)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 One CAMERA descriptor.
+
+	dim:	 Dimensions of the result.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of the given dimensions containing cloned versions of the input 
+	camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SCALE
+---------
+
+
+ PURPOSE:
+       Returns the 2-element array giving the camera scale
+       (radians/pixel) in each direction for each given camera
+       descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	scale = cam_scale(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Scale array associated with each given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_BODY
+------------
+
+
+ PURPOSE:
+	Replaces the body descriptor in each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_body, cd, bd
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	 Array (nt) of CAMERA descriptors.
+
+	bd:	 Array (nt) of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_EXPOSURE
+----------------
+
+
+ PURPOSE:
+       Replaces the exposure duration for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_exposure,cd,exposure
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	     Array (nt) of CAMERA descriptors.
+
+       exposure:    Array (nt) of new exposure values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_FILTERS
+---------------
+
+
+ PURPOSE:
+	Sets the filter name(s) for a given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_filters, cd, filters, i
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Camera descriptor.
+
+	filters:	Name(s) of filters.
+
+	index:	 Index of filter to set.  If not given, all are set.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_FN_DATA_P
+-----------------
+
+
+ PURPOSE:
+       For each given camera descriptor, sets the pointer to the
+       generic data intended to be used by the user-defined focal
+       <--> image transformation functions.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_fn_data_p, cd, data_p
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Array (nt) of CAMERA descriptors.
+
+	data_p:	Array (nt) of pointers to user-defined data.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_FN_FOCAL_TO_IMAGE
+-------------------------
+
+
+ PURPOSE:
+       Sets the user-defined focal --> image transformation function
+       for the given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_fn_focal_to_image, cd, fn
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+	fn:	 Array (nt) of user-defined focal --> image functions.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_FN_IMAGE_TO_FOCAL
+-------------------------
+
+
+ PURPOSE:
+       Sets the user-defined image --> focal transformation function
+       for the given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_fn_image_to_focal, cd, fn
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+	fn:	 Array (nt) of user-defined image --> focal functions.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_FN_PSF
+--------------
+
+
+ PURPOSE:
+	Sets the user-defined PSF function for the given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_fn_psf, cd, fn
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	 Camera descriptor.
+
+	fn:	 Name of user-defined PSF function.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_OAXIS
+-------------
+
+
+ PURPOSE:
+       Replaces the oaxis array for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_oaxis, cd, oaxis
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Array (nt) of CAMERA descriptors.
+
+       oaxis:	Array (2,nt) of new oaxis values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_ORIGIN
+--------------
+
+
+ PURPOSE:
+       Replaces the origin array for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_origin, cd, origin
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Array (nt) of CAMERA descriptors.
+
+       origin:	Array (2,nt) of new origin values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_POLY_MATRICES
+---------------------
+
+
+ PURPOSE:
+       Sets up the camera function data for the polynomial distortion model.
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_poly_matrices, cx, XX, YY, PP, QQ
+
+
+ ARGUMENTS:
+  INPUT: 
+	cx:	Array (nt) of and subclass of CAMERA.
+
+       XX:     Polynominal distortion coefficients in x.
+
+       YY:     Polynominal distortion coefficients in y.
+
+       PP:     Inverse polynominal distortion coefficients in x.
+
+       QQ:     Inverse polynominal distortion coefficients in y.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_SCALE
+-------------
+
+
+ PURPOSE:
+       Replaces the scale array for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_scale, cd, scale
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Array (nt) of CAMERA descriptors.
+
+	scale:	Array (2,nt) of new scale values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SET_SIZE
+------------
+
+
+ PURPOSE:
+       Replaces the size array for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_size, cd, size
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	     Array (nt) of CAMERA descriptors.
+
+       size:        Array (2,nt) of new size values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SIZE
+--------
+
+
+ PURPOSE:
+	Returns the image size (in pixels) for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	size = cam_size(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Array (nt) of CAMERA descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Size array associated with each given camera descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CAM_SUBIMAGE
+------------
+
+
+ PURPOSE:
+       Produces a new camera descriptor corresponding to dividing the 
+	associated image as specified.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cd1 = cam_subimage(cd, p0, nxy)
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	Array (nt) of CAMERA descriptors.
+
+	p0:	Starting corner of subimage.
+
+	size:	Array (2,1,nt) of image sizes.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 4/2015
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

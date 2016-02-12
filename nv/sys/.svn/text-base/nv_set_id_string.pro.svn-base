@@ -1,0 +1,15 @@
+;=============================================================================
+; nv_set_id_string
+;
+;=============================================================================
+pro nv_set_id_string, ddp, id_string
+@nv_block.common
+ dd = nv_dereference(ddp)
+
+ dd.id_string = id_string
+
+ nv_rereference, ddp, dd
+ nv_notify, ddp, type = 0
+ nv_notify, /flush
+end
+;=============================================================================

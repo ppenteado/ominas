@@ -1,0 +1,48 @@
+GET_PROFILE_RING_OUTLINE
+
+
+ PURPOSE:
+       Generates an outline of a ring sector.
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+    result = get_profile_ring_outline(cd, dkd, lon, rad, inertial=inertial)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	dkx:	Disk descriptor.
+
+	points:	Array (2,2) of image points defining corners of the sector.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	lon:	Array of disk longitudes for sector
+
+	rad:	Array of disk radii for sector
+
+	nrad:	Number of points in the radial direction.
+
+	nlon:	Number of points in the longitudinal direction.
+
+  OUTPUT:
+	inertial:	Inertial vectors corresponding to the ring sector 
+			outline points.
+
+
+ RETURN:
+       Output is set of image points (x,y) defining the outline of the
+       ring sector.
+
+ MODIFICATION HISTORY:
+       Written by:     Vance Haemmerle & Joe Spitale, 6/1998
+

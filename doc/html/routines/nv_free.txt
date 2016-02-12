@@ -1,0 +1,39 @@
+NV_FREE
+
+
+ PURPOSE:
+	Recursively frees a descriptor.  Pointers and structures are 
+	dereferenced and descended, freeing any pointers encountered.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_free, p
+
+
+ ARGUMENTS:
+  INPUT:
+	p:	Pointer or structure.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

@@ -1,0 +1,39 @@
+BOD_TIME
+
+
+ PURPOSE:
+	Returns the time for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	time = bod_time(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Any subclass of BODY.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Time value associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

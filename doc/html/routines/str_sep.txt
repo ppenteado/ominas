@@ -1,0 +1,43 @@
+STR_SEP
+
+ PURPOSE:
+    This routine cuts a string into pieces which are separated by the 
+    separator string.
+ CATEGORY:
+    String processing.
+ CALLING SEQUENCE:
+    arr = STR_SEP(str, separator)
+
+ INPUTS:
+    str - The string to be separated.
+    separator - The separator.
+
+ KEYWORDS:
+    ESC = escape character.  Only valid if separator is a single character.
+		Characters following the escape character are treated
+		literally and not interpreted as separators.
+		For example, if the separator is a comma,
+		and the escape character is a backslash, the character
+		sequence 'a\,b' is a single field containing the characters
+		'a,b'.
+    REMOVE_ALL = if set, remove all blanks from fields.
+    TRIM = if set, remove only leading and trailing blanks from fields.
+
+ OUTPUT: 
+    An array of strings as function value.
+
+ COMMON BLOCKS:
+    None
+
+ SIDE EFFECTS:
+    No known side effects.
+
+ RESTRICTIONS:
+    None.
+
+ EXAMPLE:
+    array = STR_SEP ("ulib.usca.test", ".")
+
+ MODIFICATION HISTORY:
+	July 1992, AH,	CreaSo		Created.
+	December, 1994, DMS, RSI	Added TRIM and REMOVE_ALL.

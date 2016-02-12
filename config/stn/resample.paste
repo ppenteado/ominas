@@ -1,0 +1,29 @@
+spacing = 250d
+
+filenames = findfiles('./*-raw.arr')
+nfiles = n_elements(filenames)
+
+for i=0, nfiles-1 do $
+ begin &$
+
+  ;----------------------------------
+  ; read file
+  ;----------------------------------
+  filename = filenames[i] &$
+  arr = stn_read_array(filename) &$
+
+
+  ;------------------------------------
+  ; resample array to uniform spacing
+  ;------------------------------------
+  arr = v_sample(arr, spacing) &$
+
+
+
+  ;----------------------------------
+  ; write output file
+  ;----------------------------------
+  fname = strep_s(filename, '-raw.arr', '.arr') &$
+  print, 'writing ' + fname &$
+  stn_write_array, fname, arr &$
+ end

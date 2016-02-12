@@ -1,0 +1,64 @@
+DSK_SHAPE_RADIAL
+
+
+ PURPOSE:
+	Computes radii along the edge of a disk using disk elements.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	z = dsk_shape_radial(dkx, a, e, lp, lon, m, em, lpm)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkx:	 Array (nt) of any subclass of DISK.
+
+	a:	 Array (nt) of semimajor axis values. 
+
+	e:	 Array (nt) of eccentricity values. 
+
+	lp:	 Array (nt) of longitudes of periapse. 
+
+	lon:	 Array (nlon) of longitudes at which to compute elevations.
+
+	m:	 Array (nt) of radial wavenumbers.
+
+	em:	 Array (nt) of eccentricities for each m.
+
+	lpm:	 Array (nt) of longitudes of periapse for each m.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.  One for each dkx.
+
+	mm:	If set, only the radius component for this wavenumber
+		is returned.
+
+	mii:	If set, only the radius component with this index
+		is returned.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt x nlon) of radii computed at each longitude on each 
+	disk.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

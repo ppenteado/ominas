@@ -1,0 +1,41 @@
+;==============================================================================
+; str_copy_descriptor
+;
+;
+;==============================================================================
+pro _str_copy_descriptor, sdp_dst, sdp_src
+ nv_notify, sdp_src, type = 1
+ new_sd = nv_dereference(sdp_src)
+
+ glb_copy_descriptor, new_sd.gbd, str_globe(sdp_src)
+
+ nv_rereference, sdp_dst, new_sd
+ nv_notify, sdp_dst
+end
+;==============================================================================
+
+
+
+;==============================================================================
+; str_copy_descriptor
+;
+;
+;==============================================================================
+pro str_copy_descriptor, sdp_dst, sdp_src
+@nv_lib.include
+ nv_notify, sdp_src, type = 1
+ sd_src = nv_dereference(sdp_src)
+ sd_dst = nv_dereference(sdp_dst)
+
+ new_sd = sd_src
+ new_sd.gbd = sd_dst.gbd
+
+ glb_copy_descriptor, new_sd.gbd, str_globe(sdp_src)
+
+ nv_rereference, sdp_dst, new_sd
+ nv_notify, sdp_dst
+end
+;==============================================================================
+
+
+

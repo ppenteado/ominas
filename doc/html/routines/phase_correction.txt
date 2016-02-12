@@ -1,0 +1,41 @@
+PHASE_CORRECTION
+
+
+ PURPOSE:
+	Assuming body gbx is a sphere, this routine computes the correction
+	in pixels needed to obtain its true image center given a measurement 
+	of its center of light.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       dxy = phase_correction(cd, gbx, sund)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Any subclass of DISK.
+
+	gbx:	Any subclass of GLOBE.
+
+	sund:	STAR descriptor representing the sun.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+	Array (2) giving the phase correction offset.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

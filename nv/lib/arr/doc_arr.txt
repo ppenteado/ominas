@@ -1,0 +1,660 @@
+									12/05/15
+ARR Program Reference
+=====================
+
+ Summary
+ -------
+  - ARRAY_DESCRIPTOR__DEFINE
+	Class structure for the ARRAY class.
+
+  - ARR_CLONE_DESCRIPTOR
+       Allocates new array descriptors as copies of the given
+       (existing) array descriptors.
+
+  - ARR_COPY_DESCRIPTOR
+	Copies all fields from the source array descriptors into the
+       destination array descriptors.
+
+  - ARR_INIT_DESCRIPTORS
+	Init method for the ARRAY class.
+
+  - ARR_PRIMARY
+	Returns the primary string for each given array descriptor.
+
+  - ARR_REPLICATE
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+  - ARR_SET_PRIMARY
+	Replaces the primary string in each given array descriptor.
+
+  - ARR_SET_SURFACE_PTS
+	Replaces the surface_pts vector in each given array descriptor.
+
+  - ARR_SURFACE_PTS
+	Returns the surface_pts vector for each given array descriptor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARRAY_DESCRIPTOR__DEFINE
+------------------------
+
+
+ PURPOSE:
+	Class structure for the ARRAY class.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	N/A 
+
+
+ FIELDS:
+	bd:	BODY class descriptor.  
+
+		Methods: arr_body, arr_set_body
+
+
+	primary:	String giving the name of the primary body.
+
+			Methods: arr_primary, arr_set_primary
+
+	surface_pts:	Vector giving the surface coordinates of the 
+			array points on the primary.  
+
+			Methods: arr_surface_pts, arr_set_surface_pts
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2012
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARR_CLONE_DESCRIPTOR
+--------------------
+
+
+ PURPOSE:
+       Allocates new array descriptors as copies of the given
+       (existing) array descriptors.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	new_arx = arr_clone_descriptor(arx)
+
+
+ ARGUMENTS:
+  INPUT:
+	arx:	 Array (nt) of any subclass of ARRAY.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created array descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARR_COPY_DESCRIPTOR
+-------------------
+
+
+ PURPOSE:
+	Copies all fields from the source array descriptors into the
+       destination array descriptors.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	arr_copy_descriptor, arx_dst, arx_src
+
+
+ ARGUMENTS:
+  INPUT:
+	arx_dst:	        Array (nt) of any subclass of ARRAY to copy to.
+
+	arx_src:	        Array (nt) of any subclass of ARRAY to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARR_INIT_DESCRIPTORS
+--------------------
+
+
+ PURPOSE:
+	Init method for the ARRAY class.
+
+
+ CATEGORY:
+       NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+       ard = arr_init_descriptors(n)
+
+
+ ARGUMENTS:
+  INPUT:
+       n:      Number of array descriptors.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	ard:	Station descriptor(s) to initialize, instead of creating new 
+		ones.
+
+	bd:	Body descriptor(s) to pass to bod_init_descriptors.
+
+	crd:	Core descriptor(s) to pass to cor_init_descriptors.
+
+	primary:	Array (n) of primary strings.
+
+  OUTPUT: NONE
+
+ RETURN:
+       An array (n) of array descriptors.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARR_PRIMARY
+-----------
+
+
+ PURPOSE:
+	Returns the primary string for each given array descriptor.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	primary = arr_primary(ard)
+
+
+ ARGUMENTS:
+  INPUT: 
+	ard:	 Array (nt) of ARRAY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Primary string associated with each given array descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARR_REPLICATE
+-------------
+
+
+ PURPOSE:
+	Replicates the given descriptor, producing an array of the given
+	dimensions containing cloned versions of the input descriptor.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	ards = str_replicate(ard, dim)
+
+
+ ARGUMENTS:
+  INPUT:
+	ard:	 Station descriptor.
+
+	dim:	 Dimensions of the result.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of the given dimensions containing cloned versions of the input 
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARR_SET_PRIMARY
+---------------
+
+
+ PURPOSE:
+	Replaces the primary string in each given array descriptor.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	arr_set_primary, ard, primary
+
+
+ ARGUMENTS:
+  INPUT: 
+	ard:	Array (nt) of ARRAY descriptors.
+
+	primary:	Array (nt) of primary strings.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARR_SET_SURFACE_PTS
+-------------------
+
+
+ PURPOSE:
+	Replaces the surface_pts vector in each given array descriptor.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	arr_set_surface_pts, ard, surface_pts
+
+
+ ARGUMENTS:
+  INPUT: 
+	ard:	Array (nt) of ARRAY descriptors.
+
+	surface_pts:	Array (nv,3,nt) of surface_pts vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ARR_SURFACE_PTS
+---------------
+
+
+ PURPOSE:
+	Returns the surface_pts vector for each given array descriptor.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	surface_pts = arr_surface_pts(ard)
+
+
+ ARGUMENTS:
+  INPUT: 
+	ard:	 Array (nt) of ARRAY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) of surface_pts vectors associated with each given 
+	array descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

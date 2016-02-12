@@ -1,0 +1,1320 @@
+									12/05/15
+ICV Program Reference
+=====================
+
+ Summary
+ -------
+  - EDGE_MODEL_ATAN
+	Calculates an arctan edge model for use in curve fitting.
+
+  - EDGE_MODEL_GAUSS
+	Calculates a gaussian edge model for use in curve fitting.
+
+  - EDGE_MODEL_NAV_LIMB
+	Returns the edge model used by the VICAR program NAV for limb fits.
+
+  - EDGE_MODEL_NAV_RING
+	Returns the edge model used by the VICAR program NAV for ring fits.
+
+  - EDGE_MODEL_PSF_RING
+	Returns an edge model produced by convolving a sharp edge with
+	a point-spread function.
+
+  - ICV_CHISQ
+	Computes chi-squared value for given curve fit parameters.
+
+  - ICV_COEFF
+	Computes coefficients for the 2- or 3-parameter linear least-square fit.
+
+  - ICV_COMPUTE_DIRECTIONS
+	Computes the normal to a specified curve at every point.
+
+  - ICV_CONVERT_SCAN_OFFSETS
+	Converts offsets produced by icv_scan_strip to image coordinates.
+
+  - ICV_INVERT_SCAN_OFFSETS
+	Uses scan image coordinates to produce scan offsets and angles.  This
+	routine is the reverse of icv_convert_scan_offsets.
+
+  - ICV_RESET_SCAN_PRECISION
+	Modifies the scan precision by rebinning the given image strip.
+
+  - ICV_SCAN_STRIP
+	At each point along an image strip, determines the point at which 
+	some criterion is optimized, depending on an externally-supplied
+	function.
+
+  - ICV_SCAN_STRIP_GRAD
+	At each point along an image strip, finds a sharp edge using the
+	maximum-gradient method.
+
+  - ICV_SCAN_STRIP_GRAD_NORM
+	Calls icv_scan_strip_grad with /norm set.
+
+  - ICV_SCAN_STRIP_HALF
+	At each point along an image strip, finds a sharp edge using the
+	half-power method.
+
+  - ICV_SCAN_STRIP_MODEL
+	At each point along an image strip, determines the subpixel offset at
+	which the correlation coefficient between a specified model and the
+	image is maximum.
+
+  - ICV_STRIP_CURVE
+	Using Lagrange interpolation, extracts an image strip of a specified 
+	width centered on the specified curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EDGE_MODEL_ATAN
+---------------
+
+
+ PURPOSE:
+	Calculates an arctan edge model for use in curve fitting.
+
+ CATEGORY:
+       NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+       result = edge_model_atan(n, w)
+
+
+ ARGUMENTS:
+  INPUT:
+	    n:	Size of the model in samples
+
+	    a:	Scaling factor: larger values give a sharper edge.
+
+  OUTPUT:
+	 zero:  The array element corresponding to the physical edge.
+
+	delta:	The number of pixels represented by each element
+		Currently = 1.0
+
+	cd:	Not used.
+
+
+ RETURN:
+	An array containing the model.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 6/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EDGE_MODEL_GAUSS
+----------------
+
+
+ PURPOSE:
+	Calculates a gaussian edge model for use in curve fitting.
+
+ CATEGORY:
+       NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+       result = edge_model_gauss(n, w)
+
+
+ ARGUMENTS:
+  INPUT:
+	    n:	Size of the model in samples
+
+	    w:	Width of the gaussian (sigma)
+
+  OUTPUT:
+	 zero:  The array element corresponding to the phyiscal edge.
+
+	delta:	The number of pixels represented by each element
+		Currently = 1.0
+
+	cd:	Not used.
+
+
+ RETURN:
+	An array containing the model.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 6/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EDGE_MODEL_NAV_LIMB
+-------------------
+
+
+ PURPOSE:
+	Returns the edge model used by the VICAR program NAV for limb fits.
+
+ CATEGORY:
+       NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+       result = edge_model_nav_limb()
+
+
+ ARGUMENTS:
+  INPUT:
+	    NONE
+
+  OUTPUT:
+	 zero:  The array element corresponding to the phyiscal edge.
+
+	delta:	The number of pixels represented by each element
+		Currently = 1.0
+
+	cd:	Not used.
+
+
+ RETURN:
+	An array containing the model.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 6/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EDGE_MODEL_NAV_RING
+-------------------
+
+
+ PURPOSE:
+	Returns the edge model used by the VICAR program NAV for ring fits.
+
+ CATEGORY:
+       NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+       result = edge_model_nav_ring()
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	 zero:  The array element corresponding to the phyiscal edge.
+
+	delta:	The number of pixels represented by each element
+		Currently = 1.0
+
+	cd:	Not used.
+
+
+ RETURN:
+	An array containing the model.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 6/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EDGE_MODEL_PSF_RING
+-------------------
+
+
+ PURPOSE:
+	Returns an edge model produced by convolving a sharp edge with
+	a point-spread function.
+
+ CATEGORY:
+       NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+       result = edge_model_psf_ring()
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	 zero:  The array element corresponding to the phyiscal edge.
+
+	delta:	The number of pixels represented by each element
+		Currently = 1.0
+
+	cd:	Camera descriptor fromwhich to obtain the PSF.
+
+
+ RETURN:
+	An array containing the model.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 6/1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ICV_CHISQ
+---------
+
+
+ PURPOSE:
+	Computes chi-squared value for given curve fit parameters.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_chisq(dxy, dtheta, fix, cos_alpha, sin_alpha, scan_offsets)
+
+
+ ARGUMENTS:
+  INPUT:
+	dxy:		Array (2) giving x- and y-offset solution.
+
+	dtheta:		Scalar giving theta-offset solution.
+
+	fix:		Array specifying which parameters to fix as
+			[dx,dy,dtheta].
+
+	cos_alpha:	Array (n_points) of direction cosines computed by
+			icv_compute_directions.
+
+	sin_alpha:	Array (n_points) of direction sines computed by
+			icv_compute_directions.
+
+	scan_offsets:	Array (n_points) containing offset of best correlation 
+			at each point on the curve.  Produced by icv_scan_strip.
+
+	scan_pts:	Array (2, n_points) of image coordinates corresponding
+			to each scan offset.
+
+	axis:		Array (2) giving image coordinates of rotation axis
+			in the case of a 3-parameter fit.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS: 
+  INPUT:
+	norm:		If set, the returned value is normalized by dividing
+			it by the number of degrees of freedom.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	The chi-squared value is returned.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/1998
+	
+
+
+
+
+ICV_COEFF
+---------
+
+
+ PURPOSE:
+	Computes coefficients for the 2- or 3-parameter linear least-square fit.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	icv_coeff, cos_alpha, sin_alpha, scan_offsets, scan_pts, axis, M=M, b=b
+
+
+ ARGUMENTS:
+  INPUT:
+	cos_alpha:	Array (n_points) of direction cosines computed by
+			icv_compute_directions.
+
+	sin_alpha:	Array (n_points) of direction sines computed by
+			icv_compute_directions.
+
+	scan_offsets:	Array (n_points) containing offset of best correlation 
+			at each point on the curve.  Produced by icv_scan_strip.
+
+	scan_pts:	Array (2, n_points) of image coordinates corresponding
+			to each scan offset.
+
+	axis:		Array (2) giving image coordinates of rotation axis
+			in the case of a 3-parameter fit.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	sigma:	Uncertainty in each scan_offset.  Defaults to 1.
+
+  OUTPUT:
+	M:	3x3 matrix of coefficients for the linear fit.
+
+	b:	3-element column vector rhs of the linear fit.
+
+
+ PROCEDURE:
+	Since the fit has been linearized, it can be written as a matrix
+	equation:
+
+				Mx = b,
+
+	where x is the 3-element column vector [dx, dy, dtheta] of the
+	independent variables. 	This routine computes the matrix M and the
+	vector b.  Once these are known, mbfit can be used to solve the
+	linear system.  Moreover, since the fit is linear, a simultaneous
+	fit can be performed by simply adding together any number of
+	coefficient matrices and vectors, which can also be done using
+	mbfit.
+
+
+ RESTRICTIONS:
+	The fit associated with these coefficients has been linearized
+	and is only valid for small corrections.  For larger corrections,
+	this procedure can be iterated. 
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ICV_COMPUTE_DIRECTIONS
+----------------------
+
+
+ PURPOSE:
+	Computes the normal to a specified curve at every point.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	icv_compute_directions, curve_pts, $
+	                        cos_alpha=cos_alpha, sin_alpha=sin_alpha
+
+
+ ARGUMENTS:
+  INPUT:
+	curve_pts:	Array (2, n_points) of image points making up the curve.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	cos_alpha:	Array (n_points) of direction cosines.
+
+	sin_alpha:	Array (n_points) of direction sines.
+
+
+ RETURN:
+	NONE
+
+
+ RESTRICTIONS:
+	It is assumed that the curve is closed; if this is not the case, then
+	the results will not be meaningful at the endpoints of the curve.
+
+
+ PROCEDURE:
+	At each point on the specified curve, the two nearest neighbors are 
+	used to compute the components of the normal. 
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+ICV_CONVERT_SCAN_OFFSETS
+------------------------
+
+
+ PURPOSE:
+	Converts offsets produced by icv_scan_strip to image coordinates.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_convert_scan_offsets(curve_pts, scan_offsets, $
+	                                  cos_alpha, sin_alpha)
+
+ ARGUMENTS:
+  INPUT:
+	curve_pts:	Array (2, n_points) of image points making up the curve.
+
+	scan_offsets:	Array (n_points) containing offset of best correlation 
+			at each point on the curve.  Produced by icv_scan_strip.
+
+	cos_alpha:	Array (n_points) of direction cosines computed by
+			icv_compute_directions.
+
+	sin_alpha:	Array (n_points) of direction sines computed by
+			icv_compute_directions.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS: NONE
+
+
+ RETURN:
+	Array (2, n_points) of image coordinates corresponding to each scan
+	offset.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ICV_INVERT_SCAN_OFFSETS
+-----------------------
+
+
+ PURPOSE:
+	Uses scan image coordinates to produce scan offsets and angles.  This
+	routine is the reverse of icv_convert_scan_offsets.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_invert_scan_offsets(curve_pts, scan_pts, $
+	                                       cos_alpha, sin_alpha)
+
+ ARGUMENTS:
+  INPUT:
+	curve_pts:	Array (2, n_points) of image points making up the curve.
+
+	scan_pts:	Array (2, n_points) of image coordinates corresponding to each scan
+			offset.
+
+	cos_alpha:	Array (n_points) of direction cosines.
+
+	sin_alpha:	Array (n_points) of direction sines.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS: NONE
+
+
+ RETURN:
+	Array (2, n_points) of image coordinates corresponding to each scan
+	offset.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ICV_RESET_SCAN_PRECISION
+------------------------
+
+
+ PURPOSE:
+	Modifies the scan precision by rebinning the given image strip.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	icv_reset_scan_precision, strip, model, szero, mzero, precision
+
+
+ ARGUMENTS:
+  INPUT:
+	strip:		Image strip to modify.
+
+	model:		Corresponding edge models.
+
+	szero:		Zero-offset position in the strip.
+
+	mzero:		Zero-offset position in the model.
+
+	precision:	New precision in inverse pixels.
+
+  OUTPUT: 
+	strip:		Modified image strip.
+
+	model:		Modified edge models.
+
+	szero:		Zero-offset position in the modified strip.
+
+	mzero:		Zero-offset position in the modified model.
+
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	NONE
+
+
+ PROCEDURE:
+	The strip and model are rebinned by the specified precision factor
+	using cubic interpolation.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	
+
+
+
+
+
+ICV_SCAN_STRIP
+--------------
+
+
+ PURPOSE:
+	At each point along an image strip, determines the point at which 
+	some criterion is optimized, depending on an externally-supplied
+	function.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_scan_strip(strip, model, szero, mzero, algorithm=algorithm)
+
+
+ ARGUMENTS:
+  INPUT:
+	strip:	Image strip (n_points,ns) to be scanned.  Output from
+		icv_strip_curve ns must be even.
+
+	model:	Model (n_points,nm) to correlate with strip at each point 
+		on the curve.  Must have nm < ns.
+
+	szero:	Zero-offset position in the strip.
+
+	mzero:	Zero-offset position in the model.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	cc:	Maximum correlation coefficient at each point on the curve.
+
+	sigma:	Offset uncertainty for each point on the curve, computed as
+		one half of the half-width of the correlation peak. 
+
+	algorithm:	String giving the subscript for the name of a 
+			function as icv_scan_strip_<algorithm>.  The algorithm
+			function should be structured like the present function,
+			except with no "algorithm" keyword.  Default is
+			'model'.
+
+
+ RETURN:
+	Offset of best correlation at each point on the curve.
+
+
+ PROCEDURE:
+	This program is a wrapper for a number of functions that use various
+	algorithms determined by the 'algorithm' keyword.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	
+
+ICV_SCAN_STRIP_GRAD
+-------------------
+
+
+ PURPOSE:
+	At each point along an image strip, finds a sharp edge using the
+	maximum-gradient method.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_scan_strip_grad(strip, model, szero, mzero)
+
+
+ ARGUMENTS:
+  INPUT:
+	strip:	Image strip (n_points,ns) to be scanned.  Output from
+		icv_strip_curve ns must be even.
+
+	model:	Not used.
+
+	szero:	Zero-offset position in the strip.
+
+	mzero:	Not used.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	norm:	If set, only the absolute value of the gradint is evaluated.
+
+  OUTPUT:
+	cc:	Not used, hardwired to 0.9999999d.
+
+	sigma:	Offset uncertainty for each point on the curve, computed as
+		one half of the half-width of the gradient peak. 
+
+
+ RETURN:
+	Offset of maximum gradient points at each point on the curve.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+ICV_SCAN_STRIP_GRAD_NORM
+------------------------
+
+
+ PURPOSE:
+	Calls icv_scan_strip_grad with /norm set.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_scan_strip_grad_norm(strip, model, szero, mzero)
+
+
+ ARGUMENTS:
+  INPUT:
+	strip:	Image strip (n_points,ns) to be scanned.  Output from
+		icv_strip_curve ns must be even.
+
+	model:	Not used.
+
+	szero:	Zero-offset position in the strip.
+
+	mzero:	Not used.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	cc:	Not used, hardwired to 0.9999999d.
+
+	sigma:	Offset uncertainty for each point on the curve, computed as
+		one half of the half-width of the gradient peak. 
+
+
+ RETURN:
+	Offset of maximum gradient points at each point on the curve.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ICV_SCAN_STRIP_HALF
+-------------------
+
+
+ PURPOSE:
+	At each point along an image strip, finds a sharp edge using the
+	half-power method.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_scan_strip_half(strip, model, szero, mzero)
+
+
+ ARGUMENTS:
+  INPUT:
+	strip:	Image strip (n_points,ns) to be scanned.  Output from
+		icv_strip_curve ns must be even.
+
+	model:	Not used.
+
+	szero:	Zero-offset position in the strip.
+
+	mzero:	Not used.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	cc:	Not used, hardwired to 0.9999999d.
+
+	sigma:	Offset uncertainty for each point on the curve, computed as
+		one half of the half-width of the half-power peak. 
+
+
+ RETURN:
+	Offset of half-power points at each point on the curve.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ICV_SCAN_STRIP_MODEL
+--------------------
+
+
+ PURPOSE:
+	At each point along an image strip, determines the subpixel offset at
+	which the correlation coefficient between a specified model and the
+	image is maximum.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_scan_strip_model(strip, model, szero, mzero)
+
+
+ ARGUMENTS:
+  INPUT:
+	strip:	Image strip (n_points,ns) to be scanned.  Output from
+		icv_strip_curve ns must be even.
+
+	model:	Model (n_points,nm) to correlate with strip at each point 
+		on the curve.  Must have nm < ns.
+
+	szero:	Zero-offset position in the strip.
+
+	mzero:	Zero-offset position in the model.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	cc:	Maximum correlation coefficient at each point on the curve.
+
+	sigma:	Offset uncertainty for each point on the curve, computed as
+		one half of the half-width of the correlation peak. 
+
+
+ RETURN:
+	Offset of best correlation at each point on the curve.
+
+
+ PROCEDURE:
+	At every point on the curve, a correlation coefficient is computed
+	for every offset at which the model completely overlays the strip.
+	In other words, the model is swept across the strip.
+
+	At each point, Lagrange interpolation is used on the three correlations
+	surrounding the correlation peak to find the subpixel offset of maximum
+	correlation.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	
+
+
+ICV_STRIP_CURVE
+---------------
+
+
+ PURPOSE:
+	Using Lagrange interpolation, extracts an image strip of a specified 
+	width centered on the specified curve.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	strip = icv_strip_curve(cd, image, curve_pts, width, nD, $
+                                                   cos_alpha, sin_alpha)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:		Camera descriptor.
+
+	image:		Image from which to extract the strip.
+
+	curve_pts:	Array (2, n_points) of image points making up the curve.
+
+	width:		Width of the strip in pixels.
+
+	nD:		Number of samples across the width of the strip.
+
+	cos_alpha:	Array (n_points) of direction cosines computed by
+			icv_compute_directions.
+
+	sin_alpha:	Array (n_points) of direction sines computed by
+			icv_compute_directions.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	zero:		Zero-offset position in the strip.  This position
+			corresponds to where the specified curve falls in the
+			strip.
+
+
+ RETURN:
+	Image strip (n_points, nD).
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	
+
+
+
+
+
+
+

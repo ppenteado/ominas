@@ -1,0 +1,91 @@
+READ_VICAR
+
+
+ PURPOSE:
+	Reads a vicar data file.
+
+
+ CATEGORY:
+	UTIL/VIC
+
+
+ CALLING SEQUENCE:
+	data = read_vicar(filename, label)
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	String giving the name of the file to be read.
+
+  OUTPUT:
+	label:		Named variable in which the vicar label will be
+			returned.
+
+
+ KEYWORDS:
+  INPUT:
+	n_l:	If set, this will override the number of lines given by the 
+		'NL' field of the label.	
+
+	n_s:	If set, this will override the number of samples given by the 
+		'NS' field of the label.
+
+	n_b:	If set, this will override the number of bands given by the 
+		'NB' field of the label.
+
+	nlb:	If set, this will override the number of binary header records
+		given by the 'NLB' field of the label.
+
+	nbb:	If set, this will override the number of binary prefix bytes
+		given by the 'NBB' field of the label.
+
+	silent:	If set, no messages are printed.
+
+	swap:	If set, the data array will be byte-swapped.  If not set,
+		then read_vicar will automatically determine whether 
+		to byte swapping is necessary.
+
+	flip:	If set, the data array will be subjected to a rotate(data, 7),
+		i.e., if its an image, it will be flipped vertically.
+
+	default_format:	Data format to use if not given in the label.
+			choices are 'BYTE', 'HALF', 'FULL", 'REAL', and
+			'DOUB'.  default is 'BYTE'.
+
+       bpa:    Binary Prefix Array.  The caller must ensure that this array
+		has appropriate dimensions.
+
+	bha:	Binary Header Array.  The caller must ensure that this array
+		has appropriate dimensions.
+
+  OUTPUT:
+	status:	If no errors occur, status will be zero, otherwise
+		it will be a string giving an error message.
+
+
+ RETURN:
+	The data array read from the file.
+
+
+ RESTRICTIONS:
+	This program only works with band-sequential data.  If EOL present,
+	the EOL variable is returned as 0, the second LBLSIZE is erased
+	and the first LBLSIZE is adjusted to appear as if the label was
+	not split in two.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	write_vicar
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/1995
+                       Dyer Lytle, 8/1999
+			Vance Haemmerle, 9/1999
+
+       EOL support:    Vance Haemmerle, 6/2000
+	

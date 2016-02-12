@@ -1,0 +1,38 @@
+IMAGE_TO_BODY
+
+
+ PURPOSE:
+       Transforms points in image coordinates to body coordinates on the
+	object.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       result = image_to_body(cd, bx, p)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:       Array of nt camera or map descriptor.
+
+	bx:       Array of nt body descriptor (subclass of GLOBE or DISK).
+
+	p:       Array (2 x nv x nt) of image points.
+
+  OUTPUT:
+       hit:	Array with one element per input point.  1 if point
+		falls on the body, 0 if not.
+
+ RETURN:
+       Array (nv x 3 x nt) of body-frame vectors.  Zero vectors are returned if a
+	body point cannot be computed (e.g., the ray misses the planet).
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale; 8/2006

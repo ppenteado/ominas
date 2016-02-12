@@ -1,0 +1,91 @@
+GRIDGEN
+
+
+ PURPOSE:
+	Constructs a grid of subscripts.
+
+
+ CATEGORY:
+	UTIL/GEN
+
+
+ CALLING SEQUENCE:
+	sub = gridgen(dim)
+
+
+ ARGUMENTS:
+  INPUT:
+	dim:	 Dimensions of output grid.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	rectangular: If set, the output array has dimensions (ndim,dim[0],dim[1],...)
+	             instead of (ndim,dim[0]*dim[1]*...).  In this case,
+	             sub[i, x_0,x_1,x_2,x3,...] = x_i.
+
+	p0:          Array (ndim) giving the starting point for the grid.  
+ 	             Default is [0,0,..].
+
+	center:	     If given, p0 is taken to be the center of the grid instead.
+	             of the corner.
+
+	double:      If set, output is double instead of long.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (ndim, dim[0]*dim[1]*...) of subscripts, or (ndim,dim[0],dim[1],...) 
+	if /rectangular.
+
+
+ EXAMPLE:
+	gridgen([3], /rec) returns an array (1,3) with elements:
+
+			0 1 2    
+
+
+	gridgen([3,4], /rec) returns an array (2,3,4) with elements:
+
+			0 1 2       
+			0 1 2    
+			0 1 2    
+			0 1 2    
+
+			0 0 0   
+			1 1 1   
+			2 2 2   
+			3 3 3   
+
+
+	gridgen([3,4,2], /rec) returns an array (3,3,4,2) with elements:
+
+			0 1 2   0 1 2    
+			0 1 2   0 1 2 
+			0 1 2   0 1 2 
+			0 1 2   0 1 2 
+
+			0 0 0   0 0 0
+			1 1 1   1 1 1
+			2 2 2   2 2 2
+			3 3 3   3 3 3
+
+			0 0 0   1 1 1
+			0 0 0   1 1 1
+			0 0 0   1 1 1
+			0 0 0   1 1 1
+
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale; 	7/2015
+	

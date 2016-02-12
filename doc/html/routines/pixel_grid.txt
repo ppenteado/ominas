@@ -1,0 +1,41 @@
+PIXEL_GRID
+
+
+ PURPOSE:
+	Generates grid lines aligned with the image window.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       grid_pts = pixel_grid()
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: 
+	spacing:	Distance in pixels between grid lines.
+
+	np:	Number of points on each grid line.
+
+	wnum:	Window number for determining grid size.  If not set,
+		the current grapics window is used.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Angle in radians.
+
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

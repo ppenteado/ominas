@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0
+END
+objpds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/objpds.pro
+END
+readpds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/readpds.pro
+END
+clean.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/clean.pro
+END
+arbinpds2.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/arbinpds2.pro
+END
+cleanarr.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/cleanarr.pro
+END
+addeobj.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/addeobj.pro
+END
+imagepds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/imagepds.pro
+END
+pdspar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/pdspar.pro
+END
+btabvect.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/btabvect.pro
+END
+remove.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/remove.pro
+END
+check_axes.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/check_axes.pro
+END
+colbipds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/colbipds.pro
+END
+pointpds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/pointpds.pro
+END
+arascpds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/arascpds.pro
+END
+tascpds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/tascpds.pro
+END
+arbinpds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/arbinpds.pro
+END
+qubepds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/qubepds.pro
+END
+tbinpds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/tbinpds.pro
+END
+timepds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/timepds.pro
+END
+get_index.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/get_index.pro
+END
+headpds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/headpds.pro
+END
+colaspds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/colaspds.pro
+END
+str2num.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/str2num.pro
+END
+btabvect2.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/pds/Readpds_4.0/btabvect2.pro
+END

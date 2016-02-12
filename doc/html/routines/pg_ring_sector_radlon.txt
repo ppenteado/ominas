@@ -1,0 +1,64 @@
+PG_RING_SECTOR_RADLON
+
+ PURPOSE:
+	Constructs a ring sector outline for use with pg_profile_ring given
+	radius and longitude bounds.
+ 
+ CATEGORY:
+       NV/PG
+
+ CALLING SEQUENCE:
+     outline_ps=pg_ring_sector_radlon(cd=cd, dkx=dkx, gbx=gbx, rad, lon)
+
+
+ ARGUMENTS:
+  INPUT:
+      rad:	2-element array giving the lower and upper radial bounds
+		for the sector.
+
+      lon:	2-elements array giving the lower and upper longitude bounds
+		for the sector in radians.
+
+  OUTPUT:
+	NONE
+
+
+
+ KEYWORDS:
+  INPUT: 
+           cd:     Camera descriptor.
+
+	   dkx:     Disk descriptor describing the ring.
+
+          gbx:     Globe descriptor giving the primary for the ring.
+
+           gd:     Generic descriptor containnig the above descriptors.
+
+       sample:     Sets the grid sampling in pixels.  Default is one.
+
+         nlon:     Total number of samples in the longitude direction.  
+                   Determined by the 'sample' keyword by default.
+
+         nrad:     Total number of samples in the radial direction.  
+                   Determined by the 'sample' keyword by default.
+
+        slope:     This keyword allows the longitude to vary as a function 
+                   of radius as: lon = slope*(rad - rad0).
+
+        nodsk:     If set, image points will not be included in the output 
+                   pg_points_struct.
+
+  OUTPUT:
+         NONE
+
+
+ RETURN: 
+      pg_points_struct containing points on the sector outline.  The point
+      spacing is determined by the sample keyword.  The points structure
+      also contains the disk coordinate for each point and the user fields
+      'nrad' and 'nlon' giving the number of points in radius and longitude.
+
+
+ ORIGINAL AUTHOR : 
+	Spitale; 5/2005
+

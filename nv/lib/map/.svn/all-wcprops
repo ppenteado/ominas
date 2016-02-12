@@ -1,0 +1,383 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/minas/!svn/ver/2/trunk/nv/lib/map
+END
+map_init_descriptors.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_init_descriptors.pro
+END
+map_offset.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_offset.pro
+END
+map_set_fn_data_p.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_fn_data_p.pro
+END
+map_descriptor__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_descriptor__define.pro
+END
+map_core.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_core.pro
+END
+map_map_to_image_orthographic.pro
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_map_to_image_orthographic.pro
+END
+map_set_center.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_center.pro
+END
+map_clone_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_clone_descriptor.pro
+END
+map_rotate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_rotate.pro
+END
+map_lookup_defaults.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_lookup_defaults.pro
+END
+map_map_to_image_stereographic.pro
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_map_to_image_stereographic.pro
+END
+map_units.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_units.pro
+END
+map_set_ecc.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_ecc.pro
+END
+map_map_to_image_rectangular.pro
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_map_to_image_rectangular.pro
+END
+map_size.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_size.pro
+END
+map_map_to_image_sinusoidal.pro
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_map_to_image_sinusoidal.pro
+END
+map_map_to_image_oblique_disk.pro
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_map_to_image_oblique_disk.pro
+END
+map_fn_data_p.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_fn_data_p.pro
+END
+map_graphic.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_graphic.pro
+END
+map_map_to_image_mercator.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_map_to_image_mercator.pro
+END
+map_get_ranges.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_get_ranges.pro
+END
+map_set_size.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_size.pro
+END
+map_graphic_to_centric.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_graphic_to_centric.pro
+END
+map_origin.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_origin.pro
+END
+map_image_to_map_orthographic.pro
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_image_to_map_orthographic.pro
+END
+map_optimize.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_optimize.pro
+END
+map_image_to_map_stereographic.pro
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_image_to_map_stereographic.pro
+END
+map_set_scale.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_scale.pro
+END
+map_fn_map_to_image.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_fn_map_to_image.pro
+END
+map_ecc_to_radii.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_ecc_to_radii.pro
+END
+doc_map.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/doc_map.pro
+END
+map_image_to_map_rectangular.pro
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_image_to_map_rectangular.pro
+END
+map_copy_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_copy_descriptor.pro
+END
+map_image_to_map_sinusoidal.pro
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_image_to_map_sinusoidal.pro
+END
+map_image_to_map_oblique_disk.pro
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_image_to_map_oblique_disk.pro
+END
+map_image_to_map_mercator.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_image_to_map_mercator.pro
+END
+map_center.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_center.pro
+END
+map_type.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_type.pro
+END
+map_scale.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_scale.pro
+END
+map_set_graphic.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_graphic.pro
+END
+map_set_type.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_type.pro
+END
+map_match_type.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_match_type.pro
+END
+map_set_offset.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_offset.pro
+END
+map_set_radii.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_radii.pro
+END
+map_fn_image_to_map.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_fn_image_to_map.pro
+END
+map_replicate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_replicate.pro
+END
+map_set_rotate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_rotate.pro
+END
+map_set_fn_map_to_image.pro
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_fn_map_to_image.pro
+END
+map_map_to_image.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_map_to_image.pro
+END
+map_map_to_image_mollweide.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_map_to_image_mollweide.pro
+END
+map_centric_to_graphic.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_centric_to_graphic.pro
+END
+map_radii.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_radii.pro
+END
+map__keywords.include
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map__keywords.include
+END
+map_ecc.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_ecc.pro
+END
+map_condense.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_condense.pro
+END
+map_set_origin.pro
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_origin.pro
+END
+map_radii_to_ecc.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_radii_to_ecc.pro
+END
+map_set_units.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_units.pro
+END
+map_set_fn_image_to_map.pro
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_set_fn_image_to_map.pro
+END
+map_get_grid_points.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_get_grid_points.pro
+END
+map_image_to_map.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_image_to_map.pro
+END
+map_lookup_transformations.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_lookup_transformations.pro
+END
+map_image_to_map_mollweide.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/minas/!svn/ver/2/trunk/nv/lib/map/map_image_to_map_mollweide.pro
+END

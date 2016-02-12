@@ -1,0 +1,14 @@
+;=============================================================================
+; nv_load_data
+;=============================================================================
+function nv_load_data, ddp
+@nv_block.common
+@nv.include
+ dd = nv_dereference(ddp)
+
+ if(dd.maintain EQ 1) then nv_manage_dd, ddp
+
+ if(NOT keyword_set(dd.input_fn)) then return, 0
+ return, call_function(dd.input_fn, dd.filename, /silent)
+end
+;=============================================================================

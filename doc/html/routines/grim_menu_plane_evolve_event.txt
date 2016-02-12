@@ -1,0 +1,14 @@
+GRIM_MENU_PLANE_EVOLVE_EVENT
+
+
+ PURPOSE:
+	Copies all tieppoints from the current plane to all other planes.  
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 3/2004
+	

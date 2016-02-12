@@ -1,0 +1,54 @@
+GLB_IMAGE_BOUNDS
+
+
+ PURPOSE:
+	Determines globe coordinate ranges visible in an image described
+	by a given camera descriptor.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       glb_image_bounds, cd, gbx, $
+	        latmin=latmin, latmax=latmax, lonmin=lonmin, lonmax=lonmax
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descripor.
+
+	gbx:	Any subclass of GLOBE.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: 
+	corners:	Array(2,2) giving corers of image region to consider.
+
+	slop:	Number of pixels by which to expand the image in each
+		direction.
+
+
+  OUTPUT: 
+	latmin:	Minimum latitude in image.
+
+	latmax:	Maximum latitude in image.
+
+	lonmin:	Minimum longitude in image.
+
+	lonmax:	Maximum longitude in image.
+
+	border_pts_im:	Array (2,np) of points along the edge of the image.
+
+	status:	-1 if no globe in the image, 0 otherwise.
+
+
+ RETURN: NONE
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

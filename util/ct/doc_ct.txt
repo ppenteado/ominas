@@ -1,0 +1,1056 @@
+									12/05/15
+CT Program Reference
+====================
+
+ Summary
+ -------
+  - CTBLACK
+       To allocate/return the color black.
+
+  - CTBLUE
+       To allocate/return the color blue.
+
+  - CTBROWN
+	To allocate/return the color brown.
+
+  - CTCYAN
+	To allocate/return the color cyan.
+
+  - CTGRAY
+       Allocate/return a gray level.
+
+  - CTGREEN
+       To allocate/return the color green.
+
+  - CTLOOKUP
+       Returns a string giving the name of a color corresponding to a 
+	given color index.
+
+  - CTMOD
+       To get display visual type (8 or 24 bit) and reserve a number of
+       colors for overlay plotting in the lookup table (for 8 bit).
+
+  - CTORANGE
+	To allocate/return the color orange.
+
+  - CTPINK
+	To allocate/return the color pink.
+
+  - CTPURPLE
+       To allocate/return the color purple.
+
+  - CTRED
+       To allocate/return the color red.
+
+  - CTUSER
+       Returns a user color that was allocated using ctmod.
+
+  - CTWHITE
+       To allocate/return the color white.
+
+  - CTYELLOW
+       To allocate/return the color yellow.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTBLACK
+-------
+
+ PURPOSE:
+       To allocate/return the color black.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctblack()
+
+ RETURN:
+       The lookup table or true color value for black
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTBLUE
+------
+
+ PURPOSE:
+       To allocate/return the color blue.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctblue()
+
+ RETURN:
+       The lookup table or true color value for blue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTBROWN
+-------
+
+ PURPOSE:
+	To allocate/return the color brown.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+	return = ctbrown()
+
+ RETURN:
+	The lookup table or true color value for cyan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTCYAN
+------
+
+ PURPOSE:
+	To allocate/return the color cyan.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+	return = ctcyan()
+
+ RETURN:
+	The lookup table or true color value for cyan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTGRAY
+------
+
+ PURPOSE:
+       Allocate/return a gray level.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctgray(frac)
+
+ RETURN:
+       The lookup table or true color value for the specified gray level.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTGREEN
+-------
+
+ PURPOSE:
+       To allocate/return the color green.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctgreen()
+
+ RETURN:
+       The lookup table or true color value for green
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTLOOKUP
+--------
+
+ PURPOSE:
+       Returns a string giving the name of a color corresponding to a 
+	given color index.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       result = ctlookup(color)
+
+ ARGUMENTS:
+  INPUT:
+       color:	Color index to lookup.
+
+  OUTPUT:
+    NONE
+
+
+ RETURN:
+	String giving the color name or '' if not found.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTMOD
+-----
+
+ PURPOSE:
+       To get display visual type (8 or 24 bit) and reserve a number of
+       colors for overlay plotting in the lookup table (for 8 bit).
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       cdmod, visual=visual, top=top
+
+ ARGUMENTS:
+  INPUT:
+       NONE
+
+  OUTPUT:
+    visual:  Number of planes in idl image device.
+
+       top:  New top of lookup table available to image display.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTORANGE
+--------
+
+ PURPOSE:
+	To allocate/return the color orange.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+	return = ctorange()
+
+ RETURN:
+	The lookup table or true color value for cyan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTPINK
+------
+
+ PURPOSE:
+	To allocate/return the color pink.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+	return = ctpink()
+
+ RETURN:
+	The lookup table or true color value for cyan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTPURPLE
+--------
+
+ PURPOSE:
+       To allocate/return the color purple.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctpurple()
+
+ RETURN:
+       The lookup table or true color value for purple
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTRED
+-----
+
+ PURPOSE:
+       To allocate/return the color red.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctred()
+
+ RETURN:
+       The lookup table or true color value for red
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTUSER
+------
+
+ PURPOSE:
+       Returns a user color that was allocated using ctmod.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctuser()
+
+ RETURN:
+       The lookup table or true color value for the user color with index i.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTWHITE
+-------
+
+ PURPOSE:
+       To allocate/return the color white.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctwhite()
+
+ RETURN:
+       The lookup table or true color value for white
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CTYELLOW
+--------
+
+ PURPOSE:
+       To allocate/return the color yellow.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctyellow()
+
+ RETURN:
+       The lookup table or true color value for yellow
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

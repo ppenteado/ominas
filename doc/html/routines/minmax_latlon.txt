@@ -1,0 +1,50 @@
+MINMAX_LATLON
+
+
+ PURPOSE:
+	Computes latitide/longitude ranges visible in a given camera.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       minmax_latlon, cd, gbx, dkx, frame_bd=frame_bd
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	gbx:	Globe descriptor.
+
+	dkx:	Disk descriptor, for hiding points.
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.
+
+	slop:	Amount by which to expand image border for search.
+
+  OUTPUT: 
+	latmin:	Southernmost latitude visible.
+
+	latmax:	Northernmost latitude visible.
+
+	lonmin:	Westernmost longitude visible.
+
+	lonmax:	Easternmost longitude visible.
+
+
+ RETURN: NONE
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

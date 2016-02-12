@@ -1,0 +1,24 @@
+;===========================================================================
+; glb_evolve
+;
+;  Input  : array (nbd) of globe descriptor (pointers)
+;  Output : array (nbd, ndt) of globe descriptor (pointers)
+;
+;===========================================================================
+function glb_evolve, gbxp, dt, nodv=nodv
+@nv_lib.include
+ gbdp = class_extract(gbxp, 'GLOBE')
+ gbds = nv_dereference(gbdp)
+
+ ndt = n_elements(dt)
+ ngbd = n_elements(gbds)
+
+ tgbds = _glb_evolve(gbds, dt, nodv=nodv)
+
+ 
+ tgbdps = ptrarr(ngbd, ndt)
+ nv_rereference, tgbdps, tgbds
+
+ return, tgbdps
+end
+;===========================================================================

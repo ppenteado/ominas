@@ -1,0 +1,43 @@
+TRIANGGEN
+
+
+ PURPOSE:
+	Constructs 1d subscripts of triangular elements of an nxn matrix.
+
+
+ CATEGORY:
+	UTIL/GEN
+
+
+ CALLING SEQUENCE:
+	sub = trianggen(n)
+
+
+ ARGUMENTS:
+  INPUT:
+	n:	 Degree of matrix, i.e., number of rows / columns.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	lower:	Generates indices for the lower triangle.
+
+	upper:	Generates indices for the upper triangle.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n x n) of subscripts.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

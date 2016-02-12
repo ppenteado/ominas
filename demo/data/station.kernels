@@ -1,0 +1,23 @@
+##########################################################################
+# ephem.kernels
+#
+#  This is just a list of files in which 
+#
+##########################################################################
+
+#-----------------------------------#
+# ephemeris, etc.
+#-----------------------------------#
+ $NV_SPICE_NAIFKER/naif0007.tls
+ $NV_SPICE_NAIFKER/pck00007.tpc
+ $NV_SPICE_NAIFKER/cas00053.tsc
+ $NV_SPICE_NAIFKER/cas_iss_v07.ti
+ $NV_SPICE_NAIFKER/cas_v28.tf
+ $NV_SPICE_TOUR/990825A_SCEPH_EM52_JP0.bsp
+ $NV_SPICE_TOUR/000331R_SK_LP0_EP15.bsp
+ $NV_SPICE_TOUR/000331_SK_JM229_SP0.bsp
+ $NV_SPICE_TOUR/000609A_SK_JM207_JP0.bsp
+ $NV_SPICE_EPHEM/de405s.bsp
+ $NV_SPICE_EPHEM/jup171.bsp
+
+

@@ -1,0 +1,54 @@
+STATION_INPUT
+
+
+ PURPOSE:
+	Input translator for planet-based stations.
+
+
+ CATEGORY:
+	NV/CONFIG
+
+
+ CALLING SEQUENCE(only to be called by nv_get_value):
+	result = station_input(dd, keyword)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:  Data descriptor.
+
+	keyword: String giving the name of the translator quantity.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	key1:  Planet descriptor -- required
+
+	key2:  Camera descriptor
+
+  OUTPUT:
+	status:  Zero if valid data is returned
+
+	n_obj:  Number of objects returned.
+
+	dim:  Dimensions of return objects.
+
+
+  TRANSLATOR KEYWORDS:
+	NONE
+
+
+ RETURN:
+	Data associated with the requested keyword.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+	Written by: Spitale; 7/2007
+ 

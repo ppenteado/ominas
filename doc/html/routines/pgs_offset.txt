@@ -1,0 +1,37 @@
+PGS_OFFSET
+
+
+ PURPOSE:
+	Offsets points in a pg_points structure.
+
+
+ CATEGORY:
+	NV/PGS
+
+
+ CALLING SEQUENCE:
+	pgs_offset, pp, offset
+
+
+ ARGUMENTS:
+  INPUT:
+	pp:		Points structure.
+
+	offset:		Offset to apply.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE.
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale; 4/2015
+	

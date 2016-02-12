@@ -1,0 +1,49 @@
+READ_TXT_TABLE
+
+
+ PURPOSE:
+	Reads a text file composed of rows and columns into an array.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	result = read_txt_table(filename)
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	Name of file to read
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	comment_char:	String giving character to use as line comment.
+			Defaults to '#'.
+
+	continue_char:	String giving character to use for line continuation.
+			Defaults to '\'.
+
+	delim_char:	String giving character to use to delimit columns.
+			Defaults to ' '.
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	Array (ncolumns,nrows) of strings.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2002
+	

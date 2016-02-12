@@ -1,0 +1,20 @@
+							;../nv/gr/bitmaps/grim_tracking_on.array bitmap
+							;definition
+../nv/gr/bitmaps/grim_tracking_on.array = 	[				$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[247B, 255B],			$
+		[191B, 255B],			$
+		[255B, 255B],			$
+		[255B, 254B],			$
+		[255B, 247B],			$
+		[255B, 247B],			$
+		[255B, 193B],			$
+		[255B, 247B],			$
+		[255B, 247B],			$
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B]			$
+		]

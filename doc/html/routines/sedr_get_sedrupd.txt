@@ -1,0 +1,50 @@
+SEDR_GET_SEDRUPD
+
+
+ PURPOSE:
+	Unpacks the body constants record from platform-independent to platform
+       format or vis-versa.
+
+
+ CATEGORY:
+	UTIL/SEDR
+
+
+ CALLING SEQUENCE:
+	sedr_unpack_bcons, bconst 
+
+
+ ARGUMENTS:
+  INPUT:
+
+	bconst:		A bconst formatted record read from a bcons file.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+
+	pack:		If set, reverses the process.
+
+  OUTPUT:
+
+
+ PROCEDURE:
+	Floating and double precision numbers are converted from XDR format
+	to host floating format while integers are byteswapped into host
+	format.  If /pack is set, the process is reversed.
+
+
+ RESTRICTIONS:
+	NONE.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+	Written by:    Haemmerle, 12/1998
+	

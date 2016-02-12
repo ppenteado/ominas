@@ -1,0 +1,72 @@
+TVLINE
+
+
+ PURPOSE:
+	Returns device coordinates of the beginning and end points of a user
+	selected line.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	line = tvline()
+
+
+ ARGUMENTS:
+  INPUT:
+	win_num:	Window number of IDL graphics window in which to select
+			the line.  Default is current window.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	thick:		Thickness of line.
+
+	restore:	If set, the line is removed from the image at the end.
+
+	p0:		First point of line.  If set, then the routine
+			immediately begins to drag from that point until a
+			button is released.
+
+	grid_function:	Function which will quantize a point onto
+ 			a grid.  It should take an orderered
+			pair as its only argument and return an
+			ordered pair.  Default is the identity function.
+
+	linestyle:	Linestyle to use for line, default is 0.
+
+	cancel_button:	Index of mouse button to be used as a cancel
+			button.  Default is no cancel button.
+
+	action_button:	Index of button to use as the action button
+			instead of the left button, 1.
+
+  OUTPUT:
+	cancelled:	1 if the cancel button was pressed, 0 otherwise.
+
+
+ RETURN:
+	2D array containing the two selected endpoints of the line as
+	[p,q] where p and q are 2D arrays in device coordinates.
+
+
+ PROCEDURE:
+	The line is selected by clicking the 'action button' at the location
+	of the first point and dragging to endpoint and releasing.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	tvdrag, tvpath, tvrec, tvcursor
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/1995
+	

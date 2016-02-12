@@ -1,0 +1,41 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/nv/lib/cam/old
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+cam_get_radec_twist.pro
+file
+
+
+
+
+2009-10-27T16:30:01.000000Z
+eb274680486d7d7e90fa47f99f4d7902
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+

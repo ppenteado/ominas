@@ -1,0 +1,3 @@
+ar rcv $*
+ranlib $1
+

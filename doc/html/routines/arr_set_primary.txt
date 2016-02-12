@@ -1,0 +1,40 @@
+ARR_SET_PRIMARY
+
+
+ PURPOSE:
+	Replaces the primary string in each given array descriptor.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	arr_set_primary, ard, primary
+
+
+ ARGUMENTS:
+  INPUT: 
+	ard:	Array (nt) of ARRAY descriptors.
+
+	primary:	Array (nt) of primary strings.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

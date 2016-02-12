@@ -1,0 +1,35 @@
+PGS_NULL
+
+
+ PURPOSE:
+	Returns a null points structure.
+
+
+ CATEGORY:
+	NV/PGS
+
+
+ CALLING SEQUENCE:
+	ps = pgs_null()
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+	A null points structure.
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

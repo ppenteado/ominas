@@ -1,0 +1,39 @@
+NV_PTR_FREE
+
+
+ PURPOSE:
+	Wrapper to the IDL routine ptr_free.  In conjunction with nv_ptr_new, 
+	pointer allocations are tracked for debugging purposes.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_ptr_free, p
+
+
+ ARGUMENTS:
+  INPUT:
+	p:	Pointer to free.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

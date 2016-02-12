@@ -1,0 +1,30 @@
+;===========================================================================
+; bod_evolve
+;
+;  Input  : array (nbd) of body descriptor (pointers)
+;  Output : array (nbd, ndt) of body descriptor (pointers)
+;
+;  NOTE the caller must free the returned descriptor set.
+;
+;===========================================================================
+function bod_evolve, bxp, dt, nodv=nodv
+@nv_lib.include
+ bdp = class_extract(bxp, 'BODY')
+ bds = nv_dereference(bdp)
+
+ nbd = n_elements(bds)
+ ndt = n_elements(dt)
+
+
+ tbds = _bod_evolve(bds, dt, nodv=nodv)
+
+
+ tbdps = ptrarr(nbd, ndt)
+ nv_rereference, tbdps, tbds
+
+ return, tbdps
+end
+;===========================================================================
+
+
+

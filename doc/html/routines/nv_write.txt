@@ -1,0 +1,68 @@
+NV_WRITE
+
+
+ PURPOSE:
+	Writes a data file of arbitrary format.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_write, filespec, dd
+
+
+ ARGUMENTS:
+  INPUT:
+	filespec:	Array of strings giving file specifications for
+			file to write.
+
+	dd:		Array of data descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	filetype:	Overrides data descriptor filetype (and thus the 
+			output function).
+
+	output_fn:	Overrides data descriptor output function.
+
+	verbose:	If set, message are enabled.
+
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ RESTRICTIONS:
+	Under unix, the IDL findfile routine does not expand the ~ symbol,
+	but openr does.  In order to salvage some functionality, nv_read 
+	allows filespecs to pass even if they don't expand to anything using
+	findfile.  In this way, a filespec contianing ~ can be properly
+	expanded, but only if it expands to one filename.  If it expands
+	to multiple filenames, then openr will choke on it.
+
+
+ PROCEDURE:
+	nv_write expands all file specifications and attempts to write a
+	file corresponding to each given data descriptor.  An error results
+	if the filespec expands to a different number of files than the number
+	of given data descriptors. 
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	nv_read
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/1998
+	

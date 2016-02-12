@@ -1,0 +1,73 @@
+PG_RING_SECTOR_PERP
+
+ PURPOSE:
+	Allows the user to select a ring sector by clicking and dragging.
+	The top and bottom of the sector are defined along lines of constant 
+	radius, while the sides are perpendicular to the image-projected
+	radial direction.
+ 
+ CATEGORY:
+       NV/PG
+
+ CALLING SEQUENCE:
+     outline_ps=pg_ring_sector_perp(cd=cd, dkx=dkx, gbx=gbx)
+
+
+ ARGUMENTS:
+  INPUT:
+            p:     Corners of the sector.  If not given, the user selects
+                   them by hand.
+
+  OUTPUT:
+	NONE
+
+
+
+ KEYWORDS:
+  INPUT: 
+           cd:     Camera descriptor.
+
+	   dkx:     Disk descriptor describing the ring.
+
+          gbx:     Globe descriptor giving the primary for the ring.
+
+           gd:     Generic descriptor containnig the above descriptors.
+
+      win_num:     Window number of IDL graphics window in which to select
+                   box, default is current window.
+
+      restore:     Do not leave the box in the image.
+
+           p0:     First corner of box.  If set, then the routine immediately 
+                   begins to drag from that point until a button is released.
+
+        color:     Color to use for rectangle, default is !color.
+
+       sample:     Sets the grid sampling in pixels.  Default is one.
+
+        slope:     This keyword allows the longitude to vary from the
+                   perpendicular direction as a function of radius as: 
+                   lon = slope*(rad - rad0).
+
+ xor_graphics:     If set, the sector outline is drawn and erased using xor
+                   graphics instead of a pixmap.
+
+        nodsk:     If set, image points will not be included in the output 
+                   pg_points_struct.
+
+    noverbose:     If set, messages are suppressed.
+
+
+  OUTPUT:
+         NONE
+
+
+ RETURN: 
+      pg_points_struct containing points on the sector outline.  The point
+      spacing is determined by the sample keyword.  The points structure
+      also contains the disk coordinate for each point and the user fields
+      'nrad' and 'nlon' giving the number of points in radius and longitude.
+
+
+ ORIGINAL AUTHOR : J. Spitale ; 5/2005
+

@@ -1,0 +1,39 @@
+STR_NSPLIT
+
+ PURPOSE:
+       Splits the string into substrings delimited by the given token.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       return = str_nsplit(string, token)
+
+
+ ARGUMENTS:
+  INPUT:
+        string:        An input string
+
+         token:        String delimiter
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+       NONE
+
+
+ RETURN:
+       Array of substrings.  If the token is not found in the string,
+       the original string is returned.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale; 2/2002
+

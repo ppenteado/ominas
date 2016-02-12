@@ -1,0 +1,142 @@
+;=============================================================================
+; match_keyval
+;
+;=============================================================================
+pro match_keyval, kv, i, keyword, value=value
+
+ if(NOT ptr_valid((*kv.keywords_p)[i])) then return
+ if(NOT ptr_valid((*kv.values_p)[i])) then return
+
+ keywords = (*(*kv.keywords_p)[i])
+ values = (*(*kv.values_p)[i])
+
+ w = where(keywords EQ keyword)
+
+ if(w[0] EQ -1) then return
+
+ value = values(w[0])
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;	NOTE:	remove the second '+' on the next line for this header
+;		to be recognized by extract_doc.
+;++
+; NAME:
+;	xx
+;
+;
+; PURPOSE:
+;	xx
+;
+;
+; CATEGORY:
+;	NV/SYS
+;
+;
+; CALLING SEQUENCE:
+;	result = xx(xx, xx)
+;	xx, xx, xx
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;  OUTPUT:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; RETURN:
+;	xx
+;
+;
+; COMMON BLOCKS:
+;	xx:	xx
+;
+;	xx:	xx
+;
+;
+; SIDE EFFECTS:
+;	xx
+;
+;
+; RESTRICTIONS:
+;	xx
+;
+;
+; PROCEDURE:
+;	xx
+;
+;
+; EXAMPLE:
+;	xx
+;
+;
+; STATUS:
+;	xx
+;
+;
+; SEE ALSO:
+;	xx, xx, xx
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	xx, xx/xx/xxxx
+;	
+;-
+;=============================================================================
+function tr_keyword_value, ddp, keyword
+@nv.include
+
+ dd = nv_dereference(ddp)
+
+ ;----------------------------------------------------------------------
+ ; first look for transient keyval match
+ ;----------------------------------------------------------------------
+ if(ptr_valid(dd.transient_keyvals_p)) then $
+                match_keyval, *dd.transient_keyvals_p, 0, keyword, value=value
+ if(n_elements(value) NE 0) then return, value
+
+
+ ;----------------------------------------------------------------------
+ ; if no transient keyval match, then match regular keyvals
+ ;----------------------------------------------------------------------
+ if(NOT ptr_valid(dd.input_keyvals_p)) then return, ''
+
+ ;----------------------------------------
+ ; determine input or output translator
+ ;----------------------------------------
+ i = dd.last_translator[0]
+ io = dd.last_translator[1]
+
+ if(io EQ 0) then kv = *dd.input_keyvals_p $
+ else kv = *dd.output_keyvals_p
+
+ ;-----------------
+ ; match keyval 
+ ;-----------------
+ match_keyval, kv, i, keyword, value=value
+ if(NOT keyword_set(value)) then value = ''
+
+ return, value
+end
+;=============================================================================

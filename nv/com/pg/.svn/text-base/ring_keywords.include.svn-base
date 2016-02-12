@@ -1,0 +1,15 @@
+rng_name=rng__name, $         
+rng_primary=rng__primary, $
+rng_time=rng__time, $
+rng_orient=rng__orient, $         
+rng_avel=rng__avel, $
+rng_pos=rng__pos, $
+rng_vel=rng__vel, $
+rng_sma=rng__sma, $         
+rng_ecc=rng__ecc, $         
+rng_opaque=rng__opaque, $         
+rng_nm=rng__nm, $         
+rng_m=rng__m, $         
+rng_em=rng__em, $         
+rng_wm=rng__wm, $         
+rng_dwmdt=rng__dwmdt, $         

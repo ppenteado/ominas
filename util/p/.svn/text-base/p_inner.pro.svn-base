@@ -1,0 +1,44 @@
+;=============================================================================
+;+
+; NAME:
+;       p_inner
+;
+;
+; PURPOSE:
+;       Computes inner products between the given arrays of image points.
+;
+; CATEGORY:
+;       UTIL/V
+;
+;
+; CALLING SEQUENCE:
+;       result = p_inner(p1, p2)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;       p1:     An array of image points.
+;
+;       p2:     An second array of image points.
+;
+;
+;  OUTPUT:
+;       NONE
+;
+; RETURN:
+;       Array of inner products.
+;
+;
+; STATUS:
+;       Completed.
+;
+;
+; MODIFICATION HISTORY:
+;       Written by:     Spitale	6/2005
+;
+;-
+;=============================================================================
+function p_inner, p1, p2
+ return, total(p1*p2, 1)
+end
+;===========================================================================

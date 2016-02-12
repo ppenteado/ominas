@@ -1,0 +1,16 @@
+CTUSER
+
+ PURPOSE:
+       Returns a user color that was allocated using ctmod.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+       return = ctuser()
+
+ RETURN:
+       The lookup table or true color value for the user color with index i.
+

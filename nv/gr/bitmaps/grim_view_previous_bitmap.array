@@ -1,0 +1,20 @@
+							;../nv/gr/bitmaps/grim_view_previous_bitmap.array bitmap
+							;definition
+../nv/gr/bitmaps/grim_view_previous_bitmap.array = 	[				$
+		[255B, 255B],			$
+		[001B, 254B],			$
+		[253B, 254B],			$
+		[133B, 254B],			$
+		[229B, 254B],			$
+		[213B, 254B],			$
+		[181B, 254B],			$
+		[125B, 128B],			$
+		[001B, 190B],			$
+		[127B, 173B],			$
+		[127B, 171B],			$
+		[127B, 167B],			$
+		[127B, 161B],			$
+		[127B, 191B],			$
+		[127B, 128B],			$
+		[255B, 255B]			$
+		]

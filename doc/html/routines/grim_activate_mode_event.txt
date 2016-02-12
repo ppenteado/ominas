@@ -1,0 +1,19 @@
+GRIM_ACTIVATE_MODE_EVENT
+
+
+ PURPOSE:
+	Allows user to load images into new image planes.  The user is 
+	prompted for filenames and nv_read is used to read each image.
+	Multiple images may be selected and a new plane is created for
+	each image.  On X-windows systems, multiple files may be selected 
+	either by dragging across the filenames or by holding down the 
+	control key to toggle the selected files.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

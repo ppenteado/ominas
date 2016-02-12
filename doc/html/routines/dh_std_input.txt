@@ -1,0 +1,59 @@
+DH_STD_INPUT
+
+
+ PURPOSE:
+	Input translator for detached header
+
+
+ CATEGORY:
+	NV/CONFIG
+
+
+ CALLING SEQUENCE(only to be called by nv_get_value):
+	result = dh_std_input(dd, keyword)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	keyword:	String giving the name of the translator quantity to
+			read.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	NONE
+
+  OUTPUT:
+	status:		Zero if valid data is returned
+
+	n_obj:		Number of objects returned.
+
+	dim:		Dimensions of return objects.
+
+
+  TRANSLATOR KEYWORDS:
+	history:	History index to use in matching the keyword.  If not 
+			specified, the keyowrd with the highest history index
+			is matched.
+
+
+ RETURN:
+	Data associated with the requested keyword.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dh_std_output
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1998
+	

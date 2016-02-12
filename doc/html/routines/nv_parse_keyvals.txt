@@ -1,0 +1,41 @@
+NV_PARSE_KEYVALS
+
+
+ PURPOSE:
+	Parses an array strings containing keyword=value pairs.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	kv = nv_parse_keyvals(keyvals)
+
+
+ ARGUMENTS:
+  INPUT:
+	keyvals:	Array of strings of the form <keyword>=<value>.
+
+  OUTPUT:
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: 
+	keywords:	Array of keywords.
+
+
+ RETURN: 
+	Array of type keyval_struct containing the parsed keywords
+	and values.  One element per input array element.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

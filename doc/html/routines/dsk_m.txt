@@ -1,0 +1,39 @@
+DSK_M
+
+
+ PURPOSE:
+	Returns m for each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	m = dsk_m(dkx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	dkx:	 Any subclass of DISK.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	m value associated with each given disk descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

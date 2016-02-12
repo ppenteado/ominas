@@ -1,0 +1,63 @@
+PGS_POINTS_PS
+
+
+ PURPOSE:
+	Retrieves fields of a points structure, but does not dereference
+	pointers.
+
+
+ CATEGORY:
+	NV/PGS
+
+
+ CALLING SEQUENCE:
+	pgs_points_ps, pp, name=name, points_ps=points_ps, vectors_ps=vectors_ps, $
+	                        flags_ps=flags_ps, ...
+
+
+ ARGUMENTS:
+  INPUT:
+	pp:		Point structure.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	name:		Point structure name.
+
+	desc:		Point structure description.
+
+	input:		Description of input data.
+
+	assoc_idp:	ID pointer of associated descriptor.
+
+	points_ps:	Pointer to array of image points.
+
+	vectors_ps:	Pointer to array of column vectors.
+
+	flags_ps:	Pointer to array of flags.
+
+	tags_ps:	Pointer to array of tags for point data.
+
+	data_ps:	Pointer to array of data for each point.
+
+	uname:		Name of a user data array.
+
+	udata:		User data to associate with uname.
+
+	
+
+
+ RETURN: NONE
+
+
+ SEE ALSO:
+	pgs_set_points
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1997
+	

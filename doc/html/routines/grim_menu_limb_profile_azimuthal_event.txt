@@ -1,0 +1,14 @@
+GRIM_MENU_LIMB_PROFILE_AZIMUTHAL_EVENT
+
+
+ PURPOSE:
+	Same as 'Save' above, except always prompts for a filename. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

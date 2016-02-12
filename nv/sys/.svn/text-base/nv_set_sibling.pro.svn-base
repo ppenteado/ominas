@@ -1,0 +1,15 @@
+;=============================================================================
+; nv_set_sibling
+;
+;=============================================================================
+pro nv_set_sibling, ddp, ddp_sibling
+@nv.include
+ dd = nv_dereference(ddp)
+
+ handle_value, dd.sibling_dd_h, ddp_sibling, /set
+
+ nv_rereference, ddp, dd
+ nv_notify, ddp, type = 0
+ nv_notify, /flush
+end
+;===========================================================================

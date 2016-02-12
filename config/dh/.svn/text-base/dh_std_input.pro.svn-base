@@ -1,0 +1,503 @@
+;=============================================================================
+;+
+; NAME:
+;	dh_std_input
+;
+;
+; PURPOSE:
+;	Input translator for detached header
+;
+;
+; CATEGORY:
+;	NV/CONFIG
+;
+;
+; CALLING SEQUENCE(only to be called by nv_get_value):
+;	result = dh_std_input(dd, keyword)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dd:		Data descriptor.
+;
+;	keyword:	String giving the name of the translator quantity to
+;			read.
+;
+;  OUTPUT:
+;	NONE
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	NONE
+;
+;  OUTPUT:
+;	status:		Zero if valid data is returned
+;
+;	n_obj:		Number of objects returned.
+;
+;	dim:		Dimensions of return objects.
+;
+;
+;  TRANSLATOR KEYWORDS:
+;	history:	History index to use in matching the keyword.  If not 
+;			specified, the keyowrd with the highest history index
+;			is matched.
+;
+;
+; RETURN:
+;	Data associated with the requested keyword.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+; SEE ALSO:
+;	dh_std_output
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 1998
+;	
+;-
+;=============================================================================
+
+
+;=============================================================================
+; dhsi_get_core
+;
+;=============================================================================
+function dhsi_get_core, dh, prefix
+
+
+ name = dh_get_string(dh, prefix + '_name', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ if(status NE 0) then return, 0
+
+ user = dh_get_string(dh, prefix + '_user', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ tasks = dh_get_sclarr(dh, prefix + '_tasks', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+ crds = cor_init_descriptors(n_obj, $
+	name=name, $
+ 	user=user, $
+	tasks=tasks)
+
+ return, crds
+end
+;=============================================================================
+
+
+;=============================================================================
+; dhsi_get_body
+;
+;=============================================================================
+function dhsi_get_body, dh, prefix, crds=crds
+
+
+ time = dh_get_scalar(dh, prefix + '_time', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ if(status NE 0) then return, 0
+
+ opaque = dh_get_scalar(dh, prefix + '_opaque', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ orient = dh_get_matrix(dh, prefix + '_orient', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ pos = dh_get_vector(dh, prefix + '_pos', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ vel = dh_get_vector(dh, prefix + '_vel', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ avel = dh_get_vector(dh, prefix + '_avel', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+ libv = dh_get_vector(dh, prefix + '_libv', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ libp = dh_get_sclarr(dh, prefix + '_libp', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ libt = dh_get_sclarr(dh, prefix + '_libt', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+ bds = bod_init_descriptors(n_obj, crd=crds, $
+	time=time, $
+ 	opaque=opaque, $
+ 	orient=orient, $
+ 	pos=pos, $
+ 	vel=vel, $
+ 	avel=avel, $
+ 	libv=libv, $
+ 	libp=libp, $
+	libt=libt)
+
+ return, bds
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; dhsi_get_globe
+;
+;=============================================================================
+function dhsi_get_globe, dh, prefix, crds=crds, bds=bds
+
+
+ mass = dh_get_scalar(dh, prefix + '_mass', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ if(status NE 0) then return, 0
+
+ lora = dh_get_scalar(dh, prefix + '_lora', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ j = dh_get_sclarr(dh, prefix + '_j', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ radii = dh_get_vector(dh, prefix + '_radii', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ type = dh_get_string(dh, prefix + '_type', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ lref = dh_get_string(dh, prefix + '_lref', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ rref = dh_get_scalar(dh, prefix + '_rref', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ gm = dh_get_scalar(dh, prefix + '_gm', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+
+
+ gbds = glb_init_descriptors(n_obj, crd=crds, bd=bds, $
+	mass=mass, $
+	lora=lora, $
+	j=j, $
+	radii=radii, $
+	type=type, $
+	lref=lref, $
+	rref=rref, $
+	gm=gm)
+
+ return, gbds
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; dhsi_get_disk
+;
+;=============================================================================
+function dhsi_get_disk, dh, prefix, crds=crds, bds=bds
+
+
+ nm = dh_get_scalar(dh, prefix + '_nm', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+ if(status NE 0) then return, 0
+
+
+ if(n_obj EQ 1) then $
+  begin
+   sma = transpose(dh_get_point(dh, prefix + '_sma', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status))
+   ecc = transpose(dh_get_point(dh, prefix + '_ecc', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status))
+  end $
+ else $
+  begin
+   sma = transpose(dh_get_point(dh, prefix + '_sma', n_obj=n_obj, dim=dim, $
+			               hi=hi, status=status), [1,0,2])
+   ecc = transpose(dh_get_point(dh, prefix + '_ecc', n_obj=n_obj, dim=dim, $
+			               hi=hi, status=status), [1,0,2])
+  end
+
+
+stop
+
+
+ 
+
+
+ dkds = dsk_init_descriptors(n_obj, crd=crds, bd=bds, $
+	mass=mass, $
+	lora=lora, $
+	j=j, $
+	radii=radii, $
+	type=type, $
+	lref=lref, $
+	rref=rref, $
+	gm=gm)
+
+ return, dkds
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; dh_std_input
+;
+;=============================================================================
+function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+	end_keywords
+
+
+ status = -1
+ n_obj = 0
+
+
+ ;-----------------------------------------------
+ ; translator keywords
+ ;-----------------------------------------------
+ history = tr_keyword_value(dd, 'history')
+ if(keyword_set(history)) then hi = fix(history)
+
+
+ ;--------------------------
+ ; get detached header
+ ;--------------------------
+ dh = dh_get(dd)
+ if(NOT keyword_set(dh)) then return, 0
+
+
+ ;--------------------------
+ ; match keyword
+ ;--------------------------
+ case keyword of $
+
+	;-------------------camera keywords--------------------
+
+	'CAM_DESCRIPTORS'   : $
+	  begin
+	   crds = dhsi_get_core(dh, 'cam')
+	   if(NOT keyword_set(crds)) then return, 0
+	   bds = dhsi_get_body(dh, 'cam', crds=crds)
+
+	   cam_exposure = dh_get_scalar(dh, 'cam_exposure', n_obj=n_obj, $
+                                             dim=dim, hi=hi, status=status)
+
+	   val = $
+	      dh_get_point(dh, 'cam_size', n_obj=n_obj, hi=hi, status=status)
+	   if(keyword_set(val)) then $
+	                      cam_size = reform(val, 2,n_obj, /overwrite)
+
+	   val = $
+	      dh_get_point(dh, 'cam_scale', n_obj=n_obj, hi=hi, status=status)
+	   if(keyword_set(val)) then $
+	                      cam_scale = reform(val, 2,n_obj, /overwrite)
+
+	   val = $
+	      dh_get_point(dh, 'cam_oaxis', n_obj=n_obj, hi=hi, status=status)
+	   if(keyword_set(val)) then $
+	                      cam_oaxis = reform(val, 2,n_obj, /overwrite)
+
+	   cam_fn_focal_to_image = $
+	       dh_get_string(dh, 'cam_fn_f2i', n_obj=n_obj, dim=dim, $
+			                               hi=hi, status=status)
+
+	   cam_fn_image_to_focal = $
+	       dh_get_string(dh, 'cam_fn_i2f', n_obj=n_obj, dim=dim, $
+			                               hi=hi, status=status)
+
+	   cam_fn_data = dh_get_array(dh, 'cam_fn_data', n_obj=n_obj, dim=dim, $
+			                               hi=hi, status=status)
+
+	   cam_fn_psf = $
+	       dh_get_string(dh, 'cam_fn_psf', n_obj=n_obj, dim=dim, $
+			                               hi=hi, status=status)
+
+	   n_obj = n_elements(crds)
+	   cds = cam_init_descriptors(n_obj, crd=crds, bd=bds, $
+		exposure=cam_exposure, $
+		fn_focal_to_image=cam_fn_focal_to_image, $
+		fn_image_to_focal=cam_fn_image_to_focal, $
+		fn_data=cam_fn_data, $
+		fn_psf=cam_fn_psf, $
+		scale=cam_scale, $
+		size=cam_size, $
+		oaxis=cam_oaxis)
+
+	   format = dh_get_string(dh, 'cam_format', hi=hi)
+	   if(keyword_set(format)) then cds = dh_to_minas(format[0], cds)
+
+	   status = 0
+           dim = [1]
+
+	   return, cds
+	  end
+
+
+	;-------------------planet keywords--------------------
+
+	'PLT_DESCRIPTORS'   : $
+	  begin
+	   crds = dhsi_get_core(dh, 'plt')
+	   if(NOT keyword_set(crds)) then return, 0
+	   bds = dhsi_get_body(dh, 'plt', crds=crds)
+	   gbds = dhsi_get_globe(dh, 'plt', crds=crds, bds=bds)
+
+
+	   n_obj = n_elements(crds)
+	   pds = plt_init_descriptors(n_obj, crd=crds, bd=bds, gbd=gbds, $
+		radii=plt_radii, $
+		lref=plt_lref, $
+		mass=plt_mass, $
+		j=plt_j, $
+		lora=plt_lora)
+
+	   format = dh_get_string(dh, 'plt_format', hi=hi)
+	   if(keyword_set(format)) then pds = dh_to_minas(format[0], pds)
+
+	   status = 0
+           dim = [1]
+
+	   return, pds
+	  end
+
+	;-------------------ring keywords--------------------
+
+	'RNG_DESCRIPTORS'   : $
+	  begin
+	   crds = dhsi_get_core(dh, 'rng')
+	   if(NOT keyword_set(crds)) then return, 0
+	   bds = dhsi_get_body(dh, 'rng', crds=crds)
+	   dkds = dhsi_get_disk(dh, 'rng', crds=crds, bds=bds)
+
+	   rng_primary = $
+                 dh_get_string(dh, 'rng_primary', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+	   n_obj = n_elements(crds)
+	   rds = rng_init_descriptors(n_obj, crd=crds, bd=bds, dkd=dkds, $
+		primary=rng_primary)
+
+	   format = dh_get_string(dh, 'rng_format', hi=hi)
+	   if(keyword_set(format)) then rds = dh_to_minas(format[0], rds)
+
+	   status = 0
+           dim = [1]
+
+	   return, rds
+	  end
+
+        ;-------------------star keywords--------------------
+
+	'STR_DESCRIPTORS'   : $
+	  begin
+	   crds = dhsi_get_core(dh, 'str')
+	   if(NOT keyword_set(crds)) then return, 0
+	   bds = dhsi_get_body(dh, 'str', crds=crds)
+	   gbds = dhsi_get_globe(dh, 'str', crds=crds, bds=bds)
+
+
+	   str_lum = dh_get_scalar(dh, 'str_lum', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+	   str_sp = dh_get_string(dh, 'str_sp', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+	   n_obj = n_elements(crds)
+	   sds = str_init_descriptors(n_obj, crd=crds, bd=bds, gbd=gbds, $
+		lum=str_lum, $
+		sp=str_sp)
+
+	   format = dh_get_string(dh, 'str_format', hi=hi)
+	   if(keyword_set(format)) then sds = dh_to_minas(format[0], sds)
+
+	   status = 0
+           dim = [1]
+
+	   return, sds
+	  end
+
+
+	;-------------------map keywords--------------------
+
+	'MAP_DESCRIPTORS'   : $
+	  begin
+	   crds = dhsi_get_core(dh, 'map')
+	   if(NOT keyword_set(crds)) then return, 0
+
+	   map_fn_map_to_image = $
+	       dh_get_string(dh, 'map_fn_a2i', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+	   map_fn_image_to_map = $
+	       dh_get_string(dh, 'map_fn_i2m', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+	   map_fn_data_p = dh_get_array(dh, 'map_fn_data', n_obj=n_obj, $
+	                                       dim=dim, hi=hi, status=status)
+
+	   map_type = dh_get_string(dh, 'map_type', n_obj=n_obj, dim=dim, $
+			                                hi=hi, status=status)
+
+	   val = $
+	      dh_get_point(dh, 'map_offset', n_obj=n_obj, hi=hi, status=status)
+	   if(keyword_set(val)) then $
+	                      map_offset = reform(val, 2,n_obj, /overwrite)
+
+	   val = $
+	      dh_get_point(dh, 'map_origin', n_obj=n_obj, hi=hi, status=status)
+	   if(keyword_set(val)) then $
+	                      map_origin = reform(val, 2,n_obj, /overwrite)
+
+	   val = $
+	      dh_get_point(dh, 'map_center', n_obj=n_obj, hi=hi, status=status)
+	   if(keyword_set(val)) then $
+	                      map_center = reform(val, 2,n_obj, /overwrite)
+
+	   val = $
+	      dh_get_point(dh, 'map_units', n_obj=n_obj, hi=hi, status=status)
+	   if(keyword_set(val)) then $
+	                      map_units = reform(val, 2,n_obj, /overwrite)
+
+	   map_scale = dh_get_scalar(dh, 'map_scale', n_obj=n_obj, $
+	                                                hi=hi, status=status)
+
+	   val = $
+	      dh_get_vector(dh, 'map_radii', n_obj=n_obj, hi=hi, status=status)
+	   if(keyword_set(val)) then $
+	                      map_radii = reform(val, 3,n_obj, /overwrite)
+
+	   map_graphic = dh_get_scalar(dh, 'map_graphic', n_obj=n_obj, $
+	                                                hi=hi, status=status)
+
+	   map_rotate = dh_get_scalar(dh, 'map_rotate', n_obj=n_obj, $
+	                                                hi=hi, status=status)
+
+	   map_size = dh_get_point(dh, 'map_size', n_obj=n_obj, dim=dim, $
+	                                                hi=hi, status=status)
+
+
+	   n_obj = n_elements(crds)
+	   mds = map_init_descriptors(n_obj, $
+		crd=crds, $
+		type=map_type, $
+		fn_map_to_image=fn_map_to_image, $
+		fn_image_to_map=fn_image_to_map, $
+		fn_data_p=map_fn_data_p, $
+		graphic=map_graphic, $
+		rotate=map_rotate, $
+		size=map_size, $
+		units=map_units, $
+		offset=map_offset, $
+		origin=map_origin, $
+		center=map_center, $
+		scale=map_scale, $
+		radii=map_radii)
+
+	   format = dh_get_string(dh, 'map_format', hi=hi)
+	   if(keyword_set(format)) then mds = dh_to_minas(format[0], mds)
+
+	   status = 0
+           dim = [1]
+
+	   return, mds
+	  end
+
+
+
+	else : 	status = -1
+ endcase
+
+
+end
+;===========================================================================

@@ -1,0 +1,44 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/nv/com
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+doc_com.pro
+file
+
+
+
+
+2009-10-27T16:30:51.000000Z
+e27c179f454cff1f3ea3a6cc337dfe7b
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+pg
+dir
+

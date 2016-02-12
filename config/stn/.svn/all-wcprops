@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/minas/!svn/ver/2/trunk/config/stn
+END
+station_input.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/stn/station_input.pro
+END
+__stn_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/config/stn/__stn_evolve.pro
+END
+stations_earth.txt
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/minas/!svn/ver/2/trunk/config/stn/stations_earth.txt
+END
+stations_enceladus.txt
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/stn/stations_enceladus.txt
+END
+station_record__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/config/stn/station_record__define.pro
+END
+stations_moon.txt
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/stn/stations_moon.txt
+END
+stn_read_scan_bin.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/config/stn/stn_read_scan_bin.pro
+END
+station_read.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/config/stn/station_read.pro
+END

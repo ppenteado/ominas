@@ -1,0 +1,28 @@
+;===========================================================================
+; rng_evolve
+;
+;  Input  : array (nbd) of ring descriptor (pointers)
+;  Output : array (nbd, ndt) of ring descriptor (pointers)
+;
+;===========================================================================
+function rng_evolve, rxp, dt, nodv=nodv
+@nv_lib.include
+ rdp = class_extract(rxp, 'RING')
+ rds = nv_dereference(rdp)
+
+ ndt = n_elements(dt)
+ nrd = n_elements(rds)
+
+
+ trds = _rng_evolve(rds, dt, nodv=nodv)
+
+
+ trdps = ptrarr(nrd, ndt)
+ nv_rereference, trdps, trds
+
+ return, trdps
+end
+;===========================================================================
+
+
+

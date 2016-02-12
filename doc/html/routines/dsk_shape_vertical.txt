@@ -1,0 +1,64 @@
+DSK_SHAPE_VERTICAL
+
+
+ PURPOSE:
+	Computes elevations along the edge of a disk using disk elements.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	z = dsk_shape_vertical(dkx, a, i, lan, lon, l, il, lanl)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkx:	 Array (nt) of any subclass of DISK.
+
+	a:	 Array (nt) of semimajor axis values. 
+
+	i:	 Array (nt) of inclination values. 
+
+	lan:	 Array (nt) of longitudes of ascending node. 
+
+	lon:	 Array (nlon) of longitudes at which to compute elevations.
+
+	l:	 Array (nt) of vertical wavenumbers.
+
+	il:	 Array (nt) of inclinations for each l.
+
+	lanl:	 Array (nt) of longitudes of ascending node for each l.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.  One for each dkx.
+
+	ll:	If set, only the elevation component for this wavenumber
+		is returned.
+
+	lii:	If set, only the elevation component with this index
+		is returned.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt x nlon) of elevations computed at each longitude on each 
+	disk.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

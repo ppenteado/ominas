@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="UTIL Program Reference", $
+    "/home/joes/idl_pro/minas/config/dh/util/*.pro", $
+    "/home/joes/idl_pro/minas/config/dh/util/doc_util.txt"

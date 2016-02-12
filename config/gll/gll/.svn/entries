@@ -1,0 +1,41 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/config/util/gll
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+gll_psf.pro
+file
+
+
+
+
+2009-10-27T16:31:20.000000Z
+e2aeef140d8e36b0bf9b67adc2b85dab
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+

@@ -1,0 +1,41 @@
+;==============================================================================
+; rng_copy_descriptor
+;
+;
+;==============================================================================
+pro _rng_copy_descriptor, rdp_dst, rdp_src
+ nv_notify, rdp_src, type = 1
+ new_rd = nv_dereference(rdp_src)
+
+ dsk_copy_descriptor, new_rd.dkd, rng_disk(rdp_src)
+
+ nv_rereference, rdp_dst, new_rd
+ nv_notify, rdp_dst
+end
+;==============================================================================
+
+
+
+;==============================================================================
+; rng_copy_descriptor
+;
+;
+;==============================================================================
+pro rng_copy_descriptor, rdp_dst, rdp_src
+@nv_lib.include
+ nv_notify, rdp_src, type = 1
+ rd_src = nv_dereference(rdp_src)
+ rd_dst = nv_dereference(rdp_dst)
+
+ new_rd = rd_src
+ new_rd.dkd = rd_dst.dkd
+
+ dsk_copy_descriptor, new_rd.dkd, rng_disk(rdp_src)
+
+ nv_rereference, rdp_dst, new_rd
+ nv_notify, rdp_dst
+end
+;==============================================================================
+
+
+

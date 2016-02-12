@@ -1,0 +1,41 @@
+CLASS_COPY_DESCRIPTOR
+
+
+ PURPOSE:
+	Calls the 'copy' method for objects of unspecified class.
+
+
+ CATEGORY:
+	NV/LIB/CLASS
+
+
+ CALLING SEQUENCE:
+	class_copy_descriptor, dst, src
+
+
+ ARGUMENTS:
+  INPUT:
+	dst:	 Descriptor to copy to.
+
+	src:	 Descriptor to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

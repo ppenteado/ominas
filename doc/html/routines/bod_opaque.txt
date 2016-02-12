@@ -1,0 +1,39 @@
+BOD_OPAQUE
+
+
+ PURPOSE:
+	Returns the opaque value for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	opaque = bod_opaque(bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Opaque value associated with each given body descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

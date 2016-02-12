@@ -1,0 +1,54 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/doc
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+make_doc_links
+file
+
+
+
+
+2009-10-27T16:30:58.000000Z
+1f3a0b9e945e94f9f268e578975eac49
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+doc_doc.pro
+file
+
+
+
+
+2009-10-27T16:30:58.000000Z
+efa007850ace787e7e58896ad9b41087
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+

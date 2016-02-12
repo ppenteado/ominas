@@ -1,0 +1,26 @@
+FDELETE
+
+
+ PURPOSE:
+	Delete files.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	fdelete, filespec
+
+
+ ARGUMENTS:
+  INPUT:
+	filespec:	File specification of files to delete.
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/19/2001
+	

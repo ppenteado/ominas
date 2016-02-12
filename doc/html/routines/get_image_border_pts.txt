@@ -1,0 +1,49 @@
+GET_IMAGE_BORDER_PTS
+
+
+ PURPOSE:
+	Computes points around the edge of an image.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       border_pts_im = get_image_border_pts(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descripor.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: 
+	corners:	Array(2,2) giving corners of image region to border
+
+	center:		Array (2) giving the center of the image to use
+			instead of the optic axis.
+
+	crop:		Number of pixels by which to shrink the image border in 
+			each direction.
+
+	sample:		Sampling rate; default is 1 pixel.
+
+	aperture:	If set, a circular aperture with a diameter equal to the
+			logest dimension of the image is used.  (not complete)
+
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+	Array (2,np) of image points on the image border.  np is computed
+	such that points are spaced by one pixel.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

@@ -1,0 +1,38 @@
+EDGE_MODEL_PSF_RING
+
+
+ PURPOSE:
+	Returns an edge model produced by convolving a sharp edge with
+	a point-spread function.
+
+ CATEGORY:
+       NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+       result = edge_model_psf_ring()
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	 zero:  The array element corresponding to the phyiscal edge.
+
+	delta:	The number of pixels represented by each element
+		Currently = 1.0
+
+	cd:	Camera descriptor fromwhich to obtain the PSF.
+
+
+ RETURN:
+	An array containing the model.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 6/1998
+

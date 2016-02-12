@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/minas/!svn/ver/2/trunk/config/vicar
+END
+vic_str_sep.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/vicar/vic_str_sep.pro
+END
+vicsetpar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/config/vicar/vicsetpar.pro
+END
+vicgetpar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/config/vicar/vicgetpar.pro
+END
+doc_vicar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/config/vicar/doc_vicar.pro
+END
+vicdelpar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/config/vicar/vicdelpar.pro
+END
+vic_str_pad.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/vicar/vic_str_pad.pro
+END
+read_vicar_label.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/vicar/read_vicar_label.pro
+END
+write_vicar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/vicar/write_vicar.pro
+END
+read_vicar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/config/vicar/read_vicar.pro
+END

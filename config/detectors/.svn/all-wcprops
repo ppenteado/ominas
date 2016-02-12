@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/minas/!svn/ver/2/trunk/config/detectors
+END
+doc_detectors.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/detectors/doc_detectors.pro
+END
+detect_multi.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_multi.pro
+END
+detect_dh.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_dh.pro
+END
+detect_mirac.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_mirac.pro
+END
+detect_ctio.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_ctio.pro
+END
+detect_vgr.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_vgr.pro
+END
+detect_vicar.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_vicar.pro
+END
+detect_occ.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_occ.pro
+END
+detect_vgr_cd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_vgr_cd.pro
+END
+detect_fits.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_fits.pro
+END
+detect_cas.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_cas.pro
+END
+detect_spdr.pro
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_spdr.pro
+END
+detect_cas_uvis.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_cas_uvis.pro
+END
+detect_map.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_map.pro
+END
+detect_gll.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_gll.pro
+END
+detect_vgr_pps.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_vgr_pps.pro
+END
+detect_tdl.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_tdl.pro
+END
+detect_vgr_rss.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_vgr_rss.pro
+END
+detect_pds.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/detectors/detect_pds.pro
+END

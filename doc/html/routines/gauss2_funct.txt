@@ -1,0 +1,30 @@
+GAUSS2_FUNCT
+ PURPOSE:
+	Evaluate function for gauss2fit.
+ CALLING SEQUENCE:
+	FUNCT,X,A,F,PDER
+ INPUTS:
+	X = values of independent variables, encoded as: [nx, ny, x, y]
+	A = parameters of equation described below.
+ OUTPUTS:
+	F = value of function at each X(i,j), Y(i,j).
+	Function is:
+		F(x,y) = A0 + A1*EXP(-U/2)
+		where: U= (yp/A2)^2 + (xp/A3)^2
+
+	  If A has 7 elements a rotation of the ellipse is present and:
+		xp = (x-A4) * cos(A6) - (y-A5) * sin(A6)
+		yp = (x-A4) * sin(A6) + (y-A5) * cos(A6)
+	  If A has 6 elements, A6 (theta) is 0, the major and minor axes
+	  of the ellipse are parallel to the XY axes, and:
+		xp = (x-A4)   and   yp = (x-A5)
+
+ Optional output parameters:
+	PDER = (n_elements(z),6 or 7) array containing the
+		partial derivatives.  pder(i,j) = derivative
+		at ith point w/respect to jth parameter.
+ PROCEDURE:
+	Evaluate the function and then if requested, eval partials.
+
+ MODIFICATION HISTORY:
+	WRITTEN, DMS, RSI, June, 1995.

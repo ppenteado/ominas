@@ -1,0 +1,41 @@
+IMAGE_TO_RADEC
+
+
+ PURPOSE:
+       Transforms points in image coordinates to polar ra/dec coords
+	w.r.t the inertial frame.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       result = image_to_radec(cd, p)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Array of nt camera descriptors.
+
+	p:	Array (2 x nv x nt) of image points.
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+   INPUT: NONE
+
+   OUTPUT:
+	body_pts:	Body coordinates of output points.
+
+
+ RETURN:
+       Array (nv x 3 x nt) of radec vectors in the cd BODY frame.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale 3/2002, to replace image_to_ra_dec

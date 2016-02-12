@@ -1,0 +1,183 @@
+;=============================================================================
+;+
+; NAME:
+;	pg_mask
+;
+;
+; PURPOSE:
+;	Uses the given geometry to compute an image mask for all objects
+;	in a scene.
+;
+;
+; CATEGORY:
+;	NV/PG
+;
+;
+; CALLING SEQUENCE:
+;	mask = pg_mask(dd, cd=cd, gbx=gbx, dkx=dkx, sd=sd, sund=sund)
+;	mask = pg_mask(dd, gd=gd)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dd:	Data descriptor containing the image to be despiked.
+;
+;  OUTPUT:
+;	NONE
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	cd:	Camera descriptor.
+;
+;	gbx:	Globe descriptors.
+;
+;	dkx:	Disk descriptors.
+;
+;	sd:	Star descriptors.
+;
+;	sund:	Star descriptor giving the sun.
+;
+;	gd:	Generic descriptor containing the above descriptors.
+;
+;  OUTPUT:
+;	limb_ps:	pg_points_struct giving the computed limb points.
+;
+;	term_ps:	pg_points_struct giving the computed terminator points.
+;
+;	disk_ps:	pg_points_struct giving the computed disk points.
+;
+;	star_ps:	pg_points_struct giving the computed star points.
+;
+;
+; RETURN:
+;	Byte image in which pixels corresponding to objects are set to 1.
+;
+;
+; STATUS:
+;	Complete.
+;
+;
+; SEE ALSO:
+;	pg_spikes
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 4/2004
+;	
+;-
+;=============================================================================
+function pg_mask, dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, sd=sd, sund=sund, $
+      limb_ps=limb_ps, term_ps=term_ps, star_ps=star_ps, disk_ps=ring_ps
+
+ ;-----------------------------------------------
+ ; dereference the generic descriptor if given
+ ;-----------------------------------------------
+ pgs_gd, gd, cd=cd, gbx=gbx, dkx=dkx, sd=sd, sund=sund, dd=dd
+
+ ;-----------------------------------------------
+ ; initialize the mask
+ ;-----------------------------------------------
+ im = nv_data(dd)
+ s = size(im)
+ mask = bytarr(s[1], s[2])
+
+ ;-----------------------------------------------
+ ; rings
+ ;-----------------------------------------------
+ if(keyword_set(dkx)) then $
+  begin
+   sma = (dsk_sma(dkx))[0,0,*]
+   ii = rotate(sort(sma), 2)
+   dkx = dkx[ii]
+
+   ring_ps = pg_disk(cd=cd, dkx=dkx, gbx=gbx)
+   ndkx = n_elements(dkx)
+   for i=0, ndkx-1 do $
+    begin
+     inner_pp = pg_points(ring_ps[2*i])
+     outer_pp = pg_points(ring_ps[2*i+1])
+
+     if(keyword_set(outer_pp)) then $
+      begin
+       ii_outer = polyfillv(outer_pp[0,*], outer_pp[1,*], s[1], s[2])
+       if(ii_outer[0] NE -1) then mask[ii_outer] = 1
+      end
+
+     if(keyword_set(inner_pp)) then $
+      begin
+       ii_inner = polyfillv(inner_pp[0,*], inner_pp[1,*], s[1], s[2])
+       if(ii_inner[0] NE -1) then mask[ii_inner] = 0
+      end
+
+     
+    end
+
+  end
+
+
+ ;-----------------------------------------------
+ ; planets
+ ;-----------------------------------------------
+ if(keyword_set(gbx)) then $
+  begin
+   ngbx = n_elements(gbx)
+   center_ps = pg_center(cd=cd, bx=gbx)
+   center_pts = pg_points(center_ps)
+   cam_pos = bod_pos(cd)##make_array(ngbx, val=1d)
+   rad_pix = (glb_radii(gbx))[2,*] / v_mag(cam_pos - tr(bod_pos(gbx))) $
+                                                        / (cam_scale(cd))[0]
+
+   w = where((center_pts[0,*]-rad_pix LT s[1]) $
+            AND (center_pts[0,*]+rad_pix GT 0) $
+            AND (center_pts[1,*]-rad_pix LT s[2]) $
+            AND (center_pts[1,*]+rad_pix GT 0))
+   nw = n_elements(w)
+
+   limb_ps = pg_limb(cd=cd, gbx=gbx[w]) 
+   
+   for i=0, nw-1 do $
+    begin
+     pp = pg_points(limb_ps[i])
+     ii = polyfillv(pp[0,*], pp[1,*], s[1], s[2])
+     if(ii[0] NE -1) then mask[ii] = 0
+    end
+   pg_hide, /limb, limb_ps, gbx=gbx[w], od=sund
+
+   term_ps = pg_limb(cd=cd, od=sund, gbx=gbx[w])
+   pg_hide, /limb, term_ps, gbx=gbx[w], cd=cd
+
+   for i=0, nw-1 do $
+    begin
+     p = pg_points([limb_ps[i], term_ps[i]])
+     pp = poly_rectify(p)
+     ii = polyfillv(pp[0,*], pp[1,*], s[1], s[2])
+     if(ii[0] NE -1) then mask[ii] = 1
+    end
+  end
+
+
+ ;-----------------------------------------------
+ ; stars
+ ;-----------------------------------------------
+ if(keyword_set(sd)) then $
+  begin
+   star_ps = pg_center(cd=cd, bx=sd)
+   star_pts = pg_points(star_ps)
+
+   w = in_image(cd, star_pts, slop=1)
+
+   if(w[0] NE -1) then $
+    begin
+     ii = xy_to_w(mask, star_pts[*,w])
+     if(ii[0] NE -1) then mask[ii] = 1
+    end
+  end
+
+
+
+
+
+ return, mask
+end
+;=============================================================================

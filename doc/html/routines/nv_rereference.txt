@@ -1,0 +1,47 @@
+NV_REREFERENCE
+
+
+ PURPOSE:
+	Copies an array of descriptors into an array of pointers to descriptors.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_rereference, dp, d
+
+
+ ARGUMENTS:
+  INPUT:
+	dp:	Array of pointers to the appropriate type of descriptor.
+
+	d:	Array of descriptors.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS: 
+  INPUT:
+	new:	If set, new pointers will be alocated in dp.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	nv_dereference
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2002
+	

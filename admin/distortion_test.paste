@@ -1,0 +1,41 @@
+;--------------------
+; uniform test grid
+;--------------------
+p=fix(findgen(100)/10)
+q=findgen(100) MOD 10
+plots, p, q, psym=1
+
+;-----------------------------------
+; create linear distortion matrices
+;-----------------------------------
+oaxis=[5,3]
+scale=[0.5,0.7]
+XX=[[oaxis(0), 0],$
+    [scale(0), 0]]
+YY=[[oaxis(1), 0],$
+    [scale(1), 0]]
+
+;--------------------------------
+; apply the distortion matrices
+;--------------------------------
+cam_apply_distortion, p, q, XX, YY, x, y
+plots, x, y, psym=1, col=255
+
+
+;--------------------------------------
+; create nonlinear distortion matrices
+;--------------------------------------
+oaxis=[0,0]
+scale=[0.5,0.7]
+XX=[[oaxis(0), 0, -0.01],$
+    [scale(0), 0,  0.01],$
+    [0,        0,    0]]
+YY=[[oaxis(1), 0, 0],$
+    [scale(1), 0, 0],$
+    [0,        0, 0]]
+
+;--------------------------------
+; apply the distortion matrices
+;--------------------------------
+cam_apply_distortion, p, q, XX, YY, x, y
+plots, x, y, psym=1, col=255

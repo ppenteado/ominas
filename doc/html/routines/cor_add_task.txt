@@ -1,0 +1,41 @@
+COR_ADD_TASK
+
+
+ PURPOSE:
+	Adds a task to the descriptor task list.
+
+
+ CATEGORY:
+	NV/LIB/COR
+
+
+ CALLING SEQUENCE:
+	cor_add_task, crx, task
+
+
+ ARGUMENTS:
+  INPUT:
+	crx:	 Any subclass of CORE.  Only one descriptor may be provided.
+
+	task:	 String giving the name of a program that modified the 
+		 descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

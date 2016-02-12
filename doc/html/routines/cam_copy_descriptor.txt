@@ -1,0 +1,42 @@
+CAM_COPY_DESCRIPTOR
+
+
+ PURPOSE:
+	Copies all fields from the source camera descriptors into the
+       destination camera descriptors.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_copy_descriptor, cd_dst, cd_src
+
+
+ ARGUMENTS:
+  INPUT:
+	cd_dst:	        Array (nt) of CAMERA descriptors to copy to.
+
+	cd_src:	        Array (nt) of CAMERA descriptors to copy from.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

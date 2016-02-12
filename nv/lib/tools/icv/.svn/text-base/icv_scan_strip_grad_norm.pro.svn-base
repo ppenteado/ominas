@@ -1,0 +1,12 @@
+;=============================================================================
+; icv_scan_strip_grad_norm
+;
+;=============================================================================
+function icv_scan_strip_grad_norm, strip, model, szero, mzero, arg=inner, $
+        cc=cc, sigma=sigma
+
+ return, icv_scan_strip_grad(/norm, strip, model, szero, mzero, arg=inner, $
+        cc=cc, sigma=sigma)
+
+end
+;=============================================================================

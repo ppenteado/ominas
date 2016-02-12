@@ -1,0 +1,17 @@
+;===========================================================================
+; cam_nfilters
+;
+;
+;===========================================================================
+function cam_nfilters
+@nv_lib.include
+
+ nfilt_string = getenv('CAM_NFILTERS')
+ if(keyword_set(nfilt_string)) then nfilt=strtrim(nfilt_string, 2) else nfilt=4
+
+ return, nfilt
+end
+;===========================================================================
+
+
+

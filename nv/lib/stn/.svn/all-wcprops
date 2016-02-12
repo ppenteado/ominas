@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn
+END
+stn_clone_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/stn_clone_descriptor.pro
+END
+stn_set_primary.pro
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/stn_set_primary.pro
+END
+_stn_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/_stn_evolve.pro
+END
+stn_evolve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/stn_evolve.pro
+END
+stn_primary.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/stn_primary.pro
+END
+station_descriptor__define.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/station_descriptor__define.pro
+END
+stn_init_descriptors.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/stn_init_descriptors.pro
+END
+stn_copy_descriptor.pro
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/stn_copy_descriptor.pro
+END
+stn_replicate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/stn_replicate.pro
+END
+stn__keywords.include
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/minas/!svn/ver/2/trunk/nv/lib/stn/stn__keywords.include
+END

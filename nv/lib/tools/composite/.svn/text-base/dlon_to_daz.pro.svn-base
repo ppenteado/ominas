@@ -1,0 +1,22 @@
+;===========================================================================
+; dlon_to_daz
+;
+;  computes azimuths relative to given observer descriptor.
+;
+;
+;===========================================================================
+function dlon_to_daz, dlon, dkx, od
+
+ n = n_elements(dlon)
+
+ vref_inertial = get_disk_ref(dkx, od)
+ vref_disk = dsk_body_to_disk(dkx, $
+               bod_inertial_to_body(dkx, vref_inertial))
+
+ dlon_ref = vref_disk[*,1]
+
+ daz = dlon - make_array(n, val=dlon_ref[0])
+
+ return, daz
+end
+;===========================================================================

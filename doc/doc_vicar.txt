@@ -1,0 +1,660 @@
+									12/05/15
+VICAR Program Reference
+=======================
+
+ Summary
+ -------
+  - READ_VICAR
+	Reads a vicar data file.
+
+  - READ_VICAR_LABEL
+	Reads the label of a vicar data file.
+
+  - STR_SEP
+    This routine cuts a string into pieces which are separated by the 
+    separator string.
+
+  - VICGETPAR
+	Reads the value of a VICAR label keyword.
+
+  - VICSETPAR
+	Add, delete, or change a keyword/value pair in a VICAR label.
+
+  - WRITE_VICAR
+	Writes a vicar data file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+READ_VICAR
+----------
+
+
+ PURPOSE:
+	Reads a vicar data file.
+
+
+ CATEGORY:
+	UTIL/VIC
+
+
+ CALLING SEQUENCE:
+	data = read_vicar(filename, label)
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	String giving the name of the file to be read.
+
+  OUTPUT:
+	label:		Named variable in which the vicar label will be
+			returned.
+
+
+ KEYWORDS:
+  INPUT:
+	n_l:	If set, this will override the number of lines given by the 
+		'NL' field of the label.	
+
+	n_s:	If set, this will override the number of samples given by the 
+		'NS' field of the label.
+
+	n_b:	If set, this will override the number of bands given by the 
+		'NB' field of the label.
+
+	nlb:	If set, this will override the number of binary header records
+		given by the 'NLB' field of the label.
+
+	nbb:	If set, this will override the number of binary prefix bytes
+		given by the 'NBB' field of the label.
+
+	silent:	If set, no messages are printed.
+
+	flip:	If set, the data array will be subjected to a rotate(data, 7),
+		i.e., if its an image, it will be flipped vertically.
+
+	default_format:	Data format to use if not given in the label.
+			choices are 'BYTE', 'HALF', 'FULL", 'REAL', and
+			'DOUB'.  default is 'BYTE'.
+
+       bpa:    Binary Prefix Array.  The caller must ensure that this array
+		has appropriate dimensions.
+
+	bha:	Binary Header Array.  The caller must ensure that this array
+		has appropriate dimensions.
+
+  OUTPUT:
+	status:	If no errors occur, status will be zero, otherwise
+		it will be a string giving an error message.
+
+
+ RETURN:
+	The data array read from the file.
+
+
+ RESTRICTIONS:
+	This program only works with band-sequential data.  If EOL present,
+	the EOL variable is returned as 0, the second LBLSIZE is erased
+	and the first LBLSIZE is adjusted to appear as if the label was
+	not split in two.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	write_vicar
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/1995
+                       Dyer Lytle, 8/1999
+			Vance Haemmerle, 9/1999
+
+       EOL support:    Vance Haemmerle, 6/2000
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+READ_VICAR_LABEL
+----------------
+
+
+ PURPOSE:
+	Reads the label of a vicar data file.
+
+
+ CATEGORY:
+	UTIL/VIC
+
+
+ CALLING SEQUENCE:
+	label = read_vicar_label(filename)
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	String giving the name of the file to be read.
+
+  OUTPUT:
+     NONE
+
+
+ KEYWORDS:
+  INPUT:
+	n_l:	If set, this will override the number of lines given by the 
+		'NL' field of the label.	
+
+	n_s:	If set, this will override the number of samples given by the 
+		'NS' field of the label.
+
+	n_b:	If set, this will override the number of bands given by the 
+		'NB' field of the label.
+
+	nlb:	If set, this will override the number of binary header records
+		given by the 'NLB' field of the label.
+
+	nbb:	If set, this will override the number of binary prefix bytes
+		given by the 'NBB' field of the label.
+
+	silent:	If set, no messages are printed.
+
+	default_format:	Data format to use if not given in the label.
+			choices are 'BYTE', 'HALF', 'FULL", 'REAL', and
+			'DOUB'.  default is 'BYTE'.
+
+       bpa:    Must be set to 1 for Binary Prefix Array to be returned.
+
+	bha:	Must be set to 1 for Binary Header Array to be returned.
+
+  OUTPUT:
+       bpa:    Binary Prefix Array
+
+	bha:	Binary Header Array
+
+
+ RETURN:
+	The label read from the file.
+
+
+ RESTRICTIONS:
+	This program only works with band-sequential data.  If EOL present,
+	the EOL variable is returned as 0, the second LBLSIZE is erased
+	and the first LBLSIZE is adjusted to appear as if the label was
+	not split in two.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/1995
+                       Dyer Lytle, 8/1999
+			Vance Haemmerle, 9/1999
+       EOL support:    Vance Haemmerle, 6/2000
+          Modified:    Tiscareno, 8/2000 (from read_vicar)
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STR_SEP
+-------
+
+ PURPOSE:
+    This routine cuts a string into pieces which are separated by the 
+    separator string.
+ CATEGORY:
+    String processing.
+ CALLING SEQUENCE:
+    arr = STR_SEP(str, separator)
+
+ INPUTS:
+    str - The string to be separated.
+    separator - The separator.
+
+ KEYWORDS:
+    ESC = escape character.  Only valid if separator is a single character.
+		Characters following the escape character are treated
+		literally and not interpreted as separators.
+		For example, if the separator is a comma,
+		and the escape character is a backslash, the character
+		sequence 'a\,b' is a single field containing the characters
+		'a,b'.
+    REMOVE_ALL = if set, remove all blanks from fields.
+    TRIM = if set, remove only leading and trailing blanks from fields.
+
+ OUTPUT: 
+    An array of strings as function value.
+
+ COMMON BLOCKS:
+    None
+
+ SIDE EFFECTS:
+    No known side effects.
+
+ RESTRICTIONS:
+    None.
+
+ EXAMPLE:
+    array = STR_SEP ("ulib.usca.test", ".")
+
+ MODIFICATION HISTORY:
+	July 1992, AH,	CreaSo		Created.
+	December, 1994, DMS, RSI	Added TRIM and REMOVE_ALL.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+VICGETPAR
+---------
+
+
+ PURPOSE:
+	Reads the value of a VICAR label keyword.
+
+
+ CATEGORY:
+	UTIL/VIC
+
+
+ CALLING SEQUENCE:
+	value = vicgetpar(label, keyword)
+
+
+ ARGUMENTS:
+  INPUT:
+	label:		String array giving the VICAR label.
+
+	keyword:	String giving the keyword whose value is to be obtained.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	string:		If set, the value will be returned as the exact string
+			read from the label instead of converting it based
+			quotes.
+
+  OUTPUT:
+	pos:		Position of keyword in label.
+
+	status:		If no errors occur, status will be zero, otherwise
+			it will be a string giving an error message.  If the
+			keyword is not found, status will contain a message.
+
+
+ RETURN:
+	The data array read from the file.
+
+
+ STATUS:
+	Complete
+
+
+ RESTRICTIONS:
+	Will not work for keyword values in which strings contain commas as
+	it is used as the delimiter.
+	
+
+ SEE ALSO:
+	vicsetpar
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/1996
+	Modified by:	Haemmerle, 10/2000  (add arrays)
+	
+
+
+
+
+
+
+VICSETPAR
+---------
+
+
+ PURPOSE:
+	Add, delete, or change a keyword/value pair in a VICAR label.
+
+
+ CATEGORY:
+	UTIL/VIC
+
+
+ CALLING SEQUENCE:
+	vicsetpar, label, keyword, value
+
+
+ ARGUMENTS:
+  INPUT:
+	label:		String array giving the VICAR label.
+
+	keyword:	String giving the keyword whose value is to be set.
+			If the keyword is not found, it will be added.
+
+	value:		Value for the given keyword.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	delete:		If set, the keyword/value pair will be deleted from the
+			label, if found.
+
+	prepend:	If set, and if the keyword doesn't already exist, it
+			will be prepended instead of appended.
+
+	pad:		If set, spaces are added to the end of the keyword/value
+			pair to attain this length, not including the two
+			spaces before the following keyword.
+
+  OUTPUT:
+	pos:		Position at which the keyword was placed in the label.
+
+	status:		If no errors occur, status will be zero, otherwise
+			it will be a string giving an error message.
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	vicgetpar
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/1996
+	Spitale 2/2004:	Added /prepend
+	Spitale 6/2004:	Added pad keyword
+	
+
+
+
+WRITE_VICAR
+-----------
+
+
+ PURPOSE:
+	Writes a vicar data file.
+
+
+ CATEGORY:
+	UTIL/VIC
+
+
+ CALLING SEQUENCE:
+	write_vicar, filename, data, label
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	String giving the name of the file to be written.
+
+	data:		Data to be written.
+
+	label:		String giving the vicar label.  System items
+			will be added or changed as appropriate.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	silent:	If set, no messages are printed.
+
+	swap:	If set, the data array will be byte-swapped.
+
+	flip:	If set, the data array will be subjected to a rotate(data, 7),
+		i.e., if its an image, it will be flipped vertically.
+
+       bpa:    Binary Prefix Array.
+
+	bha:	Binary Header Array.
+
+  OUTPUT:
+	status:	If no errors occur, status will be zero, otherwise
+		it will be a string giving an error message.
+
+
+ RETURN: NONE
+
+
+ RESTRICTIONS:
+	This program only writes band-sequential data with no binary header 
+	or prefixes.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	read_vicar
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/1996
+	Spitale 2/2004:	fixed bug where LBLSIZE wasn't always placed at the
+                       start of the header.
+	Spitale 6/2004:	added bpa and bha output.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

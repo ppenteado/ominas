@@ -1,0 +1,61 @@
+WRITE_TDL
+
+
+ PURPOSE:
+	Writes a tab-delimited (tdl) text data file.  This is essentially
+	a VICAR file, except that the data is written as tab-delimited
+	text, suitable for reading into excel.  The label is written
+	as the first line of the file.  You may need to use '.csv' file
+	extensio for Excel to recognize the format.  
+
+
+ CATEGORY:
+	UTIL/TDL
+
+
+ CALLING SEQUENCE:
+	write_tdl, filename, data, label
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	String giving the name of the file to be written.
+
+	data:		Data to be written.
+
+	label:		String giving the tdl label.  System items
+			will be added or changed as appropriate.  This is
+			essentially a VICAR label, adabpted for this purpose.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	silent:	If set, no messages are printed.
+
+
+  OUTPUT:
+	status:	If no errors occur, status will be zero, otherwise
+		it will be a string giving an error message.
+
+
+ RETURN: NONE
+
+
+ RESTRICTIONS:
+ 	This routine relies on the presence of the routines vigetpar 
+	and vicsetpar.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	read_tdl
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/2006
+

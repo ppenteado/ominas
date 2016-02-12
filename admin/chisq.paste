@@ -1,0 +1,38 @@
+ file = '../demo/data/n1350122987.2'
+ dd=nv_read(file, im, label, /silent)
+
+ ctmod, top=top
+ tvim, im, zoom=0.45, /order, /new
+
+ cd = pg_get_cameras(dd)
+ pd = pg_get_planets(dd, od=cd, plt_name=['JUPITER'])
+ rd = pg_get_rings(dd, pd=pd, od=cd)
+ sund = pg_get_stars(dd, od=cd, str_name='SUN')
+
+ gd={cd:cd, gbx:pd, dkx:rd, sund:sund}
+
+ limb_ps = pg_limb(gd=gd) && pg_hide, limb_ps, /globe, gd=gd, od=sund
+ center_ps = pg_center(gd=gd, bx=pd)
+ pg_draw, limb_ps
+
+
+ nlimb = n_elements(limb_ps)
+ cvscan_ps = pg_cvscan(dd, [limb_ps], edge=30, width=80, $
+   model=[make_array(nlimb,val=ptr_new(edge_model_nav_limb(zero=lzero)))], $
+   mzero=[make_array(nlimb,val=lzero)] )
+ pg_draw, cvscan_ps
+
+ cvscan_cf = pg_cvscan_coeff(cvscan_ps, axis=center_ps[0], fix=2)
+ dxy = pg_fit([cvscan_cf], dtheta=dtheta)
+ cvchisq = pg_cvchisq(dxy, dtheta, cvscan_ps, axis=center_ps[0])
+ covar = pg_covariance([cvscan_cf])
+ pg_repoint, dxy, dtheta, axis=center_ps[0], gd=gd
+
+ limb_ps = pg_limb(gd=gd) && pg_hide, limb_ps, /globe, gd=gd, od=sund
+ center_ps = pg_center(gd=gd, bx=pd)
+; tvim, im
+ pg_draw, limb_ps
+
+
+
+

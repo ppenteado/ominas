@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic
+END
+lic_validate.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/lic_validate.pro
+END
+shape1.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/shape1.pro
+END
+s_tree.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/s_tree.pro
+END
+it_solve.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/it_solve.pro
+END
+optimize_2d.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/optimize_2d.pro
+END
+lic_validate_pwd.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/lic_validate_pwd.pro
+END
+doc_lic.pro
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/doc_lic.pro
+END
+tvhash.pro
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/tvhash.pro
+END
+lic_probe.pro
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/lic_probe.pro
+END
+lic_read.pro
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/lic_read.pro
+END
+get_tokens.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/get_tokens.pro
+END
+lic_gethost.pro
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/lic_gethost.pro
+END
+lic_filename.pro
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/lic_filename.pro
+END
+maxz.pro
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/maxz.pro
+END
+lic_tamper.pro
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/minas/!svn/ver/2/trunk/nv/sys/lic/lic_tamper.pro
+END

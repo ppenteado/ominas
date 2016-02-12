@@ -1,0 +1,15 @@
+GRIM_MENU_VIEW_ZOOM_1_6_EVENT
+
+
+ PURPOSE:
+	Obtains the necessary descriptors through the translators and computes
+	ring outlines using pg_disk. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

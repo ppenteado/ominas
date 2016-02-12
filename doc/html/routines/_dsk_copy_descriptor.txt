@@ -1,0 +1,36 @@
+_DSK_COPY_DESCRIPTOR
+
+
+ PURPOSE:
+	Copies all fields from one disk descrptor into another.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	dsk_copy_descriptor, dkd_dst, dkd_src
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd_dst:	 Descriptor of class DISK to copy to.
+
+	dkd_src:	 Descriptor of class DISK to copy from.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

@@ -1,0 +1,70 @@
+;===========================================================================
+; imst_fn
+;
+;===========================================================================
+function imst_fn, x, data
+
+ X = data[0,*]
+ e = data[1,*]
+
+ return, 2d*atan(tan(!dpi/4d + X/2d) * $
+                ((1d + e*sin(x))/(1d - e*sin(x)))^(e/2d) ) - !dpi/2d
+end
+;===========================================================================
+
+
+;===========================================================================
+; map_image_to_map_stereographic
+;
+; Inverse stereographic projection for the oblate spheroid.  See [1], p.161.
+;
+; References:
+;	[1] Snyder (1987)
+;	    Map projections -- A working manual
+;	    USGS professional paper 1395
+;
+;===========================================================================
+function map_image_to_map_stereographic, mdp, _image_pts, valid=valid
+ md = nv_dereference(mdp)
+
+ ecc = (map_radii_to_ecc(md.radii))[0]
+
+ nt = n_elements(md)
+ sv = size(_image_pts)
+ nv = 1
+ if(sv[0] GT 1) then nv = sv[2]
+
+ result = dblarr(2,nv,nt, /nozero)
+
+ image_pts = dblarr(2,nv,nt, /nozero)
+ image_pts[0,*,*] = _image_pts[0,*,*] - md.origin[0]
+ image_pts[1,*,*] = _image_pts[1,*,*] - md.origin[1]
+
+
+ a = 0.25*min(md.size)*md.scale 
+
+ m1 = cos(md.center[0])/sqrt(1d - ecc^2*sin(md.center[0])^2)
+ rho = sqrt(image_pts[0,*,*]^2 + image_pts[1,*,*]^2)
+ X1 = 2d*atan(tan(!dpi/4d + md.center[0]/2d) * $
+               ((1d - ecc*sin(md.center[0]))/(1d + $
+                      ecc*sin(md.center[0])))^(ecc/2d)) - !dpi/2d
+ ce = 2d*atan(rho*cos(X1), 2d*a*md.scale*m1)
+ X = asin(cos(ce)*sin(X1) + image_pts[1,*,*]*sin(ce)*cos(X1)/rho) 
+
+ data = dblarr(2,nv)
+ data[0,*] = X
+ data[1,*] = ecc
+ result[0,*,*] = X
+ result[0,*,*] = trans_solve('imst_fn', result[0,*,*], data) / md.units[0]
+
+ result[1,*,*] = md.center[1] + atan(image_pts[0,*,*]*sin(ce), $
+         rho*cos(X1)*cos(ce) - image_pts[1,*,*]*sin(X1)*sin(ce)) / md.units[1]
+
+ valid = lindgen(nv*nt)
+
+ return, result
+end
+;===========================================================================
+
+
+

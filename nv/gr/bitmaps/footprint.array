@@ -1,0 +1,20 @@
+							;~/idl_pro/minas/nv/gr/bitmaps/footprint.array bitmap
+							;definition
+~/idl_pro/minas/nv/gr/bitmaps/footprint.array = 	[				$
+		[255B, 255B],			$
+		[127B, 255B],			$
+		[127B, 255B],			$
+		[071B, 241B],			$
+		[119B, 247B],			$
+		[119B, 247B],			$
+		[255B, 255B],			$
+		[193B, 193B],			$
+		[255B, 255B],			$
+		[119B, 247B],			$
+		[119B, 247B],			$
+		[071B, 241B],			$
+		[127B, 255B],			$
+		[127B, 255B],			$
+		[255B, 255B],			$
+		[255B, 255B]			$
+		]

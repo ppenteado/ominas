@@ -1,0 +1,41 @@
+STN_CLONE_DESCRIPTOR
+
+
+ PURPOSE:
+       Allocates new station descriptors as copies of the given
+       (existing) station descriptors.
+
+
+ CATEGORY:
+	NV/LIB/STN
+
+
+ CALLING SEQUENCE:
+	new_stx = stn_clone_descriptor(stx)
+
+
+ ARGUMENTS:
+  INPUT:
+	stx:	 Array (nt) of any subclass of STATION.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+       Newly created station descriptors with all fields identical to
+       the input descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

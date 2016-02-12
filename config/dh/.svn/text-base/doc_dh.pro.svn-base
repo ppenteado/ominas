@@ -1,0 +1,6 @@
+extract_doc, /page, $
+    title="DH Program Reference", $
+    "/home/joes/idl_pro/minas/config/dh/*.pro", $
+    "/home/joes/idl_pro/minas/config/dh/doc_dh.txt"
+@doc_util
+@doc_wrappers

@@ -1,0 +1,76 @@
+PG_SHADOW_DISK
+
+
+ PURPOSE:
+	Computes image coordinates of given inertial vectors projected onto
+	surface of the given disk with respect to the given observer.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_shadow_disk(object_ps, cd=cd, ods=ods, dkx=dkx)
+
+
+ ARGUMENTS:
+  INPUT:
+	object_ps:	Array of pg_points_struct containing inertial vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	Array (n_timesteps) of camera descriptors.
+
+	dkx:	Array (n_disks, n_timesteps) of descriptors of objects 
+		which must be a subclass of DISK.
+
+	od:	Array (n_timesteps) of descriptors of objects 
+		which must be a subclass of BODY.  These objects are used
+		as the source from which points are projected.  If no observer
+		descriptor is given, then the sun descriptor in gd is used.
+		Only one observer is allowed.
+
+	gd:	Generic descriptor.  If given, the cd and gbx inputs 
+		are taken from the cd and gbx fields of this structure
+		instead of from those keywords.
+
+	reveal:	 Normally, disks whose opaque flag is set are ignored.  
+		 /reveal suppresses this behavior.
+
+	fov:	 If set shadow points are cropped to within this many camera
+		 fields of view.
+
+	cull:	 If set, points structures excluded by the fov keyword
+		 are not returned.  Normally, empty points structures
+		 are returned as placeholders.
+
+   backshadow:	 If set, only backshadows (shadows cast between the object and
+ 		 observer) are returned.
+
+	both:	 If set, both shadows and backshadows are returned.
+
+	all:	 If set, all points are returned, even if invalid.
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+	Array (n_disks,n_objects) of pg_points_struct containing image 
+	points and the corresponding inertial vectors.
+
+
+ STATUS:
+	
+
+
+ SEE ALSO:
+	pg_shadow, pg_shadow_globe, pg_shadow_points
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/2002
+	

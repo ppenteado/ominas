@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/minas/!svn/ver/2/trunk/config/spice/cas
+END
+cas_from_minas.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_from_minas.pro
+END
+cas_spice_sck_detect.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_sck_detect.pro
+END
+cas_spice_lsk_detect.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_lsk_detect.pro
+END
+doc_cas.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/doc_cas.pro
+END
+cas_cmat_to_orient.pro
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_cmat_to_orient.pro
+END
+cas_orient_to_cmat.pro
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_orient_to_cmat.pro
+END
+cas_spice_spk_detect.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_spk_detect.pro
+END
+cas_spice_ck_detect.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_ck_detect.pro
+END
+cas_to_minas.pro
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_to_minas.pro
+END
+cas_format_comment.pro
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_format_comment.pro
+END
+cas_spice_fk_detect.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_fk_detect.pro
+END
+cas_spice_ik_detect.pro
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_ik_detect.pro
+END
+cas_spice_read_labels.pro
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_read_labels.pro
+END
+cas_spice_time.pro
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_time.pro
+END
+cas_spice_input.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_input.pro
+END
+cas_spice_output.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_output.pro
+END
+cas_compute_psf.pro
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_compute_psf.pro
+END
+cas_filter.pro
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_filter.pro
+END
+cas_spice_sct2et.pro
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_sct2et.pro
+END
+cas_spice_pck_detect.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_spice_pck_detect.pro
+END
+cas_psf.pro
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/minas/!svn/ver/2/trunk/config/spice/cas/cas_psf.pro
+END

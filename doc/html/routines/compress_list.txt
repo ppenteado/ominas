@@ -1,0 +1,36 @@
+COMPRESS_LIST
+
+
+ PURPOSE:
+       To compress a list to n elements, removing elements with a value
+       of -1.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = compress_list(list, n)
+
+
+ ARGUMENTS:
+  INPUT:
+       list:   List to compress.
+
+          n:   Size of the compressed list.
+
+  OUTPUT:
+       NONE
+
+ RETURN:
+       The resulting list contains n elements, the first of which are those
+       elements of list which are not -1.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

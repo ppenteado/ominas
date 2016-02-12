@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="STR Program Reference", $
+    "/home/joes/idl_pro/minas/nv/lib/str/*.pro", $
+    "/home/joes/idl_pro/minas/nv/lib/str/doc_str.txt"

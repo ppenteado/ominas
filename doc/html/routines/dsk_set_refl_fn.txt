@@ -1,0 +1,40 @@
+DSK_SET_REFL_FN
+
+
+ PURPOSE:
+       Replaces the reflection function for each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/dsk
+
+
+ CALLING SEQUENCE:
+	dsk_set_refl_fn, dkx, refl_fn
+
+
+ ARGUMENTS:
+  INPUT: 
+	dkx:	 Array (nt) of any subclass of DISK descriptors.
+
+	refl_fn: Array (nt) of new reflection functions.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

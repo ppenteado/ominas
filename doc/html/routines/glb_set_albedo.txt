@@ -1,0 +1,40 @@
+GLB_SET_ALBEDO
+
+
+ PURPOSE:
+       Replaces the bond albedo for each given globe descriptor.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	glb_set_albedo, gbx, albedo
+
+
+ ARGUMENTS:
+  INPUT: 
+	gbx:	 Array (nt) of any subclass of GLOBE descriptors.
+
+	albedo:	 Array (nt) of new bond albedos.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

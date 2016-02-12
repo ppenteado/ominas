@@ -1,0 +1,23 @@
+;===========================================================================
+; map_map_to_image
+;
+;===========================================================================
+function map_map_to_image, mdp, _map_pts, valid=valid
+ md = nv_dereference(mdp)
+
+ pi2 = !dpi/2d
+ 
+ map_pts = _map_pts
+ map_pts[0,*,*] = map_pts[0,*,*] - md.offset[0]
+ map_pts[1,*,*] = map_pts[1,*,*] - md.offset[1]
+
+ np = n_elements(map_pts)/2
+
+ fn = map_fn_map_to_image(mdp)
+
+ image_pts = call_function(fn, mdp, map_pts, valid=valid)
+ image_pts = rotate_coord(image_pts, md.rotate, size=md.size)
+
+ return, image_pts
+end
+;===========================================================================

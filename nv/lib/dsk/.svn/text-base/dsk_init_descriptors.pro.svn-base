@@ -1,0 +1,40 @@
+;===========================================================================
+; dsk_init_descriptors
+;
+;
+;===========================================================================
+function dsk_init_descriptors, n, crd=crd, bd=bd, dkd=dkd, $
+@dsk__keywords.include
+end_keywords
+@nv_lib.include
+
+ if(NOT keyword_set(dkd)) then dkd=replicate({disk_descriptor}, n)
+ dkd.class=decrapify(make_array(n, val='DISK'))
+
+ if(keyword_set(sma)) then dkd.sma[0:(size(sma))[1]-1,*,*] = sma
+ if(keyword_set(ecc)) then dkd.ecc[0:(size(ecc))[1]-1,*,*] = ecc
+
+ if(keyword_set(nm)) then dkd.nm = nm
+ if(keyword_set(m)) then dkd.m = m
+ if(keyword_set(em)) then dkd.em = em
+ if(keyword_set(lpm)) then dkd.lpm = lpm
+ if(keyword_set(dlpmdt)) then dkd.dlpmdt = dlpmdt
+
+ if(keyword_set(scale)) then dkd.scale = scale $
+ else dkd.scale = [0.,1.]#make_array(n, val=1d)
+
+ if(keyword_set(bd)) then dkd.bd = bd $
+ else dkd.bd=bod_init_descriptors(n, crd=crd, $
+@bod__keywords.include
+end_keywords)
+
+ dkdp = ptrarr(n)
+ nv_rereference, dkdp, dkd
+
+
+ return, dkdp
+end
+;===========================================================================
+
+
+

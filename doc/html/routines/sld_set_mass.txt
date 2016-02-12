@@ -1,0 +1,40 @@
+SLD_SET_MASS
+
+
+ PURPOSE:
+       Replaces the mass for each given solid descriptor.
+
+
+ CATEGORY:
+	NV/LIB/SLD
+
+
+ CALLING SEQUENCE:
+	sld_set_mass, slx, mass
+
+
+ ARGUMENTS:
+  INPUT: 
+	slx:	 Array (nt) of any subclass of SOLID descriptors.
+
+	j:	 Array (nj,nt) of new masses.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2015
+	

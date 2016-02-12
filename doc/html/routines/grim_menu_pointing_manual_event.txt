@@ -1,0 +1,15 @@
+GRIM_MENU_POINTING_MANUAL_EVENT
+
+
+ PURPOSE:
+	Writes tie points for the current plane to a file called
+	[image name].tie_ps 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2004
+	

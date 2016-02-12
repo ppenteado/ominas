@@ -1,0 +1,28 @@
+;===========================================================================
+; map_image_to_map
+;
+; If valid not set on return, then all points are valid.
+; 
+;===========================================================================
+function map_image_to_map, mdp, _image_pts, valid=valid
+@nv_lib.include
+ md = nv_dereference(mdp)
+
+ image_pts = rotate_coord(_image_pts, md.rotate, /inverse, size=md.size)
+ np = n_elements(image_pts)/2
+
+ fn = map_fn_image_to_map(mdp)
+
+ map_pts = call_function(fn, mdp, image_pts, valid=valid)
+ if(NOT keyword_set(map_pts)) then $
+  begin
+   valid = [-1]
+   return, 0
+  end
+
+ map_pts[0,*,*] = map_pts[0,*,*] + md.offset[0]
+ map_pts[1,*,*] = map_pts[1,*,*] + md.offset[1]
+
+ return, map_pts
+end
+;===========================================================================

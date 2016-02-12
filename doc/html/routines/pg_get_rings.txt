@@ -1,0 +1,90 @@
+PG_GET_RINGS
+
+
+ PURPOSE:
+	Obtains ring descriptors for the given data descriptor.  
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_get_rings(dd, od=od)
+	result = pg_get_rings(dd, od=od, trs)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	data descriptor
+
+	trs:	String containing keywords and values to be passed directly
+		to the translators as if they appeared as arguments in the
+		translators table.  These arguments are passed to every
+		translator called, so the user should be aware of possible
+		conflicts.  Keywords passed using this mechanism take 
+		precedence over keywords appearing in the translators table.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	rd:		Input ring descriptors.  New descriptors will
+			be appended to this list.  This concatenation occurs
+			before sorting such that input descriptors have
+			higher priority than new descriptors (see /no_sort).
+
+	pd:		Planet descriptors for primary objects.  
+
+	od:		Observer descriptors.  
+
+	gd:		Generic descriptors.  Can be used in place of od.
+
+	no_sort:	Unless this keyword is set, only the first descriptor 
+			encountered with a given name is returned.  This allows
+			translators to be arranged in the translators table such
+			by order of priority.
+
+	override:	Create a data descriptor and initilaize with the 
+			given values.  Translators will not be called.
+
+	rng_*:		All ring override keywords are accepted.  See
+			ring_keywords.include.
+
+			If rng_name is specified, then only descriptors with
+			those names are returned.
+
+	verbatim:	If set, the descriptors requested using rng_name
+			are returned in the order requested.  Otherwise, the 
+			order is determined by the translators.
+
+	tr_override:	String giving a comma-separated list of translators
+			to use instead of those in the translators table.  If
+			this keyword is specified, no translators from the 
+			table are called, but the translators keywords
+			from the table are still used.   
+
+
+ RETURN:
+	Ring descriptors obtained from the translators, 0 if an error occurs.
+
+
+ PROCEDURE:
+	If /override, then a ring descriptor is created and initialized
+	using the specified values.  Otherwise, the descriptor is obtained
+	through the translators.  Note that if /override is not used,
+	values (except rng_name) can still be overridden by specifying 
+	them as keyword parameters.  If rng_name is specified, then
+	only descriptors corresponding to those names will be returned.
+	
+
+
+ SEE ALSO:
+	xx, xx, xx
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1998
+	Modified:	Spitale, 8/2001
+	

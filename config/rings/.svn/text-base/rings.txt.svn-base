@@ -1,0 +1,25 @@
+# Ring database -- all angles in degrees
+#
+ primary	name			sma		ecc	inc	lp	lan	dlpdt	dlandt	epoch
+#--------------------------------------------------------------------------------------------------------------
+ JUPITER	MAIN_RING_SYSTEM_INNER	123740000	0	0	0	0	0	0	--
+		MAIN_RING_SYSTEM_OUTER	130215000	0	0	0	0	0	0	--
+
+ SATURN		A_RING_INNER		122053000	0	0	0	0	0	0	--
+		A_RING_OUTER		136800000	0	0	0	0	0	0	--
+		B_RING_INNER		91983000	0	0	0	0	0	0	--
+		B_RING_OUTER		117516000	0	0	0	0	0	0	--
+		C_RING_INNER		74500000	0	0	0	0	0	0	--
+		C_RING_OUTER		91983000	0	0	0	0	0	0	--
+
+ URANUS		MAIN_RING_SYSTEM_INNER	41837000	0	0	0	0	0	0	--
+		MAIN_RING_SYSTEM_OUTER	51149000	0	0	0	0	0	0	--
+
+ NEPTUNE	ADAMS_INNER		62905000	0	0	0	0	0	0	--
+		ADAMS_OUTER		62955000	0	0	0	0	0	0	--
+		LE_VERRIER_INNER	53175000	0	0	0	0	0	0	--
+		LE_VERRIER_OUTER	53225000	0	0	0	0	0	0	--
+		GALLE_INNER		41150000	0	0	0	0	0	0	--
+		GALLE_OUTER		42850000	0	0	0	0	0	0	--
+
+

@@ -1,0 +1,60 @@
+PG_DESPIKE
+
+
+ PURPOSE:
+	Removes previously-located spurious features like cosmic-ray hits.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_despike(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor containing the image to be despiked.
+
+	spike_ps:	pg_points_struct specifying the points to replace;
+			typically computed by pg_spikes.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	scale:		Typical size of features to be removed.  Default 
+			is 10.
+
+	n=n:		Number of timers to repeat the box filter.  Default
+			is 5.
+
+  OUTPUT:
+	image:		The corrected image.
+
+
+ RETURN:
+	Data descriptor containing the corrected image.  If /noclone
+	is not set, set input data descriptor is modified.
+
+
+ PROCEDURE:
+	pg_despike replaces the values of the desired pixels with those
+	computed by smoothing the input image using a box filter of size 
+	'scale' repeatedly, 'n' times.
+
+
+ STATUS:
+	Complete.
+
+
+ SEE ALSO:
+	pg_spikes
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2004
+	

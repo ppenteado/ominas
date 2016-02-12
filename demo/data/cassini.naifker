@@ -1,0 +1,61 @@
+\begindata
+PATH_VALUES = (
+	'/casper/naif/',
+	'/casper/kernels/spk/tour/axp/' ,
+	'/casper/kernels/spk/ephem/axp/',
+	'/casper/kernels/ck/axp/'
+	)
+
+PATH_SYMBOLS = (
+	'NAIFKER',
+	'TOUR',
+	'EPHEM',
+	'CK'
+	)
+
+KERNELS_TO_LOAD = (
+	'$NAIFKER/naif0007.tls',
+	'$NAIFKER/pck00007.tpc',
+	'$NAIFKER/cas00053.tsc',
+	'$NAIFKER/cas_iss_v07.ti',
+	'$NAIFKER/cas_v28.tf',
+	'$TOUR/990825A_SCEPH_EM52_JP0.bsp',
+	'$TOUR/000331R_SK_LP0_EP15.bsp',
+	'$TOUR/000331_SK_JM229_SP0.bsp',
+	'$TOUR/000609A_SK_JM207_JP0.bsp',
+	'$EPHEM/de405s.bsp',
+	'$EPHEM/jup171.bsp', 
+
+
+	'$CK/001206_001213ra.bc'
+
+#	'$CK/001103_001105ra.bc'
+#	'$CK/001105_001108ra.bc'
+#	'$CK/001108_001113rc.bc'
+#	'$CK/001113_001116ra.bc'
+	'$CK/001113_001118ra.bc'
+#	'$CK/001118_001123ra.bc'
+
+	'$CK/001011_001014ra.bc'
+	'$CK/001021_001024ra.bc'
+	'$CK/001026_001029ra.bc'
+
+	'$CK/001029_001031ra.bc'
+	'$CK/001229_010103ra.bc'
+	'$CK/001130_001206ra.bc'
+
+
+
+	'$CK/010109_010114ra.bc'
+	'$CK/010114_010121ra.bc'
+
+
+	)
+
+
+
+\begintext
+
+
+	'/home/joe/tmp/cas_v33.tf',
+	'/casper/casper_3.6/kernels/pck00006_casper.tpc',

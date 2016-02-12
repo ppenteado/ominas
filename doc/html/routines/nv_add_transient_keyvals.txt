@@ -1,0 +1,40 @@
+NV_ADD_TRANSIENT_KEYVALS
+
+
+ PURPOSE:
+	Records keyword/value pairs from a transient argument string.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_add_transient_keyvals, dd, trs
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor in which to record transient keyvals.
+
+	trs:	Transient argument string.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

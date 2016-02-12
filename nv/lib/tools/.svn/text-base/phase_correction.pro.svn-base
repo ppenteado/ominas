@@ -1,0 +1,53 @@
+;===========================================================================
+; phase_correction
+;
+;  Assuming body gbx is a sphere, this routine computes the correction
+;  in pixels x,y that you would need to apply to obtain its true image 
+;  center given a measurement of its center of light.
+;
+;===========================================================================
+function phase_correction, cd, gbx, sund
+
+ nv = n_elements(gbx)
+
+ ;--------------------------
+ ; phase angle
+ ;--------------------------
+ v = bod_pos(cd)
+ s = bod_pos(sund)
+ p = bod_pos(gbx)
+
+ vv = bod_inertial_to_body_pos(gbx, v)
+ ss = bod_inertial_to_body_pos(gbx, s) ## make_array(nv, val=1d)
+
+ phase = v_angle(vv,ss) 
+
+ ;--------------------------
+ ; body radius on image
+ ;--------------------------
+ R = total(glb_radii(gbx))/3d
+ Rpix = make_array(nv, val=R) / v_mag(vv) / (cam_scale(cd))[0,*]
+
+ ;--------------------------
+ ; correction in pixels
+ ;--------------------------
+ c = 4d/(3d*!dpi) * sin(phase)^2 / (1d + cos(phase)) * Rpix
+
+ ;--------------------------
+ ; rotate to get cx, cy
+ ;--------------------------
+ sp = bod_inertial_to_body(cd, p-s)
+ sp[*,1] = 0
+ sp = v_unit(sp)
+ xx = tr([1,0,0])
+ zz = tr([0,0,1])
+ cx = c*v_inner(sp,xx)
+ cy = c*v_inner(sp,zz)
+
+
+ return, [cx, cy]
+end
+;===========================================================================
+
+
+

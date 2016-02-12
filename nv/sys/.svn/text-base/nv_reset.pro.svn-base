@@ -1,0 +1,24 @@
+;===========================================================================
+; nv_reset.pro
+;
+;===========================================================================
+pro nv_reset
+@nv_block.common
+@nv.include
+
+ *nv_state.ftp_detectors_filenames_p = 0
+ *nv_state.ins_detectors_filenames_p = 0
+ *nv_state.translators_filenames_p = 0
+ *nv_state.transforms_filenames_p = 0
+ *nv_state.io_filenames_p = 0
+
+ *nv_state.ftp_table_p = 0
+ *nv_state.ins_table_p = 0
+ *nv_state.tr_table_p = 0
+ *nv_state.trf_table_p = 0
+ *nv_state.io_table_p = 0
+ 
+ nv_unload_data, /all
+
+end
+;===========================================================================

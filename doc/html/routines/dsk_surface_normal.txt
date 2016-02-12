@@ -1,0 +1,44 @@
+DSK_SURFACE_NORMAL
+
+
+ PURPOSE:
+	Computes the surface normals of a DISK object at the given 
+	body-frame positions.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	n = dsk_surface_normal(dkx, r)
+
+
+ ARGUMENTS:
+  INPUT: 
+	dkx:	Array (nt) of any subclass of DISK descriptors.
+
+	r:	Array (nv,3) of surface positions in the BODY frame.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	frame_bd:  Frame descriptor.
+
+  OUTPUT: NONE
+
+
+ RETURN: 
+	Array (nv, 3, nt) of surface unit normals in the BODY frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2015
+	

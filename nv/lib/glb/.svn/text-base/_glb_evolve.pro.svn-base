@@ -1,0 +1,20 @@
+;===========================================================================
+; _glb_evolve
+;
+;  Input  : array (nbd) of globe descriptor (structures)
+;  Output : array (nbd, ndt) of globe descriptor (structures)
+;
+;===========================================================================
+function _glb_evolve, gbds, dt, nodv=nodv
+@nv_lib.include
+
+ ndt = n_elements(dt)
+ ngbd = n_elements(gbds)
+ tgbds = gbds[gen3x(ngbd, ndt, 1)]
+
+ bdp = bod_evolve(gbds.bd, dt, nodv=nodv)
+ tgbds.bd = bdp
+
+ return, tgbds
+end
+;===========================================================================

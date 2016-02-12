@@ -1,0 +1,27 @@
+DELETE_FILE
+
+
+ PURPOSE:
+	Deletes the specified file.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	delete_file, fname 
+
+
+ ARGUMENTS:
+  INPUT:
+	fname:	Name of file to delete
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2002
+	

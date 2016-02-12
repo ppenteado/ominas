@@ -1,0 +1,28 @@
+;===========================================================================
+; plt_evolve
+;
+;  Input  : array (nbd) of planet descriptor (pointers)
+;  Output : array (nbd, ndt) of planet descriptor (pointers)
+;
+;===========================================================================
+function plt_evolve, pxp, dt, nodv=nodv
+@nv_lib.include
+ pdp = class_extract(pxp, 'PLANET')
+ pds = nv_dereference(pdp)
+
+ ndt = n_elements(dt)
+ npd = n_elements(pds)
+
+
+ tpds = _plt_evolve(pds, dt, nodv=nodv)
+
+
+ tpdps = ptrarr(npd, ndt)
+ nv_rereference, tpdps, tpds
+
+ return, tpdps
+end
+;===========================================================================
+
+
+

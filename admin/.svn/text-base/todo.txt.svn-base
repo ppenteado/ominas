@@ -1,0 +1,1105 @@
+grim
+ - close and reopening grim n a session causes trouble
+ - finish making cd time event work
+   - currently recomputes cd properly, but grim gets caught in a loop
+   - maybe a probelm with zeroing out the dependiencies in grim_descriptor_notify_handle
+     to force descriptors to be recomputed.
+ - transforms not called when maintain!=0.
+ - descriptors should be controlled and related directly to overlays
+   - sometimes need to have descriptors loaded for purposes other than overlay
+   - associate descriptor with each overlay
+     - that's already done through the dependencies
+   - when settings changed, don't unload descriptrs, just indicate that a new
+     should be loaded next time
+   - whenever an overlay is removed, check all loaded descriptors to see if
+     still needed
+ - pg_get_rings is too damned slow
+ - overlay settings
+   - 'All' applies the max, which can suck
+   - FOV < 0 could apply to current view
+ - note mars, uranus, neptune don't show up in kernels.
+
+
+fix wrap-around in the rest of the sector routines
+
+projections / mosaics
+ arrow keys in pg_drag
+ improve color table editor
+ grim mosaic needs options
+ need a way to save the offsets done in grim
+ correlate mosaic overlaps
+ skyplane coords?
+ image_median is extremely slow
+ pg_shift -- need to interpolate from original image instead of latest image.
+  -- add dd array to keep track of initial image if desired
+     -- option to nv_data (/intial) to return init data instead of current data
+     -- can save memory by implementing this on the dap: don't have to save a 
+        special array until the redo buffer extends far enough
+     -- for maintain > 0, don't need to keep track, just reload
+ look into using matrix_multiply etc.
+ plane mode right button -- select plane by overlay
+ consider all visible planes in activate mode
+ need pixmap that includes overlays 
+  -- use for erasing tiepoints
+ grim panning screws up in tiepoints.example
+  -- it gets confused by multiple grim windows.
+ pds file reader
+ "vicar2" file reader
+ pg_grid 
+  -- need to resolve longitude range issue - map_get_ranges
+     this may be affecting the sat positions in the ring mosaics
+ mercator not working -- jupiter.example
+ graphic longitudes
+ minas.org -- taken
+  openminas.org
+  ominas.org
+  miinas.org
+  minaas.org
+ revise composite calling interface using keywords for descriptor inputs
+ const/ should be moved to config somewhere
+ brim -- redo such that only required pixels are obtained from nv_data.
+ ring grids neglect ring ecc.
+ readout box mode -- readout all point objects inside box -- stars, planet centers
+ camera radec mapping instead of focal?
+  - radec system is already a surface system, associated with BODY.
+    - add to surface composite routines 
+ handle no-image case more cleanly.  Currently, you have to just specify a blank image.
+ create pg_retime, cd=cd, dt
+   -- if descriptor time changes, need to reload it and dependent descriptors in 
+      grim before recomputing overlays
+ perform aberrations when computing points instad of when retrieving descirptors?
+ new camera transformation which gets rid of off-center distortion?
+ treat sun as a planet in grim
+ don't display overlays when inside or at body
+ include camera as a point source in grim?  Useful when moving camera around manually
+  -- or add option to compute spacecraft positions
+ all composite routines should return 0 if input points array is 0.
+ map_grid_ps stuff doesn't work in jupiter.example
+ grim map projection interface
+ orb_input does not work correctly when plt_name specified to pg_get_planets
+ pg_retarg -- if dd given, reproject image.
+ return descriptor uncertainties?
+ need glb/dsk_hide_points_inertial
+ remove class_extract from routines where not needed -- should be faster
+ allow descriptors of either pointer or structure type?  Structure type is
+  much faster to dereference.  Disadvantage is private copies.
+
+ 
+MAC:
+ compile spice interface
+
+
+stars
+ in grim, color based on spectral type?
+ common name association
+ compute occ. chord lengths
+
+translators
+ Some translators (stn, orb) shoudl look at the list of outputs from preceding
+ translators and just update any that are relevant instead of always creating
+ new ones
+
+grim overlays:
+ pluto barycenter in N1563329313_1.IMG
+ add NV_UCACT_DATA to minas_env.csh
+ add xidl aliasas to minas_env.csh
+ problem when recomputing planets centers after changing # of bodies
+  by using 'name=' in overlay settings. 
+  In N1563329313_1.IMG:
+  1. set name=TETHYS and compute planet centers
+  2. set name=ENCELADUS and compute planet centers
+  #2 should just add the new body.  Instead, it removes the first body
+  and if you clear the names and recompute, you get no bodies
+ 
+ aes don't display when there's no grim image
+
+ put standard class fields in separate structure so they can be dereferenced
+  in nv_extract_idp even with mixed types.
+
+ debug/grim_future.paste -- make this work more simply
+
+ ded -- descriptor editor
+ dread -- good program name name
+ gros -- something witrh grim?  grim_overlay_settings
+
+ need to be able to use klist file without also autodetecting lsk
+ stars double click not working
+ grim data event handling
+
+ least-sq fit crashes using grim.example
+  --> the problem is that grim.example computes only the visible points,
+      (one ps per overlay) while after an event, grim computes the hidden
+      points as well, making three arrays per overlay.  gr_draw will have to
+      deal with this.
+ map returned by pg_map in jupiter.example f-ed
+ 
+ double/single click
+ shading on/off
+ shadows won't move when changing the pointing because their description 
+  fields are not unique
+  --> maybe match dependiencies? 
+ if hide setting is changed, those overlays will not be recomputed after an event
+  --> would need a user data field to record settings used when points
+      initially computed
+
+ctmod bug:
+ print, ctyellow()
+ print, ct_yellow()
+ first time through ctmod, doesn't detect 24-bit
+
+grim stars
+ why does it take so damned long?
+  largely because of hiding
+   pgs_compress
+  also, don't compute hidden points for any overlays if hiding is turned off
+ problem may also be partly related to data events when the descriptors are added.
+  it looks like perhaps descriptors get registered over and over with nv_notify_register
+ figure why it takes so long to refresh
+ transparent overlay
+  --> filled overlays option
+
+grim tool for interactively changing spacecraft position
+ use mouse buttons to set whic plane you're moving in
+
+rings:
+ maxwell ringlet
+  use vgr, 28 sag, etc --> j2
+
+genorb_rad_plot problem
+Daphnis orbit gives different position than kernel in ehr retargs.
+
+grim hide modes
+grim tiepoint limb/ring fits; actually combine tie points with scanned points
+grim plane notes
+
+look at weighting in limbscans
+
+add skyplane pixel scale to pg_cursor
+
+fix map_units_disk
+
+genorb --
+ simplify code by directly storing and using the input data structures
+ instead of parsing them into the main data structure.  That should 
+ get rid of the indexing stuff -- state.wt, etc.
+
+add grim options for reseau removal and geometric correction
+
+
+gff
+
+FN20 may be inclined -- N1524964907_1.IMG
+
+
+
+remove scanned points in grim after fit?
+arbitrary image region scan in grim
+record sector geometry in header of files written by plod?
+
+ecc feats.
+    456 Feb  1 Carolyn Porco       (1581) eccentric features                    
+
+try to clarify imdb ring keyword definitions
+     20 Feb 28 John Weiss          (1905) IMDb Help Info                        
+
+bugs
+ spice problem making /reload necessary so kernel order doesn't get screwed up
+ genorb uncertainties useless -- try pan.paste
+ update doc descriptions, especially disk stuff
+ plod help
+
+
+look at D68
+writeups for proposals
+  A 435 Jan 22 Carolyn Porco       (3144) preparations for proposal writing     
+
+
+ 
+fn7
+ look at PPS and RSS
+ look at pole
+ look at images with stars to check trajectory
+ try botsim navigation, compare to NAC w/ stars
+
+ correct precession rate
+ use more current kernels
+ photometric correction -- "normal intensity"
+ use calibrated images
+ verify the images are delutted if necessary
+ look at 28 sag scans -- should see some part of any drift.
+ fix ring catalog problem
+ clarify how initial pointing affects everything.
+
+
+streamlining
+ automatic sectors
+ batch fits
+  list of feat names
+  init guess from ring catalog
+  names of nav, feat dirs, etc..
+
+
+ucact names -- 
+  A 265 Dec 12 Mike Evans          (686K) Re: AutoNav images (IMDB)             
+
+
+paper
+
+
+
+huygens comparison with occ stuff
+
+s17 retargs
+
+
+shoudl frame_bd also be used for ring position?
+
+crash when trying to change pointing with fiducial ring features.
+  see navrings
+
+remove temp files created in spice_io.c
+
+routine to nearest tangent on globe to a ray.
+  A 114 Sep 19 Daren Wilson        (3489) Re: subspacecraft lat-lon             
+
+
+grim middle button pan
+ - when zoomed in, moves are strangely quantized
+grim -- pg_limb fov not implemented
+grim -- pixel grid
+  labels, make grid liesn at "even" pixel values.
+
+speed up ring catalog
+
+pg_cursor -- 
+  results f-ed for F ring; maybe ignores inclination?
+
+grim 
+ recompute ring points...
+pg_grid_disk funny for F ring.
+
+
+ring feature radii
+ catalog edge fit
+
+traj correction for stringing scans together
+  -- try varying planet pole
+
+
+B-ring edge
+
+Karjalainen and Salo (2004)
+
+tvim -- /zbuffer
+
+frame_bd --> frame_bx
+
+2-D ring feature location
+
+use cd psf for star fitting stuff
+
+genorb -- 
+ - look at star navigation
+ - take a look at curvefit95 for derivative increments; line 198 -- inc = eps * abs(p(term))    
+
+
+cam_focal_to_image and visa versa -- remove degenerate dimension using reform()
+  have to check old routines, though - get_ring_profile_n, ...
+
+grim --
+ *** F-ring grid messed up
+ *** funny result when repointing with shadows
+       looks like some points on hidden terminator show up.
+
+ - droplist in file picker for input transform
+ - overlay important vectors
+    nodes -- centered on body, primaries only?
+    sun direction -- lower right corner
+    body axes -- centered on body
+	body axes -- green
+	node -- purple
+	sun vector -- yellow
+ - gr_maptool
+   - ring map projections
+ - interpolation warning in lsqtool
+ - gr_lsqtool, no rotation axis for theta fitting.
+ - anaglyph overlays
+   - also, stereo blinking
+   - in grim:
+     - each plane should be able to store overlays corresponding to any number
+       of camera descriptors:
+       - add dimension to *limb_psp, ...
+       - overlay calcs should loop over all cds.
+ - repointing -- use translation approximation if offset is small
+ - interrupt dialog for procedures that may take a long time
+   - dialog_interrupt, interrupt_callbacks=interrupt_callbacks
+   - when interrupted, calls callbacks and then does a retall
+   - so you would save relevant things first, like active objects, and then
+     restore them in the callback
+   - dialog_interrupt has to start an external program that sends
+     an INT signal to the idl process -- kill -s INT [pid]
+   - but how do you catch the interrupt?
+
+sat paper
+ - res. bias
+   - check for correlation with sun direction
+   - remove all disk-resolved measurements and see how solution changes
+
+include trajectory errors in weights for orbit/ring fits
+
+add recent points to F ring
+ ** for movies -- average measurements at similar longitudes to reduce
+    effect of kinks, clumps.
+
+
+incorporate dsk_image_bounds into dbp_test_ring in dbprep
+
+add /fov keyword to other pg routines -- 
+ pg_limb
+ ** N1491419517_3.IMG -- thinks F-ring not in fov
+                         manual repointing -- F-ring appears
+
+autonav --
+ F-ring issues
+ - if reslolution too low, omit model from fit
+ - if resolution too high, removed expected edges from fit
+ - if A-ring not saturated, then moti F-ring model from fit
+
+_rot or _dir
+
+Radial scale / global fits
+ - try to standardize ring measurements so others can contribute to database
+ - try using NAV algorithm to extract long. scan. as test on A ring/keeler
+ - to start, focus on the Cassini division, from the outer B-ring edge to
+   inner A-ring edge.
+ - Try to find automated way to pull scans from images
+ - solve for pointing and then rescan
+ - output all scans.
+ - once the pointing is good, do hi-res longitudinal scans and catalog.
+ - ring scan catalog
+   - flag for provisional / final
+   - store Cmat, sc pos, ra-dec/line-sample of feature
+   - store radial scan
+   - eventually store az. scan with good pointing
+   - feature names, shape parameters.
+   - star positions
+   - radial resolution at each feature measurement.
+
+check genorb -- may be better to use pds as frame bds instead of pd0 since
+  they're already precessed properly.
+
+figure out what to do with raptor's idl license.
+minas integration issues
+
+
+current projects
+ satellite paper
+ ring edges / radial scale
+ get rid of '.IMG' in kernel and sat_file names, etc, so that .LAB files
+   can be used as well.
+
+occultation data --
+ pps, rss, ctio. spdr are all in fits files and have detectors 
+ old occ tests were in genorb_test.bat.
+
+
+should data dimensions should be stored in dd?
+
+farsat
+		
+need to include pole precession in pc_get
+get J values from pck e.g., BODY699_JCOEF
+
+pg_resfit not working right -- geom.paste
+
+
+Pl. Rings p. 596 -- P-R drag and ring spreading.
+ --> what about Yk drag?
+      planetocentric effect:
+	seasonal --
+	   - fast orbital speed means large lag angle --> large effect
+ 	   - inner material falls inward faster than outer material -- spreading
+	diurnal
+	   - inner particles should spin retrograd --> spiral inward
+wrong ---	     outer particles spin prograde --> spiral outward
+		--> spreading
+	   - if velocity gradient reversed, then you get confinement.
+      heliocentric effect:
+	Yk mostly cancels out over orbit, but not quite because insolation
+	has change a bit by the time the particle returns because of
+	planet motion around sun --> a new type of seasonal effect
+
+
+N1477239260_2.IMG -- grim gives wrong radius under cursor
+
+autonav - W1349679963_2 -- why no limb, term points?
+
+dps abstract
+ s1, s2, s3
+  s1,2 ecc. puzzling relative to Mimas -- 
+    maybe resonance swept through
+     6469 Oct  6 Robert A. Jacobson (92,634) Science article and revised orbits
+   mention clumps paper, from carolyn
+  s1, s2 retargs Early Nov. -- add to fit
+    6624 Oct 19 Carolyn Porco      (1,783) First Set of Retargs (in S05) for S1
+    6625 Oct 19 Josh Riley         (3,604) Re: First Set of Retargs (in S05) fo
+    6627 Oct 19 Josh Riley         (2,317) Re: First Set of Retargs (in S05) fo
+ s3/s4 dilemna, 
+  s3/s4 retargs
+ confident that pan's orbit eccentric from wac soi measurements
+  important in protoplanetary disks
+ s1 same as 1981s14?? Bob has measurements
+ pan, atlas
+  data span -- vgr, ... get from Bob.
+  how does vgr data affect fits?
+ S5, S6
+ latest orbit solutions
+ sebastien's integration results :
+    6950 Nov  5 Sebastien Charnoz    (782K) DPS Communication : some comments
+on
+    6957 Nov  5 Carolyn Porco       (4,308) Re: DPS Communication : some
+comment
+    6959 Nov  5 joe burns           (5,459) Re: DPS Communication : some
+comment
+
+f-ring shape
+  go back to approach images to for better constraint on dlpdt
+    resolution may not be high enough, though.
+  do another model with as many measurements per image as possible?
+   --> fine scale shape.
+  get f-ring radii by subtracting measured a-ring (or keeler edge) radii?
+  residuals in m.
+  reproject f-ring images to look for high-order modes
+  add occultation data
+  add latest images
+
+get constants from pck (e.g., planet mass)
+ BODY*_ATMOSPHERE
+
+projects/f-ring_shape/navrings1/nav.paste
+ klist kernels don't get unloaded
+   problem is that spice_input only unloads when cd requested.
+
+possible satellite (2204c6)
+ N1466462380_1.IMG  961 945
+ N1466450141_1.IMG  540 363
+
+genorb -- program to span ranges of initial conditions.  Good test case is 
+s2: finding fit #13, starting with fit #12
+
+ucact catalog problem -- N1468944211_2, N1471210606_2.IMG
+    6314 Sep 23 Daren Wilson        (1,182) The Day Someone Forgot to Turn On
+    6472 Oct  7 Josh Riley          (4,353) renav finished - 1 error          
+
+
+glimpse on S1,2,3 using latest images.
+
+
+prometheus' shadow -- W1467350849_2 and others.
+
+plans for dps, october visit, psg, agu.  Register for agu, dps.
+    6108 Sep 14 Carolyn Porco       (6,340) TA                                 
+    6116 Sep 14 Josh Riley          (8,831) Re: TA                             
+
+emily -- ring scans, gr_draw problems
+    6108 Sep 13 Emily Baker         (1,465) minas radial scan again            
+  A 6177 Sep 17 Emily Baker         (2,831) Re: Minas navigation question again 
+
+
+psfs
+  A 5654 Aug 17 Bill Owen           (2,685) Star ID problems?                  
+    5655 Aug 17 Bill Owen           (2,698) Re: Star ID problems?              
+
+grim write user_ps --> fails if more than one user point
+glimpse --> check whether target obscured by another object
+plod write ps
+
+look at voyager candidates for S1, S2
+
+keeler gap:
+    N1467350572_2	interesting edge feature at 663, 163
+    N1467350634_2	interesting edge feature at 496, 563
+    look at time between images, check for orbital motion.
+    look at satellite wakes
+
+other gaps...
+
+keeler satellite candidates:
+ none of these pan out
+ W1467351601_2.IMG	848	695
+ W1467351601_2.IMG	919	658	
+ W1467351601_2.IMG	1005	574
+ W1467351463_2.IMG	861	669
+
+columbo?? candidates
+ N1477307779_1.IMG	750	188
+ N1477308042_1.IMG	484	445
+ 
+
+pan psfs -- looks like need to add 90 to twist angle.  Why not for others?
+Produce psfs of only new or changed measurements?
+    5012 Jun 29 Robert A. Jacobson (44,606) Pan                                 
+    find additional helene/telesto frames, pre=N1460
+
+why is 04135_04212pf.bc selected instead of 04171_04212pg_psiv2_merge.bc?
+  A 4915 Jun 24 Diane Conner        (2,026) Re: problem with
+04171_04212ph_psiv2
+  most of the 1466 images fall under this kernel, I think.
+
+soi ring science
+ photom -- talk to henry about box files
+ kinematics of the F ring
+
+spice interface:
+  dd = nv_read('~/casIss/1462/N1462785220_4.IMG')
+  cd = pg_get_cameras(dd, 'ck_in=./N1462785220_4.IMG.bc'); fails, as it should
+  cd = pg_get_cameras(dd)
+
+pan candidates:
+ N1462257472_1.IMG	460	593
+ N1462228074_1.IMG	361	360
+ N1463932008_1.IMG	740	762
+
+ N1466455421_1.IMG	346	638  
+	t = 1.4103481e+08  ml = 189.47241  dmldt = 627.6145839357
+
+ N1466457341_1.IMG	878	478  
+	t = 1.4103673e+08  ml = 156.15005  dmldt = 628.1164301776
+
+satellite candidates:
+ N1465778295_1.IMG	381	938
+ N1465955746_1.IMG	229	699
+
+pg_coregister screws up the camera descriptor
+
+try loading 300 c kernels on a sun --
+    4626 Jun  9 S?bastien Charnoz   (7,927) Re: minas : pb with satsearch       
+
+atlas --
+  A 4414 May 31 Carolyn Porco       (1,620) for your infomration....            
+    4465 Jun  1 Carolyn Porco       (1,286) Atlas                               
+ fit orbit, use glimpse to find in earlier frames.
+
+glimpse -- account for orbit uncertainty
+   consider mainly longitude uncertainty
+
+psfs:
+ (5/26) according to Bob, stars 141404 and 141406 are totally bogus
+  and really screw up the pointing estimation.  
+  e.g., see sats-saturn_051204_N1459_1.psf
+ 
+
+grim --
+ png output
+ ring photmetry
+ plod -- ps output
+ cursor mode for adjusting stretch
+
+
+
+
+
+to run cisscal:
+ cd to ~/cisscal/cisscal040517/
+ idl cisscal
+
+
+for inclined rings, use broken angle -- 
+    start at ascending node of eq. plane on EME2000.  Go along the eq. plane
+    to the ring's node, and then measure along the inclined ring.
+
+add options to specify longitude/latitude conventions in grim
+
+look at sebastien's point-source routine
+set up minas contributions distribution, include sebastien's satellite code.
+
+plan pasadena trip, see if Ingrid can go.
+
+thermal radiation in light-scattering code for PGG proposal
+ simplest model -- isolated particle in orbit around sun
+ more sophisticated -- include periodic shadowing by saturn
+                       include attenuation by ring particles
+                       saturn shine
+ to get optical depth:
+  sample a grid within the box to get tau as a function of solar azimuth for
+  each point.  Interpolate from that to get particle attenuation.
+
+autonav documentation
+
+carolyn's emails -- compare w/ mike's measurements
+ 3723 Apr  2 Carolyn Porco       (9,680) [Fwd: Pointing data....
+
+free gbxt in orb_construct_descriptor??
+
+grim; propagate tiepoints
+  working on orb_cartesian_to_orbit; runs without crashing, but wrong answer
+
+how to handle saturated stars in ptloc?
+
+check Mike's latest C-matrices, see Carolyn's emails [Fwd: Pointing Data
+File...
+
+ray --
+  Dones et al 1993 (Icarus 105, p. 194)
+  how to tell which particle files are which?
+ 
+satellite orbit fits
+ - Janus, Epimetheus, Prometheus, Pandora, Calypso, Telesto, Helene, Atlas,
+Pan
+ - search database for images for each satellite
+ - navigate, take measurements, write psf file for Bob J.
+ - findsat -- detect when satellite behind planet
+ - need stellar nav, too.
+ - Prom/Pan -- look at spot-merge images..., ~/projects/merge
+
+autonav / dbprep
+ add circular ring features to ring_input
+
+cd filter model
+ return array giving band-pass model
+ store in binary detached header, .dhb?
+
+on_error in lots of minas routines where it shouldn't crash inside.
+ nv_dereference, pg_draw, ...
+
+nv_help has sometimes says array[0]
+
+
+correct the trajectory if stars and planets visible?
+
+josh's klist file for autonav dev version:
+     /home/issadmin/imdb/minas_config/cas_db.kernels
+
+ckcat, spkcat
+does rockspk produce label files?  If not, how to do that?
+
+source extraction -- 
+ sextractor
+ ridgelets for cosmic ray streaks
+ paper on ridgelets -- Jean-Luc Starck, Eric Pantin PASP
+  pub. astron. soc. pacific.  parpers by starck.
+ fwhm threshold for pg_ptscan?
+ http://terapix.iap.fr/
+
+genorb occultation stuff
+   set up a test
+   write lt_match
+     make sure this is done correctly.  The only thing that matters is when
+     the ray hits the feature, not when it leaves target descriptor.
+code to compute rough orbit from one observation
+  assume e=i=0 --> genorb_rough, cd, pd0, image_pt
+grim star fitting kind of buggy
+comparing janus/epimetheus measurements with bill
+
+look into ross nea program
+
+grim -- evolve option -- select objects to be evolved to all other planes.
+        manual descriptor editing tool
+	rings aren't selected on double click
+	ring profile sometimes doesn't work
+separate amalthea / thebe
+stellar navigation in genorb
+perhaps pd0 in genorb should go away and one can use a covar function to 
+ describe the planet's precession.
+verify that covar functions actually work right.
+genorb tool for determining optimal derivative deltas??
+look at icy
+pg_despike
+autonav -- too many open files
+autonav statistics -- before march team meeting
+autonav -- free objects allocated by pgs_clone_ps()
+use I-kernel for cam params instead of hard-wired?
+  there are no routines in cspice for this, just request relevant values from 
+  kernel pool.
+
+
+spice_output needs to be able to load kernels just as in spice_input.
+
+orbit determination
+    Bob will send data for orbit-fit test.  amalthea/phoebe
+** check /raid/images/raw/casIss/1361/N1361612880_1.IMG autonavigation
+implement diane connor's pick algorithm for SPK's
+
+check MINAS's ring features against CASPER's
+
+
+(818)393-0691 Vance
+
+
+
+**licensing -- 
+**** the _lic_block common block can be accessed from the command line if 
+     user finds the name of that block.  Apparently common block names cannot 
+     be listed using 'help', though.  Actually, the common bloick name 
+     appears when the variable is listed.
+*** help command can be used to get names of all compiled functions, even 
+    undocumented license routines!!
+***** code can be interrupted using ^C before license is validated.
+  if interrupted during lic_read, the user might be able to get the
+  rotor settings.  It's easy to do because once you're at the command
+  line, you can step through using .step.
+ help, /routines --> routines and args are displayed.
+- license can be defeated by setting _flag in lblock properly, but that's not 
+  easy  to do.
+
+idl -32 on s2
+
+*****************************************
+autonav 
+
+autonav test using titan
+  /home/joe/idl_pro/minas/demo/data/c3488255.gem
+
+stars:
+/raid/images/raw/casIssPrelim/1412/W1412655655_1.IMG 
+/raid/images/raw/casIss/1354/N1354354567.2; autonav fails; not enough stars
+
+transform avel properly in put/get_cameras
+
+saturated images, difficult for autonav:
+/raid/images/raw/casIss/1352/N1352775200_2.IMG
+/raid/images/raw/casIss/1352/N1352990430_2.IMG
+/raid/images/raw/casIss/1354/N1354785560_2.IMG
+
+the following (and many more) appear to be due to coverage gaps within the
+  C-kernels:
+% SPICE_CAMERAS: Error obtaining camera data for n1353557930.2
+% SPICE_CAMERAS: Error obtaining camera data for w1354616990.2
+% SPICE_CAMERAS: Error obtaining camera data for n1353838801.2
+% SPICE_CAMERAS: Error obtaining camera data for n1356757748.2
+% SPICE_CAMERAS: Error obtaining camera data for n1358802980.2
+% SPICE_CAMERAS: Error obtaining camera data for n1363032659.1
+% SPICE_CAMERAS: Error obtaining camera data for n1363039826.1
+the above images are of poor quality, however.
+
+autonav crash: 
+/raid/images/raw/casIss/1355/N1355253987_1.IMG
+/raid/images/raw/casIss/1354/N1354012511_1.IMG
+
+
+close jupiter images:  1356*
+
+
+autonav false positive :
+* /raid/images/raw/casIss/1347/N1347931867_3.IMG 
+ -- need to detect saturated stars.
+
+
+
+
+satellite shadow test:
+ /data/nethome/josh/test/sample_archive/Data/1355xxxxxx/N1355518257_2.IMG
+  
+*****************************************
+
+
+
+currently: 
+	need pgs_free_points
+
+	idea: option for data to not be kept in memory in data descriptor --
+	      nv_data could load it on the fly if desired.
+	      or /assoc keyword to nv_read, nv_init_descriptor
+				 (could also have a system variable) -- 
+		- read array
+		- create temp file
+		- return assoc'd pointer to temp file
+	       to clean up:
+		- temp filenames include idl session process number
+		- if any found with different proc num, then remove them
+
+	*_evolve routines -- returned descriptor array needs to be nt x nbd
+	 instead of visa-versa.  That way, for one body the array is 1-d with
+nt
+	 elements and consistent with everything else.
+	think about using selgen in library routines
+	  allow keyword to select indices of vectors to transform
+
+
+current changes to note:
+	new magnifying glass cursor mode -- data magnify doesn't work well yet
+	shortcuts buttons --
+		next/previous plane
+		refresh
+		entire
+		previous view
+		hide/unhide overlays
+	x,y/dn readout at bottom
+	pan mode -- recenter changed to right button
+	zoom mode -- zoom box no longer releases when pointer moves out of
+		     window
+	unzoom problem appears to be fixed
+	henry's crash on image 1358205910.1 cannot be reproduced.
+	color tool
+	save postscript; doesn't work right for multi-channel images
+	save MPEG -- use xinteranimate (plane/sequence)
+	new pickfile widget, allows more flexibility
+	mag mode works right
+	"apply all" button for photometry
+	grim lsq fit outputs residuals and rms residual
+	user overlays can now be activated/deactivated
+	cursor x y/dn readout toggle button
+	hide overlays menu option
+	shadow points added -- not complete
+	modified data event handling
+	pg_get_station
+	ephem.kernels
+	eph spice translator
+	/system translator keyword to ring_input
+	color table support in colortool
+	new window becomes primary now
+	I think tvim coordinate system is fixed
+	ck_in kernels in spice interface are now reloaded on each call 
+ 	 without the need for /reload
+	avel calculation corrected in spice interface
+	ring longitudes now w.r.t inertial frame by default.
+	 - affects ring profile outlines, etc.  --> dsk_loncor to convert
+	dlp removed from disk descriptor, incorporated into orientation 
+	  matrix instead.
+	v_rotate* had sign error, fixed.
+	disk_to_body_solar and body_to_disk_solar
+	sund can be given to image_to_disk and disk_to_image to make them
+	 use solar longitudes.
+	grlsq interface improved.
+	on 24-bit displays, grayscale images displayed in one shot
+	smoothing fixed (removed) for 24-bit displays
+	all object lib routines now work for any subclass
+	glb_sub_point, glb_sub_point_graphic
+	'targets' keyword (or [pfx]_SPICE_TARGETS variable) to spice_input
+	  points to targets file.
+        dataprep
+	grim readout label uses better formatting; exponents now shown
+	plod
+	pg_drag now erases using pixmap instead of xor
+	activate/deactivate_all shortcuts
+	oplod
+	color, psym, thick keywords to plod, oplod
+	spice interface now gets all bodies internally
+	- - - - - - - - - - - - - - - - Carolyn
+	stellar abberation correction appears to have had incorrect sign!!
+	ck_in=auto
+	spk_in, fk_in, ...
+	- - - - - - - - - - - - - - - - Henry
+
+
+
+** centroid algorithms
+** need to override sun in saturn.example
+
+
+** map projections:
+   -try using 'temporary' function to save memory
+   - ** need to use graphic coordinates --> gbx to pg_get_maps
+   - ** documentation
+   - need faster iteration for mollweide proj.
+   - projections to implement:
+	lambert 2-standard conformal conic
+	tranverse mercator
+	sinusoidal (in progress)
+	oblique sinusoidal
+	perspective
+
+
+** reseau
+   - combine reproject_image and project_map into one routine.
+   - why doesn't control-point method work as well as in vicar?
+
+
+grim --
+  widget/command line data sharing
+	- could associate current window (!window) with basic variable names
+	  like dd, cd, pd, etc. in common block
+	- Common block idea could be built on top of grimvar.
+	- describe NV events in nv_description.txt
+	    don't forget to discuss event compression in lib_description.txt
+  planes --  
+	    option to display using filter band-pass models?
+  save session function
+  undo function
+  **restored maps don't get descriptors correctly 
+  in cas WAC frame, getting stars takes a LONG time, apparently in nv_notify
+	- the problem is that nv_notify has to search all registered sn's for
+ 	  each new star descriptor
+  gr_lsqtool
+	need args for edge_model_atan and edge_model_guass
+  use tiepoints in addition to scanned points in fits??
+	- this is tough because it's hard to associate a given tiepoint with
+	  a computed point
+**unregister events on points arrays when cleared.
+**shadow points
+	- warning if limb shadow requested since that would not
+	  correspond to anything in the scene?
+	- don't allow user to compute shadows of shadows!
+	- add to lsq fit
+	  - point scan if only one shadow point selected, curve scan otherwise
+  arithmetic errors when using pixel readout
+  Remember last filter.
+  how to select only the latest version of a file in a mission-independent
+way?
+	- use own file selector and allow some kind of awk syntax?
+  clear all --> need to unregister event
+  crash:
+    1) try to coregister without first loading descriptors
+    2) try pixel readout
+  gr_maptool
+	button sensitivity not really right
+  mosaics sometimes come out with no data
+  option to combine all selected grim tools onto different planes of one grim
+	tool.
+* gr_lsqtool:
+        .  save image and pointing information separately
+		graphical interface to ancillary I/O
+  stars identified improperly in some NAC frames -- see Henry's email. 
+  postscript -- RGB images don't come out right
+  maybe gr_phttool 'apply all' should open all corrected planes on one 
+   new grim window instead of seperate windows.
+* clean up farfit and lsq fit, document
+* various problems with n1413903622.1 --
+  - planet grid extends beyond drawn terminator
+  - no ring shadow on planet
+  cursor readout box coords don't agree with readout on grim base
+* grim_loadct
+ Henry's latest comments:
+ - ring test file database
+ - grim .ps output
+   + crashes on eggplant
+   + xyouts some info on output -- image name, sequence, exp_dur, filters, ...
+ - figure out how ATV is able to change colortables so fast on 24-bit display.
+
+
+
+
+discussion of using '=' with object descriptors.
+
+
+genorb -- turn occulation and image data into common format.
+ - *_evolve routines
+	- option to spice interface to turn off light-time correction.
+	  this will be helpful for testing 
+	- sedr times are not correct, considering light-time
+	- correct dlp (or disk orientation matrix) to remove planet rotation
+  	- should create new serial numbers.
+ - general routine to iterate to find light-corrected intersections.
+ - issues:
+	ring shape model -- use pure fourier series or fourier plus kepler?
+ - inputs
+   - occultation scan (opacity vs. time) -
+	given viewer location and star location as fn's of time, can get
+	input pointing as fn of time using grel and lt corrections.
+   - image scan (reflectance vs. image coord.)
+	given image scan, initial pointing -- can map each scan element 
+	back to image pixel and therefore viewing direction.
+
+
+freeze version -- documentation
+	** redo all data/_* detached headers after Cassini optic axis fixed
+	** pg_photom 
+		-- make sure correction is applied correctly
+	** test galileo spice against a pirl map
+	eventually, there should be a document describing massive array
+	 operations.
+	description of error messages -- one big doc. or in each file?
+	known bugs
+	class_description.txt
+	what's changed from MINAS 0.*?
+		camera nx, ny required so old dh's obsolete
+		translator keywords
+		no more pg_get_stars_*, pg_get_cameras_sedr, etc.
+	tools_description.txt
+		composite_description.txt
+		pht_description.txt
+	list of obsolete functions and their replacements
+		get_plane_coords
+	possible future changes to MINAS
+	star catalogs need to be delivered with MINAS?
+	get rid of all unnecessary demo data
+	***make sure all [[]]'s have been resolved.
+	where to obtain databases?
+		make tar files for star catalogs
+	document cam_*, etc override keywords in the appropriate pg_get/put
+		file
+
+	detached header more readable -- rearrange?
+
+
+delivery checklist
+	compiled version for all platforms
+	compile minas idl source
+	deliver with appropriate configuration tables
+
+understand photometric properties of Lagrange interp. and other types of
+  interpolation algorithms for mapping and scans
+
+tesseral harmonics in globe descriptor
+
+look into using blas_axpy and maybe replicate_inplace to speed up some
+operations.
+
+look into demo/*.pro programs
+
+Stellar abberation -- correct in cam_body_to_focal and cam_focal_to_body?
+
+implement pg_grid_sky by using pg_grid_globe in pg_grid?
+
+slight error in predicted satellite positions -- see bug1.txt and 
+minas_fit_n1355257043.jpeg
+
+from minas meeting:
+3)  Ability to do polar projections
+
+modify pg_cursor() to use new photometric routines. 
+
+5)  Color tables issue:  related to Object Graphics
+        Does Joe need a new machine for this?
+        What is the cheapest machine that is required?
+
+6)  Detached header formats:  should be easily readable
+                              what info should be contained
+                              in them?
+
+8)  Upgrade documentation
+	- include discussion of matrix convention -- minas documentation
+	  and index order corresponds to the way idl prints matrices and
+	  vectors.  NOT normal matrix notation.
+	- note about how orientation matrix can have det = 1 or -1 depending
+	  on how camera reads out.
+
+*) tiepoints
+
+
+
+consolidate star translators
+
+map projections, mosaicing
+	- coregistration
+	- use assoc to treat larger maps?
+
+finish ptr_free_recurse
+
+pg_cursor -- disk photometric angles
+
+SPICE interface --
+ - need to make it easier to find the correct C-kernel.
+ - need to make all pg_ routines account for light time. 
+  use derivatives to evolve body descriptors to correct time
+  SPICE interface outputs light-corrected descriptors, as
+   reflected by the descriptor times.
+ - modify to use instrument kernel for camera scale and oaxis
+ - galileo spice
+  on pirl : /archive/galileo for images
+            /opt/usgs/isisdata/galdata for kernels
+ - wrappers for specific spice routines.
+  routine to tell what kernels are loaded.
+  convert between time formats
+
+pg_crop -- crop image and modify cd.oaxis to reflect new image coordniate
+system
+
+ring parameter database
+
+Carolyn's priorities from 5/13/02:
+----------------------------------
++ voyager geom. corrections
++ GLL testing
+- specific photometric functions
++ GUI -- command line AND widgets

@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="TVIM Program Reference", $
+    "/home/joes/idl_pro/minas/util/tvim/*.pro", $
+    "/home/joes/idl_pro/minas/util/tvim/doc_tvim.txt"

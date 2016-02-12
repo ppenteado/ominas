@@ -1,0 +1,40 @@
+BOD_SET_LIBV
+
+
+ PURPOSE:
+	Replaces the libration vector of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_libv, bx, libv
+
+
+ ARGUMENTS:
+  INPUT: 
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	libv:	 Array (ndv,3,nt) of new libration vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

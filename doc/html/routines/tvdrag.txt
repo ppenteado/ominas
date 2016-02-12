@@ -1,0 +1,65 @@
+TVDRAG
+
+
+ PURPOSE:
+	Allows user to drag a given image across a background image.
+
+
+ CATEGORY:
+	UTIL
+
+
+ CALLING SEQUENCE:
+	p = tvdrag(bg_image, drag_image, p0)
+
+
+ ARGUMENTS:
+  INPUT:
+	bg_image:	Background image.
+
+	drag_image:	Image to be dragged across bg_image.
+
+	p0:		Initial point in bg_image for origin of drag_image.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	win_num:	Window number of IDL graphics window in which to select
+			box.  Default is current window.
+
+	restore:	If set, the original image is restored at the end.
+
+	grid_function:	Function which will quantize a point onto
+			a grid.  It should take an orderered
+			pair as its only argument and return an
+			ordered pair.  Default is the identity function.
+
+	cursor_init:	2-element vector giving Initial position for cursor.
+			If not set, the routine will wait for a button 
+			to be pressed before continuing.
+
+	no_scale:	If set, tvdrag will not scale the levels of the
+			drag image to the bg image.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	2 element vector giving the point where the mouse button was released.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	tvline, tvpath, tvrec, tvcursor
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/1995
+	Modified:	Spitale, 8/2008
+	 Added window number inputs, xor_graphics option
+	

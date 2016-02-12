@@ -1,0 +1,40 @@
+SLD_SET_ALBEDO
+
+
+ PURPOSE:
+       Replaces the bond albedo for each given solid descriptor.
+
+
+ CATEGORY:
+	NV/LIB/SLD
+
+
+ CALLING SEQUENCE:
+	sld_set_albedo, slx, albedo
+
+
+ ARGUMENTS:
+  INPUT: 
+	slx:	 Array (nt) of any subclass of SOLID descriptors.
+
+	albedo:	 Array (nt) of new bond albedos.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2015
+	

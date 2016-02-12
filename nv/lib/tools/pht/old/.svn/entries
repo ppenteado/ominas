@@ -1,0 +1,54 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/nv/lib/tools/pht/old
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+pht_angles1.pro
+file
+
+
+
+
+2009-10-27T16:30:11.000000Z
+6ccb840a22f7d5e3062f8bd4e080a3c8
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+pht_angles2.pro
+file
+
+
+
+
+2009-10-27T16:30:11.000000Z
+9f95613effa17abcb9b37eb180bd47a1
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+

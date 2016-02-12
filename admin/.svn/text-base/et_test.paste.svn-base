@@ -1,0 +1,47 @@
+@mks.include
+!quiet = 1
+
+files = strip_comment(read_txt_file('files2.txt'))
+
+
+;----------------------------------------------------------------------------
+; Specify directories
+;----------------------------------------------------------------------------
+split_filename, files, dirs, names
+;ckdir = '~/casIss/' + strmid(names,1,4) + '/autonav/'
+;ckdir = './navrings1/'
+;ckdir = '~/idl_pro/minas_pro/satellites/saturn/ck/'
+ckdir = './ck/'
+satdir = './sat2/'			; location of satellite measurements
+
+
+;----------------------------------------------------------------------------
+; Load everything
+;----------------------------------------------------------------------------
+sat_load, files, 'SATURN', '', 1d, $; /nodata, $
+        ckdir=ckdir, $
+        satdir=satdir, $
+	dd=dd, $
+	image_pts=image_pts, $
+	cd=cd, $
+
+	pd=pd, $
+	sigs=sigs
+pd = reform(pd[0,*])
+ndd = n_elements(dd)
+
+;---------------------------------
+; load image observations
+;---------------------------------
+;@observations2.paste
+
+epoch1 = spice_et('2453158.0jd')
+epoch2 = spice_et(2453158.0, /jed)
+
+print, epoch1, epoch2, format='(d20.10)'
+; currently, we get this: 139363264.1848825514 = epoch1
+; we want epoch2 = 139363200... 
+
+
+;139329377.373891860
+;N1464749951_1.IMG

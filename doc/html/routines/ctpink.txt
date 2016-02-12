@@ -1,0 +1,16 @@
+CTPINK
+
+ PURPOSE:
+	To allocate/return the color pink.
+
+
+ CATEGORY:
+       UTIL/CT
+
+
+ CALLING SEQUENCE:
+	return = ctpink()
+
+ RETURN:
+	The lookup table or true color value for cyan
+

@@ -1,0 +1,50 @@
+;==================================================================================
+; rotate_coord
+;
+;  Performs the coordinate transformations corresponding to the idl 
+;  "rotate" command.
+;
+;==================================================================================
+function rotate_coord, p, dir, inverse=inverse, size=_size
+
+ if(NOt keyword_set(_size)) then _size = [0d,0d]
+ nt = n_elements(dir)
+ np = n_elements(p)/2/nt
+ size = (_size#make_array(np, val=1d))[linegen3z(2,np,nt)]
+
+ for i=0, nt-1 do $
+  begin
+   case dir of
+    0	: return, p 
+    1	: begin 
+	   pp = rotate(p,5) 
+	   pp[0,*,i] = size[0,*,i]-pp[0,*,i] - 1d
+	   if(keyword_set(inverse)) then pp = -pp
+	  end
+    2	: return, size-p - 1d
+    3	: begin 
+	   pp = rotate(p,5)
+	   pp[1,*,i] = size[1,*,i]-pp[1,*,i] - 1d
+	   if(keyword_set(inverse)) then pp = size-pp - 1d
+	  end
+    4	: pp = rotate(p,5)
+    5	: begin 
+	   pp = p
+	   pp[0,*,i] = size[0,*,i]-pp[0,*,i] - 1d
+	  end
+    6	: pp = size-rotate(p,5) - 1d
+    7	: begin 
+	   pp = p
+	   pp[1,*,i] = size[1,*,i]-pp[1,*,i] - 1d
+	  end
+    else: message, 'Invalid rotation.'
+   endcase
+  end
+
+
+ return, pp
+end
+;==================================================================================
+
+
+

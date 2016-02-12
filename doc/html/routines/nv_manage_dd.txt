@@ -1,0 +1,39 @@
+NV_MANAGE_DD
+
+
+ PURPOSE:
+	Adds a data descriptor to the NV state maintained list.  If the list
+	is full, the oldest descriptor is unloaded and removed.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_manage_dd, dd
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

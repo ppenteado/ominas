@@ -1,0 +1,41 @@
+NV_SET_ID_STRING
+
+
+ PURPOSE:
+	Replaces the id string in a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_set_id_string, dd, id_string
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	id_string:	New id string.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

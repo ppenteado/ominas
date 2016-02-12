@@ -1,0 +1,33 @@
+P_UNIT
+
+
+ PURPOSE:
+       Converts image vectors to unit image vectors.
+
+
+ CATEGORY:
+       UTIL/V
+
+
+ CALLING SEQUENCE:
+       result = p_unit(p)
+
+
+ ARGUMENTS:
+  INPUT:
+	p:	An array of np x nt image vectors (i.e., 2 x np x nt).
+
+  OUTPUT:
+       mag:	Array of np x nt magnitudes.
+
+ RETURN:
+       An array of np x nt unit image vectors (i.e., 2 x np x nt).
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale	6/2005
+

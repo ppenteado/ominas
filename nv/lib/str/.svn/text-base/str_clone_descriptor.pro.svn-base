@@ -1,0 +1,19 @@
+;==============================================================================
+; str_clone_descriptor
+;
+;
+;==============================================================================
+function str_clone_descriptor, sdp
+@nv_lib.include
+ nv_notify, sdp, type = 1
+ sd = nv_dereference(sdp)
+
+ new_sd = sd
+ new_sd.gbd = glb_clone_descriptor(sd.gbd)
+
+ new_sdp = ptrarr(n_elements(sd))
+ nv_rereference, new_sdp, new_sd
+
+ return, new_sdp
+end
+;==============================================================================

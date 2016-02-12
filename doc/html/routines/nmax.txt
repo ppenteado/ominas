@@ -1,0 +1,49 @@
+NMAX
+
+
+ PURPOSE:
+       Finds maximum values within many arrays.
+
+
+ CATEGORY:
+       UTIL
+
+
+ CALLING SEQUENCE:
+       result = nmax(array, direction, subscripts=subscripts)
+
+
+ ARGUMENTS:
+  INPUT:
+         array:  Array to search for maximum values.
+
+     direction:  Dimension to search.
+
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+    subscripts: Coordinate of each maximum value relative to the 
+                scanning dimension.
+
+
+ RETURN:
+       An array of maximum values.  
+
+ EXAMPLE:
+	If x is an array with dimensions (d0,d1,d2), then the command 
+
+		xm = nmax(x, 1, sub=sub)
+
+	returns an array with dimensions (d0,1,d2), where each value is 
+	the maximum value along the scanned direction (direction 1).   
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale; 1/2002
+

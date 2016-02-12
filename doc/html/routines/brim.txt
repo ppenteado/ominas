@@ -1,0 +1,120 @@
+BRIM
+
+
+ PURPOSE:
+	Image browser.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ CALLING SEQUENCE:
+	brim, files
+
+
+ ARGUMENTS:
+  INPUT:
+	files:	List of filenames and file specifications.  Only files whose
+		filetypes can be detected are loaded.  If this argument is not
+		given, the user is prompted for a list of files.  An array of
+		data descriptors may also be specified.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	thumbsize:	Size of the thumbnal images.  Default is 100 pixels.
+			Thumbnail images are alwasy square.
+
+	labels:		Labels to use for each thumbnail.  If none given, the
+			filename is used, is one exists.
+
+	ids:		Array to identify each thumbnail.  If none given, the
+			labels are used, if they exist.
+
+	select_ids:	Ids of Initial thumbnail(s) to appear selected.
+
+	left_fn:	Name of a procedure to call when the left mouse button
+			is clicked on a thumbnail.  Default procedure selects
+			that image and opens it in a new grim window.  The
+			user procedure is called as follows: 
+
+				left_fn, fn_data, i, id, status=status
+
+			fn_data is supplied by the caller through the fn_data
+			keyword, i is the index of the thumbnail, id is the
+			thumbnail id as given by the ids keyword,
+			and status should return 0 if successful and nonzero
+			otherwise.
+
+	middle_fn:	Name of a procedure to call when the middle mouse button
+			is clicked on a thumbnail.  There is no default.
+
+	right_fn:	Name of a procedure to call when the right mouse button
+			is clicked on a thumbnail.  There is no default.
+
+	fn_data:	Data to be supplied to the above user procedures.
+
+	exclusive_selection:	
+			If set, only one image may be selected at once.  
+			(Currently multiple image selection is not supported.)
+
+	path:		Initial path to use for the file selection widget, 
+			which appears only if the file argument is not given. 
+
+	modal:		If set, only the brim widget may be used until it
+			is closed.
+
+	title:		Title to use for the brim widget instead of 'brim'.
+
+	order:		Display order for thumbnails.  Default is 0.
+
+	filter:		Initial filter to use when loading files.
+
+  OUTPUT:
+	get_path:	Final path selected in the file selection widget.
+
+	select_ids:	On return, select_ids contains the ids of the selected
+			images.  If there are no selections, its value will be
+			the null string: ''.
+
+
+ RETURN:
+	NONE
+
+
+ PROCEDURE:
+	brim may be run standalone or from within grim.  If no files or data
+	descriptors are given, brim first prompts the user to select a list of
+	files.  brim then displays thumbnails of all valid files.  Files may be
+	selected by clicking with the left mouse button.  By default, the image
+	is opened in a new grim window.  Alternate actions may be defined
+	through procedures supplied by the caller.
+
+
+ EXAMPLES:
+	To load files into brim using a file-selection widget:
+
+	 IDL> brim
+
+
+	To load all recognizeable images in the current directory into brim:
+
+	 IDL> brim, '*'
+
+
+	To browse a set of data descriptors:
+
+	 IDL> dd = nv_read('*')
+	 IDL> brim, dd
+
+
+ STATUS:
+	Experimental.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2002
+	

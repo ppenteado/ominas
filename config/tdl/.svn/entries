@@ -1,0 +1,54 @@
+8
+
+dir
+3
+https://nopsvn.ciclops.org/svn/minas/trunk/config/tdl
+https://nopsvn.ciclops.org/svn/minas
+
+
+
+2009-10-26T21:54:58.512518Z
+2
+mrb
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+46ea3c5c-4a13-46c4-acac-fae9dc682352
+
+write_tdl.pro
+file
+
+
+
+
+2009-10-27T16:31:00.000000Z
+ae283b463a2518363d6a4c2b9c1985cb
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+
+read_tdl.pro
+file
+
+
+
+
+2009-10-27T16:31:00.000000Z
+05e87f71c8777590c91f2fd4eb866280
+2009-10-26T21:54:58.512518Z
+2
+mrb
+has-props
+

@@ -1,0 +1,39 @@
+STELLAB
+
+
+ PURPOSE:
+	Corrects body positions for stellar aberration.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       stellab, obs_bx, targ_bx
+
+
+ ARGUMENTS:
+  INPUT:
+	obs_bx:		Array (nt) of any subclass of BODY describing 
+			the observer.
+
+	targ_bx:	Array (nt) of any subclass of BODY describing 
+			the target.  The position of this body is modified. 
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT: 
+	c:	Speed of light.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+

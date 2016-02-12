@@ -1,0 +1,8 @@
+# detector fn			filetype
+# (returns instrument string)	(only detectors for the correct
+#				 filetype are called)
+
+  detect_vgr			VICAR
+  detect_vgr                    VGR_CD
+  detect_vgr_pps		VICAR
+  detect_vgr_rss		VICAR

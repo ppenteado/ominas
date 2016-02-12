@@ -1,0 +1,46 @@
+CAS_DEDARK
+
+
+ PURPOSE:
+	To remove horizontal banding and dark current in Cassini images
+
+
+ CATEGORY:
+	UTIL/CASSINI
+
+
+ CALLING SEQUENCE:
+	result = cas_dedark(image, label, bpa)
+
+
+ ARGUMENTS:
+  INPUT:
+	image:	Image data
+
+	label:	Image label from read_vicar
+
+	bpa:    Binary prefix bytes from read_vicar
+
+  OUTPUT:
+	bias:	Bias/dark calculated	
+
+
+
+ RETURN:
+	Real image with horizontal banding mostly subtracted.
+
+
+ PROCEDURE:
+	This routine applies a digital filter to the extended
+	pixel value found in the Binary prefix array (bpa) and then
+	subtracts this from the image.
+
+
+
+ STATUS:
+	xx
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	V. Haemmerle, 3/2000
+	

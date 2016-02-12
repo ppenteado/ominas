@@ -1,0 +1,198 @@
+									12/05/15
+DH Program Reference
+====================
+
+ Summary
+ -------
+  - DH_STD_INPUT
+	Input translator for detached header
+
+  - DH_STD_OUTPUT
+	Output translator for detached headers.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DH_STD_INPUT
+------------
+
+
+ PURPOSE:
+	Input translator for detached header
+
+
+ CATEGORY:
+	NV/CONFIG
+
+
+ CALLING SEQUENCE(only to be called by nv_get_value):
+	result = dh_std_input(dd, keyword)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	keyword:	String giving the name of the translator quantity to
+			read.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	NONE
+
+  OUTPUT:
+	status:		Zero if valid data is returned
+
+	n_obj:		Number of objects returned.
+
+	dim:		Dimensions of return objects.
+
+
+  TRANSLATOR KEYWORDS:
+	history:	History index to use in matching the keyword.  If not 
+			specified, the keyowrd with the highest history index
+			is matched.
+
+
+ RETURN:
+	Data associated with the requested keyword.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dh_std_output
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1998
+	
+
+
+
+
+
+
+DH_STD_OUTPUT
+-------------
+
+
+ PURPOSE:
+	Output translator for detached headers.
+
+
+ CATEGORY:
+	NV/CONFIG
+
+
+ CALLING SEQUENCE(only to be called by nv_put_value):
+	dh_std_output, dd, keyword, value
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	keyword:	String giving the name of the translator quantity to
+			write.
+
+	value:		The data to write.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	NONE
+
+  OUTPUT:
+	status:		Zero unless a problem occurs.
+
+
+  TRANSLATOR KEYWORDS:
+	format:		String giving the name of the output representation. 
+			Default is OMINAS internal representation.  The null  
+			string, '', indicates the default.
+
+
+ SIDE EFFECTS:
+	The detached header in the data descriptor is modified.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dh_std_input
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1998
+	
+
+
+
+
+
+
+
+

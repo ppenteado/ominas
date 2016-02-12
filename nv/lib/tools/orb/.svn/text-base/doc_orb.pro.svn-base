@@ -1,0 +1,4 @@
+extract_doc, /page, $
+    title="ORB Program Reference", $
+    "/home/joes/idl_pro/minas/nv/lib/tools/orb/*.pro", $
+    "/home/joes/idl_pro/minas/nv/lib/tools/orb/doc_orb.txt"

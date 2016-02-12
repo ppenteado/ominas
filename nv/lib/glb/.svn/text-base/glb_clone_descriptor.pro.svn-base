@@ -1,0 +1,19 @@
+;==============================================================================
+; glb_clone_descriptor
+;
+;
+;==============================================================================
+function glb_clone_descriptor, gbdp
+@nv_lib.include
+ nv_notify, gbdp, type = 1
+ gbd = nv_dereference(gbdp)
+
+ new_gbd = gbd
+ new_gbd.bd = bod_clone_descriptor(gbd.bd)
+
+ new_gbdp = ptrarr(n_elements(gbd))
+ nv_rereference, new_gbdp, new_gbd
+
+ return, new_gbdp
+end
+;==============================================================================

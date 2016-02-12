@@ -1,0 +1,33 @@
+;===========================================================================
+; map_map_to_image_rectangular
+;
+;
+;===========================================================================
+function map_map_to_image_rectangular, mdp, map_pts, valid=valid
+@nv_lib.include
+ md = nv_dereference(mdp)
+
+ nt = n_elements(md)
+ sv = size(map_pts)
+ nv = 1
+ if(sv[0] GT 1) then nv = sv[2]
+
+; The old approach was to force the scaling to be the same in both direcions, 
+; regardless of the map dimensions.  The new approach is to scale the full range
+; of lat and lon to each dimension, allowing the user to vary it using the
+; 'units' field.
+; a = min([md.size[0], 2d*md.size[1]])/2d/!dpi * md.scale * md.units	; pix/rad
+ a = [md.size[1]/!dpi, md.size[0]/2d/!dpi] * md.scale * md.units
+
+ result = dblarr(2,nv,nt, /nozero)
+
+ result[1,*,*] = md.origin[1] + a[0]*(map_pts[0,*,*]-md.center[0])
+ result[0,*,*] = md.origin[0] + a[1]*(map_pts[1,*,*]-md.center[1])
+
+ valid = internal_points(result, 0, md.size[0]-1, 0, md.size[1]-1)
+ return, result
+end
+;===========================================================================
+
+
+

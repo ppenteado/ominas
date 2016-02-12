@@ -1,0 +1,52 @@
+SEDR_LIST
+
+
+ PURPOSE:
+	Unpacks the sedr2 record from platform-independent to platform
+       format or vis-versa.
+
+
+ CATEGORY:
+	UTIL/SEDR
+
+
+ CALLING SEQUENCE:
+	sedr_unpack_sedr2, sedr
+
+
+ ARGUMENTS:
+  INPUT:
+
+	sedr:		A sedr2 formatted record read from a sedr file.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+
+	pack:		If set, reverses the process.
+
+
+  OUTPUT: NONE
+
+
+ PROCEDURE:
+	Floating and double precision numbers are converted from XDR format
+	to host floating format while integers are byteswapped into host
+	format.  If /pack is set, the processes is reversed.
+
+
+ RESTRICTIONS:
+	NONE.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	S. Ewald, 10/1998
+	Modified by:    Haemmerle, 12/1998
+	

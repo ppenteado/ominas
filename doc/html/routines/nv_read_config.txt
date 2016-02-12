@@ -1,0 +1,43 @@
+NV_READ_CONFIG
+
+
+ PURPOSE:
+	Reads an NV configuration table.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_read_config, env, table_p, filenames_p
+
+
+ ARGUMENTS:
+  INPUT:
+	env:	Name of an environment variable giving the names of the
+		configuration files to read, delimited by ':'.
+
+  OUTPUT:
+	table_p:	Pointer to the configuration table contructed by
+			concatenating the contents of each file.
+
+	filenames_p:	List of configuration filenames that were read.
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+	

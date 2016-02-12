@@ -1,0 +1,20 @@
+;===========================================================================
+; star_descriptor__define
+;
+;
+;===========================================================================
+pro star_descriptor__define
+
+ struct = $
+    { star_descriptor, $
+	gbd:		 ptr_new(), $		; ptr to globe descriptor
+	class:		 '', $			; Name of descriptor class
+	lum: 		 double(0), $		; Luminosity (units?)
+	sp:		 '' $			; Spectral type
+    }
+
+end
+;===========================================================================
+
+
+

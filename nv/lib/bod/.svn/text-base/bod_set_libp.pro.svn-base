@@ -1,0 +1,16 @@
+;===========================================================================
+; bod_set_libp
+;
+;
+;===========================================================================
+pro bod_set_libp, bxp, libp
+@nv_lib.include
+ bdp = class_extract(bxp, 'BODY')
+ bd = nv_dereference(bdp)
+
+ bd.libp=libp
+
+ nv_rereference, bdp, bd
+ nv_notify, bdp, type = 0
+end
+;===========================================================================

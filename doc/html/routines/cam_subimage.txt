@@ -1,0 +1,43 @@
+CAM_SUBIMAGE
+
+
+ PURPOSE:
+       Produces a new camera descriptor corresponding to dividing the 
+	associated image as specified.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_subimage, cd, p0, nxy
+
+
+ ARGUMENTS:
+  INPUT: 
+	cd:	Array (nt) of CAMERA descriptors to modify.
+
+	p0:	Starting corner of subimage.
+
+	size:	Array (2,1,nt) of image sizes.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 4/2015
+	

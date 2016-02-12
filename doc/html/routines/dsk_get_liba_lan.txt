@@ -1,0 +1,44 @@
+DSK_GET_LIBA_LAN
+
+
+ PURPOSE:
+	Determines liba_lan for each given disk descriptor, based on the
+	orientation of its BODY axes.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	liba_lan = dsk_liba_lan(dkx, frame_bd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	dkx:	 Array (nt) of any subclass of DISK.
+
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.  One for each dkx.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: 
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	liba_lan value associated with each given disk descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+	

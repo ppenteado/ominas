@@ -1,0 +1,56 @@
+PG_FOOTPRINT
+
+
+ PURPOSE:
+	Computes the footprint of a camera on a given body.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+       footprint_ps = footprint(cd=cd, bx=bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	Array (n_timesteps) of camera descriptors.
+
+	bx:	Array (n_objects, n_timesteps) of descriptors of objects 
+		which must be a subclass of BODY.
+
+	gd:	Generic descriptor.  If given, the cd and bx inputs 
+		are taken from the cd and bx fields of this structure
+		instead of from those keywords.
+
+	frame_bd:	Subclass of BODY giving the frame against which to 
+			measure inclinations and nodes, e.g., a planet 
+			descriptor.  One per bx.
+
+	fov:	 If set points are computed only within this many camera
+		 fields of view.
+
+	sample:	 Sampling rate; default is 1 pixel.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n_objects) of pg_points_struct containing image points and
+	the corresponding inertial vectors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2014
+	

@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_ZOOM_9_EVENT
+
+
+ PURPOSE:
+	Allows the user modify settings relevant to the overlay points.  
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+	

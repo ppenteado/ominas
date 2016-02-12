@@ -1,0 +1,25 @@
+;===========================================================================
+; illumination_fraction
+;
+;  Assuming the body gbx is a sphere, this routine computes the fraction of 
+;  its disk that appears illuminated by the source sund, as seen from the
+;  inertial position vectors v.
+;
+;===========================================================================
+function illumination_fraction, gbx, sund, v
+
+ nv = n_elements(v)/3
+
+ vv = bod_inertial_to_body_pos(gbx, v)
+ ss = bod_inertial_to_body_pos(gbx, bod_pos(sund)) ## make_array(nv, val=1d)
+
+ phi = v_angle(vv,ss) - !dpi/2d
+
+ fraction = 0.5d*(1d - sin(phi))
+
+ return, fraction
+end
+;===========================================================================
+
+
+

@@ -1,0 +1,58 @@
+PG_SELECT
+
+
+ PURPOSE:
+	Allows the user to select objects in an image using the mouse.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	region = pg_select(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor containing the image.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noverbose: 	If set, turns off the notification that cursor
+			movement is required.
+
+	psym: 		Plotting symbol to use for plotting points.
+
+	one:		If set, the routine will exit after selecting one point.
+
+	number:		If set, points will be labeled with numbers.
+
+	region:		If set, the user selects a region in the image.
+			This is the default.
+
+	points:		If set, the user selects points.
+
+  OUTPUT: 
+	cancelled:	Set if routine is caused to return by the cancel button.
+
+
+ RETURN:
+	Array of subscripts of all image points which lie within the selected
+	region.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pg_trim
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+	

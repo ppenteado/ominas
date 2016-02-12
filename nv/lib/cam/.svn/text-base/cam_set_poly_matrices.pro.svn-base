@@ -1,0 +1,22 @@
+;===========================================================================
+; cam_set_poly_matrices
+;
+;
+;===========================================================================
+pro cam_set_poly_matrices, cxp, XX, YY, PP, QQ
+@nv_lib.include
+ cdp = class_extract(cxp, 'CAMERA')
+ cd = nv_dereference(cdp)
+
+
+ if(ptr_valid(cd.fn_data_p)) then ptr_free_recurse, cd.fn_data_p
+
+ cd.fn_data_p = ptr_new([ptr_new(XX), ptr_new(YY), ptr_new(PP), ptr_new(QQ)])
+
+ nv_rereference, cdp, cd
+ nv_notify, cdp, type = 0
+end
+;===========================================================================
+
+
+

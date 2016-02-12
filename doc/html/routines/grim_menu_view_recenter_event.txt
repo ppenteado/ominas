@@ -1,0 +1,14 @@
+GRIM_MENU_VIEW_RECENTER_EVENT
+
+
+ PURPOSE:
+	Modifies view settings so as to display the active overlays. 
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 9/2007
+	

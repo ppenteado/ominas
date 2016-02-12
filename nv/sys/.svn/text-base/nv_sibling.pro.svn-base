@@ -1,0 +1,13 @@
+;=============================================================================
+; nv_sibling
+;
+;=============================================================================
+function nv_sibling, ddp
+@nv.include
+ nv_notify, ddp, type = 1
+ dd = nv_dereference(ddp)
+
+ handle_value, dd.sibling_dd_h, sibling_ddp
+ return, sibling_ddp
+end
+;=============================================================================
