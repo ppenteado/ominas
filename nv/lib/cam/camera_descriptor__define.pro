@@ -116,7 +116,7 @@ pro camera_descriptor__define
 						; (radians/pixel)
 	oaxis:		 dblarr(2), $		; image coordinates of optical
 						; axis
-	size:		 dblarr(2), $		; Image size, pixels
+	size:		 dblarr(3), $		; Image size, pixels
 	exposure:	 0d, $			; exposure duration; body time
 						; is specified at center of this
 						; interval
