@@ -152,10 +152,22 @@ function image_interp_sinc, image, grid_x, grid_y, k, fwhm, valid=valid, $
       x_xi = grid_x[ii] - grid_xi[ii]
       y_yj = grid_y[ii] - grid_yj[ii]
 
+      if n_elements(ii) eq 1 then begin ;kepp psf_in from thinking the single element is a grid size
+        fixx=1
+        x_xi=[x_xi,x_xi]
+        y_yj=[y_yj,y_yj]
+      endif else fixx=0
+
       if(keyword_set(psf_fn)) then $
                       psf = call_function(psf_fn, psf_data, x_xi, y_yj) $
       else psf = gauss2d(x_xi, y_yj, sig)
-
+      
+      if fixx then begin ;undo the workaround created above when the grid has only one element
+        x_xi=[x_xi[0]]
+        y_yj=[y_yj[0]]
+        psf=[psf[0]]
+      endif
+        
       xsinc = sinc(x_xi)
       ysinc = sinc(y_yj)
 
