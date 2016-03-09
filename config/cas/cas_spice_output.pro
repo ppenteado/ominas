@@ -70,14 +70,24 @@ pro cas_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
                                       n_obj=n_obj, dim=dim, status=status
 
  cam_name = nv_instrument(dd)
- if(cam_name EQ 'CAS_ISSNA') then inst=-82360l
- if(cam_name EQ 'CAS_ISSWA') then inst=-82361l
-
+ case cam_name of
+	'CAS_ISSNA': $
+	  begin
+	   inst=-82360l
+	   orient_fn = 'cas_orient_to_cmat_iss'
+	  end
+	'CAS_ISSWA': $
+	  begin
+	   inst=-82361l
+	   orient_fn = 'cas_orient_to_cmat_iss'
+	  end
+ endcase
 
  sc = -82l
  plat = -82000l
 
- spice_write_cameras, dd, ref, ck_file, cas_from_ominas(value), $
+ spice_write_cameras, dd, ref, ck_file, $
+           cas_from_ominas(value, orient_fn), $
 		sc = sc, $
 		inst = inst, $
 		plat = plat, status=status

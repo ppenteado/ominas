@@ -98,7 +98,7 @@ function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
 
  inst = sc*1000 - 001l					; na camera
  if(cam_name EQ 'wa') then inst = sc*1000 - 002l	; wa camera
-
+ orient_fn = 'vgr_cmat_to_orient_iss'
 
  label = nv_header(dd)
 
@@ -175,7 +175,8 @@ function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		cam_fn_focal_to_image = cam_focal_to_image_linear, $
 		cam_fn_image_to_focal = cam_image_to_focal_linear, $
 		cam_fn_data = [nv_ptr_new()], $
-		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs) )
+		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
+                   orient_fn )
 
 end
 ;===========================================================================

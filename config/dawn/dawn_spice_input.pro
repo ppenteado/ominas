@@ -118,8 +118,16 @@ function dawn_spice_cameras, dd, ref, pos=pos, constants=constants, $
  cam_oaxis = [(cam_nx - 1.), (cam_ny - 1.)]/2.
 
  case cam_name of
-	'DAWN_FC1':  inst=-203110l
-	'DAWN_FC2': inst=-203120l
+	'DAWN_FC1': $
+	  begin
+	   inst=-203110l
+	   orient_fn = 'dawn_cmat_to_orient_fc'
+	  end
+	'DAWN_FC2': $
+	  begin
+	   inst=-203120l
+	   orient_fn = 'dawn_cmat_to_orient_fc'
+	  end
  endcase
 
  cam_scale = dawn_spice_scale(inst)
@@ -143,7 +151,8 @@ filters=''
 		cam_fn_focal_to_image = cam_focal_to_image_linear, $
 		cam_fn_image_to_focal = cam_image_to_focal_linear, $
 		cam_fn_data = [nv_ptr_new()], $
-		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs) )
+		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
+                  orient_fn )
 
 end
 ;===========================================================================

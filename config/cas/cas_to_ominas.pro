@@ -2,7 +2,7 @@
 ; cas_to_ominas
 ;
 ;=============================================================================
-function cas_to_ominas, _od
+function cas_to_ominas, _od, orient_fn
 
  if(NOT keyword__set(_od)) then return, 0
 
@@ -10,7 +10,7 @@ function cas_to_ominas, _od
 
  cd = class_extract(od, 'CAMERA')
  bd = cam_body(cd)
- bod_set_orient, bd, cas_cmat_to_orient(bod_orient(bd))
+ bod_set_orient, bd, call_function(orient_fn, bod_orient(bd))
  bod_set_pos, bd, bod_pos(bd)*1000d		; km --> m
  bod_set_vel, bd, bod_vel(bd)*1000d		; km/s --> m/s
  cam_set_body, cd, bd

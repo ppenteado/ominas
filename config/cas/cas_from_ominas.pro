@@ -2,7 +2,7 @@
 ; cas_from_ominas
 ;
 ;=============================================================================
-function cas_from_ominas, _od
+function cas_from_ominas, _od, orient_fn
 
  if(NOT keyword__set(_od)) then return, 0
 
@@ -12,7 +12,7 @@ function cas_from_ominas, _od
  if(keyword__set(cd)) then $
   begin
    bd = cam_body(cd)
-   bod_set_orient, bd, cas_orient_to_cmat(bod_orient(bd))
+   bod_set_orient, bd, call_function(orient_fn, bod_orient(bd))
    bod_set_pos, bd, bod_pos(bd)/1000d			; m --> km
    bod_set_vel, bd, bod_vel(bd)/1000d			; m/s --> km/s
    cam_set_body, cd, bd

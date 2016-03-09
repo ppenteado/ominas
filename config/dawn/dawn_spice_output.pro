@@ -77,7 +77,7 @@ pro dawn_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
  sc = -203l
  plat = -203000l
 
- spice_write_cameras, dd, ref, ck_file, dawn_from_ominas(value), $
+ spice_write_cameras, dd, ref, ck_file, dawn_from_ominas(value, orient_fn), $
 		sc = sc, $
 		inst = inst, $
 		plat = plat, status=status

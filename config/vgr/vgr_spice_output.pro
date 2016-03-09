@@ -72,6 +72,7 @@ pro vgr_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
  sc_name = vgr_parse_inst(nv_instrument(dd), cam=cam_name)
  sc = -31l
  if(sc_name EQ 'vg2') then sc = -32l
+ orient_fn = 'vgr_orient_to_cmat_iss'
 
  plat = 0l
 
@@ -80,7 +81,7 @@ pro vgr_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
 
  plat = 0l
 
- spice_write_cameras, dd, ref, ck_file, vgr_from_ominas(value), $
+ spice_write_cameras, dd, ref, ck_file, vgr_from_ominas(value, orient_fn), $
 		sc = sc, $
 		inst = inst, $
 		plat = plat, status=status

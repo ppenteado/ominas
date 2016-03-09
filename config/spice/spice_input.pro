@@ -346,8 +346,9 @@ function spice_input, dd, keyword, prefix, $
    if(keyword_set(_time)) then time = _time $
    else if((size(_time, /type) NE 7)) then time = _time
   end
- if(defined(time)) then $
-  if(size(time, /type) EQ 7) then time = spice_str2et(time)
+
+;;;;; if(defined(time)) then $
+;;;;;  if(size(time, /type) EQ 7) then time = spice_str2et(time)
 
  ;- - - - - - - - - - - - - - - - - - -
  ; nokernels
@@ -443,8 +444,6 @@ function spice_input, dd, keyword, prefix, $
   end
 
 
-
-
  ;----------------------------------
  ; manage kernels
  ;----------------------------------
@@ -466,6 +465,9 @@ function spice_input, dd, keyword, prefix, $
        lsk_reverse=lsk_reverse
      spice_load, lsk_to_load
 
+
+     if(defined(time)) then $
+         if(size(time, /type) EQ 7) then time = spice_str2et(time)
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      ; kernel list file
@@ -550,6 +552,9 @@ function spice_input, dd, keyword, prefix, $
 ;   spice_cull
   end
 
+
+ if(defined(time)) then $
+         if(size(time, /type) EQ 7) then time = spice_str2et(time)
 
 
  ;--------------------------

@@ -134,11 +134,13 @@ function cas_spice_cameras, dd, ref, pos=pos, constants=constants, $
 	  begin
 	   inst=-82360l
 	   cam_scale = cas_nac_scale() * bin
+	   orient_fn = 'cas_cmat_to_orient_iss'
 	  end
 	'CAS_ISSWA': $
 	  begin
 	   inst=-82361l
 	   cam_scale = cas_wac_scale() * bin
+	   orient_fn = 'cas_cmat_to_orient_iss'
 	  end
  endcase
 
@@ -160,7 +162,8 @@ function cas_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		cam_fn_focal_to_image = cam_focal_to_image_linear, $
 		cam_fn_image_to_focal = cam_image_to_focal_linear, $
 		cam_fn_data = [nv_ptr_new()], $
-		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs) )
+		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
+                  orient_fn )
 
 end
 ;===========================================================================
