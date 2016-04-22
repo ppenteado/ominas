@@ -1,4 +1,0 @@
-@bod__keywords.include
-type=type, radii=radii, lora=lora, lref=lref, rref=rref, mass=mass, J=J, GM=GM, $
-refl_fn=refl_fn, refl_parm=refl_parm, phase_fn=phase_fn, phase_parm=phase_parm, $
-albedo=albedo, $

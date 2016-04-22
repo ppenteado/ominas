@@ -42,10 +42,10 @@
 ;	
 ;-
 ;===========================================================================
-function stn_body, stxp
+function stn_body, stxp, noevent=noevent
 @nv_lib.include
  stdp = class_extract(stxp, 'STATION')
- nv_notify, stdp, type = 1
+ nv_notify, stdp, type = 1, noevent=noevent
  std = nv_dereference(stdp)
  return, std.bd
 end

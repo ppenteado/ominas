@@ -44,9 +44,9 @@
 ;	
 ;-
 ;===========================================================================
-function sld_refl_parm, gbxp
+function sld_refl_parm, gbxp, noevent=noevent
  gbdp = class_extract(gbxp, 'SOLID')
- nv_notify, gbdp, type = 1
+ nv_notify, gbdp, type = 1, noevent=noevent
  gbd = nv_dereference(gbdp)
  return, gbd.refl_parm
 end

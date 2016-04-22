@@ -11,7 +11,7 @@ function grim_compute_planet_center, map=map, fov=fov, hide=hide, idp_each=idp_e
 
  pds = class_extract(active_xds, 'PLANET')
  if(NOT keyword_set(pds)) then pds = gd.pd
- select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+ select = nwhere(cor_idp(gd.pd), cor_idp(pds))
 
  ;--------------------------------
  ; compute points
@@ -62,14 +62,13 @@ function grim_compute_limb, map=map, fov=fov, hide=hide, idp_each=idp_each, $
 
  pds = class_extract(active_xds, 'GLOBE')
  if(NOT keyword_set(pds)) then pds = gd.pd
- select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+ select = nwhere(cor_idp(gd.pd), cor_idp(pds))
 
  npd = n_elements(pds)
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
-help, od
  limb_ps = pg_limb(cd=gd.cd, gbx=pds, od=od, fov=fov, npoints=npoints)
  grim_message
 
@@ -148,7 +147,7 @@ function grim_compute_terminator, map=map, fov=fov, hide=hide, idp_each=idp_each
 
  pds = class_extract(active_xds, 'PLANET')
  if(NOT keyword_set(pds)) then pds = gd.pd
- select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+ select = nwhere(cor_idp(gd.pd), cor_idp(pds))
 
  npd = n_elements(pds)
 
@@ -232,7 +231,7 @@ function grim_compute_planet_grid, map=map, fov=fov, hide=hide, idp_each=idp_eac
 
  pds = class_extract(active_xds, 'GLOBE')
  if(NOT keyword_set(pds)) then pds = gd.pd
- select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+ select = nwhere(cor_idp(gd.pd), cor_idp(pds))
 
  npd = n_elements(pds)
 
@@ -370,7 +369,7 @@ function grim_compute_station, map=map, fov=fov, hide=hide, idp_each=idp_each, $
 ; grim_message
 ; if(hide) then hide_ps_disk = ptrarr(nstd)
 
- idp_each = nv_extract_idp(stds)
+ idp_each = cor_idp(stds)
 
 
  ;-------------------------------------
@@ -468,7 +467,7 @@ function grim_compute_array, map=map, fov=fov, hide=hide, idp_each=idp_each, $
 ; grim_message
 ; if(hide) then hide_ps_disk = ptrarr(npd)
 
- idp_each = nv_extract_idp(ards)
+ idp_each = cor_idp(ards)
 
 
  ;-------------------------------------
@@ -619,10 +618,10 @@ function grim_compute_shadow, map=map, fov=fov, hide=hide, idp_each=idp_each, $
  if(hide) then hide_ps = ptrarr(nshad)
 
 ;stop
-;;; idp_each = nv_extract_idp(active_ps)
-;; idp_each = nv_extract_idp(active_xds)
+;;; idp_each = cor_idp(active_ps)
+;; idp_each = cor_idp(active_xds)
 ; idp_each = ptrarr(nshad)
-; for i=0, nshad-1 do idp_each[i] = nv_extract_idp(active_xds[i])
+; for i=0, nshad-1 do idp_each[i] = cor_idp(active_xds[i])
 
  ;-------------------------------------------------------------------
  ; note we don't care about dimensions because shadows are not
@@ -758,7 +757,7 @@ function grim_compute_ring_grid, map=map, fov=fov, hide=hide, idp_each=idp_each,
  ;--------------------------------------------------------
  rds = class_extract(active_xds, 'RING')
  if(NOT keyword_set(rds)) then rds = gd.rd
- select = nwhere(nv_extract_idp(gd.rd), nv_extract_idp(rds))
+ select = nwhere(cor_idp(gd.rd), cor_idp(rds))
 
  nrd = n_elements(rds)
 
@@ -836,7 +835,7 @@ function grim_compute_limb_fill, map=map, fov=fov, hide=hide, idp_each=idp_each,
 
  pds = class_extract(active_xds, 'PLANET')
  if(NOT keyword__set(pds)) then pds = gd.pd
- select = nwhere(nv_extract_idp(gd.pd), nv_extract_idp(pds))
+ select = nwhere(cor_idp(gd.pd), cor_idp(pds))
 
  ;--------------------------------
  ; limb points
@@ -876,13 +875,13 @@ function grim_compute_limb_fill, map=map, fov=fov, hide=hide, idp_each=idp_each,
   begin
    fill_ps_lit[i] = ps_compress([limb_ps[i], term_ps[i]])
    fill_ps_unlit[i] = ps_compress([hide_ps_limb[i], term_ps[i]])
-   name = ps_name(limb_ps[i])
+   name = cor_name(limb_ps[i])
 
    ps_set_desc, fill_ps_lit[i], 'limb_fill_lit'
-   ps_set_name, fill_ps_lit[i], name
+   cor_set_name, fill_ps_lit[i], name
 
    ps_set_desc, fill_ps_unlit[i], 'limb_fill_unlit'
-   ps_set_name, fill_ps_unlit[i], name
+   cor_set_name, fill_ps_unlit[i], name
 
    ps_poly_rectify, fill_ps_unlit[i]
    ps_poly_rectify, fill_ps_lit[i]
@@ -993,9 +992,9 @@ function grim_compute_ring_fill, map=map, fov=fov, hide=hide, idp_each=idp_each,
 
    fill_ps_lit[i] = ps_compress(ps)
 
-   ps_set_name, ring_ps[i], name
+   cor_set_name, ring_ps[i], name
    ps_set_desc, fill_ps_lit[i], 'ring_fill_lit'
-   ps_set_name, fill_ps_lit[i], name
+   cor_set_name, fill_ps_lit[i], name
 
    ps_poly_rectify, fill_ps_lit[i]
 

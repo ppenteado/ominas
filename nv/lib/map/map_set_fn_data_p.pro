@@ -43,13 +43,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_fn_data_p, mdp, p
+pro map_set_fn_data_p, mdp, p, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.fn_data_p=p
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

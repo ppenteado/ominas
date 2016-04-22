@@ -43,10 +43,10 @@
 ;	
 ;-
 ;===========================================================================
-function arr_surface_pts, arxp
+function arr_surface_pts, arxp, noevent=noevent
 @nv_lib.include
  ardp = class_extract(arxp, 'ARRAY')
- nv_notify, ardp, type = 1
+ nv_notify, ardp, type = 1, noevent=noevent
  ard = nv_dereference(ardp)
  if(NOT ptr_valid(ard.surface_pts_p)) then return, 0
  return, *ard.surface_pts_p

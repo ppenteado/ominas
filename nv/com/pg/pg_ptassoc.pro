@@ -139,7 +139,7 @@ function pg_ptassoc, scan_ps, model_ps, assoc_model_ps, radius=radius, $
 
  for k=0, nw-1 do $
   begin
-   name = ps_name(model_ps[j[k]])
+   name = cor_name(model_ps[j[k]])
 
    delta = ddxy[*,w[k]]
 

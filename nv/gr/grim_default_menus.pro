@@ -137,8 +137,8 @@ pro grim_menu_ring_box_profile_radial_event, event
  dd = pg_profile_ring(plane.dd, sigma=sigma, w=w, nn=nn, $
                   cd=*plane.cd_p, dkx=rd[0], $
                         gbx=*plane.pd_p, outline_ps, dsk_pts=dsk_pts)
- nv_set_udata, dd[0], dsk_pts, 'DISK_PTS'
- nv_set_udata, dd[0], outline_ps, 'RING_BOX_PROFILE_RADIAL_OUTLINE'
+ cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
+ cor_set_udata, dd[0], 'RING_BOX_PROFILE_RADIAL_OUTLINE', outline_ps
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -224,8 +224,8 @@ pro grim_menu_ring_box_profile_longitudinal_event, event
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
                  cd=*plane.cd_p, dkx=rd[0], $
                    gbx=*plane.pd_p, outline_ps, dsk_pts=dsk_pts, /az)
- nv_set_udata, dd[0], dsk_pts, 'DISK_PTS'
- nv_set_udata, dd[0], outline_ps, 'RING_BOX_PROFILE_LONGITUDINAL_OUTLINE'
+ cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
+ cor_set_udata, dd[0], 'RING_BOX_PROFILE_LONGITUDINAL_OUTLINE', outline_ps
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -318,8 +318,8 @@ pro grim_menu_ring_profile_radial_event, event
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
                   cd=*plane.cd_p, dkx=rd[0], $
                         gbx=*plane.pd_p, outline_ps, dsk_pts=dsk_pts)
- nv_set_udata, dd[0], dsk_pts, 'DISK_PTS'
- nv_set_udata, dd[0], outline_ps, 'RING_PROFILE_RADIAL_OUTLINE'
+ cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
+ cor_set_udata, dd[0], 'RING_PROFILE_RADIAL_OUTLINE', outline_ps
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -405,8 +405,8 @@ pro grim_menu_ring_profile_longitudinal_event, event
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
                  cd=*plane.cd_p, dkx=rd[0], $
                    gbx=*plane.pd_p, outline_ps, dsk_pts=dsk_pts, /az)
- nv_set_udata, dd[0], dsk_pts, 'DISK_PTS'
- nv_set_udata, dd[0], outline_ps, 'RING_PROFILE_LONGITUDINAL_OUTLINE'
+ cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
+ cor_set_udata, dd[0], 'RING_PROFILE_LONGITUDINAL_OUTLINE', outline_ps
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -489,7 +489,7 @@ pro grim_menu_limb_profile_azimuthal_event, event
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
                  cd=*plane.cd_p, dkx=dkd, $
                    gbx=pd[0], outline_ps, dsk_pts=dsk_pts, /az)
- nv_set_udata, dd[0], dsk_pts, 'DISK_PTS'
+ cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -571,7 +571,7 @@ pro grim_menu_limb_profile_radial_event, event
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
                  cd=*plane.cd_p, dkx=dkd, $
                    gbx=pd[0], outline_ps, dsk_pts=dsk_pts)
- nv_set_udata, dd[0], dsk_pts, 'DISK_PTS'
+ cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -1140,7 +1140,7 @@ pro grim_menu_shift_drag_event, event
  plane = grim_get_plane(grim_data)
 
  
- test_ps = ps_init(p=transpose([transpose([0d,0d]), transpose([0d,1d])])) 
+ test_ps = ps_init(points=transpose([transpose([0d,0d]), transpose([0d,1d])])) 
 
  grim_print, grim_data, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept'
 

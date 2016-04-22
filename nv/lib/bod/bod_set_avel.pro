@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro bod_set_avel, bxp, avel
+pro bod_set_avel, bxp, avel, noevent=noevent
 @nv_lib.include
  bdp = class_extract(bxp, 'BODY')
  bd = nv_dereference(bdp)
@@ -51,6 +51,6 @@ pro bod_set_avel, bxp, avel
  bd.avel=avel
 
  nv_rereference, bdp, bd
- nv_notify, bdp, type = 0
+ nv_notify, bdp, type = 0, noevent=noevent
 end
 ;===========================================================================

@@ -4,8 +4,9 @@
 ; NOTE: emm, inc, and g are COSINES.
 ;
 ;=============================================================================
-pro pht_angles, image_pts, cd, bx, sund, night=night, inertial=inertial, $
-       emm=emm, inc=inc, g=g, valid=valid, body_pts=body_pts, frame_bd=frame_bd
+pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
+       emm=emm, inc=inc, g=g, valid=valid, body_pts=body_pts, frame_bd=frame_bd, $
+       north=north
 
  if(keyword_set(body_pts)) then np = n_elements(body_pts)/3 $
  else np = n_elements(image_pts)/2
@@ -15,13 +16,13 @@ pro pht_angles, image_pts, cd, bx, sund, night=night, inertial=inertial, $
  ; construct view vectors
  ;-------------------------------
  cam_pos = (bod_pos(cd))[gen3y(np,3,nt)]
+ v = bod_inertial_to_body_pos(bx, cam_pos)
+
  if(keyword_set(body_pts)) then $
          r = v_unit(bod_inertial_to_body_pos(cd, cam_pos) - body_pts) $
  else $
   begin
-   v = bod_inertial_to_body_pos(bx, cam_pos)
-   
-   if(keyword_set(inertia)) then r_inertial = image_pts $
+   if(keyword_set(inertial)) then r_inertial = image_pts $
    else r_inertial = (bod_body_to_inertial(cd, $
                         cam_focal_to_body(cd, $
                           cam_image_to_focal(cd, image_pts))))[linegen3z(np,3,nt)]
@@ -30,7 +31,7 @@ pro pht_angles, image_pts, cd, bx, sund, night=night, inertial=inertial, $
    ;-------------------------------
    ; compute points on surface
    ;-------------------------------
-   body_pts = surface_intersect(bx, v, r, hit=valid, /near)
+   junk = surface_intersect(bx, v, r, hit=valid, near=body_pts, frame_bd=frame_bd)
    if(valid[0] EQ -1) then return
   end
 
@@ -48,22 +49,16 @@ pro pht_angles, image_pts, cd, bx, sund, night=night, inertial=inertial, $
  ;-------------------------------
  ; compute surface normals
  ;-------------------------------
- normals = surface_normal(bx, body_pts, frame_bd=frame_bd)
+ normals = surface_normal(bx, v, body_pts, frame_bd=frame_bd, north=north)
 
  ;-------------------------------
- ; compute angles
+ ; compute cosines
  ;-------------------------------
  rww = r[ww]
  sww = s[ww]
 
  _emm = v_inner(-rww, normals[ww])
- w = where(_emm LT 0)
- if(w[0] NE -1) then _emm[w] = -_emm[w]
-
  _inc = v_inner(sww, normals[ww])
- w = where(_inc LT 0)
-; if((w[0] NE -1) AND (NOT keyword_set(night))) then _inc[w] = 0
-
  _g = v_inner(-rww, sww)
 
  emm = dblarr(np,nt)

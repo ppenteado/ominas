@@ -5,7 +5,7 @@
 ;
 ;=============================================================================
 function dh_get, dd
- dh=nv_udata(dd, 'DETACHED_HEADER')
+ dh=cor_udata(dd, 'DETACHED_HEADER')
  if(keyword__set(dh)) then return, dh
  return, ''
 end

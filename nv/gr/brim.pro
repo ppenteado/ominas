@@ -331,7 +331,7 @@ function brim_configure, brim_data, n, files=files, base=base, $
 
  if(NOT keyword_set(labels)) then $
   begin
-   fnames = nv_id_string(files)
+   fnames = cor_name(files)
    split_filename, fnames, dirs, labels
   end
  if(keyword_set(ids)) then $

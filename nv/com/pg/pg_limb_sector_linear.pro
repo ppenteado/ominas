@@ -121,9 +121,9 @@ function pg_limb_sector_linear, cd=cd, gbx=_gbx, gd=gd, $
  ; Return outline points
  ;-------------------------------------------
  outline_ps = ps_init(points = outline_pts, desc = 'pg_limb_sector_linear')
- ps_set_udata, outline_ps, name='nw', [nalt]
- ps_set_udata, outline_ps, name='nl', [nrim]
- ps_set_udata, outline_ps, name='sample', [sample]
+ cor_set_udata, outline_ps, 'nw', [nalt]
+ cor_set_udata, outline_ps, 'nl', [nrim]
+ cor_set_udata, outline_ps, 'sample', [sample]
 
  return, outline_ps
 end

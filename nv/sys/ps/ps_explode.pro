@@ -62,7 +62,7 @@ function ps_explode, ps
     if(keyword_set(vectors)) then ps_set_vectors, pps[i,j], vectors[i,*,j], /noevent
     if(keyword_set(data)) then ps_set_data, pps[i,j], data[*,i,j], /noevent
 
-    ps_set_udata, pps[i,j], tag_list_clone(ps_udata(ps))
+    cor_set_udata, pps[i,j], '', tag_list_clone(cor_udata(ps))
    end
 
  return, pps

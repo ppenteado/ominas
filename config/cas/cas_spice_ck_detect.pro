@@ -282,7 +282,7 @@ common cas_spice_ck_block, all_files, all_names_block, ckpath_block, $
  ;---------------------------------------------------------
  if(keyword_set(all_files)) then $
   begin
-   split_filename, nv_id_string(dd), dir, name, ext
+   split_filename, cor_name(dd), dir, name, ext
    if(keyword_set(name)) then $
     begin 
      p = strpos(strupcase(all_names), strupcase(name))

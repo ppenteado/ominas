@@ -43,13 +43,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_units, mdp, units
+pro map_set_units, mdp, units, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.units=units
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

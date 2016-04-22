@@ -43,13 +43,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_graphic, mdp, graphic
+pro map_set_graphic, mdp, graphic, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.graphic=graphic
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

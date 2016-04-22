@@ -42,11 +42,13 @@
 ;	
 ;-
 ;===========================================================================
-function cam_size, cxp
+function cam_size, cxp, noevent=noevent, nx=nx, ny=ny
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
- nv_notify, cdp, type = 1
+ nv_notify, cdp, type = 1, noevent=noevent
  cd = nv_dereference(cdp)
+ nx = cd.size[0]
+ ny = cd.size[1]
  return, cd.size
 end
 ;===========================================================================

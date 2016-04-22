@@ -1,6 +1,0 @@
-# instrument		input			output		
-# string		transform		transform
-#------------------------------------------------------------------------------
-  CAS_ISSNA		cas_delut		- #cas_relut
-  CAS_ISSWA		cas_delut		- #cas_relut
-  END

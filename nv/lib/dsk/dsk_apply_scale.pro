@@ -45,10 +45,10 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_apply_scale, dkxp, radii, inverse=inverse
+function dsk_apply_scale, dkxp, radii, inverse=inverse, noevent=noevent
 @nv_lib.include
  dkdp = class_extract(dkxp, 'DISK')
- nv_notify, dkdp, type = 1
+ nv_notify, dkdp, type = 1, noevent=noevent
  dkd = nv_dereference(dkdp)
  
  scale = dkd.scale

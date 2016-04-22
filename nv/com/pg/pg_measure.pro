@@ -631,7 +631,7 @@ print, inertial_pt1
                   label=label, $
                   inertial_pt=inertial_pts[i,*,*], surface_pt=surface_pts[i,*,*])
 
-         if(nv_test_dd(xds[0])) then names = nv_id_string(xds[0]) $
+         if(nv_test_dd(xds[0])) then names = cor_name(xds[0]) $
          else names = cor_name(xds)
          if(n_elements(names) EQ 1) then name = names $
          else $

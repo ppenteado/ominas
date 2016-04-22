@@ -43,14 +43,14 @@
 ;	
 ;-
 ;===========================================================================
-pro glb_set_solid, gbxp, slds
+pro glb_set_solid, gbxp, slds, noevent=noevent
  gbdp = class_extract(gbxp, 'GLOBE')
  gbd = nv_dereference(gbdp)
 
  gbd.sld=slds
 
  nv_rereference, gbdp, gbd
- nv_notify, gbdp, type = 0
+ nv_notify, gbdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

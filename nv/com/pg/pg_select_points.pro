@@ -102,7 +102,7 @@ function pg_select_points, dd, psym=psym, noverbose=noverbose, color=color, $
 
  if(keyword_set(ps_output)) then $
   begin
-   ps = ps_init(p=points[0:1,*])
+   ps = ps_init(points=points[0:1,*])
    return, ps
   end
 

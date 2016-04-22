@@ -438,7 +438,7 @@ pro gr_maptool_event, event
 	begin
 	 md_form = grmt_form_to_md(data, type=data.last_type)
 	 md = grmt_get_md(data, data.last_type, index=index)
-	 map_copy_descriptor, md, md_form
+	 nv_copy, md, md_form
 
 	 md = grmt_get_md(data, types[value.type])
          grmt_md_to_form, data, md

@@ -101,7 +101,7 @@
 ;=============================================================================
 function _pgc_xy, p, dd, gd=gd, format=format, label=label, name=name
 
- name = nv_id_string(dd)
+ name = cor_name(dd)
  label = ['X', 'Y']
  format = ['(1i10)', '(1i10)']
  return, long(p)
@@ -119,7 +119,7 @@ function _pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
 ; format = '(1i10)'
  format = '(d20.10)'
  label = ''
- name = nv_id_string(dd)
+ name = cor_name(dd)
 
  pp = fix(p)
 
@@ -461,7 +461,7 @@ function _pgc_photom_disk, p, dd, gd=gd, format=format, label=label, name=name
 
 
  frame_bd = get_primary(gd.cd, gd.gbx)
- pht_angles_disk, p, gd.cd, gd.dkx, gd.sund, frame=frame_bd, emm=emm, inc=inc, g=g, valid=valid
+ pht_angles, p, gd.cd, gd.dkx, gd.sund, frame=frame_bd, emm=emm, inc=inc, g=g, valid=valid
 
  if(valid[0] EQ -1) then return, 0
 
@@ -472,11 +472,12 @@ function _pgc_photom_disk, p, dd, gd=gd, format=format, label=label, name=name
 
  label = ['EMM', 'INC', 'PH']
 
- result = [tr(emm), tr(inc), tr(g)] * 180d/!dpi
+ result = [tr(acos(emm)), tr(acos(inc)), tr(acos(g))] * 180d/!dpi
 
  return, reform(result, 3, n_elements(valid), /over)
 end
 ;=============================================================================
+
 
 
 ;=============================================================================

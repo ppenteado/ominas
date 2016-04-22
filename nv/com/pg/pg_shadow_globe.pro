@@ -133,7 +133,7 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ps, $
     if((bod_opaque(gbx[i,0])) OR (keyword_set(reveal))) then $
      begin
       xd = reform(gbx[i,*], nt)
-      idp = nv_extract_idp(xd)
+      idp = cor_idp(xd)
       obj_bds = class_extract(xd, 'BODY')		; Globe i for all t.
       obj_gbds = class_extract(xd, 'GLOBE')
 

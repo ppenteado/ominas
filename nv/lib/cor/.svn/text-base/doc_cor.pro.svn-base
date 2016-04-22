@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="COR Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/cor/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/cor/doc_cor.txt"

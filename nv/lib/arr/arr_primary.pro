@@ -42,10 +42,10 @@
 ;	
 ;-
 ;===========================================================================
-function arr_primary, arxp
+function arr_primary, arxp, noevent=noevent
 @nv_lib.include
  ardp = class_extract(arxp, 'ARRAY')
- nv_notify, ardp, type = 1
+ nv_notify, ardp, type = 1, noevent=noevent
  ard = nv_dereference(ardp)
  return, ard.primary
 end

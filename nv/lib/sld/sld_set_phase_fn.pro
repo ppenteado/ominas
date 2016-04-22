@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro sld_set_phase_fn, slxp, phase_fn
+pro sld_set_phase_fn, slxp, phase_fn, noevent=noevent
 @nv_lib.include
  sldp = class_extract(slxp, 'SOLID')
  sld = nv_dereference(sldp)
@@ -51,6 +51,6 @@ pro sld_set_phase_fn, slxp, phase_fn
  sld.phase_fn=phase_fn
 
  nv_rereference, sldp, sld
- nv_notify, sldp, type = 0
+ nv_notify, sldp, type = 0, noevent=noevent
 end
 ;===========================================================================

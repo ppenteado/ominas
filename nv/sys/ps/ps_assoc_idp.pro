@@ -49,7 +49,7 @@
 ;-
 ;=============================================================================
 function ps_assoc_idp, psp, noevent=noevent
- if(NOT keyword_set(noevent)) then nv_notify, psp, type = 1
+ nv_notify, psp, type = 1, noevent=noevent
  ps = nv_dereference(psp)
  return, ps.assoc_idp
 end

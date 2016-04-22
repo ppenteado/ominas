@@ -58,18 +58,15 @@ pro ps_set, ps, points=points, vectors=vectors, flags=flags, $
  if(defined(points)) then ps_set_points, ps, points, /noevent
  if(defined(vectors)) then ps_set_vectors, ps, vectors, /noevent
  if(defined(flags)) then ps_set_flags, ps, flags, /noevent
- if(defined(name)) then ps_set_name, ps, name, /noevent
+ if(defined(name)) then cor_set_name, ps, name, /noevent
  if(defined(desc)) then ps_set_desc, ps, desc, /noevent
  if(defined(input)) then ps_set_input, ps, input, /noevent
  if(defined(data)) then ps_set_data, ps, data, /noevent
  if(defined(tags)) then ps_set_tags, ps, tags, /noevent
  if(defined(assoc_idp)) then ps_set_assoc_idp, ps, assoc_idp, /noevent
- if(defined(udata)) then ps_set_udata, ps, udata, name=uname, /noevent
+ if(defined(udata)) then cor_set_udata, ps, udata, uname, /noevent
 
- if(NOT keyword_set(noevent)) then $
-  begin
-   nv_notify, ps, type = 0
-   nv_notify, /flush
-  end
+ nv_notify, ps, type = 0, noevent=noevent
+ nv_notify, /flush, noevent=noevent
 end
 ;===========================================================================

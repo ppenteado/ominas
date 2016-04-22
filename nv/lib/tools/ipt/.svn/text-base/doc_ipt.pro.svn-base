@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="IPT Program Reference", $
-    "/home/joes/idl_pro/minas/util/ipt/*.pro", $
-    "/home/joes/idl_pro/minas/util/ipt/doc_ipt.txt"

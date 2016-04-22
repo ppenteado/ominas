@@ -162,7 +162,7 @@ function pg_render, cd=cd, sund=sund, $
    ymin = min(image_pts[1,*], max=ymax)
    mask_cd = nv_clone(cd)
    cam_subimage, mask_cd, [xmin,ymin], [xmax-xmin+1, ymax-ymin+1]
-   r = (mask_width/cam_nx(mask_cd))[0]
+   r = (mask_width/(cam_size(mask_cd))[0])[0]
    cam_resize, mask_cd, cam_size(mask_cd)*r
    result = pg_mask(/nodd, cd=mask_cd, bx=bx, mask=mask, pbx=2, np=100)
 

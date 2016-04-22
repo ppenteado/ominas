@@ -84,7 +84,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
   begin
    split_filename, reject_kernels, dirs, names
    tag = strupcase(type) + '_REJECTED_KERNELS'
-   nv_set_udata, dd, names, tag
+   cor_set_udata, dd, tag, names
   end
 
 

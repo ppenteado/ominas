@@ -44,9 +44,9 @@
 ;	
 ;-
 ;===========================================================================
-function bod_vel, bxp
+function bod_vel, bxp, noevent=noevent
  bdp = class_extract(bxp, 'BODY')
- nv_notify, bdp, type = 1
+ nv_notify, bdp, type = 1, noevent=noevent
  bd = nv_dereference(bdp)
  return, bd.vel
 end

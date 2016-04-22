@@ -16,8 +16,8 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
  ; remember to refresh the image
  ;-----------------------------------------------------------------
  use_pixmap = 1
- idp = nv_extract_idp(xd)
- w = where(idp EQ nv_extract_idp(plane.dd))
+ idp = cor_idp(xd)
+ w = where(idp EQ cor_idp(plane.dd))
  if(w[0] NE -1) then $
   begin
    if(nv_update(plane.dd) EQ 1) then new = 1 $
@@ -47,13 +47,13 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    if(keyword_set(points_ps)) then $
     for i=0, n-1 do if(ptr_valid(points_ps[i])) then $
      begin
-      dep = ps_udata(points_ps[i], 'grim_dep')
+      dep = cor_udata(points_ps[i], 'grim_dep')
       if(keyword_set(dep)) then $
        begin
         w = where(dep EQ idp)
         if(w[0] NE -1) then $
          begin
-          name = ps_udata(points_ps[i], 'grim_name')
+          name = cor_udata(points_ps[i], 'grim_name')
 
           w = where(name_list EQ name)
           if(w[0] EQ -1) then $
@@ -243,7 +243,7 @@ pro grim_rm_descriptor, grim_data, plane=plane, _xd
  ;----------------------------------
  for i=0, n_elements(xd)-1 do $
   begin
-   idp = nv_extract_idp(xd[i])
+   idp = cor_idp(xd[i])
    ps = grim_get_object_overlays(plane, xd[i])
    if(keyword_set(ps)) then nv_notify_unregister, ps, 'grim_descriptor_notify'
   end
@@ -454,7 +454,7 @@ function grim_get_cameras, grim_data, idp=idp, replace=replace, plane=plane
     end
   end
 
- idp = nv_extract_idp(*plane.cd_p)
+ idp = cor_idp(*plane.cd_p)
 
  return, *plane.cd_p
 end
@@ -516,7 +516,7 @@ function grim_get_planets, grim_data, idp=idp, $
    grim_add_descriptor, grim_data, plane.pd_p, pd, replace=replace
   end
 
- idp = nv_extract_idp(pd)
+ idp = cor_idp(pd)
 
 
  return, pd
@@ -567,7 +567,7 @@ function grim_get_sun, grim_data, idp=idp, replace=replace, plane=plane
 ;   grim_add_descriptor, grim_data, plane.pd_p, sund, replace=replace
   end
 
- idp = nv_extract_idp(sund)
+ idp = cor_idp(sund)
 
 
  return, sund
@@ -619,8 +619,7 @@ function grim_get_stars, grim_data, idp=idp, replace=replace, silent=silent, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - -
    else $
     begin
-     nx = cam_nx(cd)
-     ny = cam_ny(cd)
+     size = cam_size(cd, nx=nx, ny=ny)
      x0 = 0 & x1 = nx-1
      y0 = 0 & y1 = ny-1
      slop = plane.fov + 0.5
@@ -688,7 +687,7 @@ function grim_get_stars, grim_data, idp=idp, replace=replace, silent=silent, $
               grim_add_descriptor, grim_data, plane.sd_p, sd, replace=replace
   end
 
- idp = nv_extract_idp(sd)
+ idp = cor_idp(sd)
 
 
  return, sd
@@ -723,7 +722,7 @@ function grim_get_rings, grim_data, idp=idp, $
    grim_add_descriptor, grim_data, plane.rd_p, rd, replace=replace
   end
 
- idp = nv_extract_idp(rd)
+ idp = cor_idp(rd)
 
 
  return, rd
@@ -760,7 +759,7 @@ function grim_get_stations, grim_data, idp=idp, $
    grim_add_descriptor, grim_data, plane.std_p, std, replace=replace
   end
 
- idp = nv_extract_idp(std)
+ idp = cor_idp(std)
 
 
  return, std
@@ -797,7 +796,7 @@ function grim_get_arrays, grim_data, idp=idp, $
    grim_add_descriptor, grim_data, plane.ard_p, ard, replace=replace
   end
 
- idp = nv_extract_idp(ard)
+ idp = cor_idp(ard)
 
 
  return, ard

@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro sld_set_gm, slxp, gm, nosynch=nosynch
+pro sld_set_gm, slxp, gm, nosynch=nosynch, noevent=noevent
 @nv_lib.include
  sldp = class_extract(slxp, 'SOLID')
  sld = nv_dereference(sldp)
@@ -52,6 +52,6 @@ pro sld_set_gm, slxp, gm, nosynch=nosynch
  sld.gm = gm
 
  nv_rereference, sldp, sld
- nv_notify, sldp, type = 0
+ nv_notify, sldp, type = 0, noevent=noevent
 end
 ;===========================================================================

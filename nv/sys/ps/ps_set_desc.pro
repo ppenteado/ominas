@@ -56,10 +56,7 @@ pro ps_set_desc, psp, desc, noevent=noevent
  ps.desc = desc
 
  nv_rereference, psp, ps
- if(NOT keyword_set(noevent)) then $
-  begin
-   nv_notify, psp, type = 0
-   nv_notify, /flush
-  end
+ nv_notify, psp, type = 0, noevent=noevent
+ nv_notify, /flush, noevent=noevent
 end
 ;===========================================================================

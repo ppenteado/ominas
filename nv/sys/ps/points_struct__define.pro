@@ -29,8 +29,6 @@
 ;
 ;	assoc_idp:	IDP of an associated descriptor, if applicable.
 ;
-;	udata_tlp:	Pointer to a tag list containing generic user data.
-;
 ;	data_p:		Pointer to a point-by-point user data array.
 ;
 ;	tags_p:		Tags for point-by-point user data.
@@ -58,20 +56,23 @@
 pro points_struct__define
 
  struct={points_struct, $
-		name:		'', $		; data set name
+		crd:		 nv_ptr_new(), $; ptr to core class descriptor
+		class:		 '', $		; Name of descriptor class
+		abbrev:		 '', $		; Abbreviation of descriptor class
+
 		desc:		'', $		; data set description
-		idp:		ptr_new(), $	; ID pointer
 		points_p:	ptr_new(), $	; image points
 		vectors_p:	ptr_new(), $	; inertial vectors
 		flags_p:	ptr_new(), $	; flags
 		data_p:		ptr_new(), $	; point-by-point user data
 		tags_p:		ptr_new(), $	; tags for p-b-p user data
-		udata_tlp:	ptr_new(), $	; ptr to generic user data
 		input:		'', $		; description of input data
 		nv:		0l, $
 		nt:		0l, $
 
 		dst: 		{nv_directive_stop}, $	; Protect subsequent pointers
+
+
 		assoc_idp:	ptr_new() $	; idp of associated descriptor
 	}
 

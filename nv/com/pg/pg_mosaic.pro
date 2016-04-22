@@ -146,9 +146,9 @@ function pg_mosaic, dd, combine_fn=_combine_fn, wt_fns=_wt_fns, data=data, mosai
      begin
       maps[*,*,ii] = weight[ii] * nv_data(dd[ii], samples=pc_sub)
 
-      emm[*,*,ii] = nv_udata(dd[ii], 'EMM')
-      inc[*,*,ii] = nv_udata(dd[ii], 'INC')
-      phase[*,*,ii] = nv_udata(dd[ii], 'PHASE')
+      emm[*,*,ii] = cor_udata(dd[ii], 'EMM')
+      inc[*,*,ii] = cor_udata(dd[ii], 'INC')
+      phase[*,*,ii] = cor_udata(dd[ii], 'PHASE')
      end
     aux = create_struct('EMM', emm, 'INC', inc, 'PHASE', phase)
 

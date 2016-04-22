@@ -46,7 +46,7 @@
 ;	
 ;-
 ;===========================================================================
-pro cam_subimage, cxp, p0, size
+pro cam_subimage, cxp, p0, size, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
  cd = nv_dereference(cdp)
@@ -55,7 +55,7 @@ pro cam_subimage, cxp, p0, size
  cd.oaxis = cd.oaxis - p0
 
  nv_rereference, cdp, cd
- nv_notify, cdp, type = 0
+ nv_notify, cdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

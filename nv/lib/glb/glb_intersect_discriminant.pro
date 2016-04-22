@@ -5,10 +5,10 @@
 ;
 ;
 ;===========================================================================
-function glb_intersect_discriminant, gbxp, v, r, $
+function glb_intersect_discriminant, gbxp, v, r, noevent=noevent, $
                                           alpha=alpha, beta=beta, gamma=gamma
 @nv_lib.include
- nv_notify, gbdp, type = 1
+ nv_notify, gbdp, type = 1, noevent=noevent
  gbdp = class_extract(gbxp, 'GLOBE')
  gbd = nv_dereference(gbdp)
 

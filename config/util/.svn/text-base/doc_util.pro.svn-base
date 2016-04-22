@@ -1,5 +1,0 @@
-extract_doc, /page, $
-    title="UTIL Program Reference", $
-    "/home/joes/idl_pro/minas/config/util/*.pro", $
-    "/home/joes/idl_pro/minas/config/util/doc_util.txt"
-@doc_cas

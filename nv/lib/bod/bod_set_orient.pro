@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro bod_set_orient, bxp, orient
+pro bod_set_orient, bxp, orient, noevent=noevent
 @nv_lib.include
  bdp = class_extract(bxp, 'BODY')
  bd = nv_dereference(bdp)
@@ -53,6 +53,6 @@ pro bod_set_orient, bxp, orient
  else bd.orientT=transpose(orient)
 
  nv_rereference, bdp, bd
- nv_notify, bdp, type = 0
+ nv_notify, bdp, type = 0, noevent=noevent
 end
 ;===========================================================================

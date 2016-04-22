@@ -67,7 +67,7 @@ function ps_cull, ps, visible=visible, nofree=nofree
       vectors = ps_vectors(ps[i], /visible)
       flags = ps_flags(ps[i], /visible)
       data = ps_data(ps[i], /visible)
-      name = ps_name(ps[i], /visible)
+      name = cor_name(ps[i], /visible)
       desc = ps_desc(ps[i], /visible)
       input = ps_input(ps[i], /visible)
 
@@ -77,7 +77,7 @@ function ps_cull, ps, visible=visible, nofree=nofree
       ps_set_vectors, ps[i], vectors
       ps_set_flags, ps[i], flags
       ps_set_data, ps[i], data
-      ps_set_name, ps[i], name
+      cor_set_name, ps[i], name
       ps_set_desc, ps[i], desc
       ps_set_input, ps[i], input
      end

@@ -47,7 +47,7 @@
 ;	
 ;-
 ;=============================================================================
-function ps_valid, _psp
+function ps_valid, _psp, noevent=noevent
  if(NOT keyword_set(_psp)) then return, 0
 
  n = n_elements(_psp)
@@ -57,7 +57,7 @@ function ps_valid, _psp
 
  psp = _psp[_w]
 
- nv_notify, psp, type = 1
+ nv_notify, psp, type = 1, noevent=noevent
  ps = nv_dereference(psp)
 
  nps = n_elements(ps)

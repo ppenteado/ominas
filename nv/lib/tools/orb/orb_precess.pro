@@ -33,8 +33,11 @@ pro orb_precess, obs_bx, _pd0, pd, _rd0, _pd=_pd, _rd=_rd, $
  ;---------------------------------------------
  ; copy correct positions, velocities, masses
  ;---------------------------------------------
- plt_copy_descriptor, pd_precess, pd
- rng_copy_descriptor, rd_precess, rd0
+nv_message, /con, name='orb_precess', 'Warning: untested use of nv_copy.'
+nv_copy, pd_precess, pd
+nv_copy, rd_precess, rd0
+; plt_copy_descriptor, pd_precess, pd
+; rng_copy_descriptor, rd_precess, rd0
 
  bod_set_pos, rd_precess, bod_pos(pd_precess)
  bod_set_vel, rd_precess, bod_vel(pd_precess)

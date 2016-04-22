@@ -55,10 +55,10 @@
 ;-
 ;=============================================================================
 function dsk_get_edge_radius, dkxp, lon, frame_bd, inner=inner, outer=outer, time=time, $
-    one_to_one=one_to_one
+    one_to_one=one_to_one, noevent=noevent
 @nv_lib.include
  dkdp = class_extract(dkxp, 'DISK')
- nv_notify, dkdp, type = 1
+ nv_notify, dkdp, type = 1, noevent=noevent
  dkd = nv_dereference(dkdp)
 
  if(keyword__set(inner)) then ii = 0 $

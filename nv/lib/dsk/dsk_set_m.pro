@@ -43,7 +43,7 @@
 ;	
 ;-
 ;=============================================================================
-pro dsk_set_m, dkxp, m
+pro dsk_set_m, dkxp, m, noevent=noevent
 @nv_lib.include
  dkdp = class_extract(dkxp, 'DISK')
  dkd = nv_dereference(dkdp)
@@ -51,7 +51,7 @@ pro dsk_set_m, dkxp, m
  dkd.m = m
 
  nv_rereference, dkdp, dkd
- nv_notify, dkdp, type = 0
+ nv_notify, dkdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

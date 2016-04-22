@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="GEN Program Reference", $
-    "/home/joes/idl_pro/minas/util/gen/*.pro", $
-    "/home/joes/idl_pro/minas/util/gen/doc_gen.txt"

@@ -106,7 +106,7 @@ function pg_ring_sector_box_ortho, p, $
  ; package the result
  ;-----------------------------------------
  outline_ps = ps_init(points = outline_pts, desc = 'pg_ring_sector_box_ortho')
- ps_set_udata, outline_ps, name='sample', [sample]
+ cor_set_udata, outline_ps, 'sample', [sample]
 
  return, outline_ps
 end

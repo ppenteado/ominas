@@ -42,13 +42,6 @@
 ;
 ;	assoc_idp:	IDP of an associated descriptor.
 ;
-;	uname:		String giving the name of a user data array.  If the name 
-;			exists, then the corresponding user data array is 
-;			replaced.  Otherwise, a new array is created with this 
-;			name. 
-;
-;	udata:		New user data array.
-;
 ;
 ;
 ;  OUTPUT: NONE
@@ -67,45 +60,37 @@
 ;	
 ;-
 ;=============================================================================
-function ps_init, $
-   name=name, $
-   desc=desc, $
-   input=input, $
-   points=points, $
-   vectors=vectors, $
-   flags=flags, $
-   tags=tags, data=data, $
-   assoc_idp=assoc_idp, $
-   uname=uname, udata=udata
+function ps_init, crd=crd, ptd=ptd, $
+@ps__keywords.include
+end_keywords
 
- ps = {points_struct}
+ if(NOT keyword_set(ptd)) then ptd = {points_struct}
+ ptd.class = 'POINT'
+ ptd.abbrev = 'PNT'
 
- ;-----------------------
- ; ID pointer
- ;-----------------------
- ps.idp = nv_ptr_new(0)
 
- ;-----------------------
- ; name
- ;-----------------------
- if(keyword_set(name)) then ps.name = name
+ if(keyword_set(crd)) then ptd.crd = crd $
+ else ptd.crd=cor_init_descriptors(1, $
+@cor__keywords.include
+end_keywords)
+
 
  ;-----------------------
  ; desc
  ;-----------------------
- if(keyword_set(desc)) then ps.desc = desc
+ if(keyword_set(desc)) then ptd.desc = desc
 
  ;-----------------------
  ; input
  ;-----------------------
- if(keyword_set(input)) then ps.input = input
+ if(keyword_set(input)) then ptd.input = input
 
  ;-----------------------
  ; points
  ;-----------------------
  if(keyword_set(points)) then $
   begin
-   ps.points_p = nv_ptr_new(points)
+   ptd.points_p = nv_ptr_new(points)
 
    dim = size(points, /dim)
    ndim = n_elements(dim)
@@ -119,7 +104,7 @@ function ps_init, $
  ;-----------------------
  if(keyword_set(vectors)) then $
   begin
-   ps.vectors_p = nv_ptr_new(vectors)
+   ptd.vectors_p = nv_ptr_new(vectors)
 
    dim = size(vectors, /dim)
    ndim = n_elements(dim)
@@ -144,7 +129,7 @@ function ps_init, $
 
  if(defined(flags)) then $
   begin
-   ps.flags_p = nv_ptr_new(flags)
+   ptd.flags_p = nv_ptr_new(flags)
 
    dim = [1]
    if(n_elements(flags) GT 1) then dim = size(flags, /dim)
@@ -168,7 +153,7 @@ function ps_init, $
  ;--------------------------
  if(keyword_set(data)) then $
   begin
-   ps.data_p = nv_ptr_new(data)
+   ptd.data_p = nv_ptr_new(data)
 
    dim = size(data, /dim)
    ndim = n_elements(dim)
@@ -192,7 +177,7 @@ function ps_init, $
  ;--------------------------
  if(keyword_set(tags)) then $
   begin
-   ps.tags_p = nv_ptr_new(tags)
+   ptd.tags_p = nv_ptr_new(tags)
 
    dim = size(tags, /dim)
    ndim = n_elements(dim)
@@ -207,35 +192,20 @@ function ps_init, $
  ;--------------------------
  ; dimensions
  ;--------------------------
- ps.nv = (ps.nt = 0)
- if(keyword_set(nv)) then ps.nv = nv
- if(keyword_set(nt)) then ps.nt = nt
-
-
- ;--------------------------
- ; user data
- ;--------------------------
- if(defined(udata)) then $
-  begin
-   if(NOT keyword_set(uname)) then ps.udata_tlp = udata $
-   else $
-    begin
-     tlp = ps.udata_tlp
-     tag_list_set, tlp, uname, udata
-     ps.udata_tlp = tlp
-    end
-  end
+ ptd.nv = (ptd.nt = 0)
+ if(keyword_set(nv)) then ptd.nv = nv
+ if(keyword_set(nt)) then ptd.nt = nt
 
 
  ;-----------------------
- ; ps pointer
+ ; ptd pointer
  ;-----------------------
- psp = ptrarr(1)
- nv_rereference, psp, ps
+ ptdp = ptrarr(1)
+ nv_rereference, ptdp, ptd
 
 
 
- return, psp
+ return, ptdp
 end
 ;===========================================================================
 

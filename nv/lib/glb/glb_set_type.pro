@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro glb_set_type, gbxp, type
+pro glb_set_type, gbxp, type, noevent=noevent
 @nv_lib.include
  gbdp = class_extract(gbxp, 'GLOBE')
  gbd = nv_dereference(gbdp)
@@ -51,6 +51,6 @@ pro glb_set_type, gbxp, type
  gbd.type=type
 
  nv_rereference, gbdp, gbd
- nv_notify, gbdp, type = 0
+ nv_notify, gbdp, type = 0, noevent=noevent
 end
 ;===========================================================================

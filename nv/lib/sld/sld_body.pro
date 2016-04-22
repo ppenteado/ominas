@@ -42,10 +42,10 @@
 ;	
 ;-
 ;===========================================================================
-function sld_body, slxp
+function sld_body, slxp, noevent=noevent
 @nv_lib.include
  sldp = class_extract(slxp, 'SOLID')
- nv_notify, sldp, type = 1
+ nv_notify, sldp, type = 1, noevent=noevent
  sld = nv_dereference(sldp)
  return, sld.bd
 end

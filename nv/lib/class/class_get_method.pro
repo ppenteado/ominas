@@ -45,8 +45,8 @@
 ;	
 ;-
 ;=============================================================================
-function class_get_method, xdp, name
- nv_notify, xdp, type = 1
+function class_get_method, xdp, name, noevent=noevent
+ nv_notify, xdp, type = 1, noevent=noevent
  if(NOT keyword_set(xdp)) then return, 0
 
  xd = *xdp

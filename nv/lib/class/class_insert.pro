@@ -3,7 +3,7 @@
 ;
 ;
 ;===========================================================================
-pro class_insert, odp, cld, class, copy=copy
+pro class_insert, odp, cld, class, copy=copy, noevent=noevent
  od = nv_dereference(odp)
 
  n = n_elements(od)
@@ -13,21 +13,21 @@ pro class_insert, odp, cld, class, copy=copy
 
  if(keyword__set(copy)) then $
   case i of $
-   0 : class_copy_descriptor, odp, cld
-   1 : class_copy_descriptor, od.(0), cld
+   0 : nv_copy, odp, cld
+   1 : nv_copy, od.(0), cld
    2 : for j=0, n-1 do $
-        class_copy_descriptor, (*od[j].(0)).(0), cld[j]
+        nv_copy, (*od[j].(0)).(0), cld[j]
    3 : for j=0, n-1 do $
-        class_copy_descriptor, (*(*od[j].(0)).(0)).(0), cld[j]
+        nv_copy, (*(*od[j].(0)).(0)).(0), cld[j]
    4 : for j=0, n-1 do $
-        class_copy_descriptor, (*(*(*od[j].(0)).(0)).(0)).(0), cld[j]
+        nv_copy, (*(*(*od[j].(0)).(0)).(0)).(0), cld[j]
    5 : for j=0, n-1 do $
-        class_copy_descriptor, (*(*(*(*od[j].(0)).(0)).(0)).(0)).(0), cld[j]
+        nv_copy, (*(*(*(*od[j].(0)).(0)).(0)).(0)).(0), cld[j]
    6 : for j=0, n-1 do $
-            class_copy_descriptor, $
+            nv_copy, $
                          (*(*(*(*(*od[j].(0)).(0)).(0)).(0)).(0)).(0), cld[j]
    6 : for j=0, n-1 do $
-            class_copy_descriptor, $
+            nv_copy, $
                    (*(*(*(*(*(*od[j].(0)).(0)).(0)).(0)).(0)).(0)).(0), cld[j]
    else : return
   endcase $
@@ -46,7 +46,7 @@ pro class_insert, odp, cld, class, copy=copy
 
 
  nv_rereference, odp, od
- nv_notify, odp, type = 0
+ nv_notify, odp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

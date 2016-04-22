@@ -12,7 +12,7 @@ pro gr_png_all
   begin 
    grim_jump_to_plane, grim_data, pn[i] 
    grim_refresh, grim_data
-   png_image, 'grim_' + nv_id_string(dds[i]) + '-' + strtrim(pn[i],2) + '.png'
+   png_image, 'grim_' + cor_name(dds[i]) + '-' + strtrim(pn[i],2) + '.png'
   end
 
 

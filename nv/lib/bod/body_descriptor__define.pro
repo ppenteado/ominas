@@ -100,6 +100,7 @@ pro body_descriptor__define
 	crd:		 nv_ptr_new(), $	; ptr to core class descriptor
 	class:		 '', $			; Name of descriptor class
 	abbrev:		 '', $			; Abbreviation of descriptor class
+
 	opaque:		 0b, $			; If set, then this body is
 						;  "easily visible".
 	arrays_tlp:	 nv_ptr_new(), $	; Pointer to body-frame points 

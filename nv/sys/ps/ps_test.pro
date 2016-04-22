@@ -50,11 +50,11 @@
 ;	
 ;-
 ;=============================================================================
-function ps_test, psp, generic=generic
+function ps_test, psp, generic=generic, noevent=noevent
  if(NOT keyword_set(psp)) then return, 0
  if(size(psp, /type) NE 10) then return, 0
 
- nv_notify, psp, type = 1
+ nv_notify, psp, type = 1, noevent=noevent
  ps = nv_dereference(psp)
 
  if(keyword_set(generic)) then return, tag_exists(ps[0], 'POINTS_P')

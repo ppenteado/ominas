@@ -43,9 +43,9 @@
 ;	
 ;-
 ;=============================================================================
-function map_radii, mdp
+function map_radii, mdp, noevent=noevent
 @nv_lib.include
- nv_notify, mdp, type = 1
+ nv_notify, mdp, type = 1, noevent=noevent
  md = nv_dereference(mdp)
  return, md.radii
 end

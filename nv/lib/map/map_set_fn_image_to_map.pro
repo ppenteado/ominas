@@ -44,13 +44,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_fn_image_to_map, mdp, fn
+pro map_set_fn_image_to_map, mdp, fn, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.fn_image_to_map=fn
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

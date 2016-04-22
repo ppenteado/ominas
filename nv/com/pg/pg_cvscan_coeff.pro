@@ -84,7 +84,7 @@ function pg_cvscan_coeff, scan_ps, axis_ps=_axis_ps, fix=fix
        
  if(keyword_set(_axis_ps)) then $
   begin     
-   if(size(_axis_ps, /type) NE 10) then axis_ps = ps_init(p=_axis_ps) $ 
+   if(size(_axis_ps, /type) NE 10) then axis_ps = ps_init(points=_axis_ps) $ 
    else axis_ps = _axis_ps
   end
 

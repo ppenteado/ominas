@@ -52,7 +52,7 @@ function pg_vectors, ps, sample=_sample, all=all, name=get_name
  else sample = _sample
  sample = float(sample)
 
- names = ps_name(ps)
+ names = cor_name(ps)
 
 
  ;----------------------------------

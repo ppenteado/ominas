@@ -69,7 +69,7 @@ function ps_uncompress, pps, _ps, nn=nn
  vv = ps_vectors(pps)
  ff = ps_flags(pps)
  data = ps_data(pps)
- name = ps_name(pps)
+ name = cor_name(pps)
 
  pp = reform(pp, 2,np,nn, /over)
  vv = reform(vv, np,3,nn, /over)
@@ -90,8 +90,8 @@ function ps_uncompress, pps, _ps, nn=nn
    dat = reform(data[*,jj:jj+nnp-1,*], ndat,nnp*nn)
    ps_set, ps[i], p=p, v=v, flags=f, name=nam, data=dat, tags=tags
 
-   tag_list_free, ps_udata(ps[i])
-   ps_set_udata, ps[i], ps_udata(pps)
+   tag_list_free, cor_udata(ps[i])
+   cor_set_udata, ps[i], '', cor_udata(pps)
 
    jj = jj + nnp
   end

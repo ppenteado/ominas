@@ -51,6 +51,9 @@
 ;	phase_parms:	Array of parameters for the photometric function named
 ;			by the 'phase_fn' keyword.
 ;
+;	overwrite:	If set, the output descriptor is the input descriptor
+;			with the relevant fields modified.
+;
 ;  OUTPUT:
 ;	emm_out:	Image emission angles.
 ;
@@ -60,9 +63,11 @@
 ;
 ;
 ; RETURN:
-;	Data descriptor containing the corrected image.  The photometric angles
-;	emm, inc, and phase are placed in the user data arrays with the tags
-;	'EMM', 'INC', and 'PHASE' respectively.
+;	New data descriptor containing the corrected image.  The photometric 
+;	angles emm, inc, and phase are placed in the user data arrays with 
+;	the tags'EMM', 'INC', and 'PHASE' respectively.  Unless /overwrite is
+;	set, the nw descriptor is a clone of the input descriptor, with the 
+;	relevant fields modified.
 ;
 ;
 ; STATUS:
@@ -79,7 +84,7 @@ function pg_photom_globe, dd, outline_ps=outline_ps, $
                   cd=cd, gbx=gbx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
-                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out
+                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -120,9 +125,8 @@ function pg_photom_globe, dd, outline_ps=outline_ps, $
  ; dereference the data descriptor 
  ;---------------------------------------
  image = nv_data(dd)
-; s = size(image)
-; xsize = s[1] & ysize = s[2]
- xsize = (cam_nx(cd))[0] & ysize = (cam_ny(cd))[0]
+ s = cam_size(cd)
+ xsize = s[0] & ysize = s[1]
 
  xysize = xsize*ysize
 
@@ -177,7 +181,8 @@ function pg_photom_globe, dd, outline_ps=outline_ps, $
  ;---------------------------------------
  ; modify the data descriptor
  ;---------------------------------------
- dd_pht = nv_clone(dd)
+ if(keyword_set(overwrite)) then dd_pht = dd $
+ else dd_pht = nv_clone(dd)
  nv_set_data, dd_pht, new_image
 
  ;---------------------------------------
@@ -185,15 +190,15 @@ function pg_photom_globe, dd, outline_ps=outline_ps, $
  ;---------------------------------------
  emm = fltarr(xsize,ysize)
  emm[indices] = mu
- nv_set_udata, dd_pht, emm, 'EMM'
+ cor_set_udata, dd_pht, 'EMM', emm
 
  inc = fltarr(xsize,ysize)
  inc[indices] = mu0
- nv_set_udata, dd_pht, inc, 'INC'
+ cor_set_udata, dd_pht, 'INC', inc
 
  phase = fltarr(xsize,ysize)
  phase[indices] = g
- nv_set_udata, dd_pht, phase, 'PHASE'
+ cor_set_udata, dd_pht, 'PHASE', phase
 
  emm_out = emm
  inc_out = inc

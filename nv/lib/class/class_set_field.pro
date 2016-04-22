@@ -8,7 +8,7 @@
 ;
 ;
 ;===========================================================================
-pro class_set_field, odp, tag_name, value, found=found
+pro class_set_field, odp, tag_name, value, found=found, noevent=noevent
  ods = nv_dereference(odp)
 
  found = 1
@@ -24,7 +24,7 @@ pro class_set_field, odp, tag_name, value, found=found
     begin
      _ods.(i) = value
      nv_rereference, _odp, _ods
-     nv_notify, _odp, type = 0
+     nv_notify, _odp, type = 0, noevent=noevent
      return
     end
    _odp = _ods.(0)

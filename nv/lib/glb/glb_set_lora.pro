@@ -44,13 +44,13 @@
 ;	
 ;-
 ;===========================================================================
-pro glb_set_lora, gbxp, lora
+pro glb_set_lora, gbxp, lora, noevent=noevent
  gbdp = class_extract(gbxp, 'GLOBE')
  gbd = nv_dereference(gbdp)
 
  gbd.lora=lora
 
  nv_rereference, gbdp, gbd
- nv_notify, gbdp, type = 0
+ nv_notify, gbdp, type = 0, noevent=noevent
 end
 ;===========================================================================

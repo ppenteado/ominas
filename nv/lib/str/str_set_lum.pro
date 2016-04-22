@@ -43,7 +43,7 @@
 ;	
 ;-
 ;=============================================================================
-pro str_set_lum, sxp, lum
+pro str_set_lum, sxp, lum, noevent=noevent
 @nv_lib.include
  sdp = class_extract(sxp, 'STAR')
  sd = nv_dereference(sdp)
@@ -51,7 +51,7 @@ pro str_set_lum, sxp, lum
  sd.lum=lum
 
  nv_rereference, sdp, sd
- nv_notify, sdp, type = 0
+ nv_notify, sdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

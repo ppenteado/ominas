@@ -52,7 +52,7 @@ end_keywords
 @ps_condition_keywords.include 
 end_keywords)
 
- if(NOT keyword_set(noevent)) then nv_notify, psp, type = 1
+ nv_notify, psp, type = 1, noevent=noevent
  ps = nv_dereference(psp)
 
  if(NOT keyword_set(condition)) then return, ps.nv

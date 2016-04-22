@@ -42,10 +42,10 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_lanl, dkxp
+function dsk_lanl, dkxp, noevent=noevent
 @nv_lib.include
  dkdp = class_extract(dkxp, 'DISK')
- nv_notify, dkdp, type = 1
+ nv_notify, dkdp, type = 1, noevent=noevent
  dkd = nv_dereference(dkdp)
  return, dkd.lanl
 end

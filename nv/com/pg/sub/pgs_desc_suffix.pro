@@ -50,7 +50,7 @@ function pgs_desc_suffix, gd, $
                  gbd=gbd, pd=pd, sd=sd, rd=rd, cd=cd, sund=sund, bx=bx, od=od
 
  suffix = ''
- if(keyword_set(dd)) then suffix = suffix + '/dd:' + nv_id_string(dd)
+ if(keyword_set(dd)) then suffix = suffix + '/dd:' + cor_name(dd)
  if(keyword_set(crd)) then suffix = suffix + '/crd:' + cor_name(crd)
  if(keyword_set(bd)) then suffix = suffix + '/bd:' + cor_name(bd)
  if(keyword_set(md)) then suffix = suffix + '/md:' + cor_name(md)

@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro bod_set_array, bxp, tag, array
+pro bod_set_array, bxp, tag, array, noevent=noevent
 @nv_lib.include
  bdp = class_extract(bxp, 'BODY')
  bd = nv_dereference(bdp)
@@ -53,7 +53,7 @@ pro bod_set_array, bxp, tag, array
  bd.arrays_tlp = tlp
 
  nv_rereference, bdp, bd
- nv_notify, bdp, type = 0
+ nv_notify, bdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

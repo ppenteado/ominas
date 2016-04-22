@@ -43,13 +43,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_radii, mdp, radii
+pro map_set_radii, mdp, radii, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.radii=radii
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

@@ -111,7 +111,7 @@ function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
 ;         xd = reform(bx[w[0],j], nt)
          xd = bx[w[0],j]
          input = pgs_desc_suffix(bx=xd[0], cd=cd[0])
-         idp = nv_extract_idp(xd)
+         idp = cor_idp(xd)
         end
       end
 

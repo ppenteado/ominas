@@ -1,116 +1,0 @@
-8
-
-dir
-3
-https://nopsvn.ciclops.org/svn/minas/trunk/config
-https://nopsvn.ciclops.org/svn/minas
-
-
-
-2009-10-26T21:54:58.512518Z
-2
-mrb
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-46ea3c5c-4a13-46c4-acac-fae9dc682352
-
-orb
-dir
-
-rings
-dir
-
-tdl
-dir
-
-include
-dir
-
-pds
-dir
-
-doc_config.pro
-file
-
-
-
-
-2009-10-27T16:31:20.000000Z
-ffe3b1c3137624d6e32c1a4773940eb9
-2009-10-26T21:54:58.512518Z
-2
-mrb
-has-props
-
-multi
-dir
-
-dh
-dir
-
-minas_env.csh
-file
-
-
-
-
-2009-10-27T16:31:20.000000Z
-612071d142c288acb575eef26615aa83
-2009-10-26T21:54:58.512518Z
-2
-mrb
-
-detectors
-dir
-
-sedr
-dir
-
-trk
-dir
-
-strcat
-dir
-
-gff
-dir
-
-spice
-dir
-
-occ
-dir
-
-stn
-dir
-
-vgr_cd
-dir
-
-vicar
-dir
-
-pf
-dir
-
-fits
-dir
-
-tab
-dir
-
-util
-dir
-

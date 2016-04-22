@@ -43,9 +43,9 @@
 ;	
 ;-
 ;===========================================================================
-function sld_phase_parm, slxp
+function sld_phase_parm, slxp, noevent=noevent
  sldp = class_extract(slxp, 'SOLID')
- nv_notify, sldp, type = 1
+ nv_notify, sldp, type = 1, noevent=noevent
  sld = nv_dereference(sldp)
  return, sld.phase_parm
 end

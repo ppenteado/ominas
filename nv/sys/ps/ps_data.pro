@@ -72,7 +72,7 @@ end_keywords
 @ps_condition_keywords.include 
 end_keywords)
 
- if(NOT keyword_set(noevent)) then nv_notify, psp, type = 1
+ nv_notify, psp, type = 1, noevent=noevent
  ps = nv_dereference(psp)
  if(n_elements(ps) GT 1) then return, ps.data_p
  if(NOT ptr_valid(ps.data_p)) then return, 0
@@ -113,7 +113,7 @@ end_keywords
 @ps_condition_keywords.include 
 end_keywords)
 
- if(NOT keyword_set(noevent)) then nv_notify, psp, type = 1
+ nv_notify, psp, type = 1, noevent=noevent
  ps = nv_dereference(psp)
  if(NOT ptr_valid(ps.data_p)) then return, 0
 

@@ -64,9 +64,8 @@ function map_to_surface, md, bx, map_pts
  result[*,1,*] = map_pts[1,*,*]
  result[*,2,*] = 0
 
-
- if(class_get(bx) EQ 'GLOBE') then $
-  if(class_get(md) EQ 'MAP') then $
+ if(class_get(bx[0]) EQ 'GLOBE') then $
+  if(class_get(md[0]) EQ 'MAP') then $
    if(map_graphic(md)) then $
           result[*,0,*] = map_graphic_to_centric(md, map_pts[0,*,*])
 

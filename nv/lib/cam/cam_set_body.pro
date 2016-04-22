@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro cam_set_body, cxp, bdp
+pro cam_set_body, cxp, bdp, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
  cd = nv_dereference(cdp)
@@ -51,7 +51,7 @@ pro cam_set_body, cxp, bdp
  cd.bd=bdp
 
  nv_rereference, cdp, cd
- nv_notify, cdp, type = 0
+ nv_notify, cdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

@@ -46,8 +46,8 @@
 ;	
 ;-
 ;=============================================================================
-function class_extract, odp, class, indices=indices, rm=rm
- nv_notify, odp, type = 1
+function class_extract, odp, class, indices=indices, rm=rm, noevent=noevent
+ nv_notify, odp, type = 1, noevent=noevent
 
  if(NOT keyword_set(odp)) then return, 0
 
@@ -106,8 +106,8 @@ end
 ;
 ;
 ;===========================================================================
-function _class_extract, odp, class
- nv_notify, odp, type = 1
+function _class_extract, odp, class, noevent=noevent
+ nv_notify, odp, type = 1, noevent=noevent
  od = nv_dereference(odp)
 
  case class_search(od, class) of $

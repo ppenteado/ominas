@@ -43,7 +43,7 @@
 ;	
 ;-
 ;=============================================================================
-pro bod_set_time, bxp, time
+pro bod_set_time, bxp, time, noevent=noevent
 @nv_lib.include
  bdp = class_extract(bxp, 'BODY')
  bd = nv_dereference(bdp)
@@ -51,7 +51,7 @@ pro bod_set_time, bxp, time
  bd.time=time
 
  nv_rereference, bdp, bd
- nv_notify, bdp, type = 0
+ nv_notify, bdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

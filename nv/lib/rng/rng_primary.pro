@@ -42,10 +42,10 @@
 ;	
 ;-
 ;===========================================================================
-function rng_primary, rxp
+function rng_primary, rxp, noevent=noevent
 @nv_lib.include
  rdp = class_extract(rxp, 'RING')
- nv_notify, rdp, type = 1
+ nv_notify, rdp, type = 1, noevent=noevent
  rd = nv_dereference(rdp)
  return, rd.primary
 end

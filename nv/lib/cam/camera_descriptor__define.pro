@@ -1,3 +1,17 @@
+function camera_descriptor::init
+print, 'cam_init'
+ return, 1
+end
+
+
+
+function camera_descriptor::oaxis
+stop
+ return, self.oaxis
+end
+
+
+
 ;=============================================================================
 ;+
 ; NAME:
@@ -131,6 +145,3 @@ pro camera_descriptor__define
 
 end
 ;===========================================================================
-
-
-

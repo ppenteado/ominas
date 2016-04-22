@@ -236,9 +236,9 @@ function pg_image_sector, sample=sample, $
  ; Return outline points
  ;-------------------------------------------
  outline_ps = ps_init(points = outline_pts, desc = 'pg_image_sector')
- ps_set_udata, outline_ps, name='nl', [nl]
- ps_set_udata, outline_ps, name='nw', [nw]
- ps_set_udata, outline_ps, name='sample', [sample]
+ cor_set_udata, outline_ps, 'nl', [nl]
+ cor_set_udata, outline_ps, 'nw', [nw]
+ cor_set_udata, outline_ps, 'sample', [sample]
 
  return, outline_ps
 end

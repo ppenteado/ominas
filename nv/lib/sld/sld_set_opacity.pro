@@ -43,7 +43,7 @@
 ;	
 ;-
 ;=============================================================================
-pro sld_set_opacity, slxp, opacity
+pro sld_set_opacity, slxp, opacity, noevent=noevent
 @nv_lib.include
  sldp = class_extract(slxp, 'SOLID')
  sld = nv_dereference(sldp)
@@ -51,7 +51,7 @@ pro sld_set_opacity, slxp, opacity
  sld.opacity=opacity
 
  nv_rereference, sldp, sld
- nv_notify, sldp, type = 0
+ nv_notify, sldp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

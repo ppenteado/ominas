@@ -108,7 +108,7 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
       begin
        xd = reform(bx[w[0],*], nt)
        input = pgs_desc_suffix(bx=xd[0], cd=cd[0])
-       idp = nv_extract_idp(xd)
+       idp = cor_idp(xd)
       end
     end
 

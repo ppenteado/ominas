@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro stn_set_body, stxp, bdp
+pro stn_set_body, stxp, bdp, noevent=noevent
 @nv_lib.include
  stdp = class_extract(stxp, 'STATION')
  std = nv_dereference(stdp)
@@ -51,7 +51,7 @@ pro stn_set_body, stxp, bdp
  std.bd=bdp
 
  nv_rereference, stdp, std
- nv_notify, stdp, type = 0
+ nv_notify, stdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

@@ -162,7 +162,7 @@ function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
             ps_init(name = get_core_name(dsk_bds), $
 		    desc = 'disk_outer', $
 		    input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], cd=cd[0]), $
-		    assoc_idp = nv_extract_idp(xd), $
+		    assoc_idp = cor_idp(xd), $
 		    points = image_pts, $
 		    vectors = inertial_pts)
 
@@ -222,7 +222,7 @@ function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
             ps_init(name = get_core_name(dsk_bds), $
 		    desc = 'disk_inner', $
 		    input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], cd=cd[0]), $
-		    assoc_idp = nv_extract_idp(xd), $
+		    assoc_idp = cor_idp(xd), $
 		    points = image_pts, $
 		    vectors = inertial_pts)
          if(NOT bod_opaque(dkx[i,0])) then $

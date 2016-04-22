@@ -229,8 +229,6 @@ pro dh_std_output, dd, keyword, value, status=status, $
 	    dh_put_string, dh, 'cam_fn_f2i', cam_fn_focal_to_image(cds)
 	    dh_put_string, dh, 'cam_fn_i2f', cam_fn_image_to_focal(cds)
 	    dh_put_array, dh, 'cam_fn_data', cam_fn_data_p(cds)
-;	    dh_put_scalar, dh, 'cam_nx', cam_nx(cds)
-;	    dh_put_scalar, dh, 'cam_ny', cam_ny(cds)
 	    dh_put_point, dh, 'cam_size', $
 	                             reform(cam_size(cds), 2,1,n_obj, /over)
 	    dh_put_point, dh, 'cam_scale', $

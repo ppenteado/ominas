@@ -32,7 +32,9 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	absolute: If set, the dxy argument represents and abosolute image
+;		  position rather than an offset.
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,7 +51,7 @@
 ;	
 ;-
 ;===========================================================================
-pro cam_reorient, _cdp, image_axis, dxy, dtheta, $
+pro cam_reorient, _cdp, image_axis, dxy, dtheta, absolute=absolute, $
                       n=n, sin_angle=sin_angle, cos_angle=cos_angle
  @nv_lib.include
 
@@ -73,7 +75,8 @@ pro cam_reorient, _cdp, image_axis, dxy, dtheta, $
  ; on-axis image points; before and after reorientation
  ;-------------------------------------------------------
  p0 = image_axis
- p1 = image_axis + dxy
+ p1 = dxy
+ if(NOT keyword_set(absolute)) then p1 = p1 + image_axis
 
  ;----------------------------------
  ; choose an off-axis image point

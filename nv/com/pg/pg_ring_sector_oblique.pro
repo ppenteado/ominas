@@ -248,8 +248,8 @@ function pg_ring_sector_oblique, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
  outline_ps = ps_init(points = outline_pts, $
                       desc = 'pg_ring_sector_oblique', $
                       data = transpose(dsk_outline_pts))
- ps_set_udata, outline_ps, name='nrad', [nrad]
- ps_set_udata, outline_ps, name='nlon', [nlon]
+ cor_set_udata, outline_ps, 'nrad', [nrad]
+ cor_set_udata, outline_ps, 'nlon', [nlon]
 
  return, outline_ps
 end

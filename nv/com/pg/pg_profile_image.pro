@@ -75,9 +75,9 @@ function pg_profile_image, dd, cd=cd, gd=gd, outline_ps, distance=distance, $
  ; get the points
  ;-----------------------------------
  outline_pts = ps_points(outline_ps)
- nl = ps_udata(outline_ps, 'nl')
- nw = ps_udata(outline_ps, 'nw')
- sample= ps_udata(outline_ps, 'sample')
+ nl = cor_udata(outline_ps, 'nl')
+ nw = cor_udata(outline_ps, 'nw')
+ sample= cor_udata(outline_ps, 'sample')
  nl = nl[0] & nw = nw[0] & sample = sample[0]
 
 
@@ -105,15 +105,15 @@ function pg_profile_image, dd, cd=cd, gd=gd, outline_ps, distance=distance, $
  if(keyword_set(bg)) then profile = profile - bg[0]
 
  dd_prof = [ nv_init_descriptor(data=[tr(distance), $
-                                 tr(profile)], id_string=nv_id_string(dd)), $
+                                 tr(profile)], name=cor_name(dd)), $
              nv_init_descriptor(data=[tr(distance), $
-                                 tr(sigma)], id_string=nv_id_string(dd)) ]
+                                 tr(sigma)], name=cor_name(dd)) ]
  nv_set_header, dd_prof[0], nv_header(dd)
  nv_set_header, dd_prof[1], nv_header(dd)
 
- image_ps = ps_init(p=image_pts)
- nv_set_udata, dd_prof[0], image_ps, 'IMAGE_PS'
- nv_set_udata, dd_prof[1], image_ps, 'IMAGE_PS'
+ image_ps = ps_init(points=image_pts)
+ cor_set_udata, dd_prof[0], 'IMAGE_PS', image_ps
+ cor_set_udata, dd_prof[1], 'IMAGE_PS', image_ps
 
  return, dd_prof
 end

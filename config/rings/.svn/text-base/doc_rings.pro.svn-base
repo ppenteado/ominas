@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="RINGS Program Reference", $
-    "/home/joes/idl_pro/minas/config/rings/*.pro", $
-    "/home/joes/idl_pro/minas/config/rings/doc_rings.txt"

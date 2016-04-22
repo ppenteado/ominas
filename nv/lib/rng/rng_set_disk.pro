@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro rng_set_disk, rxp, dkdp
+pro rng_set_disk, rxp, dkdp, noevent=noevent
 @nv_lib.include
  rdp = class_extract(rxp, 'RING')
  rd = nv_dereference(rdp)
@@ -51,7 +51,7 @@ pro rng_set_disk, rxp, dkdp
  rd.dkd=dkdp
 
  nv_rereference, rdp, rd
- nv_notify, rdp, type = 0
+ nv_notify, rdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

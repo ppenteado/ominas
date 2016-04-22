@@ -47,10 +47,10 @@
 ;	
 ;-
 ;===========================================================================
-function glb_get_surface_normal_body, gbxp, v
+function glb_get_surface_normal_body, gbxp, v, noevent=noevent
 @nv_lib.include
  gbdp = class_extract(gbxp, 'GLOBE')
- nv_notify, gbdp, type = 1
+ nv_notify, gbdp, type = 1, noevent=noevent
  gbd = nv_dereference(gbdp)
 
  nt = n_elements(gbd)

@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro arr_set_primary, arxp, primary
+pro arr_set_primary, arxp, primary, noevent=noevent
 @nv_lib.include
  ardp = class_extract(arxp, 'ARRAY')
  ard = nv_dereference(ardp)
@@ -51,7 +51,7 @@ pro arr_set_primary, arxp, primary
  ard.primary=primary
 
  nv_rereference, ardp, ard
- nv_notify, ardp, type = 0
+ nv_notify, ardp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

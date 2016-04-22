@@ -53,7 +53,7 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
      else $
       begin
        nv_message, name = 'spice_cameras', /continue, $
-                         'Error obtaining camera data for ' + nv_id_string(dd)
+                         'Error obtaining camera data for ' + cor_name(dd)
        return, 0
       end
     end
@@ -65,7 +65,7 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
     if(NOT valid_rotation(cmat)) then $
      begin
       nv_message, name = 'spice_cameras', /continue, $
-                    'Invalid C-matrix for ' + nv_id_string(dd) + '.'
+                    'Invalid C-matrix for ' + cor_name(dd) + '.'
       status = -1
       return, 0
      end

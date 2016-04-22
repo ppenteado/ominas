@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro arr_set_surface_pts, arxp, surface_pts
+pro arr_set_surface_pts, arxp, surface_pts, noevent=noevent
 @nv_lib.include
  ardp = class_extract(arxp, 'ARRAY')
  ard = nv_dereference(ardp)
@@ -52,7 +52,7 @@ pro arr_set_surface_pts, arxp, surface_pts
  else *ard.surface_pts_p = surface_pts
 
  nv_rereference, ardp, ard
- nv_notify, ardp, type = 0
+ nv_notify, ardp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

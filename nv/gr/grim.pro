@@ -1356,7 +1356,7 @@ function grim_user_ps_fname, grim_data, plane, basename=basename
 
  if(NOT keyword_set(basename)) then $
   begin
-   basename = nv_id_string(plane.dd)
+   basename = cor_name(plane.dd)
    if(NOT keyword_set(basename)) then basename = 'grim-' + strtrim(plane.pn,2)
   end
 
@@ -1396,7 +1396,7 @@ end
 ;
 ;=============================================================================
 function grim_mask_fname, grim_data, plane, basename=basename
- if(NOT keyword_set(basename)) then basename = nv_id_string(plane.dd)
+ if(NOT keyword_set(basename)) then basename = cor_name(plane.dd)
  return, grim_data.workdir + '/' + basename + '.mask'
 end
 ;=============================================================================
@@ -1447,7 +1447,7 @@ pro grim_read_user_points, grim_data, plane
 
    for i=0, n-1 do $
     begin
-     tag = ps_name(user_ps[i])
+     tag = cor_name(user_ps[i])
      tags[i] = tag
     end
 
@@ -4626,7 +4626,7 @@ pro grim_menu_plane_dump_event, event
 
  for i=0, n-1 do $
   begin
-   filename = nv_id_string(planes[i].dd)
+   filename = cor_name(planes[i].dd)
    grim_refresh, grim_data, plane=planes[i], wnum=pixmap, /no_title
    wset, pixmap
    write_png, filename + '.png', tvrd()
@@ -11008,7 +11008,7 @@ pro grim_initial_framing, grim_data, frame
 
    if(keyword_set(obj_name)) then $
     begin
-     obj_names = ps_name(ps)
+     obj_names = cor_name(ps)
      w = where(obj_names[0,*] EQ obj_name[0])
      if(w[0] EQ -1) then return
      ps = ps[*,w]
@@ -11422,7 +11422,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
      if(NOT keyword_set(xsize)) then xsize = 512
      if(NOT keyword_set(ysize)) then ysize = 512
      dd = nv_init_descriptor(data=grim_blank(xsize, ysize), $
-          id_string='BLANK', nhist=nhist, maintain=maintain, compress=compress)
+          name='BLANK', nhist=nhist, maintain=maintain, compress=compress)
     end $
    else $
     for i=0, n_elements(dd)-1 do $

@@ -147,7 +147,7 @@ pro pg_rm_globe, cd=cd, od=od, gbx=gbx, gd=gd, point_ps, hide_ps, $
      if(w[0] NE -1) then $
       begin
        if(hide) then $
-          hide_ps[j,i] = ps_init(p=p[*,w], flags=flags[w], vectors=vectors[w,*])
+          hide_ps[j,i] = ps_init(points=p[*,w], flags=flags[w], vectors=vectors[w,*])
        flags[w]=flags[w] OR PS_MASK_INVISIBLE
        ps_set_flags, point_ps[j], flags
       end

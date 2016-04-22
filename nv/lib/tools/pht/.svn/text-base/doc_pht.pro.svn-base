@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="PHT Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/tools/pht/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/tools/pht/doc_pht.txt"

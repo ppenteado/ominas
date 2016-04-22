@@ -121,7 +121,7 @@ function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, ps, body_pts=body_pts, dx
    scan_data[3]=1d		 & tags[3]='scan_cc'            ; correlation
 
 
-   tie_ps[i] = ps_init(p=p, $
+   tie_ps[i] = ps_init(points=p, $
                        name=name, $
                        desc=desc, $
                        data=data, $

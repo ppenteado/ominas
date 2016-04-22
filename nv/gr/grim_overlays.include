@@ -8,7 +8,7 @@ pro grim_set_overlay_update_flag, ps, value
 
  nps = n_elements(ps)
  for i=0, nps-1 do if(ptr_valid(ps[i])) then $
-   ps_set_udata, ps[i], name='GRIM_UPDATE_FLAG', value, /noevent
+   cor_set_udata, ps[i], 'GRIM_UPDATE_FLAG', value, /noevent
 
 end
 ;=============================================================================
@@ -26,7 +26,7 @@ function grim_get_overlay_update_flag, ps
  nps = n_elements(ps)
  vals = bytarr(nps)
 
- for i=0, nps-1 do vals[i] = ps_udata(ps[i], 'GRIM_UPDATE_FLAG')
+ for i=0, nps-1 do vals[i] = cor_udata(ps[i], 'GRIM_UPDATE_FLAG')
 
  return, vals
 end
@@ -90,7 +90,7 @@ function grim_get_xd, grim_data, plane=plane, class, w=w, idps=idps
       if(keyword_set(xd)) then $
        begin
         xds = append_array(xds, xd)
-        idps = append_array(idps, nv_extract_idp(xd))
+        idps = append_array(idps, cor_idp(xd))
        end
      end
    'planet'	:	$
@@ -99,7 +99,7 @@ function grim_get_xd, grim_data, plane=plane, class, w=w, idps=idps
       if(keyword_set(xd)) then $
        begin
         xds = append_array(xds, xd)
-        idps = append_array(idps, nv_extract_idp(xd))
+        idps = append_array(idps, cor_idp(xd))
        end
      end
    'ring'	:	$
@@ -108,7 +108,7 @@ function grim_get_xd, grim_data, plane=plane, class, w=w, idps=idps
       if(keyword_set(xd)) then $
        begin
         xds = append_array(xds, xd)
-        idps = append_array(idps, nv_extract_idp(xd))
+        idps = append_array(idps, cor_idp(xd))
        end
      end
    'sun'	:	$
@@ -117,7 +117,7 @@ function grim_get_xd, grim_data, plane=plane, class, w=w, idps=idps
       if(keyword_set(xd)) then $
        begin
         xds = append_array(xds, xd)
-        idps = append_array(idps, nv_extract_idp(xd))
+        idps = append_array(idps, cor_idp(xd))
        end
      end
    'star'	:	$
@@ -126,7 +126,7 @@ function grim_get_xd, grim_data, plane=plane, class, w=w, idps=idps
       if(keyword_set(xd)) then $
        begin
         xds = append_array(xds, xd)
-        idps = append_array(idps, nv_extract_idp(xd))
+        idps = append_array(idps, cor_idp(xd))
        end
      end
    'station'	:	$
@@ -135,7 +135,7 @@ function grim_get_xd, grim_data, plane=plane, class, w=w, idps=idps
       if(keyword_set(xd)) then $
        begin
         xds = append_array(xds, xd)
-        idps = append_array(idps, nv_extract_idp(xd))
+        idps = append_array(idps, cor_idp(xd))
        end
      end
    'array'	:	$
@@ -144,7 +144,7 @@ function grim_get_xd, grim_data, plane=plane, class, w=w, idps=idps
       if(keyword_set(xd)) then $
        begin
         xds = append_array(xds, xd)
-        idps = append_array(idps, nv_extract_idp(xd))
+        idps = append_array(idps, cor_idp(xd))
        end
      end
   endcase
@@ -1220,10 +1220,10 @@ return
 
  ps = grim_cat_points(grim_data, plane=plane)
  if(NOT keyword_set(ps)) then return
- idp = nv_extract_idp(ps)
+ idp = cor_idp(ps)
 ; xd = grim_get_xd(grim_data, plane=plane, 'all')
 ; if(NOT keyword_set(xd)) then return
-; idp = nv_extract_idp(xd) ; can't do this because xd not all the same type
+; idp = cor_idp(xd) ; can't do this because xd not all the same type
 
  shadow_ps = *(grim_get_overlay_psp(grim_data, plane=plane, 'shadow'))
  if(NOT keyword_set(shadow_ps)) then return
@@ -1233,7 +1233,7 @@ return
 
  for i=0, n-1 do $
   begin
-   dp = ps_udata(shadow_ps[i], 'grim_dep')
+   dp = cor_udata(shadow_ps[i], 'grim_dep')
    if(NOT keyword_set(dp)) then mark[i] = 1 $
    else $
     begin
@@ -1378,8 +1378,8 @@ pro grim_add_points, grim_data, object_ps, plane=plane, $
     begin
      if(ps_valid(object_ps[j,i])) then $
       begin
-       ps_set_udata, object_ps[j,i], name='grim_dep', idp, /noev
-       ps_set_udata, object_ps[j,i], name='grim_name', name, /noev
+       cor_set_udata, object_ps[j,i], 'grim_dep', idp, /noev
+       cor_set_udata, object_ps[j,i], 'grim_name', name, /noev
       end
     end
   end
@@ -1716,7 +1716,7 @@ end
 ;
 ;=============================================================================
 function grim_indexed_array_fname, grim_data, plane, name, basename=basename
- if(NOT keyword_set(basename)) then basename = nv_id_string(plane.dd)
+ if(NOT keyword_set(basename)) then basename = cor_name(plane.dd)
  return, grim_data.workdir + '/' + basename + '.' + strlowcase(name) + '_ps'
 end
 ;=============================================================================
@@ -1769,7 +1769,7 @@ pro grim_read_indexed_arrays, grim_data, plane, name, fname=fname
 
  for i=0, n-1 do $
   begin
-   label = ps_udata(ps[i], 'GRIM_INDEXED_ARRAY_LABEL')
+   label = cor_udata(ps[i], 'GRIM_INDEXED_ARRAY_LABEL')
    if(NOT keyword_set(label)) then label = strtrim(i,2)
    grim_add_indexed_array, psp, ps_points(ps[i]), label=label
   end
@@ -1793,7 +1793,7 @@ function grim_unique_array_label, psp, prefix=prefix
 
  labels = strarr(nps) 
  for i=0, nps-1 do if(ptr_valid(ps[i])) then $
-                 labels[i] = ps_udata(ps[i], 'GRIM_INDEXED_ARRAY_LABEL')
+                 labels[i] = cor_udata(ps[i], 'GRIM_INDEXED_ARRAY_LABEL')
  
  p = strpos(labels, '.')
  w = where(p EQ -1)
@@ -1846,7 +1846,7 @@ pro grim_add_indexed_array, psp, p, ps=ps, $
  if(NOT keyword_set(label)) then $
                         label = grim_unique_array_label(psp, prefix=prefix)
 
- ps = ps_init(p=pp, $
+ ps = ps_init(points=pp, $
         uname='GRIM_INDEXED_ARRAY_LABEL', $
         udata=label)
 
@@ -2413,7 +2413,7 @@ pro grim_sync_indexed_array, grim_data, plane, ps, _grim_data, _plane, _psp
  ;------------------------------------------
  label = strtrim(grim_data.grnum,2) + '.' + $
                              strtrim(plane.pn,2) + '.' + $
-                                       ps_udata(ps, 'GRIM_INDEXED_ARRAY_LABEL')
+                                       cor_udata(ps, 'GRIM_INDEXED_ARRAY_LABEL')
  if(valid[0] NE -1) then $
   begin
    grim_add_indexed_array, _psp, _pts[*,valid], label=label
@@ -2656,7 +2656,7 @@ function grim_get_associated_overlays, plane, idp
 
  ps = grim_cat_points(grim_data, plane=plane)
  if(NOT keyword_set(ps)) then return, 0
- idps = nv_extract_idp(ps)
+ idps = cor_idp(ps)
 
  w = where(idps EQ idp)
  if(w[0] EQ -1) then return, 0
@@ -2687,8 +2687,8 @@ pro grim_deactivate_xd, plane, xds
 
  n_active = n_elements(*plane.active_xd_p)
  active_idp = ptrarr(n_active)
- for i=0, n_active-1 do active_idp[i] = nv_extract_idp((*plane.active_xd_p)[i])
- idp = nv_extract_idp(xds)
+ for i=0, n_active-1 do active_idp[i] = cor_idp((*plane.active_xd_p)[i])
+ idp = cor_idp(xds)
 
  w = nwhere(active_idp, idp)
 
@@ -2806,8 +2806,8 @@ pro grim_activate_xd, plane, xds
    n_active = n_elements(*plane.active_xd_p)
    active_idp = ptrarr(n_active)
    for i=0, n_active-1 do $
-      active_idp[i] = nv_extract_idp((*plane.active_xd_p)[i])
-   idp = nv_extract_idp(xds)
+      active_idp[i] = cor_idp((*plane.active_xd_p)[i])
+   idp = cor_idp(xds)
 
    w = nwhere(idp, active_idp)
    ww = complement(xds, w)

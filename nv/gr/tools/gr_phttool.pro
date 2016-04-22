@@ -175,14 +175,8 @@ pro grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ps
  widget_control, /hourglass
  dd_cor = pg_photom(dd, cd=cd, gbx=pd[0], sund=sund, outline=outline_ps, $
              refl_fn=refl_fn, refl_parm=*phtd.refl_parm_p, $
-             phase_fn=phase_fn, phase_parm=*phtd.phase_parm_p)
+             phase_fn=phase_fn, phase_parm=*phtd.phase_parm_p, /over)
 
- ;-----------------------------------
- ; update grim dd
- ;-----------------------------------
- nv_copy_descriptor, dd, dd_cor
-
-; nv_free, dd_cor
 end
 ;=============================================================================
 

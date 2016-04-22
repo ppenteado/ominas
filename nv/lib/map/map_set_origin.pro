@@ -43,13 +43,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_origin, mdp, origin
+pro map_set_origin, mdp, origin, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.origin=origin
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

@@ -44,9 +44,9 @@
 ;	
 ;-
 ;=============================================================================
-function map_fn_image_to_map, mdp
+function map_fn_image_to_map, mdp, noevent=noevent
 @nv_lib.include
- nv_notify, mdp, type = 1
+ nv_notify, mdp, type = 1, noevent=noevent
  md = nv_dereference(mdp)
  return, 'map_image_to_map_' + md.type
 end

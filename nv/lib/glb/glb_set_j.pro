@@ -43,13 +43,13 @@
 ;	
 ;-
 ;===========================================================================
-pro glb_set_j, gbxp, J
+pro glb_set_j, gbxp, J, noevent=noevent
  gbdp = class_extract(gbxp, 'GLOBE')
  gbd = nv_dereference(gbdp)
 
  gbd.J = J
 
  nv_rereference, gbdp, gbd
- nv_notify, gbdp, type = 0
+ nv_notify, gbdp, type = 0, noevent=noevent
 end
 ;===========================================================================

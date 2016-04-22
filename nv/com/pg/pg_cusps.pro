@@ -136,7 +136,7 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
    cusp_ps[i] = ps_init(name = get_core_name(xd), $
 			desc=desc, $
 			input=pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd=cd[0]), $
-			assoc_idp = nv_extract_idp(xd), $
+			assoc_idp = cor_idp(xd), $
                         points = points, $
 			flags = flags, $
                         vectors = inertial_pts)

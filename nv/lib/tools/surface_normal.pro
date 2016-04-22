@@ -21,6 +21,8 @@
 ;	bx:	Array (nt) of any subclass of BODY descriptors with
 ;		the expected surface parameters.
 ;
+;	v:	Array (nv,3,nt) giving observer positions in the BODY frame.
+;
 ;	r:	Array (nv,3,nt) giving surface positions in the BODY frame.
 ;
 ;
@@ -30,6 +32,9 @@
 ; KEYWORDS:
 ;  INPUT: 
 ;	frame_bd:  Frame descriptor, if required for bx.
+;
+;	north:     Passed to dsk_surface_normal.  Causes surface normal
+;	           to point north regardless of observer position.
 ;
 ;  OUTPUT: NONE
 ;
@@ -47,13 +52,12 @@
 ;	
 ;-
 ;===========================================================================
-function surface_normal, bx, r, frame_bd=frame_bd
+function surface_normal, bx, v, r, frame_bd=frame_bd, north=north
 
  if(keyword_set(class_extract(bx, 'GLOBE'))) then $
      norm_pts = glb_surface_normal(bx, r) $
  else if(keyword_set(class_extract(bx, 'DISK'))) then $
-     norm_pts = dsk_surface_normal(bx, r, frame_bd=frame_bd)
-
+     norm_pts = dsk_surface_normal(bx, v, r, frame_bd=frame_bd, north=north)
 
  return, norm_pts
 end

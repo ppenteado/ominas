@@ -124,7 +124,7 @@ function pg_reflection_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, 
       if(ii[0] NE -1) then $
        begin
         xd = reform(dkx[i,ii], nt)
-        idp = nv_extract_idp(xd)
+        idp = cor_idp(xd)
         obj_bds = class_extract(xd, 'BODY')		; Disk i for all t.
         obj_dkds = class_extract(xd, 'DISK')
 

@@ -48,7 +48,7 @@
 ;	
 ;-
 ;===========================================================================
-pro cam_set_poly_matrices, cxp, XX, YY, PP, QQ
+pro cam_set_poly_matrices, cxp, XX, YY, PP, QQ, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
  cd = nv_dereference(cdp)
@@ -59,7 +59,7 @@ pro cam_set_poly_matrices, cxp, XX, YY, PP, QQ
  cd.fn_data_p = nv_ptr_new([nv_ptr_new(XX), nv_ptr_new(YY), nv_ptr_new(PP), nv_ptr_new(QQ)])
 
  nv_rereference, cdp, cd
- nv_notify, cdp, type = 0
+ nv_notify, cdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

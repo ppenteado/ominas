@@ -115,13 +115,13 @@ function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
         ps_init(name = get_core_name(bx), $
 		desc = desc[i], $
 		input = pgs_desc_suffix(bx=bx[i,0], cd=cd[0]), $
-		assoc_idp = nv_extract_idp(bx), $
+		assoc_idp = cor_idp(bx), $
 		vectors = inertial_pts, $
                 flags = flags, $
 		points = points)
 
-     ps_set_udata, footprint_ps[i], name='SURFACE_PTS', surface_pts
-     ps_set_udata, footprint_ps[i], name='BODY_PTS', body_pts
+     cor_set_udata, footprint_ps[i], 'SURFACE_PTS', surface_pts
+     cor_set_udata, footprint_ps[i], 'BODY_PTS', body_pts
 
      if(NOT bod_opaque(bx[i,0])) then 
               ps_set_flags, footprint_ps[i], $

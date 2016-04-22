@@ -40,10 +40,10 @@
 ;
 ;-
 ;=============================================================================
-function str_sp, sxp
+function str_sp, sxp, noevent=noevent
 @nv_lib.include
  sdp = class_extract(sxp, 'STAR')
- nv_notify, sdp, type = 1
+ nv_notify, sdp, type = 1, noevent=noevent
  sd = nv_dereference(sdp)
  return, sd.sp
 end

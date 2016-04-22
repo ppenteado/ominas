@@ -465,7 +465,7 @@ pro grim_compute_shadows, grim_data, shadow_ps, dep, plane=plane, w=w
    pg_hide, shadow_ps, cd=*plane.cd_p, gbx=pds, dkx=rds, /disk, /globe
    grim_message
 
-   dep = nv_extract_idp(active_ps)
+   dep = cor_idp(active_ps)
   end
 
  grim_message

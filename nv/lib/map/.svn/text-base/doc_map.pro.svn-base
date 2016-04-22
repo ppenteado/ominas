@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="MAP Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/map/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/map/doc_map.txt"

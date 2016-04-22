@@ -1,8 +1,0 @@
-extract_doc, /page, $
-    title="GR Program Reference", $
-    "/home/joes/idl_pro/minas/nv/gr/*.pro", $
-    "/home/joes/idl_pro/minas/nv/gr/doc_gr.txt"
-@doc_bitmaps
-@doc_interface
-@doc_plod
-@doc_tools

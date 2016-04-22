@@ -42,10 +42,10 @@
 ;	
 ;-
 ;===========================================================================
-function bod_libv, bxp
+function bod_libv, bxp, noevent=noevent
 @nv_lib.include
  bdp = class_extract(bxp, 'BODY')
- nv_notify, bdp, type = 1
+ nv_notify, bdp, type = 1, noevent=noevent
  bd = nv_dereference(bdp)
  return, bd.libv
 end

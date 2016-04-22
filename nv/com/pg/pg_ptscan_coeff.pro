@@ -74,7 +74,7 @@ function pg_ptscan_coeff, pts_ps, axis_ps=axis_ps, fix=fix, model_ps=model_ps
                  
  if(keyword_set(_axis_ps)) then $
   begin     
-   if(size(_axis_ps, /type) NE 7) then axis_ps = ps_init(p=_axis_ps) $ 
+   if(size(_axis_ps, /type) NE 7) then axis_ps = ps_init(points=_axis_ps) $ 
    else axis_ps = _axis_ps
   end
 

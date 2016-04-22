@@ -43,14 +43,14 @@
 ;	
 ;-
 ;===========================================================================
-pro sld_set_body, slxp, bds
+pro sld_set_body, slxp, bds, noevent=noevent
  sldp = class_extract(slxp, 'SOLID')
  sld = nv_dereference(sldp)
 
  sld.bd=bds
 
  nv_rereference, sldp, sld
- nv_notify, sldp, type = 0
+ nv_notify, sldp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

@@ -42,9 +42,9 @@
 ;	
 ;-
 ;=============================================================================
-function map_type, mdp
+function map_type, mdp, noevent=noevent
 @nv_lib.include
- nv_notify, mdp, type = 1
+ nv_notify, mdp, type = 1, noevent=noevent
  md = nv_dereference(mdp)
  return, md.type
 end

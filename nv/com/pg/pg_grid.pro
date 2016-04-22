@@ -169,7 +169,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
     begin
      xd = reform(bx[i,*], nt)
      input = pgs_desc_suffix(bx=bx[i,0], cd=cd[0])
-     idp = nv_extract_idp(xd)
+     idp = cor_idp(xd)
     end
 
    ;- - - - - - - - - - - - - - - - -

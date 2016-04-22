@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro dsk_set_phase_fn, dkxp, phase_fn
+pro dsk_set_phase_fn, dkxp, phase_fn, noevent=noevent
 @nv_lib.include
  dkdp = class_extract(dkxp, 'DISK')
  dkd = nv_dereference(dkdp)
@@ -51,6 +51,6 @@ pro dsk_set_phase_fn, dkxp, phase_fn
  dkd.phase_fn=phase_fn
 
  nv_rereference, dkdp, dkd
- nv_notify, dkdp, type = 0
+ nv_notify, dkdp, type = 0, noevent=noevent
 end
 ;===========================================================================

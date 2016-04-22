@@ -152,8 +152,8 @@ function pg_limb_sector_altaz, cd=cd, gbx=_gbx, gd=gd, dkd=dkd, $
  outline_ps = ps_init(points = outline_pts, $
                       desc = 'pg_limb_sector_altaz', $
                       data = transpose(dsk_outline_pts))
- ps_set_udata, outline_ps, name='nrad', [nalt]
- ps_set_udata, outline_ps, name='nlon', [naz]
+ cor_set_udata, outline_ps, 'nrad', [nalt]
+ cor_set_udata, outline_ps, 'nlon', [naz]
 		udata = [naz])
 
  return, outline_ps

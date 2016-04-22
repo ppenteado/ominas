@@ -49,7 +49,7 @@
 ;-
 ;=============================================================================
 function ps_tags, psp, noevent=noevent
- if(NOT keyword_set(noevent)) then nv_notify, psp, type = 1
+ nv_notify, psp, type = 1, noevent=noevent
  ps = nv_dereference(psp)
  if(NOT ptr_valid(ps.tags_p)) then return, 0
  return, *ps.tags_p

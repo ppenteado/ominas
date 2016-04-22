@@ -46,10 +46,10 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_valid_edges, dkxp, inner=inner, outer=outer, all=all
+function dsk_valid_edges, dkxp, inner=inner, outer=outer, all=all, noevent=noevent
 @nv_lib.include
  dkdp = class_extract(dkxp, 'DISK')
- nv_notify, dkdp, type = 1
+ nv_notify, dkdp, type = 1, noevent=noevent
  dkd = nv_dereference(dkdp)
 
  if(keyword_set(all)) then $

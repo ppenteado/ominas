@@ -45,8 +45,8 @@
 ; 
 ;-
 ;=============================================================================
-pro ps_write, filename, psp, bin=bin
- nv_notify, psp, type = 1
+pro ps_write, filename, psp, bin=bin, noevent=noevent
+ nv_notify, psp, type = 1, noevent=noevent
  ps = nv_dereference(psp)
 
  openw, unit, filename, /get_lun

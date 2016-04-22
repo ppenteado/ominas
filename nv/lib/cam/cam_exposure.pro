@@ -42,10 +42,10 @@
 ;	
 ;-
 ;===========================================================================
-function cam_exposure, cxp
+function cam_exposure, cxp, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
- nv_notify, cdp, type = 1
+ nv_notify, cdp, type = 1, noevent=noevent
  cd = nv_dereference(cdp)
  return, cd.exposure
 end

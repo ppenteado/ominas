@@ -47,6 +47,8 @@
 ;
 ;	bore_dxy: Boresight offset in pixels.
 ;
+;	absolute: If set, the dxy argument represents and abosolute image
+;		  position rather than an offset.
 ;
 ;  OUTPUT:
 ;	cd:	 If given, the camera descriptor is modified with a new
@@ -78,7 +80,8 @@
 ;-
 ;=============================================================================
 pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ps=axis_ps, $
-                bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy
+                bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy, $
+		absolute=absolute
 
 
  dxy = 0
@@ -135,7 +138,7 @@ pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ps=axis_ps, $
 
    if(keyword__set(axis_ps)) then axis = ps_points(axis_ps) $
    else axis = cam_oaxis(cd)
-   cam_reorient, cd, axis, dxy[*,0,*], dtheta[*]
+   cam_reorient, cd, axis, dxy[*,0,*], dtheta[*], absolute=absolute
   end
 
 

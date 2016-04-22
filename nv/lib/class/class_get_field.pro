@@ -8,9 +8,9 @@
 ;
 ;
 ;===========================================================================
-function class_get_field, odp, tag_name, found=found
+function class_get_field, odp, tag_name, found=found, noevent=noevent
  ods = nv_dereference(odp)
- nv_notify, ods, type = 1
+ nv_notify, ods, type = 1, noevent=noevent
 
  found = 1
  _ods = ods

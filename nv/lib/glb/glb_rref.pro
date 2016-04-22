@@ -43,9 +43,9 @@
 ;	
 ;-
 ;===========================================================================
-function glb_rref, gbxp
+function glb_rref, gbxp, noevent=noevent
  gbdp = class_extract(gbxp, 'GLOBE')
- nv_notify, gbdp, type = 1
+ nv_notify, gbdp, type = 1, noevent=noevent
  gbd = nv_dereference(gbdp)
 
  return, gbd.rref

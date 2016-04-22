@@ -66,18 +66,18 @@ end_keywords
 @ps_condition_keywords.include 
 end_keywords)
 
- if(NOT keyword_set(noevent)) then nv_notify, ps, type = 1
+ nv_notify, ps, type = 1, noevent=noevent
 
  if(arg_present(points)) then points = ps_points(ps, condition=condition, /noevent)
  if(arg_present(vectors)) then vectors = ps_vectors(ps, condition=condition, /noevent)
  if(arg_present(flags)) then flags = ps_flags(ps, /noevent, condition=condition)
- if(arg_present(name)) then name = ps_name(ps, /noevent)
+ if(arg_present(name)) then name = cor_name(ps, /noevent)
  if(arg_present(desc)) then desc = ps_desc(ps, /noevent)
  if(arg_present(input)) then input = ps_input(ps, /noevent)
  if(arg_present(data)) then data = ps_data(ps, condition=condition, /noevent)
  if(arg_present(tags)) then tags = ps_tags(ps, /noevent)
  if(arg_present(assoc_idp)) then assoc_idp = ps_assoc_idp(ps, /noevent)
- if(arg_present(udata)) then udata = ps_udata(ps, uname, /noevent)
+ if(arg_present(udata)) then udata = cor_udata(ps, uname, /noevent)
  if(arg_present(nv)) then nv = ps_nv(ps, /noevent, condition=condition)
  if(arg_present(nt)) then nt = ps_nt(ps, /noevent, condition=condition)
 

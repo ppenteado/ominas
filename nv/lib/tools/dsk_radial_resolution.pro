@@ -35,7 +35,7 @@
 ;
 ;
 ; RETURN: 
-;	Radial resolution on dkx at r, computed as te length of a
+;	Radial resolution on dkx at r, computed as the length of a
 ;	segment bisecting the intersection ellipse in the radial direction.
 ;
 ;

@@ -102,9 +102,6 @@ pro dsk_projected_resolution, dkd, cd, p, scale, $
  resperp = scale * range / v_mag(v_cross(v, vv))
 
 
-
-
-
 end
 ;==============================================================================
 

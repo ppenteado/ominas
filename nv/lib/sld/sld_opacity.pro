@@ -42,9 +42,9 @@
 ;	
 ;-
 ;=============================================================================
-function sld_opacity, slxp
+function sld_opacity, slxp, noevent=noevent
  sldp = class_extract(slxp, 'SOLID')
- nv_notify, sldp, type = 1
+ nv_notify, sldp, type = 1, noevent=noevent
  sld = nv_dereference(sldp)
  return, sld.opacity
 end

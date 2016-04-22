@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="TAB Program Reference", $
-    "/home/joes/idl_pro/minas/config/tab/*.pro", $
-    "/home/joes/idl_pro/minas/config/tab/doc_tab.txt"

@@ -53,6 +53,9 @@
 ;	phase_parms:	Array of parameters for the photometric function named
 ;			by the 'phase_fn' keyword.
 ;
+;	overwrite:	If set, the output descriptor is the input descriptor
+;			with the relevant fields modified.
+;
 ;  OUTPUT:
 ;	emm_out:	Image emission angles.
 ;
@@ -80,7 +83,8 @@ function pg_photom, dd, outline_ps=outline_ps, $
                   cd=cd, gbx=gbx, dkx=dkx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
-                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out
+                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, $
+                  overwrite=overwrite
 
 
  ;-----------------------------------------------
@@ -97,13 +101,13 @@ function pg_photom, dd, outline_ps=outline_ps, $
                   cd=cd, gbx=gbx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
-                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out)
+                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite)
   
  return, pg_photom_disk(dd, outline_ps=outline_ps, $
                   cd=cd, dkx=dkx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
-                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out)
+                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite)
 
 end
 ;=============================================================================

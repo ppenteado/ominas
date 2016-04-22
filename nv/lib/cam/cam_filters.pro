@@ -44,10 +44,10 @@
 ;	
 ;-
 ;=============================================================================
-function cam_filters, cxp, i
+function cam_filters, cxp, i, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
- nv_notify, cdp, type = 1
+ nv_notify, cdp, type = 1, noevent=noevent
  cd = nv_dereference(cdp)
 
  if(NOT defined(i)) then i = where(cd.filters NE '')

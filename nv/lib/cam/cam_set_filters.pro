@@ -44,7 +44,7 @@
 ;	
 ;-
 ;=============================================================================
-pro cam_set_filters, cxp, filter, i
+pro cam_set_filters, cxp, filter, i, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
  cd = nv_dereference(cdp)
@@ -53,7 +53,7 @@ pro cam_set_filters, cxp, filter, i
  else cd.filters[i] = filter
 
  nv_rereference, cdp, cd
- nv_notify, cdp, type = 0
+ nv_notify, cdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

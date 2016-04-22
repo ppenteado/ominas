@@ -45,7 +45,7 @@ pro grim_add_user_points, grnum=grnum, user_ps, tag, update=update, $
  pn = plane.pn
 
  n = n_elements(user_ps)
- for i=0, n-1 do if(ps_valid(user_ps[i])) then ps_set_name, user_ps[i], tag
+ for i=0, n-1 do if(ps_valid(user_ps[i])) then cor_set_name, user_ps[i], tag
 
  if(NOT keyword_set(color)) then color = 'purple' 
 

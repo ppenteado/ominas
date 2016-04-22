@@ -43,13 +43,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_center, mdp, center
+pro map_set_center, mdp, center, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.center=center
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

@@ -376,7 +376,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
   for i=0, n_planes-1 do $
    begin
     flag = 1
-    if(nv_id_string(dd[i]) EQ 'BLANK') then flag = 2
+    if(cor_name(dd[i]) EQ 'BLANK') then flag = 2
 
     plane = {grim_planes_struct, $
 	;---------------
@@ -503,7 +503,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 
     new = 0
     if(NOT keyword__set(planes)) then new = 1 $
-    else if(nv_id_string(planes[0].dd) EQ 'BLANK') then new = 1
+    else if(cor_name(planes[0].dd) EQ 'BLANK') then new = 1
 
     ;------------------------------------------------
     ; the first non-blank plane --

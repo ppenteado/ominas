@@ -44,10 +44,10 @@
 ;	
 ;-
 ;===========================================================================
-function glb_lora, gbxp
+function glb_lora, gbxp, noevent=noevent
 @nv_lib.include
  gbdp = class_extract(gbxp, 'GLOBE')
- nv_notify, gbdp, type = 1
+ nv_notify, gbdp, type = 1, noevent=noevent
  gbd = nv_dereference(gbdp)
  return, gbd.lora
 end

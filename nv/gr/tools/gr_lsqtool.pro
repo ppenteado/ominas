@@ -539,7 +539,7 @@ end
 function grlsq_make_tag, ps
 
  desc = ps_desc(ps)
- name = ps_name(ps)
+ name = cor_name(ps)
 
  return, strupcase(desc) + '_SCAN[' + strupcase(name) + ']'
 end
@@ -602,7 +602,7 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
    for k=0, nps-1 do $
     begin
      p = ps_points(_ps[k])
-     name = ps_name(_ps[k])
+     name = cor_name(_ps[k])
      w = in_image(cd, p)
      if(w[0] NE -1) then ps = append_array(ps, _ps[k])
     end
@@ -631,7 +631,7 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
        ps = 0
        for k=0, nps-1 do $
         begin
-         name = ps_name(ps)
+         name = cor_name(ps)
          w = where(names EQ name)
          if(w[0] NE -1) then $
           begin
@@ -654,9 +654,9 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
         begin
          scan_ps = pg_ptscan(dd, [ps], edge=lsqd.edge, width=lsqd.width)
          for l=0, n_elements(scan_ps)-1 do $
-                ps_set_udata, scan_ps[l], name='grlsq_scan_data', {lsqd:lsqd.edge}
+                cor_set_udata, scan_ps[l], 'grlsq_scan_data', {lsqd:lsqd.edge}
          for l=0, n_elements(scan_ps)-1 do $
-                       ps_set_udata, scan_ps[l], name='grlsq_scanned', 1b
+                       cor_set_udata, scan_ps[l], 'grlsq_scanned', 1b
          psym = 1
         end
       end $
@@ -702,10 +702,10 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
                                   algorithm=lsqd.algorithm, arg=inner)
 
         for l=0, n_elements(scan_ps)-1 do $
-            ps_set_udata, scan_ps[l], name='grlsq_scan_data', $
+            cor_set_udata, scan_ps[l], 'grlsq_scan_data', $
                     {lsqd:lsqd, model_p:model_p, mzero:mzero, inner:inner}
         for l=0, n_elements(scan_ps)-1 do $
-                       ps_set_udata, scan_ps[l], name='grlsq_scanned', 1b
+                       cor_set_udata, scan_ps[l], 'grlsq_scanned', 1b
       end
 
 
@@ -724,7 +724,7 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
        ;------------------------
        for j=0, nps-1 do if(ps_valid(scan_ps[j])) then $
         begin
-         name = strupcase(ps_name(ps[j]))
+         name = strupcase(cor_name(ps[j]))
 
          new_tag = grlsq_make_tag(ps[j])
          if(keyword_set(nocreate)) then $
@@ -795,10 +795,10 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
 
      if(keyword_set(_scan_ps)) then $
       begin
-       scanned = ps_udata(_scan_ps, 'grlsq_scanned')
+       scanned = cor_udata(_scan_ps, 'grlsq_scanned')
        if(NOT scanned) then $
         begin
-         scan_data = ps_udata(_scan_ps, 'grlsq_scan_data')
+         scan_data = cor_udata(_scan_ps, 'grlsq_scan_data')
          __scan_ps = $
            pg_cvscan(dd, scan_ps=_scan_ps, cd=cd, bx=rds, [ps], edge=scan_data.lsqd.edge, $
                           width=scan_data.lsqd.width, $
@@ -818,7 +818,7 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
          if(NOT keyword_set(ptscan_cf)) then ptscan_cf = _ptscan_cf $
          else ptscan_cf = [ptscan_cf, _ptscan_cf]
          for l=0, n_elements(scan_ps)-1 do  $
-                        ps_set_udata, scan_ps[l], name='grlsq_scanned', 0b
+                        cor_set_udata, scan_ps[l], 'grlsq_scanned', 0b
         end $
        ;-----------------------------------
        ; curves
@@ -829,7 +829,7 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
          if(NOT keyword_set(cvscan_cf)) then cvscan_cf = _cvscan_cf $
          else cvscan_cf = [cvscan_cf, _cvscan_cf]
          for l=0, n_elements(scan_ps)-1 do  $
-                        ps_set_udata, scan_ps[l], name='grlsq_scanned', 0b
+                        cor_set_udata, scan_ps[l], 'grlsq_scanned', 0b
         end
 
       end

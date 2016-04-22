@@ -160,7 +160,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
    for i=0, naux-1 do $
     begin
-     temp = nv_udata(dd, aux_names[i])
+     temp = cor_udata(dd, aux_names[i])
      if(keyword_set(temp)) then $
       begin
        aux_flags[i] = 1
@@ -275,7 +275,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
    for i=0, naux-1 do $
     if(aux_flags[i]) then $
      begin
-      nv_set_udata, dd_map, map[*,*,nn], aux_names[i]
+      cor_set_udata, dd_map, aux_names[i], map[*,*,nn]
       nn = nn + 1
      end
   end $

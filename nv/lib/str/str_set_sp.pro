@@ -43,7 +43,7 @@
 ;	
 ;-
 ;=============================================================================
-pro str_set_sp, sxp, sp
+pro str_set_sp, sxp, sp, noevent=noevent
 @nv_lib.include
  sdp = class_extract(sxp, 'STAR')
  sd = nv_dereference(sdp)
@@ -51,7 +51,7 @@ pro str_set_sp, sxp, sp
  sd.sp=sp
 
  nv_rereference, sdp, sd
- nv_notify, sdp, type = 0
+ nv_notify, sdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

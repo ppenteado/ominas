@@ -56,11 +56,11 @@
 ;	
 ;-
 ;=============================================================================
-function cam_psf, cxp, _x, _y
+function cam_psf, cxp, _x, _y, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
  if(NOT keyword_set(cdp)) then return, 0
- nv_notify, cdp, type = 1
+ nv_notify, cdp, type = 1, noevent=noevent
  cd = nv_dereference(cdp)
 
  if(keyword_set(_x)) then x = _x 

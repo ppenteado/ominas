@@ -630,7 +630,7 @@ function spice_input, dd, keyword, prefix, $
    if(keyword_set(names)) then $
     begin
      tag = 'LOADED_SPICE_KERNELS'
-     nv_set_udata, dd, names, tag
+     cor_set_udata, dd, tag, names
     end
   end
 

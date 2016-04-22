@@ -51,6 +51,6 @@ pro ps_scale, ps, scale, noevent=noevent
    *ps[i].points_p = p
   end
 
- if(NOT keyword_set(noevent)) then nv_notify, ps, type = 0
+ nv_notify, ps, type = 0, noevent=noevent
 end
 ;=============================================================================

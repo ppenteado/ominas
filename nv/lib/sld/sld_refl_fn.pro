@@ -44,9 +44,9 @@
 ;	
 ;-
 ;===========================================================================
-function sld_refl_fn, slxp
+function sld_refl_fn, slxp, noevent=noevent
  sldp = class_extract(slxp, 'SOLID')
- nv_notify, sldp, type = 1
+ nv_notify, sldp, type = 1, noevent=noevent
  sld = nv_dereference(sldp)
  return, sld.refl_fn
 end

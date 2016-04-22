@@ -43,13 +43,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_rotate , mdp, rotate 
+pro map_set_rotate , mdp, rotate , noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.rotate = rotate 
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

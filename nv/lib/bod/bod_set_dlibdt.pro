@@ -44,7 +44,7 @@
 ;	
 ;-
 ;===========================================================================
-pro bod_set_dlibdt, bxp, dlibdt
+pro bod_set_dlibdt, bxp, dlibdt, noevent=noevent
 @nv_lib.include
  bdp = class_extract(bxp, 'BODY')
  bd = nv_dereference(bdp)
@@ -52,6 +52,6 @@ pro bod_set_dlibdt, bxp, dlibdt
  bd.dlibdt=dlibdt
 
  nv_rereference, bdp, bd
- nv_notify, bdp, type = 0
+ nv_notify, bdp, type = 0, noevent=noevent
 end
 ;===========================================================================

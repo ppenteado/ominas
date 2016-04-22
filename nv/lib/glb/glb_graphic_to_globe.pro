@@ -45,10 +45,10 @@
 ;	
 ;-
 ;===========================================================================
-function glb_graphic_to_globe, gbxp, v
+function glb_graphic_to_globe, gbxp, v, noevent=noevent
 @nv_lib.include
  gbdp = class_extract(gbxp, 'GLOBE')
- nv_notify, gbdp, type = 1
+ nv_notify, gbdp, type = 1, noevent=noevent
  gbd = nv_dereference(gbdp)
 
 stop

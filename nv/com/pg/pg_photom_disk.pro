@@ -55,6 +55,9 @@
 ;	phase_parms:	Array of parameters for the photometric function named
 ;			by the 'phase_fn' keyword.
 ;
+;	overwrite:	If set, the output descriptor is the input descriptor
+;			with the relevant fields modified.
+;
 ;  OUTPUT:
 ;	emm_out:	Image emission angles.
 ;
@@ -64,9 +67,11 @@
 ;
 ;
 ; RETURN:
-;	Data descriptor containing the corrected image.  The photometric angles
-;	emm, inc, and phase are placed in the user data arrays with the tags
-;	'EMM', 'INC', and 'PHASE' respectively.
+;	New data descriptor containing the corrected image.  The photometric 
+;	angles emm, inc, and phase are placed in the user data arrays with 
+;	the tags'EMM', 'INC', and 'PHASE' respectively.  Unless /overwrite is
+;	set, the nw descriptor is a clone of the input descriptor, with the 
+;	relevant fields modified.
 ;
 ;
 ; STATUS:
@@ -83,7 +88,7 @@ function pg_photom_disk, dd, outline_ps=outline_ps, $
                   cd=cd, dkx=dkx, gbx=_gbx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
-                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out
+                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite
 
 ; ;-----------------------------------------
 ; ; default is Minneart
@@ -184,7 +189,8 @@ function pg_photom_disk, dd, outline_ps=outline_ps, $
  ;---------------------------------------
  ; modify the data descriptor
  ;---------------------------------------
- dd_pht = nv_clone(dd)
+ if(keyword_set(overwrite)) then dd_pht = dd $
+ else dd_pht = nv_clone(dd)
  nv_set_data, dd_pht, new_image
 
  ;---------------------------------------
@@ -192,15 +198,15 @@ function pg_photom_disk, dd, outline_ps=outline_ps, $
  ;---------------------------------------
  emm = fltarr(xsize,ysize)
  emm[indices] = mu
- nv_set_udata, dd_pht, emm, 'EMM'
+ cor_set_udata, dd_pht, 'EMM', emm
 
  inc = fltarr(xsize,ysize)
  inc[indices] = mu0
- nv_set_udata, dd_pht, inc, 'INC'
+ cor_set_udata, dd_pht, 'INC', inc
 
  phase = fltarr(xsize,ysize)
  phase[indices] = g
- nv_set_udata, dd_pht, phase, 'PHASE'
+ cor_set_udata, dd_pht, 'PHASE', phase
 
 
  return, dd_pht 

@@ -43,7 +43,7 @@
 ;	
 ;-
 ;=============================================================================
-pro plt_set_globe, pxp, gbdp
+pro plt_set_globe, pxp, gbdp, noevent=noevent
 @nv_lib.include
  pdp = class_extract(pxp, 'PLANET')
  pd = nv_dereference(pdp)
@@ -51,7 +51,7 @@ pro plt_set_globe, pxp, gbdp
  pd.gbd=gbdp
 
  nv_rereference, pdp, pd
- nv_notify, pdp, type = 0
+ nv_notify, pdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

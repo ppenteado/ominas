@@ -43,13 +43,13 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_scale, mdp, scale
+pro map_set_scale, mdp, scale, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
  md.scale=scale
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

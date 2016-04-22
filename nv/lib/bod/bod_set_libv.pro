@@ -43,7 +43,7 @@
 ;	
 ;-
 ;===========================================================================
-pro bod_set_libv, bxp, libv
+pro bod_set_libv, bxp, libv, noevent=noevent
 @nv_lib.include
  bdp = class_extract(bxp, 'BODY')
  bd = nv_dereference(bdp)
@@ -51,6 +51,6 @@ pro bod_set_libv, bxp, libv
  bd.libv=libv
 
  nv_rereference, bdp, bd
- nv_notify, bdp, type = 0
+ nv_notify, bdp, type = 0, noevent=noevent
 end
 ;===========================================================================

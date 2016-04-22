@@ -43,7 +43,7 @@
 ;	
 ;-
 ;=============================================================================
-pro map_set_type, mdp, type
+pro map_set_type, mdp, type, noevent=noevent
 @nv_lib.include
  md = nv_dereference(mdp)
 
@@ -53,6 +53,6 @@ pro map_set_type, mdp, type
  md.fn_image_to_map = decrapify(fn_image_to_map)
 
  nv_rereference, mdp, md
- nv_notify, mdp, type = 0
+ nv_notify, mdp, type = 0, noevent=noevent
 end
 ;===========================================================================

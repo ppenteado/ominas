@@ -12,7 +12,7 @@ function pgs_idp_to_gd, idps, xd
 
  for i=0, nxd-1 do $
   begin
-   idp = nv_extract_idp(xd[i])
+   idp = cor_idp(xd[i])
    ww = where(idp_used EQ idp)
    if(ww[0] EQ -1) then $
     begin

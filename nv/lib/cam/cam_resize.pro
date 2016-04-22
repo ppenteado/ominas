@@ -44,7 +44,7 @@
 ;	
 ;-
 ;===========================================================================
-pro cam_resize, cxp, size
+pro cam_resize, cxp, size, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
  cd = nv_dereference(cdp)
@@ -56,7 +56,7 @@ pro cam_resize, cxp, size
  cd.scale = cd.scale*ratio
 
  nv_rereference, cdp, cd
- nv_notify, cdp, type = 0
+ nv_notify, cdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 nx1*scale1 = nx*scale

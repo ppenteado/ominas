@@ -56,10 +56,10 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_intersect_inertial, dkxp, v, r, t=t, hit=hit, frame_bd=frame_bd
+function dsk_intersect_inertial, dkxp, v, r, t=t, hit=hit, frame_bd=frame_bd, noevent=noevent
 @nv_lib.include
  dkdp = class_extract(dkxp, 'DISK')
- nv_notify, dkdp, type = 1
+ nv_notify, dkdp, type = 1, noevent=noevent
  dkd = nv_dereference(dkdp)
 
  nt = n_elements(dkd)

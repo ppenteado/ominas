@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="DSK Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/dsk/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/dsk/doc_dsk.txt"

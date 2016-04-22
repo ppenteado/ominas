@@ -18,10 +18,10 @@ end
 ; (nv,3,nt) of 3-element column vectors.
 ;
 ;===========================================================================
-function _glb_graphic_to_surface, gbxp, v
+function _glb_graphic_to_surface, gbxp, v, noevent=noevent
 @nv_lib.include
  gbdp = class_extract(gbxp, 'GLOBE')
- nv_notify, gbdp, type = 1
+ nv_notify, gbdp, type = 1, noevent=noevent
  gbd = nv_dereference(gbdp)
 
  sv = size(v)

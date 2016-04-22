@@ -121,7 +121,7 @@ pro rim, files, keywords=keywords
  for i=0, ndd-1 do $
   begin
    if(nkey EQ 0) then print, $
-      transpose([' ', nv_id_string(dd[i]) + ':', nv_header(dd[i])]) $
+      transpose([' ', cor_name(dd[i]) + ':', nv_header(dd[i])]) $
    else $
     begin
      for j=0, nkey-1 do $
@@ -129,7 +129,7 @@ pro rim, files, keywords=keywords
        nv_header_value, dd[i], keywords[j], get=val
        values[j] = str_comma_list(val)
       end
-     print, nv_id_string(dd[i]) + ': ' + str_comma_list(values, delim=' ')
+     print, cor_name(dd[i]) + ': ' + str_comma_list(values, delim=' ')
     end
   end
 

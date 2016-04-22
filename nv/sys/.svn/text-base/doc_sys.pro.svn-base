@@ -1,5 +1,0 @@
-extract_doc, /page, $
-    title="SYS Program Reference", $
-    "/home/joes/idl_pro/minas/nv/sys/*.pro", $
-    "/home/joes/idl_pro/minas/nv/sys/doc_sys.txt"
-@doc_lic

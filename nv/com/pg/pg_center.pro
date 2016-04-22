@@ -103,7 +103,7 @@ function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
         ps_init(name = get_core_name(bds), $
 		desc = desc[i], $
 		input = pgs_desc_suffix(bx=bx[i,0], cd=cd[0]), $
-		assoc_idp = nv_extract_idp(xd), $
+		assoc_idp = cor_idp(xd), $
 		points = inertial_to_image_pos(cd, inertial_pts), $
 		vectors = inertial_pts)
   end

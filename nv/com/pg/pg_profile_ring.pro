@@ -154,12 +154,12 @@ dkd = class_extract(dkx[0], 'DISK')
 	points=outline_pts, $
 	data=dsk_outline_pts
  dsk_outline_pts = transpose(dsk_outline_pts)
- nrad = ps_udata(outline_ps, 'nrad')
- nlon = ps_udata(outline_ps, 'nlon')
- point0 = ps_udata(outline_ps, 'point0')
- point = ps_udata(outline_ps, 'point')
- point = ps_udata(outline_ps, 'point')
- sample = ps_udata(outline_ps, 'sample')
+ nrad = cor_udata(outline_ps, 'nrad')
+ nlon = cor_udata(outline_ps, 'nlon')
+ point0 = cor_udata(outline_ps, 'point0')
+ point = cor_udata(outline_ps, 'point')
+ point = cor_udata(outline_ps, 'point')
+ sample = cor_udata(outline_ps, 'sample')
  sample = sample[0]
 
 
@@ -232,8 +232,8 @@ dkd = class_extract(dkx[0], 'DISK')
    lon_pts = lon0_pts##make_array(nrad,val=1d) + $
              lon_offsets#make_array(nlon,val=1d)
 
-   ps_set_udata, outline_ps, name='rad_pts', rad_pts
-   ps_set_udata, outline_ps, name='lon_pts', lon_pts
+   cor_set_udata, outline_ps, 'rad_pts', rad_pts
+   cor_set_udata, outline_ps, 'lon_pts', lon_pts
 
 
    ;----------------------------------------------------------
@@ -268,10 +268,10 @@ dkd = class_extract(dkx[0], 'DISK')
   end
 
  dd_prof = [ nv_init_descriptor(data=[tr(abscissa), $
-                                tr(profile)], id_string=nv_id_string(dd), $
+                                tr(profile)], name=cor_name(dd), $
                                 header=nv_header(dd)), $
              nv_init_descriptor(data=[tr(abscissa), $
-                                tr(sigma)], id_string=nv_id_string(dd), $
+                                tr(sigma)], name=cor_name(dd), $
                                 header=nv_header(dd)) ]
 
  return, dd_prof

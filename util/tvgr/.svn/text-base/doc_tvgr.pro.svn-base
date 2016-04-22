@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="TVGR Program Reference", $
-    "/home/joes/idl_pro/minas/util/tvgr/*.pro", $
-    "/home/joes/idl_pro/minas/util/tvgr/doc_tvgr.txt"

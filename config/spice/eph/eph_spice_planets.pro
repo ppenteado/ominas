@@ -26,7 +26,7 @@ function eph_spice_planets, dd, ref, target=target, time=sc_time, $
  if(NOT keyword_set(target)) then target = 'UNKNOWN' $
  else $
   begin
-   nv_set_udata, dd, target, 'TARGET'
+   cor_set_udata, dd, 'TARGET', target
 
    w = where(planets EQ target)
    if(w[0] NE -1) then $

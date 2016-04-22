@@ -44,10 +44,10 @@
 ;	
 ;-
 ;===========================================================================
-function cam_origin, cxp
+function cam_origin, cxp, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
- nv_notify, cdp, type = 1
+ nv_notify, cdp, type = 1, noevent=noevent
  cd = nv_dereference(cdp)
  return, cd.origin
 end

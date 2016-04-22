@@ -873,7 +873,7 @@ function grim_title, plane, primary=primary
    plane = grim_get_plane(grim_data)
   end
 
- if(NOT keyword_set(plane.filename)) then name = nv_id_string(plane.dd) $
+ if(NOT keyword_set(plane.filename)) then name = cor_name(plane.dd) $
  else split_filename, plane.filename, dir, name
 
  return, name[0]

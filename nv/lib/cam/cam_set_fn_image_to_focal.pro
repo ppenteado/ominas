@@ -44,7 +44,7 @@
 ;	
 ;-
 ;===========================================================================
-pro cam_set_fn_image_to_focal, cxp, fn_image_to_focal
+pro cam_set_fn_image_to_focal, cxp, fn_image_to_focal, noevent=noevent
 @nv_lib.include
  cdp = class_extract(cxp, 'CAMERA')
  cd = nv_dereference(cdp)
@@ -52,7 +52,7 @@ pro cam_set_fn_image_to_focal, cxp, fn_image_to_focal
  cd.fn_image_to_focal=fn_image_to_focal
 
  nv_rereference, cdp, cd
- nv_notify, cdp, type = 0
+ nv_notify, cdp, type = 0, noevent=noevent
 end
 ;===========================================================================
 

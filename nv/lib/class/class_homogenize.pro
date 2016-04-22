@@ -43,8 +43,8 @@
 ;	
 ;-
 ;=============================================================================
-function class_homogenize, odp, class
- nv_notify, odp, type = 1
+function class_homogenize, odp, class, noevent=noevent
+ nv_notify, odp, type = 1, noevent=noevent
 
  if(NOT keyword_set(odp)) then return, 0
  n = n_elements(odp)

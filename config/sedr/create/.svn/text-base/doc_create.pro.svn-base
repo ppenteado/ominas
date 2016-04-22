@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="CREATE Program Reference", $
-    "/home/joes/idl_pro/minas/config/sedr/create/*.pro", $
-    "/home/joes/idl_pro/minas/config/sedr/create/doc_create.txt"

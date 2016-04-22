@@ -93,7 +93,7 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
 
  type = size(pp, /type)
  if(type EQ 10) then object_ps = pp $
- else object_ps = ps_init(p=pp)
+ else object_ps = ps_init(points=pp)
 
  if(keyword_set(grnum)) then $
                      grim_data = grim_get_data(grim_grnum_to_top(grnum)) $
@@ -199,11 +199,11 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
 
  idp_cam = nv_ptr_new() & idp_plt = nv_ptr_new() & idp_rng = nv_ptr_new()
  idp_str = nv_ptr_new() & idp_sun = nv_ptr_new()
- if(keyword_set(cd)) then idp_cam = nv_extract_idp(cd)
- if(keyword_set(pd)) then idp_plt = nv_extract_idp(pd)
- if(keyword_set(rd)) then idp_rng = nv_extract_idp(rd)
- if(keyword_set(sd)) then idp_str = nv_extract_idp(sd)
- if(keyword_set(sund)) then idp_sun = nv_extract_idp(sund)
+ if(keyword_set(cd)) then idp_cam = cor_idp(cd)
+ if(keyword_set(pd)) then idp_plt = cor_idp(pd)
+ if(keyword_set(rd)) then idp_rng = cor_idp(rd)
+ if(keyword_set(sd)) then idp_str = cor_idp(sd)
+ if(keyword_set(sund)) then idp_sun = cor_idp(sund)
 
  ;------------------------------
  ; set object points

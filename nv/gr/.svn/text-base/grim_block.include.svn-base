@@ -1,2 +1,0 @@
-common grim_block, _top, _selected, _primary, _suspend_events, $
-   _pm_callbacks, _pm_data_ps, _all_tops
