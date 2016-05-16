@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = sedr_vgr_input(dd, keyword)
 ;
 ;
@@ -95,8 +95,8 @@ function sedr_vgr_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, statu
  ;---------------------------------
  ; get sctime and planet and source
  ;---------------------------------
- sctime = long(vicar_vgrkey(nv_header(dd),'SCTIME'))
- planet = vicar_vgrkey(nv_header(dd),'PLANET')
+ sctime = long(vicar_vgrkey(dat_header(dd),'SCTIME'))
+ planet = vicar_vgrkey(dat_header(dd),'PLANET')
  if(keyword__set(source)) then _source=source $
  else _source = 'SEDR'
 
@@ -137,10 +137,10 @@ function sedr_vgr_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, statu
     ; Test if image is Object space ("geomed")
     ;-----------------------------------------
     geom = 0
-    if(strpos(nv_header(dd),'GEOM') NE -1) then geom = 1
-    if(strpos(nv_header(dd),'FARENC') NE -1) then geom = 1
-    if(strpos(nv_header(dd),'*** OBJECT SPACE') NE -1) then geom = 1
-    s = size(nv_data(dd))
+    if(strpos(dat_header(dd),'GEOM') NE -1) then geom = 1
+    if(strpos(dat_header(dd),'FARENC') NE -1) then geom = 1
+    if(strpos(dat_header(dd),'*** OBJECT SPACE') NE -1) then geom = 1
+    s = size(dat_data(dd))
     ; If size = 1000x1000 assume it's geomed
     if(s[1] EQ 1000 AND s[2] EQ 1000) then geom = 1
 

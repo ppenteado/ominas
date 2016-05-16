@@ -77,7 +77,7 @@ pro nv_message, string, name=name, continue=continue, $
              callback=callback, cb_data_p=cb_data_p, disconnect=disconnect, $
              cb_tag=cb_tag, silent=_silent, stop=stop
 common nv_message_block, last_message, cb_tlp, silent
-@nv.include
+@core.include
 
  silent = keyword_set(silent)
 

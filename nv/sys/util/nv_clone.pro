@@ -41,6 +41,7 @@
 ;
 ; MODIFICATION HISTORY:
 ; 	Written by:	Spitale
+; 	Adapted by:	Spitale, 5/2016
 ;	
 ;-
 ;==============================================================================
@@ -84,6 +85,28 @@ pro nv_clone_recurse, xd
        xd[i].(j) = val
       end
     end
+  end $
+ ;----------------------------------------------
+ ; object 
+ ;----------------------------------------------
+ else if(type EQ 11) then $
+  begin
+   for i=0, n-1 do if(obj_valid(xd[i])) then $
+    begin
+     _xd = cor_dereference(xd[i])
+;;     if(nv_get_directive(_xd) EQ 'NV_STOP') then return
+
+     ntags = n_tags(_xd)
+     for j=0, ntags-1 do $
+      begin
+       val = _xd.(j)
+       nv_clone_recurse, val
+       _xd.(j) = val
+      end
+
+     xd[i] = obj_new(obj_class(xd[i]))
+     cor_rereference, xd[i], _xd
+    end
   end
 
 end
@@ -95,11 +118,11 @@ end
 ; nv_clone
 ;
 ;=============================================================================
-function nv_clone, _xd, noevent=noevent
-@nv_lib.include
- nv_notify, _xd, type = 1, noevent=noevent
+function nv_clone, xd0, noevent=noevent
+@core.include
+ nv_notify, xd0, type = 1, noevent=noevent
 
- xd = _xd
+ xd = xd0
  nv_clone_recurse, xd
  return, xd
 end

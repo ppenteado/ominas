@@ -87,7 +87,7 @@ pro rim, files, keywords=keywords
    nfiles = n_elements(files)
    unknown = lonarr(nfiles)
    for i=0, nfiles-1 do $
-           if(nv_detect_filetype(files[i]) EQ '') then unknown[i] = 1
+           if(dat_detect_filetype(files[i]) EQ '') then unknown[i] = 1
 
    w = where(unknown EQ 1)
    if(w[0] NE -1) then $
@@ -107,7 +107,7 @@ pro rim, files, keywords=keywords
  ; read files if necessary
  ;----------------------------------
  if(size(files, /type) NE 7) then dd = files $
- else dd = nv_read(files, /silent, maintain=2)
+ else dd = dat_read(files, /silent, maintain=2)
 
  ndd = n_elements(dd)
 
@@ -121,12 +121,12 @@ pro rim, files, keywords=keywords
  for i=0, ndd-1 do $
   begin
    if(nkey EQ 0) then print, $
-      transpose([' ', cor_name(dd[i]) + ':', nv_header(dd[i])]) $
+      transpose([' ', cor_name(dd[i]) + ':', dat_header(dd[i])]) $
    else $
     begin
      for j=0, nkey-1 do $
       begin
-       nv_header_value, dd[i], keywords[j], get=val
+       dat_header_value, dd[i], keywords[j], get=val
        values[j] = str_comma_list(val)
       end
      print, cor_name(dd[i]) + ': ' + str_comma_list(values, delim=' ')

@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	array_ps = pg_array(gd=gd)
+;	array_ptd = pg_array(gd=gd)
 ;
 ;
 ; ARGUMENTS:
@@ -49,8 +49,8 @@
 ;	fov:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, points structures excluded by the fov keyword
-;		 are not returned.  Normally, empty points structures
+;	cull:	 If set, POINT objects excluded by the fov keyword
+;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
 ;
@@ -58,7 +58,7 @@
 ;
 ;
 ; RETURN:
-;	Array (n_objects) of points_struct containing image points and
+;	Array (n_objects) of objects containing image points and
 ;	the corresponding inertial vectors.
 ;
 ;
@@ -73,7 +73,7 @@
 ;=============================================================================
 function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
                                fov=fov, cull=cull, frame_bd=frame_bd
-@ps_include.pro
+@pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -91,9 +91,9 @@ function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;-----------------------------------
  ; compute points for each array
  ;-----------------------------------
- hide_flag = PS_MASK_INVISIBLE
+ hide_flag = PTD_MASK_INVISIBLE
 
- array_ps = ptrarr(n_objects, nt)
+ array_ptd = objarr(n_objects, nt)
 
  for j=0, nt-1 do $
   begin
@@ -110,7 +110,7 @@ function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
         begin
 ;         xd = reform(bx[w[0],j], nt)
          xd = bx[w[0],j]
-         input = pgs_desc_suffix(bx=xd[0], cd=cd[0])
+         input = pgs_desc_suffix(bx=xd[0], cd[0])
          idp = cor_idp(xd)
         end
       end
@@ -125,23 +125,23 @@ function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
       if(keyword_set(body_pts)) then $
        inertial_pts = bod_body_to_inertial_pos(xd, body_pts)
 
-     name = get_core_name(xd) + ':' + get_core_name(ard[i,j])
+     name = cor_name(xd) + ':' + cor_name(ard[i,j])
 
      ;-----------------------------------
      ; store grid
      ;-----------------------------------
-     array_ps[i,j] = ps_init(name = strupcase(name), $
+     array_ptd[i,j] = pnt_create_descriptors(name = strupcase(name), $
 		             desc = 'array', $
 		             input = input, $
 		             assoc_idp = idp, $
 		             points = points, $
 		             vectors = inertial_pts)
-   flags = ps_flags(array_ps[i,j])
-   if(NOT keyword__set(valid)) then flags[*] = PS_MASK_INVISIBLE
-   ps_set_flags, array_ps[i,j], flags
+   flags = pnt_flags(array_ptd[i,j])
+   if(NOT keyword__set(valid)) then flags[*] = PTD_MASK_INVISIBLE
+   pnt_set_flags, array_ptd[i,j], flags
 
      if(keyword_set(xd)) then $
-       if(NOT bod_opaque(xd[0])) then ps_set_flags, array_ps[i,j], hide_flag
+       if(NOT bod_opaque(xd[0])) then pnt_set_flags, array_ptd[i,j], hide_flag
     end
   end
 
@@ -152,14 +152,14 @@ function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;------------------------------------------------------
  if(keyword_set(fov)) then $
   begin
-   pg_crop_points, array_ps, cd=cd[0], slop=slop
-   if(keyword_set(cull)) then array_ps = ps_cull(array_ps)
+   pg_crop_points, array_ptd, cd=cd[0], slop=slop
+   if(keyword_set(cull)) then array_ptd = pnt_cull(array_ptd)
   end
 
 
  if(keyword_set(__lat)) then _lat = __lat
  if(keyword_set(__lon)) then _lon = __lon
 
- return, array_ps
+ return, array_ptd
 end
 ;=============================================================================

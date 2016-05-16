@@ -117,7 +117,7 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
   begin
    n = n_elements(str__name)
 
- sd=str_init_descriptors(n, $
+ sd=str_create_descriptors(n, $
 	name=str__name, $
 	orient=str__orient, $
 	avel=str__avel, $
@@ -144,12 +144,12 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
 ;   if(NOT keyword__set(od)) then nv_message, $
 ;                               name='pg_get_stars', 'No observer descriptor.'
 
-   sd=nv_get_value(dd, 'STR_DESCRIPTORS', key1=od, key2=sund, key4=_sd, $
+   sd=dat_get_value(dd, 'STR_DESCRIPTORS', key1=od, key2=sund, key4=_sd, $
                  key5=corners, key6=radec, key7=str__time, key8=str__name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-   if(NOT keyword__set(sd)) then return, nv_ptr_new()
+   if(NOT keyword__set(sd)) then return, obj_new()
 
    n = n_elements(sd)
 
@@ -165,9 +165,9 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
    ;---------------------------------------------------
    if(keyword__set(str__name)) then $
     begin
-     tr_names = get_core_name(sd)
+     tr_names = cor_name(sd)
      sub = nwhere(strupcase(tr_names), strupcase(str__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
@@ -176,7 +176,7 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
    sd = sd[sub]
 
    ;------------------------------------------------------------------
-   ; perform stellar aberration correction -- not yet implemented
+   ; perform stellar aberration correction
    ;------------------------------------------------------------------
 ;   if(keyword_set(od) AND (NOT keyword_set(raw))) then $
 ;                                        stellab, od, sd, c=pgc_const('c')
@@ -211,7 +211,7 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
  ; Thus, translators can be arranged in order in the table
  ; such the the first occurence has the highest priority.
  ;------------------------------------------------------------
- if(NOT keyword__set(no_sort)) then sd=sd[pgs_name_sort(get_core_name(sd))]
+ if(NOT keyword__set(no_sort)) then sd=sd[pgs_name_sort(cor_name(sd))]
 
 
 

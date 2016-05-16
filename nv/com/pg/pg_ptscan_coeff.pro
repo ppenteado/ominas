@@ -14,12 +14,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_ptscan_coeff(pts_ps)
+;	result = pg_ptscan_coeff(pts_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;       pts_ps:         Array (n_pts) of points_struct output from
+;       pts_ptd:         Array (n_pts) of POINT output from
 ;                       pg_ptscan containing image points as well as
 ;                       other necessary data.;
 ;
@@ -28,7 +28,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;       axis_ps:        points_struct containing a single image point
+;       axis_ptd:        POINT containing a single image point
 ;                       to be used as the axis of rotation in the fit for
 ;                       every point.
 ;
@@ -44,7 +44,7 @@
 ;
 ; PROCEDURE:
 ;       pg_ptscan_coeff extracts the scan data from the given
-;       scan_ps structure and uses ipt_coeff to compute the coefficients.
+;       scan_ptd structure and uses ipt_coeff to compute the coefficients.
 ;       See the documentation for that routine for details.
 ;
 ;
@@ -53,11 +53,11 @@
 ;       least square coefficients for a fit such that only dx and dtheta
 ;       will be allowed to vary:
 ;
-;       optic_ps = ps_init(points=cam_oaxis(cd))
-;       ptscan_cf = pg_ptscan_coeff(pts_ps, axis=optic_ps, fix=[1])
+;       optic_ptd = pnt_create_descriptors(points=cam_oaxis(cd))
+;       ptscan_cf = pg_ptscan_coeff(pts_ptd, axis=optic_ptd, fix=[1])
 ;
-;       In this call, pts_ps is a points_struct containing the point data
-;       from pg_ptscan and optic_ps is a points_struct giving the optic axis
+;       In this call, pts_ptd is a POINT containing the point data
+;       from pg_ptscan and optic_ptd is a POINT giving the optic axis
 ;       of the camera as computed by cam_oaxis.
 ;
 ;
@@ -70,15 +70,15 @@
 ;	
 ;-
 ;=============================================================================
-function pg_ptscan_coeff, pts_ps, axis_ps=axis_ps, fix=fix, model_ps=model_ps
+function pg_ptscan_coeff, pts_ptd, axis_ptd=axis_ptd, fix=fix, model_ptd=model_ptd
                  
- if(keyword_set(_axis_ps)) then $
+ if(keyword_set(_axis_ptd)) then $
   begin     
-   if(size(_axis_ps, /type) NE 7) then axis_ps = ps_init(points=_axis_ps) $ 
-   else axis_ps = _axis_ps
+   if(size(_axis_ptd, /type) NE 7) then axis_ptd = pnt_create_descriptors(points=_axis_ptd) $ 
+   else axis_ptd = _axis_ptd
   end
 
- n_objects = n_elements(pts_ps)
+ n_objects = n_elements(pts_ptd)
  pts_cf = replicate({pg_fit_coeff_struct}, n_objects)
 
  n_points = 0
@@ -91,7 +91,7 @@ function pg_ptscan_coeff, pts_ps, axis_ps=axis_ps, fix=fix, model_ps=model_ps
    ;----------------------------------------
    ; compute the least-squares coefficients
    ;----------------------------------------
-   ps_get, pts_ps[i], data=pts_data, points=pts_pts, /visible
+   pnt_get, pts_ptd[i], data=pts_data, points=pts_pts, /visible
 
    if(keyword__set(pts_data)) then $
     begin
@@ -99,9 +99,9 @@ function pg_ptscan_coeff, pts_ps, axis_ps=axis_ps, fix=fix, model_ps=model_ps
      pts_y = pts_data[1]
      scan_sigma = pts_data[4]
     end $
-   else if(keyword__set(pts_pts)) then $
+   else if(keyword__set(model_pts)) then $
     begin
-     model_pts = ps_points(model_ps[i], /visible)
+     model_pts = pnt_points(model_ptd[i], /visible)
      pts_x = pts_pts[0] - model_pts[0]
      pts_y = pts_pts[1] - model_pts[1]
 scan_sigma = 1d
@@ -112,7 +112,7 @@ scan_sigma = 1d
      n_points = n_points + 1
 
      axis=dblarr(2)
-     if(keyword__set(axis_ps)) then axi = ps_points(axis_ps0
+     if(keyword__set(axis_ptd)) then axis = pnt_points(axis_ptd)
      ipt_coeff, pts_x, pts_y, pts_pts, axis, sigma=scan_sigma, M=M, b=b
 
      ;--------------------------------------

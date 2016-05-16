@@ -19,7 +19,7 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
  n_obj = 1 
  dim = [1]
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
 
  n_k_in = 0l
  if(NOT keyword_set(k_in)) then k_in = '' $
@@ -75,7 +75,7 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
  ;------------------------------
  ; create a camera descriptor
  ;------------------------------
- cd = cam_init_descriptors(n_obj, $
+ cd = cam_create_descriptors(n_obj, $
 		name=cam_name, $
 		orient=cmat, $
 		exposure=cam_exposure, $

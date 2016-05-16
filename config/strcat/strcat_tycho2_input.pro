@@ -530,7 +530,7 @@ w2 = min(where(ra2 LE ra_start))
  m = stars.mag - 5d*alog10(dist/pc) + 5d
  lum = Lsun * 10.d^( (4.83d0-m)/2.5d ) 
 
- _sd = str_init_descriptors(n, $
+ _sd = str_create_descriptors(n, $
         name=name, $
         orient=orient, $
         avel=avel, $

@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = dh_std_input(dd, keyword)
 ;
 ;
@@ -80,7 +80,7 @@ function dhsi_get_core, dh, prefix
  tasks = dh_get_sclarr(dh, prefix + '_tasks', n_obj=n_obj, dim=dim, $
 			                                hi=hi, status=status)
 
- crds = cor_init_descriptors(n_obj, $
+ crds = cor_create_descriptors(n_obj, $
 	name=name, $
  	user=user, $
 	tasks=tasks)
@@ -119,7 +119,7 @@ function dhsi_get_body, dh, prefix, crds=crds
  lib = dh_get_sclarr(dh, prefix + '_lib', n_obj=n_obj, dim=dim, $
 			                                hi=hi, status=status)
 
- bds = bod_init_descriptors(n_obj, crd=crds, $
+ bds = bod_create_descriptors(n_obj, crd=crds, $
 	time=time, $
  	opaque=opaque, $
  	orient=orient, $
@@ -152,7 +152,7 @@ function dhsi_get_solid, dh, prefix, crds=crds, bds=bds
 
 
 
- slds = sld_init_descriptors(n_obj, crd=crds, bd=bds, $
+ slds = sld_create_descriptors(n_obj, crd=crds, bd=bds, $
 	mass=mass, $
 	lora=lora, $
 	j=j, $
@@ -197,7 +197,7 @@ function dhsi_get_globe, dh, prefix, crds=crds, bds=bds, slds=slds
 
 
 
- gbds = glb_init_descriptors(n_obj, crd=crds, bd=bds, slds=slds, $
+ gbds = glb_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, $
 	lora=lora, $
 	j=j, $
 	radii=radii, $
@@ -240,7 +240,7 @@ function dhsi_get_disk, dh, prefix, crds=crds, bds=bds, slds=slds
 
 
 
- dkds = dsk_init_descriptors(n_obj, crd=crds, bd=bds, slds=slds, $
+ dkds = dsk_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, $
 	sma=sma, $
 	ecc=ecc, $
 	scale=scale, $
@@ -345,7 +345,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 			                               hi=hi, status=status)
 
 	   n_obj = n_elements(crds)
-	   cds = cam_init_descriptors(n_obj, crd=crds, bd=bds, $
+	   cds = cam_create_descriptors(n_obj, crd=crds, bd=bds, $
 		exposure=cam_exposure, $
 		fn_focal_to_image=cam_fn_focal_to_image, $
 		fn_image_to_focal=cam_fn_image_to_focal, $
@@ -377,7 +377,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   gbds = dhsi_get_globe(dh, 'plt', crds=crds, bds=bds, slds=slds)
 
 	   n_obj = n_elements(crds)
-	   pds = plt_init_descriptors(n_obj, crd=crds, bd=bds, gbd=gbds, slds=slds)
+	   pds = plt_create_descriptors(n_obj, crd=crds, bd=bds, gbd=gbds, slds=slds)
 
 	   format = dh_get_string(dh, 'plt_format', hi=hi)
 	   if(keyword_set(format)) then pds = dh_to_ominas(format[0], pds)
@@ -403,7 +403,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 			                                hi=hi, status=status)
 
 	   n_obj = n_elements(crds)
-	   rds = rng_init_descriptors(n_obj, crd=crds, bd=bds, slds=slds, dkd=dkds, $
+	   rds = rng_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, dkd=dkds, $
 		primary=rng_primary)
 
 	   format = dh_get_string(dh, 'rng_format', hi=hi)
@@ -432,7 +432,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 			                                hi=hi, status=status)
 
 	   n_obj = n_elements(crds)
-	   sds = str_init_descriptors(n_obj, crd=crds, bd=bds, slds=slds, gbd=gbds, $
+	   sds = str_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, gbd=gbds, $
 		lum=str_lum, $
 		sp=str_sp)
 
@@ -506,7 +506,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 
 
 	   n_obj = n_elements(crds)
-	   mds = map_init_descriptors(n_obj, $
+	   mds = map_create_descriptors(n_obj, $
 		crd=crds, $
 		type=map_type, $
 		fn_map_to_image=fn_map_to_image, $

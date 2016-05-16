@@ -14,15 +14,15 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_hide, object_ps, cd=cd, od=od, gbx=gbx, dkx=dkx, /[disk|globe|limb]
-;	pg_hide, object_ps, gd=gd, od=od, /[disk|globe|limb]
+;	pg_hide, object_ptd, cd=cd, od=od, gbx=gbx, dkx=dkx, /[disk|globe|limb]
+;	pg_hide, object_ptd, gd=gd, od=od, /[disk|globe|limb]
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	object_ps:	Array of points_struct containing inertial vectors.
+;	object_ptd:	Array of POINT containing inertial vectors.
 ;
-;	hide_ps:	Array (n_disks, n_timesteps) of points_struct 
+;	hide_ptd:	Array (n_disks, n_timesteps) of POINT 
 ;			containing the hidden points.
 ;
 ;  OUTPUT: NONE
@@ -49,12 +49,12 @@
 ;
 ;
 ; SIDE EFFECTS:
-;	The flags arrays in object_ps are modified.
+;	The flags arrays in object_ptd are modified.
 ;
 ;
 ; PROCEDURE:
-;	For each object in object_ps, hidden points are computed and
-;	PS_MASK_INVISIBLE in the points_struct is set.  No points are
+;	For each object in object_ptd, hidden points are computed and
+;	PS_MASK_INVISIBLE in the POINT is set.  No points are
 ;	removed from the array.
 ;
 ;
@@ -62,7 +62,7 @@
 ;	(1) The following command hides all points on the planet which lie
 ;	    behind the terminator:
 ;
-;	    pg_hide, object_ps, /limb, gbx=pd, od=sd
+;	    pg_hide, object_ptd, /limb, gbx=pd, od=sd
 ;
 ;	    In this call, pd is a planet descriptor, and sd is a star descriptor
 ;	    (i.e., the sun).
@@ -72,7 +72,7 @@
 ;	(2) This command hides all points on the planet which are shadowed by
 ;	    the rings:
 ;
-;	    pg_hide, object_ps, /disk, dkx=rd, od=sd
+;	    pg_hide, object_ptd, /disk, dkx=rd, od=sd
 ;
 ;	    In this call, rd is a ring descriptor, and sd is as above.
 ;
@@ -81,7 +81,7 @@
 ;	(3) This command hides all points which lie behind the planet or the
 ;	    rings:
 ;
-;	    pg_hide, object_ps, /disk, /globe, dkx=rd, gbx=pd, cd=cd
+;	    pg_hide, object_ptd, /disk, /globe, dkx=rd, gbx=pd, cd=cd
 ;
 ;	    In this call, rd is a ring descriptor, pd is a planet descriptor, 
 ;	    cd is a camera descriptor, and sd is as above.
@@ -100,13 +100,13 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_hide, object_ps, hide_ps, cd=cd, $
+pro pg_hide, object_ptd, hide_ptd, cd=cd, $
              od=od, gbx=gbx, dkx=dkx, gd=gd, one2one=one2one, $
 	     globe=globe, limb=limb, disk=disk, rm=rm, reveal=reveal, cat=cat
 
 
- if(arg_present(hide_ps)) then hide_ps = 1	; need this to allow called routines
-						; to detect presence of hide_ps argument.
+ if(arg_present(hide_ptd)) then hide_ptd = 1	; need this to allow called routines
+						; to detect presence of hide_ptd argument.
 
  ;--------------------------
  ; remove instead of hide
@@ -114,29 +114,29 @@ pro pg_hide, object_ps, hide_ps, cd=cd, $
  if(keyword_set(rm)) then $
   begin
    if(keyword_set(disk)) then $
-      pg_rm_disk, object_ps, hide_ps, cd=cd, dkx=dkx, gbx=gbx, gd=gd, reveal=reveal, cat=cat
+      pg_rm_disk, object_ptd, hide_ptd, cd=cd, dkx=dkx, gbx=gbx, gd=gd, reveal=reveal, cat=cat
    if(keyword_set(globe)) then $
-      pg_rm_globe, object_ps, hide_ps, cd=cd, gbx=gbx, gd=gd, reveal=reveal, cat=cat
+      pg_rm_globe, object_ptd, hide_ptd, cd=cd, gbx=gbx, gd=gd, reveal=reveal, cat=cat
   end $
  ;--------------------------
  ; hide
  ;--------------------------
  else $
   begin
-   ps = object_ps
-;   if(keyword_set(one2one)) then ps = ps_compress(object_ps)
+   ptd = object_ptd
+;   if(keyword_set(one2one)) then ptd = pnt_compress(object_ptd)
 ;if(keyword_set(one2one)) then stop
 
    if(keyword_set(disk)) then $
-     pg_hide_disk, ps, hide_ps, cd=cd, od=od, dkx=dkx, gbx=gbx, gd=gd, reveal=reveal, cat=cat
+     pg_hide_disk, ptd, hide_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, gd=gd, reveal=reveal, cat=cat
    if(keyword_set(globe)) then $
-     pg_hide_globe, ps, hide_ps, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal, cat=cat
+     pg_hide_globe, ptd, hide_ptd, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal, cat=cat
 
 ;if(keyword_set(one2one)) then stop
-;   if(keyword_set(one2one)) then ps_uncompress, object_ps, ps
+;   if(keyword_set(one2one)) then pnt_uncompress, object_ptd, ptd
 
    if(keyword_set(limb)) then $
-     pg_hide_limb, ps, hide_ps, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal
+     pg_hide_limb, ptd, hide_ptd, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal
   end
 
 

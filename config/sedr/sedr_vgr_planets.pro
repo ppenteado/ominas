@@ -157,7 +157,7 @@ plt_orient = me
  plt_j = pc_get(plt_name, 'J')
 
 
- pd = plt_init_descriptors(n_obj, $
+ pd = plt_create_descriptors(n_obj, $
 		name=plt_name, $
 		orient=plt_orient, $
 		avel=plt_avel, $

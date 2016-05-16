@@ -36,10 +36,10 @@
 ;       model:  2-D array giving a model of the reseau image.  Default model
 ;		is an inverted Gaussian.
 ;
-;	nom_ps:	If given, reseau marks are searched for only within the
+;	nom_ptd:	If given, reseau marks are searched for only within the
 ;		given radius about each nominal point.
 ;
-;	radius:	Radius about no_ps to search.  Default is ten pixels.
+;	radius:	Radius about no_ptd to search.  Default is ten pixels.
 ;
 ;  OUTPUT:
 ;	NONE
@@ -73,10 +73,10 @@
 ;-
 ;=============================================================================
 function pg_resloc, dd, edge=edge, model=model, $
-                       ccmin=ccmin, gdmax=gdmax, nom_ps=nom_ps,radius=radius
+                       ccmin=ccmin, gdmax=gdmax, nom_ptd=nom_ptd,radius=radius
 
 
- image = nv_data(dd)
+ image = dat_data(dd)
  s = size(image)
  if(NOT keyword_set(edge)) then edge = s[1]/50
 
@@ -93,22 +93,22 @@ function pg_resloc, dd, edge=edge, model=model, $
  ;----------------------------------
  ; locate candidate reseaus
  ;----------------------------------
- if(NOT keyword_set(nom_ps)) then $
+ if(NOT keyword_set(nom_ptd)) then $
   begin
    points = locmod(image, model, edge=edge, ccmin=ccmin, gdmax=gdmax, coeff=cc)
    if(NOT keyword_set(points)) then return, 0
   end $
  else $
   begin
-   p = pg_points(nom_ps)
+   p = pnt_points(/cat, nom_ptd)
    n = n_elements(p)/2
-   nom__ps = ptrarr(n)
-   for i=0, n-1 do ps_set_points, nom__ps[i], p[*,i]
+   nom__ptd = objarr(n)
+   for i=0, n-1 do pnt_set_points, nom__ptd[i], p[*,i]
 
-   scan_ps = pg_ptscan(dd, nom__ps, model=model, $
+   scan_ptd = pg_ptscan(dd, nom__ptd, model=model, $
                           width=radius, ccmin=ccmin, gdmax=gdmax, cc_out=cc)
 
-   points = pg_points(scan_ps)
+   points = pnt_points(/cat, scan_ptd)
    if(NOT keyword_set(points)) then return, 0
   end
 
@@ -118,12 +118,12 @@ function pg_resloc, dd, edge=edge, model=model, $
  scan_data = transpose(cc)
  tags = ['scan_cc']
 
- points_ps = ps_init(points = points, $
+ points_ptd = pnt_create_descriptors(points = points, $
                      desc = 'reseau_location', $
                      data = scan_data, $
                      tags = tags)
 
 
- return, points_ps
+ return, points_ptd
 end
 ;=============================================================================

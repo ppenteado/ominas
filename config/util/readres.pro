@@ -33,8 +33,8 @@ function readres, fname
 
 
 
- ps = ps_init(points = p)
+ ptd = pnt_create_descriptors(points = p)
 
- return, ps
+ return, ptd
 end
 ;========================================================================

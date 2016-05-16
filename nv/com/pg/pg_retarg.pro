@@ -98,7 +98,7 @@ pro pg_retarg, v, cd=cd, bx=bx, ref_bx=ref_bx, toward=toward, away=away, along=a
 
 
 
- add_core_task, cd, 'pg_retarg'
+ cor_add_task, cd, 'pg_retarg'
 end
 ;=============================================================================
 

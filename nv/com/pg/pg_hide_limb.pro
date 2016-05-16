@@ -16,15 +16,15 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_hide_limb, object_ps, cd=cd, od=od, gbx=gbx
-;	pg_hide_limb, object_ps, gd=gd, od=od
+;	pg_hide_limb, object_ptd, cd=cd, od=od, gbx=gbx
+;	pg_hide_limb, object_ptd, gd=gd, od=od
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	object_ps:	Array of points_struct containing inertial vectors.
+;	object_ptd:	Array of POINT containing inertial vectors.
 ;
-;	hide_ps:	Array (n_disks, n_timesteps) of points_struct 
+;	hide_ptd:	Array (n_disks, n_timesteps) of POINT 
 ;			containing the hidden points.
 ;
 ;  OUTPUT: NONE
@@ -36,7 +36,7 @@
 ;
 ;	gbx:	Array (n_globes, n_timesteps) of descriptors of objects 
 ;		which must be a subclass of GLOBE.  n_globes must be the
-;		same as the number of object_ps arrays.
+;		same as the number of object_ptd arrays.
 ;
 ;	od:	Array (n_timesteps) of descriptors of objects 
 ;		which must be a subclass of BODY.  These objects are used
@@ -57,7 +57,7 @@
 ;
 ;
 ; SIDE EFFECTS:
-;	The flags arrays in object_ps are modified.
+;	The flags arrays in object_ptd are modified.
 ;
 ;
 ; RESTRICTIONS:
@@ -66,8 +66,8 @@
 ;
 ;
 ; PROCEDURE:
-;	For each object in object_ps, hidden points are computed and
-;	PS_MASK_INVISIBLE in the points_struct is set.  No points are
+;	For each object in object_ptd, hidden points are computed and
+;	PTD_MASK_INVISIBLE in the POINT is set.  No points are
 ;	removed from the array.
 ;
 ;
@@ -75,7 +75,7 @@
 ;	The following command hides all points which lie on the surface of the
 ;	planet behind the limb as seen by the camera:
 ;
-;	pg_hide_limb, object_ps, cd=cd, gbx=pd
+;	pg_hide_limb, object_ptd, cd=cd, gbx=pd
 ;
 ;	In this call, pd is a planet descriptor, and cd is a camera descriptor.
 ;
@@ -93,12 +93,12 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ps, hide_ps, $
+pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
               reveal=reveal
-@ps_include.pro
+@pnt_include.pro
 
- hide = keyword_set(hide_ps)
- if(NOT keyword_set(point_ps)) then return
+ hide = keyword_set(hide_ptd)
+ if(NOT keyword_set(point_ptd)) then return
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -115,45 +115,44 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ps, hide_ps, $
  ; validate descriptors
  ;-----------------------------------
  nt = n_elements(od)
- n_objects = n_elements(point_ps)
+ n_objects = n_elements(point_ptd)
  pgs_count_descriptors, gbx, nd=n_globes, nt=nt1
  if(nt NE nt1) then nv_message, name='pg_hide_limb', 'Inconsistent timesteps.'
  if(n_globes NE n_objects) then nv_message, name='pg_hide_limb', $
                                                         'Inconsistent inputs.'
 
- if(hide) then hide_ps = ptrarr(n_objects)
+ if(hide) then hide_ptd = objarr(n_objects)
 
  ;------------------------------------
  ; hide object points for each planet
  ;------------------------------------
  obs_pos = bod_pos(od)
- for i=0, n_globes-1 do $
+ for i=0, n_globes-1 do if(obj_valid(point_ptd[i])) then  $
   if((bod_opaque(gbx[i,0])) OR (keyword_set(reveal))) then $
    begin
     xd = reform(gbx[i,*], nt)
-    gbds = class_extract(xd, 'GLOBE')
 
-    Rs = bod_inertial_to_body_pos(gbds, obs_pos)
+    Rs = bod_inertial_to_body_pos(xd, obs_pos)
 
-    ps_get, point_ps[i], p=p, vectors=vectors, flags=flags
-    object_pts = bod_inertial_to_body_pos(gbds, vectors)
+    pnt_get, point_ptd[i], p=p, vectors=vectors, flags=flags
+    object_pts = bod_inertial_to_body_pos(xd, vectors)
 
-    w = glb_hide_points_limb(gbds, Rs, object_pts)
+    w = glb_hide_points_limb(xd, Rs, object_pts)
 
     if(hide) then $
      begin
-      ps_get, point_ps[i], desc=desc, inp=inp
-      hide_ps[i] = $
-         ps_init(desc=desc+'-hide_limb', $
-                 input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd=cd[0]))
+      pnt_get, point_ptd[i], desc=desc, inp=inp
+      hide_ptd[i] = $
+         pnt_create_descriptors(desc=desc+'-hide_limb', $
+                 input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]))
      end
 
     if(w[0] NE -1) then $
      begin
       if(hide) then $
-           ps_set, hide_ps[i], p=p[*,w], flags=flags[w], vectors=vectors[w,*]
-      flags[w] = flags[w] OR PS_MASK_INVISIBLE
-      ps_set_flags, point_ps[i], flags
+           pnt_set, hide_ptd[i], p=p[*,w], flags=flags[w], vectors=vectors[w,*]
+      flags[w] = flags[w] OR PTD_MASK_INVISIBLE
+      pnt_set_flags, point_ptd[i], flags
      end
    end
 

@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_put_value):
+; CALLING SEQUENCE(only to be called by dat_put_value):
 ;	dh_std_output, dd, keyword, value
 ;
 ;
@@ -70,10 +70,10 @@ pro dhso_put_core, dh, crx, prefix
 
  n_obj = n_elements(crx)
 
- for i=0, n_obj-1 do dh_put_sclarr, dh, prefix + '_tasks', get_core_tasks(crx[i])
+ for i=0, n_obj-1 do dh_put_sclarr, dh, prefix + '_tasks', cor_tasks(crx[i])
 
- dh_put_string, dh, prefix + '_user', get_core_user(crx)
- dh_put_string, dh, prefix + '_name', get_core_name(crx)
+ dh_put_string, dh, prefix + '_user', cor_user(crx)
+ dh_put_string, dh, prefix + '_name', cor_name(crx)
 
 
 end

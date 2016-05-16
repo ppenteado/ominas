@@ -10,8 +10,8 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps = pg_ring_sector_box()
-;     outline_ps = pg_ring_sector_box(corners)
+;     outline_ptd = pg_ring_sector_box()
+;     outline_ptd = pg_ring_sector_box(corners)
 ;
 ;
 ; ARGUMENTS:
@@ -49,7 +49,7 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
+;      POINT containing points on the sector outline.  The point
 ;      spacing is determined by the sample keyword.
 ;
 ;
@@ -123,13 +123,13 @@ end
 pro test
 ingrid, dd=dd, cd=cd, pd=pd, rd=rd
 
-outline_ps = pg_ring_sector_box()
-outline_ps = pg_ring_sector_box(tr([tr([0,0]),tr([1023,1023])]))
+outline_ptd = pg_ring_sector_box()
+outline_ptd = pg_ring_sector_box(tr([tr([0,0]),tr([1023,1023])]))
 
-pg_draw,outline_ps, col=ctred(), psym=-3
+pg_draw,outline_ptd, col=ctred(), psym=-3
 
 profile = pg_profile_ring(dd, cd=cd, dkx=rd, gbx=pd, $
-                                   outline_ps, dsk_pts=dsk_pts, $
+                                   outline_ptd, dsk_pts=dsk_pts, $
                                    sigma=sigma)
 rads = dsk_pts[*,0]
 lons = dsk_pts[*,1]

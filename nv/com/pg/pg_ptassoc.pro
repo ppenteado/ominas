@@ -14,22 +14,22 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	assoc_scan_ps = pg_ptassoc(scan_ps, model_ps, assoc_model_ps)
+;	assoc_scan_ptd = pg_ptassoc(scan_ptd, model_ptd, assoc_model_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	scan_ps:	points_struct(s) containing first array, typically
+;	scan_ptd:	POINT(s) containing first array, typically
 ;			an array of candidate points detected in an image.
 ;
-;	model_ps:	points_struct(s) containing the second array, typically
+;	model_ptd:	POINT(s) containing the second array, typically
 ;			an array of computed model points.
 ;
 ;  OUTPUT: 
-;	assoc_model_ps:	points_struct containing the output model points.  
+;	assoc_model_ptd:	POINT containing the output model points.  
 ;			Each of these points is associated with a point
 ;			in the returned array.  If this argument is not
-;			present, the model_ps array is overwritten with
+;			present, the model_ptd array is overwritten with
 ;			the output model points.
 ;
 ;
@@ -40,8 +40,8 @@
 ;
 ;
 ; RETURN:
-;	points_struct containing an associated scan point for each output
-;	model point in assoc_model_ps.  
+;	POINT containing an associated scan point for each output
+;	model point in assoc_model_ptd.  
 ;
 ;
 ; PROCEDURE:
@@ -63,7 +63,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_ptassoc, scan_ps, model_ps, assoc_model_ps, radius=radius, $
+function pg_ptassoc, scan_ptd, model_ptd, assoc_model_ptd, radius=radius, $
    dxy=dxy, maxcount=maxcount
 
  if(NOT keyword__set(maxcount)) then maxcount = 5
@@ -72,16 +72,16 @@ function pg_ptassoc, scan_ps, model_ps, assoc_model_ps, radius=radius, $
  ;----------------------------------
  ; dereference points arrays
  ;----------------------------------
- scan_pts = pg_points(scan_ps)
+ scan_pts = pnt_points(/cat, /vis, scan_ptd)
  nscan = n_elements(scan_pts)/2
- model_pts = pg_points(model_ps)
+ model_pts = pnt_points(/cat, /vis, model_ptd)
  nmodel = n_elements(model_pts)/2
  n = nscan*nmodel
 
  if(NOT keyword__set(scan_pts)) then return, 0
  if(NOT keyword__set(model_pts)) then return, 0
 
- if(NOT arg_present(assoc_model_ps)) then overwrite = 1
+ if(NOT arg_present(assoc_model_ptd)) then overwrite = 1
 
  ;-----------------------------------------------
  ; compute offsets between every possible pair
@@ -134,12 +134,12 @@ function pg_ptassoc, scan_ps, model_ps, assoc_model_ps, radius=radius, $
  scan_pts = scan_pts[*,i]
  model_pts = model_pts[*,j]
 
- assoc_scan_ps = ptrarr(nw)
- assoc_model_ps = ptrarr(nw)
+ assoc_scan_ptd = objarr(nw)
+ assoc_model_ptd = objarr(nw)
 
  for k=0, nw-1 do $
   begin
-   name = cor_name(model_ps[j[k]])
+   name = cor_name(model_ptd[j[k]])
 
    delta = ddxy[*,w[k]]
 
@@ -151,21 +151,21 @@ function pg_ptassoc, scan_ps, model_ps, assoc_model_ps, radius=radius, $
    scan_data[3]=0                & tags[3]='Not_applicable'     ; 
    scan_data[4]=0                & tags[4]='Not_applicable'     ; 
 
-   ps_set, assoc_scan_ps[k], $
+   pnt_set, assoc_scan_ptd[k], $
 			points = scan_pts[*,k], $
 			name = name, $
 			desc = 'ptscan', $
 			data = scan_data, $
 			tags = tags
 
-   ps_set, assoc_model_ps[k], $
+   pnt_set, assoc_model_ptd[k], $
 			points = model_pts[*,k], $
 			name = name, $
 			desc = 'ptassoc-model'
   end
 
- if(keyword__set(overwrite)) then model_ps = assoc_model_ps
+ if(keyword__set(overwrite)) then model_ptd = assoc_model_ptd
 
- return, assoc_scan_ps
+ return, assoc_scan_ptd
 end
 ;=============================================================================

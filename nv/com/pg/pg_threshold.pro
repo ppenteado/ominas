@@ -6,7 +6,7 @@
 ;
 ; PURPOSE:
 ;	Excludes points whose associated data lie outside of specified
-;	thresholds by setting the PS_MASK_INVISIBLE.
+;	thresholds by setting the PTD_MASK_INVISIBLE.
 ;
 ;
 ; CATEGORY:
@@ -14,16 +14,16 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_threshold, object_ps, tag=tag, max=max, min=min
+;	pg_threshold, object_ptd, tag=tag, max=max, min=min
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	object_ps:	Array (n_objects) of points_struct giving the
+;	object_ptd:	Array (n_objects) of POINT giving the
 ;			points to be thresholded.
 ;
 ;  OUTPUT:
-;	object_ps:	Modified array of points_struct.  PS_MASK_INVISIBLE
+;	object_ptd:	Modified array of POINT.  PTD_MASK_INVISIBLE
 ;			is set for all excluded points.
 ;
 ;
@@ -48,7 +48,7 @@
 ;
 ;
 ; SIDE EFFECTS:
-;	The input argument object_ps is modified.
+;	The input argument object_ptd is modified.
 ;
 ;
 ; RESTRICTIONS:
@@ -73,10 +73,10 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_threshold, scan_ps, tag=tag, min=min, max=max, relative=relative
-@ps_include.pro
+pro pg_threshold, scan_ptd, tag=tag, min=min, max=max, relative=relative
+@pnt_include.pro
 
- n_objects=n_elements(scan_ps)
+ n_objects=n_elements(scan_ptd)
 
  if(n_elements(min) EQ 0) then min = 0.5
  if(n_elements(min) NE n_objects) then min = make_array(n_objects, val=min[0])
@@ -92,7 +92,7 @@ pro pg_threshold, scan_ps, tag=tag, min=min, max=max, relative=relative
  ;----------------------------
  for i=0, n_objects-1 do $
   begin
-   ps_get, scan_ps[i], data=scan_data, flags=flags, tags=tags
+   pnt_get, scan_ptd[i], data=scan_data, flags=flags, tags=tags
 
    sub = -1
    if(keyword__set(tags)) then sub = where(tags EQ tag)
@@ -110,8 +110,8 @@ pro pg_threshold, scan_ps, tag=tag, min=min, max=max, relative=relative
 
      if(w[0] NE -1) then $
       begin
-       flags[w]=flags[w] OR PS_MASK_INVISIBLE
-       ps_set_flags, scan_ps[i], flags
+       flags[w]=flags[w] OR PTD_MASK_INVISIBLE
+       pnt_set_flags, scan_ptd[i], flags
       end
 
     end

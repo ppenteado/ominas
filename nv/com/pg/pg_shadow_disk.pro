@@ -14,12 +14,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_shadow_disk(object_ps, cd=cd, ods=ods, dkx=dkx)
+;	result = pg_shadow_disk(object_ptd, cd=cd, ods=ods, dkx=dkx)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	object_ps:	Array of points_struct containing inertial vectors.
+;	object_ptd:	Array of POINT containing inertial vectors.
 ;
 ;  OUTPUT: NONE
 ;
@@ -47,8 +47,8 @@
 ;	fov:	 If set shadow points are cropped to within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, points structures excluded by the fov keyword
-;		 are not returned.  Normally, empty points structures
+;	cull:	 If set, POINT objects excluded by the fov keyword
+;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
 ;   backshadow:	 If set, only backshadows (shadows cast between the object and
@@ -62,7 +62,7 @@
 ;
 ;
 ; RETURN: 
-;	Array (n_disks,n_objects) of points_struct containing image 
+;	Array (n_disks,n_objects) of POINT containing image 
 ;	points and the corresponding inertial vectors.
 ;
 ;
@@ -79,10 +79,10 @@
 ;	
 ;-
 ;=============================================================================
-function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
+function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, $
                            nocull=nocull, both=both, reveal=reveal, $
                            fov=fov, cull=cull, backshadow=backshadow, all=all
-@ps_include.pro
+@pnt_include.pro
 
 
  ;-----------------------------------------------
@@ -116,13 +116,12 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
  ;------------------------------------------------
  ; compute shadows for each object on each globe
  ;------------------------------------------------
- n_objects=(size(object_ps))[1]
- _shadow_ps = ptrarr(n_disks, n_objects)
- shadow_ps = ptrarr(n_objects)
+ n_objects=(size(object_ptd))[1]
+ _shadow_ptd = objarr(n_disks, n_objects)
+ shadow_ptd = objarr(n_objects)
 
- obs_bd = class_extract(od, 'BODY')
- obs_pos = bod_pos(obs_bd)
- for j=0, n_objects-1 do $
+ obs_pos = bod_pos(od)
+ for j=0, n_objects-1 do if(obj_valid(object_ptd[j])) then $
   begin
    for i=0, n_disks-1 do $
     if((bod_opaque(dkx[i,0])) OR (keyword_set(reveal))) then $
@@ -132,13 +131,11 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
        begin
         xd = reform(dkx[i,ii], nt)
         idp = cor_idp(xd)
-        obj_bds = class_extract(xd, 'BODY')		; Disk i for all t.
-        obj_dkds = class_extract(xd, 'DISK')
 
         ;---------------------------
         ; get object vectors
         ;---------------------------
-        ps_get, object_ps[j], vectors=vectors, assoc_idp=assoc_idp
+        pnt_get, object_ptd[j], vectors=vectors, assoc_idp=assoc_idp
         if(idp NE assoc_idp) then $
          begin
           n_vectors = (size(vectors))[1]
@@ -150,14 +147,14 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
           rr = vectors - v_inertial
           r_inertial = v_unit(rr)
 
-          r_body = bod_inertial_to_body(obj_bds, r_inertial)
-          v_body = bod_inertial_to_body_pos(obj_bds, vectors)
+          r_body = bod_inertial_to_body(xd, r_inertial)
+          v_body = bod_inertial_to_body_pos(xd, vectors)
 
           ;---------------------------------
           ; project shadows in body frame
           ;---------------------------------
           shadow_pts = $
-           dsk_intersect(obj_dkds, v_body, r_body, hit=hit, t=t, frame_bd=gbx)
+           dsk_intersect(xd, v_body, r_body, hit=hit, t=t, frame_bd=gbx)
 
           ;---------------------------------------------------------------
           ; compute and store image coords of intersections
@@ -172,17 +169,17 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
             ;---------------------------------
             ; store points
             ;---------------------------------
-            _shadow_ps[i,j] = $
-                ps_init(points = points, $
-                        input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd=cd[0]), $
+            _shadow_ptd[i,j] = $
+                pnt_create_descriptors(points = points, $
+                        input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]), $
                         vectors = inertial_pts)
 
             ;-----------------------------------------------
             ; flag points that missed the ring as invisible
             ;-----------------------------------------------
-            flags = ps_flags(_shadow_ps[i,j])
+            flags = pnt_flags(_shadow_ptd[i,j])
             hh = complement(rr[*,0,0], hit)
-            if(hh[0] NE -1) then flags[hh] = flags[hh] OR PS_MASK_INVISIBLE
+            if(hh[0] NE -1) then flags[hh] = flags[hh] OR PTD_MASK_INVISIBLE
 
             ss = inertial_pts - v_inertial
 
@@ -192,7 +189,7 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
             if((NOT keyword_set(backshadow)) AND (NOT keyword_set(both))) then $
              begin
               w = where(v_mag(ss) LT v_mag(rr))
-              if(w[0] NE -1) then flags[w] = flags[w] OR PS_MASK_INVISIBLE
+              if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
              end
 
             ;-----------------------------------------------------------
@@ -201,7 +198,7 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
             if(keyword_set(backshadow)) then $
              begin
               w = where(v_mag(ss) GE v_mag(rr))
-              if(w[0] NE -1) then flags[w] = flags[w] OR PS_MASK_INVISIBLE
+              if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
              end
 
             ;-----------------------------------------------------------
@@ -211,13 +208,13 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
              if(keyword_set(valid)) then $
               begin
                invalid = complement(shadow_pts[*,0], valid)
-               if(invalid[0] NE -1) then flags[invalid] = PS_MASK_INVISIBLE
+               if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
               end
 
             ;---------------------------------------------------------------
             ; store flags
             ;---------------------------------------------------------------
-            ps_set_flags, _shadow_ps[i,j], flags
+            pnt_set_flags, _shadow_ptd[i,j], flags
            end
          end
        end
@@ -226,23 +223,23 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
    ;-----------------------------------------------------
    ; take only nearest shadow points for this object
    ;-----------------------------------------------------
-   shadow_ps[j] = ps_compress(_shadow_ps[*,j])
-   if(ptr_valid(shadow_ps[j])) then ps_set_desc, shadow_ps[j], 'disk_shadow'
+   shadow_ptd[j] = pnt_compress(_shadow_ptd[*,j])
+   if(obj_valid(shadow_ptd[j])) then pnt_set_desc, shadow_ptd[j], 'disk_shadow'
 ;   if(NOT keyword__set(all)) then $
 ;    begin
-;     sp = ps_cull(_shadow_ps[*,j])
+;     sp = pnt_cull(_shadow_ptd[*,j])
 ;     if(keyword__set(sp)) then $
 ;      begin
-;;       if(n_elements(sp) EQ 1) then shadow_ps[j] = sp $
-;;       else shadow_ps[j] = pg_nearest_points(object_ps[j], sp) 
+;;       if(n_elements(sp) EQ 1) then shadow_ptd[j] = sp $
+;;       else shadow_ptd[j] = pg_nearest_points(object_ptd[j], sp) 
 ;      end
 ;   end
   end
 
  ;-------------------------------------------------------------------------
- ; by default, remove empty points structs and reform to one dimension 
+ ; by default, remove empty POINT objects and reform to one dimension 
  ;-------------------------------------------------------------------------
- if(NOT keyword__set(nocull)) then shadow_ps = ps_cull(shadow_ps)
+ if(NOT keyword__set(nocull)) then shadow_ptd = pnt_cull(shadow_ptd)
 
 
  ;------------------------------------------------------
@@ -251,11 +248,11 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, $
  ;------------------------------------------------------
  if(keyword_set(fov)) then $
   begin
-   pg_crop_points, shadow_ps, cd=cd[0], slop=slop
-   if(keyword_set(cull)) then shadow_ps = ps_cull(shadow_ps)
+   pg_crop_points, shadow_ptd, cd=cd[0], slop=slop
+   if(keyword_set(cull)) then shadow_ptd = pnt_cull(shadow_ptd)
   end
 
 
- return, shadow_ps
+ return, shadow_ptd
 end
 ;=============================================================================

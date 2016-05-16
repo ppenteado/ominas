@@ -53,7 +53,7 @@
 ;=============================================================================
 pro nv_flush, events, clear=clear
 @nv_notify_block.common
-@nv.include
+@core.include
 
  global = 1
 

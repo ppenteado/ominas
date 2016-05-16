@@ -71,7 +71,7 @@
 ;=============================================================================
 pro nv_notify, xd, type=type, desc=desc, flush=flush, noevent=noevent
 @nv_notify_block.common
-@nv.include
+@core.include
 
  if(keyword_set(noevent)) then return
  if(keyword_set(suspended)) then return
@@ -85,7 +85,7 @@ pro nv_notify, xd, type=type, desc=desc, flush=flush, noevent=noevent
  ;-------------------------------------------------------------------------
  ; clean up event registry
  ;-------------------------------------------------------------------------
- w = where(ptr_valid(list.xd) EQ 0)
+ w = where(obj_valid(list.xd) EQ 0)
  if(w[0] NE -1) then list = rm_list_item(list, w)
 
  ;------------------------------------------------------------------

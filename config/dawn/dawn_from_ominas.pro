@@ -8,25 +8,19 @@ function dawn_from_ominas, _od, orient_fn
 
  od = nv_clone(_od)
 
- cd = class_extract(od, 'CAMERA')
- if(keyword__set(cd)) then $
+ if(cor_isa(od, 'CAMERA')) then $
   begin
-   bd = cam_body(cd)
-   bod_set_orient, bd, call_function(orient_fn, bod_orient(bd))
-   bod_set_pos, bd, bod_pos(bd)/1000d			; m --> km
-   bod_set_vel, bd, bod_vel(bd)/1000d			; m/s --> km/s
-   cam_set_body, cd, bd
+   bod_set_orient, od, call_function(orient_fn, bod_orient(od))
+   bod_set_pos, od, bod_pos(od)/1000d			; m --> km
+   bod_set_vel, od, bod_vel(od)/1000d			; m/s --> km/s
    return, od
   end
 
- gbd = class_extract(od, 'GLOBE')
- if(keyword__set(gbd)) then $
+ if(cor_isa(od 'GLOBE')) then $
   begin
-   bd = class_extract(gbd, 'BODY')
-   bod_set_pos, bd, bod_pos(bd)/1000d		; m --> km
-   bod_set_vel, bd, bod_vel(bd)/1000d		; m/s --> km/s
-   glb_set_radii, gbd, glb_radii(gbd)/1000d	; m --> km
-   class_insert, gbd, bd, 'BODY'
+   bod_set_pos, od, bod_pos(od)/1000d		; m --> km
+   bod_set_vel, od, bod_vel(od)/1000d		; m/s --> km/s
+   glb_set_radii, god, glb_radii(god)/1000d	; m --> km
    return, od
   end
 

@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = array_input(dd, keyword)
 ;
 ;
@@ -221,7 +221,7 @@ function array_input, dd, keyword, prefix, $
          ;- - - - - - - - - - - - - - - - - - - - - - - -
          ; construct descriptors
          ;- - - - - - - - - - - - - - - - - - - - - - - -
-         _ards = arr_init_descriptors(1)
+         _ards = arr_create_descriptors(1)
 
          cor_set_name, _ards, name
          arr_set_primary, _ards, primary

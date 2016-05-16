@@ -20,7 +20,7 @@ function pgs_idp_to_gd, idps, xd
      w = where(idp EQ idps)
      if(w[0] NE -1) then $
       begin
-       class = class_get(xd[i])
+       class = cor_class(xd[i])
        case class of
         'CORE' : crd = append_array(crd, xd[i])
         'BODY' : bd = append_array(bd, xd[i])

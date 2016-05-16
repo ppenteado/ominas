@@ -118,20 +118,20 @@ pro grmt_create_map, data, md
 
 	 if(keyword_set(pd)) then $
           begin
-           set_core_name, md, get_core_name(pd[0])
+           cor_set_name, md, cor_name(pd[0])
            gbx = pd[0]
 	   map_pd = pd[0]
           end $
-         else set_core_name, md, get_core_name(cd)
+         else cor_set_name, md, cor_name(cd)
 
 	 aux= ['EMM']
 
 	 dd_map = pg_map(dd, $
-                  md=md, $
-                  cd=cd, $
-                  sund=sund, $
-                  gbx=gbx, aux=['EMM'], $
-                  hide_fn=hide_fn, hide_data_p=hide_data_p)
+                    md=md, $
+                    cd=cd, $
+                    sund=sund, $
+                    gbx=gbx, aux=['EMM'], $
+                    hide_fn=hide_fn, hide_data_p=hide_data_p)
 	end
 
   'DISK' : $
@@ -147,7 +147,7 @@ pro grmt_create_map, data, md
 	   return
 	  end
 
-	 set_core_name, md, get_core_name(rd[0])
+	 set_core_name, md, cor_name(rd[0])
 
 	 dd_map = pg_map(dd, bx=rd[0], $
                   md=md, $
@@ -165,7 +165,7 @@ pro grmt_create_map, data, md
  ;-----------------------------------
  ; open map in grim
  ;-----------------------------------
- if(class_get(cd) NE 'MAP') then od = cd
+ if(cor_class(cd) NE 'MAP') then od = cd
  grim, /new, dd_map, cd=md, od=od, sund=sund, pd=map_pd, rd=map_rd
 
 
@@ -238,7 +238,7 @@ function grmt_form_to_md, data, type=type
    type = strupcase(data.types[type_index])
   end
 
- md = map_init_descriptors(1, $
+ md = map_create_descriptors(1, $
 		type=type, $
 		size=size, $
 		scale=scale, $
@@ -384,7 +384,7 @@ pro gr_maptool_event, event
 
 
 
-;		 md = map_init_descriptors(1, $
+;		 md = map_create_descriptors(1, $
 ;;			type=type, $
 ;;			size=size, $
 ;			scale=scale, $
@@ -542,25 +542,25 @@ pro gr_maptool
 	;-----------------------------
 	; default map descriptors
 	;-----------------------------
-		mds 		:	[ map_init_descriptors(1,$
+		mds 		:	[ map_create_descriptors(1,$
 					   type='RECTANGULAR', $
 					   size = [800,400]), $
-					  map_init_descriptors(1,$
+					  map_create_descriptors(1,$
 					   type='MERCATOR', $
 					   size = [800,400]), $
-					  map_init_descriptors(1,$
+					  map_create_descriptors(1,$
 					   type='ORTHOGRAPHIC', $
 					   size = [400,400]), $
-					  map_init_descriptors(1,$
+					  map_create_descriptors(1,$
 					   type='STEREOGRAPHIC', $
 					   size = [400,400]), $
-					  map_init_descriptors(1,$
+					  map_create_descriptors(1,$
 					   type='SINUSOIDAL', $
 					   size = [800,400]), $
-					  map_init_descriptors(1,$
+					  map_create_descriptors(1,$
 					   type='MOLLWEIDE', $
 					   size = [800,400]), $
-					  map_init_descriptors(1,$
+					  map_create_descriptors(1,$
 					   type='OBLIQUE_DISK', $
 					   size = [400,400]) ] $ 
 	     }

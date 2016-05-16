@@ -115,8 +115,9 @@ function image_interp_sinc, image, grid_x, grid_y, k, fwhm, valid=valid, $
  mask_sub = [-1]
  if(keyword_set(mask)) then mask_sub = where(mask GT 0) 
 
+
  ;------------------------------------------------------
- ; comute contribution at each offset in the kernel
+ ; compute contribution at each offset in the kernel
  ;------------------------------------------------------
  for i=-k+1, k do $
   for j=-k+1, k do $
@@ -124,7 +125,6 @@ function image_interp_sinc, image, grid_x, grid_y, k, fwhm, valid=valid, $
     grid_xi = lgrid_x + i
     grid_yj = lgrid_y + j
     sub = grid_xi + s[1]*grid_yj
-
 
     ;- - - - - - - - - - - - - - - - - - - - - - - -
     ; mask as needed
@@ -147,7 +147,7 @@ function image_interp_sinc, image, grid_x, grid_y, k, fwhm, valid=valid, $
     ;- - - - - - - - - - - - - - - - - - - - - - - -
     ; interpolate
     ;- - - - - - - - - - - - - - - - - - - - - - - -
-    if(ii[0] NE -1) then $
+    if(n_elements(ii) GT 1) then $
      begin
       x_xi = grid_x[ii] - grid_xi[ii]
       y_yj = grid_y[ii] - grid_yj[ii]

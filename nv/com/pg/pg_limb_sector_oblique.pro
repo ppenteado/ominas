@@ -11,7 +11,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps=pg_limb_sector(cd=cd, gbx=gbx, dkd=dkd)
+;     outline_ptd=pg_limb_sector(cd=cd, gbx=gbx, dkd=dkd)
 ;
 ;
 ; ARGUMENTS:
@@ -61,8 +61,8 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT object
 ;      also contains the disk coordinate for each point, relative to the
 ;      returned disk descriptor, and the user fields 'nrad' and 'nlon' 
 ;      giving the number of points in altitude and azimuth.
@@ -247,12 +247,12 @@ stop
  if(NOT keyword_set(nodsk)) then $
       dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=gbx, outline_pts)
 
- outline_ps = ps_init(points = outline_pts, $
+ outline_ptd = pnt_create_descriptors(points = outline_pts, $
                       desc = 'pg_limb_sector', $
                       data = transpose(dsk_outline_pts))
- cor_set_udata, outline_ps, 'nrad', [nalt]
- cor_set_udata, outline_ps, 'nlon', [naz]
+ cor_set_udata, outline_ptd, 'nrad', [nalt]
+ cor_set_udata, outline_ptd, 'nlon', [naz]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================

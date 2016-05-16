@@ -13,7 +13,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps = pg_image_sector()
+;     outline_ptd = pg_image_sector()
 ;
 ;
 ; ARGUMENTS:
@@ -61,7 +61,7 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
+;      POINT containing points on the sector outline.  The point
 ;      spacing is determined by the sample keyword. 
 ;
 ; ORIGINAL AUTHOR : J. Spitale ; 6/2005
@@ -235,12 +235,12 @@ function pg_image_sector, sample=sample, $
  ;-------------------------------------------
  ; Return outline points
  ;-------------------------------------------
- outline_ps = ps_init(points = outline_pts, desc = 'pg_image_sector')
- cor_set_udata, outline_ps, 'nl', [nl]
- cor_set_udata, outline_ps, 'nw', [nw]
- cor_set_udata, outline_ps, 'sample', [sample]
+ outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'pg_image_sector')
+ cor_set_udata, outline_ptd, 'nl', [nl]
+ cor_set_udata, outline_ptd, 'nw', [nw]
+ cor_set_udata, outline_ptd, 'sample', [sample]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================
 
@@ -249,9 +249,9 @@ end
 pro test
 
 ingrid, dd=dd, cd=cd
-ps = pg_image_sector(p0=[100,100], p1=[200,200], /nov, width=10)
-pg_draw, ps, col=ctred()
-dd_profile = pg_profile_image(dd, ps, profile=profile)
+ptd = pg_image_sector(p0=[100,100], p1=[200,200], /nov, width=10)
+pg_draw, ptd, col=ctred()
+dd_profile = pg_profile_image(dd, ptd, profile=profile)
 plot, profile
 grim, dd_profile
 

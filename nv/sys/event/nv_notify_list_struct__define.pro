@@ -56,7 +56,7 @@ pro nv_notify_list_struct__define
  struct = $
     { nv_notify_list_struct, $
 	idp :		nv_ptr_new(), $	; id pointer.
-	xd:		nv_ptr_new(), $	; Pointer to top of object tree.
+	xd:		obj_new(), $	; Pointer to top of object tree.
 	handler :	'', $		; Event handler routine.
 	compress :	0b, $		; If 1, compress events.
 	data_p:		nv_ptr_new(), $	; Pointer to user data.

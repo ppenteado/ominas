@@ -12,7 +12,7 @@
 ; load image
 ;-------------------------------
 file = '~/casIss/1460/N1460002670_1.IMG'
-dd = nv_read(file, im)
+dd = dat_read(file, im)
 ctmod, top=top
 tvim, im, zoom=0.5, /order, /new, top=top
 
@@ -31,20 +31,20 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;---------------------------------------
 ; rough pointing correction
 ;---------------------------------------
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-          pg_hide, limb_ps, /limb, gd=gd, od=sund
-pg_draw, limb_ps, col=ctred()
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
+          pg_hide, limb_ptd, /limb, gd=gd, od=sund
+pg_draw, limb_ptd, col=ctred()
 
-edge_ps = pg_edges(dd, edge=10)			
-pg_draw, edge_ps, col=ctblue()
-dxy = pg_farfit(dd, edge_ps, [limb_ps])	
+edge_ptd = pg_edges(dd, edge=10)			
+pg_draw, edge_ptd, col=ctblue()
+dxy = pg_farfit(dd, edge_ptd, [limb_ptd])	
 					 	
 pg_repoint, dxy, 0d, gd=gd	
 
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-          pg_hide, limb_ps, /limb, gd=gd, od=sund
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
+          pg_hide, limb_ptd, /limb, gd=gd, od=sund
 tvim, im
-pg_draw, limb_ps
+pg_draw, limb_ptd
 
 
 ;------------------------------------------------------
@@ -126,7 +126,7 @@ tvim, /new, _map1, title=map_type(md1) + ' TO ' + map_type(_md1) + ' PROJECTION'
 ;------------------------------------------------------------------
 ; Project a previous projection to a different camera perspective
 ;------------------------------------------------------------------
-_cd = cam_clone_descriptor(cd)
+_cd = nv_clone(cd)
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ; Set camera position in terms of sclat, sclon, and altitude in 
@@ -171,7 +171,7 @@ pg_put_maps, dd_map1, md=md1			; create detached header on dd_map1
 pg_put_cameras, dd_map1, cd=cd
 ;pg_put_planets, dd_map1, od=cd, pd=pd
 ;pg_put_rings, dd_map1, od=cd, pd=pd
-nv_write, 'globe-1.map', dd_map1		; write data file, and detached header
+dat_write, 'globe-1.map', dd_map1		; write data file, and detached header
 
 
 
@@ -182,9 +182,9 @@ nv_write, 'globe-1.map', dd_map1		; write data file, and detached header
 
 
 
-dd_map = nv_read('globe-1.vic')
+dd_map = dat_read('globe-1.vic')
 md = pg_get_maps(dd_map)
 
-grid_ps = pg_grid(cd=md, gbx=pd)
-limb_ps = pg_limb(cd=md, od=cd, gbx=pd)
+grid_ptd = pg_grid(cd=md, gbx=pd)
+limb_ptd = pg_limb(cd=md, od=cd, gbx=pd)
 

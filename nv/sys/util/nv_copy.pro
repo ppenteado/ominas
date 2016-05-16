@@ -103,6 +103,27 @@ pro nv_copy_recurse, dst_xd, src_xd, alloc=alloc
        else nv_copy_recurse, dst_xd[i].(j), src_xd[i].(j), alloc=alloc
       end
     end
+  end $
+ ;----------------------------------------------
+ ; structure 
+ ;----------------------------------------------
+ else if(type EQ 11) then $
+  begin
+   for i=0, n-1 do if(obj_valid(src_xd[i])) then $
+    begin
+     _src_xd = cor_dereference(src_xd[i])
+     _dst_xd = cor_dereference(dst_xd[i])
+
+;;     if(nv_get_directive(_xd) EQ 'NV_STOP') then return
+
+     for j=0, n_tags(_src_xd)-1 do $
+      begin
+       if(nv_copy_is_scalar(_src_xd.(j))) then _dst_xd.(j) = _src_xd.(j) $
+       else nv_copy_recurse, _dst_xd.(j), _src_xd.(j), alloc=alloc
+      end
+
+     cor_rereference, dst_xd[i], _dst_xd
+    end
   end
 
 end
@@ -116,7 +137,7 @@ end
 ;=============================================================================
 pro nv_copy, dst_xd, src_xd, noevent=noevent
 
- if(class_get(dst_xd) NE class_get(src_xd)) then $
+ if(cor_class(dst_xd) NE cor_class(src_xd)) then $
     nv_message, name='nv_copy', 'Source and destination must have the same class'
 
  nv_notify, src_xd, type = 1, noevent=noevent

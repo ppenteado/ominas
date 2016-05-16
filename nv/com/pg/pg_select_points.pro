@@ -36,7 +36,7 @@
 ;
 ;	color:		Color to use for graphics overlays.
 ;
-;	ps_output:	If set, a points structure is returned instead
+;	ptd_output:	If set, a POINT object is returned instead
 ;			of a points array.
 ;
 ;	p0:		Initial point, instead of user selection.
@@ -66,7 +66,7 @@
 ;-
 ;=============================================================================
 function pg_select_points, dd, psym=psym, noverbose=noverbose, color=color, $
-                 p0=p0, one=one, number=number, cancelled=cancelled, ps_output=ps_output
+                 p0=p0, one=one, number=number, cancelled=cancelled, ptd_output=ptd_output
 
  if(NOT keyword_set(psym)) then psym=1
  cancel = 0
@@ -100,10 +100,10 @@ function pg_select_points, dd, psym=psym, noverbose=noverbose, color=color, $
 
 
 
- if(keyword_set(ps_output)) then $
+ if(keyword_set(ptd_output)) then $
   begin
-   ps = ps_init(points=points[0:1,*])
-   return, ps
+   ptd = pnt_create_descriptors(points=points[0:1,*])
+   return, ptd
   end
 
  return, points[0:1,*]

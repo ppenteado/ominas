@@ -235,7 +235,6 @@ function spice_input, dd, keyword, prefix, $
    return, 0
   end
 
-
  if(NOT spice_test()) then $
   begin
    status = -1
@@ -435,7 +434,7 @@ function spice_input, dd, keyword, prefix, $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if((NOT keyword_set(time)) AND keyword_set(od)) then $
   begin
-   if(NOT keyword_set(class_extract(od, 'BODY'))) then $
+   if(NOT cor_isa(od, 'BODY')) then $
     begin
      status = -1
      return, 0
@@ -483,7 +482,7 @@ function spice_input, dd, keyword, prefix, $
          klist = kpath + '/' + klist
         end
        k_in = spice_read_klist(klist, silent=silent, $
-                            time=time, prefix=prefix, label=nv_header(dd))
+                            time=time, prefix=prefix, label=dat_header(dd))
       end
     end
 
@@ -586,7 +585,7 @@ function spice_input, dd, keyword, prefix, $
 	 if(NOT keyword_set(result)) then status = -1 $
 	 else if((where(names0 EQ 'SUN'))[0] EQ -1) then $
 	  begin
-	   names = get_core_name(result)
+	   names = cor_name(result)
   	   w = where(strupcase(names) EQ 'SUN')
 	   if(w[0] NE -1) then $
             begin

@@ -97,12 +97,12 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, no_sort=no_sort,
  if(keyword_set(arr__name)) then tr_first = 1
 ;tr_first = 1
 
- ards = nv_get_value(dd, 'ARR_DESCRIPTORS', key1=od, key2=bx, key4=_ard, key6=arr__primary, $$
+ ards = dat_get_value(dd, 'ARR_DESCRIPTORS', key1=od, key2=bx, key4=_ard, key6=arr__primary, $$
                              key8=arr__name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
- if(NOT keyword_set(ards)) then return, nv_ptr_new()
+ if(NOT keyword_set(ards)) then return, obj_new()
 
  n = n_elements(ards)
 
@@ -118,9 +118,9 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, no_sort=no_sort,
  ;---------------------------------------------------
  if(keyword__set(arr__name)) then $
   begin
-   tr_names = get_core_name(ards)
+   tr_names = cor_name(ards)
    sub = nwhere(strupcase(tr_names), strupcase(arr__name))
-   if(sub[0] EQ -1) then return, nv_ptr_new()
+   if(sub[0] EQ -1) then return, obj_new()
    if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
   end $
  else sub=lindgen(n)
@@ -135,7 +135,7 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, no_sort=no_sort,
  ; Thus, translators can be arranged in order in the table
  ; such the the first occurence has the highest priority.
  ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then ards = ards[pgs_name_sort(get_core_name(ards))]
+ if(NOT keyword_set(no_sort)) then ards = ards[pgs_name_sort(cor_name(ards))]
 
 
  return, ards

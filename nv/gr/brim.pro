@@ -110,7 +110,7 @@
 ;
 ;	To browse a set of data descriptors:
 ;
-;	 IDL> dd = nv_read('*')
+;	 IDL> dd = dat_read('*')
 ;	 IDL> brim, dd
 ;
 ;
@@ -192,14 +192,14 @@ pro brim_load, brim_data, files, display=display
    if(size(files, /type) EQ 7) then $
     begin
      _im = 0
-     dd = nv_read(files[i], _im, /silent);, maintain=2)
-     if(ptr_valid(dd[0])) then nv_free, dd
+     dd = dat_read(files[i], _im, /silent);, maintain=2)
+     if(obj_valid(dd[0])) then nv_free, dd
     end $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; otherwise, assume it gives data descriptors.
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else  _im = nv_data(files[i])
-; need to sample images with nv_data instead of congrid
+   else  _im = dat_data(files[i])
+; need to sample images with dat_data instead of congrid
 
    if(keyword_set(_im)) then $
     if((size(_im))[0] EQ 2) then $
@@ -492,7 +492,7 @@ pro brim_fn_grim, brim_data, i, label, status=status
  status = 0
 
  if(size(brim_data.files, /type) EQ 7) then $
-                            dd = nv_read(brim_data.files[i], /silent) $
+                            dd = dat_read(brim_data.files[i], /silent) $
  else dd = brim_data.files[i]
 
  widget_control, /hourglass
@@ -668,7 +668,7 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
    nfiles = n_elements(files)
    unknown = lonarr(nfiles)
    for i=0, nfiles-1 do $
-           if(nv_detect_filetype(files[i]) EQ '') then unknown[i] = 1
+           if(dat_detect_filetype(files[i]) EQ '') then unknown[i] = 1
 
    w = where(unknown EQ 1)
    if(w[0] NE -1) then $

@@ -140,7 +140,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ;---------------------------------------
  ; create map data descriptor
  ;---------------------------------------
- dd_map = nv_init_descriptor(instrument='MAP', filetype=nv_filetype(dd))
+ dd_map = dat_create_descriptors(1, instrument='MAP', filetype=dat_filetype(dd))
 
 
  ;------------------------------------------------------------------
@@ -149,7 +149,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  naux = n_elements(aux_names)
  if(naux GT 0) then $
   begin
-   _image = nv_data(dd)
+   _image = dat_data(dd)
    s = size(_image)
    xsize = s[1] & ysize = s[2]
 
@@ -171,7 +171,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
    if(nn LT naux) then image = image[*,*,0:nn+1]
   end $
- else image = nv_data(dd)
+ else image = dat_data(dd)
 
 
  ;---------------------------------------
@@ -205,7 +205,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
    set_image_size, test_md, map_size/test_factor
    set_image_origin, test_md, image_origin(md)/test_factor
 
-   if(class_get(test_md) EQ 'CAMERA') then cam_set_scale, test_md, cam_scale(md)*test_factor
+   if(cor_class(test_md) EQ 'CAMERA') then cam_set_scale, test_md, cam_scale(md)*test_factor
 
    test_map = project_map(image, bounds=bounds, frame_bd=gbx, interp=interp,  $
             md=test_md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
@@ -269,7 +269,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ;--------------------------------------------------------------------------
  if(naux GT 0) then $
   begin
-   nv_set_data, dd_map, map[*,*,0]
+   dat_set_data, dd_map, map[*,*,0]
 
    nn = 1
    for i=0, naux-1 do $
@@ -279,7 +279,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
       nn = nn + 1
      end
   end $
- else nv_set_data, dd_map, map
+ else dat_set_data, dd_map, map
 
 
  return, dd_map

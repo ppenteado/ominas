@@ -14,14 +14,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_ptscan(dd, object_ps)
+;	result = pg_ptscan(dd, object_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:		Data descriptor
 ;
-;	object_ps: 	Array (n_pts) of points_struct giving the points.
+;	object_ptd: 	Array (n_pts) of POINT giving the points.
 ;			Only the image coordinates of the points need to be
 ;			specified.
 ;
@@ -67,15 +67,15 @@
 ;
 ;
 ; RETURN:
-;	An array of type points_struct giving the detected position for
+;	An array of type POINT giving the detected position for
 ;       each object.  The correlation coeff value for each detection is
-;       saved in the data portion of points_struct with tag 'scan_cc'.
+;       saved in the data portion of POINT with tag 'scan_cc'.
 ;       The x and y offset from the given position is also saved.
 ;
 ;
 ; RESTRICTIONS:
 ;	Currently does not work for multiple time steps, only considers
-;	one point per given points_struct.
+;	one point per given POINT.
 ;
 ;
 ; PROCEDURE:
@@ -88,8 +88,8 @@
 ; EXAMPLE:
 ;	To find stellar positions with a correlation higher than 0.6...
 ;
-;       star_ps=pg_center(bx=sd, gd=gd) & pg_hide, star_ps, gd=gd, /rm, /globe
-;       ptscan_ps=pg_ptscan(dd, star_ps, edge=30, width=40, ccmin=0.6)
+;       star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;       ptscan_ptd=pg_ptscan(dd, star_ptd, edge=30, width=40, ccmin=0.6)
 ;
 ; SEE ALSO:
 ;	pg_ptfarscan
@@ -105,23 +105,23 @@
 ;	
 ;-
 ;=============================================================================
-function pg_ptscan, dd, object_ps, $
+function pg_ptscan, dd, object_ptd, $
                     model=model, radius=radius, $
                     width=_width, edge=edge, ccmin=ccmin, gdmax=gdmax, $
                     smooth=smooth, show=show, wmod=wmod, wpsf=wpsf, $
                     median=median, chisqmax=chisqmax, cc_out=cc_out, $
                     round=round, spike=spike
-@ps_include.pro
+@pnt_include.pro
 
  if(NOT keyword__set(ccmin)) then ccmin=0.01
 ; if(NOT keyword__set(gdmax)) then gdmax=0.25
  
- _image=nv_data(dd)
+ _image=dat_data(dd)
  
  if(keyword__set(smooth)) then _image = smooth(_image, smooth)
  if(keyword__set(median)) then _image = median(_image, median)
 
- n_objects = n_elements(object_ps)
+ n_objects = n_elements(object_ptd)
  s = size(_image)
 
  ;-----------------------------
@@ -155,13 +155,13 @@ function pg_ptscan, dd, object_ps, $
  all_cc = dblarr(n_objects)
  dxy = dblarr(2,n_objects)
  all_flags = bytarr(n_objects)
- pts_ps = ptrarr(n_objects)
+ pts_ptd = objarr(n_objects)
  for i=0, n_objects-1 do $
   begin
    ;-----------------------------------
    ; get object point
    ;-----------------------------------
-   ps_get, object_ps[i], points=pts, flags=flags, name=name, /visible
+   pnt_get, object_ptd[i], points=pts, flags=flags, name=name, /visible
 
    ;------------------------------------------------------
    ; trim point if invisible or too close to edge
@@ -177,7 +177,7 @@ function pg_ptscan, dd, object_ps, $
    ccp = 0
    scan_pts = pts
    sim = size(im_pts)
-   flags = make_array(1, /byte, val=PS_MASK_INVISIBLE)
+   flags = make_array(1, /byte, val=PTD_MASK_INVISIBLE)
 
    start = intarr(2)
    start[0] = fix(pts[0]-width[i]/2) < (s[1]-width[i]-1) > 0.
@@ -230,7 +230,7 @@ function pg_ptscan, dd, object_ps, $
    scan_data[3]=ccp		 & tags[3]='scan_cc'            ; correlation
 
 
-   pts_ps[i] = ps_init(points = scan_pts, $
+   pts_ptd[i] = pnt_create_descriptors(points = scan_pts, $
                        name = name, $
                        desc = 'ptscan', $
                        data = scan_data, $
@@ -253,22 +253,22 @@ function pg_ptscan, dd, object_ps, $
    if(n_elements(w) GT 1) then $
     begin
      ff = all_flags[w]
-     ww = where((ff AND PS_MASK_INVISIBLE) EQ 0)
+     ww = where((ff AND PTD_MASK_INVISIBLE) EQ 0)
      if(n_elements(ww) GT 1) then $
       begin
        d2 = mag2_dxy[w[ww]]
        www = where(d2 eq max(d2))
        ii = w[ww[www[0]]]
-       flags = ps_flags(pts_ps[ii])
-       flags = flags OR PS_MASK_INVISIBLE
-       ps_set_flags, pts_ps[ii], flags
+       flags = pnt_flags(pts_ptd[ii])
+       flags = flags OR PTD_MASK_INVISIBLE
+       pnt_set_flags, pts_ptd[ii], flags
        discard[ii] = 1
       end
     end
   end
 
  cc_out = all_cc
- ww = where((all_flags AND PS_MASK_INVISIBLE) EQ 0)
+ ww = where((all_flags AND PTD_MASK_INVISIBLE) EQ 0)
  if(ww[0] NE -1) then cc_out = cc_out[ww] 
 
 
@@ -277,7 +277,7 @@ function pg_ptscan, dd, object_ps, $
  ;---------------------------------------------
  if(keyword__set(radius)) then $
   begin
-   ww = where((all_flags AND PS_MASK_INVISIBLE) EQ 0)
+   ww = where((all_flags AND PTD_MASK_INVISIBLE) EQ 0)
    if(ww[0] NE -1) then $
     begin
      w = correlate_pairs(dxy[*,ww], radius, /complement)
@@ -287,15 +287,15 @@ function pg_ptscan, dd, object_ps, $
        nw = n_elements(w)
        for i=0, nw-1 do $
         begin
-         scan_data = ps_data(pts_ps[w[i]])
+         scan_data = pnt_data(pts_ptd[w[i]])
          scan_data[3] = 0d
-         ps_set_data, pts_ps[w[i]], scan_data
+         pnt_set_data, pts_ptd[w[i]], scan_data
         end
       end
     end
   end
 
 
- return, pts_ps
+ return, pts_ptd
 end
 ;===========================================================================

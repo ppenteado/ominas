@@ -76,7 +76,7 @@ function pg_load_maps, dir, md=md, dd=dd
  ;  The files are not actually loaded, as indicated by maintain=1.
  ;  They will be loaded when accessed.
  ;-----------------------------------------------------------------
- dd = nv_read(files, maintain=1)
+ dd = dat_read(files, maintain=1)
  if(NOT keyword_set(dd)) then return, 0
 
  nmap = n_elements(dd)
@@ -85,10 +85,10 @@ function pg_load_maps, dir, md=md, dd=dd
  ;--------------------------------------------------------------
  ; get map descriptors
  ;--------------------------------------------------------------
- md = ptrarr(nmap)
+ md = objarr(nmap)
  for i=0, nmap-1 do md[i] = pg_get_maps(dd[i])
 
- w = where(ptr_valid(md))
+ w = where(obj_valid(md))
  if(w[0] EQ -1) then return, 0
 
 

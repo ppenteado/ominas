@@ -121,12 +121,27 @@ end
 ; nv_help_descend
 ;
 ;===========================================================================
-pro nv_help_descend, dp, indent, string, index, capture=capture
+pro nv_help_descend, dp0, indent, string, index, capture=capture
 
+ dp = dp0
  type = size(dp, /type)
  n = n_elements(dp)
 
  nullval = 'null'
+
+ ;----------------------------------------
+ ; object: dereference and continue
+ ;----------------------------------------
+ if(type EQ 11) then $
+  begin
+   for i=0, n-1 do $
+    begin
+     if(NOT obj_valid(dp[i])) then return
+     _dp = cor_dereference(dp[i])
+     nv_help_descend, _dp, indent+1, string, i, capture=capture
+    end
+  end
+
 
  ;----------------------------------------
  ; pointer: dereference and descend again
@@ -248,7 +263,7 @@ pro nv_help_dump_events, capture=capture, items
    xd = items[i].xd
    idp = items[i].idp
 
-   class = class_get(xd)
+   class = cor_class(xd)
    desc = cor_name(xd)
 
    type = 'READ'

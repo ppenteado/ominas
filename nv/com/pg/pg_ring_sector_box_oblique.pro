@@ -10,8 +10,8 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps=pg_ring_sector_box_oblique()
-;     outline_ps=pg_ring_sector_box_oblique(corners)
+;     outline_ptd=pg_ring_sector_box_oblique()
+;     outline_ptd=pg_ring_sector_box_oblique(corners)
 ;
 ;
 ; ARGUMENTS:
@@ -54,8 +54,8 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT object containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT object
 ;      also contains the disk coordinate for each point and the user fields
 ;      'nrad' and 'nlon' giving the number of points in radius and longitude.
 ;
@@ -205,11 +205,11 @@ function pg_ring_sector_box_oblique, p, $
  ;-----------------------------------------
  ; package the result
  ;-----------------------------------------
- outline_ps = ps_init(points = outline_pts, $
+ outline_ptd = pnt_create_descriptors(points = outline_pts, $
                       desc = 'pg_ring_sector_box_oblique')
- cor_set_udata, outline_ps, 'sample', [sample]
+ cor_set_udata, outline_ptd, 'sample', [sample]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================
 
@@ -217,12 +217,12 @@ end
 pro test
 ingrid, dd=dd, cd=cd, pd=pd, rd=rd
 
-outline_ps = pg_ring_sector_box_oblique()
+outline_ptd = pg_ring_sector_box_oblique()
 
-pg_draw,outline_ps, col=ctred(), psym=-3
+pg_draw,outline_ptd, col=ctred(), psym=-3
 
 profile = pg_profile_ring(dd, cd=cd, dkx=rd, gbx=pd, $
-                                   outline_ps, dsk_pts=dsk_pts, $
+                                   outline_ptd, dsk_pts=dsk_pts, $
                                    sigma=sigma)
 rads = dsk_pts[*,0]
 lons = dsk_pts[*,1]

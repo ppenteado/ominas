@@ -70,8 +70,8 @@ function sedr_list, dd=dd, sctime=sctime, planet=planet, silent=silent
  ;----------------------------------------------------------
  if(keyword__set(dd)) then $
   begin
-   sctime = long(vicar_vgrkey(nv_header(dd),'SCTIME'))
-   planet = vicar_vgrkey(nv_header(dd),'PLANET')
+   sctime = long(vicar_vgrkey(dat_header(dd),'SCTIME'))
+   planet = vicar_vgrkey(dat_header(dd),'PLANET')
   end $
  else $
   if(NOT keyword__set(sctime)) then $

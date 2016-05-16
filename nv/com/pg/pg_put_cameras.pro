@@ -93,12 +93,11 @@ pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
  ;-------------------------------------------------------------------
  ; override the specified values (cam__name cannot be overridden)
  ;-------------------------------------------------------------------
- bds = cam_body(cds)
- if(n_elements(cam__orient) NE 0) then bod_set_orient, bds, cam__orient
- if(n_elements(cam__avel) NE 0) then bod_set_avel, bds, cam__avel
- if(n_elements(cam__pos) NE 0) then bod_set_pos, bds, cam__pos
- if(n_elements(cam__vel) NE 0) then bod_set_vel, bds, cam__vel
- if(n_elements(cam__time) NE 0) then bod_set_time, bds, cam__time
+ if(n_elements(cam__orient) NE 0) then bod_set_orient, cds, cam__orient
+ if(n_elements(cam__avel) NE 0) then bod_set_avel, cds, cam__avel
+ if(n_elements(cam__pos) NE 0) then bod_set_pos, cds, cam__pos
+ if(n_elements(cam__vel) NE 0) then bod_set_vel, cds, cam__vel
+ if(n_elements(cam__time) NE 0) then bod_set_time, cds, cam__time
  if(n_elements(cam__fn_focal_to_image) NE 0) then $
                 cam_set_fn_focal_to_image, cds, cam__fn_focal_to_image
  if(n_elements(cam__fn_image_to_focal) NE 0) then $
@@ -114,7 +113,7 @@ pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'CAM_DESCRIPTORS', cds, trs=trs, $
+ dat_put_value, dd, 'CAM_DESCRIPTORS', cds, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 

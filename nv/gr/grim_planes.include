@@ -13,12 +13,12 @@ pro grim_crop_plane, grim_data, plane
    tvgr, grim_data.wnum, get=tvd
    xrange = tvd.xrange
 
-   dat = nv_data(plane.dd)
+   dat = dat_data(plane.dd)
    x = dat[0,*]
    w = where((x GE xrange[0]) AND (x LE xrange[1]))
 
    dat = dat[*,w]
-   nv_set_data, plane.dd, dat
+   dat_set_data, plane.dd, dat
   end $
  ;----------------------------------------------
  ; image: crop to visible size
@@ -29,7 +29,7 @@ pro grim_crop_plane, grim_data, plane
    pp0 = round((convert_coord(/device, /to_data, p0))[0:1])
    pp1 = round((convert_coord(/device, /to_data, p1))[0:1])
 
-   im = nv_data(plane.dd)
+   im = dat_data(plane.dd)
    dim = size(im, /dim)
 
    xmin = min([pp0[0],pp1[0]])
@@ -46,7 +46,7 @@ pro grim_crop_plane, grim_data, plane
 
    tvim, grim_data.wnum, offset=[0,0], zoom=!d.x_size/float(xmax-xmin)
 
-   nv_set_data, plane.dd, im
+   dat_set_data, plane.dd, im
   end
 
 
@@ -279,7 +279,7 @@ function grim_clone_plane, grim_data, plane=plane
  (*grim_data.planes_p)[pn] = new_plane
 
   new_plane.cmd = colormap_descriptor(data=new_plane.pn, $
-                                n_colors=grim_n_colors(nv_type(new_plane.dd)))
+                                n_colors=grim_n_colors(dat_type(new_plane.dd)))
 
  grim_set_plane, grim_data, new_plane
  grim_set_data, grim_data
@@ -415,33 +415,33 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	; descriptors
 	;---------------
 		dd		:	dd[i], $		; Data descriptor
-		sibling_dd	:	ptr_new(), $		; Last sibling dd
-		cd_p		:	ptr_new(ptr_new()), $	; Camera descriptor
-		pd_p		:	ptr_new(ptr_new()), $	; Planet descriptors
-		rd_p		:	ptr_new(ptr_new()), $	; Ring descriptors
-		sd_p		:	ptr_new(ptr_new()), $	; Star descriptors
-		sund_p		:	ptr_new(ptr_new()), $	; Sun descriptor
-		std_p		:	ptr_new(ptr_new()), $	; Station descriptors
-		ard_p		:	ptr_new(ptr_new()), $	; Array descriptors
-		od_p		:	ptr_new(ptr_new()), $	; Observer descriptor
+		sibling_dd	:	obj_new(), $		; Last sibling dd
+		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
+		pd_p		:	ptr_new(obj_new()), $	; Planet descriptors
+		rd_p		:	ptr_new(obj_new()), $	; Ring descriptors
+		sd_p		:	ptr_new(obj_new()), $	; Star descriptors
+		sund_p		:	ptr_new(obj_new()), $	; Sun descriptor
+		std_p		:	ptr_new(obj_new()), $	; Station descriptors
+		ard_p		:	ptr_new(obj_new()), $	; Array descriptors
+		od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 
 	;----------------------------
 	; active objects
 	;----------------------------
-		active_xd_p	:	ptr_new(ptr_new()), $	; Descriptors of
+		active_xd_p	:	ptr_new(obj_new()), $	; Descriptors of
 								;  active objects
-		active_overlays_psp :	ptr_new(ptr_new()), $	; Active overlays
+		active_overlays_ptdp :	ptr_new(obj_new()), $	; Active overlays
 
 		active_user_tags_p	:	ptr_new(''), $	
 
 	;-----------------------------------------------------------
 	; overlay points arrays -- 
-	;  Each overlay array, *overlay_psps[i], has dimensions
-	;  (nps, nd), where nd is the number of descriptors 
-	;  (planets, rings, etc.) and nps is the number of arrays per
+	;  Each overlay array, *overlay_ptdps[i], has dimensions
+	;  (nptd, nd), where nd is the number of descriptors 
+	;  (planets, rings, etc.) and nptd is the number of arrays per
 	;  descriptor (e.g., rings have two arrays per descriptor).
 	;-----------------------------------------------------------
-		overlay_psps		:	ptr_new(0), $
+		overlay_ptdps		:	ptr_new(0), $
 		overlay_names_p		:	ptr_new(''), $
 		overlay_classes_p	:	ptr_new(0), $
 		overlay_dep_p		:	ptr_new(0), $
@@ -459,7 +459,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 ;	;-----------------------------------------------------------
 ;	; fill arrays
 ;	;-----------------------------------------------------------
-;		fill_poly_psps		:	ptr_new(0), $
+;		fill_poly_ptdps		:	ptr_new(0), $
 ;		fill_color_p		:	ptr_new(0), $
 ;		fill_names_p		:	ptr_new(''), $
 
@@ -467,12 +467,12 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	; special arrays
 	;-----------------------------------------------------------
 		roi_p		:	ptr_new(0), $
-		roi_ps		:	ps_init(), $
+		roi_ptd		:	pnt_create_descriptors(), $
 		star_labels_p	:	ptr_new(0), $
 		mask_p		: 	ptr_new(-1), $
-		tie_psp		: 	ptr_new(ptr_new()), $
-		curve_psp	: 	ptr_new(ptr_new()), $
-		user_ps_tlp	:	ptr_new(), $	
+		tie_ptdp		: 	ptr_new(obj_new()), $
+		curve_ptdp	: 	ptr_new(obj_new()), $
+		user_ptd_tlp	:	ptr_new(), $	
 		notes_p		:	ptr_new(''), $
 
 	;-----------------
@@ -550,7 +550,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
     ; create colormap
     ;--------------------------------------------
     planes[pn].cmd = colormap_descriptor(data=planes[pn].pn, $
-                                n_colors=grim_n_colors(nv_type(planes[pn].dd)))
+                                n_colors=grim_n_colors(dat_type(planes[pn].dd)))
 
     ;--------------------------------------------
     ; create overlay arrays

@@ -14,15 +14,15 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_resfit, scan_ps, foc_ps, n, cd=cd
+;	pg_resfit, scan_ptd, foc_ptd, n, cd=cd
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	scan_ps:	points_struct containing image coordinates of 
+;	scan_ptd:	POINT containing image coordinates of 
 ;			the scanned reseau candidates as output by pg_resloc.
 ;
-;	foc_ps:		points_struct containing the known focal
+;	foc_ptd:		POINT containing the known focal
 ;			coordinates of the reseau marks.
 ;
 ;	n:		Order of polynomial to fit.  Default is 4.
@@ -45,27 +45,27 @@
 ;			the scan_sub array, but before fitting the polynomial
 ;			coefficients.
 ;
-;	nom_ps:		If given, this points_struct contains image
+;	nom_ptd:		If given, this POINT contains image
 ;			coordinates of nominal reseau locations corresponding 
-;			to each point in foc_ps.  The positions of each mark 
-;			for which there is no scan_ps match is computed 
+;			to each point in foc_ptd.  The positions of each mark 
+;			for which there is no scan_ptd match is computed 
 ;			as the nominal position plus an offset determined
 ;			by looking at the differences between neighboring
 ;			scanned marks and their corresponding nominal positions.
 ;
-;	use_nom:	If set, scan_ps will be ignored and nom_ps will be used
+;	use_nom:	If set, scan_ptd will be ignored and nom_ptd will be used
 ;			instead.
 ;
 ;  OUTPUT:
-;	res_ps:		points_struct containing the new image
+;	res_ptd:		POINT containing the new image
 ;			coordinates of the known reseau marks.
 ;
-;	fcp:		points_struct returning the focal points from
-;			foc_ps that were able to be associated with a scanned
+;	fcp:		POINT returning the focal points from
+;			foc_ptd that were able to be associated with a scanned
 ;			reseau.
 ;
-;	scp:		points_struct returning the scanned points from
-;			scan_ps that were able to be associated with a
+;	scp:		POINT returning the scanned points from
+;			scan_ptd that were able to be associated with a
 ;			known location.
 ;
 ; RETURN:
@@ -160,7 +160,7 @@ end
 ; pgrf_get_matches
 ;
 ;=============================================================================
-pro pgrf_get_matches, scan_sub, foc_pts, scan_pts, nom_ps=nom_ps, $
+pro pgrf_get_matches, scan_sub, foc_pts, scan_pts, nom_ptd=nom_ptd, $
                       fp=fp, sp=sp
 
  ;---------------------------------------
@@ -174,14 +174,14 @@ pro pgrf_get_matches, scan_sub, foc_pts, scan_pts, nom_ps=nom_ps, $
 
 
  ;-----------------------------------------------------------------
- ; if nom_ps given, use nominals to fill in missing points
+ ; if nom_ptd given, use nominals to fill in missing points
  ;-----------------------------------------------------------------
- if(NOT keyword__set(nom_ps)) then return
+ if(NOT keyword__set(nom_ptd)) then return
 
  ww = where(scan_sub EQ -1)
  if(ww[0] EQ -1) then return
 
- nom_pts = ps_points(nom_ps)
+ nom_pts = pnt_points(nom_ptd)
 
  n = n_elements(nom_pts)/2
  nnn = n - nn
@@ -254,8 +254,8 @@ end
 ; pg_resfit
 ;
 ;=============================================================================
-pro pg_resfit, scan_ps, foc_ps, n, cd=cd, gd=gd, range=range, nom_ps=nom_ps, $
-                   res_ps=res_ps, scp=scp, fcp=fcp, assoc=assoc, use_nom=use_nom
+pro pg_resfit, scan_ptd, foc_ptd, n, cd=cd, gd=gd, range=range, nom_ptd=nom_ptd, $
+                   res_ptd=res_ptd, scp=scp, fcp=fcp, assoc=assoc, use_nom=use_nom
 
  if(NOT keyword__set(range)) then range = 10
  if(NOT keyword__set(n)) then n = 4
@@ -273,11 +273,11 @@ pro pg_resfit, scan_ps, foc_ps, n, cd=cd, gd=gd, range=range, nom_ps=nom_ps, $
 
 
  ;------------------------------------------------------------
- ; dereference points structs
+ ; dereference POINT objects
  ;------------------------------------------------------------
- _foc_pts = ps_points(foc_ps)
- scan_pts = ps_points(scan_ps)
- cc = ps_data(scan_ps)
+ _foc_pts = pnt_points(foc_ptd)
+ scan_pts = pnt_points(scan_ptd)
+ cc = pnt_data(scan_ptd)
 
  nscan = n_elements(scan_pts)/2
  nfoc = n_elements(foc_pts)/2
@@ -310,16 +310,16 @@ pro pg_resfit, scan_ps, foc_ps, n, cd=cd, gd=gd, range=range, nom_ps=nom_ps, $
  ; extract points for which there is a match
  ;- - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword__set(use_nom)) then $
-    pgrf_get_matches, scan_sub, _foc_pts, scan_pts, nom_ps=nom_ps, $
+    pgrf_get_matches, scan_sub, _foc_pts, scan_pts, nom_ptd=nom_ptd, $
                      fp=foc_pts, sp=scan_pts $
  else $
   begin
    foc_pts = _foc_pts
-   scan_pts = ps_points(nom_ps)
+   scan_pts = pnt_points(nom_ptd)
   end
 
- fcp = ps_init(points=foc_pts)
- scp = ps_init(points=scan_pts)
+ fcp = pnt_create_descriptors(points=foc_pts)
+ scp = pnt_create_descriptors(points=scan_pts)
 
  if(keyword__set(assoc)) then return
 
@@ -350,7 +350,7 @@ pro pg_resfit, scan_ps, foc_ps, n, cd=cd, gd=gd, range=range, nom_ps=nom_ps, $
  ; of reseaus
  ;------------------------------------------------------------
  res_pts = cam_focal_to_image(cd, _foc_pts)
- res_ps = ps_init(points=res_pts)
+ res_ptd = pnt_create_descriptors(points=res_pts)
 
  ;-------------------------------------------------
  ; put new cd into the generic descriptor if given

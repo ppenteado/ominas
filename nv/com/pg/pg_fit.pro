@@ -51,15 +51,15 @@
 ;	The following commands perform a simultaneous least square fit to
 ;	a limb, ring and star field with all parameters free:
 ;
-;	cvscan_ps = pg_cvscan(dd, [limb_ps,ring_ps], width=40, edge=20)
-;	ptscan_ps = pg_ptscan(dd, [star_ps], width=40, edge=20)
+;	cvscan_ptd = pg_cvscan(dd, [limb_ptd,ring_ptd], width=40, edge=20)
+;	ptscan_ptd = pg_ptscan(dd, [star_ptd], width=40, edge=20)
 ;
-;	cvscan_cf = pg_cvscan_coeff(cvscan_ps, axis=center_ps)
-;	ptscan_cf = pg_ptscan_coeff(ptscan_ps, axis=center_ps)
+;	cvscan_cf = pg_cvscan_coeff(cvscan_ptd, axis=center_ptd)
+;	ptscan_cf = pg_ptscan_coeff(ptscan_ptd, axis=center_ptd)
 ;
 ;	dxy = pg_fit([cvscan_cf,ptscan_cf], dtheta=dtheta)
 ;
-;	In this example, center_ps, limb_ps, ring_ps, and star_ps are assumed 
+;	In this example, center_ptd, limb_ptd, ring_ptd, and star_ptd are assumed 
 ;	to have been previously computed using the appropriate routines.
 ;
 ;	Note that since this is a linear fit, the input systems may have been

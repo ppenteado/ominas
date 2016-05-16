@@ -97,12 +97,12 @@ function pg_get_stations, dd, trs, od=od, pd=pd, std=_std, gd=gd, no_sort=no_sor
  if(keyword_set(stn__name)) then tr_first = 1
 ;tr_first = 1
 
- stds = nv_get_value(dd, 'STN_DESCRIPTORS', key1=od, key2=pd, key4=_std, key6=stn__primary, $$
+ stds = dat_get_value(dd, 'STN_DESCRIPTORS', key1=od, key2=pd, key4=_std, key6=stn__primary, $$
                              key7=stn__time, key8=stn__name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
- if(NOT keyword_set(stds)) then return, nv_ptr_new()
+ if(NOT keyword_set(stds)) then return, obj_new()
 
  n = n_elements(stds)
 
@@ -118,9 +118,9 @@ function pg_get_stations, dd, trs, od=od, pd=pd, std=_std, gd=gd, no_sort=no_sor
  ;---------------------------------------------------
  if(keyword__set(stn__name)) then $
   begin
-   tr_names = get_core_name(stds)
+   tr_names = cor_name(stds)
    sub = nwhere(strupcase(tr_names), strupcase(stn__name))
-   if(sub[0] EQ -1) then return, nv_ptr_new()
+   if(sub[0] EQ -1) then return, obj_new()
    if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
   end $
  else sub=lindgen(n)
@@ -135,7 +135,7 @@ function pg_get_stations, dd, trs, od=od, pd=pd, std=_std, gd=gd, no_sort=no_sor
  ; Thus, translators can be arranged in order in the table
  ; such the the first occurence has the highest priority.
  ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then stds = stds[pgs_name_sort(get_core_name(stds))]
+ if(NOT keyword_set(no_sort)) then stds = stds[pgs_name_sort(cor_name(stds))]
 
 
  return, stds

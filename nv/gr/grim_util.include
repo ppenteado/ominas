@@ -73,9 +73,9 @@ end
 ; grim_shade_threshold
 ;
 ;=============================================================================
-function grim_shade_threshold, ps, shade, threshold
+function grim_shade_threshold, ptd, shade, threshold
 
- pp = pg_points(ps)
+ pp = pnt_points(ptd, /vis)
  w = where(shade GT threshold)
  
  if(w[0] EQ -1) then $
@@ -120,7 +120,7 @@ end
 function grim_cat_bodies, plane
 
  bx = [*plane.pd_p, *plane.rd_p]
- w = where(ptr_valid(bx))
+ w = where(obj_valid(bx))
  if(w[0] EQ -1) then return, 0
  return, bx[w]
 end

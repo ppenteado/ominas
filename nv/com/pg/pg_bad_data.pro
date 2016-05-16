@@ -46,7 +46,7 @@
 ;
 ;
 ; RETURN:
-;	points_struct containing the detected bad points.
+;	POINT objects containing the detected bad points.
 ;
 ;
 ; STATUS:
@@ -72,7 +72,7 @@ function pg_bad_data, dd, dropout=dropout, sat=sat, mask=mask, extend=extend, $
  ;---------------------------------------
  ; dereference the data descriptor
  ;---------------------------------------
- im = nv_data(dd)
+ im = dat_data(dd)
 
 
  ;---------------------------------------
@@ -97,11 +97,11 @@ function pg_bad_data, dd, dropout=dropout, sat=sat, mask=mask, extend=extend, $
 
 
  ;---------------------------------------
- ; set up the points struct
+ ; set up the POINT object
  ;---------------------------------------
-  ps = ps_init(points = p, desc = 'bad_data')
+  ptd = pnt_create_descriptors(points = p, desc = 'bad_data')
 
- return, ps
+ return, ptd
 end
 ;=============================================================================
 

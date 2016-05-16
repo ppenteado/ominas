@@ -14,14 +14,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_ptcntrd(dd, object_ps)
+;	result = pg_ptcntrd(dd, object_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:		Data descriptor
 ;
-;	object_ps: 	Array (n_pts) of points_struct giving the points.
+;	object_ptd: 	Array (n_pts) of POINT giving the points.
 ;			Only the image coordinates of the points need to be
 ;			specified.
 ;
@@ -49,9 +49,9 @@
 ;
 ;
 ; RETURN:
-;	An array of type points_struct giving the detected position for
+;	An array of type POINT giving the detected position for
 ;       each object.  The correlation coeff values for each detection is
-;       saved in the data portion of points_struct with tag 'scan_cc'.
+;       saved in the data portion of POINT with tag 'scan_cc'.
 ;       The x and y offset from the given position is also saved.
 ;
 ;
@@ -73,8 +73,8 @@
 ; EXAMPLE:
 ;	To find stellar positions with a correlation higher than 0.6...
 ;
-;       star_ps=pg_center(bx=sd, gd=gd) & pg_hide, star_ps, gd=gd, /rm, /globe
-;       ptscan_ps=pg_ptscan(dd, star_ps, edge=30, width=40, ccmin=0.6)
+;       star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;       ptscan_ptd=pg_ptscan(dd, star_ptd, edge=30, width=40, ccmin=0.6)
 ;
 ; SEE ALSO:
 ;	ptscan, pg_ptscan
@@ -88,14 +88,14 @@
 ;	
 ;-
 ;=============================================================================
-function pg_ptcntrd, dd, object_ps, $
+function pg_ptcntrd, dd, object_ptd, $
                     model=model, $
                     width=width, edge=edge, ccmin=ccmin, gdmax=gdmax
                  
-@ps_include.pro
- _image=nv_data(dd)
+@pnt_include.pro
+ _image=dat_data(dd)
 
- n_objects=n_elements(object_ps)
+ n_objects=n_elements(object_ptd)
  s=size(_image)
 
  ;-----------------------------
@@ -131,13 +131,13 @@ function pg_ptcntrd, dd, object_ps, $
  ;=========================
  ; scan for each object
  ;=========================
- pts_ps = ptrarr(n_objects)
+ pts_ptd = objarr(n_objects)
  for i=0, n_objects-1 do $
   begin
    ;-----------------------------------
    ; get object point
    ;-----------------------------------
-   ps_get, object_ps[i], points=pts, flags=flags, /visible
+   pnt_get, object_ptd[i], points=pts, flags=flags, /visible
 
    ;------------------------------------------------------
    ; trim point if invisible or too close to edge
@@ -153,7 +153,7 @@ function pg_ptcntrd, dd, object_ps, $
    ccp=0
    scan_pts=pts
    sim=size(im_pts)
-   flags = make_array(1, /byte, val=PS_MASK_INVISIBLE)
+   flags = make_array(1, /byte, val=PTD_MASK_INVISIBLE)
 
    start=intarr(2)
    start[0]=fix(pts[0]-width[i]/2-sm[1]/2)
@@ -225,7 +225,7 @@ function pg_ptcntrd, dd, object_ps, $
    scan_data[3]=ccp		 & tags[3]='scan_cc'           ; correlation
 
 
-   ps_set, pts_ps[i], points = scan_pts, $
+   pnt_set, pts_ptd[i], points = scan_pts, $
                       data = scan_data, $
                       flags = flags, $
                       tags = tags
@@ -234,6 +234,6 @@ function pg_ptcntrd, dd, object_ps, $
 
 
 
- return, pts_ps
+ return, pts_ptd
 end
 ;===========================================================================

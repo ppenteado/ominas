@@ -106,7 +106,7 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, no_sort=no_sort
   begin
    n = n_elements(cam__name)
 
-   cds=cam_init_descriptors(n, $
+   cds=cam_create_descriptors(n, $
 	name=cam__name, $
 	orient=cam__orient, $
 	avel=cam__avel, $
@@ -127,10 +127,10 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, no_sort=no_sort
   end $
  else $
   begin
-;   cam__size = nv_dim(dd)
-   data = nv_data(dd)
+;   cam__size = dat_dim(dd)
+   data = dat_data(dd)
    if(keyword_set(data)) then $
-          if(NOT keyword_set(cam__size)) then cam__size = nv_dim(dd)
+          if(NOT keyword_set(cam__size)) then cam__size = dat_dim(dd)
 
 
 
@@ -147,13 +147,13 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, no_sort=no_sort
    if(keyword_set(cam__name)) then tr_first = 1
 ;tr_first = 1
 
-   cds = nv_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cds, key3=orient, $
+   cds = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cds, key3=orient, $
                              key7=cam__time, key8=cam__name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
 
-   if(NOT keyword_set(cds)) then return, nv_ptr_new()
+   if(NOT keyword_set(cds)) then return, obj_new()
 
    n = n_elements(cds)
 
@@ -169,9 +169,9 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, no_sort=no_sort
    ;---------------------------------------------------
    if(keyword__set(cam__name)) then $
     begin
-     tr_names = get_core_name(cds)
+     tr_names = cor_name(cds)
      sub = nwhere(strupcase(tr_names), strupcase(cam__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
@@ -213,7 +213,7 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, no_sort=no_sort
  ; Thus, translators can be arranged in order in the table
  ; such the the first occurence has the highest priority.
  ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then cds=cds[pgs_name_sort(get_core_name(cds))]
+ if(NOT keyword_set(no_sort)) then cds=cds[pgs_name_sort(cor_name(cds))]
 
 
 

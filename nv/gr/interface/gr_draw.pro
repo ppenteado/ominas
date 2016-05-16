@@ -92,8 +92,8 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
        psym=psym, symsize=symsize, color=_color, tag=tag, pn=pn, grnum=grnum
 
  type = size(pp, /type)
- if(type EQ 10) then object_ps = pp $
- else object_ps = ps_init(points=pp)
+ if(type EQ 11) then object_ptd = pp $
+ else object_ptd = pnt_create_descriptors(points=pp)
 
  if(keyword_set(grnum)) then $
                      grim_data = grim_get_data(grim_grnum_to_top(grnum)) $
@@ -132,7 +132,7 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
     NOT keyword_set(rd) AND $
     NOT keyword_set(sd) AND $
     NOT keyword_set(sund) AND $
-    NOT keyword_set(od) ) then user_ps = object_ps $
+    NOT keyword_set(od) ) then user_ptd = object_ptd $
  ;------------------------------
  ; otherwise, determine types
  ;------------------------------
@@ -146,45 +146,45 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
    ;---------------------
    ; add overlay points
    ;---------------------
-   limb_ps = 0
-   ring_ps = 0
-   term_ps = 0
-   star_ps = 0
-   center_ps = 0
-   user_ps = 0
+   limb_ptd = 0
+   ring_ptd = 0
+   term_ptd = 0
+   star_ptd = 0
+   center_ptd = 0
+   user_ptd = 0
 
-   n = n_elements(object_ps)
+   n = n_elements(object_ptd)
    for i=0, n-1 do $
     begin
-     desc = ps_desc(object_ps[i])
+     desc = pnt_desc(object_ptd[i])
 
      if(NOT keyword_set(desc)) then $
-                    user_ps = append_array(user_ps, object_ps[i]) $
+                    user_ptd = append_array(user_ptd, object_ptd[i]) $
      else $
       begin
 ;       desc = strupcase(desc)
 ;       if((strpos(desc, 'LIMB'))[0] NE -1) then $
-;                              limb_ps = append_array(limb_ps, object_ps[i]) $
+;                              limb_ptd = append_array(limb_ptd, object_ptd[i]) $
 ;       else if((strpos(desc, 'DISK_INNER'))[0] NE -1) then $
-;                              ring_ps = append_array(ring_ps, object_ps[i]) $
+;                              ring_ptd = append_array(ring_ptd, object_ptd[i]) $
 ;       else if((strpos(desc, 'DISK_OUTER'))[0] NE -1) then $
-;                              ring_ps = append_array(ring_ps, object_ps[i]) $
+;                              ring_ptd = append_array(ring_ptd, object_ptd[i]) $
 ;       else if((strpos(desc, 'TERMINATOR'))[0] NE -1) then $
-;                              term_ps = append_array(term_ps, object_ps[i]) $
+;                              term_ptd = append_array(term_ptd, object_ptd[i]) $
 ;       else if((strpos(desc, 'STAR_CENTER'))[0] NE -1) then $
-;                              star_ps = append_array(star_ps, object_ps[i]) $
+;                              star_ptd = append_array(star_ptd, object_ptd[i]) $
 ;       else if((strpos(desc, 'PLANET_CENTER'))[0] NE -1) then $
-;                              center_ps = append_array(center_ps, object_ps[i]) $
-;       else user_ps = append_array(user_ps, object_ps[i])
+;                              center_ptd = append_array(center_ptd, object_ptd[i]) $
+;       else user_ptd = append_array(user_ptd, object_ptd[i])
 
        case strupcase(desc) of
-        'LIMB' : limb_ps = append_array(limb_ps, object_ps[i])
-        'DISK_INNER' : ring_ps = append_array(ring_ps, object_ps[i])
-        'DISK_OUTER' : ring_ps = append_array(ring_ps, object_ps[i])
-        'TERMINATOR' : term_ps = append_array(term_ps, object_ps[i])
-        'STAR_CENTER' : star_ps = append_array(star_ps, object_ps[i])
-        'PLANET_CENTER' : center_ps = append_array(center_ps, object_ps[i])
-        else : user_ps = append_array(user_ps, object_ps[i])
+        'LIMB' : limb_ptd = append_array(limb_ptd, object_ptd[i])
+        'DISK_INNER' : ring_ptd = append_array(ring_ptd, object_ptd[i])
+        'DISK_OUTER' : ring_ptd = append_array(ring_ptd, object_ptd[i])
+        'TERMINATOR' : term_ptd = append_array(term_ptd, object_ptd[i])
+        'STAR_CENTER' : star_ptd = append_array(star_ptd, object_ptd[i])
+        'PLANET_CENTER' : center_ptd = append_array(center_ptd, object_ptd[i])
+        else : user_ptd = append_array(user_ptd, object_ptd[i])
        endcase
 
       end
@@ -208,34 +208,34 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
  ;------------------------------
  ; set object points
  ;------------------------------
- if(keyword_set(limb_ps)) then $
-     grim_add_points, grim_data, limb_ps, name='limb', /replace, plane=plane, $
+ if(keyword_set(limb_ptd)) then $
+     grim_add_points, grim_data, limb_ptd, name='limb', /replace, plane=plane, $
          idp_cam=idp_cam
- if(keyword_set(ring_ps)) then $
-     grim_add_points, grim_data, ring_ps, name='ring', /replace, plane=plane, $
+ if(keyword_set(ring_ptd)) then $
+     grim_add_points, grim_data, ring_ptd, name='ring', /replace, plane=plane, $
                              idp_cam=idp_cam
- if(keyword_set(term_ps)) then $
-     grim_add_points, grim_data, term_ps, name='terminator', /replace, plane=plane, $
+ if(keyword_set(term_ptd)) then $
+     grim_add_points, grim_data, term_ptd, name='terminator', /replace, plane=plane, $
             idp_cam=idp_cam
- if(keyword_set(star_ps)) then $
-     grim_add_points, grim_data, star_ps, name='star', /replace, plane=plane, $
+ if(keyword_set(star_ptd)) then $
+     grim_add_points, grim_data, star_ptd, name='star', /replace, plane=plane, $
             idp_cam=idp_cam
- if(keyword_set(center_ps)) then $
-     grim_add_points, grim_data, center_ps, name='planet_center', /replace, plane=plane, $
+ if(keyword_set(center_ptd)) then $
+     grim_add_points, grim_data, center_ptd, name='planet_center', /replace, plane=plane, $
                                               idp_cam=idp_cam
 
 
  ;------------------------------
  ; set user points
  ;------------------------------
- if(keyword_set(user_ps)) then $
+ if(keyword_set(user_ptd)) then $
   begin
    if(keyword_set(tag)) then $
-      grim_add_user_points, plane=plane, user_ps, tag, $
+      grim_add_user_points, plane=plane, user_ptd, tag, $
                        psym=psym, symsize=symsize, color=color, /no_refresh $
    else $
     begin
-     nuser = n_elements(user_ps)
+     nuser = n_elements(user_ptd)
      all_tags = strarr(nuser)
 
      ;-------------------------
@@ -244,7 +244,7 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
      tags = ''
      for i=0, nuser-1 do $
       begin
-       tag = ps_desc(user_ps[0])
+       tag = pnt_desc(user_ptd[0])
        all_tags[i] = tag
        w = where(tags EQ tag)
        if(w[0] EQ -1) then tags = [tags, tag]
@@ -258,7 +258,7 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
      for i=0, ntags-1 do $
       begin
        w = where(all_tags EQ tags[i])
-       grim_add_user_points, plane=plane, user_ps[w], $
+       grim_add_user_points, plane=plane, user_ptd[w], $
                     tags[i], psym=psym, symsize=symsize, color=color, /no_refresh
       end
 

@@ -109,7 +109,7 @@ pro pg_put_planets, dd, trs, pds=pds, ods=ods, gd=gd, $
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'PLT_DESCRIPTORS', pds, trs=trs, $
+ dat_put_value, dd, 'PLT_DESCRIPTORS', pds, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 

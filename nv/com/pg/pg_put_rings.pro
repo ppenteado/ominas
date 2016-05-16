@@ -117,7 +117,7 @@ pro pg_put_rings, dd, trs, rds=rds, ods=ods, gd=gd, $
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'RNG_DESCRIPTORS', rds, trs=trs, $
+ dat_put_value, dd, 'RNG_DESCRIPTORS', rds, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 

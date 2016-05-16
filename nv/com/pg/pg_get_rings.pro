@@ -109,14 +109,13 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
   begin
    n = n_elements(rng__name)
 
-   bd = class_extract(pd, 'BODY')
-   if(NOT keyword__set(rng__orient)) then rng__orient = bod_orient(bd)
-;   if(NOT keyword__set(rng__avel)) then rng__avel = bod_avel(bd)
-   if(NOT keyword__set(rng__pos)) then rng__pos = bod_pos(bd)
-   if(NOT keyword__set(rng__vel)) then rng__vel = bod_vel(bd)
-   if(NOT keyword__set(rng__time)) then rng__time = bod_time(bd)
+   if(NOT keyword__set(rng__orient)) then rng__orient = bod_orient(pd)
+;   if(NOT keyword__set(rng__avel)) then rng__avel = bod_avel(pd)
+   if(NOT keyword__set(rng__pos)) then rng__pos = bod_pos(pd)
+   if(NOT keyword__set(rng__vel)) then rng__vel = bod_vel(pd)
+   if(NOT keyword__set(rng__time)) then rng__time = bod_time(pd)
 
-   rd=rng_init_descriptors(n, $
+   rd=rng_create_descriptors(n, $
 	name=rng__name, $
 	primary=rng__primary, $
 	orient=rng__orient, $
@@ -144,12 +143,12 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(rng__name)) then tr_first = 1
 
-   rd = nv_get_value(dd, 'RNG_DESCRIPTORS', key1=pd, key2=od, key4=_rd, $
+   rd = dat_get_value(dd, 'RNG_DESCRIPTORS', key1=pd, key2=od, key4=_rd, $
                             key7=rng__time, key8=rng__name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-   if(NOT keyword__set(rd)) then return, nv_ptr_new()
+   if(NOT keyword__set(rd)) then return, obj_new()
 
    n = n_elements(rd)
 
@@ -165,9 +164,9 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    ;---------------------------------------------------
    if(keyword__set(rng__name)) then $
     begin
-     tr_names = get_core_name(rd)
+     tr_names = cor_name(rd)
      sub = nwhere(strupcase(tr_names), strupcase(rng__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
@@ -206,8 +205,7 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
  ; Thus, translators can be arranged in order in the table
  ; such the the first occurence has the highest priority.
  ;------------------------------------------------------------
- if(NOT keyword__set(no_sort)) then rd=rd[pgs_name_sort(get_core_name(rd))]
-
+ if(NOT keyword__set(no_sort)) then rd=rd[pgs_name_sort(cor_name(rd))]
 
  return, rd
 end

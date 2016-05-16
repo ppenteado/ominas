@@ -97,23 +97,21 @@ pro pg_put_stars, dd, trs, sds=sds, ods=ods, gd=gd, $
  ;-------------------------------------------------------------------
  ; override the specified values (strt__name cannot be overridden)
  ;-------------------------------------------------------------------
- gbds = str_globe(sds)
- bds = sld_body(gbds)
- if(n_elements(str__lum) NE 0) then str_set_lum, bds, str__lum
- if(n_elements(str__sp) NE 0) then str_set_sp, bds, str__sp
- if(n_elements(str__orient) NE 0) then bod_set_orient, bds, str__orient
- if(n_elements(str__avel) NE 0) then bod_set_avel, bds, str__avel
- if(n_elements(str__pos) NE 0) then bod_set_pos, bds, str__pos
- if(n_elements(str__vel) NE 0) then bod_set_vel, bds, str__vel
- if(n_elements(str__time) NE 0) then bod_set_time, bds, str__time
- if(n_elements(str__radii) NE 0) then glb_set_radii, gbds, str__radii
- if(n_elements(str__lora) NE 0) then glb_set_lora, gbds, str__lora
+ if(n_elements(str__lum) NE 0) then str_set_lum, sds, str__lum
+ if(n_elements(str__sp) NE 0) then str_set_sp, sds, str__sp
+ if(n_elements(str__orient) NE 0) then bod_set_orient, sds, str__orient
+ if(n_elements(str__avel) NE 0) then bod_set_avel, sds, str__avel
+ if(n_elements(str__pos) NE 0) then bod_set_pos, sds, str__pos
+ if(n_elements(str__vel) NE 0) then bod_set_vel, sds, str__vel
+ if(n_elements(str__time) NE 0) then bod_set_time, sds, str__time
+ if(n_elements(str__radii) NE 0) then glb_set_radii, sds, str__radii
+ if(n_elements(str__lora) NE 0) then glb_set_lora, sds, str__lora
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'STR_DESCRIPTORS', sds, trs=trs, $
+ dat_put_value, dd, 'STR_DESCRIPTORS', sds, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 

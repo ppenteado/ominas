@@ -56,10 +56,8 @@ function pg_range, bx1, bx2
  ;-----------------------------------
  ; get centers
  ;-----------------------------------
- bds1=class_extract(bx1, 'BODY')
- bds2=class_extract(bx2, 'BODY')
- center_pts1 = bod_pos(bds1)
- center_pts2 = bod_pos(bds2)
+ center_pts1 = bod_pos(bx1)
+ center_pts2 = bod_pos(bx2)
 
  ;-----------------------------------
  ; compute ranges

@@ -83,7 +83,7 @@ function pg_mosaic, dd, combine_fn=_combine_fn, wt_fns=_wt_fns, data=data, mosai
 
  if(NOT keyword_set(weight)) then weight = make_array(nmaps, val=1.0)
 
- dim = nv_dim(dd[0])
+ dim = dat_dim(dd[0])
  mos_xsize = dim[0]
  mos_ysize = dim[1]
  type = size(im, /type)
@@ -144,7 +144,7 @@ function pg_mosaic, dd, combine_fn=_combine_fn, wt_fns=_wt_fns, data=data, mosai
     phase = make_array(xsize, ysize, nmaps, type=type, /nozero)
     for ii=0, nmaps-1 do $
      begin
-      maps[*,*,ii] = weight[ii] * nv_data(dd[ii], samples=pc_sub)
+      maps[*,*,ii] = weight[ii] * dat_data(dd[ii], samples=pc_sub)
 
       emm[*,*,ii] = cor_udata(dd[ii], 'EMM')
       inc[*,*,ii] = cor_udata(dd[ii], 'INC')
@@ -165,7 +165,7 @@ function pg_mosaic, dd, combine_fn=_combine_fn, wt_fns=_wt_fns, data=data, mosai
  ;--------------------------------------
  ; normalize to first map
  ;--------------------------------------
- map = nv_data(dd[0])
+ map = dat_data(dd[0])
  w = where(map NE 0)
  if(w[0] NE -1) then mosaic = mosaic * mean(map[w])/mean(mosaic[w])
 
@@ -173,7 +173,7 @@ function pg_mosaic, dd, combine_fn=_combine_fn, wt_fns=_wt_fns, data=data, mosai
  ;------------------------------------------------------------------------
  ; store the result
  ;------------------------------------------------------------------------
- dd_mosaic = nv_init_descriptor(instrument='MAP', data=mosaic, filetype=nv_filetype(dd[0]))
+ dd_mosaic = dat_create_descriptors(1, instrument='MAP', data=mosaic, filetype=dat_filetype(dd[0]))
 
 
  return, dd_mosaic

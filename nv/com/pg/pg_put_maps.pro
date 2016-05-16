@@ -112,7 +112,7 @@ pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'MAP_DESCRIPTORS', mds, trs=trs, $
+ dat_put_value, dd, 'MAP_DESCRIPTORS', mds, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 

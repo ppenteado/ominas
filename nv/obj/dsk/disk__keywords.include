@@ -1,0 +1,6 @@
+@solid__keywords.include
+sma=sma, ecc=ecc, scale=scale, $
+nm=nm, _m=m, em=em, lpm=lpm, dlpmdt=dlpmdt, $
+libam=libam, libm=libm, dlibmdt=dlibmdt, $
+nl=nl, _l=l, il=il, lanl=lanl, dlanldt=dlanldt, $
+libal=libal, libl=libl, dlibldt=dlibldt, $

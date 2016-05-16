@@ -89,7 +89,7 @@ function pg_select_region, dd, color=color, $
 
  if(keyword_set(dd)) then $
   begin
-   image=nv_data(dd)
+   image=dat_data(dd)
    s=size(image)
    xsize=s[1]
    ysize=s[2]

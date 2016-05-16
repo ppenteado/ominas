@@ -12,7 +12,7 @@
 ;       NV/PG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;       result = strcat_tycho_input(dd, keyword)
 ;
 ;
@@ -488,7 +488,7 @@ function tycho_get_stars, filename, b1950=b1950, cam_vel=cam_vel, $
  ;-------------------------------------------------------
  lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d ) 
 
- _sd = str_init_descriptors( n, $
+ _sd = str_create_descriptors( n, $
         name=name, $
         orient=orient, $
         avel=avel, $

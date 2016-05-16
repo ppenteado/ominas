@@ -42,7 +42,7 @@
 ;=============================================================================
 pro nv_reset
 @nv_block.common
-@nv.include
+@core.include
 
  *nv_state.ftp_detectors_filenames_p = 0
  *nv_state.ins_detectors_filenames_p = 0
@@ -56,7 +56,7 @@ pro nv_reset
  *nv_state.trf_table_p = 0
  *nv_state.io_table_p = 0
  
- nv_unload_data, /all
+ dat_unload_data, /all
 
 end
 ;===========================================================================

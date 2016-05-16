@@ -48,7 +48,7 @@ pro strcat_get_inputs, dd, env, key, $
  ; observer descriptor passed as key1
  ;-----------------------------------------------
  if(keyword_set(key1)) then ods = key1 
- if(NOT keyword_set(class_extract(ods[0], 'BODY'))) then ods = 0
+ if(NOT cor_isa(ods[0], 'BODY')) then ods = 0
  if(NOT keyword_set(ods)) then return
 
  ;-----------------------------------------------
@@ -121,16 +121,12 @@ pro strcat_get_inputs, dd, env, key, $
  ;-------------------------------------------------------------------
  ; Get camera velocity for stellar aberration 
  ;-------------------------------------------------------------------
- cb = cam_body(ods[0])
- cam_vel = (bod_vel(cb))[0,*]
+ cam_vel = (bod_vel(ods[0]))[0,*]
 
 ; if(keyword__set(sund)) then $
 ;  begin
-;   cb = cam_body(ods[0])
-;   vel = (bod_vel(cb))[0,*]
-;   sung = str_globe(sund[0])
-;   sunb = class_extract(sung, 'BODY')
-;   sun_vel = (bod_vel(sunb))[0,*]
+;   vel = (bod_vel(ods[0]))[0,*]
+;   sun_vel = (bod_vel(sund))[0,*]
 ;   cam_vel = vel - sun_vel
 ;  end $
 ; else nv_message, name='strcat_get_inputs', /continue, $

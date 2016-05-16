@@ -12,7 +12,7 @@
 ; load image
 ;-------------------------------
 file = '~/casIss/1460/N1460002670_1.IMG'
-dd = nv_read(file, im)
+dd = dat_read(file, im)
 ctmod, top=top
 tvim, im, zoom=0.5, /order, /new, top=top
 
@@ -31,20 +31,20 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;---------------------------------------
 ; rough pointing correction
 ;---------------------------------------
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-          pg_hide, limb_ps, /limb, gd=gd, od=sund
-pg_draw, limb_ps, col=ctred()
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
+          pg_hide, limb_ptd, /limb, gd=gd, od=sund
+pg_draw, limb_ptd, col=ctred()
 
-edge_ps = pg_edges(dd, edge=10)			
-pg_draw, edge_ps, col=ctblue()
-dxy = pg_farfit(dd, edge_ps, [limb_ps])	
+edge_ptd = pg_edges(dd, edge=10)			
+pg_draw, edge_ptd, col=ctblue()
+dxy = pg_farfit(dd, edge_ptd, [limb_ptd])	
 					 	
 pg_repoint, dxy, 0d, gd=gd	
 
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-          pg_hide, limb_ps, /limb, gd=gd, od=sund
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
+          pg_hide, limb_ptd, /limb, gd=gd, od=sund
 tvim, im
-pg_draw, limb_ps
+pg_draw, limb_ptd
 
 
 ;------------------------------------------------------
@@ -80,7 +80,7 @@ tvim, /new, map, title=map_type(md) + ' PROJECTION'
 ;------------------------------------------------------------------
 ; Project to a different camera perspective
 ;------------------------------------------------------------------
-_cd = cam_clone_descriptor(cd)
+_cd = nv_clone(cd)
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ; Set camera position in terms of sclat, sclon, and altitude in 

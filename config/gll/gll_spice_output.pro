@@ -69,7 +69,7 @@
 pro gll_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
                                       n_obj=n_obj, dim=dim, status=status
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
  if(cam_name EQ 'GLL_SSI') then inst=-82360l			;!!
  fn = 'gll_orient_to_cmat_ssi'
 

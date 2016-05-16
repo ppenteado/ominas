@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = station_input(dd, keyword)
 ;
 ;
@@ -214,7 +214,7 @@ function station_input, dd, keyword, prefix, $
      if(continue) then $
       begin
        ndat = n_elements(dat)
-       _stds = stn_init_descriptors(ndat)
+       _stds = stn_create_descriptors(ndat)
 
        pos_surf = transpose([transpose([dat.lat]), transpose([dat.lon]), transpose([dat.alt])])
 

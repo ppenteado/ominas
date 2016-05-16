@@ -3,9 +3,9 @@
 ;
 ;=============================================================================
 pro nv_redo, ddp, noevent=noevent
-@nv.include
+@core.include
  nv_notify, ddp, type = 1, noevent=noevent
- dd = nv_dereference(ddp)
+ dd = cor_dereference(ddp)
 
  nhist = n_elements(*dd.data_dap)
  ii = dd.dap_index
@@ -13,7 +13,7 @@ pro nv_redo, ddp, noevent=noevent
 
  dd.dap_index = dd.dap_index - 1
 
- nv_rereference, ddp, dd
+ cor_rereference, ddp, dd
  nv_notify, ddp, type = 0, noevent=noevent
  nv_notify, /flush, noevent=noevent
 end

@@ -66,8 +66,8 @@
 function pgc_compute_average, dd
  ndd = n_elements(dd)
 
- im0 = dblarr(nv_dim(dd[0]))
- for i=0, ndd-1 do im0 = im0 + nv_data(dd[i])
+ im0 = dblarr(dat_dim(dd[0]))
+ for i=0, ndd-1 do im0 = im0 + dat_data(dd[i])
       
  return, im0/ndd
 end
@@ -81,9 +81,9 @@ end
 ;=============================================================================
 function pgc_compute_median, dd
  ndd = n_elements(dd)
- im = dblarr([nv_dim(dd[0]), ndd])
+ im = dblarr([dat_dim(dd[0]), ndd])
 
- for i=0, ndd-1 do im[*,*,i] = nv_data(dd[i])
+ for i=0, ndd-1 do im[*,*,i] = dat_data(dd[i])
 
  return, image_median(im)
 end
@@ -98,8 +98,8 @@ end
 function pgc_compute_minimum, dd
  ndd = n_elements(dd)
 
- im0 = nv_data(dd[0])
- for i=1, ndd-1 do im0 = im0 < nv_data(dd[i])
+ im0 = dat_data(dd[0])
+ for i=1, ndd-1 do im0 = im0 < dat_data(dd[i])
       
  return, im0
 end
@@ -114,8 +114,8 @@ end
 function pgc_compute_maximum, dd
  ndd = n_elements(dd)
 
- im0 = nv_data(dd[0])
- for i=1, ndd-1 do im0 = im0 > nv_data(dd[i])
+ im0 = dat_data(dd[0])
+ for i=1, ndd-1 do im0 = im0 > dat_data(dd[i])
       
  return, im0
 end
@@ -160,7 +160,7 @@ function pg_coadd, dd, bx0, cd=cd, bx=bx, gd=gd, $
  ;-----------------------------------------------
  if(keyword_set(bx)) then $
   begin
-   bx0 = ptrarr(n)
+   bx0 = objarr(n)
    bod_time0 = dblarr(n)
    bod_pos0 = dblarr(1,3,n)
    bod_orient0 = dblarr(3,3,n)
@@ -183,7 +183,7 @@ function pg_coadd, dd, bx0, cd=cd, bx=bx, gd=gd, $
       bod_time0[j] = bod_time0[j] + bod_time(bx[i,j])
       bod_pos0[*,*,j] = bod_pos0[*,*,j] + bod_pos(bx[i,j])
       bod_orient0[*,*,j] = bod_orient0[*,*,j] + bod_orient(bx[i,j])
-      if(class_get(bx[i,j]) EQ 'CAMERA') then cam_oaxis0[*,j] = cam_oaxis0[*,j] + cam_oaxis(bx[i,j])
+      if(cor_class(bx[i,j]) EQ 'CAMERA') then cam_oaxis0[*,j] = cam_oaxis0[*,j] + cam_oaxis(bx[i,j])
      end
   end
 
@@ -193,11 +193,11 @@ function pg_coadd, dd, bx0, cd=cd, bx=bx, gd=gd, $
    bod_time0 = bod_time0 / ndd		& for j=0, n-1 do bod_set_time, bx0[j], bod_time0[j]
    bod_pos0 = bod_pos0 / ndd		& for j=0, n-1 do bod_set_pos, bx0[j], bod_pos0[*,*,j]
    bod_orient0 = bod_orient0 / ndd	& for j=0, n-1 do bod_set_orient, bx0[j], bod_orient0[*,*,j]
-   cam_oaxis0 = cam_oaxis0 / ndd	& for j=0, n-1 do if(class_get(bx0[j]) EQ 'CAMERA') then cam_set_oaxis, bx0[j], cam_oaxis0[*,j]
+   cam_oaxis0 = cam_oaxis0 / ndd	& for j=0, n-1 do if(cor_class(bx0[j]) EQ 'CAMERA') then cam_set_oaxis, bx0[j], cam_oaxis0[*,j]
   end
 
  dd0 = nv_clone(dd[0])
- nv_set_data, dd0, im0
+ dat_set_data, dd0, im0
 
 
 

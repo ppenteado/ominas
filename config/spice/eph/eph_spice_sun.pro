@@ -20,22 +20,18 @@ function eph_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
  ;------------------------------
  ; convert to star descriptor
  ;------------------------------
- gbd = plt_globe(pd)
- sld = glb_solid(gbd)
- bd = sld_body(sld)
-
- sd = str_init_descriptors(n_obj, $
-		name=get_core_name(pd), $
-		orient=bod_orient(bd), $
-		avel=bod_avel(bd), $
-		pos=bod_pos(bd), $
+ sd = str_create_descriptors(n_obj, $
+		name=cor_name(pd), $
+		orient=bod_orient(pd), $
+		avel=bod_avel(pd), $
+		pos=bod_pos(pd), $
 		lum=3.862d26, $
 		mass=1.98892d30, $
-		vel=bod_vel(bd), $
-		time=bod_time(bd), $
-		lref=glb_lref(gbd), $
-		radii=glb_radii(gbd), $
-		lora=glb_lora(gbd))
+		vel=bod_vel(pd), $
+		time=bod_time(pd), $
+		lref=glb_lref(pd), $
+		radii=glb_radii(pd), $
+		lora=glb_lora(pd))
 
  return, sd
 

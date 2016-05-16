@@ -28,7 +28,7 @@ pro spice_write_cameras, dd, ref, ck_file, cd, $
 
  cam_avel = (bod_avel(cd))[0,*]
 
- cam_name = (nv_instrument(dd))[0]
+ cam_name = (dat_instrument(dd))[0]
 
  spawn, 'echo ' + ck_file, ck_file
  ck_file = ck_file[0]

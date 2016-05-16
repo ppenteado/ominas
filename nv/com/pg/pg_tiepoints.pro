@@ -13,12 +13,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       tie_ps = pg_tiepoints(cd=cd, bx=bx, body_pts=body_pts, ps)
+;       tie_ptd = pg_tiepoints(cd=cd, bx=bx, body_pts=body_pts, ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;   ps:         points_struct containing the image points.
+;   ptd:         POINT containing the image points.
 ;
 ; KEYWORDS:
 ;  INPUT:
@@ -51,13 +51,13 @@
 ;     a pointing offset:
 ;
 ;	ndd = n_elements(dd)
-;	for i=0, ndd-1 do ps[i] = pg_select_points(dd[i], /ps)
+;	for i=0, ndd-1 do ptd[i] = pg_select_points(dd[i], /ptd)
 ;
 ;	body_pts = 0
 ;	for i=0, ndd-1 do $
 ;	 begin &$
-;	  tie_ps = pg_tiepoints(cd=cd[i], bx=pd[i], ps[i], body_pts=body_pts) &$
-;	  tpcoeff = pg_ptscan_coeff(tie_ps, fix=[2]) &$
+;	  tie_ptd = pg_tiepoints(cd=cd[i], bx=pd[i], ptd[i], body_pts=body_pts) &$
+;	  tpcoeff = pg_ptscan_coeff(tie_ptd, fix=[2]) &$
 ;	  dxy = pg_fit(tpcoeff) &$
 ;	  pg_repoint, dxy, 0d, cd=cd[i] &$
 ;	 end
@@ -65,7 +65,7 @@
 ;     In the above example, the first image is used as a reference; 
 ;     because body_pts is initially undefined, those points are computed
 ;     for the first image, but not subsequently.  Instead, the subsequent
-;     images will have a nonzero offset stored in the tie_ps structure,
+;     images will have a nonzero offset stored in the tie_ptd structure,
 ;     which are then used by pg_ptscan_coeff to compute fit coefficients.
 ;
 ;
@@ -78,7 +78,7 @@
 ;
 ;-
 ;=============================================================================
-function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, ps, body_pts=body_pts, dxy=dxy
+function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, ptd, body_pts=body_pts, dxy=dxy
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -93,22 +93,18 @@ function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, ps, body_pts=body_pts, dx
  ;-----------------------------------------------
  ; get body points if necessary
  ;-----------------------------------------------
- if(NOT keyword_set(body_pts)) then $
-  begin
-   p = ps_points(ps)
-   body_pts = image_to_body(cd, bx, p)
-  end
+ p = pnt_points(ptd, /cat)
+ if(NOT keyword_set(body_pts)) then body_pts = image_to_body(cd, bx, p)
 
  ;-----------------------------------------------
  ; compute offsets
  ;-----------------------------------------------
  im_pts = reform(body_to_image_pos(cd, bx, body_pts))
- p = ps_points(ps)
 
  dxy = p - im_pts
 
  np = n_elements(dxy)/2
- tie_ps = ptrarr(np)
+ tie_ptd = objarr(np)
  for i=0, np-1 do $
   begin
    delta = dxy[*,i]
@@ -121,16 +117,16 @@ function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, ps, body_pts=body_pts, dx
    scan_data[3]=1d		 & tags[3]='scan_cc'            ; correlation
 
 
-   tie_ps[i] = ps_init(points=p, $
+   tie_ptd[i] = pnt_create_descriptors(points=p[*,i], $
                        name=name, $
-                       desc=desc, $
-                       data=data, $
+                       desc='tiepoints', $
+                       data=scan_data, $
                        tags=tags, $
                        flags=flags)
   end
 
 
- return, tie_ps
+ return, tie_ptd
 end
 ;=============================================================================
 

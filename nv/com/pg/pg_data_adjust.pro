@@ -45,8 +45,8 @@
 pro pg_data_adjust, dd
 
  device, cursor_standard=30
- data = nv_data(dd)
- dim = nv_dim(dd)
+ data = dat_data(dd)
+ dim = dat_dim(dd)
 
  ndim = 2
  if(dim[0] EQ 2) then ndim = 1
@@ -142,7 +142,7 @@ pro pg_data_adjust, dd
  ;-------------------------------------------------
  ; update data descriptor with modified data array
  ;-------------------------------------------------
- nv_set_data, dd, data
+ dat_set_data, dd, data
 
 
 

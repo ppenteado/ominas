@@ -16,18 +16,18 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_draw, object_ps, target_ps
+;	pg_draw, object_ptd, target_ptd
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	object_ps:	Array of points_struct containing image points
+;	object_ptd:	Array of POINT containing image points
 ;			to be plotted in the current data coordinate system.
 ;			Or inertial vectors to be used as vector sources.
 ;			May also be an array of image points or inertial
 ;			vectors.
 ;
-;	target_ps:	Array of points_structs giving the inertial
+;	target_ptd:	Array of POINTs giving the inertial
 ;			positions of vector targets.  May also be an
 ;			array of inertial vectors.  If this argument is
 ;			present, then vectors are drawn instead of points.
@@ -54,7 +54,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_draw, object_ps, target_ps, $
+pro pg_draw, object_ptd, target_ptd, $
              literal=literal, $
              colors=colors, shades=shades, psyms=psyms, psizes=psizes, plabels=plabels, $
              xormode=xormode, csizes=csizes, cthicks=cthicks, wnum=wnum, label_shade=label_shade, $
@@ -72,15 +72,15 @@ common pg_draw_block, pixmap
 
 
 
- if(NOT keyword_set(target_ps)) then $
+ if(NOT keyword_set(target_ptd)) then $
   pg_draw_point, $
-             object_ps, literal=literal, label_shade=label_shade, cthicks=cthicks, $
+             object_ptd, literal=literal, label_shade=label_shade, cthicks=cthicks, $
              colors=colors, shades=shades, psyms=psyms, psizes=psizes, plabels=plabels, $
              xormode=xormode, csizes=csizes, wnum=wnum, align=align, corient=corient, $
              label_points=label_points, thick=thick, line=line, print=print, label_color=label_color, $
              shade_threshold=shade_threshold $
  else pg_draw_vector, $
-    object_ps, target_ps, cd=cd, gd=gd, literal=literal, label_shade=label_shade, $
+    object_ptd, target_ptd, cd=cd, gd=gd, literal=literal, label_shade=label_shade, $
     lengths=_lengths, plabels=plabels, colors=colors, thick=thick, $
     csizes=csizes, wnum=wnum, noshorten=noshorten, solid=solid, $
     fixedheads=fixedheads, winglength=winglength, shades=shades, label_color=label_color, $

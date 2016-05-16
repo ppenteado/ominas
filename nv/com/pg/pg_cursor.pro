@@ -55,13 +55,13 @@
 ;		intersects a planet or ring.  (Ring photometry is not yet
 ;		implememented)
 ;
-;	fn:	Name of a function to be called whenever a ppoint is selected. 
+;	fn:	Name of a function to be called whenever a point is selected. 
 ;		The function is called as follows:
 ;
 ;		value = call_function(fn, p, image, gd=gd, $
 ;                                               format=_format, label=label)
 ;
-;		p is the image coords of the select ed point, image is the 
+;		p is the image coords of the selected point, image is the 
 ;		input image and gd is a generic descriptor containing the 
 ;		object descriptors.  format and label are outputs used to label
 ;		the returned value.
@@ -124,13 +124,13 @@ function _pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
  pp = fix(p)
 
  n = n_elements(dd)
- image0 = nv_data(dd[0])
+ image0 = dat_data(dd[0])
  dn = make_array(n, val=image0[0])
  dn[*] = 0
 
  for i=0, n-1 do $
   begin
-   image = nv_data(dd[i])
+   image = dat_data(dd[i])
 
    s = size(image)
    if((pp[0] GE 0) AND (pp[0] LT s[1]) $
@@ -196,7 +196,7 @@ function _pgc_globe, p, dd, gd=gd, format=format, label=label, name=name
  format = ['(1g10.5)', '(1g10.5)', '(1g10.5)', '(1g10.5)']
  label = ''
 
- name = get_core_name(gd.gbx)
+ name = cor_name(gd.gbx)
  nt = n_elements(name)
 
  v = image_to_surface(gd.cd, gd.gbx, p, dis=dis, body_pts=body_pts)
@@ -247,7 +247,7 @@ function _pgc_map, p, dd, gd=gd, format=format, label=label, name=name
  format = ['(1g10.5)', '(1g10.5)']
  label = ''
 
- name = get_core_name(gd.cd)
+ name = cor_name(gd.cd)
  nt = n_elements(name)
 
  v = image_to_map(gd.cd, p, valid=valid)
@@ -279,13 +279,13 @@ function _pgc_disk, p, dd, gd=gd, format=format, label=label, name=name
  cd = gd.cd
  pd = gd.gbx
 
- name = get_core_name(rd)
+ name = cor_name(rd)
  nt = n_elements(name)
 
 ; frame_bd = get_primary(cd, pd);, rx=rd)
 ; frame_bd = get_primary(cd, pd, rx=rd)
 
- frame_bd = ptrarr(nt)
+ frame_bd = objarr(nt)
  for i=0, nt-1 do $
   begin
    xd = get_primary(cd, pd, rx=rd[i])
@@ -329,7 +329,7 @@ function _pgc_disk_scale, p, dd, gd=gd, format=format, label=label, name=name
  cd = gd.cd
  pd = gd.gbx
 
- name = get_core_name(rd)
+ name = cor_name(rd)
  nt = n_elements(name)
 
  frame_bd = get_primary(cd, pd);, rx=rd)
@@ -366,9 +366,9 @@ end
 function _pgc_eqplane, p, dd, gd=gd, format=format, label=label, name=name
 
  gbx = get_primary(gd.cd, gd.gbx)
- if(NOT ptr_valid(gbx[0])) then return, 0
+ if(NOT obj_valid(gbx[0])) then return, 0
 
- dkd = dsk_init_descriptors(1, name='EQUATORIAL_PLANE', $
+ dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
 	orient = bod_orient(gbx), $
 	pos = bod_pos(gbx))
  sma = dsk_sma(dkd)
@@ -391,9 +391,9 @@ end
 function _pgc_eqplane_scale, p, dd, gd=gd, format=format, label=label, name=name
 
  gbx = get_primary(gd.cd, gd.gbx)
- if(NOT ptr_valid(gbx[0])) then return, 0
+ if(NOT obj_valid(gbx[0])) then return, 0
 
- dkd = dsk_init_descriptors(1, name='EQUATORIAL_PLANE', $
+ dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
 	orient = bod_orient(gbx), $
 	pos = bod_pos(gbx))
  sma = dsk_sma(dkd)
@@ -420,7 +420,7 @@ function _pgc_photom_globe, p, dd, gd=gd, format=format, label=label, name=name
  format = ['(1d10.5)', '(1d10.5)', '(1d10.5)']
  label = ''
 
- name = get_core_name(gd.gbx)
+ name = cor_name(gd.gbx)
  nt = n_elements(name)
 
  pht_angles, p, gd.cd, gd.gbx, gd.sund, emm=emm, inc=inc, g=g, valid=valid
@@ -451,7 +451,7 @@ function _pgc_photom_disk, p, dd, gd=gd, format=format, label=label, name=name
  format = ['(1d10.5)', '(1d10.5)', '(1d10.5)']
  label = ''
 
- name = get_core_name(gd.dkx)
+ name = cor_name(gd.dkx)
  nt = n_elements(name)
 
  if((NOT keyword_set(gd.cd)) OR $
@@ -487,9 +487,9 @@ end
 function _pgc_photom_eqplane, p, dd, gd=gd, format=format, label=label, name=name
 
  gbx = get_primary(gd.cd, gd.gbx)
- if(NOT ptr_valid(gbx[0])) then return, 0
+ if(NOT obj_valid(gbx[0])) then return, 0
 
- dkd = dsk_init_descriptors(1, name='EQUATORIAL_PLANE', $
+ dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
 	orient = bod_orient(gbx), $
 	pos = bod_pos(gbx))
  sma = dsk_sma(dkd)
@@ -563,7 +563,7 @@ end
 ; pg_cursor
 ;
 ;=============================================================================
-pro pg_cursor, dd, ps, cd=cd, gbx=gbx, dkx=dkx, sund=sund, sd=sd, gd=_gd, fn=_fn, $
+pro pg_cursor, dd, ptd, cd=cd, gbx=gbx, dkx=dkx, sund=sund, sd=sd, gd=_gd, fn=_fn, $
            radec=radec, photom=photom, xy=xy, string=string, $
            silent=silent, values=values
 common pgc_table_block, last_labels, first
@@ -602,7 +602,7 @@ common pgc_table_block, last_labels, first
  ; options 
  ;- - - - - - - - - 
  if(keyword_set(cd)) then $
-  case class_get(cd) of
+  case cor_class(cd) of
    'CAMERA' : $
 	begin
 	 if(keyword_set(radec)) then fn = [fn, '_pgc_radec']

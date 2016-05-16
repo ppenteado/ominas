@@ -133,7 +133,7 @@ common cas_spice_ck_block, all_files, all_names_block, ckpath_block, $
 
  if(NOT keyword_set(djd)) then djd = 1d			; days, +/-
 
- label = nv_header(dd)
+ label = dat_header(dd)
 ; all_files = ''
  
 

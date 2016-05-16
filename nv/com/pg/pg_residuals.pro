@@ -13,12 +13,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	chisq = pg_residuals(scan_ps)
+;	chisq = pg_residuals(scan_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	scan_ps:	Array (n_curves) of points_struct output from
+;	scan_ptd:	Array (n_curves) of POINT output from
 ;			pg_cvscan or pg_ptscan containing scan data.
 ;
 ;  OUTPUT: NONE
@@ -43,10 +43,10 @@
 ;	
 ;-
 ;=============================================================================
-function pg_residuals, scan_ps
+function pg_residuals, scan_ptd
                  
 
- n_objects = n_elements(scan_ps)
+ n_objects = n_elements(scan_ptd)
  resx = 0d
  resy = 0d
 
@@ -58,7 +58,7 @@ function pg_residuals, scan_ps
    ;-------------------
    ; get scan data
    ;-------------------
-   ps_get, scan_ps[i], data=scan_data, desc=desc, points=scan_pts, /visible
+   pnt_get, scan_ptd[i], data=scan_data, desc=desc, points=scan_pts, /visible
 
    if(keyword__set(scan_data)) then $
     begin

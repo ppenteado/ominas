@@ -128,7 +128,7 @@ pro pg_repos, bx=bx, _dv, od=od, ref_bx=ref_bx, $
  bod_set_pos, bx, bod_pos(bx) + dvv
 
 
- add_core_task, bx, 'pg_repos'
+ cor_add_task, bx, 'pg_repos'
 end
 ;=============================================================================
 

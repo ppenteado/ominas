@@ -1,7 +1,0 @@
-CLASS library
-=============
-			
- The purpose of the CLASS library is to operate on descriptors of unspecified 
- class, or even arrays of descriptors of inhomogeneous class.  CLASS defines
- no data objects or coordinate systems. 
-

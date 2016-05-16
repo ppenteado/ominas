@@ -90,17 +90,17 @@
 function cas_spice_cameras, dd, ref, pos=pos, constants=constants, $
          n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
 
  sc = -82l
  plat = -82000l
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  if(NOT keyword_set(time)) then $
   begin
    time = cas_spice_time(label, dt=dt, status=status)
-   if(status NE 0) then return, ptr_new()
+   if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    cam_time = time + dt
   end $
@@ -178,12 +178,12 @@ function cas_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  if(NOT keyword_set(time)) then $
   begin
    time = cas_spice_time(label, dt=dt, status=status)
-   if(status NE 0) then return, ptr_new()
+   if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    plt_time = time + dt
   end $
@@ -217,12 +217,12 @@ end
 function cas_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
                                    status=status, time=time, obs=obs
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  if(NOT keyword__set(time)) then $
   begin
    time = cas_spice_time(label, dt=dt, status=status)
-   if(status NE 0) then return, ptr_new()
+   if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    sun_time = time + dt
   end $

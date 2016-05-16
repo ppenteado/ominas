@@ -51,7 +51,7 @@ pro grim_rc_settings, rcfile=rcfile, $
  ;----------------------------------------------------
  ; parse the keyvals
  ;----------------------------------------------------
- kv = nv_parse_keyvals(lines)
+ kv = dat_parse_keyvals(lines)
  keyword_ps = *kv.keywords_p & nv_ptr_free, kv.keywords_p
  value_ps = *kv.values_p & nv_ptr_free, kv.values_p
 

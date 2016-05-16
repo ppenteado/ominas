@@ -77,7 +77,7 @@
 ; pgdsp_compute
 ;
 ;=============================================================================
-function pgdsp_compute, cd, pd, sund, n0, term_ps, axis, theta, n=n
+function pgdsp_compute, cd, pd, sund, n0, term_ptd, axis, theta, n=n
 common pickplane_compute_points_block, dkd
 
  n = v_rotate_11(n0, axis, sin(theta), cos(theta))
@@ -88,7 +88,7 @@ common pickplane_compute_points_block, dkd
  xx = v_unit(v_cross(n, tr([1,0,0])))
  yy = v_unit(v_cross(n, xx))
 
- if(NOT keyword_set(dkd)) then dkd = dsk_init_descriptors(1)
+ if(NOT keyword_set(dkd)) then dkd = dsk_create_descriptors(1)
  bod_set_orient, dkd, [xx, yy, n]
  bod_set_pos, dkd, bod_pos(pd)
  sma = dsk_sma(dkd) & sma[0,1] = 1d100 & dsk_set_sma, dkd, sma
@@ -97,9 +97,9 @@ common pickplane_compute_points_block, dkd
  ;----------------------------------------------------------------
  ; project shadow
  ;----------------------------------------------------------------
- shadow_ps = pg_shadow_disk(cd=cd, od=sund, dkx=dkd, gbx=dkd, term_ps)
+ shadow_ptd = pg_shadow_disk(cd=cd, od=sund, dkx=dkd, gbx=dkd, term_ptd)
 
- return, shadow_ps
+ return, shadow_ptd
 end
 ;=============================================================================
 
@@ -111,7 +111,7 @@ end
 ;=============================================================================
 function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xor_graphics, $
                   p0=p0, n0=n0, noverbose=noverbose, color=color, gain=gain, $
-                  axis=axis, shadow_ps=shadow_ps
+                  axis=axis, shadow_ptd=shadow_ptd
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -159,7 +159,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xo
  ;-----------------------------------
  ; compute terminator
  ;-----------------------------------
- term_ps = pg_limb(cd=cd, gbx=gbx, od=sund, np=5000)
+ term_ptd = pg_limb(cd=cd, gbx=gbx, od=sund, np=5000)
 
 
  ;-----------------------------------
@@ -189,8 +189,8 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xo
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; compute initial model
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- shadow_ps = pgdsp_compute(cd, gbx, sund, n0, term_ps, axis, 0)
- shadow_pts = pg_points(shadow_ps)
+ shadow_ptd = pgdsp_compute(cd, gbx, sund, n0, term_ptd, axis, 0)
+ shadow_pts = pnt_points(/cat, /vis, shadow_ptd)
  xarr = shadow_pts[0,*]
  yarr = shadow_pts[1,*]
 
@@ -219,8 +219,8 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xo
     ; compute shadow points
     ;- - - - - - - - - - - - - - - -
     theta = (point[0] - p0[0]) * gain
-    shadow_ps = pgdsp_compute(cd, gbx, sund, n0, term_ps, axis, theta, n=n)
-    shadow_pts = pg_points(shadow_ps)
+    shadow_ptd = pgdsp_compute(cd, gbx, sund, n0, term_ptd, axis, theta, n=n)
+    shadow_pts = pnt_points(/cat, /vis, shadow_ptd)
     xarr = shadow_pts[0,*]
     yarr = shadow_pts[1,*]
 

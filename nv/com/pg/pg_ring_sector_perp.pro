@@ -13,7 +13,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps=pg_ring_sector_perp(cd=cd, dkx=dkx, gbx=gbx)
+;     outline_ptd=pg_ring_sector_perp(cd=cd, dkx=dkx, gbx=gbx)
 ;
 ;
 ; ARGUMENTS:
@@ -56,7 +56,7 @@
 ;                   graphics instead of a pixmap.
 ;
 ;        nodsk:     If set, image points will not be included in the output 
-;                   points_struct.
+;                   POINT.
 ;
 ;    noverbose:     If set, messages are suppressed.
 ;
@@ -66,8 +66,8 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT object
 ;      also contains the disk coordinate for each point and the user fields
 ;      'nrad' and 'nlon' giving the number of points in radius and longitude.
 ;
@@ -118,14 +118,13 @@ function pg_ring_sector_perp, p, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
  if(n_elements(cds) GT 1) then nv_message, name='pg_ring_sector_perp', $
                         'No more than one camera descriptor may be specified.'
  rd = dkx[0]
- dkd = rng_disk(rd)
 
  nrad = 3 & nlon = 5
 
  if(keyword_set(p)) then $
   begin
    point0 = p[*,0] & point = p[*,1]
-   outline_pts = get_ring_profile_outline_perp(cd, dkd, nrad=nrad, nlon=nlon, $
+   outline_pts = get_ring_profile_outline_perp(cd, rd, nrad=nrad, nlon=nlon, $
                                      tr([tr(point0), tr(point)]), frame_bd=gbx)
    outline_pts = reform(outline_pts)
   end $
@@ -195,7 +194,7 @@ function pg_ring_sector_perp, p, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
       ; make arrays of radius and longitude values
       ; sample at approx every 5 pixels
       ;--------------------------------------------
-      outline_pts = get_ring_profile_outline_perp(cd, dkd, nrad=nrad, nlon=nlon, $
+      outline_pts = get_ring_profile_outline_perp(cd, rd, nrad=nrad, nlon=nlon, $
                                      tr([tr(point0), tr(point)]), frame_bd=gbx)
       outline_pts = reform(outline_pts)
 
@@ -225,15 +224,15 @@ function pg_ring_sector_perp, p, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
  ;--------------------------------------------
  ; resample
  ;--------------------------------------------
- dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=gbx, outline_pts)
+ dsk_outline_pts = image_to_disk(cd, rd, frame_bd=gbx, outline_pts)
  rads = dsk_outline_pts[nlon+lindgen(nrad),0]
  lons = dsk_outline_pts[lindgen(nlon), 1]
 
- nlonrad = get_ring_profile_n(outline_pts, cd, dkd, $
+ nlonrad = get_ring_profile_n(outline_pts, cd, rd, $
                                 lons, rads, oversamp=sample, frame_bd=gbx)
  nrad = long(nlonrad[1]) & nlon = long(nlonrad[0])
 
- outline_pts = get_ring_profile_outline_perp(cd, dkd, nrad=nrad, nlon=nlon, $
+ outline_pts = get_ring_profile_outline_perp(cd, rd, nrad=nrad, nlon=nlon, $
                                      tr([tr(point0), tr(point)]), frame_bd=gbx)
 
  ;-------------------------------------------
@@ -241,14 +240,14 @@ function pg_ring_sector_perp, p, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
  ;-------------------------------------------
  dsk_outline_pts = 0
  if(NOT keyword_set(nodsk)) then $
-          dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=gbx, outline_pts)
+          dsk_outline_pts = image_to_disk(cd, rd, frame_bd=gbx, outline_pts)
 
- outline_ps = ps_init(points = outline_pts, $
+ outline_ptd = pnt_create_descriptors(points = outline_pts, $
                       desc = 'pg_ring_sector_rad', $
                       data = transpose(dsk_outline_pts))
- cor_set_udata, outline_ps, 'nrad', [nrad]
- cor_set_udata, outline_ps, 'nlon', [nlon]
+ cor_set_udata, outline_ptd, 'nrad', [nrad]
+ cor_set_udata, outline_ptd, 'nlon', [nlon]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================

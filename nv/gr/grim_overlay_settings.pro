@@ -57,10 +57,10 @@ pro gros_update_form, grim_data, plane, base
    ;-----------------------------------------------------
    ; if no user overlays, unmap that section
    ;-----------------------------------------------------
-   user_ps = grim_get_user_ps(plane=plane, $
+   user_ptd = grim_get_user_ptd(plane=plane, $
                             utags, color=user_colors, psym=user_psyms, symsize=user_psizes)
 
-   if(NOT keyword_set(user_ps)) then $
+   if(NOT keyword_set(user_ptd)) then $
     begin 
      w_user_base = (where(data.tags EQ 'USER_BASE'))[0]
      widget_control, data.ids[w_user_base], map=0
@@ -355,7 +355,7 @@ pro gros_apply_settings, data
    if(keyword__set(utags)) then $
     for j=0, n_utags-1 do $
      begin
-      user_ps = grim_get_user_ps(plane=planes[i], utags[j], shade_fn=shade_fn, $
+      user_ptd = grim_get_user_ptd(plane=planes[i], utags[j], shade_fn=shade_fn, $
                           graphics_fn=graphics_fn, xgraphics=xgraphics)
 
       psym = ''
@@ -371,7 +371,7 @@ pro gros_apply_settings, data
 
       col = data.colors[grim_parse_form_entry(data.ids, data.tags, $
                                        gros_user_tag(j, 'color'), /drop)]
-      grim_add_user_points, /update, /nodraw, user_ps, utags[j], plane=planes[i], $
+      grim_add_user_points, /update, /nodraw, user_ptd, utags[j], plane=planes[i], $
          color=col, psym=psym, symsize=psize, shade_fn=shade_fn, graphics_fn=graphics_fn, xgraphics=xgraphics
      end
 
@@ -525,13 +525,13 @@ common grim_overlay_settings_block, tops
 	  '2, LABEL, Overlay                Color    Psym   Size       Labels         Shading, CENTER']
 
  overlay_label_len = 15
- psps = grim_get_overlay_psp(grim_data, plane=plane, 'all')
- npsps = n_elements(psps)
+ ptdps = grim_get_overlay_ptdp(grim_data, plane=plane, 'all')
+ nptdps = n_elements(ptdps)
 
- for i=0, npsps-1 do $
+ for i=0, nptdps-1 do $
   begin
    name = ''
-   psp = grim_get_overlay_psp(grim_data, name, plane=plane, ii=i)
+   ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, ii=i)
    label =  str_pad(name, overlay_label_len) + ':'
 
    desc = [desc, $
@@ -570,8 +570,8 @@ common grim_overlay_settings_block, tops
  ;- - - - - - - - - - - - - - - - - - - - - -
  n_utags_max = 256
  user_label_len = 40
- user_ps = grim_get_user_ps(plane=plane)
- user_exists = keyword_set(user_ps)
+ user_ptd = grim_get_user_ptd(plane=plane)
+ user_exists = keyword_set(user_ptd)
  if(user_exists) then $
   begin
    desc = [desc, $

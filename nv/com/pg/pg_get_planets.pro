@@ -107,12 +107,12 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, no_sort=no_sort, 
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators
- ;-------------------------------------------------------------------
+ ;-------------------------------------------------------------------s
  if(keyword_set(override)) then $
   begin
    n = n_elements(plt__name)
 
-   pd = plt_init_descriptors(n, $
+   pd = plt_create_descriptors(n, $
 		name=plt__name, $
 		orient=plt__orient, $
 		avel=plt__avel, $
@@ -140,12 +140,12 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, no_sort=no_sort, 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(plt__name)) then tr_first = 1
 
-   pd = nv_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
+   pd = dat_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
                                 key7=plt__time, key8=plt__name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-   if(NOT keyword_set(pd)) then return, nv_ptr_new()
+   if(NOT keyword_set(pd)) then return, obj_new()
 
    n = n_elements(pd)
 
@@ -161,9 +161,9 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, no_sort=no_sort, 
    ;---------------------------------------------------
    if(keyword_set(plt__name)) then $
     begin
-     tr_names = get_core_name(pd)
+     tr_names = cor_name(pd)
      sub = nwhere(strupcase(tr_names), strupcase(plt__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
@@ -175,7 +175,7 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, no_sort=no_sort, 
    ; perform aberration corrections
    ;-----------------------------------
    if(keyword_set(od) AND (NOT keyword_set(raw))) then $
-     if(keyword_set(class_extract(od, 'BODY'))) then $
+     if(cor_isa(od, 'BODY')) then $
                           abcorr, od, pd, c=pgc_const('c');, /iterate
 
    ;-------------------------------------------------------------------
@@ -205,7 +205,7 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, no_sort=no_sort, 
  ; Thus, translators can be arranged in order in the table
  ; such the the first occurence has the highest priority.
  ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then pd = pd[pgs_name_sort(get_core_name(pd))]
+ if(NOT keyword_set(no_sort)) then pd = pd[pgs_name_sort(cor_name(pd))]
 
 
 

@@ -282,6 +282,7 @@ function ucact_get_stars, filename, cam_vel=cam_vel, $
     begin
 w1 = max(where(ra1 GE ra_start))
 w2 = min(where(ra2 LE ra_start))
+if(w2[0] EQ -1) then w2 = n_elements(ra_start)-1
 ;;;     w1 = min(where(ra_start GE ra1))
 ;;;     w2 = max(where(ra_start LE ra2) + 1) 
 ;stop
@@ -530,7 +531,7 @@ w2 = min(where(ra2 LE ra_start))
  m = stars.mag - 5d*alog10(dist/pc) + 5d
  lum = Lsun * 10.d^( (4.83d0-m)/2.5d ) 
 
- _sd = str_init_descriptors(n, $
+ _sd = str_create_descriptors(n, $
         name=name, $
         orient=orient, $
         avel=avel, $

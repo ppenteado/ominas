@@ -90,7 +90,7 @@
 function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
         n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
- sc_name = vgr_parse_inst(nv_instrument(dd), cam=cam_name)
+ sc_name = vgr_parse_inst(dat_instrument(dd), cam=cam_name)
  sc = -31l
  if(sc_name EQ 'vg2') then sc = -32l
 
@@ -100,7 +100,7 @@ function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
  if(cam_name EQ 'wa') then inst = sc*1000 - 002l	; wa camera
  orient_fn = 'vgr_cmat_to_orient_iss'
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  ;-----------------------------------
  ; cam_time
@@ -108,7 +108,7 @@ function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
  if(NOT keyword__set(time)) then $
   begin
    time = vgr_spice_time(label, dt=dt, status=status)
-   if(status NE 0) then return, ptr_new()
+   if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    cam_time = time + dt
   end $
@@ -123,7 +123,7 @@ function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
    if(strpos(label,'GEOM') NE -1) then geom = 1
    if(strpos(label,'FARENC') NE -1) then geom = 1
    if(strpos(label,'*** OBJECT SPACE') NE -1) then geom = 1
-   s = size(nv_data(dd))
+   s = size(dat_data(dd))
    if(s[1] EQ 1000 AND s[2] EQ 1000) then geom = 1
   end
  
@@ -191,12 +191,12 @@ function vgr_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  if(NOT keyword__set(time)) then $
   begin 
    time = vgr_spice_time(label, dt=dt, status=status)
-   if(status NE 0) then return, ptr_new()
+   if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    plt_time = time + dt
   end $
@@ -224,12 +224,12 @@ end
 function vgr_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
                    status=status, time=time, constants=constants, obs=obs
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  if(NOT keyword__set(time)) then $
   begin
    time = vgr_spice_time(label, dt=dt, status=status)
-   if(status NE 0) then return, ptr_new()
+   if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    sun_time = time + dt
   end $

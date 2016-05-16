@@ -20,7 +20,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
  w = where(idp EQ cor_idp(plane.dd))
  if(w[0] NE -1) then $
   begin
-   if(nv_update(plane.dd) EQ 1) then new = 1 $
+   if(dat_update(plane.dd) EQ 1) then new = 1 $
    else $
     begin
      refresh = 1
@@ -33,8 +33,8 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
  ;---------------------------------------------------------------------------
  for j=0, nplanes-1 do $
   begin
-   points_ps = grim_cat_points(grim_data, plane=planes[j])
-   n = n_elements(points_ps)
+   points_ptd = grim_cat_points(grim_data, plane=planes[j])
+   n = n_elements(points_ptd)
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; build a list of source functions and dependencies
@@ -42,32 +42,32 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    name_list = ''
    dep_list = ptr_new()
-   points_ps_list = ptr_new()
+   points_ptd_list = ptr_new()
 
-   if(keyword_set(points_ps)) then $
-    for i=0, n-1 do if(ptr_valid(points_ps[i])) then $
+   if(keyword_set(points_ptd)) then $
+    for i=0, n-1 do if(obj_valid(points_ptd[i])) then $
      begin
-      dep = cor_udata(points_ps[i], 'grim_dep')
+      dep = cor_udata(points_ptd[i], 'grim_dep')
       if(keyword_set(dep)) then $
        begin
         w = where(dep EQ idp)
         if(w[0] NE -1) then $
          begin
-          name = cor_udata(points_ps[i], 'grim_name')
+          name = cor_udata(points_ptd[i], 'grim_name')
 
           w = where(name_list EQ name)
           if(w[0] EQ -1) then $
            begin
             name_list = append_array(name_list, name)
             dep_list = append_array(dep_list, ptr_new(dep))
-            points_ps_list = append_array(points_ps_list, ptr_new(points_ps[i]))
+            points_ptd_list = append_array(points_ptd_list, ptr_new(points_ptd[i]))
             if(plane.pn EQ planes[j].pn) then refresh = 1
            end $
           else $
            begin
             ii= w[0]
             *dep_list[ii] = append_array(*dep_list[ii], dep)
-            *points_ps_list[ii] = append_array(*points_ps_list[ii], points_ps[i])
+            *points_ptd_list[ii] = append_array(*points_ptd_list[ii], points_ptd[i])
            end 
          end
        end
@@ -104,9 +104,9 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ; Call each source function
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    for i=0, n-1 do grim_overlay, grim_data, plane=plane, $
-                      name_list[i], dep=*dep_list[i], ps=*points_ps_list[i]
+                      name_list[i], dep=*dep_list[i], ptd=*points_ptd_list[i]
 
-   for i=0, n-1 do ptr_free, dep_list[i], points_ps_list[i]
+   for i=0, n-1 do ptr_free, dep_list[i], points_ptd_list[i]
   end
 
 end
@@ -183,13 +183,13 @@ pro grim_descriptor_notify, events, refresh=refresh, new=new
 stop
 ; this is not working.  You just get an infinite number of events and new grim windows.
 help, events[i].xd
-      sibling_dd = nv_sibling(plane.dd)
+      sibling_dd = dat_sibling(plane.dd)
 
       new = 0
-;      if(NOT ptr_valid(plane.sibling_dd)) then new = 1 $
+;      if(NOT obj_valid(plane.sibling_dd)) then new = 1 $
 ;      else if(sibling_dd NE plane.sibling_dd) then new = 1
 
-      if(ptr_valid(plane.sibling_dd)) then  $
+      if(obj_valid(plane.sibling_dd)) then  $
       if(sibling_dd NE plane.sibling_dd) then new = 1
 
 ;nv_suspend_events
@@ -221,12 +221,12 @@ pro grim_rm_descriptor, grim_data, plane=plane, _xd
  ;----------------------------------
  ; remove the descriptor
  ;----------------------------------
- ptr = 0
- if(size(_xd, /type) EQ 10) then ptr = 1
+ obj = 0
+ if(size(_xd, /type) EQ 11) then obj = 1
 
- if(ptr) then $
+ if(obj) then $
   begin
-   if(NOT ptr_valid(_xd)) then return
+   if(NOT obj_valid(_xd)) then return
    xd = *_xd
   end $
  else xd = _xd
@@ -244,13 +244,13 @@ pro grim_rm_descriptor, grim_data, plane=plane, _xd
  for i=0, n_elements(xd)-1 do $
   begin
    idp = cor_idp(xd[i])
-   ps = grim_get_object_overlays(plane, xd[i])
-   if(keyword_set(ps)) then nv_notify_unregister, ps, 'grim_descriptor_notify'
+   ptd = grim_get_object_overlays(plane, xd[i])
+   if(keyword_set(ptd)) then nv_notify_unregister, ptd, 'grim_descriptor_notify'
   end
 
  nv_free, xd
 
- if(ptr) then *_xd = 0
+ if(obj) then *_xd = 0			;;;;;;
 end
 ;=============================================================================
 
@@ -274,7 +274,7 @@ end
 ;
 ;=============================================================================
 function grim_demark_descriptor, xd
- if(NOT ptr_valid(xd)) then return, 0
+ if(NOT obj_valid(xd)) then return, 0
  return, cor_udata(xd, 'grim_status')
 end
 ;=============================================================================
@@ -356,6 +356,7 @@ pro grim_add_descriptor, grim_data, xdp, xd, one=one, replace=replace, $
    grim_descriptor_notify_handle, grim_data, xd
    return
   end
+stop
 
  ;-------------------------------------------------------------------
  ; multiple descriptors allowed --
@@ -369,10 +370,11 @@ pro grim_add_descriptor, grim_data, xdp, xd, one=one, replace=replace, $
    w = where(cor_name(*xdp) EQ cor_name(xd[i]))
    if(w[0] EQ -1) then $
     begin
-     *xdp = class_homogenize([*xdp, xd[i]])
-;     if(class_get(xd[i]) NE class_get((*xdp)[0])) then $
-;                                *xdp = class_homogenize([xd, *xdp]) $
-;     else *xdp = [*xdp, xd[i]]
+;     *xdp = cor_homogenize([*xdp, xd[i]])	; this may not be needed after object conversion
+;;     if(cor_class(xd[i]) NE cor_class((*xdp)[0])) then $
+;;                                *xdp = cor_homogenize([xd, *xdp]) $
+;;     else *xdp = [*xdp, xd[i]]
+     *xdp = [*xdp, xd[i]]
 
      if(NOT keyword_set(noregister)) then $
            nv_notify_register, xd[i], 'grim_descriptor_notify', $
@@ -418,7 +420,7 @@ function grim_get_cameras, grim_data, idp=idp, replace=replace, plane=plane
    t = ''
    if(keyword_set(cd0)) then $
     begin
-     if(keyword_set(class_extract(cd0, 'BODY'))) then t = bod_time(cd0)
+     if(cor_isa(cd0[0], 'BODY')) then t = bod_time(cd0)
      orient = bod_orient(cd0)
     end
 
@@ -543,7 +545,7 @@ function grim_get_sun, grim_data, idp=idp, replace=replace, plane=plane
 ;   grim_clear_objects, grim_data, /sund, plane=plane
 
    ; can use a planet instead of the sun if 'name' translator keyword is given
-   kv = nv_parse_keyvals(nv_parse_transient_keyvals(plane.trs_sund), keywords=keywords)
+   kv = dat_parse_keyvals(dat_parse_transient_keyvals(plane.trs_sund), keywords=keywords)
    nv_free, kv  
 
    star = 1
@@ -557,7 +559,7 @@ function grim_get_sun, grim_data, idp=idp, replace=replace, plane=plane
    else $
     begin
      pd = (pg_get_planets(plane.dd, od=*plane.cd_p, plane.trs_sund))[1]
-     sund = str_init_descriptors(1, gbd=plt_globe(pd))
+     sund = str_create_descriptors(1, gbd=pd)
     end
    if(NOT keyword_set(sund)) then return, 0
 
@@ -673,7 +675,7 @@ function grim_get_stars, grim_data, idp=idp, replace=replace, silent=silent, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; get stars from translators if no similar set exists
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(copy NE -1) then sd = str_clone_descriptor(*planes[copy].sd_p) $
+   if(copy NE -1) then sd = nv_clone(*planes[copy].sd_p) $
    else sd = pg_get_stars(plane.dd, od=*plane.cd_p, $
                      /no_sort, str_name=names, plane.trs_sd, corners=corners)
    if(NOT keyword_set(sd)) then $
@@ -824,7 +826,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- junk = grim_get_overlay_psp(grim_data, name, plane=plane, $
+ junk = grim_get_overlay_ptdp(grim_data, name, plane=plane, $
                                                    class=class, dep=dep)
  dep = append_array(dep, class)
 

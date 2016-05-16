@@ -14,14 +14,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_cntrd(dd, object_ps)
+;	result = pg_cntrd(dd, object_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:		Data descriptor
 ;
-;	object_ps: 	Array (n_pts) of points_struct giving the points.
+;	object_ptd: 	Array (n_pts) of POINT objects giving the points.
 ;			Only the image coordinates of the points need to be
 ;			specified.
 ;
@@ -46,9 +46,9 @@
 ;
 ;
 ; RETURN:
-;	An array of type points_struct giving the detected position for
+;	An array of type POINT objects giving the detected position for
 ;       each object.  The max values for each detection is
-;       saved in the data portion of points_struct with tag 'scan_cc'.
+;       saved in the data portion of object with tag 'scan_cc'.
 ;       The x and y offset from the given position is also saved.
 ;
 ;
@@ -73,12 +73,12 @@
 ;	
 ;-
 ;=============================================================================
-function pg_cntrd, dd, object_ps, $
+function pg_cntrd, dd, object_ptd, $
                     fwhm=fwhm, edge=edge, sigmin=sigmin
-@ps_include.pro
- _image=nv_data(dd)
+@pnt_include.pro
+ _image=dat_data(dd)
 
- n_objects=n_elements(object_ps)
+ n_objects=n_elements(object_ptd)
  s=size(_image)
 
  ;-----------------------------
@@ -94,13 +94,13 @@ function pg_cntrd, dd, object_ps, $
  ;=========================
  ; scan for each object
  ;=========================
- pts_ps=ptrarr(n_objects)
+ pts_ptd=objarr(n_objects)
  for i=0, n_objects-1 do $
   begin
    ;-----------------------------------
    ; get object point
    ;-----------------------------------
-   ps_get, object_ps[i], points=pts, flags=flags, /visible
+   pnt_get, object_ptd[i], points=pts, flags=flags, /visible
 
    ;------------------------------------------------------
    ; trim point if invisible or too close to edge
@@ -116,7 +116,7 @@ function pg_cntrd, dd, object_ps, $
    ccp=0
    scan_pts=pts
    sim=size(im_pts)
-   flags = make_array(1, /byte, val=PS_MASK_INVISIBLE)
+   flags = make_array(1, /byte, val=PTD_MASK_INVISIBLE)
 
    if(sim[0] NE 0 AND pts[0] GE x0 AND pts[1] GE y0 AND  $
       pts[0] LE x1 AND pts[1] LE y1 ) then $
@@ -181,7 +181,7 @@ function pg_cntrd, dd, object_ps, $
    scan_data[3]=ccp		 & tags[3]='scan_cc'           ; correlation
 
 
-   ps_set, pts_ps[i], $
+   pnt_set, pts_ptd[i], $
               points = scan_pts, $
               data = scan_data, $
               flags = flags, $
@@ -191,6 +191,6 @@ function pg_cntrd, dd, object_ps, $
 
 
 
- return, pts_ps
+ return, pts_ptd
 end
 ;===========================================================================

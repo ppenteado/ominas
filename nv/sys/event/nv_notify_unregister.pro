@@ -58,7 +58,7 @@
 ;=============================================================================
 pro nv_notify_unregister, xd, handler, all=all
 @nv_notify_block.common
-@nv.include
+@core.include
 
  if(NOT keyword_set(list)) then return
  nlist = n_elements(list)

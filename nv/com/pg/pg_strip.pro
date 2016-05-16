@@ -61,8 +61,8 @@ pro pg_strip,im,width=width,nw=nw,nomarks=nomarks,device=device,xs=xs,ys=ys
 im1=im
 !err=0
 i=0
-pp1=ps_init()
-pp2=ps_init()
+pp1=pnt_create_descriptors()
+pp2=pnt_create_descriptors()
 
 ; Mark chosen points with a plus sign.
 _psyms=1
@@ -84,7 +84,7 @@ while !err ne 4 do begin
   if !err eq 4 or keyword__set(quit) then return
   print, '    x = '+strtrim(x1,2)+'   y = '+strtrim(y1,2)
   if not keyword__set(nomarks) then begin
-    ps_set_points, pp1,[x1,y1]
+    pnt_set_points, pp1,[x1,y1]
     pg_draw, pp1, psyms=_psyms, psizes=_psizes, color=ctwhite()
   endif
 
@@ -93,7 +93,7 @@ while !err ne 4 do begin
   if !err eq 4 then return
   print, '    x = '+strtrim(x2,2)+'   y = '+strtrim(y2,2)
   if not keyword__set(nomarks) then begin
-    ps_set_points, pp2, [x2,y2]
+    pnt_set_points, pp2, [x2,y2]
     pg_draw, pp2, psyms=_psyms, psizes=_psizes, color=ctwhite()
   endif
 

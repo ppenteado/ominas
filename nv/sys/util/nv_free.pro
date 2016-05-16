@@ -67,7 +67,20 @@ pro nvf_recurse, p
      ntags = n_tags(p[i])
      for j=0, ntags-1 do nvf_recurse, p[i].(j)
     end
-  end
+  end $
+ else if(type EQ 11) then $
+  begin
+   for i=0, n-1 do if(obj_valid(p[i])) then $
+    begin
+     _p = cor_dereference(p[i])
+
+     if(nv_get_directive(_p) EQ 'NV_STOP') then return
+
+     ntags = n_tags(_p)
+     for j=0, ntags-1 do nvf_recurse, _p.(j)
+     obj_destroy, p
+    end
+  end 
 
 end
 ;=============================================================================
@@ -79,7 +92,7 @@ end
 ;
 ;=============================================================================
 pro nv_free, dp
-@nv.include
+@core.include
  nvf_recurse, dp
 
  heap_gc	; this should not be necessary

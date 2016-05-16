@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = ring_input(dd, keyword)
 ;
 ;
@@ -334,7 +334,7 @@ function ring_input_nocat, dd, keyword, prefix, $
  ; make ring descriptors
  ;------------------------------------------------------------------
  n_obj = n_elements(dkds)
- rds = rng_init_descriptors(n_obj, $
+ rds = rng_create_descriptors(n_obj, $
 		primary=primaries, $
 		name=cor_name(dkds), $
 		opaque=bod_opaque(dkds), $

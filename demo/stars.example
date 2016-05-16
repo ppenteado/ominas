@@ -22,9 +22,9 @@
 ;-------------------------------------------------------------------------
 ;                        Image read and display
 ;
-;  This first section uses nv_read to read in the image.  The image file
+;  This first section uses dat_read to read in the image.  The image file
 ;  c1138223.gem is a Voyager VICAR format file where the image has had
-;  the camera distortions removed with the VICAR program GEOMA.  nv_read
+;  the camera distortions removed with the VICAR program GEOMA.  dat_read
 ;  reads the image portion (im) and the image label (label) and its output
 ;  is a data descriptor (dd). tvim is called to display the image
 ;  (im) at 1/2 size in a new window with the y coordinate as top-down.
@@ -34,9 +34,10 @@
 ;  command so that xloadct can be used to contrast enhance the image.
 ;
 ;-------------------------------------------------------------------------
-dd = nv_read('data/c1138223.gem', im, label)
+;dd = dat_read('data/c1138223.gem', im, label)
+dd = dat_read('~/casIss/1456/N1456251768_1.IMG', im, label)
 
-tvim, im, zoom=0.5, /order
+tvim, im, zoom=0.75, /order
 
 ;-------------------------------------------------------------------------
 ;
@@ -94,21 +95,21 @@ gd = {cd:cd, gbx:pd, dkx:rd}
 ;
 ;-------------------------------------------------------------------------
 ;sd = pg_get_stars(dd, od=cd, /no_sort, tr_ov='strcat_gsc_input', 'faint=8')
-sd = pg_get_stars(dd, od=cd, /no_sort, 'faint=8')
+sd = pg_get_stars(dd, od=cd, /no_sort, 'faint=14')
 
 ;-------------------------------------------------------------------------
 ;
 ;                Calculating the limb, ring and planet and star centers
 ;                    Determining the plot characteristics
 ;
-;  This section uses pg_limb to calculate the limb point structure (limb_ps)
-;  containing the limb points, the ring point structure (ring_ps) and also
-;  the planet center (center_ps) and star centers (star_ps) using the
+;  This section uses pg_limb to calculate the limb point structure (limb_ptd)
+;  containing the limb points, the ring point structure (ring_ptd) and also
+;  the planet center (center_ptd) and star centers (star_ptd) using the
 ;  routine pg_center.  It uses the generic descriptor (gd) to pass the camera,
 ;  planet and ring descriptors to these routines.  It also uses pg_hide to
 ;  remove (/rm) points from the ring (/disk) from the limb points and then
 ;  again to remove the ring points and star points covered by the planet
-;  (/globe).  It then groups each of these into object_ps for plotting.  The
+;  (/globe).  It then groups each of these into object_ptd for plotting.  The
 ;  colors, psyms, psizes and plables variables are defined for the plot.
 ;  The center is drawn in the default color (!p.color), the limb, the inner 
 ;  and outer ring and the stars are are all white (255).  In order to see
@@ -116,30 +117,17 @@ sd = pg_get_stars(dd, od=cd, /no_sort, 'faint=8')
 ;  see that each ring is treated as two objects (inner and outer) when 
 ;  defining plot characteristics.  Also, each star in the star descriptor is
 ;  treated as a separate object.  nlimb is the number of points in the 
-;  limb_ps structure, nring, the number of points in the ring point structure.
+;  limb_ptd structure, nring, the number of points in the ring point structure.
 ;  In plabels, the limb and ring's name is not plotted since it would be
 ;  plotted at the center of the object.
 ;
 ;-------------------------------------------------------------------------
-limb_ps=pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-ring_ps=pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /rm, /globe
-center_ps=pg_center(bx=pd, gd=gd)
-star_ps=pg_center(bx=sd, gd=gd) & pg_hide, star_ps, gd=gd, /rm, /globe
+star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
 n_stars=n_elements(sd)
-n_limb=n_elements(limb_ps)
-n_ring=n_elements(ring_ps)
-n_cent=n_elements(center_ps)
-object_ps=[center_ps,limb_ps,ring_ps,star_ps]
 
-colors=[make_array(n_cent, val=!p.color), make_array(n_limb, val=255), $
-        make_array(n_ring,val=255), make_array(n_stars,val=255)]
-psyms=[make_array(n_cent, val=1), make_array(n_limb, val=3), $
-       make_array(n_ring,val=3), make_array(n_stars,val=6)]
-
-psizes=[1.0]
-plabels=[get_core_name(pd), make_array(n_limb, val=' '), $
-         make_array(n_ring,val=' '), get_core_name(sd)]
-
+color = ctred()
+psym = 6
+plabels = cor_name(sd)
 
 ;-------------------------------------------------------------------------
 ;
@@ -150,11 +138,15 @@ plabels=[get_core_name(pd), make_array(n_limb, val=' '), $
 ; In this particular example, the planet does not appear in the image.
 ;
 ;-------------------------------------------------------------------------
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
-print, 'Because of the dimness of the image, using xloadct with a'
-print, 'b/w scale and a min = 11 and a max=28 is usually ok'
-;xloadct
+pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 stop, '=== Auto-test complete.  Use multi-window cut & paste to continue.'
+
+
+
+
+
+
+
 
 ;-------------------------------------------------------------------------
 ;
@@ -167,7 +159,7 @@ stop, '=== Auto-test complete.  Use multi-window cut & paste to continue.'
 tvim, im
 spt=str_sp(sd)
 psyms_str=make_array(n_stars,val=6)
-pg_draw, star_ps, psyms=psyms_str, psizes=psizes, plabel=spt
+pg_draw, star_ptd, color=color, psym=psym, plabel=spt
 
 ;-------------------------------------------------------------------------
 ;
@@ -181,7 +173,7 @@ tvim, im
 sm = str_get_mag(sd)
 smag = string(sm, format='(f4.1)')
 psyms_str=make_array(n_stars,val=6)
-pg_draw, star_ps, psyms=psyms_str, psizes=psizes, plabel=smag
+pg_draw, star_ptd, color=color, psym=psym, plabel=smag
 
 ;-------------------------------------------------------------------------
 ;
@@ -193,8 +185,8 @@ pg_draw, star_ps, psyms=psyms_str, psizes=psizes, plabel=smag
 ;  To move the pointing with pg_drag, use the left mouse button and
 ;  translate the pointing in x,y.  Use the middle mouse button to rotate
 ;  the pointing about an axis (in this case, the axis of rotation is set
-;  as the optic axis of the image (object_ps) which is defined using the
-;  routine ps_init with the points being the camera optic axis as
+;  as the optic axis of the image (object_ptd) which is defined using the
+;  routine pnt_create_descrptors with the points being the camera optic axis as
 ;  returned by the camera library routine cam_oaxis.  When the
 ;  desired pointing is set, the right mouse button accepts it.  pg_drag
 ;  returns the delta x,y amount dragged (dxy) as well as the rotation
@@ -204,19 +196,15 @@ pg_draw, star_ps, psyms=psyms_str, psizes=psizes, plabel=smag
 ;  and then pg_draw is called to replot.
 ;
 ;-------------------------------------------------------------------------
-optic_ps = ps_init(p=cam_oaxis(cd))
+optic_ptd = pnt_create_descriptors(points=cam_oaxis(cd))
 tvim, im
-dxy = pg_drag(star_ps, dtheta=dtheta, axis=optic_ps, symbol=6)  ; square
-pg_repoint, dxy, dtheta, axis=optic_ps, gd=gd
+dxy = pg_drag(star_ptd, dtheta=dtheta, axis=optic_ptd, symbol=6)  ; square
+pg_repoint, dxy, dtheta, axis=optic_ptd, gd=gd
 
-limb_ps=pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-ring_ps=pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /rm, /globe
-center_ps=pg_center(bx=pd, gd=gd)
-star_ps=pg_center(bx=sd, gd=gd) & pg_hide, star_ps, gd=gd, /rm, /globe
-object_ps=[center_ps,limb_ps,ring_ps,star_ps]
+star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
 
 tvim, im
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 
 ;=========================================================================
 ;
@@ -229,8 +217,8 @@ pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;  default gaussian) for each star.  These points are then plotted.
 ;
 ;-------------------------------------------------------------------------
-ptscan_ps=pg_ptscan(dd, star_ps, edge=30, width=40)
-pg_draw, ptscan_ps, psym=1, col=ctyellow()
+ptscan_ptd = pg_ptscan(dd, star_ptd, edge=30, width=40)
+pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 
 ;-------------------------------------------------------------------------
 ;
@@ -242,12 +230,12 @@ pg_draw, ptscan_ps, psym=1, col=ctyellow()
 ;  its own min and max value.
 ;
 ;-------------------------------------------------------------------------
-pg_threshold, ptscan_ps, min=make_array(n_stars,val=0.6), $
+pg_threshold, ptscan_ptd, min=make_array(n_stars,val=0.6), $
                          max=make_array(n_stars,val=1.0)
 
 tvim, im
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
-pg_draw, ptscan_ps, psym=1, col=ctyellow()
+pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 
 ;-------------------------------------------------------------------------
 ;
@@ -263,11 +251,11 @@ pg_draw, ptscan_ps, psym=1, col=ctyellow()
 ;
 ;-------------------------------------------------------------------------
 region=pg_select(dd)
-pg_trim, dd, ptscan_ps, region
+pg_trim, dd, ptscan_ptd, region
 
 tvim, im
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
-pg_draw, ptscan_ps, psym=1, col=ctyellow()
+pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 
 ;-------------------------------------------------------------------------
 ;
@@ -283,161 +271,20 @@ pg_draw, ptscan_ps, psym=1, col=ctyellow()
 ;  and replots.
 ;
 ;-------------------------------------------------------------------------
-ptscan_cf = pg_ptscan_coeff(ptscan_ps, axis=optic_ps)
+optic_ptd = pnt_create_descriptors(points=cam_oaxis(cd))
+ptscan_cf = pg_ptscan_coeff(ptscan_ptd, axis=optic_ptd)
 dxy = pg_fit([ptscan_cf], dtheta=dtheta)
-chisq = pg_chisq(dxy, dtheta, ptscan_ps, axis=center_ps[0])
+chisq = pg_chisq(dxy, dtheta, ptscan_ptd, axis=optic_ptd[0])
 covar = pg_covariance([ptscan_cf])
 print, dxy, dtheta*180./!pi, chisq, covar
-pg_repoint, dxy, dtheta, axis=optic_ps, gd=gd
+pg_repoint, dxy, dtheta, axis=optic_ptd, gd=gd
 
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-ring_ps = pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /rm, /globe
-center_ps = pg_center(bx=pd, gd=gd)
-star_ps = pg_center(bx=sd, gd=gd) & pg_hide, star_ps, gd=gd, /rm, /globe
-object_ps = [center_ps,limb_ps,ring_ps,star_ps]
+star_ptd = pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
 
 tvim, im
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
-
-;=========================================================================
-;
-;                       Scanning to find the ring
-;                   and using it to calculate the pointing
-;
-;  This section calls pg_cvscan to scan the image around the predicted
-;  ring edge positions (within width of 80 pixels) and find the points of
-;  highest correlation with a given edge model.  The model used here for
-;  a thin ring is a gaussian (edge_model_gauss) and zeropoint offset in
-;  the given model (rzero).  These points are then plotted.
-;
-;-------------------------------------------------------------------------
-optic_ps = ps_init(cam_oaxis(cd))
-
-cvscan_ps=pg_cvscan(dd, gd=gd, [ring_ps], edge=30, width=80, $
-  model=[make_array(nring,val=ptr_new(edge_model_gauss(10,2.,zero=rzero)))], $
-  mzero=[make_array(nring,val=rzero)] )
-tvim, im
-pg_draw, cvscan_ps
-
-;-------------------------------------------------------------------------
-;
-;                 Thresholding using correlation coefficient
-;
-;  This section (optional) calls pg_threshold to remove points with lower
-;  correlation coefficients.  This example only keeps ring points with a 
-;  correlation coefficient above 0.4.  Because the ring is dim, there are
-;  many bad points.  Notice here again that the ring is treated as two
-;  objects.
-;
-;-------------------------------------------------------------------------
-pg_threshold, cvscan_ps, min=[0.4, 0.4, 0.4, 0.4], max=[1.1, 1.1, 1.1, 1.1]
-tvim, im
-pg_draw, cvscan_ps
-
-;-------------------------------------------------------------------------
-;
-;                    Removing regions of bad points
-;
-;  This section (optional) calls pg_select to remove points within a
-;  polygonal region as defined by the cursor.  Click the left mouse
-;  button to mark a point and move the mouse to the next point and
-;  click.  Use the middle mouse button to erase a point and the right
-;  mouse button to end the region.  pg_trim removes the points in the
-;  just defined region.  The scan points are then replotted.
-;  Repeat these statements for each region a user wants to remove.
-;  With the dim image of the rings, many points have to be removed that
-;  are off the ring in order to get a decent fit.
-;
-;-------------------------------------------------------------------------
-
-region=pg_select(dd)
-pg_trim, dd, cvscan_ps, region
-tvim, im
-pg_draw, cvscan_ps
-
-;-------------------------------------------------------------------------
-;
-;                 Fitting the pointing to the scanned ring
-;
-;  This section calls pg_cvscan_coeff to determine the linear least-squares
-;  coefficients for a fit to the image coordinate translation and rotation
-;  which matches the computed curve to the scanned curve.  It then calls
-;  pg_fit to do the fit with the calculated coefficients to calculate the
-;  correction in translation (dxy) and rotation (dtheta).  It calls
-;  pg_cvchisq to get the chi square of the fit.  Then calls pg_repoint to
-;  update the pointing. Recalculates the limb and center and replots.
-;  The determination of the curves and their subsequent fit can be
-;  iterated on.
-;
-;  The fix variable determines which degrees of freedom will be held fixed
-;  in the fit and can have the values 0, 1 and/or 2.  Setting the fix
-;  variable to be 2 makes the fit solve for translation only (dxy) and to
-;  hold the rotation (dtheta) constant.  
-;
-;-------------------------------------------------------------------------
+pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 
 
-fix=[2]
-cvscan_cf=pg_cvscan_coeff(cvscan_ps, axis=optic_ps, fix=fix)
-dxy=pg_fit([cvscan_cf], dtheta=dtheta)
-cvchisq=pg_cvchisq(dxy, dtheta, cvscan_ps, axis=optic_ps, fix=fix)
-print, dxy, dtheta*180./!pi, cvchisq
-pg_repoint, dxy, dtheta, axis=optic_ps, gd=gd
-
-limb_ps=pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, dkx=gd.dks, /rm, /disk
-ring_ps=pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /rm, /globe
-center_ps=pg_center(bx=gd.gbx, cd=gd.cd)
-star_ps=pg_center(bx=gd.sd, cd=gd.cd)
-object_ps=[center_ps,limb_ps,ring_ps,star_ps]
-
-tvim, im
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
-
-;-------------------------------------------------------------------------
-;
-;                   Defining a ring sector for a plot
-;
-;  To plot a ring radius vs. intensity or longitude vs. intensity, the
-;  user must first define the limits of the ring sector.   The method
-;  demonstrated here to use the cursor to sweep out a ring sector,
-;  pg_ring_sector is called to do this.  The user could also define the
-;  ring radius (rad) and longitude (lon) as an array of [begin,end]. 
-;  To use the mouse, click in one corner of your desired sector
-;  and move the cursor to the opposite corner.  The  sector is defined in
-;  increasing longitude.  If you move against the longitude direction,
-;  the sector defined runs from the first clicked position all the way
-;  around the planet to your current position.  In this example,
-;  left to right is the direction of increasing longitude.  The chosen
-;  sector is then calculated using pg_profile_ring with the /outline
-;  keyword.  This outline is then drawn with pg_draw.  Since the routine
-;  pg_profile_ring can only handle a single ring, the first ring
-;  descriptor (rd[0]) is passed.
-;
-;-------------------------------------------------------------------------
-
-outline_ps = pg_ring_sector(cd=cd, dkx=rd[0], gbx=pd)
-
-pg_draw, outline_ps, col=ctgreen()
-
-;-------------------------------------------------------------------------
-;
-;                     Plotting ring sector plots
-;
-;  Below is the code for two different types of plots using pg_profile_ring.
-;  Radial (default) and longitudinal (/azimuthal) interpolated plots.
-;  The calculated profile is then plotted in a new window.
-;
-;-------------------------------------------------------------------------
-
-; Radial scan
-dd_prof = pg_profile_ring(dd, cd=cd, dkx=rd[0], gbx=pd, outline_ps, profile=profile)
-window, /free, xs=500, ys=300
-plot, profile[0,*], profile[1,*]
-
-; Longitudinal scan
-dd_prof = pg_profile_ring(dd, cd=cd, dkx=rd[0], gbx=pd, outline_ps, /azimuthal, profile=profile)
-window, /free, xs=500, ys=300
-plot, profile[0,*], profile[1,*]
 
 ;=========================================================================
 ;
@@ -448,8 +295,5 @@ plot, profile[0,*], profile[1,*]
 ;  header.
 ;
 ;-------------------------------------------------------------------------
-
-pg_put_rings, dd, od=gd.cd, rd=rd
-pg_put_planets, dd, od=gd.cd, pd=pd
 pg_put_cameras, dd, gd=gd
-nv_write, 'data/c1138223_nv.gem', dd
+dat_write, 'data/c1138223_nv.gem', dd

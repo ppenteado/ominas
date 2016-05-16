@@ -6,7 +6,7 @@ function grim_get_n_colors, grim_data, plane=plane, type=type
 
  if(NOT keyword_set(grim_data)) then grim_data = grim_get_data(plane=plane)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
- type = nv_type(plane.dd)
+ type = dat_type(plane.dd)
 
  return, grim_n_colors(type)
 end
@@ -47,7 +47,7 @@ function grim_get_plane_by_xy, grim_data, xy
 
  for i=0, nplanes-1 do $
   begin
-   im = nv_data(planes[i].dd)		; shouldn't do this
+   im = dat_data(planes[i].dd)		; shouldn't do this
    w = where(im NE 0)
    ww = xy_to_w(im, round(xy))
 
@@ -163,11 +163,11 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
                     cd=cd, bx=bx, sund=sund, md=md, ddmap=dd_map, map=map, $
                     pht=plane.render_pht_min, $
                     sample=plane.render_sample, $
-                    image_ps=image_pts)
+                    image_ptd=image_pts)
 
  
  image_pts = reform(image_pts, 2, n_elements(map), /over)
- nv_set_data, plane.dd, map
+ dat_set_data, plane.dd, map
 end
 ;=============================================================================
 
@@ -182,7 +182,7 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
  ctmod, top=top
- dim = nv_dim(plane.dd)
+ dim = dat_dim(plane.dd)
 
  ;---------------------------------------
  ; get all visible planes
@@ -222,8 +222,8 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
    ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
-   _im = nv_data(planes[i].dd, sample=data_xy)
-   max = nv_max(plane.dd)
+   _im = dat_data(planes[i].dd, sample=data_xy)
+   max = dat_max(plane.dd)
 
 
    ; - - - - - - - - - - - - - - -
@@ -357,7 +357,7 @@ pro grim_display_image, grim_data, data, plane=plane, $
        min=min, max=max, home=home, draw_pixmap=draw_pixmap, current=current, no_copy=no_copy
 
 
- dim = nv_dim(plane.dd)
+ dim = dat_dim(plane.dd)
 
  ;-------------------------------
  ; set tvim coordinate system
@@ -462,7 +462,7 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
 
  for i=0, nplanes-1 do $
   begin
-   if(NOT keyword_set(_data)) then data = nv_data(planes[i].dd) $
+   if(NOT keyword_set(_data)) then data = dat_data(planes[i].dd) $
    else data = _data
 
    ;---------------------------------------
@@ -1050,7 +1050,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ;-----------------------------------
  ; update undo/redo sensitivity
  ;-----------------------------------
- nhist = nv_nhist(plane.dd)
+ nhist = dat_nhist(plane.dd)
  sens = nhist GT 1
  widget_control, grim_data.undo_button, sensitive=sens
  widget_control, grim_data.undo_menu_id, sensitive=sens
@@ -1085,7 +1085,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ;-----------------------------------
  if(widget_info(grim_data.header_text, /valid)) then $
   begin
-   widget_control, grim_data.header_text, set_value=nv_header(plane.dd)
+   widget_control, grim_data.header_text, set_value=dat_header(plane.dd)
    widget_control, grim_data.header_base, tlb_set_title=grim_title(plane)
   end
 

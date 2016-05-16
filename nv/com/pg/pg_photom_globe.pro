@@ -35,7 +35,7 @@
 ;	gd:	Generic descriptor.  If present, cd and gbx are taken from 
 ;		here if contained.
 ;
-; 	outline_ps:	points_struct with image points outlining the 
+; 	outline_ptd:	POINT with image points outlining the 
 ;			region of the image to correct.  To correct the entire
 ;			planet, this input could be generated using pg_limb(). 
 ;			If this keyword is not given, the entire image is used.
@@ -80,7 +80,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_photom_globe, dd, outline_ps=outline_ps, $
+function pg_photom_globe, dd, outline_ptd=outline_ptd, $
                   cd=cd, gbx=gbx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
@@ -124,7 +124,7 @@ function pg_photom_globe, dd, outline_ps=outline_ps, $
  ;---------------------------------------
  ; dereference the data descriptor 
  ;---------------------------------------
- image = nv_data(dd)
+ image = dat_data(dd)
  s = cam_size(cd)
  xsize = s[0] & ysize = s[1]
 
@@ -134,9 +134,9 @@ function pg_photom_globe, dd, outline_ps=outline_ps, $
  ;---------------------------------------
  ; find relevant image points 
  ;---------------------------------------
- if(keyword_set(outline_ps)) then $
+ if(keyword_set(outline_ptd)) then $
   begin
-   p = ps_points(outline_ps)
+   p = pnt_points(outline_ptd)
    p = poly_rectify(p)
    indices = polyfillv(p[0,*], p[1,*], xsize, ysize)
   end $
@@ -183,7 +183,7 @@ function pg_photom_globe, dd, outline_ps=outline_ps, $
  ;---------------------------------------
  if(keyword_set(overwrite)) then dd_pht = dd $
  else dd_pht = nv_clone(dd)
- nv_set_data, dd_pht, new_image
+ dat_set_data, dd_pht, new_image
 
  ;---------------------------------------
  ; fill output arrays

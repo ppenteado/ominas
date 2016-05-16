@@ -90,7 +90,7 @@
 function gll_spice_cameras, dd, ref, pos=pos, constants=constants, $
           n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
 
  ;-------------------------------------------------------------------
  ; instrument params
@@ -103,7 +103,7 @@ function gll_spice_cameras, dd, ref, pos=pos, constants=constants, $
  inst= -77001l
  fn = 'gll_cmat_to_orient_ssi'
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  ;----------------------------
  ; time
@@ -111,7 +111,7 @@ function gll_spice_cameras, dd, ref, pos=pos, constants=constants, $
  if(NOT keyword_set(time)) then $
   begin
    time = gll_spice_time(label, dt=dt, status=status)
-   if(status NE 0) then return, ptr_new()
+   if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    cam_time = time + dt
   end $
@@ -179,14 +179,14 @@ function gll_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  if(keyword__set(label)) then $
   begin
    if(NOT keyword__set(time)) then $
     begin
      time = gll_spice_time(label, dt=dt, status=status)
-     if(status NE 0) then return, ptr_new()
+     if(status NE 0) then return, obj_new()
      time = spice_str2et(time)
      plt_time = time + dt
     end $
@@ -212,12 +212,12 @@ end
 function gll_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
                    status=status, time=time, constants=constants, obs=obs
 
- label = nv_header(dd)
+ label = dat_header(dd)
 
  if(NOT keyword__set(time)) then $
   begin
    time = gll_spice_time(label, dt=dt, status=status)
-   if(status NE 0) then return, ptr_new()
+   if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    sun_time = time + dt
   end $

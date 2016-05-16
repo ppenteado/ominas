@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = orb_input(dd, keyword)
 ;
 ;
@@ -61,9 +61,9 @@
 function oi_clone, _rd
 
  n = n_elements(_rd)
- rd = ptrarr(n)
+ rd = objarr(n)
 
- for i=0, n-1 do if(ptr_valid(_rd[i])) then $
+ for i=0, n-1 do if(obj_valid(_rd[i])) then $
                            rd[i] = nv_clone(_rd[i])
 
  return, rd
@@ -303,7 +303,7 @@ function orb_input, dd, keyword, prefix, $
 
          pos = orb_to_cartesian(dkd, vel=vel)
          
-         _pd = plt_init_descriptors(1, $
+         _pd = plt_create_descriptors(1, $
 		name=cor_name(dkd), $
 		pos=pos, $
 		vel=vel, $

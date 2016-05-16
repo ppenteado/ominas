@@ -37,7 +37,7 @@ print, jj
        field_name = strmid(field_name, 0, strlen(field_name)-1)
 help, field_name
 
-       val = class_get_field(data.xd, field_name)
+       val = cor_get_field(data.xd, field_name)
 
        n = n_elements(val)
        text = widget_info(lab, /sibling)
@@ -68,14 +68,14 @@ function dred_configure_xd, base, xd
 
  sub_base = widget_base(base, /col, map=0)
 
- fields = class_get_field_names(xd)
+ fields = cor_get_field_names(xd)
  nfields = n_elements(fields)
 
  label_size = max(strlen(fields)) + 1
 
  for i=0, nfields-1 do $
   begin
-   field = class_get_field(xd, fields[i])
+   field = cor_get_field(xd, fields[i])
    dim = size(field, /dim)
    if(n_elements(dim) EQ 1) then dim = [dim,1]
    if(dim[0] EQ 0) then dim[0] = 1
@@ -258,7 +258,7 @@ end
 pro dred, xd
 
  if(NOT keyword_set(xd)) then return
- if(NOT ptr_valid(xd[0])) then return
+ if(NOT obj_valid(xd[0])) then return
 
  ;-----------------------------------------------
  ; settings form widget
@@ -284,7 +284,7 @@ pro dred, xd
    field_base = widget_base(base, /frame, /scroll, $
                      resource_name='dred_field_base', map=map)
  
-   classes = rotate(class_get_tree(xd[ii]), 2)
+   classes = rotate(cor_tree(xd[ii]), 2)
    nclasses = n_elements(classes)
 
    class_buttons = lonarr(nclasses)
@@ -293,7 +293,7 @@ pro dred, xd
 
    sub_bases = lonarr(nclasses)
    for i=0, nclasses-1 do $
-    sub_bases[i] = dred_configure_xd(field_base, class_extract(xd[ii], classes[i]))
+    sub_bases[i] = dred_configure_xd(field_base, cor_extract(xd[ii], classes[i]))
 
    ;-----------------------------------------------
    ; save data

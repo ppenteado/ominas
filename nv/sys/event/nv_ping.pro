@@ -43,7 +43,7 @@
 ;-
 ;=============================================================================
 pro nv_ping, xdp, noevent=noevent
-@nv.include
+@core.include
 
  for i=0, n_elements(xdp)-1 do nv_notify, xdp[i], type=0, desc='PING', noevent=noevent
  nv_notify, /flush

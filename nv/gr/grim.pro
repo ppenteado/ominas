@@ -309,7 +309,7 @@
 ;	(2) To create a new grim instance with data from a file of name
 ;	    "filename":
 ;
-;		IDL> dd = nv_read(filename)
+;		IDL> dd = dat_read(filename)
 ;		IDL> grim, dd
 ;
 ;	(3) To give a grim instance a new camera descriptor:
@@ -736,10 +736,10 @@ end
 
 
 ;=============================================================================
-; grim_write_ps
+; grim_write_ptd
 ;
 ;=============================================================================
-pro grim_write_ps, grim_data, filename
+pro grim_write_ptd, grim_data, filename
 
  xoff = 0.5
  yoff = 2.0
@@ -892,7 +892,7 @@ pro grim_write, grim_data
  ;---------------------------------------------
  ; write data
  ;---------------------------------------------
- nv_write, plane.filename, plane.dd, filetype=plane.filetype
+ dat_write, plane.filename, plane.dd, filetype=plane.filetype
 
 end
 ;=============================================================================
@@ -910,7 +910,7 @@ function grim_get_save_filename, grim_data
  if(keyword_set(plane.save_path)) then path = plane.save_path $
  else if(keyword_set(plane.load_path)) then path = plane.load_path
 
- types = strupcase(nv_detect_filetype(/all))
+ types = strupcase(dat_detect_filetype(/all))
  w = where(strupcase(plane.filetype) EQ types)
 
  if(w[0] NE -1) then $
@@ -960,17 +960,17 @@ pro grim_kill_notify, top
    if(keyword_set(*plane.sund_p)) then nv_notify_unregister, *plane.sund_p, 'grim_descriptor_notify'
 
    nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, plane.sund_p, $
-             plane.od_p, plane.active_xd_p, plane.active_overlays_psp,$
-             grim_get_overlay_psp(grim_data, plane=plane, 'limb'), $
-             grim_get_overlay_psp(grim_data, plane=plane, 'ring'), $
-             grim_get_overlay_psp(grim_data, plane=plane, 'terminator'), $
-             grim_get_overlay_psp(grim_data, plane=plane, 'star'), $
-             grim_get_overlay_psp(grim_data, plane=plane, 'station'), $
-             grim_get_overlay_psp(grim_data, plane=plane, 'array'), $
-             grim_get_overlay_psp(grim_data, plane=plane, 'planet_grid'), $
-             grim_get_overlay_psp(grim_data, plane=plane, 'ring_grid'), $
-             grim_get_overlay_psp(grim_data, plane=plane, 'planet_center'), $
-             plane.user_ps_tlp]
+             plane.od_p, plane.active_xd_p, plane.active_overlays_ptdp,$
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'limb'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'ring'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'terminator'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'star'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'station'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'array'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_grid'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'ring_grid'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_center'), $
+             plane.user_ptd_tlp]
   end
 
  nv_ptr_free, [grim_data.rf_callbacks_p, grim_data.rf_callbacks_data_pp, $
@@ -1006,7 +1006,7 @@ pro grim_load_files, grim_data, filenames, load_path=load_path
  first = 1
  for i=0, nfiles-1 do $
   begin
-   dd = nv_read(filenames[i], /silent, nhist=grim_data.nhist, $
+   dd = dat_read(filenames[i], /silent, nhist=grim_data.nhist, $
             maintain=grim_data.maintain, compress=grim_data.compress, extensions=grim_data.extensions)
    if(keyword_set(dd)) then $
     begin
@@ -1034,7 +1034,7 @@ pro grim_load_files, grim_data, filenames, load_path=load_path
  ;------------------------------------
  ; set initial zoom and display image
  ;------------------------------------
- dim = nv_dim(dd)
+ dim = dat_dim(dd)
  geom = widget_info(grim_data.draw, /geom)
 
  zoom = double(geom.xsize) / double(dim[0])
@@ -1128,7 +1128,7 @@ pro grim_magnify, grim_data, plane, p_device, data=data
  wset, wnum
  if(keyword_set(data)) then $
   begin
-   dim = nv_dim(plane.dd)
+   dim = dat_dim(plane.dd)
 
    p_data = round(convert_coord(double(p_device[0]), double(p_device[1]), /device, /to_data))
    x0 = p_data[0] - half_size_data
@@ -1307,7 +1307,7 @@ pro grim_edit_header, grim_data
 
  if(NOT widget_info(grim_data.header_text, /valid)) then $
   begin
-   header = nv_header(plane.dd)   
+   header = dat_header(plane.dd)   
    grim_data.header_text = $
                textedit(header, base=base, resource='grim_header', ysize=40)
    grim_data.header_base = base
@@ -1349,10 +1349,10 @@ end
 
 
 ;=============================================================================
-; grim_user_ps_fname
+; grim_user_ptd_fname
 ;
 ;=============================================================================
-function grim_user_ps_fname, grim_data, plane, basename=basename
+function grim_user_ptd_fname, grim_data, plane, basename=basename
 
  if(NOT keyword_set(basename)) then $
   begin
@@ -1360,7 +1360,7 @@ function grim_user_ps_fname, grim_data, plane, basename=basename
    if(NOT keyword_set(basename)) then basename = 'grim-' + strtrim(plane.pn,2)
   end
 
- return, grim_data.workdir + '/' + basename + '.user_ps'
+ return, grim_data.workdir + '/' + basename + '.user_ptd'
 end
 ;=============================================================================
 
@@ -1373,13 +1373,13 @@ end
 pro grim_write_user_points, grim_data, plane, fname=_fname
 
  if(NOT keyword_set(_fname)) then $
-             fname = grim_user_ps_fname(grim_data, plane) $
+             fname = grim_user_ptd_fname(grim_data, plane) $
  else fname = _fname
 
- user_ps = grim_get_user_ps(plane=plane)
+ user_ptd = grim_get_user_ptd(plane=plane)
 
- w = where(ps_valid(user_ps))
- if(w[0] NE -1) then ps_write, fname, user_ps $
+ w = where(pnt_valid(user_ptd))
+ if(w[0] NE -1) then pnt_write, fname, user_ptd $
  else $
   begin
    ff = findfile(fname)
@@ -1415,7 +1415,7 @@ pro grim_write_mask, grim_data, plane, fname=fname
  mask = *plane.mask_p
  if(mask[0] EQ -1) then return
 
- if(mask[0] NE -1) then write_mask, fname, mask, dim=nv_dim(plane.dd) $
+ if(mask[0] NE -1) then write_mask, fname, mask, dim=dat_dim(plane.dd) $
  else $
   begin
    ff = findfile(fname)
@@ -1433,21 +1433,21 @@ end
 ;=============================================================================
 pro grim_read_user_points, grim_data, plane
 
- fname = grim_user_ps_fname(grim_data, plane)
+ fname = grim_user_ptd_fname(grim_data, plane)
 
  ff = (findfile(fname))[0]
- if(keyword_set(ff)) then user_ps = ps_read(ff) $
- else user_ps = 0
+ if(keyword_set(ff)) then user_ptd = pnt_read(ff) $
+ else user_ptd = 0
 
- w = where(ps_valid(user_ps))
+ w = where(pnt_valid(user_ptd))
  if(w[0] NE -1) then $
   begin
-   n = n_elements(user_ps)
+   n = n_elements(user_ptd)
    tags = strarr(n)
 
    for i=0, n-1 do $
     begin
-     tag = cor_name(user_ps[i])
+     tag = cor_name(user_ptd[i])
      tags[i] = tag
     end
 
@@ -1456,7 +1456,7 @@ pro grim_read_user_points, grim_data, plane
      w = where(tags EQ tags[i])
      if(w[0] NE -1) then $
       begin
-       grim_add_user_points, user_ps[w], [tags[i]], plane=plane, /no_refresh
+       grim_add_user_points, user_ptd[w], [tags[i]], plane=plane, /no_refresh
        tags[w] = ''
       end
     end
@@ -1749,10 +1749,10 @@ pro grim_render, grim_data, plane=plane
    new_plane.rendering = 1
    new_plane.dd = nv_clone(plane.dd)
 
-   nv_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn'
+   dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn'
 
-   nv_set_dim_fn, new_plane.dd, 'grim_render_dim_fn'
-   nv_set_dim_fn_data, new_plane.dd, nv_dim(plane.dd)
+   dat_set_dim_fn, new_plane.dd, 'grim_render_dim_fn'
+   dat_set_dim_fn_data, new_plane.dd, dat_dim(plane.dd)
 
    nv_notify_register, new_plane.dd, 'grim_descriptor_notify', scalar_data=grim_data.base
 
@@ -1773,7 +1773,7 @@ pro grim_render, grim_data, plane=plane
  image_pts = (convert_coord(device_pts, /device, /to_data))[0:1,*]
  image_pts = reform(image_pts, 2, !d.x_size,!d.y_size, /over)
 
- nv_set_sampling_fn_data, new_plane.dd, image_pts
+ dat_set_sampling_fn_data, new_plane.dd, image_pts
  grim_set_plane, grim_data, new_plane
  grim_set_data, grim_data, grim_data.base
 
@@ -1800,7 +1800,7 @@ pro grim_smooth, grim_data, plane=plane, box
 
  max = 30
 
- data = double(nv_data(plane.dd))
+ data = double(dat_data(plane.dd))
 
  if(grim_data.type EQ 'plot') then $
   begin
@@ -1843,7 +1843,7 @@ pro grim_smooth, grim_data, plane=plane, box
    data = convol(data, kernel, /center)
   end
 
- nv_set_data, plane.dd, data
+ dat_set_data, plane.dd, data
  
 end
 ;=============================================================================
@@ -1935,7 +1935,7 @@ end
 ;=============================================================================
 pro grim_undo, grim_data, plane
 
- nv_undo, plane.dd
+ dat_undo, plane.dd
 
 end
 ;=============================================================================
@@ -1991,7 +1991,7 @@ end
 ;=============================================================================
 function grim_render_sampling_fn, dd, source_image_pts_sample, source_image_pts_grid
 
- rdim = nv_dim(dd, /true)
+ rdim = dat_dim(dd, /true)
  render_image_pts_grid = gridgen(rdim, /rec, /double)
 
  xx = interpol(render_image_pts_grid[0,*,0], source_image_pts_grid[0,*,0], source_image_pts_sample[0,*])
@@ -2082,20 +2082,20 @@ pro grim_draw_event, event
    yy = str_pad(strtrim(p[1],2), 6)
 
    dn = ''
-   dim = nv_dim(plane.dd)
+   dim = dat_dim(plane.dd)
    if(n_elements(dim) EQ 1) then dim = [dim, 1]
 
    if(grim_data.type EQ 'plot') then $
     begin
      if((p[0] GE 0) AND (p[0] LT dim[1])) then $
-                               dn = nv_data(plane.dd, sample=[1,p[0]], /nd)
+                               dn = dat_data(plane.dd, sample=[1,p[0]], /nd)
     end $
    else $
     begin
      p = round(p)
      if((p[0] GE 0) AND (p[0] LT dim[0]) AND $
         (p[1] GE 0) AND (p[1] LT dim[1])) then $
-                                   dn = nv_data(plane.dd, sample=p, /nd)
+                                   dn = dat_data(plane.dd, sample=p, /nd)
     end
 
    if(size(dn, /type) EQ 1) then dn = fix(dn)
@@ -2658,14 +2658,14 @@ pro grim_draw_event, event
               1 : $
                 begin
                  grim_activate_select, $
-                     plane, [event.x, event.y], clicks=event.clicks, ps=ps
+                     plane, [event.x, event.y], clicks=event.clicks, ptd=ptd
                  grim_refresh, grim_data, /noglass;, /no_image, /update
                  pressed = 0
                 end
               4 : $
                 begin
                  grim_activate_select, $
-                    plane, [event.x, event.y], /deactivate, clicks=event.clicks, ps=ps
+                    plane, [event.x, event.y], /deactivate, clicks=event.clicks, ptd=ptd
                  grim_refresh, grim_data, /noglass;, /no_image, /update
                  pressed = 0
                 end
@@ -2953,7 +2953,7 @@ end
 ;
 ; PURPOSE:
 ;	Allows user to load images into new image planes.  The user is 
-;	prompted for filenames and nv_read is used to read each image.
+;	prompted for filenames and dat_read is used to read each image.
 ;	Multiple images may be selected and a new plane is created for
 ;	each image.  On X-windows systems, multiple files may be selected 
 ;	either by dragging across the filenames or by holding down the 
@@ -3080,7 +3080,7 @@ end
 ;	Allows user to save the current image plane and geometry.  If there 
 ;	is no current filename for the current plane, then the user is 
 ;	prompted for one.  All descriptors are written through the translators
-;	and then nv_write is used to write the data file.  Specific behavior 
+;	and then dat_write is used to write the data file.  Specific behavior 
 ;	is governed by OMINAS' configuration.
 ;
 ;
@@ -3176,12 +3176,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_file_save_user_ps_event
+;	grim_menu_file_save_user_ptd_event
 ;
 ;
 ; PURPOSE:
 ;	Writes user points for the current plane to a file called
-;	[image name].user_ps 
+;	[image name].user_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3193,13 +3193,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_file_save_user_ps_help_event, event
+pro grim_menu_file_save_user_ptd_help_event, event
  text = ''
- nv_help, 'grim_menu_file_save_user_ps_event', cap=text
+ nv_help, 'grim_menu_file_save_user_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_file_save_user_ps_event, event
+pro grim_menu_file_save_user_ptd_event, event
 
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
@@ -3209,7 +3209,7 @@ pro grim_menu_file_save_user_ps_event, event
  ;------------------------------------------------------
  ; get filename
  ;------------------------------------------------------
- fname = pickfiles(default=grim_user_ps_fname(grim_data, plane), $
+ fname = pickfiles(default=grim_user_ptd_fname(grim_data, plane), $
                             title='Select filename for saving', /one)
 
  ;------------------------------------------------------
@@ -3226,12 +3226,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_file_save_all_user_ps_event
+;	grim_menu_file_save_all_user_ptd_event
 ;
 ;
 ; PURPOSE:
 ;	Writes user points for all planes to files called
-;	[image name].user_ps 
+;	[image name].user_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3243,13 +3243,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_file_save_all_user_ps_help_event, event
+pro grim_menu_file_save_all_user_ptd_help_event, event
  text = ''
- nv_help, 'grim_menu_file_save_all_user_ps_event', cap=text
+ nv_help, 'grim_menu_file_save_all_user_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_file_save_all_user_ps_event, event
+pro grim_menu_file_save_all_user_ptd_event, event
 
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
@@ -3271,12 +3271,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_file_load_user_ps_event
+;	grim_menu_file_load_user_ptd_event
 ;
 ;
 ; PURPOSE:
 ;	loads user points for the current plane from a file called
-;	[image name].user_ps 
+;	[image name].user_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3288,13 +3288,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_file_load_user_ps_help_event, event
+pro grim_menu_file_load_user_ptd_help_event, event
  text = ''
- nv_help, 'grim_menu_file_load_user_ps_event', cap=text
+ nv_help, 'grim_menu_file_load_user_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_file_load_user_ps_event, event
+pro grim_menu_file_load_user_ptd_event, event
 
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
@@ -3315,12 +3315,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_file_load_all_user_ps_event
+;	grim_menu_file_load_all_user_ptd_event
 ;
 ;
 ; PURPOSE:
 ;	Loads user points for all planes from files called
-;	[image name].user_ps 
+;	[image name].user_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3332,13 +3332,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_file_load_all_user_ps_help_event, event
+pro grim_menu_file_load_all_user_ptd_help_event, event
  text = ''
- nv_help, 'grim_menu_file_load_all_user_ps_event', cap=text
+ nv_help, 'grim_menu_file_load_all_user_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_file_load_all_user_ps_event, event
+pro grim_menu_file_load_all_user_ptd_event, event
 
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
@@ -3360,12 +3360,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_file_save_tie_ps_event
+;	grim_menu_file_save_tie_ptd_event
 ;
 ;
 ; PURPOSE:
 ;	Writes tie points for the current plane to a file called
-;	[image name].tie_ps 
+;	[image name].tie_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3377,13 +3377,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_file_save_tie_ps_help_event, event
+pro grim_menu_file_save_tie_ptd_help_event, event
  text = ''
- nv_help, 'grim_menu_file_save_tie_ps_event', cap=text
+ nv_help, 'grim_menu_file_save_tie_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_file_save_tie_ps_event, event
+pro grim_menu_file_save_tie_ptd_event, event
 
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
@@ -3411,12 +3411,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_file_save_all_tie_ps_event
+;	grim_menu_file_save_all_tie_ptd_event
 ;
 ;
 ; PURPOSE:
 ;	Writes tie points for all planes to files called
-;	[image name].tie_ps 
+;	[image name].tie_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3428,13 +3428,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_file_save_all_tie_ps_help_event, event
+pro grim_menu_file_save_all_tie_ptd_help_event, event
  text = ''
- nv_help, 'grim_menu_file_save_all_tie_ps_event', cap=text
+ nv_help, 'grim_menu_file_save_all_tie_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_file_save_all_tie_ps_event, event
+pro grim_menu_file_save_all_tie_ptd_event, event
 
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
@@ -3456,12 +3456,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_file_load_tie_ps_event
+;	grim_menu_file_load_tie_ptd_event
 ;
 ;
 ; PURPOSE:
 ;	loads tie points for the current plane from a file called
-;	[image name].tie_ps 
+;	[image name].tie_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3473,13 +3473,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_file_load_tie_ps_help_event, event
+pro grim_menu_file_load_tie_ptd_help_event, event
  text = ''
- nv_help, 'grim_menu_file_load_tie_ps_event', cap=text
+ nv_help, 'grim_menu_file_load_tie_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_file_load_tie_ps_event, event
+pro grim_menu_file_load_tie_ptd_event, event
 
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
@@ -3506,12 +3506,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_file_load_all_tie_ps_event
+;	grim_menu_file_load_all_tie_ptd_event
 ;
 ;
 ; PURPOSE:
 ;	Loads tie points for all planes from files called
-;	[image name].tie_ps 
+;	[image name].tie_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3523,13 +3523,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_file_load_all_tie_ps_help_event, event
+pro grim_menu_file_load_all_tie_ptd_help_event, event
  text = ''
- nv_help, 'grim_menu_file_load_all_tie_ps_event', cap=text
+ nv_help, 'grim_menu_file_load_all_tie_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_file_load_all_tie_ps_event, event
+pro grim_menu_file_load_all_tie_ptd_event, event
 
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
@@ -3560,7 +3560,7 @@ end
 ;
 ; PURPOSE:
 ;	Writes curves for the current plane to a file called
-;	[image name].curve_ps 
+;	[image name].curve_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3611,7 +3611,7 @@ end
 ;
 ; PURPOSE:
 ;	Writes curves for all planes to files called
-;	[image name].curve_ps 
+;	[image name].curve_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3656,7 +3656,7 @@ end
 ;
 ; PURPOSE:
 ;	loads curves for the current plane from a file called
-;	[image name].curve_ps 
+;	[image name].curve_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3706,7 +3706,7 @@ end
 ;
 ; PURPOSE:
 ;	Loads curves for all planes from files called
-;	[image name].curve_ps 
+;	[image name].curve_ptd 
 ;
 ;
 ; CATEGORY:
@@ -3960,7 +3960,7 @@ end
 ;=============================================================================
 pro grim_menu_file_save_ps_help_event, event
  text = ''
- nv_help, 'grim_menu_file_save_ps_event', cap=text
+ nv_help, 'grim_menu_file_save_ptd_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -3982,7 +3982,7 @@ pro grim_menu_file_save_ps_event, event
  ; write postscript file
  ;------------------------------------------------------
  widget_control, grim_data.draw, /hourglass
- grim_write_ps, grim_data, filename[0]
+ grim_write_ptd, grim_data, filename[0]
 
 end
 ;=============================================================================
@@ -4684,9 +4684,9 @@ pro grim_menu_plane_coregister_event, event
  ; build descriptor arrays
  ;------------------------------------------------
  n = n_elements(planes)
- cd = ptrarr(n)
- bx = ptrarr(n)
- dd = ptrarr(n)
+ cd = objarr(n)
+ bx = objarr(n)
+ dd = objarr(n)
 
  for i=0, n-1 do $
   if(keyword_set(*planes[i].active_xd_p)) then $
@@ -4696,7 +4696,7 @@ pro grim_menu_plane_coregister_event, event
     bx[i] = (*planes[i].active_xd_p)[0]
    end
 
- w = where(ptr_valid(dd))
+ w = where(obj_valid(dd))
  if(w[0] EQ -1)then $
   begin
    grim_message, 'There are no active overlays.'
@@ -5217,7 +5217,7 @@ pro grim_menu_plane_propagate_tiepoints_event, event
  pn = plane.pn
 
 
- tie_pts = pg_points(plane.tiepoints_ps)
+ tie_pts = pnt_points(plane.tiepoints_ptd)
  if(NOT keyword_set(tie_pts)) then return
  npts = n_elements(tie_pts)/2
  ii = grim_get_tiepoint_indices(grim_data, plane=plane)
@@ -5235,7 +5235,7 @@ pro grim_menu_plane_propagate_tiepoints_event, event
   end
 
  pd = get_primary(cd, *plane.pd_p)
- name = get_core_name(pd)
+ name = cor_name(pd)
 
  tie_pts = reform(tie_pts, 2, 1, npts, /over)
 
@@ -5254,13 +5254,13 @@ pro grim_menu_plane_propagate_tiepoints_event, event
     if(keyword_set(cdi)) then $
      begin
       grim_load_descriptors, grim_data, class='planet', plane=planes[i]
-      w = where(get_core_name(*planes[i].pd_p) EQ name)
+      w = where(cor_name(*planes[i].pd_p) EQ name)
       if(w[0] NE -1) then $
        begin
         pdi = (*planes[i].pd_p)[w[0]]
 
         dt = bod_time(pdi) - bod_time(pd)
-        dkdt = ptrarr(npts)
+        dkdt = objarr(npts)
         r = dblarr(1,3,npts)
         for j=0, npts-1 do $
          begin
@@ -5325,7 +5325,7 @@ pro grim_menu_data_adjust_event, event
  ;------------------------------------------------
  ; get data array
  ;------------------------------------------------
- data = nv_data(plane.dd)
+ data = dat_data(plane.dd)
 
  ;------------------------------------------------
  ; adjust the data
@@ -5337,7 +5337,7 @@ pro grim_menu_data_adjust_event, event
  ;------------------------------------------------
  ; save modified data array
  ;------------------------------------------------
-; nv_set_data, plane.dd, data
+; dat_set_data, plane.dd, data
 
  
 end
@@ -6824,8 +6824,8 @@ pro grim_menu_view_frame_active_event, event
 
  widget_control, grim_data.draw, /hourglass
 
- ps = grim_get_all_active_overlays(grim_data, plane=plane)
- grim_frame_overlays, grim_data, plane, ps
+ ptd = grim_get_all_active_overlays(grim_data, plane=plane)
+ grim_frame_overlays, grim_data, plane, ptd
 
  grim_refresh, grim_data
 
@@ -10184,15 +10184,15 @@ function grim_menu_desc, user_modes=user_modes
            '0\Save                \+*grim_menu_file_save_event', $
            '0\Save As             \+*grim_menu_file_save_as_event', $
            '0\--------------------\+grim_menu_delim_event', $ 
-           '0\Save User Points    \+*grim_menu_file_save_user_ps_event', $
-           '0\Save All User Points\+*grim_menu_file_save_all_user_ps_event', $
-           '0\Load User Points    \+*grim_menu_file_load_user_ps_event', $
-           '0\Load All User Points\+*grim_menu_file_load_all_user_ps_event', $
+           '0\Save User Points    \+*grim_menu_file_save_user_ptd_event', $
+           '0\Save All User Points\+*grim_menu_file_save_all_user_ptd_event', $
+           '0\Load User Points    \+*grim_menu_file_load_user_ptd_event', $
+           '0\Load All User Points\+*grim_menu_file_load_all_user_ptd_event', $
            '0\--------------------\grim_menu_delim_event', $ 
-           '0\Save Tie Points     \*grim_menu_file_save_tie_ps_event', $
-           '0\Save All Tie Points \*grim_menu_file_save_all_tie_ps_event', $
-           '0\Load Tie Points     \*grim_menu_file_load_tie_ps_event', $
-           '0\Load All Tie Points \*grim_menu_file_load_all_tie_ps_event', $
+           '0\Save Tie Points     \*grim_menu_file_save_tie_ptd_event', $
+           '0\Save All Tie Points \*grim_menu_file_save_all_tie_ptd_event', $
+           '0\Load Tie Points     \*grim_menu_file_load_tie_ptd_event', $
+           '0\Load All Tie Points \*grim_menu_file_load_all_tie_ptd_event', $
            '0\--------------------\grim_menu_delim_event', $ 
            '0\Save Curves         \*grim_menu_file_save_curves_event', $
            '0\Save All Curves     \*grim_menu_file_save_all_curves_event', $
@@ -10388,7 +10388,7 @@ pro grim_get_window_size, grim_data, xsize=xsize, ysize=ysize
 
  plane = grim_get_plane(grim_data)
 
- dim = nv_dim(plane.dd)
+ dim = dat_dim(plane.dd)
  if(n_elements(dim) EQ 2) then $
   begin
    xs = double(dim[0])*grim_data.zoom
@@ -10957,7 +10957,7 @@ ratio = 0.75
  xsize_max = screen_size[0] * ratio
  ysize_max = screen_size[1] * ratio
 
- dim = nv_dim(dd)
+ dim = dat_dim(dd)
  if(n_elements(dim) EQ 1) then dim = [dim, 1]
 
  sx = double(dim[0])
@@ -11002,19 +11002,19 @@ pro grim_initial_framing, grim_data, frame
  for i=0, n_elements(planes)-1 do $
   begin
    name = grim_parse_overlay(frame[0], obj_name)
-   ps = grim_get_all_overlays(grim_data, plane=planes[i], name=name)
-   if(NOT keyword_set(ps)) then $
-        grim_initial_overlays, grim_data, plane=planes[i], frame[0], /temp, ps=ps
+   ptd = grim_get_all_overlays(grim_data, plane=planes[i], name=name)
+   if(NOT keyword_set(ptd)) then $
+        grim_initial_overlays, grim_data, plane=planes[i], frame[0], /temp, ptd=ptd
 
    if(keyword_set(obj_name)) then $
     begin
-     obj_names = cor_name(ps)
+     obj_names = cor_name(ptd)
      w = where(obj_names[0,*] EQ obj_name[0])
      if(w[0] EQ -1) then return
-     ps = ps[*,w]
+     ptd = ptd[*,w]
     end
 
-   if(keyword_set(ps)) then grim_frame_overlays, grim_data, planes[i], ps
+   if(keyword_set(ptd)) then grim_frame_overlays, grim_data, planes[i], ptd
    tvim, get_info=tvd, /inherit, /silent
    if(min(tvd.zoom) LT z) then $
     begin
@@ -11035,7 +11035,7 @@ end
 ;
 ;=============================================================================
 pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
-    only=only, temp=temp, ps=ps
+    only=only, temp=temp, ptd=ptd
 
  widget_control, /hourglass
 
@@ -11076,8 +11076,8 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
     grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
 
 ;print, i, j, ' ', name, ' ', obj_name
-    grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ps=_ps
-    if(keyword_set(_ps)) then ps = append_array(ps, _ps[*])
+    grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
+    if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
    end
 
 end
@@ -11101,7 +11101,7 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
  ;-----------------------------------
  while(1) do $
   begin
-   if(nv_valid_descriptor(arg_ps[0])) then arg = arg_ps[0] $
+   if(dat_valid_descriptor(arg_ps[0])) then arg = arg_ps[0] $
    else arg = *arg_ps[0]
 
 ;   arg = *arg_ps[0]
@@ -11115,10 +11115,10 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
    ;- - - - - - - - - - - - - - - -
    if(type EQ 7) then $
     begin
-     _dd = nv_read(arg, maintain=maintain, compress=compress, extensions=extensions, nhist=nhist)
+     _dd = dat_read(arg, maintain=maintain, compress=compress, extensions=extensions, nhist=nhist)
 
 ;     if(keyword_set(nhist)) then $
-;             for i=0, n_elements(dd)-1 do nv_set_nhist, dd[i], nhist
+;             for i=0, n_elements(dd)-1 do dat_set_nhist, dd[i], nhist
 
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ; If any dd's don't have 2 dimensions, then they must be expanded
@@ -11129,10 +11129,10 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
     for i=0, n_dd-1 do $
      begin
       __dd = _dd[i]
-      if(n_elements(nv_dim(_dd[i])) NE 2) then $
+      if(n_elements(dat_dim(_dd[i])) NE 2) then $
        begin
-        arg = nv_data(__dd)
-        nv_free, __dd & __dd = nv_ptr_new()
+        arg = dat_data(__dd)
+        nv_free, __dd & __dd = obj_new()
         arg_ps = nv_ptr_new(arg)
         grim_get_args_recurse, arg_ps, dd=__dd, grnum=grnum, xarr, yarr
         nv_ptr_free, arg_ps
@@ -11142,32 +11142,32 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
      end
    end $
 
-   else if(type EQ 10) then $
+   else if(type EQ 11) then $
     begin
      ;- - - - - - - - - - - - - - - -
      ; dd
      ;- - - - - - - - - - - - - - - -
-     if(nv_valid_descriptor(arg)) then $
+     if(dat_valid_descriptor(arg)) then $
       begin
         _dd = arg
         n_dd = n_elements(_dd)
         for i=0, n_dd-1 do $
          begin
-          arr = nv_data(_dd[i])
+          arr = dat_data(_dd[i])
 
 ;          if(n_elements(size(arr, /dim)) EQ 1) then $
-          if(n_elements(nv_dim(_dd[i])) EQ 1) then $
+          if(n_elements(dat_dim(_dd[i])) EQ 1) then $
            begin
             grim_suspend_events
             yarr = arr
             xarr = dindgen(n_elements(yarr))
-            nv_set_data, _dd[i], [transpose(xarr), transpose(yarr)]
+            dat_set_data, _dd[i], [transpose(xarr), transpose(yarr)]
             grim_resume_events
            end
 
-          if(keyword_set(nhist)) then nv_set_nhist, _dd[i], nhist
-          if(keyword_set(maintain)) then nv_set_maintain, _dd[i], maintain
-          if(keyword_set(compress)) then nv_set_compress, _dd[i], compress
+          if(keyword_set(nhist)) then dat_set_nhist, _dd[i], nhist
+          if(keyword_set(maintain)) then dat_set_maintain, _dd[i], maintain
+          if(keyword_set(compress)) then dat_set_compress, _dd[i], compress
          end
 
         dd = append_array(dd, _dd)
@@ -11185,14 +11185,14 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
    ;- - - - - - - - - - - - - - - -
    ; grnum
    ;- - - - - - - - - - - - - - - -
-   else if(ndim EQ 0) then grnum = arg $
+   else if((ndim EQ 1) AND (dim[0] EQ 0)) then grnum = arg $
 
    ;- - - - - - - - - - - - - - - -
    ; full data array
    ;- - - - - - - - - - - - - - - -
    else if(ndim EQ 2) then $
     begin
-     _dd = nv_init_descriptor(data=arg, nhist=nhist, maintain=maintain, compress=compress)
+     _dd = dat_create_descriptors(1, data=arg, nhist=nhist, maintain=maintain, compress=compress)
      dd = append_array(dd, _dd)
     end $
 
@@ -11204,7 +11204,7 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
      nn = dim[2]
      for i=0, nn-1 do $
       begin
-       _dd = nv_init_descriptor(data=arg[*,*,i], nhist=nhist, maintain=maintain, compress=compress)
+       _dd = dat_create_descriptors(1, data=arg[*,*,i], nhist=nhist, maintain=maintain, compress=compress)
        dd = append_array(dd, _dd)
       end
     end $
@@ -11216,7 +11216,7 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
     begin
      yarr = arg
      xarr = dindgen(n_elements(yarr))
-     _dd = nv_init_descriptor(data=[transpose(xarr), transpose(yarr)], nhist=nhist)
+     _dd = dat_create_descriptors(1, data=[transpose(xarr), transpose(yarr)], nhist=nhist)
      dd = append_array(dd, _dd)
     end $
    else grim_message, 'Invalid argument.'
@@ -11265,7 +11265,7 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
  type = 'image'
  if(keyword_set(dd)) then $
   begin 
-   dim = nv_dim(dd[0])
+   dim = dat_dim(dd[0])
    if(dim[0] EQ 2) then type = 'plot'
   end
 
@@ -11275,9 +11275,9 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
  ;---------------------------------------------------
  if(keyword_set(plot) AND keyword_set(xzero)) then $
   begin
-   data = nv_data(dd)
+   data = dat_data(dd)
    data[0,*] = data[0,*] - data[0,0]
-   nv_set_data, dd, data
+   dat_set_data, dd, data
   end
 
 end
@@ -11339,7 +11339,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	visibility=visibility, render_sample=render_sample, $
 	render_pht_min=render_pht_min
 
- if(keyword_set(ndd)) then nv_set_ndd, ndd
+ if(keyword_set(ndd)) then dat_set_ndd, ndd
 
  if(NOT keyword_set(menu_extensions)) then $
                                      menu_extensions = 'grim_default_menus' $
@@ -11421,18 +11421,18 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
     begin
      if(NOT keyword_set(xsize)) then xsize = 512
      if(NOT keyword_set(ysize)) then ysize = 512
-     dd = nv_init_descriptor(data=grim_blank(xsize, ysize), $
+     dd = dat_create_descriptors(1, data=grim_blank(xsize, ysize), $
           name='BLANK', nhist=nhist, maintain=maintain, compress=compress)
     end $
    else $
     for i=0, n_elements(dd)-1 do $
-     if(NOT keyword_set(nv_dim(dd[i]))) then $
+     if(NOT keyword_set(dat_dim(dd[i]))) then $
       begin
        if(NOT keyword_set(xsize)) then xsize = 512
        if(NOT keyword_set(ysize)) then ysize = 512
-       nv_set_maintain, dd[i], 0
-       nv_set_compress, dd[i], compress
-       nv_set_data, dd[i], grim_blank(xsize, ysize) 
+       dat_set_maintain, dd[i], 0
+       dat_set_compress, dd[i], compress
+       dat_set_data, dd[i], grim_blank(xsize, ysize) 
       end
 
    if(NOT keyword_set(zoom)) then zoom = grim_get_default_zoom(dd[0])
@@ -11511,7 +11511,19 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 ;                    call_procedure, button_extensions[i]+'_init', grim_data, user_modes[i].data_p
 ;    end
 
- end
+  end
+
+
+ ;======================================================================
+ ; change to new window if specified
+ ;======================================================================
+ if(defined(grnum)) then $
+  begin
+   grim_data = grim_get_data(grnum=grnum)
+   grim_wset, grim_data, /silent
+  end
+
+
 
 
  ;======================================================================

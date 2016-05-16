@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = ring_input(dd, keyword)
 ;
 ;
@@ -70,9 +70,9 @@
 function ri_clone, _rd
 
  n = n_elements(_rd)
- rd = ptrarr(n)
+ rd = objarr(n)
 
- for i=0, n-1 do if(ptr_valid(_rd[i])) then $
+ for i=0, n-1 do if(obj_valid(_rd[i])) then $
                            rd[i] = nv_clone(_rd[i])
 
  return, rd
@@ -248,7 +248,6 @@ function ring_input, dd, keyword, prefix, $
 
      if(continue) then $
       begin
-
        ;- - - - - - - - - - - - - - - - - -
        ; build descriptors
        ;- - - - - - - - - - - - - - - - - -
@@ -270,10 +269,10 @@ function ring_input, dd, keyword, prefix, $
 
        opaque = strupcase(dat.opaque) EQ 'YES'
 
-       dkd_inner = ptrarr(n_rings)
-       dkd_outer = ptrarr(n_rings)
-       dkd_peak = ptrarr(n_rings)
-       dkd_trough = ptrarr(n_rings)
+       dkd_inner = objarr(n_rings)
+       dkd_outer = objarr(n_rings)
+       dkd_peak = objarr(n_rings)
+       dkd_trough = objarr(n_rings)
        kk = 0
        for j=0, n_rings-1 do $
         begin
@@ -289,7 +288,7 @@ function ring_input, dd, keyword, prefix, $
          w2 = where(dat[w].type EQ 'PEAK') 
          w3 = where(dat[w].type EQ 'TROUGH') 
 
-         dkd_inner[j] = (dkd_outer[j] = (dkd_peak[j] = (dkd_trough[j] = nv_ptr_new())))
+         dkd_inner[j] = (dkd_outer[j] = (dkd_peak[j] = (dkd_trough[j] = obj_new())))
 
          ;................................ 
          ; inner edge
@@ -412,15 +411,14 @@ function ring_input, dd, keyword, prefix, $
           end
         end
 
-
        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        ; record which rings had only one edge, and fix them up so
        ; that the following calculations are valid
        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       xx_inner = where(ptr_valid(dkd_inner) EQ 0)
-       xx_outer = where(ptr_valid(dkd_outer) EQ 0)
-       xx_peak = where(ptr_valid(dkd_peak) EQ 0)
-       xx_trough = where(ptr_valid(dkd_trough) EQ 0)
+       xx_inner = where(obj_valid(dkd_inner) EQ 0)
+       xx_outer = where(obj_valid(dkd_outer) EQ 0)
+       xx_peak = where(obj_valid(dkd_peak) EQ 0)
+       xx_trough = where(obj_valid(dkd_trough) EQ 0)
 
        if(xx_inner[0] NE -1) then dkd_inner[xx_inner] = dkd_outer[xx_inner]
        if(xx_outer[0] NE -1) then dkd_outer[xx_outer] = dkd_inner[xx_outer]
@@ -456,8 +454,6 @@ function ring_input, dd, keyword, prefix, $
          ndkd = n_elements(dkd)
          for j=0, ndkd-1 do $
           begin
-;print, j
-;help, dkd[j]
            sma = tr( [tr((dsk_sma(dkd[j]))[*,0]), tr((dsk_sma(dkd_outer[j]))[*,0])] )
            dsk_set_sma, dkd[j], sma
            ecc = tr( [tr((dsk_ecc(dkd[j]))[*,0]), tr((dsk_ecc(dkd_outer[j]))[*,0])] )
@@ -465,7 +461,6 @@ function ring_input, dd, keyword, prefix, $
            bod_set_pos, dkd[j], bod_pos(pds[i])
            bod_set_opaque, dkd[j], opaque[j]
           end
-;stop
 
          dkds = append_array(dkds, dkd)
          primaries = append_array(primaries, make_array(ndkd, val=cor_name(pds[i])))
@@ -507,7 +502,7 @@ function ring_input, dd, keyword, prefix, $
  ;----------------------------------------------
  n_obj = n_elements(dkds)
 
- dkdts = ptrarr(n_obj)
+ dkdts = objarr(n_obj)
  for i=0, n_obj-1 do $
   dkdts[i] = rng_evolve(dkds[i], bod_time(ppds[i]) - bod_time(dkds[i]))
  nv_free, dkdx
@@ -515,7 +510,7 @@ function ring_input, dd, keyword, prefix, $
  ;------------------------------------------------------------------
  ; make ring descriptors
  ;------------------------------------------------------------------
- rds = rng_init_descriptors(n_obj, $
+ rds = rng_create_descriptors(n_obj, $
 		primary=primaries, $
 		name=cor_name(dkdts), $
 		opaque=bod_opaque(dkdts), $

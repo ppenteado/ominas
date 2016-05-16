@@ -67,13 +67,13 @@ pro pg_shift, dd, dxy, cd=cd, gd=gd
  ;-----------------------------------------------
  for i=0, n-1 do $ 
   if(max(abs(dxy[*,i] - fix(dxy[*,i]))) GT 0) then $
-   nv_set_data, dd[i], image_shift(nv_data(dd[i]), dxy[0,i], dxy[1,i], cd=cd[i]) $
-  else nv_set_data, dd[i], shift_image(nv_data(dd[i]), -dxy[0,i], -dxy[1,i]) 
+   dat_set_data, dd[i], image_shift(dat_data(dd[i]), dxy[0,i], dxy[1,i], cd=cd[i]) $
+  else dat_set_data, dd[i], shift_image(dat_data(dd[i]), -dxy[0,i], -dxy[1,i]) 
 
  if(keyword_set(cd)) then $
   begin
    cam_reorient, cd, cam_oaxis(cd), -dxy, [0]
-   add_core_task, cd, 'pg_shift' 
+   cor_add_task, cd, 'pg_shift' 
   end
   
  

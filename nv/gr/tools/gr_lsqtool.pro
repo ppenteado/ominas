@@ -51,7 +51,7 @@
 ;	Fix buttons:
 ;		Select fit parameters to fix.  x and y are the image offsets 
 ;		in the repective direction, theta is the rotation about the
-;		center given by the parameter center_psp.  If center_psp
+;		center given by the parameter center_ptdp.  If center_ptdp
 ;		contains no points, then theta is automatically fixed.
 ;
 ;	Fit button:
@@ -283,33 +283,33 @@ end
 
 
 ;=============================================================================
-; grlsq_get_psps
+; grlsq_get_ptdps
 ;
 ;=============================================================================
-function grlsq_get_psps, grim_data, data, lsqd, pds=pds, rds=rds, sds=sds
- psps = nv_ptr_new()
+function grlsq_get_ptdps, grim_data, data, lsqd, pds=pds, rds=rds, sds=sds
+ ptdps = nv_ptr_new()
 
- ingrid, active_limb_ps=limb_ps, $
-         active_ring_ps=ring_ps, $
-         active_term_ps=term_ps, $
-         active_shadow_ps=shadow_ps, $
-         active_star_ps=star_ps, $
-         active_center_ps=center_ps, $
+ ingrid, active_limb_ptd=limb_ptd, $
+         active_ring_ptd=ring_ptd, $
+         active_term_ptd=term_ptd, $
+         active_shadow_ptd=shadow_ptd, $
+         active_star_ptd=star_ptd, $
+         active_center_ptd=center_ptd, $
          active_pd=pds, $
          active_rd=rds, $
          active_sd=sds
 
- if(keyword__set(limb_ps)) then psps = append_array(psps, nv_ptr_new(limb_ps))
- if(keyword__set(ring_ps)) then psps = append_array(psps, nv_ptr_new(ring_ps))
- if(keyword__set(term_ps)) then psps = append_array(psps, nv_ptr_new(term_ps))
- if(keyword__set(shadow_ps)) then psps = append_array(psps, nv_ptr_new(shadow_ps))
- if(keyword__set(star_ps)) then psps = append_array(psps, nv_ptr_new(star_ps))
- if(keyword__set(center_ps)) then psps = append_array(psps, nv_ptr_new(center_ps))
+ if(keyword__set(limb_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(limb_ptd))
+ if(keyword__set(ring_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(ring_ptd))
+ if(keyword__set(term_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(term_ptd))
+ if(keyword__set(shadow_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(shadow_ptd))
+ if(keyword__set(star_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(star_ptd))
+ if(keyword__set(center_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(center_ptd))
 
- if(n_elements(psps) EQ 0) then return, 0
+ if(n_elements(ptdps) EQ 0) then return, 0
 
 ; need to free these guys
- return, psps
+ return, ptdps
 end
 ;=============================================================================
 
@@ -536,10 +536,10 @@ end
 ; grlsq_make_tag
 ;
 ;=============================================================================
-function grlsq_make_tag, ps
+function grlsq_make_tag, ptd
 
- desc = ps_desc(ps)
- name = cor_name(ps)
+ desc = pnt_desc(ptd)
+ name = cor_name(ptd)
 
  return, strupcase(desc) + '_SCAN[' + strupcase(name) + ']'
 end
@@ -571,14 +571,14 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
  ; determine which arrays to use
  ;---------------------------------
  rds = 0
- object_psps = grlsq_get_psps(grim_data, data, lsqd, rds=rds)
+ object_ptdps = grlsq_get_ptdps(grim_data, data, lsqd, rds=rds)
 
- if(NOT keyword_set(object_psps)) then $
+ if(NOT keyword_set(object_ptdps)) then $
   begin
    grim_message, 'No appropriate overlay points available.'
    return
   end
- nobj = n_elements(object_psps)
+ nobj = n_elements(object_ptdps)
 
  ingrid, dd=dd, cd=cd, pd=pd
 
@@ -591,27 +591,27 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
  ;-------------------------------------
  for i=0, nobj-1 do $
   begin
-   ps = *object_psps[i]
-   _ps = ps
-   nps = n_elements(_ps)
+   ptd = *object_ptdps[i]
+   _ptd = ptd
+   nptd = n_elements(_ptd)
 
    ;- - - - - - - - - - - - - - - - - 
    ; in the image?
    ;- - - - - - - - - - - - - - - - - 
-   ps = 0
-   for k=0, nps-1 do $
+   ptd = 0
+   for k=0, nptd-1 do $
     begin
-     p = ps_points(_ps[k])
-     name = cor_name(_ps[k])
+     p = pnt_points(_ptd[k])
+     name = cor_name(_ptd[k])
      w = in_image(cd, p)
-     if(w[0] NE -1) then ps = append_array(ps, _ps[k])
+     if(w[0] NE -1) then ptd = append_array(ptd, _ptd[k])
     end
 
-   if(keyword_set(ps)) then $
+   if(keyword_set(ptd)) then $
     begin
-     nps = n_elements(ps)
-;     desc = ps_desc(ps[0])
-     desc = ps_desc(ps)
+     nptd = n_elements(ptd)
+;     desc = pnt_desc(ptd[0])
+     desc = pnt_desc(ptd)
      desc = strupcase(desc)
 
      ;--------------------------------------------------------------
@@ -627,11 +627,11 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
       begin
        center = 1
        names = cor_name(pd)
-       _ps = ps
-       ps = 0
-       for k=0, nps-1 do $
+       _ptd = ptd
+       ptd = 0
+       for k=0, nptd-1 do $
         begin
-         name = cor_name(ps)
+         name = cor_name(ptd)
          w = where(names EQ name)
          if(w[0] NE -1) then $
           begin
@@ -641,22 +641,22 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
            npix = rad/dist[0] / (cam_scale(cd))[0]
            cam_psf_attrib, cd, fwhm=fwhm
            if(NOT keyword_set(fwhm)) then fwhm = 1d 
-           if(npix LE fwhm*2.) then ps = append_array(ps, _ps[k])
+           if(npix LE fwhm*2.) then ptd = append_array(ptd, _ptd[k])
           end
         end
-       nps = 0
-       if(keyword_set(ps)) then nps = n_elements(ps)
+       nptd = 0
+       if(keyword_set(ptd)) then nptd = n_elements(ptd)
       end
 
      if(center) then $
       begin
-       if(keyword_set(ps)) then $
+       if(keyword_set(ptd)) then $
         begin
-         scan_ps = pg_ptscan(dd, [ps], edge=lsqd.edge, width=lsqd.width)
-         for l=0, n_elements(scan_ps)-1 do $
-                cor_set_udata, scan_ps[l], 'grlsq_scan_data', {lsqd:lsqd.edge}
-         for l=0, n_elements(scan_ps)-1 do $
-                       cor_set_udata, scan_ps[l], 'grlsq_scanned', 1b
+         scan_ptd = pg_ptscan(dd, [ptd], edge=lsqd.edge, width=lsqd.width)
+         for l=0, n_elements(scan_ptd)-1 do $
+                cor_set_udata, scan_ptd[l], 'grlsq_scan_data', {lsqd:lsqd.edge}
+         for l=0, n_elements(scan_ptd)-1 do $
+                       cor_set_udata, scan_ptd[l], 'grlsq_scanned', 1b
          psym = 1
         end
       end $
@@ -668,10 +668,10 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
        model_p = nv_ptr_new()
        if(strupcase(lsqd.algorithm) EQ 'MODEL') then $
         begin
-         model_p = ptrarr(nps)
-         mzero = dblarr(nps)
+         model_p = ptrarr(nptd)
+         mzero = dblarr(nptd)
 
-         for k=0, nps-1 do $
+         for k=0, nptd-1 do $
           begin
            rd = 0
            if(keyword_set(rds)) then rd = rds[k]
@@ -686,8 +686,8 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
           end
         end
 
-       inner = bytarr(nps)
-       for k=0, nps-1 do $
+       inner = bytarr(nptd)
+       for k=0, nptd-1 do $
         begin
          rd = 0
          if(keyword_set(rds)) then rd = rds[k]
@@ -696,45 +696,45 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
         end
 
        if(NOT keyword_set(noscan)) then $
-        scan_ps = $
-          pg_cvscan(dd, cd=cd, bx=rds, [ps], edge=lsqd.edge, width=lsqd.width, $
+        scan_ptd = $
+          pg_cvscan(dd, cd=cd, bx=rds, [ptd], edge=lsqd.edge, width=lsqd.width, $
                                   model=model_p, mzero=mzero, $
                                   algorithm=lsqd.algorithm, arg=inner)
 
-        for l=0, n_elements(scan_ps)-1 do $
-            cor_set_udata, scan_ps[l], 'grlsq_scan_data', $
+        for l=0, n_elements(scan_ptd)-1 do $
+            cor_set_udata, scan_ptd[l], 'grlsq_scan_data', $
                     {lsqd:lsqd, model_p:model_p, mzero:mzero, inner:inner}
-        for l=0, n_elements(scan_ps)-1 do $
-                       cor_set_udata, scan_ps[l], 'grlsq_scanned', 1b
+        for l=0, n_elements(scan_ptd)-1 do $
+                       cor_set_udata, scan_ptd[l], 'grlsq_scanned', 1b
       end
 
 
-     if(keyword_set(scan_ps)) then $
+     if(keyword_set(scan_ptd)) then $
       begin
        ;------------------
        ; threshold
        ;------------------
-       n = n_elements(scan_ps)
-       pg_threshold, scan_ps, $
+       n = n_elements(scan_ptd)
+       pg_threshold, scan_ptd, $
          min=make_array(n, val=lsqd.min), max=make_array(n, val=lsqd.max);, /rel
 
 
        ;------------------------
        ; add scanned points
        ;------------------------
-       for j=0, nps-1 do if(ps_valid(scan_ps[j])) then $
+       for j=0, nptd-1 do if(pnt_valid(scan_ptd[j])) then $
         begin
-         name = strupcase(cor_name(ps[j]))
+         name = strupcase(cor_name(ptd[j]))
 
-         new_tag = grlsq_make_tag(ps[j])
+         new_tag = grlsq_make_tag(ptd[j])
          if(keyword_set(nocreate)) then $
           begin
-           pps = grim_get_user_ps(new_tag)
-           flags = ps_flag(pps)
-           ps_set_flags, scan_ps[j], flag
+           pptd = grim_get_user_ptd(new_tag)
+           flags = ptd=nt_flags(pptd)
+           pnt_set_flags, scan_ptd[j], flag
           end
 
-         grim_add_user_points, scan_ps[j], $
+         grim_add_user_points, scan_ptd[j], $
                      new_tag, psym=psym, /nodraw, update=nocreate
         end
       end
@@ -774,62 +774,62 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
  ;---------------------------------------------------------
  ; only fit objects for which the model points are active
  ;---------------------------------------------------------
- object_psps = grlsq_get_psps(grim_data, data, lsqd)
+ object_ptdps = grlsq_get_ptdps(grim_data, data, lsqd)
 
- if(NOT keyword_set(object_psps)) then $
+ if(NOT keyword_set(object_ptdps)) then $
   begin
    grim_message, 'No overlay points available.'
    return
   end
- nobj = n_elements(object_psps)
+ nobj = n_elements(object_ptdps)
 
  for i=0, nobj-1 do $
   begin
-   ps = *object_psps[i]
-   nps = n_elements(ps)
+   ptd = *object_ptdps[i]
+   nptd = n_elements(ptd)
 
-   for j=0, nps-1 do $
+   for j=0, nptd-1 do $
     begin
-     tag = grlsq_make_tag(ps[j])
-     _scan_ps =  grim_get_user_ps(tag, /active)
+     tag = grlsq_make_tag(ptd[j])
+     _scan_ptd =  grim_get_user_ptd(tag, /active)
 
-     if(keyword_set(_scan_ps)) then $
+     if(keyword_set(_scan_ptd)) then $
       begin
-       scanned = cor_udata(_scan_ps, 'grlsq_scanned')
+       scanned = cor_udata(_scan_ptd, 'grlsq_scanned')
        if(NOT scanned) then $
         begin
-         scan_data = cor_udata(_scan_ps, 'grlsq_scan_data')
-         __scan_ps = $
-           pg_cvscan(dd, scan_ps=_scan_ps, cd=cd, bx=rds, [ps], edge=scan_data.lsqd.edge, $
+         scan_data = cor_udata(_scan_ptd, 'grlsq_scan_data')
+         __scan_ptd = $
+           pg_cvscan(dd, scan_ptd=_scan_ptd, cd=cd, bx=rds, [ptd], edge=scan_data.lsqd.edge, $
                           width=scan_data.lsqd.width, $
                           model=scan_data.model_p, mzero=scan_data.mzero, $
                           algorithm=scan_data.lsqd.algorithm, arg=scan_data.inner)
         end
 
-       if(NOT keyword_set(scan_ps)) then scan_ps = _scan_ps $
-       else scan_ps = [scan_ps, _scan_ps]
+       if(NOT keyword_set(scan_ptd)) then scan_ptd = _scan_ptd $
+       else scan_ptd = [scan_ptd, _scan_ptd]
 
        ;-----------------------------------
        ; stars and planet centers
        ;-----------------------------------
        if(strpos(tag, 'CENTER') NE -1) then $
         begin
-         _ptscan_cf = pg_ptscan_coeff(scan_ps, axis=axis, fix=fix)
+         _ptscan_cf = pg_ptscan_coeff(scan_ptd, axis=axis, fix=fix)
          if(NOT keyword_set(ptscan_cf)) then ptscan_cf = _ptscan_cf $
          else ptscan_cf = [ptscan_cf, _ptscan_cf]
-         for l=0, n_elements(scan_ps)-1 do  $
-                        cor_set_udata, scan_ps[l], 'grlsq_scanned', 0b
+         for l=0, n_elements(scan_ptd)-1 do  $
+                        cor_set_udata, scan_ptd[l], 'grlsq_scanned', 0b
         end $
        ;-----------------------------------
        ; curves
        ;-----------------------------------
        else $
         begin
-         _cvscan_cf = pg_cvscan_coeff(scan_ps, axis=axis, fix=fix)
+         _cvscan_cf = pg_cvscan_coeff(scan_ptd, axis=axis, fix=fix)
          if(NOT keyword_set(cvscan_cf)) then cvscan_cf = _cvscan_cf $
          else cvscan_cf = [cvscan_cf, _cvscan_cf]
-         for l=0, n_elements(scan_ps)-1 do  $
-                        cor_set_udata, scan_ps[l], 'grlsq_scanned', 0b
+         for l=0, n_elements(scan_ptd)-1 do  $
+                        cor_set_udata, scan_ptd[l], 'grlsq_scanned', 0b
         end
 
       end
@@ -874,7 +874,7 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
  ;- - - - - - - - - - - -
  ; compute residuals
  ;- - - - - - - - - - - -
- res = pg_residuals(scan_ps)
+ res = pg_residuals(scan_ptd)
  nres = n_elements(res)/2
 
  res_rms = sqrt(total(res^2)/nres)
@@ -884,7 +884,7 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
  ; compute covariance matrix and chisq
  ;- - - - - - - - - - - - - - - - - - - -
  covar = pg_covariance([scan_cf])
- chisq = pg_chisq(dxy, dtheta, scan_ps, axis_ps=axis_ps, fix=fix)
+ chisq = pg_chisq(dxy, dtheta, scan_ptd, axis_ptd=axis_ptd, fix=fix)
 
 
  ;- - - - - - - - - - - - - - - - - - - -
@@ -908,7 +908,7 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
  ;--------------------------------------
  ; repoint
  ;--------------------------------------
- pg_repoint, dxy, dtheta, axis=axis_ps, cd=cd
+ pg_repoint, dxy, dtheta, axis=axis_ptd, cd=cd
 
 end
 ;=============================================================================

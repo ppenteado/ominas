@@ -14,7 +14,7 @@ pro gff_struct__define
 
 
         idp :           nv_ptr_new(), $    ; id pointer.
-        xd:             nv_ptr_new(), $    ; Affected descriptor.
+        xd:             obj_new(), $    ; Affected descriptor.
         handler:        '', $           ; Event handler procedure.
         data_p :        nv_ptr_new(), $    ; Pointer to associated user data.
         data:           0d, $           ; Scalar user data.

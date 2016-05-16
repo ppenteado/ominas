@@ -12,7 +12,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps = pg_limb_sector_line(cd=cd, gbx=gbx, alt, rim, az0)
+;     outline_ptd = pg_limb_sector_line(cd=cd, gbx=gbx, alt, rim, az0)
 ;
 ;
 ; ARGUMENTS:
@@ -60,8 +60,8 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT object containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT object
 ;      also contains the user fields 'nl' and 'nw' giving the number of points 
 ;      in altitude and r.
 ;
@@ -120,11 +120,11 @@ function pg_limb_sector_linear, cd=cd, gbx=_gbx, gd=gd, $
  ;-------------------------------------------
  ; Return outline points
  ;-------------------------------------------
- outline_ps = ps_init(points = outline_pts, desc = 'pg_limb_sector_linear')
- cor_set_udata, outline_ps, 'nw', [nalt]
- cor_set_udata, outline_ps, 'nl', [nrim]
- cor_set_udata, outline_ps, 'sample', [sample]
+ outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'pg_limb_sector_linear')
+ cor_set_udata, outline_ptd, 'nw', [nalt]
+ cor_set_udata, outline_ptd, 'nl', [nrim]
+ cor_set_udata, outline_ptd, 'sample', [sample]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================

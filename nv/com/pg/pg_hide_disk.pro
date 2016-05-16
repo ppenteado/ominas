@@ -13,15 +13,15 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_hide_disk, object_ps, cd=cd, od=od, dkx=dkx, gbx=gbx
-;	pg_hide_disk, object_ps, gd=gd, od=od
+;	pg_hide_disk, object_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx
+;	pg_hide_disk, object_ptd, gd=gd, od=od
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	object_ps:	Array of points_struct containing inertial vectors.
+;	object_ptd:	Array of POINT containing inertial vectors.
 ;
-;	hide_ps:	Array (n_disks, n_timesteps) of points_struct 
+;	hide_ptd:	Array (n_disks, n_timesteps) of POINT 
 ;			containing the hidden points.
 ;
 ;  OUTPUT: NONE
@@ -50,8 +50,8 @@
 ;	reveal:	 Normally, objects whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
 ;
-;	cat:	If set, the hide_ps points are concatentated into a single
-;		points_struct.
+;	cat:	If set, the hide_ptd points are concatentated into a single
+;		POINT.
 ;
 ;  OUTPUT: NONE
 ;
@@ -60,12 +60,12 @@
 ;
 ;
 ; SIDE EFFECTS:
-;	The flags arrays in object_ps are modified.
+;	The flags arrays in object_ptd are modified.
 ;
 ;
 ; PROCEDURE:
-;	For each object in object_ps, hidden points are computed and
-;	PS_MASK_INVISIBLE in the points_struct is set.  No points are
+;	For each object in object_ptd, hidden points are computed and
+;	PTD_MASK_INVISIBLE in the POINT is set.  No points are
 ;	removed from the array.
 ;
 ;
@@ -73,7 +73,7 @@
 ;	The following command hides all points which are behind the rings as
 ;	seen by the camera:
 ;
-;	pg_hide_disk, object_ps, cd=cd, dkx=rd
+;	pg_hide_disk, object_ptd, cd=cd, dkx=rd
 ;
 ;	In this call, rd is a ring descriptor, and cd is a camera descriptor.
 ;
@@ -92,12 +92,12 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, hide_ps, $
+pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, $
               reveal=reveal, cat=cat
-@ps_include.pro
+@pnt_include.pro
 
- hide = keyword_set(hide_ps)
- if(NOT keyword_set(object_ps)) then return
+ hide = keyword_set(hide_ptd)
+ if(NOT keyword_set(object_ptd)) then return
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -128,12 +128,11 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, hide_ps, $
  ;------------------------------------
  ; hide object points for each ring
  ;------------------------------------
- n_objects = n_elements(object_ps)
- if(hide) then hide_ps = ptrarr(n_objects, n_disks)
+ n_objects = n_elements(object_ptd)
+ if(hide) then hide_ptd = objarr(n_objects, n_disks)
 
- obs_bds = class_extract(od, 'BODY')
- obs_pos = bod_pos(obs_bds)
- for j=0, n_objects-1 do $
+ obs_pos = bod_pos(od)
+ for j=0, n_objects-1 do if(obj_valid(object_ptd[j])) then $
   for i=0, n_disks-1 do $
    if((bod_opaque(dkx[i,0])) OR (keyword_set(reveal))) then $
     begin
@@ -141,45 +140,43 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ps, hide_ps, $
      if(ii[0] NE -1) then $
       begin
        xd = reform(dkx[i,ii], nt)
-       obj_bds=class_extract(xd, 'BODY')			; Object i for all t.
-       obj_dkd=class_extract(xd, 'DISK')
 
-       Rs = bod_inertial_to_body_pos(obj_bds, obs_pos)
+       Rs = bod_inertial_to_body_pos(xd, obs_pos)
 
-       ps_get, object_ps[j], p=p, vectors=vectors, flags=flags
-       object_pts = bod_inertial_to_body_pos(obj_bds, vectors)
+       pnt_get, object_ptd[j], p=p, vectors=vectors, flags=flags
+       object_pts = bod_inertial_to_body_pos(xd, vectors)
 
-       w = dsk_hide_points(obj_dkd, Rs, object_pts, frame_bd=gbx)
+       w = dsk_hide_points(xd, Rs, object_pts, frame_bd=gbx)
 
      if(hide) then $
       begin
-       ps_get, object_ps[j], desc=desc, inp=inp
-       hide_ps[j,i] = $
-          ps_init(desc=desc+'-hide_disk', $
-             input=inp+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd=cd[0]))
+       pnt_get, object_ptd[j], desc=desc, inp=inp
+       hide_ptd[j,i] = $
+          pnt_create_descriptors(desc=desc+'-hide_disk', $
+             input=inp+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]))
       end
 
        if(w[0] NE -1) then $
         begin
          if(hide) then $
-           ps_set, hide_ps[j,i], p=p[*,w], flags=flags[w], vectors=vectors[w,*]
-         flags[w]=flags[w] OR PS_MASK_INVISIBLE
-         ps_set_flags, object_ps[j], flags
+           pnt_set, hide_ptd[j,i], p=p[*,w], flags=flags[w], vectors=vectors[w,*]
+         flags[w]=flags[w] OR PTD_MASK_INVISIBLE
+         pnt_set_flags, object_ptd[j], flags
         end
       end
     end
 
 
  ;---------------------------------------------------------
- ; if desired, concatenate all hide_ps for each object
+ ; if desired, concatenate all hide_ptd for each object
  ;---------------------------------------------------------
  if(hide AND keyword_set(cat)) then $
   begin
-   for j=0, n_objects-1 do hide_ps[j,0] = ps_compress(hide_ps[j,*])
+   for j=0, n_objects-1 do hide_ptd[j,0] = pnt_compress(hide_ptd[j,*])
    if(n_disks GT 1) then $
     begin
-     nv_free, hide_ps[*,1:*]
-     hide_ps = hide_ps[*,0]
+     nv_free, hide_ptd[*,1:*]
+     hide_ptd = hide_ptd[*,0]
     end
   end
 

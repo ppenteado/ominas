@@ -4,7 +4,7 @@
 ;===========================================================================
 function vgr_get_sc, dd
 
- sc_name = vgr_parse_inst(nv_instrument(dd), cam=cam_name)
+ sc_name = vgr_parse_inst(dat_instrument(dd), cam=cam_name)
  sc = -31l
  if(sc_name EQ 'vg2') then sc = -32l
 

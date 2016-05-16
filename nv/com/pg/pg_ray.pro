@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	ray_ps = pg_ray(cd=cd, r=r, v=v)
+;	ray_ptd = pg_ray(cd=cd, r=r, v=v)
 ;
 ;
 ; ARGUMENTS:
@@ -48,8 +48,8 @@
 ;	fov:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, points structures excluded by the fov keyword
-;		 are not returned.  Normally, empty points structures
+;	cull:	 If set, POINT objects excluded by the fov keyword
+;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
 ;	cat:	 If set, all points for each descriptor are concatenated
@@ -62,7 +62,7 @@
 ;
 ;
 ; RETURN:
-;	Array (nt) of points_struct each containing image
+;	Array (nt) of POINT each containing image
 ;	points (2,nv,npoints) and the corresponding inertial vectors 
 ;	(nv,3,npoints).  
 ;
@@ -96,7 +96,7 @@ end
 ;=============================================================================
 function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull, $
              npoints=npoints, cat=cat, density_fn=density_fn, dispersion=dispersion
-@ps_include.pro
+@pnt_include.pro
 
  if(NOT keyword_set(npoints)) then npoints = 1000
  if(NOT keyword_set(density_fn)) then density_fn = 'pgr_density_uniform'
@@ -147,7 +147,7 @@ function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull, $
  ;---------------------------------------------------------
  ; get ray points 
  ;---------------------------------------------------------
- ray_ps = ptrarr(nt)
+ ray_ptd = objarr(nt)
  ii = linegen3y(nv,3,npoints)
  jj = linegen3z(nv,3,npoints)
  
@@ -182,8 +182,8 @@ function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull, $
      points = reform(points, 2, nv*npoints, /over)
     end
 
-   ray_ps[i] = ps_init(desc=desc, $
-                       input=pgs_desc_suffix(cd=cd[0]), $
+   ray_ptd[i] = pnt_create_descriptors(desc=desc, $
+                       input=pgs_desc_suffix(cd[0]), $
                        points = points, $
                        vectors = ray_pts)
   end
@@ -195,12 +195,12 @@ function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull, $
  ;------------------------------------------------------
  if(keyword_set(fov)) then $
   begin
-   pg_crop_points, ray_ps, cd=cd[0], slop=slop
-   if(keyword_set(cull)) then ray_ps = ps_cull(ray_ps)
+   pg_crop_points, ray_ptd, cd=cd[0], slop=slop
+   if(keyword_set(cull)) then ray_ptd = pnt_cull(ray_ptd)
   end
 
 
 
- return, ray_ps
+ return, ray_ptd
 end
 ;=============================================================================

@@ -167,7 +167,7 @@ common cas_spice_spk_block, data
  if(keyword__set(_time)) then time = _time
 
  reject = keyword__set(reject)
- label = nv_header(dd)
+ label = dat_header(dd)
 
  ;--------------------------------
  ; get image jd

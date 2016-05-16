@@ -70,13 +70,10 @@ function pg_northangle, cd=cd, bx=bx, gd=gd
  ;-----------------------------------
  ; compute northangles
  ;-----------------------------------
- bds = class_extract(bx, 'BODY')
- orient = bod_orient(bds)
+ orient = bod_orient(bx)
  bod_z = orient[2,*,*]
 
- cam_bd = cam_body(cd)
-
- bod_z_camera = bod_inertial_to_body(cam_bd, bod_z)
+ bod_z_camera = bod_inertial_to_body(cd, bod_z)
  
  northangles = atan(bod_z_camera[*,0,*], bod_z_camera[*,2,*])
 ; northangles = atan(bod_z_camera[*,2,*], bod_z_camera[*,0,*])

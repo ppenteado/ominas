@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	scan_ps = pg_cvscan(dd, curve_ps)
+;	scan_ptd = pg_cvscan(dd, curve_ptd)
 ;
 ;
 ; ARGUMENTS:
@@ -25,14 +25,14 @@
 ;			interpolation schemes will not work without it.
 ;
 ;	bx:		Descriptor specifying the body associated with
-;			each points struct.  Not required, but some algorithms
+;			each POINT object.  Not required, but some algorithms
 ;			will not work properly without it.
 ;
 ;	gd:		Generic descriptor.
 ;
-;	curve_ps:	Array (n_curves) of points_struct giving the curves.
+;	curve_ptd:	Array (n_curves) of POINT objects giving the curves.
 ;			Only the image coordinates of the curves need to be
-;			specified in the points_struct.
+;			specified in the POINT object.
 ;
 ;  OUTPUT: NONE
 ;
@@ -65,7 +65,7 @@
 ;			whether each edge is interior (arg=1) or 
 ;			exterior (arg=0).
 ;
-;	scan_ps:	If given, these previously scanned points are updated
+;	scan_ptd:	If given, these previously scanned points are updated
 ;			to be consistent with the given data points.  The image
 ;			is not scanned.
 ;
@@ -77,7 +77,7 @@
 ;
 ;
 ; RETURN:
-;	Array (n_curves) of points_struct containing resulting image points,
+;	Array (n_curves) of POINT objects containing resulting image points,
 ;	as well as additional scan data to be used by pg_cvscan_coeff and
 ;	possibly other programs.  The scan data is as follows:
 ;
@@ -110,9 +110,9 @@
 ;	The following command scans for a limb in the image contained in the
 ;	given data descriptor, dd:
 ;
-;	scan_ps = pg_cvscan(dd, limb_ps, width=40, edge=20)
+;	scan_ptd = pg_cvscan(dd, limb_ptd, width=40, edge=20)
 ;
-;	In this call, limb_ps is a points_struct containing computed limb
+;	In this call, limb_ptd is a POINT containing computed limb
 ;	points.
 ;
 ;
@@ -130,19 +130,19 @@
 ;	
 ;-
 ;=============================================================================
-function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ps, $
+function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ptd, $
                     model_p=model_p, mzero=mzero, dir=dir, $
-                    width=width, edge=edge, arg=arg, scan_ps=_scan_ps
- @ps_include.pro
+                    width=width, edge=edge, arg=arg, scan_ptd=_scan_ptd
+ @pnt_include.pro
    
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
  pgs_gd, gd, cd=cd, bx=bx, dd=dd
 
- image = nv_data(dd)
+ image = dat_data(dd)
 
- n_objects = n_elements(object_ps)
+ n_objects = n_elements(object_ptd)
  s = size(image)
 
  smz = size(mzero)
@@ -170,20 +170,20 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ps, $
  ;=========================
  ; scan each object
  ;=========================
- scan_ps = ptrarr(n_objects)
+ scan_ptd = objarr(n_objects)
  for i=0, n_objects-1 do $
   begin
    ;-----------------------------------
    ; get all points
    ;-----------------------------------
-   ps_get, object_ps[i], points=all_pts, flags=flags, /visible
+   pnt_get, object_ptd[i], points=all_pts, flags=flags, /visible
 
    ;-----------------------------------
    ; determine center if possible
    ;-----------------------------------
    center = 0
    if(keyword_set(cd) AND keyword_set(bx)) then $
-                          center = pg_points(pg_center(cd=cd, bx=bx[i]))
+                          center = pnt_points(pg_center(cd=cd, bx=bx[i]))
 
    ;-----------------------------------------------
    ; compute curve normals at all points and save
@@ -208,11 +208,11 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ps, $
    if(sub[0] NE -1) then $
     begin
      ;------------------------------------------------------
-     ; if scan_ps given, just update the relevant offsets
+     ; if scan_ptd given, just update the relevant offsets
      ;------------------------------------------------------
-     if(keyword_set(_scan_ps)) then $
+     if(keyword_set(_scan_ptd)) then $
       begin 
-       ps_get, _scan_ps[i], data=scan_data, points=scan_pts
+       pnt_get, _scan_ptd[i], data=scan_data, points=scan_pts
        cos_alpha = scan_data[0,*]
        sin_alpha = scan_data[1,*]
        scan_offsets = scan_data[2,*]
@@ -285,9 +285,9 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ps, $
      scan_pts_all[*,sub] = scan_pts
 
      tsub = complement(flags, sub)
-     if(tsub[0] NE -1) then flags[tsub] = flags[tsub] OR PS_MASK_INVISIBLE
+     if(tsub[0] NE -1) then flags[tsub] = flags[tsub] OR PTD_MASK_INVISIBLE
 
-     scan_ps[i] = ps_init(points = scan_pts_all, $
+     scan_ptd[i] = pnt_create_descriptors(points = scan_pts_all, $
                           desc = 'cvscan', $
                           data = scan_data, $
                           flags = flags, $
@@ -297,6 +297,6 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ps, $
 
 
 
- return, scan_ps
+ return, scan_ptd
 end
 ;===========================================================================

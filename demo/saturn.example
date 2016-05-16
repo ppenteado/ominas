@@ -23,17 +23,17 @@
 ;-------------------------------------------------------------------------
 ;                        Image read and display
 ;
-;  This first section uses nv_read to read in the image.  The image file
+;  This first section uses dat_read to read in the image.  The image file
 ;  c3440346.gem is a Voyager VICAR format file where the image has had
-;  the camera distortions removed with the VICAR program GEOMA.  nv_read
+;  the camera distortions removed with the VICAR program GEOMA.  dat_read
 ;  reads the image portion (im) and the image label (label) and its output
 ;  is a data descriptor (dd).  ctmod is called to reserve several colors
 ;  in the case of an 8-bit display.  tvim is called to display the image
 ;  (im) at 1/2 size in a new window with the y coordinate as top-down.
 ;
 ;-------------------------------------------------------------------------
-dd = nv_read('data/c3440346.gem', im, label)
-;dd = nv_read('/images/joe/vgr/s_rings/c3440346.img', im, label)
+dd = dat_read('data/c3440346.gem', im, label)
+;dd = dat_read('/images/joe/vgr/s_rings/c3440346.img', im, label)
 ctmod, top=top
 tvim, im, zoom=0.4, /order, /new, top=top
 
@@ -193,14 +193,14 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;                 Calculating the limb, ring and planet center
 ;                    Determining the plot characteristics
 ;
-;  This section uses pg_limb to calculate the limb point structure (limb_ps)
-;  containing the limb points, the ring point structure (ring_ps) and also
-;  the planet center (center_ps) using the routine pg_center.  It uses the
+;  This section uses pg_limb to calculate the limb point structure (limb_ptd)
+;  containing the limb points, the ring point structure (ring_ptd) and also
+;  the planet center (center_ptd) using the routine pg_center.  It uses the
 ;  generic descriptor (gd) to pass the camera, planet and ring descriptors
 ;  to these routines.  It also uses pg_hide to remove (/rm) points from the
 ;  ring (/disk) from the limb points and then again to remove the ring points
 ;  covered by the planet (/globe).  It then groups each of these into
-;  object_ps for plotting.  The colors, psyms, psizes and plables variables
+;  object_ptd for plotting.  The colors, psyms, psizes and plables variables
 ;  are defined for the plot.  The center is drawn in the default color
 ;  (!p.color), the limb is in yellow (ctyellow) and the inner and outer ring
 ;  are in red (ctred).  Here you can see that each ring is treated as two
@@ -208,22 +208,22 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;  8-bit display, these color routines return the values that were previously
 ;  reserved in the color table with ctmod; with a 24-bit display, these
 ;  routines return the true color values for these colors.  nlimb stores the
-;  number of points in the limb_ps structure, nring, the number of points in
+;  number of points in the limb_ptd structure, nring, the number of points in
 ;  the ring point structure.  In plabels, the limb and ring's name is not
 ;  plotted since it would be plotted at the center of the object.
 ;
 ;-------------------------------------------------------------------------
 
 
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /disk
-ring_ps = pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /globe
-shadow_ps = pg_shadow_globe(gd=gd, ring_ps)
-center_ps = pg_center(gd=gd, bx=pd)
-object_ps = [center_ps,limb_ps,ring_ps,shadow_ps]
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /disk
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /globe
+shadow_ptd = pg_shadow_globe(gd=gd, ring_ptd)
+center_ptd = pg_center(gd=gd, bx=pd)
+object_ptd = [center_ptd,limb_ptd,ring_ptd,shadow_ptd]
 colors = [!p.color,ctyellow(),ctred(),ctred(),ctblue()] & psyms=[1,3,3,3,3] & psizes=[0.5]
-plabels = [get_core_name(pd), '', '']
-nlimb = n_elements(limb_ps)
-nring = n_elements(ring_ps)
+plabels = [cor_name(pd), '', '']
+nlimb = n_elements(limb_ptd)
+nring = n_elements(ring_ptd)
 
 
 ;-------------------------------------------------------------------------
@@ -237,7 +237,7 @@ nring = n_elements(ring_ps)
 ;
 ;-------------------------------------------------------------------------
 
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 
 ;-------------------------------------------------------------------------
 ;
@@ -259,31 +259,31 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 
 
 
-grid_ps = pg_grid(gd=gd, bx=pd) & pg_hide, grid_ps, gd=gd, /limb, /disk
-pg_draw, grid_ps, color=ctblue()
+grid_ptd = pg_grid(gd=gd, bx=pd) & pg_hide, grid_ptd, gd=gd, /limb, /disk
+pg_draw, grid_ptd, color=ctblue()
 
-dgrid_ps = pg_grid(gd=gd, bx=rd, frame_bd=pd) & pg_hide, dgrid_ps, gd=gd, /globe
-pg_draw, dgrid_ps, color=ctpurple()
+dgrid_ptd = pg_grid(gd=gd, bx=rd, frame_bd=pd) & pg_hide, dgrid_ptd, gd=gd, /globe
+pg_draw, dgrid_ptd, color=ctpurple()
 
 ;-------------------------------------------------------------------------
 ;
 ;                    First-cut Automatic repointing 
 ;
 ;-------------------------------------------------------------------------
-edge_ps = pg_edges(dd, edge=50)
-pg_draw, edge_ps
-dxy = pg_farfit(dd, edge_ps, [limb_ps[0], ring_ps[1], shadow_ps[0]])
-; dxy = pg_farfit(dd, edge_ps, [limb_ps[0], ring_ps[1], shadow_ps[0]], ns=[10,10], bin=50, show=[150,150])
-pg_repoint, dxy, 0d, axis=center_ps[0], gd=gd
+edge_ptd = pg_edges(dd, edge=50)
+pg_draw, edge_ptd
+dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0], ring_ptd[1], shadow_ptd[0]])
+; dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0], ring_ptd[1], shadow_ptd[0]], ns=[10,10], bin=50, show=[150,150])
+pg_repoint, dxy, 0d, axis=center_ptd[0], gd=gd
 
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-ring_ps = pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /rm, /globe
-shadow_ps = pg_shadow_globe(gd=gd, ring_ps)
-center_ps = pg_center(gd=gd, bx=pd)
-object_ps = [center_ps,limb_ps,ring_ps,shadow_ps]
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /rm, /globe
+shadow_ptd = pg_shadow_globe(gd=gd, ring_ptd)
+center_ptd = pg_center(gd=gd, bx=pd)
+object_ptd = [center_ptd,limb_ptd,ring_ptd,shadow_ptd]
 
 tvim, im
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 
 
 ;-------------------------------------------------------------------------
@@ -296,7 +296,7 @@ pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;  ring and planet center.  To move the pointing with pg_drag, use the left
 ;  mouse button and translate the pointing in x,y.  Use the middle mouse
 ;  button to rotate the pointing about an axis (in this case, the axis of
-;  rotation is set as the planet center (center_ps[0]).  When the
+;  rotation is set as the planet center (center_ptd[0]).  When the
 ;  desired pointing is set, the right mouse button accepts it.  pg_drag
 ;  returns the delta x,y amount dragged (dxy) as well as the rotation
 ;  angle (dtheta).  pg_repoint uses the dxy and dtheta to update the
@@ -306,17 +306,17 @@ pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;
 ;-------------------------------------------------------------------------
 tvim, im
-dxy = pg_drag(object_ps, dtheta=dtheta, axis=center_ps[0])
-pg_repoint, dxy, dtheta, axis=center_ps[0], gd=gd
+dxy = pg_drag(object_ptd, dtheta=dtheta, axis=center_ptd[0])
+pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-ring_ps = pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /rm, /globe
-shadow_ps = pg_shadow_globe(gd=gd, ring_ps)
-center_ps = pg_center(gd=gd, bx=pd)
-object_ps = [center_ps,limb_ps,ring_ps,shadow_ps]
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /rm, /globe
+shadow_ptd = pg_shadow_globe(gd=gd, ring_ptd)
+center_ptd = pg_center(gd=gd, bx=pd)
+object_ptd = [center_ptd,limb_ptd,ring_ptd,shadow_ptd]
 
 tvim, im
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 
 ;=========================================================================
 ;
@@ -331,13 +331,13 @@ pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;  the given model (lzero).  These points are then plotted.
 ;
 ;-------------------------------------------------------------------------
-cvscan_ps = pg_cvscan(dd, gd=gd, [limb_ps,ring_ps], edge=30, width=80, $
+cvscan_ptd = pg_cvscan(dd, gd=gd, [limb_ptd,ring_ptd], edge=30, width=80, $
    model=[make_array(nlimb,val=ptr_new(edge_model_nav_limb(zero=lzero))), $
           make_array(nring,val=ptr_new(edge_model_nav_ring(zero=rzero)))], $
    mzero=[make_array(nlimb,val=lzero),$
           make_array(nring,val=rzero)] )
 tvim, im
-pg_draw, cvscan_ps
+pg_draw, cvscan_ptd
 
 ;-------------------------------------------------------------------------
 ;
@@ -350,9 +350,9 @@ pg_draw, cvscan_ps
 ;  objects.
 ;
 ;-------------------------------------------------------------------------
-pg_threshold, cvscan_ps, min=[0.8, 1.0, 0.8], max=[1.2, 1.0, 1.2], /rel
+pg_threshold, cvscan_ptd, min=[0.8, 1.0, 0.8], max=[1.2, 1.0, 1.2], /rel
 tvim, im
-pg_draw, cvscan_ps
+pg_draw, cvscan_ptd
 
 ;-------------------------------------------------------------------------
 ;
@@ -368,9 +368,9 @@ pg_draw, cvscan_ps
 ;
 ;-------------------------------------------------------------------------
 region = pg_select(dd)
-pg_trim, dd, cvscan_ps, region
+pg_trim, dd, cvscan_ptd, region
 tvim, im
-pg_draw, cvscan_ps
+pg_draw, cvscan_ptd
 
 ;-------------------------------------------------------------------------
 ;
@@ -387,19 +387,19 @@ pg_draw, cvscan_ps
 ;  iterated on.
 ;
 ;-------------------------------------------------------------------------
-cvscan_cf = pg_cvscan_coeff(cvscan_ps, axis=center_ps[0])
+cvscan_cf = pg_cvscan_coeff(cvscan_ptd, axis=center_ptd[0])
 dxy = pg_fit([cvscan_cf], dtheta=dtheta)
-chisq = pg_chisq(dxy, dtheta, cvscan_ps, axis=center_ps[0])
+chisq = pg_chisq(dxy, dtheta, cvscan_ptd, axis=center_ptd[0])
 print, dxy, dtheta*180./!pi, chisq
-pg_repoint, dxy, dtheta, axis=center_ps[0], gd=gd
+pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-ring_ps = pg_disk(gd=gd) & pg_hide, ring_ps, gd=gd, /rm, /globe
-center_ps = pg_center(gd=gd, bx=pd)
-object_ps = [center_ps,limb_ps,ring_ps]
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /rm, /globe
+center_ptd = pg_center(gd=gd, bx=pd)
+object_ptd = [center_ptd,limb_ptd,ring_ptd]
 
 tvim, im
-pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 
 ;-------------------------------------------------------------------------
 ;
@@ -422,8 +422,8 @@ pg_draw, object_ps, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;rad = [65000000.,138000000.]
 ;slope=1d-8
 
-outline_ps = pg_ring_sector(gd=gd, rad=rad, lon=lon, slope=slope)
-pg_draw, outline_ps, col=ctgreen()
+outline_ptd = pg_ring_sector(gd=gd, rad=rad, lon=lon, slope=slope)
+pg_draw, outline_ptd, col=ctgreen()
 
 ;-------------------------------------------------------------------------
 ;
@@ -440,12 +440,12 @@ pg_draw, outline_ps, col=ctgreen()
 ;
 ;-------------------------------------------------------------------------
 ; Radial scan
-dd_prof = pg_profile_ring(dd, gd=gd, outline_ps, dsk_pts=dsk_pts, profile=profile)
+dd_prof = pg_profile_ring(dd, gd=gd, outline_ptd, dsk_pts=dsk_pts, profile=profile)
 window, /free, xs=500, ys=300
 plot, dsk_pts[*,0], profile
 
 ; Longitudinal scan
-dd_prof = pg_profile_ring(dd, gd=gd, outline_ps, /azimuthal, dsk_pts=dsk_pts, profile=profile)
+dd_prof = pg_profile_ring(dd, gd=gd, outline_ptd, /azimuthal, dsk_pts=dsk_pts, profile=profile)
 window, /free, xs=500, ys=300
 plot, dsk_pts[*,1], profile, /yno
 
@@ -464,21 +464,22 @@ plot, dsk_pts[*,1], profile, /yno
 ;  grid points in blue (ctblue).
 ;
 ;-------------------------------------------------------------------------
-grid_ps = pg_grid(gd=gd, lat=lat, lon=lon) 
-pg_hide, grid_ps, cd=cd, gbx=pd, /limb
-pg_hide, grid_ps, cd=cd, gbx=pd, od=sund, /limb
-pg_hide, grid_ps, gd=gd, /disk
-pg_draw, grid_ps, color=ctblue()
+tvim, 32
+grid_ptd = pg_grid(gd=gd, lat=lat, lon=lon) 
+pg_hide, grid_ptd, cd=cd, gbx=pd, /limb
+pg_hide, grid_ptd, cd=cd, gbx=pd, od=sund, /limb
+pg_hide, grid_ptd, gd=gd, /disk
+pg_draw, grid_ptd, color=ctblue()
 
-plat_ps = pg_grid(gd=gd, slon=!dpi/2d, lat=lat, nlon=0) 
-pg_hide, plat_ps[0], cd=cd, gbx=pd[0], /limb
-pg_draw, plat_ps[0], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
+plat_ptd = pg_grid(gd=gd, slon=!dpi/2d, lat=lat, nlon=0) 
+pg_hide, plat_ptd[0], cd=cd, gbx=pd[0], /limb
+pg_draw, plat_ptd[0], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
 
-plon_ps = pg_grid(gd=gd, slat=0d, lon=lon, nlat=0) 
-pg_hide, plon_ps[0], cd=cd, gbx=pd[0], /limb
-pg_draw, plon_ps[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
+plon_ptd = pg_grid(gd=gd, slat=0d, lon=lon, nlat=0) 
+pg_hide, plon_ptd[0], cd=cd, gbx=pd[0], /limb
+pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 
-dgrid_ps = pg_grid(gd=gd, bx=rd, frame_bd=pd) & pg_hide, dgrid_ps, gd=gd, /globe
-pg_draw, dgrid_ps, color=ctpurple()
+dgrid_ptd = pg_grid(gd=gd, bx=rd, frame_bd=pd) & pg_hide, dgrid_ptd, gd=gd, /globe
+pg_draw, dgrid_ptd, color=ctpurple()
 
 

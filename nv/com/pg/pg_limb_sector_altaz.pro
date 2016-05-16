@@ -11,7 +11,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps=pg_limb_sector_altaz(cd=cd, gbx=gbx, alt, az, dkd=dkd)
+;     outline_ptd=pg_limb_sector_altaz(cd=cd, gbx=gbx, alt, az, dkd=dkd)
 ;
 ;
 ; ARGUMENTS:
@@ -53,7 +53,7 @@
 ;                   direction.
 ;
 ;        nodsk:     If set, skyplane disk image points will not be included 
-;                   in the output points_struct.
+;                   in the output POINT.
 ;
 ;      graphic:     If set, the sector is computed in the planetographic
 ;                   sense, i.e., lines of constant azimuth extend along 
@@ -75,8 +75,8 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT objects
 ;      also contains the disk coordinate for each point, relative to the
 ;      returned disk descriptor, and the user fields 'nrad' and 'nlon' 
 ;      giving the number of points in altitude and azimuth.
@@ -149,13 +149,13 @@ function pg_limb_sector_altaz, cd=cd, gbx=_gbx, gd=gd, dkd=dkd, $
  if(NOT keyword_set(nodsk)) then $
        dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=dkd, outline_pts)
 
- outline_ps = ps_init(points = outline_pts, $
+ outline_ptd = pnt_create_descriptors(points = outline_pts, $
                       desc = 'pg_limb_sector_altaz', $
                       data = transpose(dsk_outline_pts))
- cor_set_udata, outline_ps, 'nrad', [nalt]
- cor_set_udata, outline_ps, 'nlon', [naz]
+ cor_set_udata, outline_ptd, 'nrad', [nalt]
+ cor_set_udata, outline_ptd, 'nlon', [naz]
 		udata = [naz])
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================

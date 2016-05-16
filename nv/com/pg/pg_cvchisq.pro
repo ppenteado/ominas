@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	chisq = pg_cvchisq(dxy, dtheta, scan_ps, axis_ps=axis_ps)
+;	chisq = pg_cvchisq(dxy, dtheta, scan_ptd, axis_ptd=axis_ptd)
 ;
 ;
 ; ARGUMENTS:
@@ -22,7 +22,7 @@
 ;
 ;	dtheta:		Rotation in radians.
 ;
-;	scan_ps:	Array (n_curves) of points_struct output from
+;	scan_ptd:	Array (n_curves) of POINT output from
 ;			pg_cvscan containing scanned image points as well as
 ;			other necessary scan data.
 ;
@@ -31,7 +31,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	axis_ps:	points_struct containing a single image  point
+;	axis_ptd:	POINT containing a single image  point
 ;			to be used as the axis of rotation.
 ;
 ;	fix:		Array specifying which parameters to fix as
@@ -63,10 +63,10 @@
 ;	
 ;-
 ;=============================================================================
-function pg_cvchisq, dxy, dtheta, scan_ps, axis_ps=axis_ps, fix=fix
+function pg_cvchisq, dxy, dtheta, scan_ptd, axis_ptd=axis_ptd, fix=fix
                  
 
- n_objects = n_elements(scan_ps)
+ n_objects = n_elements(scan_ptd)
  chisq = 0d
 
 
@@ -78,7 +78,7 @@ function pg_cvchisq, dxy, dtheta, scan_ps, axis_ps=axis_ps, fix=fix
    ;-------------------
    ; get scan data
    ;-------------------
-   ps_get, scan_ps[i], data=scan_data, points=scan_pts, /visible
+   pnt_get, scan_ptd[i], data=scan_data, points=scan_pts, /visible
 
    if(keyword__set(scan_data)) then $
     begin
@@ -88,7 +88,7 @@ function pg_cvchisq, dxy, dtheta, scan_ps, axis_ps=axis_ps, fix=fix
      scan_offsets = scan_data[2,*]
 
      axis = dblarr(2)
-     if(keyword__set(axis_ps)) then axis = ps_points(axis_ps)
+     if(keyword__set(axis_ptd)) then axis = pnt_points(axis_ptd)
 
      ;----------------------
      ; compute chi-squared

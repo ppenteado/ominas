@@ -42,7 +42,7 @@ common dawn_spice_spk_block, all_files, all_names_block, spkpath_block, $
 
  if(NOT keyword_set(djd)) then djd = 1d			; days, +/-
 
- label = nv_header(dd)
+ label = dat_header(dd)
  
 
  ;--------------------------------

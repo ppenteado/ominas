@@ -69,19 +69,16 @@ function pg_sub_body, gbx=gbx, bx=bx, gd=gd
  ;-----------------------------------
  ; get centers
  ;-----------------------------------
- gbds = class_extract(gbx, 'GLOBE')
- bd_globe = class_extract(gbx, 'BODY')
- bds = class_extract(bx, 'BODY')
- gb_centers = bod_pos(bd_globe)
- bd_centers = bod_pos(bds)
+ gb_centers = bod_pos(gbx)
+ bd_centers = bod_pos(bx)
 
  ;-------------------------------------------------------
  ; form ray and find intersection with globe surface
  ;-------------------------------------------------------
- v = bod_inertial_to_body_pos(bd_globe, bd_centers)
- r = bod_inertial_to_body(bd_globe, gb_centers - bd_centers)
+ v = bod_inertial_to_body_pos(gbx, bd_centers)
+ r = bod_inertial_to_body(gbx, gb_centers - bd_centers)
 
- surface_pts = glb_body_to_globe(gbds, glb_intersect(gbds, v, r))
+ surface_pts = glb_body_to_globe(gbx, glb_intersect(gbx, v, r))
 
 
  ;----------------------------------------------------------

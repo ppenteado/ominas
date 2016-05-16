@@ -78,7 +78,7 @@
 pro nv_notify_register, _xd, handler, type, data=data, $
                  scalar_data=scalar_data, compress=compress
 @nv_notify_block.common
-@nv.include
+@core.include
 
  ;------------------------------------------------------------------
  ; first flush event buffer to ensure that the new handler 
@@ -88,7 +88,7 @@ pro nv_notify_register, _xd, handler, type, data=data, $
 
 
  dynamic = 0
- if(size(_xd, /type) NE 10) then $
+ if(size(_xd, /type) NE 11) then $		;; not sure about this
   begin
    xd = nv_ptr_new(_xd)
    dynamic = 1

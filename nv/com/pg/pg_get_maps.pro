@@ -101,8 +101,8 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;----------------------------------------------------------
  if(keyword__set(bx)) then $
   begin
-   gbx = class_extract(bx, 'GLOBE')
-   dkx = class_extract(bx, 'DISK')
+   if(cor_isa(bx, 'GLOBE')) then gbx = bx
+   if(cor_isa(bx, 'DISK')) then dkx = bx
   end
 
  ;----------------------------------------------------------
@@ -131,11 +131,11 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
    if(n EQ 0) then $
     begin
      n = 1
-     map__name = get_core_name(bx)
+     map__name = cor_name(bx)
     end
 
 
-   mds=map_init_descriptors(n, $
+   mds=map_create_descriptors(n, $
 	name=map__name, $
 	graphic=map__graphic, $
 	rotate=map__rotate, $
@@ -155,12 +155,12 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;-------------------------------------------------------------------
  else $
   begin
-   mds=nv_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_mds, key8=map__name, trs=trs, $
+   mds=dat_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_mds, key8=map__name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-;   if(NOT keyword__set(mds)) then mds=map_init_descriptors(1)
-   if(NOT keyword__set(mds)) then return, nv_ptr_new()
+;   if(NOT keyword__set(mds)) then mds=map_create_descriptors(1)
+   if(NOT keyword__set(mds)) then return, obj_new()
 
    n = n_elements(mds)
 
@@ -176,9 +176,9 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
    ;---------------------------------------------------
    if(keyword__set(map__name)) then $
     begin
-     tr_names = get_core_name(mds)
+     tr_names = cor_name(mds)
      sub = nwhere(strupcase(tr_names), strupcase(map__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
@@ -213,7 +213,7 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ; Thus, translators can be arranged in order in the table
  ; such the the first occurence has the highest priority.
  ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then mds=mds[pgs_name_sort(get_core_name(mds))]
+ if(NOT keyword_set(no_sort)) then mds=mds[pgs_name_sort(cor_name(mds))]
 
 
 

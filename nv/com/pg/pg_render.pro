@@ -66,7 +66,7 @@
 ;	no_secondary: If set, no secondary ray tracing is performed,  
 ;	              resulting in no shadows.
 ;
-;	image_ps:     points_struct or array with image points 
+;	image_ptd:    POINT or array with image points 
 ;	              specifying the grid to trace.  If not set, the entire 
 ;	              image described by cd is used.  The array can have
 ;	              dimensions of (2,np) or (2,nx,ny).  If the latter,
@@ -108,10 +108,10 @@ function pg_render, cd=cd, sund=sund, $
        show=show, pht_min=pht_min, no_pht=no_pht, map=image, $
        standoff=standoff, limit_source=limit_source, nodd=nodd, $
        psf=psf, npsf=npsf, penumbra=penumbra, no_secondary=no_secondary, $
-       image_ps=_image_ps, mask_width=mask_width, no_maps=no_maps
+       image_ptd=_image_ptd, mask_width=mask_width, no_maps=no_maps
  
 
- if(keyword_set(_image_ps)) then image_ps = _image_ps
+ if(keyword_set(_image_ptd)) then image_ptd = _image_ptd
  if(NOT keyword_set(npsf)) then npsf = 10
  if(NOT defined(mask_width)) then mask_width = 512
 
@@ -131,9 +131,9 @@ function pg_render, cd=cd, sund=sund, $
  ;----------------------------------------
  ; set up grid if necessary
  ;----------------------------------------
- if(NOT keyword_set(image_ps)) then image_pts = gridgen(cam_size(cd), /rectangular) $
- else if(size(image_ps, /type) EQ 10) then image_pts = ps_points(image_ps) $
- else image_pts = image_ps
+ if(NOT keyword_set(image_ptd)) then image_pts = gridgen(cam_size(cd), /rectangular) $
+ else if(size(image_ptd, /type) EQ 10) then image_pts = pnt_points(image_ptd) $
+ else image_pts = image_ptd
 
 
  ;----------------------------------------
@@ -213,6 +213,6 @@ function pg_render, cd=cd, sund=sund, $
  ; store rendering new data descriptor
  ;--------------------------------------------------------------------------
  if(keyword_set(nodd)) then return, 0
- return, nv_init_descriptor(instrument=cor_name(cd), data=image)
+ return, dat_create_descriptors(1, instrument=cor_name(cd), data=image)
 end
 ;=============================================================================

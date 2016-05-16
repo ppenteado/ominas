@@ -67,7 +67,7 @@ function spice_planets, dd, ref, $
  ;------------------------------
  ; create planet descriptors
  ;------------------------------
- pd = plt_init_descriptors(n_obj, $
+ pd = plt_create_descriptors(n_obj, $
 		name=plt_name, $
 		orient=plt_orient, $
 		avel=plt_avel, $
@@ -86,7 +86,6 @@ function spice_planets, dd, ref, $
 		gm=plt_gm, $
 		j=plt_j, $
 		lora=plt_lora)
-
   cor_set_udata, pd, 'NAIF_ID', ids
 
  ;-----------------------------------------------------
@@ -107,9 +106,10 @@ function spice_planets, dd, ref, $
   ;--------------------------------------------------------------------
   if(target_unknown) then $
    begin
-    pd = [plt_init_descriptors(1, name='UNKNOWN'), pd]
+    pd = [plt_create_descriptors(1, name='UNKNOWN'), pd]
     n_obj = n_obj + 1
    end
+
 
 
   return, pd

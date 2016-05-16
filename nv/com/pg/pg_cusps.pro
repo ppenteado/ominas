@@ -14,8 +14,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	cusp_ps = pg_cusps(cd=cd, od=od, gbx=gbx)
-;	cusp_ps = pg_cusps(gd=gd)
+;	cusp_ptd = pg_cusps(cd=cd, od=od, gbx=gbx)
+;	cusp_ptd = pg_cusps(gd=gd)
 ;
 ;
 ; ARGUMENTS:
@@ -47,7 +47,7 @@
 ;
 ;
 ; RETURN:
-;	Array (n_objects) of points_struct containing image
+;	Array (n_objects) of POINT objects containing image
 ;	points and the corresponding inertial vectors.
 ;
 ;
@@ -68,14 +68,14 @@
 ;-
 ;=============================================================================
 function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
-@ps_include.pro
+@pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
  pgs_gd, gd, cd=cd, gbx=gbx, od=od, sund=sund
- if(NOT keyword_set(cd)) then return, ptr_new() 
- if(NOT keyword_set(gbx)) then return, ptr_new()
+ if(NOT keyword_set(cd)) then return, obj_new() 
+ if(NOT keyword_set(gbx)) then return, obj_new()
 
  ;-----------------------------
  ; default observer is sun
@@ -103,12 +103,12 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
  ; contruct data set description
  ;-----------------------------------------------
  desc = 'cusp'
- hide_flags = make_array(npoints, val=PS_MASK_INVISIBLE)
+ hide_flags = make_array(npoints, val=PTD_MASK_INVISIBLE)
 
  ;---------------------------------------------------------
  ; get cusps for each object for all times
  ;---------------------------------------------------------
- cusp_ps = ptrarr(n_objects)
+ cusp_ptd = objarr(n_objects)
 
  obs_pos = bod_pos(od)
  cam_pos = bod_pos(cd)
@@ -131,20 +131,20 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
    if(keyword__set(valid)) then $
     begin
      invalid = complement(cusp_pts[*,0], valid)
-     if(invalid[0] NE -1) then flags[invalid] = PS_MASK_INVISIBLE
+     if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
     end
-   cusp_ps[i] = ps_init(name = get_core_name(xd), $
+   cusp_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
 			desc=desc, $
-			input=pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd=cd[0]), $
+			input=pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), $
 			assoc_idp = cor_idp(xd), $
                         points = points, $
 			flags = flags, $
                         vectors = inertial_pts)
-   if(NOT bod_opaque(gbx[i,0])) then ps_setflags, cusp_ps[i], hide_flags
+   if(NOT bod_opaque(gbx[i,0])) then pnt_setflags, cusp_ptd[i], hide_flags
   end
 
 
 
- return, cusp_ps
+ return, cusp_ptd
 end
 ;=============================================================================

@@ -662,11 +662,11 @@ function grim_test_map, grim_data, plane=plane
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- if(nv_instrument(plane.dd) EQ 'MAP') then return, 1
+ if(dat_instrument(plane.dd) EQ 'MAP') then return, 1
 
  if(NOT keyword_set(*plane.cd_p)) then return, 0
 
- if(class_get(*plane.cd_p) EQ 'MAP') then return, 1
+ if(cor_class(*plane.cd_p) EQ 'MAP') then return, 1
 
  return, 0
 end

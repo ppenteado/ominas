@@ -164,7 +164,7 @@ end
 ; grpht_apply_correction
 ;
 ;=============================================================================
-pro grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ps
+pro grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ptd
 
  ;-----------------------------------
  ; compute correction
@@ -173,7 +173,7 @@ pro grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ps
  phase_fn = grpht_get_prefix('phase') + phtd.phase_fn
 
  widget_control, /hourglass
- dd_cor = pg_photom(dd, cd=cd, gbx=pd[0], sund=sund, outline=outline_ps, $
+ dd_cor = pg_photom(dd, cd=cd, gbx=pd[0], sund=sund, outline=outline_ptd, $
              refl_fn=refl_fn, refl_parm=*phtd.refl_parm_p, $
              phase_fn=phase_fn, phase_parm=*phtd.phase_parm_p, /over)
 
@@ -191,13 +191,13 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
  ;---------------------------
  ; get data
  ;----------------------------
- limb_ps = grim_get_active_overlays(grim_data, 'limb')
- if(NOT keyword_set(limb_ps)) then $
+ limb_ptd = grim_get_active_overlays(grim_data, 'limb')
+ if(NOT keyword_set(limb_ptd)) then $
   begin
    grim_message, 'No outline points.'
    return
   end $
- else outline_ps = ps_compress(limb_ps)
+ else outline_ptd = pnt_compress(limb_ptd)
 
  ingrid, dd=dd, cd=cd, sund=sund, active_pd=pd
 
@@ -222,9 +222,9 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
  ;----------------------------
  ; apply correction
  ;----------------------------
- grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ps
+ grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ptd
 
- nv_free, outline_ps
+ nv_free, outline_ptd
 end
 ;=============================================================================
 
@@ -241,14 +241,14 @@ pro grpht_apply_correction_all, grim_data, data, phtd
 
  for i=0, nplanes-1 do $
   begin
-   ingrid, pn=i, dd=dd, cd=cd, sund=sund, active_pd=pd, active_limb_ps=limb_ps
+   ingrid, pn=i, dd=dd, cd=cd, sund=sund, active_pd=pd, active_limb_ptd=limb_ptd
    apply = 1
 
    ;---------------------------
    ; get data
    ;----------------------------
-   if(NOT keyword__set(limb_ps)) then apply = 0 $
-   else outline_ps = (limb_ps)[0]
+   if(NOT keyword__set(limb_ptd)) then apply = 0 $
+   else outline_ptd = (limb_ptd)[0]
 
    if(NOT keyword__set(cd)) then apply = 0
    if(NOT keyword__set(pd)) then apply = 0 
@@ -258,7 +258,7 @@ pro grpht_apply_correction_all, grim_data, data, phtd
    ; apply correction
    ;----------------------------
    if(apply) then $
-         grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ps
+         grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ptd
   end
 
 

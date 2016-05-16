@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       footprint_ps = footprint(cd=cd, bx=bx)
+;       footprint_ptd = footprint(cd=cd, bx=bx)
 ;
 ;
 ; ARGUMENTS:
@@ -46,7 +46,7 @@
 ;
 ;
 ; RETURN:
-;	Array (n_objects) of points_struct containing image points and
+;	Array (n_objects) of POINT containing image points and
 ;	the corresponding inertial vectors.
 ;
 ;
@@ -61,7 +61,7 @@
 ;=============================================================================
 function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
     sample=sample
-@ps_include.pro
+@pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -69,7 +69,7 @@ function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
  pgs_gd, gd, cd=cd, bx=bx, od=od
  if(NOT keyword_set(cd)) then cd = 0 
 
- if(NOT keyword_set(bx)) then return, ptr_new()
+ if(NOT keyword_set(bx)) then return, obj_new()
 
  ;-----------------------------
  ; default observer is camera
@@ -88,13 +88,13 @@ function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
  ;-----------------------------------------------
  ; determine points description
  ;-----------------------------------------------
- desc = class_get(bx) + '_footprint'
+ desc = cor_class(bx) + '_footprint'
 
 
  ;-----------------------------------
  ; get footprint for each object
  ;-----------------------------------
- footprint_ps = ptrarr(n_objects)
+ footprint_ptd = objarr(n_objects)
 
  for i=0, n_objects-1 do $
   begin
@@ -108,24 +108,24 @@ function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
      if(keyword__set(valid)) then $
       begin
        invalid = complement(body_pts[*,0], valid)
-       if(invalid[0] NE -1) then flags[invalid] = PS_MASK_INVISIBLE
+       if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
       end
 
-     footprint_ps[i] = $
-        ps_init(name = get_core_name(bx), $
+     footprint_ptd[i] = $
+        pnt_create_descriptors(name = cor_name(bx), $
 		desc = desc[i], $
-		input = pgs_desc_suffix(bx=bx[i,0], cd=cd[0]), $
+		input = pgs_desc_suffix(bx=bx[i,0], cd[0]), $
 		assoc_idp = cor_idp(bx), $
 		vectors = inertial_pts, $
                 flags = flags, $
 		points = points)
 
-     cor_set_udata, footprint_ps[i], 'SURFACE_PTS', surface_pts
-     cor_set_udata, footprint_ps[i], 'BODY_PTS', body_pts
+     cor_set_udata, footprint_ptd[i], 'SURFACE_PTS', surface_pts
+     cor_set_udata, footprint_ptd[i], 'BODY_PTS', body_pts
 
      if(NOT bod_opaque(bx[i,0])) then 
-              ps_set_flags, footprint_ps[i], $
-                           make_array(n_elements(flags), val=PS_MASK_INVISIBLE)
+              pnt_set_flags, footprint_ptd[i], $
+                           make_array(n_elements(flags), val=PTD_MASK_INVISIBLE)
     end 
   end
 
@@ -136,11 +136,11 @@ function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
  ;------------------------------------------------------
  if(keyword_set(fov)) then $
   begin
-   pg_crop_points, footprint_ps, cd=cd[0], slop=slop
-   if(keyword_set(cull)) then footprint_ps = ps_cull(footprint_ps)
+   pg_crop_points, footprint_ptd, cd=cd[0], slop=slop
+   if(keyword_set(cull)) then footprint_ptd = pnt_cull(footprint_ptd)
   end
 
 
- return, footprint_ps
+ return, footprint_ptd
 end
 ;=============================================================================

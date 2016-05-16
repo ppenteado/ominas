@@ -55,7 +55,7 @@
 ;                   graphics instead of a pixmap.
 ;
 ;        nodsk:     If set, image points will not be included in the output 
-;                   points_struct.
+;                   POINT.
 ;
 ;    noverbose:     If set, messages are suppressed.
 ;
@@ -68,8 +68,8 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT object
 ;      also contains the disk coordinate for each point and the user fields
 ;      'nrad' and 'nlon' giving the number of points in radius and longitude.
 ;

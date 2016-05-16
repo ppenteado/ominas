@@ -31,8 +31,8 @@ pro grim_compute_limb, grim_data, limb_ps, dep, plane=plane, w=w
    n = n_elements(_limb_ps)
    for i=0, n-1 do $
     begin
-     points = ps_points(_limb_ps[i])
-     ps_set_points, limb_ps[i], points
+     points = pnt_points(_limb_ps[i])
+     pnt_set_points, limb_ps[i], points
     end
   end $
  ;------------------------------------------------------------------
@@ -87,8 +87,8 @@ pro grim_compute_planet_center, grim_data, center_ps, dep, plane=plane, w=w
    n = n_elements(_center_ps)
    for i=0, n-1 do $
     begin
-     points = ps_points(_center_ps[i])
-     ps_set_points, center_ps[i], points
+     points = pnt_points(_center_ps[i])
+     pnt_set_points, center_ps[i], points
     end
   end $
  ;------------------------------------------------------------------
@@ -143,8 +143,8 @@ pro grim_compute_planet_grid, grim_data, grid_ps, dep, plane=plane, w=w
    n = n_elements(_grid_ps)
    for i=0, n-1 do $
     begin
-     points = ps_points(_grid_ps[i])
-     ps_set_points, grid_ps[i], points
+     points = pnt_points(_grid_ps[i])
+     pnt_set_points, grid_ps[i], points
     end
   end $
  ;------------------------------------------------------------------
@@ -210,8 +210,8 @@ pro grim_compute_ring_grid, grim_data, grid_ps, dep, plane=plane, w=w
    n = n_elements(_grid_ps)
    for i=0, n-1 do $
     begin
-     points = ps_points(_grid_ps[i])
-     ps_set_points, grid_ps[i], points
+     points = pnt_points(_grid_ps[i])
+     pnt_set_points, grid_ps[i], points
     end
   end $
  ;------------------------------------------------------------------
@@ -281,10 +281,10 @@ pro grim_compute_ring, grim_data, ring_ps, dep, plane=plane
  if(keyword__set(ring_ps)) then $
   begin
    n = n_elements(_ring_ps)
-   for i=0, n-1 do if(ps_valid(_ring_ps[i])) then $
+   for i=0, n-1 do if(pnt_valid(_ring_ps[i])) then $
     begin
-     points = ps_points( _ring_ps[i])
-     ps_set_points, (*(grim_get_overlay_psp(grim_data, plane=plane, 'ring')))[i], points
+     points = pnt_points( _ring_ps[i])
+     pnt_set_points, (*(grim_get_overlay_psp(grim_data, plane=plane, 'ring')))[i], points
     end
   end $
  else ring_ps = _ring_ps
@@ -323,8 +323,8 @@ pro grim_compute_star, grim_data, star_ps, dep, plane=plane
    n = n_elements(_star_ps)
    for i=0, n-1 do $
     begin
-     points = ps_points(_star_ps[i])
-     ps_set_points, star_ps[i], points
+     points = pnt_points(_star_ps[i])
+     pnt_set_points, star_ps[i], points
     end
   end $
  ;------------------------------------------------------------------
@@ -377,8 +377,8 @@ pro grim_compute_term, grim_data, term_ps, dep, plane=plane, w=w
    n = n_elements(_term_ps)
    for i=0, n-1 do $
     begin
-     points = ps_points(_term_ps[i])
-     ps_set_points, term_ps[i], points
+     points = pnt_points(_term_ps[i])
+     pnt_set_points, term_ps[i], points
     end
   end $
  ;------------------------------------------------------------------
@@ -441,8 +441,8 @@ pro grim_compute_shadows, grim_data, shadow_ps, dep, plane=plane, w=w
    n = n_elements(_shadow_ps)
    for i=0, n-1 do $
     begin
-     points = ps_points(_shadow_ps[i])
-     ps_set_points, shadow_ps[i], points
+     points = pnt_points(_shadow_ps[i])
+     pnt_set_points, shadow_ps[i], points
     end
   end $
  ;------------------------------------------------------------------

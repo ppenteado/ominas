@@ -65,7 +65,7 @@
 ;=============================================================================
 function cmat_to_orient, dd, cmat
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
 
  case strmid(cam_name, 0, 3) of $
   'CAS' : return, cas_cmat_to_orient(cmat)

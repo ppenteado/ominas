@@ -20,7 +20,7 @@
 ;  INPUT:
 ;	dd:		Data descriptor containing the image to be despiked.
 ;
-;	spike_ps:	points_struct specifying the points to replace;
+;	spike_ptd:	POINT specifying the points to replace;
 ;			typically computed by pg_spikes.
 ;
 ;  OUTPUT:
@@ -63,7 +63,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_despike, dd, spike_ps, image=image, scale=scale, n=n, noclone=noclone
+function pg_despike, dd, spike_ptd, image=image, scale=scale, n=n, noclone=noclone
 
  if(NOT keyword_set(scale)) then scale = 10
  if(NOT keyword_set(n)) then n = 5
@@ -71,8 +71,8 @@ function pg_despike, dd, spike_ps, image=image, scale=scale, n=n, noclone=noclon
  ;---------------------------------------
  ; dereference
  ;---------------------------------------
- im = nv_data(dd)
- p = pg_points(spike_ps)
+ im = dat_data(dd)
+ p = pnt_points(spike_ptd)
 
 
  ;---------------------------------------
@@ -87,7 +87,7 @@ function pg_despike, dd, spike_ps, image=image, scale=scale, n=n, noclone=noclon
  ;---------------------------------------
  if(NOT keyword_set(noclone)) then new_dd = nv_clone(dd) $
  else new_dd = dd
- nv_set_data, new_dd, image
+ dat_set_data, new_dd, image
 
  return, new_dd
 end

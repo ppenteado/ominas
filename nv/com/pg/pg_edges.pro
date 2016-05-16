@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	edge_ps = pg_edges(dd)
+;	edge_ptd = pg_edges(dd)
 ;
 ;
 ; ARGUMENTS:
@@ -40,7 +40,7 @@
 ;
 ;
 ; RETURN:
-;	points_struct giving the resulting edge points.
+;	POINT giving the resulting edge points.
 ;
 ;
 ; PROCEDURE:
@@ -64,13 +64,13 @@
 ;=============================================================================
 function pg_edges, dd, threshold=threshold, edge=edge, npoints=npoints, $
                       gate=gate, lowpass=lowpass
- @ps_include.pro
+ @pnt_include.pro
    
 
  ;-------------------------------------
  ; scale image to byte range
  ;-------------------------------------
- image = bytscl(nv_data(dd))
+ image = bytscl(dat_data(dd))
  s = size(image)
  xsize = s[1] & ysize = s[2]
 
@@ -171,9 +171,9 @@ function pg_edges, dd, threshold=threshold, edge=edge, npoints=npoints, $
  ;-----------------------------
  ; save the selected points
  ;-----------------------------
- edge_ps = ps_init(points=points, desc='edges', input=pgs_desc_suffix(dd=dd))
+ edge_ptd = pnt_create_descriptors(points=points, desc='edges', input=pgs_desc_suffix(dd))
 
 
- return, edge_ps
+ return, edge_ptd
 end
 ;===========================================================================

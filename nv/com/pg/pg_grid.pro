@@ -13,8 +13,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	grid_ps = pg_grid(cd=cd, gbx=gbx)
-;	grid_ps = pg_grid(gd=gd)
+;	grid_ptd = pg_grid(cd=cd, gbx=gbx)
+;	grid_ptd = pg_grid(gd=gd)
 ;
 ;
 ; ARGUMENTS:
@@ -63,8 +63,8 @@
 ;	fov:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, points structures excluded by the fov keyword
-;		 are not returned.  Normally, empty points structures
+;	cull:	 If set, POINT objects excluded by the fov keyword
+;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
 ;	npoints: Number of points to compute in each latitude or longitude line,
@@ -82,7 +82,7 @@
 ;
 ;
 ; RETURN:
-;	Array (n_objects) of points_struct containing image points and
+;	Array (n_objects) of POINT containing image points and
 ;	the corresponding inertial vectors.
 ;
 ;
@@ -98,7 +98,7 @@
 function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
 		nlat=nlat, nlon=nlon, flat=flat, flon=flon, npoints=npoints, $
 		fov=fov, cull=cull, frame_bd=frame_bd, slat=slat, slon=slon
-@ps_include.pro
+@pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -123,9 +123,9 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
  ;-----------------------------------
  ; compute grid for each body
  ;-----------------------------------
- hide_flags = make_array(npoints, val=PS_MASK_INVISIBLE)
+ hide_flags = make_array(npoints, val=PTD_MASK_INVISIBLE)
 
- grid_ps = ptrarr(n_objects)
+ grid_ptd = objarr(n_objects)
 
  for i=0, n_objects-1 do $
   begin
@@ -168,7 +168,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
    if(keyword_set(bx)) then $
     begin
      xd = reform(bx[i,*], nt)
-     input = pgs_desc_suffix(bx=bx[i,0], cd=cd[0])
+     input = pgs_desc_suffix(bx=bx[i,0], cd[0])
      idp = cor_idp(xd)
     end
 
@@ -221,13 +221,13 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
 ;     if(keyword__set(valid)) then $
 ;      begin
 ;       invalid = complement(points[0,*], valid)
-;       if(invalid[0] NE -1) then flags[invalid] = PS_MASK_INVISIBLE
+;       if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
 ;      end
 
      ;-----------------------------------
      ; store grid
      ;-----------------------------------
-     grid_ps[i] = ps_init(name = get_core_name(xd), $
+     grid_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
 		          desc = 'globe_grid', $
 		          input = input, $
 		          assoc_idp = idp, $
@@ -235,7 +235,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
 		          flags = flags, $
 		          vectors = inertial_pts)
      if(keyword_set(bx)) then $
-       if(NOT bod_opaque(bx[i,0])) then ps_set_flags, grid_ps[i], hide_flags
+       if(NOT bod_opaque(bx[i,0])) then pnt_set_flags, grid_ptd[i], hide_flags
     end
   end
 
@@ -246,14 +246,14 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
  ;------------------------------------------------------
  if(keyword_set(fov)) then $
   begin
-   pg_crop_points, grid_ps, cd=cd[0], slop=slop
-   if(keyword_set(cull)) then grid_ps = ps_cull(grid_ps)
+   pg_crop_points, grid_ptd, cd=cd[0], slop=slop
+   if(keyword_set(cull)) then grid_ptd = pnt_cull(grid_ptd)
   end
 
 
  if(keyword_set(__lat)) then _lat = __lat
  if(keyword_set(__lon)) then _lon = __lon
 
- return, grid_ps
+ return, grid_ptd
 end
 ;=============================================================================

@@ -69,7 +69,7 @@
 pro cas_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
                                       n_obj=n_obj, dim=dim, status=status
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
  case cam_name of
 	'CAS_ISSNA': $
 	  begin

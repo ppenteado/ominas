@@ -69,7 +69,7 @@
 pro dawn_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
                                       n_obj=n_obj, dim=dim, status=status
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
  if(cam_name EQ 'DAWN_FC1') then inst=-203110l
  if(cam_name EQ 'DAWN_FC2') then inst=-203120l
 

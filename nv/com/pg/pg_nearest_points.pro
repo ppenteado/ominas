@@ -86,18 +86,18 @@
 ;	
 ;-
 ;=============================================================================
-function pg_nearest_points, object_ps, _ps
-@ps_include.pro
+function pg_nearest_points, object_ptd, _ptd
+@pnt_include.pro
 
- ps = ps_cull(_ps)
+ ptd = pnt_cull(_ptd)
 
- n = n_elements(ps)
- if(n EQ 1) then return, ps
+ n = n_elements(ptd)
+ if(n EQ 1) then return, ptd
 
  ;---------------------------
  ; get object vectors
  ;---------------------------
- v = ps_vectors(object_ps)
+ v = pnt_vectors(object_ptd)
 
  nv = n_elements(v)/3
 
@@ -112,13 +112,13 @@ function pg_nearest_points, object_ps, _ps
 
  for i=0, n-1 do $
   begin
-   ps_get, ps[i], v=v, p=p, flag=flag
+   pnt_get, ptd[i], v=v, p=p, flag=flag
    if(n_elements(v) NE 3*nv) then $
      nv_message, name='pg_nearest_points', 'WARNING: Incompatible arrays.'
    vec[*,*,i] = v
    pts[*,*,i] = p
    flags[*,i] = flag
-   w = where((flag AND PS_MASK_INVISIBLE) EQ 1)
+   w = where((flag AND PTD_MASK_INVISIBLE) EQ 1)
    if(w[0] NE -1) then vec[w,*,i] = 1d100	; exclude invisible points
   end
 
@@ -140,8 +140,8 @@ function pg_nearest_points, object_ps, _ps
  min_pts = transpose(min_pts)
  min_flags = flags[colgen(nv,1,n, sub)]
 
- ps_set, ps[0], v=min_vec, p=min_pts, flags=min_flags
+ pnt_set, ptd[0], v=min_vec, p=min_pts, flags=min_flags
 
- return, ps[0]
+ return, ptd[0]
 end
 ;=============================================================================

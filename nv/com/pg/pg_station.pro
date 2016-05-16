@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	station_ps = pg_station(gd=gd)
+;	station_ptd = pg_station(gd=gd)
 ;
 ;
 ; ARGUMENTS:
@@ -49,8 +49,8 @@
 ;	fov:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, points structures excluded by the fov keyword
-;		 are not returned.  Normally, empty points structures
+;	cull:	 If set, POINT objects excluded by the fov keyword
+;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
 ;
@@ -58,7 +58,7 @@
 ;
 ;
 ; RETURN:
-;	Array (n_objects) of points_struct containing image points and
+;	Array (n_objects) of POINT containing image points and
 ;	the corresponding inertial vectors.
 ;
 ;
@@ -73,7 +73,7 @@
 ;=============================================================================
 function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
                                fov=fov, cull=cull, frame_bd=frame_bd
-@ps_include.pro
+@pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -91,9 +91,9 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;-----------------------------------
  ; compute points for each station
  ;-----------------------------------
- hide_flag = PS_MASK_INVISIBLE
+ hide_flag = PTD_MASK_INVISIBLE
 
- station_ps = ptrarr(n_objects)
+ station_ptd = objarr(n_objects)
 
  for i=0, n_objects-1 do $
   begin
@@ -107,7 +107,7 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
      if(w[0] NE -1) then $
       begin
        xd = reform(bx[w[0],*], nt)
-       input = pgs_desc_suffix(bx=xd[0], cd=cd[0])
+       input = pgs_desc_suffix(bx=xd[0], cd[0])
        idp = cor_idp(xd)
       end
     end
@@ -122,23 +122,23 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
     if(keyword_set(body_pts)) then $
      inertial_pts = bod_body_to_inertial_pos(xd, body_pts)
 
-   name = get_core_name(xd) + ':' + get_core_name(std[i])
+   name = cor_name(xd) + ':' + cor_name(std[i])
 
    ;-----------------------------------
    ; store grid
    ;-----------------------------------
-   station_ps[i] = ps_init(name = strupcase(name), $
+   station_ptd[i] = pnt_create_descriptors(name = strupcase(name), $
 		           desc = 'station', $
 		           input = input, $
 		           assoc_idp = idp, $
 		           points = points, $
 		           vectors = inertial_pts)
-   flags = ps_flags(station_ps[i])
-   if(NOT keyword__set(valid)) then flags[*] = PS_MASK_INVISIBLE
-   ps_set_flags, station_ps[i], flags
+   flags = pnt_flags(station_ptd[i])
+   if(NOT keyword__set(valid)) then flags[*] = PTD_MASK_INVISIBLE
+   pnt_set_flags, station_ptd[i], flags
 
    if(keyword_set(xd)) then $
-     if(NOT bod_opaque(xd[0])) then ps_set_flags, station_ps[i], hide_flag
+     if(NOT bod_opaque(xd[0])) then pnt_set_flags, station_ptd[i], hide_flag
   end
 
 
@@ -148,14 +148,14 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;------------------------------------------------------
  if(keyword_set(fov)) then $
   begin
-   pg_crop_points, station_ps, cd=cd[0], slop=slop
-   if(keyword_set(cull)) then station_ps = ps_cull(station_ps)
+   pg_crop_points, station_ptd, cd=cd[0], slop=slop
+   if(keyword_set(cull)) then station_ptd = pnt_cull(station_ptd)
   end
 
 
  if(keyword_set(__lat)) then _lat = __lat
  if(keyword_set(__lon)) then _lon = __lon
 
- return, station_ps
+ return, station_ptd
 end
 ;=============================================================================

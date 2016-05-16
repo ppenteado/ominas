@@ -12,7 +12,7 @@
 ;       NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;       result = strcat_sao_input(dd, keyword)
 ;
 ;
@@ -331,7 +331,7 @@ function sao_get_stars, filename, cam_vel=cam_vel, $
  for j = 0 , n-1 do orient[*,*,j] = _orient
  avel = make_array(1,3,n,value=0d)
  vel = make_array(1,3,n,value=0d)
-; time = make_array(n,value=(bod_time(cam_body(ods[0]))))
+; time = make_array(n,value=(bod_time(ods[0])))
  time = make_array(n,value=0d)
  radii = make_array(3,n,value=1d)
  lora = make_array(n, value=0d)
@@ -366,7 +366,7 @@ function sao_get_stars, filename, cam_vel=cam_vel, $
 
  lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d ) 
 
- _sd = str_init_descriptors( n, $
+ _sd = str_create_descriptors( n, $
         name=name, $
         orient=orient, $
         avel=avel, $

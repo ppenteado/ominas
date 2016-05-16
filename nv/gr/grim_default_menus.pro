@@ -624,8 +624,8 @@ pro grim_menu_pointing_manual_event, event
  ;----------------------------------------------------------------------
  ; construct the outlines to use based on currently existing points
  ;----------------------------------------------------------------------
- point_ps = grim_cat_points(grim_data, /active)
- if(NOT keyword_set(point_ps)) then $
+ point_ptd = grim_cat_points(grim_data, /active)
+ if(NOT keyword_set(point_ptd)) then $
   begin
    grim_message, 'There are no active image points.'
    return
@@ -634,11 +634,11 @@ pro grim_menu_pointing_manual_event, event
  ;------------------------------------------------
  ; find the offset
  ;------------------------------------------------
- axis_ps = ps_init(points=cam_oaxis(*plane.cd_p))
+ axis_ps = pnt_create_descriptors(points=cam_oaxis(*plane.cd_p))
  grim_print, grim_data, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept'
 
  grim_logging, grim_data, /start
- dxy = pg_drag(point_ps, draw=grim_data.draw, $
+ dxy = pg_drag(point_ptd, draw=grim_data.draw, $
                dtheta=dtheta, axis=axis_ps, col=ctpurple(), sample=1)
  grim_logging, grim_data, /stop
 
@@ -701,8 +701,8 @@ pro grim_menu_pointing_farfit_event, event
  ;----------------------------------------------------------------------
  ; construct the outlines to use based on currently existing points
  ;----------------------------------------------------------------------
- point_ps = grim_cat_points(grim_data, /active)
- if(NOT keyword__set(point_ps)) then $
+ point_ptd = grim_cat_points(grim_data, /active)
+ if(NOT keyword__set(point_ptd)) then $
   begin
    grim_message, 'No active image points.'
    return
@@ -711,7 +711,8 @@ pro grim_menu_pointing_farfit_event, event
  ;------------------------------------------------
  ; scan for edges
  ;------------------------------------------------
- np = n_elements(pg_points(point_ps))/2
+; np = n_elements(pnt_points(/cat, point_ptd))/2
+ np = pnt_nv(point_ptd)
  edge_ps = pg_edges(plane.dd, edge=10, np=4*np)
  pg_draw, edge_ps, col=ctgreen()
 ;stop
@@ -720,7 +721,7 @@ pro grim_menu_pointing_farfit_event, event
  ; find the offset
  ;------------------------------------------------
  grim_message, /clear
- dxy = pg_farfit(plane.dd, edge_ps, [point_ps])
+ dxy = pg_farfit(plane.dd, edge_ps, [point_ptd])
  grim_message
 
  ;------------------------------------------------------------
@@ -1140,7 +1141,7 @@ pro grim_menu_shift_drag_event, event
  plane = grim_get_plane(grim_data)
 
  
- test_ps = ps_init(points=transpose([transpose([0d,0d]), transpose([0d,1d])])) 
+ test_ps = pnt_create_descriptors(points=transpose([transpose([0d,0d]), transpose([0d,1d])])) 
 
  grim_print, grim_data, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept'
 
