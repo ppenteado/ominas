@@ -17,7 +17,7 @@ function cas_from_ominas, _od, orient_fn
   end
 
 stop
- if(cor_isa(od 'GLOBE')) then $
+ if(cor_isa(od, 'GLOBE')) then $
   begin
    bod_set_pos, od, bod_pos(od)/1000d		; m --> km
    bod_set_vel, od, bod_vel(od)/1000d		; m/s --> km/s
