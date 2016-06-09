@@ -16,7 +16,8 @@ function map_match_type, _type
                 'SINUSOIDAL', $
                 'PERSPECTIVE', $
                 'OBLIQUE_DISK', $
-                'EQUATORIAL_RING' $
+                'EQUATORIAL_RING', $
+                'RING' $
                 ]
 
  types = strarr(n)

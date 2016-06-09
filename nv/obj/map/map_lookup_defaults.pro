@@ -38,7 +38,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; equatorial disk projection
  ;---------------------------------
- w = where(type EQ 'EQUATORIAL_RING')
+ w = where(strmatch(type,'*RING'))
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d

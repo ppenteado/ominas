@@ -25,6 +25,12 @@ pro map_lookup_transformations, _md, fn_map_to_image, fn_image_to_map
          fn_image_to_map[i] = 'map_image_to_map_equatorial_ring'
         end
 
+    'RING' : $
+        begin
+         fn_map_to_image[i] = 'map_map_to_image_ring'
+         fn_image_to_map[i] = 'map_image_to_map_ring'
+        end
+
     'MERCATOR' : $
 	begin
 	 fn_map_to_image[i] = 'map_map_to_image_mercator'
