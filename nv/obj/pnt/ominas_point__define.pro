@@ -164,17 +164,13 @@ end
 ;
 ;
 ; FIELDS:
-;	name:		Data set name.
-;
 ;	desc:		Data set description.
-;
-;	idp:		ID pointer.  Uniquely identifies this data object.
 ;
 ;	points_p:	Pointer to image points.
 ;
 ;	vectors_p:	Pointer to inertial vectors.
 ;
-;	assoc_idp:	IDP of an associated descriptor, if applicable.
+;	assoc_xd:	Associated descriptor, if applicable.
 ;
 ;	data_p:		Pointer to a point-by-point user data array.
 ;
@@ -216,7 +212,7 @@ pro ominas_point__define
 		dst: 		{nv_directive_stop}, $	; Protect subsequent pointers
 
 
-		assoc_idp:	ptr_new() $	; idp of associated descriptor
+		assoc_xd:	obj_new() $	; associated descriptor
 	}
 
 end

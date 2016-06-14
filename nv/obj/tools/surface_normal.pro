@@ -57,7 +57,7 @@ function surface_normal, bx, v, r, frame_bd=frame_bd, north=north
  gbx = cor_select(bx, 'GLOBE', /class)
  dkx = cor_select(bx, 'DISK', /class)
 
- if(keyword_set(gbx)) then norm_pts = glb_surface_normal(gbx, r) $
+ if(keyword_set(gbx)) then norm_pts = glb_get_surface_normal(/body, gbx, r) $
  else if(keyword_set(dkx)) then $
        norm_pts = dsk_surface_normal(dkx, v, r, frame_bd=frame_bd, north=north)
 

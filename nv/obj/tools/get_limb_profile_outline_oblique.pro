@@ -72,8 +72,8 @@ function get_limb_profile_outline_oblique, cd, gbx, points, point, $
  ;----------------------------------------
  ; set up bounds if not given
  ;----------------------------------------
- dsk_pts = image_to_disk(cd, dkd, points, frame=dkd, body=body_pts)
- dsk_pt = image_to_disk(cd, dkd, point, frame=dkd, body=body_pts)
+ dsk_pts = image_to_disk(cd, dkd, points,, body=body_pts)
+ dsk_pt = image_to_disk(cd, dkd, point, body=body_pts)
 
  crads = dsk_pts[*,0]
  ss = sort(crads)
@@ -136,14 +136,14 @@ function get_limb_profile_outline_oblique, cd, gbx, points, point, $
  pp = dindgen(nalt)##(points[*,1] - points[*,0])/double(nalt-1) + $
                                   points[*,0]#make_array(nalt,val=1d)
 
- end_pts0_disk = image_to_disk(cd, dkd, pp, frame=gbx)
+ end_pts0_disk = image_to_disk(cd, dkd, pp)
  end_pts1_disk = end_pts0_disk
  end_pts1_disk[*,1] = end_pts1_disk[*,1] - daz
 
  end_pts0 = bod_body_to_inertial_pos(dkd, $
-              dsk_disk_to_body(dkd, end_pts0_disk, frame_bd=dkd))
+              dsk_disk_to_body(dkd, end_pts0_disk))
  end_pts1 = bod_body_to_inertial_pos(dkd, $
-              dsk_disk_to_body(dkd, end_pts1_disk, frame_bd=dkd))
+              dsk_disk_to_body(dkd, end_pts1_disk))
 
  inertial_pts = [inner_pts, end_pts0, outer_pts, end_pts1]
 

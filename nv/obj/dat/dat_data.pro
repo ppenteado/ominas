@@ -128,7 +128,7 @@ function dat_data, dd, samples=_samples, nd=nd, true=true, noevent=noevent
  else $
   begin
    data = data_archive_get(_dd.data_dap, _dd.dap_index)
-   data = call_function('nv_uncompress_data_' + _dd.compress, _dd, data)
+   data = call_function('dat_uncompress_data_' + _dd.compress, _dd, data)
   end
 
 

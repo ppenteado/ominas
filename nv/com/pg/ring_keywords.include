@@ -7,6 +7,7 @@ rng_pos=rng__pos, $
 rng_vel=rng__vel, $
 rng_sma=rng__sma, $         
 rng_ecc=rng__ecc, $         
+rng_ecc=rng__dap, $         
 rng_opaque=rng__opaque, $         
 rng_opacity=rng__opacity, $  
 rng_nm=rng__nm, $         

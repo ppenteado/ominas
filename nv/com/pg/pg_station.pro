@@ -38,10 +38,6 @@
 ;	bx:	Array (n_xd, n_timesteps) of descriptors of objects 
 ;		that must be a subclass of BODY, instead of gbx or dkx.  
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
 ;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
 ;		are taken from the cd and gbx fields of this structure
 ;		instead of from those keywords.
@@ -72,13 +68,13 @@
 ;-
 ;=============================================================================
 function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
-                               fov=fov, cull=cull, frame_bd=frame_bd
+                                                         fov=fov, cull=cull
 @pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, std=std, cd=cd, bx=bx, gbx=gbx, dkx=dkx, frame_bd=frame_bd
+ pgs_gd, gd, std=std, cd=cd, bx=bx, gbx=gbx, dkx=dkx
  if(NOT keyword_set(cd)) then cd = 0 
  if(keyword_set(gbx)) then if(NOT keyword_set(bx)) then bx = gbx
  if(keyword_set(dkx)) then if(NOT keyword_set(bx)) then bx = dkx
@@ -98,7 +94,6 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  for i=0, n_objects-1 do $
   begin
    input = 0
-   idp = 0
    xd = 0
    if(keyword_set(bx)) then $
     begin
@@ -108,15 +103,13 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
       begin
        xd = reform(bx[w[0],*], nt)
        input = pgs_desc_suffix(bx=xd[0], cd[0])
-       idp = cor_idp(xd)
       end
     end
 
    surf_pts = stn_surface_pt(std[i,*])
    map_pts = surface_to_map(cd, xd, surf_pts)
 
-   points = map_to_image(cd, cd, xd, map_pts, valid=valid, $
-                                         body=body_pts, frame_bd=frame_bd)
+   points = map_to_image(cd, cd, xd, map_pts, valid=valid, body=body_pts)
    inertial_pts = 0
    if(keyword_set(bx)) then $
     if(keyword_set(body_pts)) then $
@@ -130,7 +123,7 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
    station_ptd[i] = pnt_create_descriptors(name = strupcase(name), $
 		           desc = 'station', $
 		           input = input, $
-		           assoc_idp = idp, $
+		           assoc_xd = xd, $
 		           points = points, $
 		           vectors = inertial_pts)
    flags = pnt_flags(station_ptd[i])

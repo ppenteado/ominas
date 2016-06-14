@@ -41,14 +41,14 @@
 ;       Written by:     Spitale; 8/2006
 ;-
 ;=============================================================================
-function image_to_body, cd, bx, p, hit=hit, back=back, all=all, frame_bd=frame_bd
+function image_to_body, cd, bx, p, hit=hit, back=back, all=all
 
 ; if(keyword_set(cd)) then class = cor_class(cd[0])
  class = (cor_class(cd))[0]
 
  case class of 
-  'MAP' : return, surface_to_body(bx, frame_bd=frame_bd, $
-	            image_to_surface(cd, bx, p, frame_bd=frame_bd))
+  'MAP' : return, surface_to_body(bx, $
+	            image_to_surface(cd, bx, p))
 
 
   'CAMERA' : $
@@ -65,7 +65,7 @@ function image_to_body, cd, bx, p, hit=hit, back=back, all=all, frame_bd=frame_b
 	 rr = image_to_inertial(cd, p)
 	 r = bod_inertial_to_body(bx, rr)
 
-         body_pts = surface_intersect(bx, v, r, hit=hit, frame_bd=frame_bd)
+         body_pts = surface_intersect(bx, v, r, hit=hit)
 
          if(NOT keyword_set(all)) then $
           begin

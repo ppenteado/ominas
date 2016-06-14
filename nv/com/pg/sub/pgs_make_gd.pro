@@ -44,7 +44,7 @@
 ;	
 ;-
 ;=============================================================================
-function pgs_make_gd, gd=gd, $
+function pgs_make_gd, xds, gd=gd, $
                  dd=dd, crd=crd, bd=bd, md=md, dkx=dkx, gbx=gbx, dkd=dkd, $
                  gbd=gbd, pd=pd, sd=sd, std=std, ard=ard, rd=rd, cd=cd, sund=sund, bx=bx, od=od
 
@@ -52,6 +52,37 @@ function pgs_make_gd, gd=gd, $
  if(keyword_set(gd)) then pgs_gd, gd, $
                  dd=dd, crd=crd, bd=bd, md=md, dkx=dkx, gbx=gbx, dkd=dkd, $
                  gbd=gbd, pd=pd, sd=sd, std=std, ard=ard, rd=rd, cd=cd, sund=sund, bx=bx, od=od
+
+ if(keyword_set(xds)) then $
+  begin
+   class = cor_class(xds)
+   w = where(class EQ 'DATA')
+   if(w[0] NE -1) then dd = append_array(dd, xds[w])
+   w = where(class EQ 'CORE')
+   if(w[0] NE -1) then crd = append_array(crd, xds[w])
+   w = where(class EQ 'BODY')
+   if(w[0] NE -1) then bd = append_array(bd, xds[w])
+   w = where(class EQ 'MAP')
+   if(w[0] NE -1) then md = append_array(md, xds[w])
+   w = where(class EQ 'DISK')
+   if(w[0] NE -1) then dkd = append_array(dkd, xds[w])
+   w = where(class EQ 'GLOBE')
+   if(w[0] NE -1) then gbd = append_array(gbd, xds[w])
+   w = where(class EQ 'PLANET')
+   if(w[0] NE -1) then pd = append_array(pd, xds[w])
+   w = where(class EQ 'STAR')
+   if(w[0] NE -1) then sd = append_array(sd, xds[w])
+   w = where(class EQ 'STATION')
+   if(w[0] NE -1) then std = append_array(std, xds[w])
+   w = where(class EQ 'ARRAY')
+   if(w[0] NE -1) then ard = append_array(ard, xds[w])
+   w = where(class EQ 'RING')
+   if(w[0] NE -1) then rd = append_array(rd, xds[w])
+   w = where(class EQ 'CAMERA')
+   if(w[0] NE -1) then cd = append_array(cd, xds[w])
+   w = where((class EQ 'STAR') AND (cor_name(xds) EQ 'SUN'))
+   if(w[0] NE -1) then sund = append_array(sund, xds[w])
+  end
 
  if(NOT keyword_set(dd)) then dd = 0
  if(NOT keyword_set(crd)) then crd = 0

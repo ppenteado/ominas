@@ -66,7 +66,7 @@
 ;-
 ;=============================================================================
 function get_ring_profile_n, outline_pts, cd, dkd, lon, rad, $
-                             oversamp=oversamp, frame_bd=frame_bd
+                             oversamp=oversamp
 
  if(NOT keyword__set(oversamp)) then oversamp=1.
  n_lon = n_elements(lon)
@@ -98,7 +98,7 @@ function get_ring_profile_n, outline_pts, cd, dkd, lon, rad, $
  ; convert to image coordinates
  ;-------------------------------
  inertial = bod_body_to_inertial_pos(dkd, $
-              dsk_disk_to_body(dkd, rp_pts, frame_bd=frame_bd))
+              dsk_disk_to_body(dkd, rp_pts))
 
  im_pts = cam_focal_to_image(cd, $
             cam_body_to_focal(cd, $

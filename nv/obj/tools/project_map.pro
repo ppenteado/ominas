@@ -58,12 +58,6 @@
 ;
 ;	arg_interp:	Interpolation argument, see image_interp_cam.
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  This argument is passed through to
-;			the hide functions in case a disk descriptor is
-;			used.  It really ought to be hidden in hide_data_p.
-;
 ;	roi:	Subscripts in the output map specifying the map region
 ;		to project, instead of the whole thing.
 ;
@@ -91,13 +85,12 @@
 ; pm_hide_ring
 ;
 ;=============================================================================
-function pm_hide_ring, rd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam, frame_bd=frame_bd
+function pm_hide_ring, rd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
  n = n_elements(rd)
- for i=0, n-1 do sub = append_array(sub, $
-   dsk_hide_points(rd[i], pos_cam, body_pts, frame_bd=frame_bd))
+ for i=0, n-1 do sub = append_array(sub, dsk_hide_points(rd[i], pos_cam, body_pts))
  return, sub
 
-; return, dsk_hide_points(rd, pos_cam, body_pts, frame_bd=frame_bd)
+; return, dsk_hide_points(rd, pos_cam, body_pts)
 end
 ;=============================================================================
 
@@ -107,7 +100,7 @@ end
 ; pm_hide_globe
 ;
 ;=============================================================================
-function pm_hide_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam, frame_bd=frame_bd
+function pm_hide_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
 
  nxd = n_elements(xd)
 
@@ -125,7 +118,7 @@ end
 ; pm_rm_globe_shadow
 ;
 ;=============================================================================
-function pm_rm_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam, frame_bd=frame_bd
+function pm_rm_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
 
  cd = xd[0]
  pd = xd[1]
@@ -149,7 +142,7 @@ end
 ; pm_rm_globe
 ;
 ;=============================================================================
-function pm_rm_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam, frame_bd=frame_bd
+function pm_rm_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
 
  nxd = n_elements(xd)
 
@@ -190,7 +183,7 @@ end
 ; pm_hide_points_limb
 ;
 ;=============================================================================
-function pm_hide_points_limb, bx, pos_cam, body_pts, frame_bd=frame_bd
+function pm_hide_points_limb, bx, pos_cam, body_pts
 
  if(cor_isa(bx, 'GLOBE')) then return, glb_hide_points_limb(bx, pos_cam, body_pts)
 ; return, 
@@ -266,7 +259,7 @@ end
 ; project_map
 ;
 ;=============================================================================
-function project_map, image, md=md, cd=cd, bx=bx, sund=sund, frame_bd=frame_bd, $
+function project_map, image, md=md, cd=cd, bx=bx, sund=sund, $
                       _pc_xsize, _pc_ysize, bounds=bounds, hit=hit, value=value, $
                       hide_fn=hide_fn, hide_data_p=hide_data_p, roi=roi, $
                       interp=interp, arg_interp=arg_interp, offset=offset, $
@@ -296,13 +289,6 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, frame_bd=frame_bd, 
   begin
    sund_cam = sund[0]
    sund_map = sund[1]
-  end
-
- if(keyword_set(frame_bd)) then frame_bd_cam = (frame_bd_map = frame_bd[0])
- if(n_elements(frame_bd) EQ 2) then $
-  begin
-   frame_bd_cam = frame_bd[0]
-   frame_bd_map = frame_bd[1]
   end
 
 
@@ -388,7 +374,7 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, frame_bd=frame_bd, 
       ;---------------------------------------------------
       ; convert pixel coordinates to map coordinates
       ;---------------------------------------------------
-      map_pts = image_to_map(md, map_image_pts, bx=bx_map, valid=valid, frame_bd=frame_bd_map)
+      map_pts = image_to_map(md, map_image_pts, bx=bx_map, valid=valid)
       invalid = complement(map_image_pts[0,*], valid)
 
       if(keyword_set(map_pts)) then $
@@ -400,7 +386,7 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, frame_bd=frame_bd, 
         ; apply wind function
         ;--------------------------
         if(keyword_set(wind_fn)) then $
-                  map_pts = call_function(wind_fn, bx_map, map_pts, wind_data)
+             map_pts = call_function('pm_wind_'+wind_fn, bx_map, map_pts, wind_data)
 
         ;----------------------------------------------
         ; compute projection
@@ -433,10 +419,9 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, frame_bd=frame_bd, 
             ; compute source image coordinates
             ;-----------------------------------
             cam_image_pts = $
-              surface_to_image(cd, bx_cam, surface_pts, frame_bd=frame_bd_cam, $
+              surface_to_image(cd, bx_cam, surface_pts, $
                                                 body_pts=body_pts, valid=_valid)
             _invalid = complement(surface_pts[*,0], _valid)
-
  ;          if(arg_present(hit)) then hit = append_array(hit, $
  ;                 xy_to_w([image_xsize, image_ysize], w_to_xy([pc_xsize, pc_ysize], _valid)))
 
@@ -472,7 +457,7 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, frame_bd=frame_bd, 
                begin
                 user_sub = -1
                 user_sub = call_function(hide_fn[k], *hide_data_p[k], $
-                            map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam, frame_bd=frame_bd_cam)
+                            map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam)
                 sub = append_array(sub, user_sub)
                end
               surface_pts = 0

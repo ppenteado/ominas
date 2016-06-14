@@ -117,9 +117,7 @@ function rdr_photometry, data, cd, sund, bx, body_pts, no_pht=no_pht
  if(data.no_pht) then phot = make_array(n, val=1d) $
  else $
   begin
-;   fbx = 0
-;   if(cor_isa(bx, 'DISK')) then fbx = get_primary(bx, all_bx)
-   pht_angles, 0, cd, bx, sund, body_pts=body_pts, emm=mu, inc=mu0, g=g, frame_bd=fbx
+   pht_angles, 0, cd, bx, sund, body_pts=body_pts, emm=mu, inc=mu0, g=g
 
    refl_fn = sld_refl_fn(bx)
    refl_parm = sld_refl_parm(bx)

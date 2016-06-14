@@ -60,7 +60,7 @@ function glb_hide_points_limb, gbd, r, points
  nv = (size(points))[1]
 
  x = points - r[gen3y(nv,3,nt)]
- n = glb_get_surface_normal_body(gbd, points)
+ n = glb_get_surface_normal(/body, gbd, points)
 
  sub = where(v_inner(n,x) GT 0)
 

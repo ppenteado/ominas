@@ -114,7 +114,7 @@ pro pg_hide, object_ptd, hide_ptd, cd=cd, $
  if(keyword_set(rm)) then $
   begin
    if(keyword_set(disk)) then $
-      pg_rm_disk, object_ptd, hide_ptd, cd=cd, dkx=dkx, gbx=gbx, gd=gd, reveal=reveal, cat=cat
+      pg_rm_disk, object_ptd, hide_ptd, cd=cd, dkx=dkx, gd=gd, reveal=reveal, cat=cat
    if(keyword_set(globe)) then $
       pg_rm_globe, object_ptd, hide_ptd, cd=cd, gbx=gbx, gd=gd, reveal=reveal, cat=cat
   end $

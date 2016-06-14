@@ -26,10 +26,7 @@
 ;       NONE
 ;
 ; KEYWORDS:
-;   INPUT:
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
+;   INPUT: NONE
 ;
 ;   OUTPUT: NONE
 ;
@@ -46,8 +43,8 @@
 ;
 ;-
 ;=============================================================================
-function inertial_to_disk, dkx, v, frame_bd=frame_bd
+function inertial_to_disk, dkx, v
  return, dsk_body_to_disk(dkx, $
-           bod_inertial_to_body(dkx, v), frame_bd=frame_bd)
+           bod_inertial_to_body(dkx, v))
 end
 ;=============================================================================

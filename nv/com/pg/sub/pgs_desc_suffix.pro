@@ -30,6 +30,8 @@
 ;
 ;	od:	Descriptors to be listed as OBSERVER.
 ;
+;	srcd:	Descriptors to be listed as SOURCE.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -53,7 +55,7 @@
 ;-
 ;=============================================================================
 function pgs_desc_suffix, xd, gd=gd, $
-                              dkx=dkx, gbx=gbx, bx=bx, sund=sund, od=od
+                              dkx=dkx, gbx=gbx, bx=bx, sund=sund, od=od, srcd=srcd
 
  pgs_gd, gd, dkx=dkx, gbx=gbx, bx=bx, sund=sund, od=od
 
@@ -66,6 +68,7 @@ function pgs_desc_suffix, xd, gd=gd, $
  if(keyword_set(bx)) then suffix = suffix + str_cat('/BX:' + cor_name(bx))
  if(keyword_set(sund)) then suffix = suffix + str_cat('/SUN:' + cor_name(sund))
  if(keyword_set(od)) then suffix = suffix + str_cat('/OBSERVER:' + cor_name(od))
+ if(keyword_set(srcd)) then suffix = suffix + str_cat('/SOURCE:' + cor_name(srcd))
  
  return, strmid(suffix, 1, 4096)
 end

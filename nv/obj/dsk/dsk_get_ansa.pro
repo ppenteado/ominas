@@ -16,9 +16,9 @@ function dsk_get_ansa, dkd, r, n=n
  aa = v_cross(zz, v_unit(r))
 
  aa_dsk = dsk_body_to_disk(dkd, aa)
- lon = aa_dsk[1]
+ ta = aa_dsk[1]
 
- rad = dsk_get_radius(dkd, lon)
+ rad = dsk_get_radius(dkd, ta)
 
 
  return, ansa_pts

@@ -82,9 +82,9 @@
 ;-
 ;=============================================================================
 pro pg_shadow_points, cd=cd, od=od, bx=bx, gd=gd, object_ptd, shadow_ptd, $
-                           nocull=nocull, edge=edge, $
-                           fov=fov, cull=cull, both=both, backshadow=_backshadow, $
-                           iterate=iterate, nosolve=nosolve
+                           nocull=nocull, edge=edge, nosolve=nosolve, $
+                           fov=fov, cull=cull, both=both, backshadow=_backshadow
+                           
 @pnt_include.pro
 
 
@@ -93,7 +93,7 @@ pro pg_shadow_points, cd=cd, od=od, bx=bx, gd=gd, object_ptd, shadow_ptd, $
  shad_ptd = pg_shadow(both=both, backshadow=backshadow, $
                        object_ptd, cd=cd, od=od, bx=bx, gd=gd, $
                        all=all, fov=fov, nocull=NOT keyword_set(cull), $
-                       iterate=iterate, nosolve=nosolve)
+                       nosolve=nosolve)
 
  object_flags = pnt_flags(object_ptd)
  shad_flags = pnt_flags(shad_ptd)

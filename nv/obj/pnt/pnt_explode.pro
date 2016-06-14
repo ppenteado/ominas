@@ -47,7 +47,7 @@
 function pnt_explode, ptd
 
  pnt_get, ptd, nv=nv, nt=nt, $
-        name=name, desc=desc, input=input, assoc_idp=assoc_idp, $
+        name=name, desc=desc, input=input, assoc_xd=assoc_xd, $
         flags=flags, points=points, vectors=vectors, data=data, tags=tags
 
  pptd = objarr(nv, nt)

@@ -192,37 +192,21 @@ pro gr_draw, pp, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, sund=sund, od=od, $
 
   end
 
- ;------------------------------
- ; get descriptor idp's
- ;------------------------------
  grim_data = grim_get_data(grnum=grnum)
-
- idp_cam = nv_ptr_new() & idp_plt = nv_ptr_new() & idp_rng = nv_ptr_new()
- idp_str = nv_ptr_new() & idp_sun = nv_ptr_new()
- if(keyword_set(cd)) then idp_cam = cor_idp(cd)
- if(keyword_set(pd)) then idp_plt = cor_idp(pd)
- if(keyword_set(rd)) then idp_rng = cor_idp(rd)
- if(keyword_set(sd)) then idp_str = cor_idp(sd)
- if(keyword_set(sund)) then idp_sun = cor_idp(sund)
 
  ;------------------------------
  ; set object points
  ;------------------------------
  if(keyword_set(limb_ptd)) then $
-     grim_add_points, grim_data, limb_ptd, name='limb', /replace, plane=plane, $
-         idp_cam=idp_cam
+     grim_add_points, grim_data, limb_ptd, pd, cd=cd, name='limb', plane=plane
  if(keyword_set(ring_ptd)) then $
-     grim_add_points, grim_data, ring_ptd, name='ring', /replace, plane=plane, $
-                             idp_cam=idp_cam
+     grim_add_points, grim_data, ring_ptd, [rd,rd], cd=cd, name='ring', plane=plane
  if(keyword_set(term_ptd)) then $
-     grim_add_points, grim_data, term_ptd, name='terminator', /replace, plane=plane, $
-            idp_cam=idp_cam
+     grim_add_points, grim_data, term_ptd, pd, cd=cd, name='terminator', plane=plane
  if(keyword_set(star_ptd)) then $
-     grim_add_points, grim_data, star_ptd, name='star', /replace, plane=plane, $
-            idp_cam=idp_cam
+     grim_add_points, grim_data, star_ptd, sd, cd=cd, name='star', plane=plane
  if(keyword_set(center_ptd)) then $
-     grim_add_points, grim_data, center_ptd, name='planet_center', /replace, plane=plane, $
-                                              idp_cam=idp_cam
+     grim_add_points, grim_data, center_ptd, pd, cd=cd, name='planet_center', plane=plane
 
 
  ;------------------------------

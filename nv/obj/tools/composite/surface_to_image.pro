@@ -29,11 +29,7 @@
 ;       NONE
 ;
 ; KEYWORDS:
-;   INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
+;   INPUT: NONE
 ;
 ;   OUTPUT: NONE
 ;
@@ -49,8 +45,7 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function surface_to_image, cd, bx, p, frame_bd=frame_bd, $
-                                        body_pts=body_pts, valid=valid
+function surface_to_image, cd, bx, p, body_pts=body_pts, valid=valid
 
  if(NOT keyword_set(p)) then return, 0
 
@@ -67,7 +62,7 @@ function surface_to_image, cd, bx, p, frame_bd=frame_bd, $
          return, globe_to_image(cd, gbx, p, body_pts=body_pts, valid=valid)
 
  if(keyword_set(dkx)) then $
-      return, disk_to_image(cd, dkx, p, frame_bd=frame_bd, body_pts=body_pts, valid=valid)
+      return, disk_to_image(cd, dkx, p, body_pts=body_pts, valid=valid)
 
  valid = lindgen(n_elements(p[*,0]))
  return, radec_to_image(cd, p, body_pts=body_pts)

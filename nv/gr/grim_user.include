@@ -38,7 +38,7 @@ pro grim_add_user_points, grnum=grnum, user_ptd, tag, update=update, $
  if(NOT keyword_set(shade_fn)) then shade_fn = ''
  if(NOT keyword_set(shade_threshold)) then shade_threshold = 0d
 
- if(NOT keyword_set(grnum)) then if(keyword_set(plane)) then grnum = plane.grnum
+ if(NOT defined(grnum)) then if(keyword_set(plane)) then grnum = plane.grnum
  grim_data = grim_get_data(grnum=grnum)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 

@@ -11,7 +11,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ptd=pg_ring_sector_radlon(cd=cd, dkx=dkx, gbx=gbx, rad, lon)
+;     outline_ptd = pg_ring_sector_radlon(cd=cd, dkx=dkx, rad, lon)
 ;
 ;
 ; ARGUMENTS:
@@ -32,8 +32,6 @@
 ;           cd:     Camera descriptor.
 ;
 ;	   dkx:     Disk descriptor describing the ring.
-;
-;          gbx:     Globe descriptor giving the primary for the ring.
 ;
 ;           gd:     Generic descriptor containnig the above descriptors.
 ;
@@ -74,7 +72,7 @@
 ; pg_ring_sector_radlon
 ;
 ;=============================================================================
-function pg_ring_sector_radlon, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+function pg_ring_sector_radlon, cd=cd, dkx=dkx, gd=gd, $
                          rad, lon, sample=sample, slope=slope, nodsk=nodsk, $
                          nlon=__nlon, nrad=__nrad
 
@@ -86,14 +84,7 @@ function pg_ring_sector_radlon, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
   begin
    if(NOT keyword__set(cd)) then cd=gd.cd
    if(NOT keyword__set(dkx)) then dkx=gd.dkx
-   if(NOT keyword__set(_gbx)) then _gbx=gd.gbx
   end
-
- if(NOT keyword__set(_gbx)) then $
-            nv_message, name='pg_ring_sector_radlon', 'Globe descriptor required.'
- __gbx = get_primary(cd, _gbx, rx=dkx)
- if(keyword__set(__gbx)) then gbx = __gbx $
- else  gbx = _gbx[0,*]
 
  ;-----------------------------------
  ; validate descriptors
@@ -111,30 +102,26 @@ function pg_ring_sector_radlon, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
  ;--------------------------
  _nlon = 10 & _nrad = 10
  outline_pts = get_ring_profile_outline(cd, rd, $
-                        rad=rad, lon=lon, nrad=_nrad, nlon=_nlon, $
-                                                    slope=slope, frame_bd=gbx)
- dsk_outline_pts = image_to_disk(cd, rd, frame_bd=gbx, outline_pts)
+                        rad=rad, lon=lon, nrad=_nrad, nlon=_nlon, slope=slope)
+ dsk_outline_pts = image_to_disk(cd, rd, outline_pts)
  rads = dsk_outline_pts[_nlon+lindgen(_nrad),0]
  lons = dsk_outline_pts[lindgen(_nlon), 1]
 
- nlonrad = get_ring_profile_n(reform(outline_pts), cd, rd, $
-                                lons, rads, oversamp=sample, frame_bd=gbx)
+ nlonrad = get_ring_profile_n(reform(outline_pts), cd, rd, lons, rads, oversamp=sample)
  nrad = long(nlonrad[1]) & nlon = long(nlonrad[0])
 
  if(keyword_set(__nlon)) then nlon = __nlon
  if(keyword_set(__nrad)) then nrad = __nrad
 
  outline_pts = get_ring_profile_outline(cd, rd, $
-                        rad=rad, lon=lon, nrad=nrad, nlon=nlon, $
-                                                    slope=slope, frame_bd=gbx)
+                        rad=rad, lon=lon, nrad=nrad, nlon=nlon, slope=slope)
 
 
  ;-------------------------------------------
  ; Return outline points
  ;-------------------------------------------
  dsk_outline_pts = 0
- if(NOT keyword_set(nodsk)) then $
-       dsk_outline_pts = image_to_disk(cd, rd, frame_bd=gbx, outline_pts)
+ if(NOT keyword_set(nodsk)) then dsk_outline_pts = image_to_disk(cd, rd, outline_pts)
 
  outline_ptd = pnt_create_descriptors(points = outline_pts, $
                       desc = 'pg_ring_sector_rad', $

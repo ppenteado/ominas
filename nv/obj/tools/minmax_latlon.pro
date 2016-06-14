@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       minmax_latlon, cd, gbx, dkx, frame_bd=frame_bd
+;       minmax_latlon, cd, gbx, dkx
 ;
 ;
 ; ARGUMENTS:
@@ -29,10 +29,6 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
-;
 ;	slop:	Amount by which to expand image border for search.
 ;
 ;  OUTPUT: 
@@ -53,6 +49,8 @@
 ;
 ;-
 ;=============================================================================
+
+
 ;===========================================================================
 ; minmax_latlon
 ;
@@ -62,7 +60,7 @@
 ;  lonmax = easternmost lon.
 ;
 ;===========================================================================
-pro minmax_latlon, cd, pd, rd, frame_bd=frame_bd, slop=slop, $
+pro minmax_latlon, cd, pd, rd, slop=slop, $
       latmin=latmin, latmax=latmax, lonmin=lonmin, lonmax=lonmax, status=status
 
  status = -1
@@ -116,7 +114,7 @@ pro minmax_latlon, cd, pd, rd, frame_bd=frame_bd, slop=slop, $
    inertial_pts = bod_body_to_inertial_pos(pd, body_pts)
    dsk_pts = bod_inertial_to_body_pos(rd, inertial_pts)
    hide_sub = dsk_hide_points(rd, $
-                bod_inertial_to_body_pos(rd, bod_pos(cd)), dsk_pts, frame_bd=frame_bd)
+                bod_inertial_to_body_pos(rd, bod_pos(cd)), dsk_pts)
    if(hide_sub[0] NE -1) then $
     begin
      vis_sub = complement(dsk_pts[*,0], hide_sub)

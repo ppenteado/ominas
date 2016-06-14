@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = ringplane_radial_bounds(cd, dkx, frame_bd=frame_bdp)
+;       result = ringplane_radial_bounds(cd, dkx)
 ;
 ;
 ; ARGUMENTS:
@@ -27,10 +27,7 @@
 ;
 ;
 ; KEYOWRDS:
-;  INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
 ;
@@ -46,7 +43,7 @@
 ;
 ;-
 ;=============================================================================
-function ringplane_radial_bounds, cd, dkx, frame_bd=frame_bd
+function ringplane_radial_bounds, cd, dkx
 
  v = (bod_orient(cd))[1,*] 			; optic axis vector
  n = (bod_orient(dkx))[2,*]			; ringplane normal
@@ -65,8 +62,8 @@ function ringplane_radial_bounds, cd, dkx, frame_bd=frame_bd
 
  vv1 = dsk_intersect_inertial(dkx, r, v1)
  vv2 = dsk_intersect_inertial(dkx, r, v2)
- vv1_disk = inertial_to_disk_pos(dkx, vv1, frame_bd=frame_bd)
- vv2_disk = inertial_to_disk_pos(dkx, vv2, frame_bd=frame_bd)
+ vv1_disk = inertial_to_disk_pos(dkx, vv1)
+ vv2_disk = inertial_to_disk_pos(dkx, vv2)
 
  rad1 = vv1_disk[0]
  rad2 = vv2_disk[0]

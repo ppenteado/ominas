@@ -1,0 +1,20 @@
+							;bitmaps/grim_drag_bitmap.array bitmap
+							;definition
+bitmaps/grim_drag_bitmap.array = 	[				$
+		[255B, 255B],			$
+		[031B, 128B],			$
+		[223B, 191B],			$
+		[127B, 190B],			$
+		[079B, 178B],			$
+		[079B, 178B],			$
+		[015B, 240B],			$
+		[011B, 128B],			$
+		[009B, 128B],			$
+		[009B, 128B],			$
+		[097B, 155B],			$
+		[001B, 128B],			$
+		[001B, 128B],			$
+		[003B, 192B],			$
+		[255B, 255B],			$
+		[255B, 255B]			$
+		]

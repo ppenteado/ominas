@@ -35,7 +35,7 @@
 ;			immediately begins to drag from that point until a
 ;			button is released.
 ;
-;	grid_function:	Function which will quantize a point onto
+;	grid_function:	Function that will quantize a point onto
 ; 			a grid.  It should take an orderered
 ;			pair as its only argument and return an
 ;			ordered pair.  Default is the identity function.
@@ -155,13 +155,12 @@ function tvline, win_num, $
  released = 0
 
  repeat begin
-
   ;--------------------------
   ; draw
   ;--------------------------
   if(NOT nodraw) then plots, xarr, yarr, /device, thick=thick, linestyle=linestyle, color=color
   if(keyword_set(fn_draw)) then $
-    call_procedure, fn_draw, fn_data, xarr, yarr, pixmap, win_num
+        call_procedure, fn_draw, fn_data, xarr, yarr, pixmap, win_num
 
   cursor, qx, qy, /device, /change
   button = !err
@@ -186,10 +185,10 @@ function tvline, win_num, $
   ; erase
   ;--------------------------
   if(keyword_set(fn_erase)) then $
-                call_procedure, fn_erase, fn_data, oldxarr, oldyarr, pixmap, win_num
+             call_procedure, fn_erase, fn_data, oldxarr, oldyarr, pixmap, win_num
   if(NOT nodraw) then $
    begin
-    if(xor_graphics) then $
+   if(xor_graphics) then $
      plots, oldxarr, oldyarr, /device, thick=thick, linestyle=linestyle, $
            color=color $
     else device, copy=[0,0, !d.x_size,!d.y_size, 0,0, pixmap]
@@ -203,13 +202,17 @@ function tvline, win_num, $
 
 
  if(NOT nodraw) then $ 
-     if(NOT keyword__set(restore)) then $
-               plots, xarr, yarr, /device, thick=thick, color=color
+  if(NOT keyword__set(restore)) then $
+   begin    
+    plots, xarr, yarr, /device, thick=thick, color=color
+    if(keyword_set(fn_draw)) then $
+          call_procedure, fn_draw, fn_data, xarr, yarr, pixmap, win_num
+   end    
 
  if(xor_graphics) then device, set_graphics=3 $
  else if(NOT keyword_set(_pixmap)) then wdelete, pixmap
 
- result=[ [px,py],[qx,qy] ]
+ result = [ [px,py],[qx,qy] ]
 
 
  return, result

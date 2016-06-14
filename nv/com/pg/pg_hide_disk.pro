@@ -146,7 +146,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
        pnt_get, object_ptd[j], p=p, vectors=vectors, flags=flags
        object_pts = bod_inertial_to_body_pos(xd, vectors)
 
-       w = dsk_hide_points(xd, Rs, object_pts, frame_bd=gbx)
+       w = dsk_hide_points(xd, Rs, object_pts)
 
      if(hide) then $
       begin

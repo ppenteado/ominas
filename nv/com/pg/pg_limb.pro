@@ -181,7 +181,7 @@ function pg_limb, cd=cd, od=od, gbx=gbx, gd=gd, fov=fov, cull=cull, $
      limb_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
                           desc=desc, $
                           input=pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), $
-                          assoc_idp = cor_idp(xd), $
+                          assoc_xd = xd, $
                           points = points, $
                           flags = flags, $
                           vectors = inertial_pts)

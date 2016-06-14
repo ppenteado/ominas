@@ -303,6 +303,9 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
                       render_sample=render_sample, render_pht_min=render_pht_min
 
   pns = 0
+  MAX_OVERLAYS = 128
+
+  n_planes = n_elements(dd) 
 
   if(NOT keyword_set(max)) then max = 0
 
@@ -340,6 +343,10 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
   yrange = [0.,0.]
   if(keyword_set(_xrange)) then xrange = _xrange
   if(keyword_set(_yrange)) then yrange = _yrange
+  if(n_elements(xrange)/2 NE n_planes) then $
+                                    xrange = xrange#make_array(n_planes,val=1d)
+  if(n_elements(yrange)/2 NE n_planes) then $
+                                    yrange = yrange#make_array(n_planes,val=1d)
 
   ;--------------------------
   ; plot parms data structure
@@ -366,8 +373,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
   ;---------------------
   planes = *grim_data.planes_p
   flags = *grim_data.pl_flags_p
-
-  n_planes = n_elements(dd) 
 
   if(n_elements(xtitle) EQ 1) then xtitle = make_array(n_planes, val=xtitle)
   if(n_elements(ytitle) EQ 1) then ytitle = make_array(n_planes, val=ytitle)
@@ -403,8 +408,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	;---------------
 	; plot viewing
 	;---------------
-		xrange		:	xrange, $
-		yrange		:	yrange, $
+		xrange		:	xrange[*,i], $
+		yrange		:	yrange[*,i], $
 		position	:	[0.,0.,0.,0.], $
 		title		:	title[i], $
 		xtitle		:	xtitle[i], $
@@ -435,8 +440,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 		active_user_tags_p	:	ptr_new(''), $	
 
 	;-----------------------------------------------------------
-	; overlay points arrays -- 
-	;  Each overlay array, *overlay_ptdps[i], has dimensions
+	; overlay points arrays  -- 
+	;  Each overlay array, *(*overlay_ptdps)[i], has dimensions
 	;  (nptd, nd), where nd is the number of descriptors 
 	;  (planets, rings, etc.) and nptd is the number of arrays per
 	;  descriptor (e.g., rings have two arrays per descriptor).
@@ -444,6 +449,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 		overlay_ptdps		:	ptr_new(0), $
 		overlay_names_p		:	ptr_new(''), $
 		overlay_classes_p	:	ptr_new(0), $
+		overlay_genres_p		:	ptr_new(0), $
 		overlay_dep_p		:	ptr_new(0), $
 		overlay_labels_p	:	ptr_new(0), $
 		overlay_color_p		:	ptr_new(''), $
@@ -557,8 +563,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
     ;--------------------------------------------
     grim_create_overlays, grim_data, plane
    end
-
-
 
  planes.image_visible = 1
 

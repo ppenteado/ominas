@@ -113,18 +113,16 @@ pro nv_notify, xd, type=type, desc=desc, flush=flush, noevent=noevent
  ; buffer events for each matching handler 
  ; flush read events immediately
  ;------------------------------------------------
- idp = cor_idp(xd, /noevent)
- n = n_elements(idp)
+ n = n_elements(xd)
 
  for i=0, n-1 do $
   begin
-   ww = where(llist.idp EQ idp[i]) 
+   ww = where(llist.xd EQ xd[i]) 
 
    if(ww[0] NE -1) then $
     begin
      nww = n_elements(ww)
      events = replicate({nv_event_struct}, nww)
-     events.idp = llist[ww].idp
      events.type = llist[ww].type
      events.data = llist[ww].data
      events.data_p = llist[ww].data_p

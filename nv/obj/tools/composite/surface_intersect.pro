@@ -30,8 +30,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	frame_bd:  Frame descriptor, if required for bx.
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
 ;
@@ -52,14 +51,12 @@
 ;	
 ;-
 ;===========================================================================
-function surface_intersect, bx, v, r, $
-                        hit=hit, near=near, far=far, frame_bd=frame_bd
+function surface_intersect, bx, v, r, hit=hit, near=near, far=far
 
  if(cor_isa(bx[0], 'GLOBE')) then $
           body_pts = glb_intersect(bx, v, r, near=near, far=far, hit=hit) $
  else if(cor_isa(bx[0], 'DISK')) then $
-          body_pts = dsk_intersect(bx, v, r, $
-                        near=near, far=far, hit=hit, frame_bd=frame_bd, /all)
+          body_pts = dsk_intersect(bx, v, r, near=near, far=far, hit=hit, /all)
 
 
  return, body_pts

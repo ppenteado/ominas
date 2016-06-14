@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = inertial_to_globe_pos(gbx, v, frame_bd=frame_bd)
+;       result = inertial_to_globe_pos(gbx, v)
 ;
 ;
 ; ARGUMENTS:

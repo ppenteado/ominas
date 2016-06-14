@@ -262,7 +262,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 grid_ptd = pg_grid(gd=gd, bx=pd) & pg_hide, grid_ptd, gd=gd, /limb, /disk
 pg_draw, grid_ptd, color=ctblue()
 
-dgrid_ptd = pg_grid(gd=gd, bx=rd, frame_bd=pd) & pg_hide, dgrid_ptd, gd=gd, /globe
+dgrid_ptd = pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, /globe
 pg_draw, dgrid_ptd, color=ctpurple()
 
 ;-------------------------------------------------------------------------
@@ -479,7 +479,7 @@ plon_ptd = pg_grid(gd=gd, slat=0d, lon=lon, nlat=0)
 pg_hide, plon_ptd[0], cd=cd, gbx=pd[0], /limb
 pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 
-dgrid_ptd = pg_grid(gd=gd, bx=rd, frame_bd=pd) & pg_hide, dgrid_ptd, gd=gd, /globe
+dgrid_ptd = pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, /globe
 pg_draw, dgrid_ptd, color=ctpurple()
 
 

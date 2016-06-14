@@ -13,18 +13,15 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	z = dsk_get_edge_elevation(dkd, lon, frame_bd)
+;	z = dsk_get_edge_elevation(dkd, ta)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dkd:	 Array (nt) of any subclass of DISK.
 ;
-;	lon:	 Array (nlon) of longitudes at which to compute elevations.
+;	ta:	 Array (nta) of true anomalies at which to compute elevations.
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One for each dkd.
 ;
 ;  OUTPUT: NONE
 ;
@@ -39,7 +36,7 @@
 ;
 ;
 ; RETURN:
-;	Array (nt x nlon) of elevations computed at each longitude on each 
+;	Array (nt x nta) of elevations computed at each true anomaly on each 
 ;	disk.
 ;
 ;
@@ -53,7 +50,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_get_edge_elevation, dkd, dlon, frame_bd, inner=inner, outer=outer, $
+function dsk_get_edge_elevation, dkd, ta, inner=inner, outer=outer, $
     one_to_one=one_to_one, noevent=noevent
 @core.include
  
@@ -65,40 +62,34 @@ function dsk_get_edge_elevation, dkd, dlon, frame_bd, inner=inner, outer=outer, 
  if(keyword__set(inner)) then ii = 0 $
  else if(keyword__set(outer)) then ii = 1
 
- nlon = n_elements(dlon)
+ nta = n_elements(ta)
  nt = n_elements(_dkd)
 
- _inc = dsk_get_inc(dkd, frame_bd)
- _lan = dsk_get_lan(dkd, frame_bd)
 
  if(NOT keyword__set(one_to_one)) then $
   begin
-   MM = make_array(nlon,val=1)
+   MM = make_array(nta,val=1)
 
-   a = [reform([_dkd.sma[0,ii,*]])]#MM				; nt x nlon
-   i = _inc#MM							; nt x nlon
-   lan = _lan#MM
+   a = [reform([_dkd.sma[0,ii,*]])]#MM				; nt x nta
 
    nl = dsk_get_nl()
-   sub = linegen3y(nt,nlon,nl)
+   sub = linegen3y(nt,nta,nl)
 
-   l = (transpose(_dkd.l[*,ii,*]))[sub]			; nt x nlon x nl
-   il = (transpose(_dkd.il[*,ii,*]))[sub]		; nt x nlon x nl
-   lanl = (transpose(_dkd.lanl[*,ii,*]))[sub]		; nt x nlon x nl
+   l = (transpose(_dkd.l[*,ii,*]))[sub]			; nt x nta x nl
+   il = (transpose(_dkd.il[*,ii,*]))[sub]		; nt x nta x nl
+   taanl = (transpose(_dkd.taanl[*,ii,*]))[sub]		; nt x nta x nl
   end $
  else $
   begin
-   a = tr(reform([_dkd.sma[0,ii,*]]))				; 1 x nlon
-   i = tr(_inc)							; 1 x nlon
-   lan = tr(_lan)
+   a = tr(reform([_dkd.sma[0,ii,*]]))				; 1 x nta
 
    nl = dsk_get_nl()
-   l = reform(transpose(_dkd.l[*,ii,*]), 1,nlon,nl, /over)	; 1 x nlon x nl
-   il = reform(transpose(_dkd.il[*,ii,*]), 1,nlon,nl, /over)	; 1 x nlon x nl
-   lanl = reform(transpose(_dkd.lanl[*,ii,*]), 1,nlon,nl, /over)	; nt x nlon x nl
+   l = reform(transpose(_dkd.l[*,ii,*]), 1,nta,nl, /over)	; 1 x nta x nl
+   il = reform(transpose(_dkd.il[*,ii,*]), 1,nta,nl, /over)	; 1 x nta x nl
+   taanl = reform(transpose(_dkd.taanl[*,ii,*]), 1,nta,nl, /over)	; nt x nta x nl
   end
 
 
- return, dsk_shape_vertical(a, i, lan, dlon, l, il, lanl)
+ return, dsk_shape_vertical(a, ta, l, il, taanl)
 end
 ;===========================================================================

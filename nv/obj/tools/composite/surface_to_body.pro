@@ -27,10 +27,7 @@
 ;       NONE
 ;
 ; KEYWORDS:
-;   INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
+;   INPUT: NONE
 ;
 ;   OUTPUT: NONE
 ;
@@ -46,7 +43,7 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function surface_to_body, bx, p, frame_bd=frame_bd
+function surface_to_body, bx, p
 
  if(NOT keyword_set(p)) then return, 0
 
@@ -54,7 +51,7 @@ function surface_to_body, bx, p, frame_bd=frame_bd
  dkx = cor_select(bx, 'DISK', /class)
 
  if(keyword_set(gbx)) then return, glb_globe_to_body(gbx, p)
- if(keyword_set(dkx)) then return, dsk_disk_to_body(dkx, p, frame_bd=frame_bd)
+ if(keyword_set(dkx)) then return, dsk_disk_to_body(dkx, p)
  return, bod_radec_to_body(bx, p)
 
 end

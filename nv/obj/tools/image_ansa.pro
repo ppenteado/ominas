@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Computes ring ansa longitudes.
+;	Computes ring ansa true anomalies.
 ;
 ;
 ; CATEGORY:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       lons = image_ansa(cd, rd, radius)
+;       tas = image_ansa(cd, rd, radius)
 ;
 ;
 ; ARGUMENTS:
@@ -31,12 +31,12 @@
 ;  INPUT: NONE
 ;
 ;  OUTPUT: 
-;	image_pts:	Image points corresponding to each ansa longitude
+;	image_pts:	Image points corresponding to each ansa true anomaly
 ;			at the given radius.
 ;
 ;
 ; RETURN: 
-;	Array (2) of longitudes
+;	Array (2) of true anomalies
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -50,20 +50,20 @@
 ; ia_compute
 ;
 ;===================================================================================
-function ia_compute, cd, rd, radius, lon0, image_pt=image_pt
+function ia_compute, cd, rd, radius, ta0, image_pt=image_pt
 
- lon = lon0
+ ta = ta0
 
- nlon = 100d
+ nta = 100d
  range = !dpi
 
- prd = inertial_to_image_pos(cd, bod_pos(rd))#make_array(nlon, val=1d)
+ prd = inertial_to_image_pos(cd, bod_pos(rd))#make_array(nta, val=1d)
 
  repeat $
   begin
-   lons = (dindgen(nlon) - nlon/2d)*range/nlon + lon
+   tas = (dindgen(nta) - nta/2d)*range/nta + ta
 
-   body_pts = dsk_get_inner_disk_points(rd, frame=rd, dlon=lons, disk=disk_pts)
+   body_pts = dsk_get_inner_disk_points(rd, ta=tas, disk=disk_pts)
    image_pts = body_to_image_pos(cd, rd, body_pts)
 
    r = p_mag(prd - image_pts)
@@ -72,12 +72,12 @@ function ia_compute, cd, rd, radius, lon0, image_pt=image_pt
    image_pt = image_pts[*,w]
    dp = p_mag(image_pt - image_pts[*,w+1])
 
-   lon = disk_pts[w[0],1]
-   range = range / (nlon/2d)
+   ta = disk_pts[w[0],1]
+   range = range / (nta/2d)
   endrep until(dp LE 1)
 
 
- return, lon
+ return, ta
 end
 ;===================================================================================
 
@@ -89,20 +89,20 @@ end
 ;===================================================================================
 function image_ansa, cd, rd, radius, image_pts=image_pts
 
- lons = image_ansa_far(cd, rd)
+ tas = image_ansa_far(cd, rd)
 
  rdr = nv_clone(rd)
  sma = dsk_sma(rdr)
  sma[0] = radius
  dsk_set_sma, rdr, sma
 
- lon1 = ia_compute(cd, rdr, radius, lons[0], image_pt=image_pt1)
- lon2 = ia_compute(cd, rdr, radius, lons[1], image_pt=image_pt2)
+ ta1 = ia_compute(cd, rdr, radius, tas[0], image_pt=image_pt1)
+ ta2 = ia_compute(cd, rdr, radius, tas[1], image_pt=image_pt2)
 
  image_pts = transpose([transpose(image_pt1), transpose(image_pt2)])
 
  nv_free, rdr
 
- return, [lon1, lon2]
+ return, [ta1, ta2]
 end
 ;===================================================================================

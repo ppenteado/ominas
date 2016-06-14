@@ -37,8 +37,8 @@
 ;		descriptor is given, then the camera descriptor in gd is used.
 ;		Only one observer is allowed.
 ;
-;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
-;		are taken from the cd and gbx fields of this structure
+;	gd:	Generic descriptor.  If given, the cd and dkx inputs 
+;		are taken from the cd and dkx fields of this structure
 ;		instead of from those keywords.
 ;
 ;	reveal:	 Normally, disks whose opaque flag is set are ignored.  
@@ -51,6 +51,8 @@
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
+;	all:	 If set, all points are returned, even if invalid.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -60,7 +62,7 @@
 ;
 ;
 ; STATUS:
-;	
+;	Not tested
 ;
 ;
 ; SEE ALSO:
@@ -72,27 +74,21 @@
 ;	
 ;-
 ;=============================================================================
-function pg_reflection_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, $
+function pg_reflection_disk, cd=cd, od=od, dkx=dkx, gd=gd, object_ptd, $
                            nocull=nocull, all_ptd=all_ptd, reveal=reveal, $
-                           fov=fov, cull=cull
+                           fov=fov, cull=cull, all=all
 @pnt_include.pro
 
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dkx=dkx, gbx=_gbx, od=od, sund=sund
+ pgs_gd, gd, cd=cd, dkx=dkx, od=od, sund=sund
  if(NOT keyword_set(cd)) then cd = 0 
 
  if(NOT keyword_set(od)) then $
   if(keyword_set(cd)) then od = cd $
   else nv_message, name='pg_reflection_disk', 'No observer descriptor.'
-
- if(NOT keyword_set(_gbx)) then $
-            nv_message, name='pg_reflection_disk', 'Globe descriptor required.'
- __gbx = get_primary(cd, _gbx, rx=dkx)
- if(keyword_set(__gbx)) then gbx = __gbx $
- else  gbx = _gbx[0,*]
 
 
  ;-----------------------------------
@@ -114,7 +110,7 @@ function pg_reflection_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd,
  reflection_ptd = objarr(n_objects)
 
  obs_pos = bod_pos(od)
- for j=0, n_objects-1 do $
+ for j=0, n_objects-1 do if(obj_valid(object_ptd[j])) then $
   begin
    for i=0, n_disks-1 do $
     if((bod_opaque(dkx[i,0])) OR (keyword_set(reveal))) then $
@@ -123,61 +119,68 @@ function pg_reflection_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd,
       if(ii[0] NE -1) then $
        begin
         xd = reform(dkx[i,ii], nt)
-        idp = cor_idp(xd)
 
         ;---------------------------
         ; get object vectors
         ;---------------------------
-        pnt_get, object_ptd[j], vectors=vectors, assoc_idp=assoc_idp
-        if(idp NE assoc_idp) then $
+        pnt_get, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
+        if(xd NE assoc_xd) then $
          begin
           n_vectors = (size(vectors))[1]
  
-          ;---------------------------------------
-          ; source and ray vectors in body frame
-          ;---------------------------------------
+          ;---------------------------------------------
+          ; source and observer vectors in body frame
+          ;---------------------------------------------
           v_inertial = obs_pos##make_array(n_vectors, val=1d)
-;;;;          rr = vectors - v_inertial
-;;;;          r_inertial = v_unit(rr)
-
-;;;;          r_body = bod_inertial_to_body(xd, r_inertial)
-
           r_inertial = vectors
           r_body = bod_inertial_to_body_pos(xd, r_inertial)
-
-
           v_body = bod_inertial_to_body_pos(xd, v_inertial)
 
           ;---------------------------------
           ; project reflections in body frame
           ;---------------------------------
-          reflection_pts = $
-           dsk_reflect(xd, v_body, r_body, hit=hit, t=t, frame_bd=gbx)
+          reflection_pts = dsk_reflect(xd, v_body, r_body, hit=hit)
 
           ;---------------------------------------------------------------
           ; compute and store image coords of intersections
           ;---------------------------------------------------------------
-;;;;;;          if(hit[0] NE -1) then $
+          if(hit[0] NE -1) then $
            begin
             flags = bytarr(n_elements(reflection_pts[*,0]))
             points = $
                  degen(body_to_image_pos(cd, xd, reflection_pts, $
                                          inertial=inertial_pts, valid=valid))
-            if(keyword_set(valid)) then $
-             begin
-              invalid = complement(reflection_pts[*,0], valid)
-              if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-             end
 
             ;---------------------------------
             ; store points
             ;---------------------------------
-            pnt_set, _reflection_ptd[i,j], $ 
-		points = points, $
-		flags = flags, $
-		input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]), $
-		vectors = inertial_pts 
+            _reflection_ptd[i,j] = $
+                 pnt_create_descriptors(points = points, $
+;                   input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], srcd=object_ptd[j], od=od[0], cd[0]), $
+                   input = pgs_desc_suffix(dkx=dkx[i,0], srcd=object_ptd[j], od=od[0], cd[0]), $
+                   vectors = inertial_pts)
 
+            ;-----------------------------------------------
+            ; flag points that missed the ring as invisible
+            ;-----------------------------------------------
+            flags = pnt_flags(_reflection_ptd[i,j])
+            hh = complement(rr[*,0,0], hit)
+            if(hh[0] NE -1) then flags[hh] = flags[hh] OR PTD_MASK_INVISIBLE
+
+            ;-----------------------------------------------------------
+            ; flag invalid image points as invisible unless /all
+            ;-----------------------------------------------------------
+            if(NOT keyword_set(all)) then $
+             if(keyword_set(valid)) then $
+              begin
+               invalid = complement(reflection_pts[*,0], valid)
+               if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
+              end
+
+            ;---------------------------------------------------------------
+            ; store flags
+            ;---------------------------------------------------------------
+            pnt_set_flags, _shadow_ptd[i,j], flags
            end
          end
        end

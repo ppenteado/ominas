@@ -6,14 +6,14 @@
 ; This routine is obsolete.  Use map_get_grid_points.
 ;
 ;===========================================================================
-function dsk_get_grid_points, dkd, nlpoints, nrpoints, rad=rad, lon=lon, $
-                        frame_bd=frame_bd, scan_rad=scan_rad, $
-              minlon=lonmin, maxlon=lonmax, minrad=radmin, maxrad=radmax
+function dsk_get_grid_points, dkd, nlpoints, nrpoints, rad=rad, ta=ta, $
+                        scan_rad=scan_rad, $
+              minta=tamin, maxta=tamax, minrad=radmin, maxrad=radmax
 @core.include
  
 
- if(NOT keyword_set(lonmin)) then lonmin = 0d
- if(NOT keyword_set(lonmax)) then lonmax = 2d*!dpi
+ if(NOT keyword_set(tamin)) then tamin = 0d
+ if(NOT keyword_set(tamax)) then tamax = 2d*!dpi
 
  nt = n_elements(dkd)
  Mt = make_array(nt, val=1)
@@ -23,8 +23,8 @@ function dsk_get_grid_points, dkd, nlpoints, nrpoints, rad=rad, lon=lon, $
  ; generate radius circles
  ;==============================
  n_points = nlpoints
- if(NOT keyword_set(scan_lon)) then $
-       scan_lon = dindgen(n_points)/double(n_points)*(lonmax-lonmin) + lonmin
+ if(NOT keyword_set(scan_ta)) then $
+       scan_ta = dindgen(n_points)/double(n_points)*(tamax-tamin) + tamin
 
  nrad = n_elements(rad)
  n_points = nlpoints
@@ -41,7 +41,7 @@ function dsk_get_grid_points, dkd, nlpoints, nrpoints, rad=rad, lon=lon, $
    ;--------------------------
    ; rotate them about z-axis
    ;--------------------------
-   vrad_body = v_rotate(init_vectors, zz, [sin(scan_lon)], [cos(scan_lon)])
+   vrad_body = v_rotate(init_vectors, zz, [sin(scan_ta)], [cos(scan_ta)])
    vvrad_body = (vrad_body[vecgen(nrad,3,n_points)])[linegen3z(np,3,nt)]
 
    ;----------------------
@@ -57,12 +57,12 @@ function dsk_get_grid_points, dkd, nlpoints, nrpoints, rad=rad, lon=lon, $
 
 
  ;==============================
- ; generate longitude lines
+ ; generate true anomaly lines
  ;==============================
- nlon = n_elements(lon)
+ nta = n_elements(ta)
  n_points = nrpoints
- np = n_points*nlon
- if(nlon GT 0) then $
+ np = n_points*nta
+ if(nta GT 0) then $
   begin
    ;-----------------------------
    ; create initial unit vectors
@@ -73,14 +73,14 @@ function dsk_get_grid_points, dkd, nlpoints, nrpoints, rad=rad, lon=lon, $
    ;-------------------------------
    ; rotate them about their axes
    ;-------------------------------
-   vlon_body = v_rotate(init_vectors, zz, [sin(lon)], [cos(lon)])
-   vvlon_body = (vlon_body[vecgen(n_points,3,nlon)])[linegen3z(np,3,nt)]
+   vta_body = v_rotate(init_vectors, zz, [sin(ta)], [cos(ta)])
+   vvta_body = (vta_body[vecgen(n_points,3,nta)])[linegen3z(np,3,nt)]
 
    ;----------------------
    ; make radius vectors
    ;----------------------
-   rads = dsk_get_radius(dkd, lon, frame_bd)
-   sub = (linegen3x(n_points,nt,nlon))[vecgen(n_points,nt,nlon)]
+   rads = dsk_get_radius(dkd, ta)
+   sub = (linegen3x(n_points,nt,nta))[vecgen(n_points,nt,nta)]
 
    if(nt EQ 1) then $
     begin
@@ -97,24 +97,24 @@ function dsk_get_grid_points, dkd, nlpoints, nrpoints, rad=rad, lon=lon, $
 
    w = where(rads1-rads0 LE 0)
 
-   p = reform(dindgen(n_points)#make_array(nlon,val=1), np, /over)#Mt
+   p = reform(dindgen(n_points)#make_array(nta,val=1), np, /over)#Mt
    trad = p*(rads1-rads0)/n_points + rads0
    if(w[0] NE -1) then trad[w] = 0
 
 
-   rlon_body = dblarr(np,3,nt,/nozero)
-   rlon_body[*,0,*] = vvlon_body[*,0,*] * trad
-   rlon_body[*,1,*] = vvlon_body[*,1,*] * trad
-   rlon_body[*,2,*] = vvlon_body[*,2,*] * trad
+   rta_body = dblarr(np,3,nt,/nozero)
+   rta_body[*,0,*] = vvta_body[*,0,*] * trad
+   rta_body[*,1,*] = vvta_body[*,1,*] * trad
+   rta_body[*,2,*] = vvta_body[*,2,*] * trad
   end
 
 
  ;==================================
  ; Combine the results and return.
  ;==================================
- rgrid_body = dblarr(nrad*nlpoints+nlon*nrpoints,3,nt)
+ rgrid_body = dblarr(nrad*nlpoints+nta*nrpoints,3,nt)
  if(nrad GT 0) then rgrid_body[0:nrad*nlpoints-1,*,*]=rrad_body
- if(nlon GT 0) then rgrid_body[nrad*nlpoints:*,*,*]=rlon_body
+ if(nta GT 0) then rgrid_body[nrad*nlpoints:*,*,*]=rta_body
 
  w = where(v_mag(rgrid_body) NE 0)
  if(w[0] EQ -1) then return, 0

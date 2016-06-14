@@ -30,10 +30,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT:  
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
+;  INPUT: NONE
 ;
 ;  OUTPUT: 
 ;	t:	Array(nv x 3 x nt) giving the distances to each intersection.
@@ -55,7 +52,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_intersect, dkd, v, r, t=t, hit=hit, near=near, far=far, all=all, frame_bd=frame_bd
+function dsk_intersect, dkd, v, r, t=t, hit=hit, near=near, far=far, all=all
 @core.include
  
 
@@ -77,8 +74,8 @@ function dsk_intersect, dkd, v, r, t=t, hit=hit, near=near, far=far, all=all, fr
  ;---------------------------------------------------------------
  if(arg_present(hit)) then $
   begin
-   vv_disk = dsk_body_to_disk(dkd, vv, frame_bd=frame_bd)
-   rad = dsk_get_radius(dkd, vv_disk[*,1,*], frame_bd)
+   vv_disk = dsk_body_to_disk(dkd, vv)
+   rad = dsk_get_radius(dkd, vv_disk[*,1,*])
    hit = where((vv_disk[*,0,*] GT rad[*,0,*]) AND (vv_disk[*,0,*] LT rad[*,1,*]))
 
    ;-------------------------------------------
@@ -120,7 +117,7 @@ end
 ; the ringplane.
 ;
 ;===========================================================================
-function _dsk_intersect, dkd, v, r, t=t, hit=hit, frame_bd=frame_bd
+function _dsk_intersect, dkd, v, r, t=t, hit=hit
 @core.include
  
 
@@ -159,8 +156,8 @@ function _dsk_intersect, dkd, v, r, t=t, hit=hit, frame_bd=frame_bd
    ;---------------------------------------------------------------
    if(arg_present(hit)) then $
     begin
-     vv_disk = dsk_body_to_disk(dkd, vv, frame_bd=frame_bd)
-     rad = dsk_get_radius(dkd, vv_disk[*,1,*], frame_bd)
+     vv_disk = dsk_body_to_disk(dkd, vv)
+     rad = dsk_get_radius(dkd, vv_disk[*,1,*])
      hit = where((vv_disk[*,0,*] GT rad[*,0,*]) AND (vv_disk[*,0,*] LT rad[*,1,*]))
     end
 

@@ -19,12 +19,13 @@ end_keywords)
 
  if(keyword_set(sma)) then self.sma[0:(size(sma))[1]-1,*] = sma[*,*,ii]
  if(keyword_set(ecc)) then self.ecc[0:(size(ecc))[1]-1,*] = ecc[*,*,ii]
+ if(keyword_set(dap)) then self.dap[0:(size(dap))[1]-1,*] = dap[*,*,ii]
 
  if(keyword_set(nm)) then self.nm = nm[ii]
  if(keyword_set(m)) then self.m = m[ii]
  if(keyword_set(em)) then self.em = em[ii]
- if(keyword_set(lpm)) then self.lpm = lpm[ii]
- if(keyword_set(dlpmdt)) then self.dlpmdt = dlpmdt[ii]
+ if(keyword_set(tapm)) then self.tapm = tapm[ii]
+ if(keyword_set(dtapmdt)) then self.dtapmdt = dtapmdt[ii]
 
  if(keyword_set(libm)) then self.libm = libm[ii]
  if(keyword_set(libam)) then self.libam = libam[ii]
@@ -33,8 +34,8 @@ end_keywords)
  if(keyword_set(nl)) then self.nl = nl[ii]
  if(keyword_set(_l)) then self.l = l[ii]
  if(keyword_set(il)) then self.il = il[ii]
- if(keyword_set(lanl)) then self.lanl = lanl[ii]
- if(keyword_set(dlanldt)) then self.dlanldt = dlanldt[ii]
+ if(keyword_set(taanl)) then self.taanl = taanl[ii]
+ if(keyword_set(dtaanldt)) then self.dtaanldt = dtaanldt[ii]
 
  if(keyword_set(libl)) then self.libl = libl[ii]
  if(keyword_set(libal)) then self.libal = libal[ii]
@@ -87,6 +88,11 @@ end
 ;		Methods: dsk_ecc, dsk_set_ecc
 ;
 ;
+;	dap:	Array ndv+1 giving the apsidal shift and derivatives. 
+;
+;		Methods: dsk_dap, dsk_set_dap
+;
+;
 ;	scale:	2-elements array giving optional radial scale coefficients:
 ;
 ;			 scaled_radii = scale[0] * radii*scale[1]
@@ -112,16 +118,16 @@ end
 ;		Methods: dsk_em, dsk_set_em
 ;
 ;
-;	lpm:	Array nm x 2 giving the longitude of periapse for each 
+;	tapm:	Array nm x 2 giving the true anmalies of periapse for each 
 ;		harmonic, for each edge.
 ;
-;		Methods: dsk_lpm, dsk_set_lpm
+;		Methods: dsk_tapm, dsk_set_tapm
 ;
 ;
-;	dlpmdt:	Array nm x 2 giving the apsidal precession rate for each 
+;	dtapmdt:Array nm x 2 giving the tapm rate rate for each 
 ;		harmonic, for each edge.
 ;
-;		Methods: dsk_dlpmdt, dsk_set_dlpmdt
+;		Methods: dsk_dtapmdt, dsk_set_dtapmdt
 ;
 ;
 ;	libam:	Array nm x 2 giving the libration amplitude for each 
@@ -160,16 +166,16 @@ end
 ;		Methods: dsk_em, dsk_set_em
 ;
 ;
-;	lanl:	Array nl x 2 giving the longitude of periapse for each 
+;	taanl:	Array nl x 2 giving the true anomaly of periapse for each 
 ;		harmonic, for each edge.
 ;
-;		Methods: dsk_lpm, dsk_set_lpm
+;		Methods: dsk_taanl, dsk_set_taanl
 ;
 ;
-;	dlanldt:	Array nl x 2 giving the nodal precession rate for each 
+;	dtaanldt:	Array nl x 2 giving the taanl rate for each 
 ;			harmonic, for each edge.
 ;
-;			Methods: dsk_dlpmdt, dsk_set_dlpmdt
+;			Methods: dsk_dtaanldt, dsk_set_dtaanldt
 ;
 ;
 ;	libal:	Array nl x 2 giving the libration amplitude for each 
@@ -215,6 +221,7 @@ pro ominas_disk__define
 						;  Negative sma means no edge
 	ecc:		 dblarr(ndv+1,2), $	; eccentricities and derivatives
 						; 0=inner edge, 1=outer edge
+	dap:		 dblarr(ndv+1,2), $	; apsidal shift.
 						
 	scale:		dblarr(2), $		; Radial scale coefficients:
 						;  scaled_radii = 
@@ -225,8 +232,8 @@ pro ominas_disk__define
 	nm:		 intarr(2), $		; Number of m != 1  harmonics
 	m:		 intarr(nm,2), $	; m values
 	em:		 dblarr(nm,2), $	; ecc for each m != 1
-	lpm:		 dblarr(nm,2), $	; lp for each m != 1
-	dlpmdt:		 dblarr(nm,2), $	; dlpdt for each m != 1
+	tapm:		 dblarr(nm,2), $	; tap for each m != 1
+	dtapmdt:		dblarr(nm,2), $	; dtapdt for each m != 1
 						; 0=inner edge, 1=outer edge	
 	libam:		 dblarr(nm,2), $	; Libration ampl. for each m != 1
 	libm:		 dblarr(nm,2), $	; Libration phase for each m != 1
@@ -239,8 +246,8 @@ pro ominas_disk__define
 	nl:		 intarr(2), $		; Number of l > 1  harmonics
 	l:		 intarr(nl,2), $	; l values
 	il:		 dblarr(nl,2), $	; inc for each l > 1
-	lanl:		 dblarr(nl,2), $	; lan for each l > 1
-	dlanldt:	 dblarr(nl,2), $		; dlandt for each l > 1
+	taanl:		 dblarr(nl,2), $	; taan for each l > 1
+	dtaanldt:	 dblarr(nl,2), $	; dtaandt for each l > 1
 						; 0=inner edge, 1=outer edge	
 	libal:	 	 dblarr(nm,2), $	; Libration ampl. for each l != 1
 	libl:		 dblarr(nm,2), $	; Libration phase for each l != 1

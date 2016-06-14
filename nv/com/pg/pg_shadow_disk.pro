@@ -58,6 +58,9 @@
 ;
 ;	all:	 If set, all points are returned, even if invalid.
 ;
+;	epsilon: If set, shadow points that are closer than this amount 
+;		 to the source point will be excluded.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -81,7 +84,8 @@
 ;=============================================================================
 function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, $
                            nocull=nocull, both=both, reveal=reveal, $
-                           fov=fov, cull=cull, backshadow=backshadow, all=all
+                           fov=fov, cull=cull, backshadow=backshadow, all=all, $
+                           epsilon=epsilon
 @pnt_include.pro
 
 
@@ -114,9 +118,9 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, $
 
 
  ;------------------------------------------------
- ; compute shadows for each object on each globe
+ ; compute shadows for each object on each disk
  ;------------------------------------------------
- n_objects=(size(object_ptd))[1]
+ n_objects = n_elements(object_ptd)
  _shadow_ptd = objarr(n_disks, n_objects)
  shadow_ptd = objarr(n_objects)
 
@@ -130,13 +134,12 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, $
       if(ii[0] NE -1) then $
        begin
         xd = reform(dkx[i,ii], nt)
-        idp = cor_idp(xd)
 
         ;---------------------------
         ; get object vectors
         ;---------------------------
-        pnt_get, object_ptd[j], vectors=vectors, assoc_idp=assoc_idp
-        if(idp NE assoc_idp) then $
+        pnt_get, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
+        if(xd NE assoc_xd) then $
          begin
           n_vectors = (size(vectors))[1]
  
@@ -153,8 +156,7 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, $
           ;---------------------------------
           ; project shadows in body frame
           ;---------------------------------
-          shadow_pts = $
-           dsk_intersect(xd, v_body, r_body, hit=hit, t=t, frame_bd=gbx)
+          shadow_pts = dsk_intersect(xd, v_body, r_body, hit=hit, t=t)
 
           ;---------------------------------------------------------------
           ; compute and store image coords of intersections
@@ -166,55 +168,74 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, $
                  degen(body_to_image_pos(cd, xd, shadow_pts, $
                                          inertial=inertial_pts, valid=valid))
 
-            ;---------------------------------
-            ; store points
-            ;---------------------------------
-            _shadow_ptd[i,j] = $
-                pnt_create_descriptors(points = points, $
-                        input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]), $
-                        vectors = inertial_pts)
-
-            ;-----------------------------------------------
-            ; flag points that missed the ring as invisible
-            ;-----------------------------------------------
-            flags = pnt_flags(_shadow_ptd[i,j])
-            hh = complement(rr[*,0,0], hit)
-            if(hh[0] NE -1) then flags[hh] = flags[hh] OR PTD_MASK_INVISIBLE
-
-            ss = inertial_pts - v_inertial
-
-            ;-----------------------------------------------------------
-            ; flag backshadows as invisible unless /both or /backshadow
-            ;-----------------------------------------------------------
-            if((NOT keyword_set(backshadow)) AND (NOT keyword_set(both))) then $
+            ;---------------------------------------------------------------
+            ; remove points closer than epsilon to source
+            ;---------------------------------------------------------------
+            continue = 1
+            if(keyword_set(epsilon)) then $
              begin
-              w = where(v_mag(ss) LT v_mag(rr))
-              if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
+              dist = v_mag(inertial_pts - vectors)
+              w = where(dist GT epsilon)
+              if(w[0] EQ -1) then continue = 0 $
+              else $
+               begin
+  	      points = points[*,w]
+  	      inertial_pts = inertial_pts[w,*]
+               end
              end
 
-            ;-----------------------------------------------------------
-            ; flag shadows as invisible if /backshadow
-            ;-----------------------------------------------------------
-            if(keyword_set(backshadow)) then $
+            if(continue) then $
              begin
-              w = where(v_mag(ss) GE v_mag(rr))
-              if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
+              ;---------------------------------
+              ; store points
+              ;---------------------------------
+              _shadow_ptd[i,j] = $
+                 pnt_create_descriptors(points = points, $
+                   input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], srcd=object_ptd[j], od=od[0], cd[0]), $
+                   vectors = inertial_pts)
+
+              ;-----------------------------------------------
+              ; flag points that missed the ring as invisible
+              ;-----------------------------------------------
+              flags = pnt_flags(_shadow_ptd[i,j])
+              hh = complement(rr[*,0,0], hit)
+              if(hh[0] NE -1) then flags[hh] = flags[hh] OR PTD_MASK_INVISIBLE
+
+              ss = inertial_pts - v_inertial
+
+              ;-----------------------------------------------------------
+              ; flag backshadows as invisible unless /both or /backshadow
+              ;-----------------------------------------------------------
+              if((NOT keyword_set(backshadow)) AND (NOT keyword_set(both))) then $
+               begin
+                w = where(v_mag(ss) LT v_mag(rr))
+                if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
+               end
+
+              ;-----------------------------------------------------------
+              ; flag shadows as invisible if /backshadow
+              ;-----------------------------------------------------------
+              if(keyword_set(backshadow)) then $
+               begin
+                w = where(v_mag(ss) GE v_mag(rr))
+                if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
+               end
+
+              ;-----------------------------------------------------------
+              ; flag invalid image points as invisible unless /all
+              ;-----------------------------------------------------------
+              if(NOT keyword_set(all)) then $
+               if(keyword_set(valid)) then $
+                begin
+                 invalid = complement(shadow_pts[*,0], valid)
+                 if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
+                end
+
+              ;---------------------------------------------------------------
+              ; store flags
+              ;---------------------------------------------------------------
+              pnt_set_flags, _shadow_ptd[i,j], flags
              end
-
-            ;-----------------------------------------------------------
-            ; flag invalid image points as invisible unless /all
-            ;-----------------------------------------------------------
-            if(NOT keyword_set(all)) then $
-             if(keyword_set(valid)) then $
-              begin
-               invalid = complement(shadow_pts[*,0], valid)
-               if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-              end
-
-            ;---------------------------------------------------------------
-            ; store flags
-            ;---------------------------------------------------------------
-            pnt_set_flags, _shadow_ptd[i,j], flags
            end
          end
        end
@@ -224,7 +245,7 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, $
    ; take only nearest shadow points for this object
    ;-----------------------------------------------------
    shadow_ptd[j] = pnt_compress(_shadow_ptd[*,j])
-   if(obj_valid(shadow_ptd[j])) then pnt_set_desc, shadow_ptd[j], 'disk_shadow'
+
 ;   if(NOT keyword__set(all)) then $
 ;    begin
 ;     sp = pnt_cull(_shadow_ptd[*,j])

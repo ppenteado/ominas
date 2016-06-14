@@ -2,14 +2,14 @@
 ; get_lonperp
 ;
 ;=============================================================================
-function get_lonperp, cd, rd, p0, p1, frame_bd=frame_bd
+function get_lonperp, cd, rd, p0, p1
 
  dp = p1 - p0
- dsk_pt0 = image_to_disk(cd, rd, p0, frame_bd=frame_bd)
+ dsk_pt0 = image_to_disk(cd, rd, p0)
 
  rng_orient = bod_orient(rd)
  _dir = v_unit(bod_body_to_inertial(rd, $
-                dsk_disk_to_body(rd, dsk_pt0, frame_bd=frame_bd)))
+                dsk_disk_to_body(rd, dsk_pt0)))
  dir = v_cross(_dir, rng_orient[2,*])
 
  cam_orient = bod_orient(cd)

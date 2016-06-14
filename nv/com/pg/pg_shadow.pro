@@ -75,8 +75,8 @@
 ;=============================================================================
 function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd, $
               reveal=reveal, fov=fov, nocull=nocull, all=all, $
-              both=both, backshadow=backshadow, $
-              iterate=iterate, nosolve=nosolve
+              both=both, backshadow=backshadow, epsilon=epsilon, $
+              nosolve=nosolve
 
  pgs_gd, bx=bx
 
@@ -96,7 +96,7 @@ function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd, $
    globe_shadow_ptd = $
        pg_shadow_globe(object_ptd, cd=cd, od=od, gbx=gbx, gd=gd, $
                /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow, $
-               iterate=iterate, nosolve=nosolve)
+               nosolve=nosolve, epsilon=epsilon)
 
  ;----------------------------------
  ; project onto all disks
@@ -104,7 +104,7 @@ function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd, $
  if(keyword_set(dkx)) then $
    disk_shadow_ptd = $
        pg_shadow_disk(object_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, gd=gd, $
-               /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow)
+               /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow, epsilon=epsilon)
 
 
  ;----------------------------------

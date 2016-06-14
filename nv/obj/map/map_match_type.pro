@@ -9,6 +9,7 @@ function map_match_type, _type
  n = n_elements(_type)
 
  known_types = ['RECTANGULAR', $
+                'RECTANGULAR_DISK', $
                 'MERCATOR', $
                 'ORTHOGRAPHIC', $
                 'STEREOGRAPHIC', $

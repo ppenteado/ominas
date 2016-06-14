@@ -17,9 +17,6 @@
 ;
 ;
 ; FIELDS:
-;	idp:		ID pointer identifying the descriptor affected by 
-;			this event.
-;
 ;	xd:		Descriptor affected by this event.
 ;
 ;	handler:	Name of event handler procedure, which should accept
@@ -55,7 +52,6 @@ pro nv_notify_list_struct__define
 
  struct = $
     { nv_notify_list_struct, $
-	idp :		nv_ptr_new(), $	; id pointer.
 	xd:		obj_new(), $	; Pointer to top of object tree.
 	handler :	'', $		; Event handler routine.
 	compress :	0b, $		; If 1, compress events.

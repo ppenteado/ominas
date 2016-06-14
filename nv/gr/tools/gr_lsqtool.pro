@@ -293,6 +293,7 @@ function grlsq_get_ptdps, grim_data, data, lsqd, pds=pds, rds=rds, sds=sds
          active_ring_ptd=ring_ptd, $
          active_term_ptd=term_ptd, $
          active_shadow_ptd=shadow_ptd, $
+         active_reflection_ptd=reflection_ptd, $
          active_star_ptd=star_ptd, $
          active_center_ptd=center_ptd, $
          active_pd=pds, $
@@ -303,6 +304,7 @@ function grlsq_get_ptdps, grim_data, data, lsqd, pds=pds, rds=rds, sds=sds
  if(keyword__set(ring_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(ring_ptd))
  if(keyword__set(term_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(term_ptd))
  if(keyword__set(shadow_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(shadow_ptd))
+ if(keyword__set(reflection_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(reflection_ptd))
  if(keyword__set(star_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(star_ptd))
  if(keyword__set(center_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(center_ptd))
 
@@ -436,7 +438,7 @@ function  grlsq_get_model_type, _tag
 
  tag = strupcase(_tag)
 
- types = ['LIMB', 'TERMINATOR', 'SHADOW', 'DISK_INNER', 'DISK_OUTER']
+ types = ['LIMB', 'TERMINATOR', 'SHADOW', 'REFLECTION', 'DISK_INNER', 'DISK_OUTER']
  ntypes = n_elements(types)
 
  for i=0, ntypes-1 do $
@@ -468,6 +470,7 @@ function  grlsq_get_model_fn, lsqd, tag
   'LIMB'		: return, 'grlsq_edge_model_atan'
   'TERMINATOR'		: return, 'grlsq_edge_model_atan'
   'SHADOW'		: return, 'grlsq_edge_model_nav_limb'
+  'REFLECTION'		: return, 'grlsq_edge_model_nav_limb'
   'DISK_OUTER'		: return, 'grlsq_edge_model_psf_ring'
   'DISK_INNER'		: return, 'grlsq_edge_model_psf_ring' 
  endcase
@@ -489,6 +492,7 @@ function  grlsq_get_inner, cd, rd, tag
   'LIMB'		: return, 0
   'TERMINATOR'		: return, 0
   'SHADOW'		: return, 0
+  'REFLECTION'		: return, 0
   'DISK_OUTER'		: return, 0
   'DISK_INNER'		: return, 1
  endcase
@@ -730,7 +734,7 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
          if(keyword_set(nocreate)) then $
           begin
            pptd = grim_get_user_ptd(new_tag)
-           flags = ptd=nt_flags(pptd)
+           flags = pnt_flags(pptd)
            pnt_set_flags, scan_ptd[j], flag
           end
 
@@ -1083,6 +1087,7 @@ pro gr_lsqtool, top
             'Ring      ', $
             'Terminator', $
             'Shadow    ', $
+            'Reflection', $
             'Star      ', $
             'Center    ']
  nobj = n_elements(objects)

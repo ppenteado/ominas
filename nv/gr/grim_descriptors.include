@@ -16,8 +16,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
  ; remember to refresh the image
  ;-----------------------------------------------------------------
  use_pixmap = 1
- idp = cor_idp(xd)
- w = where(idp EQ cor_idp(plane.dd))
+ w = where(xd EQ plane.dd)
  if(w[0] NE -1) then $
   begin
    if(dat_update(plane.dd) EQ 1) then new = 1 $
@@ -43,6 +42,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    name_list = ''
    dep_list = ptr_new()
    points_ptd_list = ptr_new()
+   source_points_ptd_list = ptr_new()
 
    if(keyword_set(points_ptd)) then $
     for i=0, n-1 do if(obj_valid(points_ptd[i])) then $
@@ -50,24 +50,39 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
       dep = cor_udata(points_ptd[i], 'grim_dep')
       if(keyword_set(dep)) then $
        begin
-        w = where(dep EQ idp)
+        w = where(dep EQ xd)
         if(w[0] NE -1) then $
          begin
           name = cor_udata(points_ptd[i], 'grim_name')
 
+          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+          ; find any point dependencies
+          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+          source_ptd = obj_new()
+          w = nwhere(points_ptd, dep)
+          if(w[0] NE -1) then source_ptd = points_ptd[w]
+
+          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+          ; if first instance of this type of overlay, add a new item
+          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
           w = where(name_list EQ name)
           if(w[0] EQ -1) then $
            begin
             name_list = append_array(name_list, name)
             dep_list = append_array(dep_list, ptr_new(dep))
             points_ptd_list = append_array(points_ptd_list, ptr_new(points_ptd[i]))
+            source_points_ptd_list = append_array(source_points_ptd_list, ptr_new(source_ptd))
             if(plane.pn EQ planes[j].pn) then refresh = 1
            end $
+          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+          ; otherwise, add to the existing item
+          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
           else $
            begin
-            ii= w[0]
+            ii = w[0]
             *dep_list[ii] = append_array(*dep_list[ii], dep)
             *points_ptd_list[ii] = append_array(*points_ptd_list[ii], points_ptd[i])
+            *source_points_ptd_list[ii] = append_array(*source_points_ptd_list[ii], source_ptd)
            end 
          end
        end
@@ -76,9 +91,9 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ;- - - - - - - - - - - - - - - - - - - - - - - -
    ; get rid of redundant dependencies
    ;- - - - - - - - - - - - - - - - - - - - - - - -
-   n = 0
-   if(keyword_set(name_list)) then n = n_elements(name_list)
-   for i=0, n-1 do $
+   nn = 0
+   if(keyword_set(name_list)) then nn = n_elements(name_list)
+   for i=0, nn-1 do $
     begin
      deps = *dep_list[i]
      deps = deps[sort(deps)]
@@ -93,20 +108,22 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
 ;    if(plane.t0 NE bod_time(*plane.cd_p)) then $
 ;     begin
 ;      grim_mark_descriptors, grim_data, /all, plane=plane, MARK_STALE
-;      for i=0, n-1 do *dep_list[i] = 0		; force everything to recompute.
-						; this is not the right way
-						; to do this since it destroys
-						; all memory of which overlays
-						; need to be recomputed
+;      for i=0, nn-1 do *dep_list[i] = 0	; force everything to recompute.
+;						; this is not the right way
+;						; to do this since it destroys
+;						; all memory of which overlays
+;						; need to be recomputed
 ;     end
+
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; Call each source function
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   for i=0, n-1 do grim_overlay, grim_data, plane=plane, $
-                      name_list[i], dep=*dep_list[i], ptd=*points_ptd_list[i]
+   for i=0, nn-1 do grim_overlay, grim_data, plane=plane, $
+               name_list[i], dep=*dep_list[i], $
+               ptd=*points_ptd_list[i], source_ptd=*source_points_ptd_list[i]
 
-   for i=0, n-1 do ptr_free, dep_list[i], points_ptd_list[i]
+   for i=0, nn-1 do ptr_free, dep_list[i], points_ptd_list[i], source_points_ptd_list[i]
   end
 
 end
@@ -221,12 +238,12 @@ pro grim_rm_descriptor, grim_data, plane=plane, _xd
  ;----------------------------------
  ; remove the descriptor
  ;----------------------------------
- obj = 0
- if(size(_xd, /type) EQ 11) then obj = 1
+ ptr = 0
+ if(size(_xd, /type) EQ 10) then ptr = 1
 
- if(obj) then $
+ if(ptr) then $
   begin
-   if(NOT obj_valid(_xd)) then return
+   if(NOT ptr_valid(_xd)) then return
    xd = *_xd
   end $
  else xd = _xd
@@ -243,14 +260,13 @@ pro grim_rm_descriptor, grim_data, plane=plane, _xd
  ;----------------------------------
  for i=0, n_elements(xd)-1 do $
   begin
-   idp = cor_idp(xd[i])
    ptd = grim_get_object_overlays(plane, xd[i])
    if(keyword_set(ptd)) then nv_notify_unregister, ptd, 'grim_descriptor_notify'
   end
 
  nv_free, xd
 
- if(obj) then *_xd = 0			;;;;;;
+ if(ptr) then *_xd = 0			;;;;;;
 end
 ;=============================================================================
 
@@ -400,12 +416,10 @@ end
 ; grim_get_cameras
 ;
 ;=============================================================================
-function grim_get_cameras, grim_data, idp=idp, replace=replace, plane=plane
+function grim_get_cameras, grim_data, replace=replace, plane=plane
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
- idp = ptr_new()
 
  mark = grim_demark_descriptor((*plane.cd_p)[0])
  if(mark EQ MARK_FRESH) then cd = *plane.cd_p $
@@ -456,8 +470,6 @@ function grim_get_cameras, grim_data, idp=idp, replace=replace, plane=plane
     end
   end
 
- idp = cor_idp(*plane.cd_p)
-
  return, *plane.cd_p
 end
 ;=============================================================================
@@ -468,14 +480,11 @@ end
 ; grim_get_planets
 ;
 ;=============================================================================
-function grim_get_planets, grim_data, idp=idp, $
+function grim_get_planets, grim_data, $
                        replace=replace, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
- idp = ptr_new()
-
 
  ;---------------------------------------------------------------------
  ; determine whether to load planet descriptors
@@ -518,8 +527,6 @@ function grim_get_planets, grim_data, idp=idp, $
    grim_add_descriptor, grim_data, plane.pd_p, pd, replace=replace
   end
 
- idp = cor_idp(pd)
-
 
  return, pd
 end
@@ -531,12 +538,10 @@ end
 ; grim_get_sun
 ;
 ;=============================================================================
-function grim_get_sun, grim_data, idp=idp, replace=replace, plane=plane
+function grim_get_sun, grim_data, replace=replace, plane=plane
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
- idp = ptr_new()
 
  mark = grim_demark_descriptor((*plane.sund_p)[0])
  if(mark EQ MARK_FRESH) then sund = get_object_by_name(*plane.sund_p, names) $
@@ -569,8 +574,6 @@ function grim_get_sun, grim_data, idp=idp, replace=replace, plane=plane
 ;   grim_add_descriptor, grim_data, plane.pd_p, sund, replace=replace
   end
 
- idp = cor_idp(sund)
-
 
  return, sund
 end
@@ -582,13 +585,11 @@ end
 ; grim_get_stars
 ;
 ;=============================================================================
-function grim_get_stars, grim_data, idp=idp, replace=replace, silent=silent, $
+function grim_get_stars, grim_data, replace=replace, silent=silent, $
           plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
- idp = ptr_new()
 
  mark = grim_demark_descriptor((*plane.sd_p)[0])
  if((mark EQ MARK_FRESH) AND NOT keyword_set(replace)) then $
@@ -689,9 +690,6 @@ function grim_get_stars, grim_data, idp=idp, replace=replace, silent=silent, $
               grim_add_descriptor, grim_data, plane.sd_p, sd, replace=replace
   end
 
- idp = cor_idp(sd)
-
-
  return, sd
 end
 ;=============================================================================
@@ -702,13 +700,11 @@ end
 ; grim_get_rings
 ;
 ;=============================================================================
-function grim_get_rings, grim_data, idp=idp, $
-                                    replace=replace, plane=plane, names=names
+function grim_get_rings, grim_data, replace=replace, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- idp = ptr_new()
 
  mark = grim_demark_descriptor((*plane.rd_p)[0])
  if(mark EQ MARK_FRESH) then rd = get_object_by_name(*plane.rd_p, names) $
@@ -724,8 +720,6 @@ function grim_get_rings, grim_data, idp=idp, $
    grim_add_descriptor, grim_data, plane.rd_p, rd, replace=replace
   end
 
- idp = cor_idp(rd)
-
 
  return, rd
 end
@@ -737,13 +731,11 @@ end
 ; grim_get_stations
 ;
 ;=============================================================================
-function grim_get_stations, grim_data, idp=idp, $
-                                    replace=replace, plane=plane, names=names
+function grim_get_stations, grim_data, replace=replace, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- idp = ptr_new()
  map = grim_test_map(grim_data)
 
  mark = grim_demark_descriptor((*plane.std_p)[0])
@@ -761,9 +753,6 @@ function grim_get_stations, grim_data, idp=idp, $
    grim_add_descriptor, grim_data, plane.std_p, std, replace=replace
   end
 
- idp = cor_idp(std)
-
-
  return, std
 end
 ;=============================================================================
@@ -774,13 +763,11 @@ end
 ; grim_get_arrays
 ;
 ;=============================================================================
-function grim_get_arrays, grim_data, idp=idp, $
-                                    replace=replace, plane=plane, names=names
+function grim_get_arrays, grim_data, replace=replace, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- idp = ptr_new()
  map = grim_test_map(grim_data)
 
  mark = grim_demark_descriptor((*plane.ard_p)[0])
@@ -797,9 +784,6 @@ function grim_get_arrays, grim_data, idp=idp, $
 
    grim_add_descriptor, grim_data, plane.ard_p, ard, replace=replace
   end
-
- idp = cor_idp(ard)
-
 
  return, ard
 end
@@ -821,8 +805,8 @@ end
 ;
 ;=============================================================================
 pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
-       idp_cam=idp_cam, idp_plt=idp_plt, idp_rng=idp_rng, $
-       idp_sun=idp_sun, idp_str=idp_str, idp_arr=idp_arr, idp_stn=idp_stn, obj_name=obj_name, replace=replace, gd=gd
+       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, $
+       obj_name=obj_name, replace=replace, gd=gd
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
@@ -837,8 +821,8 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;----------------------------------------------------------------
  cd = (pd = (rd = (sund = (sd = (std = (ard = 0))))))
 
- cd = grim_get_cameras(grim_data, idp=idp_cam, plane=plane)
- if(NOT keyword_set(idp_cam[0])) then return
+ cd = grim_get_cameras(grim_data, plane=plane)
+ if(NOT keyword_set(cd[0])) then return
 
  map = grim_test_map(grim_data)
 
@@ -848,27 +832,27 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  if(NOT map) then $
   begin
    if((where(dep EQ 'sun'))[0] NE -1) then $
-           sund = grim_get_sun(grim_data, idp=idp_sun, plane=plane)
+           sund = grim_get_sun(grim_data, plane=plane)
 
    if((where(dep EQ 'planet'))[0] NE -1) then $
     begin
      names = ''
      if(class EQ 'planet') then names = obj_name
-     pd = grim_get_planets(grim_data, idp=idp_plt, plane=plane, names=names, replace=replace)
+     pd = grim_get_planets(grim_data, plane=plane, names=names, replace=replace)
     end
 
    if((where(dep EQ 'ring'))[0] NE -1) then $
     begin
      names = ''
      if(class EQ 'ring') then names = obj_name
-     rd = grim_get_rings(grim_data, idp=idp_rng, plane=plane, names=names, replace=replace)
+     rd = grim_get_rings(grim_data, plane=plane, names=names, replace=replace)
     end
 
    if((where(dep EQ 'star'))[0] NE -1) then $
     begin
      names = ''
      if(class EQ 'star') then names = obj_name
-     sd = grim_get_stars(grim_data, idp=idp_str, plane=plane, names=names, replace=replace)
+     sd = grim_get_stars(grim_data, plane=plane, names=names, replace=replace)
     end
   end
 
@@ -880,14 +864,14 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
   begin
    names = ''
    if(class EQ 'station') then names = obj_name
-   std = grim_get_stations(grim_data, idp=idp_stn, plane=plane, names=names, replace=replace)
+   std = grim_get_stations(grim_data, plane=plane, names=names, replace=replace)
   end
 
  if((where(dep EQ 'array'))[0] NE -1) then $
   begin
    names = ''
    if(class EQ 'array') then names = obj_name
-   ard = grim_get_arrays(grim_data, idp=idp_arr, plane=plane, names=names, replace=replace)
+   ard = grim_get_arrays(grim_data, plane=plane, names=names, replace=replace)
   end
 
 

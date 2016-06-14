@@ -33,10 +33,6 @@
 ;		are taken from the cd and bx fields of this structure
 ;		instead of from those keywords.
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
 ;	fov:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
@@ -59,7 +55,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
+function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, fov=fov, $
     sample=sample
 @pnt_include.pro
 
@@ -98,8 +94,7 @@ function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
 
  for i=0, n_objects-1 do $
   begin
-   surface_pts = footprint(od, bx, frame_bd=frame_bd, sample=sample, $
-                                               valid=valid, body_pts=body_pts)
+   surface_pts = footprint(od, bx, sample=sample, valid=valid, body_pts=body_pts)
    if(keyword_set(surface_pts)) then $
     begin 
      flags = bytarr(n_elements(body_pts[*,0]))
@@ -115,7 +110,7 @@ function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, frame_bd=frame_bd, fov=fov, $
         pnt_create_descriptors(name = cor_name(bx), $
 		desc = desc[i], $
 		input = pgs_desc_suffix(bx=bx[i,0], cd[0]), $
-		assoc_idp = cor_idp(bx), $
+		assoc_xd = bx, $
 		vectors = inertial_pts, $
                 flags = flags, $
 		points = points)

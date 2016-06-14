@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       dsk_image_bounds, cd, dkx, frame_bd, $
+;       dsk_image_bounds, cd, dkx, $
 ;	        radmin=radmin, radmax=radmax, lonmin=lonmin, lonmax=lonmax
 ;
 ;
@@ -23,10 +23,6 @@
 ;	cd:	Camera descripor.
 ;
 ;	dkx:	Any subclass of DISK.
-;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
 ;
 ;  OUTPUT:  NONE
 ;
@@ -64,7 +60,7 @@
 ;
 ;-
 ;=============================================================================
-pro dsk_image_bounds, cd, dkx, frame_bd, slop=slop, border_pts_im=border_pts_im, $
+pro dsk_image_bounds, cd, dkx, slop=slop, border_pts_im=border_pts_im, $
    radmin=radmin, radmax=radmax, lonmin=lonmin, lonmax=lonmax, np=npp, $
    plane=plane, status=status, crop=crop
 
@@ -96,7 +92,7 @@ pro dsk_image_bounds, cd, dkx, frame_bd, slop=slop, border_pts_im=border_pts_im,
    dsk_set_sma, dkx, sma
   end
 
- int_pts_body = dsk_intersect(dkx, v, r, hit=hit, frame_bd=frame_bd)
+ int_pts_body = dsk_intersect(dkx, v, r, hit=hit)
 
  dsk_set_sma, dkx, sma0
  nv_resume_events
@@ -112,7 +108,7 @@ pro dsk_image_bounds, cd, dkx, frame_bd, slop=slop, border_pts_im=border_pts_im,
  ;-------------------------------------------------------
  ; compute ring edge points
  ;-------------------------------------------------------
- disk_pts = dsk_get_disk_points(dkx, npp, frame_bd=frame_bd)
+ disk_pts = dsk_get_disk_points(dkx, npp)
 
  disk_inertial_pts0 = bod_body_to_inertial_pos(dkx, disk_pts[*,*,0])
  disk_inertial_pts1 = bod_body_to_inertial_pos(dkx, disk_pts[*,*,1])
@@ -131,7 +127,7 @@ pro dsk_image_bounds, cd, dkx, frame_bd, slop=slop, border_pts_im=border_pts_im,
  ;--------------------------------------------------------
  ; compute min/max rad/lon 
  ;--------------------------------------------------------
- all_pts_dsk = inertial_to_disk_pos(dkx, all_pts, frame_bd=frame_bd)
+ all_pts_dsk = inertial_to_disk_pos(dkx, all_pts)
 
  rad = all_pts_dsk[*,0]
  radmin = min(rad)

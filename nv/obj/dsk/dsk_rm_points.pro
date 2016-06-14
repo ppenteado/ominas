@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Removes points infront of or behind a DISK object.
+;	Removes points in front of or behind a DISK object.
 ;
 ;
 ; CATEGORY:
@@ -30,10 +30,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,7 +46,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_rm_points, dkd, r, points, frame_bd=frame_bd
+function dsk_rm_points, dkd, r, points
 @core.include
  
 
@@ -59,10 +56,10 @@ function dsk_rm_points, dkd, r, points, frame_bd=frame_bd
  rr = r[gen3y(nv,3,nt)]
  v = points-rr
 
- p = dsk_intersect(dkd, rr, v, frame_bd=frame_bd)
+ p = dsk_intersect(dkd, rr, v)
 
- p_rp = dsk_body_to_disk(dkd, p, frame_bd=frame_bd)
- rad = dsk_get_radius(dkd, p_rp[*,1,*], frame_bd)
+ p_rp = dsk_body_to_disk(dkd, p)
+ rad = dsk_get_radius(dkd, p_rp[*,1,*])
 
  sub = where(p_rp[*,0,*] GE rad[*,0,*] AND p_rp[*,0,*] LE rad[*,1,*])
 

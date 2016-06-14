@@ -5,7 +5,7 @@
 ;
 ;=============================================================================
 pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
-       emm=emm, inc=inc, g=g, valid=valid, body_pts=body_pts, frame_bd=frame_bd, $
+       emm=emm, inc=inc, g=g, valid=valid, body_pts=body_pts, $
        north=north
 
  if(keyword_set(body_pts)) then np = n_elements(body_pts)/3 $
@@ -31,7 +31,7 @@ pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
    ;-------------------------------
    ; compute points on surface
    ;-------------------------------
-   junk = surface_intersect(bx, v, r, hit=valid, near=body_pts, frame_bd=frame_bd)
+   body_pts = surface_intersect(bx, v, r, hit=valid, /near)
    if(valid[0] EQ -1) then return
   end
 
@@ -49,7 +49,7 @@ pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
  ;-------------------------------
  ; compute surface normals
  ;-------------------------------
- normals = surface_normal(bx, v, body_pts, frame_bd=frame_bd, north=north)
+ normals = surface_normal(bx, v, body_pts, north=north)
 
  ;-------------------------------
  ; compute cosines

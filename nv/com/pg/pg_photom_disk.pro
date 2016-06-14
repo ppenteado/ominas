@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_photom_globe(dd, cd=cd, gbx=gbx)
+;	result = pg_photom_globe(dd, cd=cd)
 ;
 ;
 ; ARGUMENTS:
@@ -32,9 +32,7 @@
 ;
 ;	sund:	Sun descriptor
 ;
-;	gbx:	Globe descriptor for the primary planet.
-;
-;	gd:	Generic descriptor.  If present, cd and gbx are taken from 
+;	gd:	Generic descriptor.  If present, cd and dkx are taken from 
 ;		here if contained.
 ;
 ; 	outline_ptd:	POINT with image points outlining the 
@@ -85,7 +83,7 @@
 ;-
 ;=============================================================================
 function pg_photom_disk, dd, outline_ptd=outline_ptd, $
-                  cd=cd, dkx=dkx, gbx=_gbx, sund=sund, gd=gd, $
+                  cd=cd, dkx=dkx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
                   emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite
@@ -100,11 +98,6 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  ;-----------------------------------------------
  pgs_gd, gd, cd=cd, dkx=dkx, sund=sund, dd=dd
 
- if(NOT keyword__set(_gbx)) then $
-            nv_message, name='pg_photom_disk', 'Globe descriptor required.'
- __gbx = get_primary(cd, _gbx, rx=dkx)
- if(keyword__set(__gbx)) then gbx = __gbx $
- else gbx = _gbx[0,*]
 
  ;-----------------------------------------------
  ; validate descriptors
@@ -163,8 +156,8 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  ;---------------------------------------
  ; compute photometric angles
  ;---------------------------------------
- pht_angles_disk, image_pts, cd, dkx, sund, frame_bd=gbx, $
-                                  emm=mu, inc=mu0, g=g, valid=valid
+;;; should be pht_angle, I think...
+ pht_angles_disk, image_pts, cd, dkx, sund, emm=mu, inc=mu0, g=g, valid=valid
  if(valid[0] EQ -1) then $
          nv_message, name='pg_photom_disk', 'No valid points in image region.'
 

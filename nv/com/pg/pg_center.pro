@@ -99,7 +99,7 @@ function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
         pnt_create_descriptors(name = cor_name(xd), $
 		desc = desc[i], $
 		input = pgs_desc_suffix(bx=bx[i,0], cd[0]), $
-		assoc_idp = cor_idp(xd), $
+		assoc_xd = xd, $
 		points = inertial_to_image_pos(cd, inertial_pts), $
 		vectors = inertial_pts)
   end

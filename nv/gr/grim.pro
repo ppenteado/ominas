@@ -359,6 +359,8 @@ pro grim_constants
  CONTEXT_SIZE = 100
  AXES_SIZE = 125
 
+ SCALE_WIDTH = 10
+
  MARK_FRESH = 1b
  MARK_STALE = 2b
 end
@@ -606,128 +608,20 @@ pro grim_set_mode, grim_data, mode, new=new, init=init, data_p=data_p
 
  swap = grim_get_cursor_swap(grim_data)
 
- case mode of
-  'zoom' : $
+ cursor_modes = *grim_data.cursor_modes_p
+ data_p = 0
+ if(keyword_set(cursor_modes)) then $
+  begin
+   names = cursor_modes.name
+   w = where(names EQ mode)
+   if(w[0] NE -1) then $
     begin
-     device, cursor_standard = 144
-     grim_print, grim_data, 'LEFT: Zoom; RIGHT: Unzoom'
+     data_p = cursor_modes[w].data_p
+     grim_data.mode_data_p = data_p
     end
-  'zoom_plot' : $
-    begin
-     device, cursor_standard = 144
-     grim_print, grim_data, 'LEFT: Zoom; RIGHT: Unzoom'
-    end
-  'xyzoom' : $
-    begin
-     grim_xyzoom_cursor, swap=swap
-     grim_print, grim_data, 'LEFT: Zoom; RIGHT: Unzoom'
-    end
-  'pan'  : $
-    begin
-     device, cursor_standard = 52
-     grim_print, grim_data, 'LEFT: Pan; RIGHT: Recenter'
-    end
-  'pan_plot'  : $
-    begin
-     device, cursor_standard = 52
-     grim_print, grim_data, 'LEFT: Pan; RIGHT: Recenter'
-    end
-  'tiepoints'  : $
-    begin
-     grim_tiepoints_cursor, swap=swap
-     grim_print, grim_data, $
-         'LEFT: Add tiepoint; RIGHT: Remove tiepoint'
-    end
-  'curves'  : $
-    begin
-     grim_curves_cursor, swap=swap
-     grim_print, grim_data, $
-         'LEFT: Add curve; RIGHT: Remove curve'
-    end
-  'activate'  : $
-    begin
-     device, cursor_standard = 60
-     grim_print, grim_data, 'LEFT: Activate; RIGHT: Deactivate'
-    end
-  'readout'  : $
-    begin
-     grim_readout_cursor, swap=swap
-     grim_print, grim_data, 'LEFT: Pixel readout; RIGHT: Measure'
-    end
-  'mask'  : $
-    begin
-     device, cursor_standard = 22
-     grim_print, grim_data, 'LEFT: Add pixels; RIGHT: Remove pixels'
-    end
-  'mag'  : $
-    begin
-     grim_mag_cursor, swap=swap
-     grim_print, grim_data, 'LEFT: Magnify display; RIGHT: Magnify data'
-    end
-  'remove'  : $
-    begin
-     grim_remove_cursor, swap=swap
-     grim_print, grim_data, 'LEFT: Delete standard overlays; RIGHT: Delete user overlays'
-    end
-  'trim'  : $
-    begin
-     grim_trim_cursor, swap=swap
-     grim_print, grim_data, 'LEFT: Trim standard overlays; RIGHT: Trim user overlays'
-    end
-  'select'  : $
-    begin
-     grim_select_cursor, swap=swap
-     grim_print, grim_data, 'LEFT: Select overlay points; RIGHT: Deselect overlay points'
-    end
-  'region'  : $
-    begin
-;     grim_region_cursor, swap=swap
-     device, cursor_standard = 32
-     grim_print, grim_data, 'LEFT: Define rectangular region; RIGHT: Define irregular region'
-    end
-  'smooth'  : $
-    begin
-     device, cursor_standard = 64
-     grim_print, grim_data, 'LEFT: Square kernel; RIGHT: Rectangular kernel'
-    end
-  'plane'  : $
-    begin
-     device, cursor_standard = 59
-     grim_print, grim_data, 'LEFT: Select Plane by Data; RIGHT: Select Plane by Overlay'
-    end
-  'move'  : $
-    begin
-     device, cursor_standard = 59
-     grim_print, grim_data, 'LEFT: Forward; RIGHT: Backward
-    end
-  'rotate'  : $
-    begin
-     device, cursor_standard = 59
-     grim_print, grim_data, 'LEFT: Select new optic axis
-    end
-  'spin'  : $
-    begin
-     device, cursor_standard = 59
-     grim_print, grim_data, 'LEFT: Spin left; RIGHT: Spin right
-    end
-   else : $
-    begin
-     user_modes = *grim_data.user_modes_p
-     data_p = 0
-     if(keyword_set(user_modes)) then $
-      begin
-       names = user_modes.name
-       w = where(names EQ mode)
-       if(w[0] NE -1) then $
-        begin
-         data_p = user_modes[w].data_p
-         grim_data.mode_data_p = data_p
-        end
-      end
+  end
 
-     call_procedure, mode + '_mode', grim_data, data_p
-    end
- endcase
+ call_procedure, mode + '_mode', grim_data, data_p
 
 
 end
@@ -1044,157 +938,6 @@ pro grim_load_files, grim_data, filenames, load_path=load_path
  grim_refresh, grim_data, zoom=zoom, offset=offset, order=tvd.order
  grim_wset, grim_data, /save
 
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_mag_erase
-;
-;=============================================================================
-pro grim_mag_erase, grim_data, wnum
-@grim_constants.common
-
- size_device = MAG_SIZE_DEVICE
- half_size_device = size_device/2
-
-; x0 = grim_data.mag_last[0] - half_size_device > 0
-; y0 = grim_data.mag_last[1] - half_size_device > 0
-
- wset, wnum
-; device, copy=[0,0, size_device,size_device, x0,y0, $
- device, copy=[0,0, size_device,size_device, $
-                  grim_data.mag_last_x0,grim_data.mag_last_y0, $
-                                                grim_data.mag_redraw_pixmap]
-
- grim_mag_cursor, swap=grim_get_cursor_swap(grim_data)
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_mag_frame
-;
-;=============================================================================
-pro grim_mag_frame
-@grim_constants.common
-
- size_device = MAG_SIZE_DEVICE
-
- plots, /device, [0,size_device-1,size_device-1,0,0], $
-                 [0,0,size_device-1,size_device-1,0], color=ctgreen()
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_magnify
-;
-;=============================================================================
-pro grim_magnify, grim_data, plane, p_device, data=data
-@grim_constants.common
-
- size_data = MAG_SIZE_DATA
- half_size_data = fix(size_data/2)
-
-
- wnum = !d.window
- xmax = !d.x_size
- ymax = !d.y_size
-
- wset, grim_data.mag_pixmap
- size_device = MAG_SIZE_DEVICE
- half_size_device = fix(size_device/2)
-
- ;--------------------------------
- ; magnify current region
- ;--------------------------------
- x0 = p_device[0] - half_size_data
- y0 = p_device[1] - half_size_data
-
- x0 = x0 > 0 < (xmax - size_data)
- y0 = y0 > 0 < (ymax - size_data)
-
- pp = [x0 + half_size_data, y0 + half_size_data]
-
- ;- - - - - - - - - - - - - - - - - - - - -
- ; different behavior depending on mode
- ;- - - - - - - - - - - - - - - - - - - - -
- wset, wnum
- if(keyword_set(data)) then $
-  begin
-   dim = dat_dim(plane.dd)
-
-   p_data = round(convert_coord(double(p_device[0]), double(p_device[1]), /device, /to_data))
-   x0 = p_data[0] - half_size_data
-   y0 = p_data[1] - half_size_data
-
-   x0 = x0 > 0 < (dim[0]-1 - size_data - 1)
-   y0 = y0 > 0 < (dim[1]-1 - size_data - 1)
-
-   x1 = x0 + size_data - 1
-   y1 = y0 + size_data - 1
-
-   region = grim_scale_image(grim_data, $
-        xrange=[x0,x1], yrange=[y0,y1], top=top, no_scale=no_scale, plane=plane)
-
-   if(grim_data.mag_last_x0 GE 0) then grim_mag_erase, grim_data, wnum
-
-   mag_region = congrid(region, size_device, size_device)
-
-   grim_wset, grim_data, wnum, get_info=tvd
-   wset, grim_data.mag_pixmap
-
-   erase 
-   tvscl, mag_region, order=tvd.order, top=top
-  end $
- else $
-  begin
-   if(grim_data.mag_last_x0 GE 0) then grim_mag_erase, grim_data, wnum
-   region1 = congrid(tvrd(x0, y0, size_data, size_data, channel=1), size_device, size_device)
-   region2 = congrid(tvrd(x0, y0, size_data, size_data, channel=2), size_device, size_device)
-   region3 = congrid(tvrd(x0, y0, size_data, size_data, channel=3), size_device, size_device)
-
-   grim_wset, grim_data, wnum, get_info=tvd
-   wset, grim_data.mag_pixmap
-
-   erase 
-   tv, region1, channel=1
-   tv, region2, channel=2
-   tv, region3, channel=3
-  end
-
- grim_mag_frame
-
-
- ;- - - - - - - - - - - - - - -
- ; save current region
- ;- - - - - - - - - - - - - - -
- x0 = pp[0] - half_size_device
- y0 = pp[1] - half_size_device
-
- x0 = x0 > 0 < (xmax - size_device)
- y0 = y0 > 0 < (ymax - size_device)
- wset, grim_data.mag_redraw_pixmap
- device, copy=[x0,y0, size_device,size_device, 0,0, wnum]
-
-
- ;- - - - - - - - - - - - - - -
- ; overlay magnified region
- ;- - - - - - - - - - - - - - -
- wset, wnum
- device, copy=[0,0, size_device,size_device, x0,y0, grim_data.mag_pixmap]
-
- grim_data.mag_last_x0 = x0
- grim_data.mag_last_y0 = y0
- grim_set_data, grim_data, grim_data.base
-
- grim_no_cursor
 end
 ;=============================================================================
 
@@ -1596,7 +1339,7 @@ end
 ;=============================================================================
 function grim_modes_list, grim_data
 
- base = grim_data.modes_base2
+ base = grim_data.modes_base
  repeat $
   begin
    id = widget_info(base, /child)
@@ -1793,64 +1536,6 @@ end
 
 
 ;=============================================================================
-; grim_smooth
-;
-;=============================================================================
-pro grim_smooth, grim_data, plane=plane, box
-
- max = 30
-
- data = double(dat_data(plane.dd))
-
- if(grim_data.type EQ 'plot') then $
-  begin
-   xx = data[0,*] & xx = xx[sort(xx)]
-
-   yy = data[1,*]
-   x0 = min(where(xx GE min(box[0,*])))
-   x1 = max(where(xx LE max(box[0,*])))
-
-   n = x1-x0
-   if(n LT 1) then return
-
-   result = 'Yes'
-   if(n GE max) then $
-       grim_message, /question, result=result, $
-           ['The smoothing kernel is rather large.  Continue anyway?']
-   if(result NE 'Yes') then return
-
-   yy = smooth(yy, n)
-   data[1,*] = yy
-  end $
- else $
-  begin
-   dx = max(box[0,*]) - min(box[0,*])
-   dy = max(box[1,*]) - min(box[1,*])
-   nx = fix(dx)
-   ny = fix(dy)
-   if((nx LT 1) OR (ny LT 1)) then return
-
-   kernel = dblarr(nx, ny)
-   kernel[*] = 1d/(double(nx)*double(ny))
-
-   n = max([nx,ny])
-   result = 'Yes'
-   if(n GE max) then $
-       grim_message, /question, result=result, $
-           ['The smoothing kernel is rather large.  Continue anyway?']
-   if(result NE 'Yes') then return
-
-   data = convol(data, kernel, /center)
-  end
-
- dat_set_data, plane.dd, data
- 
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_erase_guideline
 ;
 ;=============================================================================
@@ -2013,6 +1698,29 @@ end
 
 
 ;=============================================================================
+; grim_draw_vectors
+;
+;=============================================================================
+pro grim_draw_vectors, cd, curves_ptd, points_ptd
+
+ if(obj_valid(curves_ptd)) then $
+  begin
+   p = inertial_to_image_pos(cd, pnt_vectors(curves_ptd, /visible))
+   pg_draw, reform(p), psym=3, col=ctgreen()
+  end
+
+ if(obj_valid(points_ptd)) then $
+  begin
+   p = inertial_to_image_pos(cd, pnt_vectors(points_ptd, /visible))
+   pg_draw, reform(p), psym=1, col=ctgreen()
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_increment_mode
 ;
 ;=============================================================================
@@ -2050,6 +1758,136 @@ end
 
 
 ;=============================================================================
+; grim_update_guideline
+;
+;=============================================================================
+pro grim_update_guideline, grim_data, plane, x, y
+
+ if(grim_data.guideline_flag) then $
+  begin
+   grim_erase_guideline, grim_data
+   grim_draw_guideline, grim_data, x, y
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_update_xy_label
+;
+;=============================================================================
+pro grim_update_xy_label, grim_data, plane, x, y
+
+ p = (convert_coord(double(x), double(y), /device, /to_data))[0:1]
+ xx = str_pad(strtrim(p[0],2), 6)
+ yy = str_pad(strtrim(p[1],2), 6)
+
+ dn = ''
+ dim = dat_dim(plane.dd)
+ if(n_elements(dim) EQ 1) then dim = [dim, 1]
+
+ ;- - - - - - - - - -  - - - 
+ ; plot
+ ;- - - - - - - - - -  - - - 
+ if(grim_data.type EQ 'plot') then $
+  begin
+   if((p[0] GE 0) AND (p[0] LT dim[1])) then $
+ 			     dn = dat_data(plane.dd, sample=[1,p[0]], /nd)
+  end $
+ ;- - - - - - - - - -  - - - 
+ ; image
+ ;- - - - - - - - - -  - - - 
+ else $
+  begin
+   p = round(p)
+   if((p[0] GE 0) AND (p[0] LT dim[0]) AND $
+      (p[1] GE 0) AND (p[1] LT dim[1])) then $
+ 				 dn = dat_data(plane.dd, sample=p, /nd)
+  end
+
+ if(size(dn, /type) EQ 1) then dn = fix(dn)
+ dn = strtrim(string(dn, format='(g10.4)'),2)
+ widget_control, grim_data.xy_label, $
+ 			     set_value='(' + xx + ',' + yy + '): ' + dn
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_scroll
+;
+;=============================================================================
+pro grim_scroll, grim_data, plane, clicks, modifiers
+
+ ;- - - - - - - - - - - - - - - - -
+ ; No modifier -- change mde 
+ ;- - - - - - - - - - - - - - - - -
+ if(NOT keyword_set(modifiers)) then $
+  begin
+   dm = - clicks
+   grim_increment_mode, grim_data, dm
+   grim_set_data, grim_data;, event.top
+  end $
+ ;- - - - - - - - - - - - - - - - -
+ ; Ctrl -- change zoom 
+ ;- - - - - - - - - - - - - - - - -
+ else if(modifiers EQ 2) then $
+  begin
+   dm = double(clicks)
+   factor = 2d^dm
+   offset = grim_zoom_to_cursor(factor, /relative, zoom=zoom)
+   grim_refresh, grim_data, zoom=zoom, offset=offset
+  end 
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_middle
+;
+;=============================================================================
+pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers
+
+ if(press NE 2) then return
+
+ if(grim_data.type EQ 'plot') then $
+  begin
+   xx = convert_coord(/data, /to_device,$
+              [transpose(double(plane.xrange)), transpose(double(plane.yrange))])
+   edge = [xx[0]+2, !d.x_size-xx[3]-1, xx[1]+2, !d.y_size-xx[4]-1]
+   tvpan, wnum=input_wnum, /notvim, edge=edge, $
+        	    p0=[x,y], cursor=60, hour=id, $
+        	    output=output_wnum, col=ctred(), doffset=doffset
+   grim_wset, grim_data, output_wnum
+   grim_refresh, grim_data, doffset=doffset
+  end $
+ else $
+  begin
+   stat = grim_activate_by_point(/invert, plane, [x,y], clicks=clicks)
+   if(stat NE -1) then grim_refresh, grim_data, /noglass, /no_image $
+   else $
+    begin
+     tvpan, wnum=input_wnum, /noplot, edge=3, $
+        	    p0=[x,y], cursor=60, hour=id, $
+        	    output=output_wnum, col=ctred()
+     grim_wset, grim_data, output_wnum
+     grim_refresh, grim_data
+    end
+  end 
+ grim_set_mode, grim_data
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_draw_event
 ;
 ;=============================================================================
@@ -2063,882 +1901,52 @@ pro grim_draw_event, event
  output_wnum = grim_data.wnum
 
  struct = tag_names(event, /struct)
-
- widget_control, event.id, get_uvalue=pressed
- if(NOT keyword_set(pressed)) then pressed = 0
  
  if(NOT grim_test_motion_event(event)) then grim_set_primary, grim_data.base
+
 
  ;======================================
  ; motion event 
  ;======================================
  if(struct EQ 'WIDGET_DRAW') then if(event.type EQ 2) then $
   begin
-   ;------------------------
-   ; print x, y, dn
-   ;------------------------
-   p = (convert_coord(double(event.x), double(event.y), /device, /to_data))[0:1]
-   xx = str_pad(strtrim(p[0],2), 6)
-   yy = str_pad(strtrim(p[1],2), 6)
-
-   dn = ''
-   dim = dat_dim(plane.dd)
-   if(n_elements(dim) EQ 1) then dim = [dim, 1]
-
-   if(grim_data.type EQ 'plot') then $
-    begin
-     if((p[0] GE 0) AND (p[0] LT dim[1])) then $
-                               dn = dat_data(plane.dd, sample=[1,p[0]], /nd)
-    end $
-   else $
-    begin
-     p = round(p)
-     if((p[0] GE 0) AND (p[0] LT dim[0]) AND $
-        (p[1] GE 0) AND (p[1] LT dim[1])) then $
-                                   dn = dat_data(plane.dd, sample=p, /nd)
-    end
-
-   if(size(dn, /type) EQ 1) then dn = fix(dn)
-   dn = strtrim(string(dn, format='(g10.4)'),2)
-   widget_control, grim_data.xy_label, $
-                               set_value='(' + xx + ',' + yy + '): ' + dn
-
-   ;---------------------------------------------
-   ; erase / redraw guidelines
-   ;---------------------------------------------
-   if(grim_data.guideline_flag) then $
-    begin
-     grim_erase_guideline, grim_data
-     grim_draw_guideline, grim_data, event.x, event.y
-    end
+   grim_update_xy_label, grim_data, plane, event.x, event.y
+   grim_update_guideline, grim_data, plane, event.x, event.y
   end
 
+
  ;===================================
- ; switch on event structure type
+ ; middle button and scroll wheel
  ;===================================
  case struct of
-  ;-------------------------------------------------------
-  ; draw widget event -- check which button pressed
-  ;-------------------------------------------------------
   'WIDGET_DRAW' : $
    case event.type of
-    ;- - - - - - - - -
-    ; button release  
-    ;- - - - - - - - -
-    1 : $						; button released
-      begin
-       grim_set_tracking, grim_data
-       pressed = 0
-       case grim_data.mode of 
-        ;- - - - - - - - 
-        ; readout mode  
-        ;- - - - - - - - 
-        'readout' : $
-           case event.release of
-            1 : $
-               begin
-                grim_wset, grim_data, input_wnum
-                p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                grim_wset, grim_data, output_wnum
-                grim_place_readout_mark, grim_data, p[0:1]
-                grim_draw, grim_data, /readout
-               end
-            else : 
-           endcase
-        ;- - - - - - - - 
-        ; mag mode  
-        ;- - - - - - - - 
-        'mag' : $
-	  begin
-	    if((input_wnum EQ grim_data.wnum) AND $
-                   (event.release EQ 1) OR (event.release EQ 4)) then $
-	     begin
-	      grim_mag_erase, grim_data, !d.window
-	      grim_data.mag_last_x0 = -1
-	      grim_set_data, grim_data, grim_data.base
-	    end
-	  end
-        'zoom' : 	
-        'zoom_plot' : 	
-        'xyzoom' : 	
-        'pan' : 	
-        'pan_plot' : 	
-        'tiepoints' : 	
-        'mask' : 	
-        'curves' : 	
-        'activate' : 	
-        'remove' : 	
-        'trim' : 	
-        'select' : 	
-        'region' : 	
-        'smooth' : 
-	'plane' :	
-	'move' :	
-	'rotate' :	
-	'spin' :	
-       ;- - - - - - - - - - - - - - - - - - - - - -
-       ; unrecognized mode, assume user-defined  
-       ;- - - - - - - - - - - - - - - - - - - - - -
-       else : $
-	begin
-	 data = 0
-	 if(keyword_set(grim_data.mode_data_p)) then data = *grim_data.mode_data_p
-	 call_procedure, grim_data.mode + '_mouse_event', event, data
-	end
-       endcase	
-      end
     ;- - - - - - - - - - - - - - - - -
-    ; scroll wheel -- 6.4 and later 
+    ; scroll wheel -- zoom / mode
     ;- - - - - - - - - - - - - - - - -
-    7 : $
-      begin
-       dm = - event.clicks
-       grim_increment_mode, grim_data, dm
-       grim_set_data, grim_data, event.top
-      end
+    7 : grim_scroll, grim_data, plane, event.clicks, event.modifiers
 
-    ;- - - - - - - - 
-    ; button press  
-    ;- - - - - - - - 
-    0 : $						; button pressed
-      begin
-       pressed = event.press
-       ;- - - - - - - - - - - - - - - - - - - - - - 
-       ; wheel cycles through modes -- pre-6.4
-       ;- - - - - - - - - - - - - - - - - - - - - - 
-       if(pressed EQ 16) then $
-        begin
-         grim_increment_mode, grim_data, 1
-
-;         modes = grim_modes_list(grim_data)
-;         nmodes = n_elements(modes)
-;         w = where(modes EQ grim_data.mode)
-;         ww = (w + 1) mod nmodes
-;         grim_set_mode, grim_data, modes[ww[0]], /new
-         grim_set_data, grim_data, event.top
-        end $
-       else if(pressed EQ 8) then $
-        begin
-         grim_increment_mode, grim_data, -1
-
-;         modes = grim_modes_list(grim_data)
-;         nmodes = n_elements(modes)
-;         w = where(modes EQ grim_data.mode)
-;         ww = (w - 1)
-;         if(ww[0] LT 0) then ww = ww + nmodes 
-;         ww = ww mod nmodes
-;         grim_set_mode, grim_data, modes[ww[0]], /new
-         grim_set_data, grim_data, event.top
-        end $
-       ;- - - - - - - - - - - - - - - - - - - - - - 
-       ; middle button pans
-       ;- - - - - - - - - - - - - - - - - - - - - - 
-       else if(pressed EQ 2) then $
-        begin
-         if(grim_data.type EQ 'plot') then $
-          begin
-           xx = convert_coord(/data, /to_device,$
-                      [transpose(double(plane.xrange)), transpose(double(plane.yrange))])
-           edge = [xx[0]+2, !d.x_size-xx[3]-1, xx[1]+2, !d.y_size-xx[4]-1]
-           tvpan, wnum=input_wnum, /notvim, edge=edge, $
-                            p0=[event.x,event.y], cursor=60, hour=event.id, $
-                            output=output_wnum, col=ctred(), doffset=doffset
-           grim_wset, grim_data, output_wnum
-           grim_refresh, grim_data, doffset=doffset
-          end $
-         else $
-          begin
-           tvpan, wnum=input_wnum, /noplot, edge=3, $
-                            p0=[event.x,event.y], cursor=60, hour=event.id, $
-                            output=output_wnum, col=ctred()
-           grim_wset, grim_data, output_wnum
-           grim_refresh, grim_data
-          end 
-         grim_set_mode, grim_data
-         pressed = 0
-        end $
-       ;- - - - - - - - - - - - - - - - - - - - - - 
-       ; right and left buttons depend on mode
-       ;- - - - - - - - - - - - - - - - - - - - - - 
-       else $
-        case grim_data.mode of 
-        ;- - - - - - - - 
-        ; zoom mode  
-        ;- - - - - - - - 
-         'zoom' : $	
-           begin
-            minbox = 5
-            aspect = double(!d.y_size)/double(!d.x_size)
-            case event.press of
-             1 : $
-                begin
-                 tvzoom, [1], input_wnum, /noplot, $
-                          p0=[event.x,event.y], cursor=78, hour=event.id, $
-                          output=output_wnum, minbox=minbox, aspect=aspect, $ 
-                          color=ctred()
-                 grim_wset, grim_data, output_wnum
-                 grim_refresh, grim_data
-                 grim_set_mode, grim_data, 'zoom'
-                 pressed = 0
-                end
-             4 : $
-                begin
-                  tvunzoom, [1], input_wnum, /noplot, $
-                             p0=[event.x,event.y], cursor=78, hour=event.id, $
-                             output=output_wnum, minbox=minbox, aspect=aspect, $
-	                     color=ctred()
-                 grim_wset, grim_data, output_wnum
-                 grim_refresh, grim_data
-                 grim_set_mode, grim_data, 'zoom'
-                 pressed = 0
-                 end
-	     else : 
-            endcase
-           end
-        ;- - - - - - - - 
-        ; zoom_plot mode  
-        ;- - - - - - - - 
-         'zoom_plot' : $	
-           begin
-            minbox = 5
-            case event.press of
-             1 : $
-               begin
-                tvgr, input_wnum
-                box = tvrec(p0=[event.x, event.y], color=ctred())
-                xx = box[0,*] & yy = box[1,*]
-                pq = convert_coord(/device, /to_data, double(xx), double(yy))
-                xrange = [min(pq[0,*]), max(pq[0,*])]
-                yrange = [min(pq[1,*]), max(pq[1,*])]
-                tvgr, output_wnum
-                grim_refresh, grim_data, xrange=xrange, yrange=yrange
-                grim_set_mode, grim_data, 'zoom_plot'
-                pressed = 0
-               end
-             4 : $
-               begin
-                tvgr, input_wnum, get_info=tvd
-                box = tvrec(p0=[event.x, event.y], color=ctred())
-                xx = box[0,*] & yy = box[1,*]
-                pq = convert_coord(/device, /to_data, double(xx), double(yy))
-
-                box_xrange=[min(pq[0,*]), max(pq[0,*])]
-                box_yrange=[min(pq[1,*]), max(pq[1,*])]
-
-                imx = tvd.position[[0,2]]
-                imy = tvd.position[[1,3]]
-                corners = convert_coord(double(imx), double(imy), /norm, /to_data)
-                old_xrange = corners[0,*] &  old_yrange = corners[1,*]            
-
-                xratio = (old_xrange[1]-old_xrange[0]) / $
-                                            (box_xrange[1]-box_xrange[0])
-                yratio = (old_yrange[1]-old_yrange[0]) / $
-                                            (box_yrange[1]-box_yrange[0])
-
-                xrange = [old_xrange - (box_xrange-old_xrange)*xratio]
-                yrange = [old_yrange - (box_yrange-old_yrange)*yratio]
-
-                tvgr, output_wnum
-
-                grim_refresh, grim_data, xrange=xrange, yrange=yrange
-                grim_set_mode, grim_data, 'zoom_plot'
-                pressed = 0
-               end
-	     else : 
-            endcase
-           end
-        ;- - - - - - - - 
-        ; xyzoom mode  
-        ;- - - - - - - - 
-         'xyzoom' : $	
-           begin
-            minbox = 5
-            case event.press of
-             1 : $
-                begin
-                 tvzoom, [1], input_wnum, /noplot, $
-                          p0=[event.x,event.y], cursor=78, hour=event.id, $
-                          output=output_wnum, minbox=minbox, $ 
-                          color=ctred(), /xy
-                 grim_wset, grim_data, output_wnum
-                 grim_refresh, grim_data
-                 grim_set_mode, grim_data, 'xyzoom'
-                 pressed = 0
-                end
-             4 : $
-                begin
-                  tvunzoom, [1], input_wnum, /noplot, $
-                             p0=[event.x,event.y], cursor=78, hour=event.id, $
-                             output=output_wnum, minbox=minbox, $
-	                     color=ctred(), /xy
-                 grim_wset, grim_data, output_wnum
-                 grim_refresh, grim_data
-                 grim_set_mode, grim_data, 'xyzoom'
-                 pressed = 0
-                 end
-	     else : 
-            endcase
-           end
-        ;- - - - - - - - 
-        ; pan mode  
-        ;- - - - - - - - 
-         'pan' : $	
-            case event.press of
-             1 : $
-                begin
-                 tvmove, [1], input_wnum, /noplot, $
-                            p0=[event.x,event.y], cursor=60, hour=event.id, $
-                            output=output_wnum, col=ctred()
-                 grim_wset, grim_data, output_wnum
-                 grim_refresh, grim_data
-                 grim_set_mode, grim_data, 'pan'
-                 pressed = 0
-                end
-             4 : $
-                begin
-                 grim_wset, grim_data, input_wnum
-                 p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-
-                 grim_wset, grim_data, output_wnum
-                 grim_recenter, grim_data, p
-
-                 grim_set_mode, grim_data, 'pan'
-                 pressed = 0
-                end
-	     else : 
-            endcase
-        ;- - - - - - - - 
-        ; plane mode  
-        ;- - - - - - - - 
-         'plane' : $
-            case event.press of
-             1 : $
-                begin
-                 grim_wset, grim_data, input_wnum
-		 if(grim_data.n_planes GT 1) then $
-		  begin
-                   xy = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                   grim_wset, grim_data, output_wnum
-                   jplane = grim_get_plane_by_xy(grim_data, xy)
-                   grim_jump_to_plane, grim_data, jplane.pn
-                   grim_refresh, grim_data, /use_pixmap, /noglass
-		  end
-                 grim_set_mode, grim_data, 'plane'
-                 pressed = 0
-                end
-             4 : $
-                begin
-;                 grim_set_mode, grim_data, 'plane'
-;                 pressed = 0
-               end
-	     else : 
-            endcase
-        ;- - - - - - - - 
-        ; readout mode  
-        ;- - - - - - - - 
-        'readout' : $
-           case event.press of
-            4 : $
-               begin
-                widget_control, grim_data.draw, draw_motion_events=1
-                grim_wset, grim_data, input_wnum
-                grim_data.readout_top = $
-                  grim_pixel_readout(grim_data.readout_top, text=text, grnum=grim_data.grnum)
-                grim_data.readout_text = text
-                grim_set_data, grim_data, event.top
-
-                p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                planes = grim_get_plane(grim_data);, /visible)
-                pg_measure, planes.dd, xy=p[0:1], p=pp, /silent, fn=*grim_data.readout_fns_p, $
-                  gd={cd:*plane.cd_p, gbx:*plane.pd_p, dkx:*plane.rd_p, $
-                      sund:*plane.sund_p, sd:*plane.sd_p, std:*plane.std_p}, /radec, string=string 
-                sep = str_pad('', 80, c='-')
-                widget_control, grim_data.readout_text, get_value=ss    
-                widget_control, grim_data.readout_text, set_value=[string , sep, ss]   
-                grim_wset, grim_data, output_wnum
-
-
-
-                grim_wset, grim_data, output_wnum
-                grim_place_measure_mark, grim_data, pp
-;                grim_draw, grim_data, /measure
-                grim_refresh, grim_data, /use_pixmap
-               end
-            else : 
-           endcase
-        ;- - - - - - - - 
-        ; move mode  
-        ;- - - - - - - - 
-         'move' : $
-            case event.press of
-             1 : $
-                begin
-                 xy = (convert_coord(double(event.x), double(event.y), /device, /to_data))[0:1]
-		 v = image_to_inertial(*plane.cd_p, xy)
-		 pg_repos, bx=*plane.cd_p, v*1d8		;; 1d8 temporary
-                 grim_set_mode, grim_data, 'move'
-                 pressed = 0
-                end
-             4 : $
-                begin
-                 xy = (convert_coord(double(event.x), double(event.y), /device, /to_data))[0:1]
-		 v = image_to_inertial(*plane.cd_p, xy)
-		 pg_repos, bx=*plane.cd_p, -v*1d8		;; 1d8 temporary
-                 grim_set_mode, grim_data, 'move'
-                 pressed = 0
-               end
-	     else : 
-            endcase
-        ;- - - - - - - - 
-        ; rotate mode  
-        ;- - - - - - - - 
-         'rotate' : $
-            case event.press of
-             1 : $
-                begin
-                 xy = (convert_coord(double(event.x), double(event.y), /device, /to_data))[0:1]
-		 v = image_to_inertial(*plane.cd_p, xy)
-		 pg_retarg, cd=*plane.cd_p, v, /toward
-                 grim_set_mode, grim_data, 'rotate'
-                 pressed = 0
-                end
-             4 : $
-                begin
-;                 grim_set_mode, grim_data, 'rotate'
-;                 pressed = 0
-               end
-	     else : 
-            endcase
-        ;- - - - - - - - 
-        ; spin mode  
-        ;- - - - - - - - 
-         'spin' : $
-            case event.press of
-             1 : $
-                begin
-                 grim_set_mode, grim_data, 'spin'
-                 pressed = 0
-                end
-             4 : $
-                begin
-;                 grim_set_mode, grim_data, 'spin'
-;                 pressed = 0
-               end
-	     else : 
-            endcase
-        ;- - - - - - - - - -
-        ; pan mode (plots) 
-        ;- - - - - - - - - -
-         'pan_plot' : $	
-            case event.press of
-             1 : $
-               begin
-                tvgr, input_wnum
-                ln = tvline(p0=[event.x, event.y], col=ctred())
-                line = convert_coord(double(ln[0,*]), double(ln[1,*]), /device, /to_data)
-                dx = line[0,0]-line[0,1]
-                dy = line[1,0]-line[1,1]
-
-                tvgr, output_wnum
-                grim_refresh, grim_data, dx=dx, dy=dy
-                grim_set_mode, grim_data, 'pan_plot'
-                pressed = 0
-               end
-             4 : $
-               begin
-                tvgr, input_wnum
-                p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                tvgr, output_wnum
-                cx = !d.x_size/2
-                cy = !d.y_size/2
-                q = convert_coord(double(cx), double(cy), /device, /to_data)
-                grim_refresh, grim_data, dx=p[0]-q[0], dy=p[1]-q[1]
-                grim_set_mode, grim_data, 'pan_plot'
-                pressed = 0
-               end
-	     else : 
-            endcase
-        ;- - - - - - - - 
-        ; tiepoint mode  
-        ;- - - - - - - - 
-         'tiepoints' : $	
-            case event.press of
-             1 : $
-                begin
-                 grim_wset, grim_data, input_wnum
-	         p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                 grim_wset, grim_data, output_wnum
-	         grim_add_tiepoint, grim_data, p[0:1]
-                 grim_draw, grim_data, /tiepoints, /nopoints
-                 pressed = 0
-               end
-             4 : $
-                begin
-                 grim_wset, grim_data, input_wnum
-	         p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                 grim_wset, grim_data, output_wnum
-                 grim_rm_tiepoint, grim_data, p[0:1];, pp=pp
-;                 if(keyword_set(pp)) then $
-;                  begin
-; 	           pp = convert_coord(pp[0,*], pp[1,*], /data, /to_device)
-;                   grim_display, grim_data, /use_pixmap, $
-;		       pixmap_box_center=[pp[0],pp[1]], pixmap_box_side=30
-;                   grim_draw, grim_data, /tiepoints, /nopoints
-                   grim_refresh, grim_data, /use_pixmap
-;                  end
-                 pressed = 0
-                end
-             else : 
-            endcase
-        ;- - - - - - - - 
-        ; mask mode  
-        ;- - - - - - - - 
-         'mask' : $	
-            case event.press of
-             1 : $
-                begin
-                 grim_wset, grim_data, input_wnum
-	         p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                 grim_wset, grim_data, output_wnum
-	         grim_add_mask, grim_data, p[0:1]
-                 grim_draw, grim_data, /mask, /nopoints
-                 pressed = 0
-               end
-             4 : $
-                begin
-                 grim_wset, grim_data, input_wnum
-	         p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                 grim_wset, grim_data, output_wnum
-                 grim_rm_mask, grim_data, p[0:1], pp=pp
-;                 if(keyword_set(pp)) then $
-;                  begin
-; 	           pp = convert_coord(pp[0,*], pp[1,*], /data, /to_device)
-;                   grim_display, grim_data, /use_pixmap, $
-;		       pixmap_box_center=[pp[0],pp[1]], pixmap_box_side=30
-;                   grim_draw, grim_data, /mask, /nopoints
-                   grim_refresh, grim_data, /use_pixmap
-;                  end
-                 pressed = 0
-                end
-             else : 
-            endcase
-        ;- - - - - - - - 
-        ; curve mode  
-        ;- - - - - - - - 
-         'curves' : $	
-            if(input_wnum EQ grim_data.wnum) then $
-             case event.press of
-              1 : $
-                begin
-		 p = pg_select_region(0, /points, /data, $
-                            p0=[event.x,event.y], $
-	                    /autoclose, /noclose, /noverbose, color=ctgreen(), $
-                            cancel_button=2, select_button=1)
-               grim_add_curve, grim_data, p
-               grim_draw, grim_data, /curves, /nopoints
-                 pressed = 0
-                end
-              4 : $
-                begin
-                 grim_wset, grim_data, input_wnum
-	         p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-                 grim_wset, grim_data, output_wnum
-                 grim_rm_curve, grim_data, p[0:1]
-                 grim_refresh, grim_data, /use_pixmap
-                 pressed = 0
-                end
-	      else : 
-             endcase
-        ;- - - - - - - - - - - - - - - - 
-        ; activate/deactivate mode  
-        ;- - - - - - - - - - - - - - - -
-         'activate' : $	
-            if(input_wnum EQ grim_data.wnum) then $
-             case event.press of
-              1 : $
-                begin
-                 grim_activate_select, $
-                     plane, [event.x, event.y], clicks=event.clicks, ptd=ptd
-                 grim_refresh, grim_data, /noglass;, /no_image, /update
-                 pressed = 0
-                end
-              4 : $
-                begin
-                 grim_activate_select, $
-                    plane, [event.x, event.y], /deactivate, clicks=event.clicks, ptd=ptd
-                 grim_refresh, grim_data, /noglass;, /no_image, /update
-                 pressed = 0
-                end
-	      else : 
-             endcase
-        ;- - - - - - - - - - - - - - - - 
-        ; remove mode  
-        ;- - - - - - - - - - - - - - - -
-         'remove' : $	
-            if(input_wnum EQ grim_data.wnum) then $
-             case event.press of
-              1 : $
-                begin
-                 grim_flash, [event.x, event.y]
-                 grim_remove_overlays, plane, [event.x, event.y], $
-                                           clicks=event.clicks, stat=stat
-                 if(stat NE -1) then grim_refresh, grim_data, /use_pixmap, /noglass
-                 pressed = 0
-                end
-              4 : $
-                begin
-                 grim_flash, [event.x, event.y]
-                 grim_remove_overlays, plane, /user, [event.x, event.y], $
-                                               clicks=event.clicks, stat=stat
-                 if(stat NE -1) then grim_refresh, grim_data, /use_pixmap, /noglass
-                 pressed = 0
-                end
-	      else : 
-             endcase
-        ;- - - - - - - - - - - - - - - - 
-        ; trim mode  
-        ;- - - - - - - - - - - - - - - -
-         'trim' : $	
-            if(input_wnum EQ grim_data.wnum) then $
-             case event.press of
-              1 : $
-                begin
-		 region = pg_select_region(0, $
-                            p0=[event.x,event.y], $
-	                    /autoclose, /noverbose, color=ctred(), $
-                            cancel_button=2, end_button=-1, select_button=1)
-                 grim_trim_overlays, grim_data, plane=plane, region
-                 grim_refresh, grim_data, /use_pixmap
-                 pressed = 0
-                end
-              4 : $
-                begin
-		 region = pg_select_region(0, $
-                            p0=[event.x,event.y], $
-	                    /autoclose, /noverbose, color=ctpurple(), $
-                            cancel_button=2, end_button=-1, select_button=4)
-                 grim_trim_user_overlays, grim_data, plane=plane, region
-                 grim_refresh, grim_data, /use_pixmap
-                 pressed = 0
-                end
-	      else : 
-             endcase
-        ;- - - - - - - - - - - - - - - - 
-        ; select mode  
-        ;- - - - - - - - - - - - - - - -
-         'select' : $	
-            if(input_wnum EQ grim_data.wnum) then $
-             case event.press of
-              1 : $
-                begin
-		 region = pg_select_region(0, $
-                            p0=[event.x,event.y], $
-	                    /autoclose, /noverbose, color=ctred(), $
-                            cancel_button=2, end_button=-1, select_button=1)
-                 grim_select_overlay_points, grim_data, plane=plane, region
-                 grim_refresh, grim_data, /use_pixmap
-;                 grim_refresh, grim_data, /no_image
-                 pressed = 0
-                end
-              4 : $
-                begin
-		 region = pg_select_region(0, $
-                            p0=[event.x,event.y], $
-	                    /autoclose, /noverbose, color=ctpurple(), $
-                            cancel_button=2, end_button=-1, select_button=4)
-                 grim_select_overlay_points, grim_data, plane=plane, region, /deselect
-                 grim_refresh, grim_data, /use_pixmap
-;                 grim_refresh, grim_data, /no_image
-                 pressed = 0
-                end
-	      else : 
-             endcase
-        ;- - - - - - - - - - - - - - - - 
-        ; region mode  
-        ;- - - - - - - - - - - - - - - -
-         'region' : $	
-           begin
-            if(input_wnum EQ grim_data.wnum) then $
-             case event.press of
-              1 : $
-                begin
-		 roi = pg_select_region(/box, 0, $
-                            p0=[event.x,event.y], $
-	                    /noverbose, color=ctblue(), image_pts=p)
-                 xx = p[0,*] & yy = p[1,*]
-                 pp = convert_coord(/device, /to_data, double(xx), double(yy))
-                 grim_set_roi, grim_data, roi, pp[0:1,*]
-                 grim_refresh, grim_data, /use_pixmap
-                 pressed = 0
-                end
-              4 : $
-                begin
-		 roi = pg_select_region(0, $
-                            p0=[event.x,event.y], $
-	                    /autoclose, /noverbose, color=ctblue(), $
-                            cancel_button=2, end_button=-1, select_button=4, $
-                            image_pts=p)
-                 xx = p[0,*] & yy = p[1,*]
-                 pp = convert_coord(/device, /to_data, double(xx), double(yy))
-                 grim_set_roi, grim_data, roi, pp[0:1,*]
-                 grim_refresh, grim_data, /use_pixmap
-                 pressed = 0
-                end
-	      else : 
-             endcase
-           end
-        ;- - - - - - - - - - - - - - - - 
-        ; smooth mode  
-        ;- - - - - - - - - - - - - - - -
-         'smooth' : $	
-            if(input_wnum EQ grim_data.wnum) then $
-             case event.press of
-              1 : $
-                begin
-                 _box = tvrec(p0=[event.x, event.y], color=ctyellow(), aspect=1)
-                 xx = _box[0,*] & yy = _box[1,*]
-                 box = convert_coord(/device, /to_data, double(xx), double(yy))
-		 widget_control, /hourglass
-		 grim_smooth, grim_data, plane=plane, box
-                 pressed = 0
-                end
-              4 : $
-                begin
-                 _box = tvrec(p0=[event.x, event.y], color=ctyellow())
-                 xx = _box[0,*] & yy = _box[1,*]
-                 box = convert_coord(/device, /to_data, double(xx), double(yy))
-		 widget_control, /hourglass
-		 grim_smooth, grim_data, plane=plane, box
-                 pressed = 0
-                end
-	      else : 
-             endcase
-         'readout' : 
-         'mask' : 
-         'plane' : 
-         'move' : 
-         'rotate' : 
-         'spin' : 
-         'mag' : 
-        ;- - - - - - - - - - - - - - - - - - - - - -
-        ; unrecognized mode, assume user-defined  
-        ;- - - - - - - - - - - - - - - - - - - - - -
-         else : $
-	  begin
-	   data = 0
-	   if(keyword_set(grim_data.mode_data_p)) then data = *grim_data.mode_data_p
-	   call_procedure, grim_data.mode + '_mouse_event', event, data
-	  end
-        endcase 
-      end
+    ;- - - - - - - - - - - - - - - - -
+    ; middle button -- pan / activate
+    ;- - - - - - - - - - - - - - - - -
+    0 : grim_middle, grim_data, plane, event.id, event.x, event.y, event.press, event.clicks, event.modifiers
     else : 
    endcase
 
-  ;--------------------------------------------------------------------------
-  ; tracking event -- make sure cursor reflects correct mode for this window
-  ;--------------------------------------------------------------------------
-  'WIDGET_TRACKING': $
-    if(event.enter) then $
-     begin
-      grim_set_mode, grim_data
-     end
   else : 
  endcase
 
 
- ;======================
- ; motion modes 
- ;======================
- if((pressed NE 0) AND (struct NE 'WIDGET_TRACKING')) then $
-  begin
-   case grim_data.mode of 
-    ;- - - - - - - - - - - - - - - - 
-    ; pixel readout mode  
-    ;- - - - - - - - - - - - - - - -
-    'readout' : $	
-       case pressed of
-        1 : $
-           begin
-	    widget_control, grim_data.draw, draw_motion_events=1
-            grim_wset, grim_data, input_wnum
-	    grim_data.readout_top = $
-	    grim_pixel_readout(grim_data.readout_top, text=text, grnum=grim_data.grnum)
-	    grim_data.readout_text = text
-	    grim_set_data, grim_data, event.top
-
-            p = convert_coord(double(event.x), double(event.y), /device, /to_data)
-	    planes = grim_get_plane(grim_data);, /visible)
-            pg_cursor, planes.dd, xy=p[0:1], /silent, fn=*grim_data.readout_fns_p, $
-              gd={cd:*plane.cd_p, gbx:*plane.pd_p, dkx:*plane.rd_p, $
-                    sund:*plane.sund_p, sd:*plane.sd_p, std:*plane.std_p}, /radec, /photom, string=string 
-            sep = str_pad('', 80, c='-')
-            widget_control, grim_data.readout_text, get_value=ss    
-            widget_control, grim_data.readout_text, set_value=[string , sep, ss]   
-            grim_wset, grim_data, output_wnum
-           end
-        4 : $
-           begin
-            end
-       else : 
-       endcase
-    ;- - - - - - - - - - - - - - - - 
-    ; magnify mode  
-    ;- - - - - - - - - - - - - - - -
-    'mag' : $	
-       case pressed of
-        1 : $
-           begin
-	    widget_control, grim_data.draw, draw_motion_events=1
-	    if(input_wnum EQ grim_data.wnum) then $
-	     begin
-              grim_wset, grim_data, input_wnum
-	      grim_magnify, grim_data, plane, [event.x, event.y]
-	     end
-           end
-        4 : $
-           begin
-	    widget_control, grim_data.draw, draw_motion_events=1
-	    if(input_wnum EQ grim_data.wnum) then $
-	     begin
-              grim_wset, grim_data, input_wnum
-	      grim_magnify, /data, grim_data, plane, [event.x, event.y]
- 	     end
-          end
-        else : 
-       endcase
-    'mask' : 	
-    'zoom' : 	
-    'zoom_plot' : 	
-    'xyzoom' : 	
-    'pan' : 	
-    'pan_plot' : 	
-    'tiepoints' : 	
-    'curves' : 	
-    'activate' : 	
-    'remove' : 	
-    'trim' : 	
-    'select' : 	
-    'region' : 	
-    'smooth' : 	
-    'plane' :
-    'move' :
-    'rotate' :
-    'spin' :
-   ;- - - - - - - - - - - - - - - - - - - - - -
-   ; unrecognized mode, assume user-defined  
-   ;- - - - - - - - - - - - - - - - - - - - - -
-    else : $
-     begin
-      data = 0
-      if(keyword_set(grim_data.mode_data_p)) then data = *grim_data.mode_data_p
-      call_procedure, grim_data.mode + '_mouse_event', event, data, /motion
-     end
-   endcase 
-  end
+ ;===================================
+ ; cursor modes
+ ;===================================
+ data = 0
+ if(keyword_set(grim_data.mode_data_p)) then data = *grim_data.mode_data_p
+ call_procedure, grim_data.mode + '_mouse_event', event, data
+ *grim_data.mode_data_p = data
 
 
  grim_wset, grim_data, grim_data.wnum
- widget_control, event.id, set_uvalue=pressed
 
 end
 ;=============================================================================
@@ -4676,8 +3684,8 @@ pro grim_menu_plane_coregister_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- grim_load_descriptors, grim_data, class='camera', plane=plane, idp_cam=idp_cam
- if(NOT keyword_set(idp_cam[0])) then return 
+ grim_load_descriptors, grim_data, class='camera', plane=plane, cd=cd
+ if(NOT keyword_set(cd[0])) then return 
 
 
  ;------------------------------------------------
@@ -5222,29 +4230,28 @@ pro grim_menu_plane_propagate_tiepoints_event, event
  npts = n_elements(tie_pts)/2
  ii = grim_get_tiepoint_indices(grim_data, plane=plane)
 
- grim_load_descriptors, grim_data, class='camera', plane=plane, idp_cam=idp_cam
- if(NOT keyword_set(idp_cam[0])) then return 
- grim_load_descriptors, grim_data, class='planet', plane=plane, idp_plt=idp_plt
- if(NOT keyword_set(idp_plt[0])) then return
-
- cd = (*plane.cd_p)[0]
- if(NOT keyword_set(cd)) then $
+ grim_load_descriptors, grim_data, class='camera', plane=plane, cd=cd
+ if(NOT keyword_set(cd[0])) then $ 
   begin
    grim_message, 'No camera descriptor!'
    return
   end
+ grim_load_descriptors, grim_data, class='planet', plane=plane, pd=pd
+ if(NOT keyword_set(pd[0])) then return
 
- pd = get_primary(cd, *plane.pd_p)
- name = cor_name(pd)
+ cd = cd[0]
+
+ pd0 = get_primary(cd, pd)
+ name = cor_name(pd0)
 
  tie_pts = reform(tie_pts, 2, 1, npts, /over)
 
  dkd = make_array(npts, $
-           val=orb_construct_descriptor(pd, sma=1d8, GG=const_G))
+           val=orb_construct_descriptor(pd0, sma=1d8, GG=const_G))
  for i=0, npts-1 do $ 
-   dkd[i] = image_to_orbit(cd, pd, dkd[i], tie_pts[*,0,i], GG=const_G)
-;orb_set_ma, dkd, orb_anom_to_lon(dkd, orb_get_ma(dkd), pd)
-; for i=0, npts-1 do orb_print_elements_mks, dkd[i], pd
+   dkd[i] = image_to_orbit(cd, pd0, dkd[i], tie_pts[*,0,i], GG=const_G)
+;orb_set_ma, dkd, orb_anom_to_lon(dkd, orb_get_ma(dkd), pd0)
+; for i=0, npts-1 do orb_print_elements_mks, dkd[i], pd0
 
  for i=0, nplanes-1 do $
   if(planes[i].pn NE pn) then $
@@ -5254,12 +4261,12 @@ pro grim_menu_plane_propagate_tiepoints_event, event
     if(keyword_set(cdi)) then $
      begin
       grim_load_descriptors, grim_data, class='planet', plane=planes[i]
-      w = where(cor_name(*planes[i].pd_p) EQ name)
+      w = where(cor_name(pd) EQ name)
       if(w[0] NE -1) then $
        begin
-        pdi = (*planes[i].pd_p)[w[0]]
+        pdi = (pd)[w[0]]
 
-        dt = bod_time(pdi) - bod_time(pd)
+        dt = bod_time(pdi) - bod_time(pd0)
         dkdt = objarr(npts)
         r = dblarr(1,3,npts)
         for j=0, npts-1 do $
@@ -7527,13 +6534,69 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_points_reflections_event
+;
+;
+; PURPOSE:
+;	Obtains the necessary descriptors through the translators and computes
+;	reflections of the currently active overlay points on all other objects. 
+;	Note that you may have to disable overlay hiding in order to compute
+;	and activate all of the appropriate source points for the reflections
+;	since many point that are not visible to the observer may still have
+;	a line of sight to the sun.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 1/2003
+;	
+;-
+;=============================================================================
+pro grim_menu_points_reflections_help_event, event
+ text = ''
+ nv_help, 'grim_menu_points_reflections_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_points_reflections_event, event
+
+ grim_data = grim_get_data(event.top)
+ widget_control, grim_data.draw, /hourglass
+
+ ;------------------------------------------------
+ ; load descriptors and compute reflections
+ ;------------------------------------------------
+ grim_overlay, grim_data, 'reflection'
+;grim_reflections, grim_data
+
+ ;------------------------------------------------
+ ; draw reflection
+ ;------------------------------------------------
+; grim_draw, grim_data, /reflection
+ grim_refresh, grim_data, /use_pixmap
+
+
+end
+;=============================================================================
+
+
+
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_points_shadows_event
 ;
 ;
 ; PURPOSE:
 ;	Obtains the necessary descriptors through the translators and computes
 ;	shadows of the currently active overlay points on all other objects. 
-;	Note that you may have todisable overlay hiding in order to compute
+;	Note that you may have to disable overlay hiding in order to compute
 ;	and activate all of the appropriate source points for the shadows
 ;	since many point that are not visible to the observer may still have
 ;	a line of sight to the sun.
@@ -7620,100 +6683,6 @@ pro grim_menu_points_planet_centers_event, event
  ;------------------------------------------------
 ; grim_draw, grim_data, /center, /label
  grim_refresh, grim_data, /use_pixmap
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_points_fill_limbs_event
-;
-;
-; PURPOSE:
-;	Fills active planet disks with a translucent color.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 6/2007
-;	
-;-
-;=============================================================================
-pro grim_menu_points_fill_limbs_help_event, event
- text = ''
- nv_help, 'grim_menu_points_limbs_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_points_fill_limbs_event, event
-
- grim_data = grim_get_data(event.top)
- widget_control, grim_data.draw, /hourglass
-
- ;------------------------------------------------
- ; load descriptors and compute limbs
- ;------------------------------------------------
- grim_overlay, grim_data, 'limb_fill'
-
- ;------------------------------------------------
- ; draw fills
- ;------------------------------------------------
-; grim_draw, grim_data, /limb
- grim_refresh, grim_data, /use_pixmap
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_points_fill_rings_event
-;
-;
-; PURPOSE:
-;	Fills active rings with a translucent color.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 6/2007
-;	
-;-
-;=============================================================================
-pro grim_menu_points_fill_rings_help_event, event
- text = ''
- nv_help, 'grim_menu_points_rings_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_points_fill_rings_event, event
-
- grim_data = grim_get_data(event.top)
- widget_control, grim_data.draw, /hourglass
-
- ;------------------------------------------------
- ; load descriptors and compute rings
- ;------------------------------------------------
- grim_overlay, grim_data, 'ring_fill'
-
- ;------------------------------------------------
- ; draw fills
- ;------------------------------------------------
-; grim_draw, grim_data, /limb
- grim_refresh, grim_data, /use_pixmap
-
 
 end
 ;=============================================================================
@@ -8099,1093 +7068,6 @@ pro grim_identify_event, event
                                                grim_set_primary, grim_data.base
 
  grim_identify, grim_data
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_zoom_mode_event
-;
-;
-; PURPOSE:
-;	Selects the zoom cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	The image zoom and offset are controlled by selecting
-;	a box in the image.  When the box is created using the
-;	left mouse button, zoom and offset are changed so that 
-;	the contents of the box best fill the current graphics
-;	window.  When the right button is used, the contents of
-;	the current graphics window are shrunken so as to best
-;	fill the box.  In other words, the left button zooms in
-;	and the right button zooms out.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_zoom_mode_help_event, event
- text = ''
- nv_help, 'grim_zoom_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_zoom_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Zoom in/out'
-   return
-  end
-
- grim_set_mode, grim_data, 'zoom', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_zoom_plot_mode_event
-;
-;
-; PURPOSE:
-;	Selects the plot zoom cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	The image zoom and offset are controlled by selecting
-;	a box in the image.  When the box is created using the
-;	left mouse button, zoom and offset are changed so that 
-;	the contents of the box best fill the current graphics
-;	window.  When the right button is used, the contents of
-;	the current graphics window are shrunken so as to best
-;	fill the box.  In other words, the left button zooms in
-;	and the right button zooms out.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_zoom_mode_plot_help_event, event
- text = ''
- nv_help, 'grim_zoom_plot_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_zoom_plot_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Zoom in/out'
-   return
-  end
-
- grim_set_mode, grim_data, 'zoom_plot', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_xyzoom_mode_event
-;
-;
-; PURPOSE:
-;	Selects the xy-zoom cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Same as 'zoom' mode, except the aspect ratio is set by the 
-;	proportions of the selected box.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 5/2005
-;	
-;-
-;=============================================================================
-pro grim_xyzoom_mode_help_event, event
- text = ''
- nv_help, 'grim_xyzoom_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_xyzoom_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'XY Zoom in/out'
-   return
-  end
-
- grim_set_mode, grim_data, 'xyzoom', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_pan_mode_event
-;
-;
-; PURPOSE:
-;	Selects the pan cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	The image offset is controlled by selecting an offset vector
-;	using the left mouse button, or the middle button may be
-;	used to center the image on a selected point.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_pan_mode_help_event, event
- text = ''
- nv_help, 'grim_pan_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_pan_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Recenter image'
-   return
-  end
-
- grim_set_mode, grim_data, 'pan', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_pan_plot_mode_event
-;
-;
-; PURPOSE:
-;	Selects the plot pan cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	The image offset is controlled by selecting an offset vector
-;	using the left mouse button, or the middle button may be
-;	used to center the image on a selected point.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_pan_plot_mode_help_event, event
- text = ''
- nv_help, 'grim_pan_plot_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_pan_plot_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Recenter plot'
-   return
-  end
-
- grim_set_mode, grim_data, 'pan_plot', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_tiepoints_mode_event
-;
-;
-; PURPOSE:
-;	Selects the tiepoints cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Tiepoints are added using the left mouse button and deleted 
-;	using the right button.  Tiepoints appear as crosses labeled 
-;	by numbers.  The use of tiepoints is determined by the 
-;	particular option selected by the user.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_tiepoints_mode_help_event, event
- text = ''
- nv_help, 'grim_tiepoints_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_tiepoints_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Add/Delete tiepoints'
-   return
-  end
-
- grim_set_mode, grim_data, 'tiepoints', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_curves_mode_event
-;
-;
-; PURPOSE:
-;	Selects the curves cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	curves are added using the left mouse button and deleted 
-;	using the right button.  
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 10/2012
-;	
-;-
-;=============================================================================
-pro grim_curves_mode_help_event, event
- text = ''
- nv_help, 'grim_curves_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_curves_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Add/Delete curves'
-   return
-  end
-
- grim_set_mode, grim_data, 'curves', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_activate_mode_event
-;
-;
-; PURPOSE:
-;	Selects the activate cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-; 	Overlay objects may be activated or deactivated by clicking 
-;	and/or dragging using the left or right mouse buttons 
-;	respectively.  This activation mechanism allows the user to 
-;	select which among a certain type of objects should be used 
-;	in a given menu selection.  A left click on an overlay
-;	activates that overlay and a right click deactivates it.  A 
-;	double click activates or deactivates all overlays associated 
-;	with a given descriptor, or all stars.  Active overlays appear 
-;	in the colors selected in the 'Overlay Settings' menu selection.  
-;	Inactive overlays appear in cyan.  A descriptor is active
-;	whenever any of its overlays are active.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_activate_mode_help_event, event
- text = ''
- nv_help, 'grim_activate_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_activate_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then $
-       grim_print, grim_data, 'Activate/Deactivate overlays and objects'
-   return
-  end
-
- grim_set_mode, grim_data, 'activate', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_readout_mode_event
-;
-;
-; PURPOSE:
-;	Selects the readout cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	A text window appears and displays data about the pixel selected 
-;	using the left mouse button.  The amount and type of information
-;	displayed depends on which descriptors are loaded.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_readout_mode_help_event, event
- text = ''
- nv_help, 'grim_readout_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_readout_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Display pixel data'
-   return
-  end
-
- grim_set_mode, grim_data, 'readout', /new
-
- grim_data.readout_top = $
-   grim_pixel_readout(grim_data.readout_top, text=text, grnum=grim_data.grnum)
- grim_data.readout_text = text
-
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_mask_mode_event
-;
-;
-; PURPOSE:
-;	Selects the mask cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Allowqs the user to select pixel to include in the mask.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 8/2013
-;	
-;-
-;=============================================================================
-pro grim_mask_mode_help_event, event
- text = ''
- nv_help, 'grim_mask_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_mask_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Mask pixels'
-   return
-  end
-
- grim_set_mode, grim_data, 'mask', /new
-
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_plane_mode_event
-;
-;
-; PURPOSE:
-;	Selects the plane cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Planes can be selected by clicking in the image window.  This option
-;	is not useful unless planes other than the current plane are visible.
-;	If more than one plane under the cursor contains data, the one with
-;	the lowest plane number is selected, unless one of them is the current
-;	plane.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 8/2008
-;	
-;-
-;=============================================================================
-pro grim_plane_mode_help_event, event
- text = ''
- nv_help, 'grim_plane_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_plane_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Change plane'
-   return
-  end
-
- grim_set_mode, grim_data, 'plane', /new
-
- 
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_move_mode_event
-;
-;
-; PURPOSE:
-;	Selects the move cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Translates the camera forward or backward along the optic axis 
-;	direction.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 2/2009
-;	
-;-
-;=============================================================================
-pro grim_move_mode_help_event, event
- text = ''
- nv_help, 'grim_move_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_move_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Move camera'
-   return
-  end
-
- grim_set_mode, grim_data, 'move', /new
-
- 
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_rotate_mode_event
-;
-;
-; PURPOSE:
-;	Selects the rotate cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Rotates the camera to a new optic axis.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 2/2009
-;	
-;-
-;=============================================================================
-pro grim_rotate_mode_help_event, event
- text = ''
- nv_help, 'grim_rotate_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_rotate_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Rotate camera'
-   return
-  end
-
- grim_set_mode, grim_data, 'rotate', /new
-
- 
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_spin_mode_event
-;
-;
-; PURPOSE:
-;	Selects the spin cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Rotates the camera about the optic axis.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 2/2009
-;	
-;-
-;=============================================================================
-pro grim_spin_mode_help_event, event
- text = ''
- nv_help, 'grim_spin_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_spin_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Spin camera'
-   return
-  end
-
- grim_set_mode, grim_data, 'spin', /new
-
- 
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_mag_mode_event
-;
-;
-; PURPOSE:
-;	Selects the magnify cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Image pixels in the graphics window may be magnifed using 
-;	either the left or right mouse buttons.  The left button 
-;	magnifies the displayed pixels, directly from the graphics 
-;	window.  The right button magnifies the data itself, without 
-;	the overlays.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_mag_mode_help_event, event
- text = ''
- nv_help, 'grim_mag_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_mag_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Magnifying glass'
-   return
-  end
-
- grim_set_mode, grim_data, 'mag', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_remove_mode_event
-;
-;
-; PURPOSE:
-;	Selects the remove cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	A single click on an overlay causes it to be deleted.  A
-;       double click causes the entire object to be deleted.  The left
-;	button applies to standard overlays; the right button applies 
-;	to user overlays.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 8/2006
-;	
-;-
-;=============================================================================
-pro grim_remove_mode_help_event, event
- text = ''
- nv_help, 'grim_remove_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_remove_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Remove overlays/objects'
-   return
-  end
-
- grim_set_mode, grim_data, 'remove', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_smooth_mode_event
-;
-;
-; PURPOSE:
-;	Selects the smooth cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	The user selects a box, which is used to determine the kernel
-;	size for smothing the data set.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 10/2006
-;	
-;-
-;=============================================================================
-pro grim_smooth_mode_help_event, event
- text = ''
- nv_help, 'grim_remove_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_smooth_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Smooth data'
-   return
-  end
-
- grim_set_mode, grim_data, 'smooth', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_region_mode_event
-;
-;
-; PURPOSE:
-;	Selects the 'region' cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	An image region is defined by clicking and dragging a box or curve.  
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 2/2014
-;	
-;-
-;=============================================================================
-pro grim_region_mode_help_event, event
- text = ''
- nv_help, 'grim_region_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_region_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Define region'
-   return
-  end
-
- grim_set_mode, grim_data, 'region', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_select_mode_event
-;
-;
-; PURPOSE:
-;	Selects the 'select' cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Overlay points are selected by clicking and dragging and curve around
-;	the desired points.  The left button selects overlay points, the right 
-;	deselects overlay points.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 2/2014
-;	
-;-
-;=============================================================================
-pro grim_select_mode_help_event, event
- text = ''
- nv_help, 'grim_select_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_select_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Select overlay points'
-   return
-  end
-
- grim_set_mode, grim_data, 'select', /new
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_trim_mode_event
-;
-;
-; PURPOSE:
-;	Selects the trim cursor mode.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	Overlay points are trimmed by clicking and dragging and curve around
-;	the desired points.  The left button trims standard overlays, the right 
-;	trims user overlay points.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 8/2006
-;	
-;-
-;=============================================================================
-pro grim_trim_mode_help_event, event
- text = ''
- nv_help, 'grim_trim_mode_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_trim_mode_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then grim_print, grim_data, 'Trim overlays'
-   return
-  end
-
- grim_set_mode, grim_data, 'trim', /new
- grim_set_data, grim_data, event.top
 
 end
 ;=============================================================================
@@ -10078,15 +7960,73 @@ end
 
 
 ;=============================================================================
-; grim_add_help_menu
+; grim_create_help_menu
 ;
 ;=============================================================================
-function grim_add_help_menu, _menu_desc
+function grim_create_help_menu, _menu_desc
 
  menu_desc = _menu_desc
 
  help_desc = strep_s(menu_desc, '_event', '_help_event')
- menu_desc = append_array(menu_desc, ['1\Help', help_desc])
+ menu_desc = ['1\Help', help_desc]
+
+ return, menu_desc
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_cull_menu_desc
+;
+;=============================================================================
+function grim_cull_menu_desc, _menu_desc, plot, map, beta, $
+            map_items=map_items, $
+            map_indices=map_indices, $
+            od_map_items=od_map_items, $
+            od_map_indices=od_map_indices, $
+            plot_items=plot_items, $
+            plot_indices=plot_indices, $
+            plot_only_items=plot_only_items, $
+            plot_only_indices=plot_only_indices, $
+            beta_only_indices=beta_only_indices
+
+ menu_desc = _menu_desc
+
+ ;-------------------------------------------
+ ; remove items 
+ ;-------------------------------------------
+ if(plot) then mark = complement(menu_desc, [plot_indices, plot_only_indices]) $
+ else mark = plot_only_indices
+
+ if(map) then $
+   mark = append_array(mark, complement(menu_desc, [map_indices, od_map_indices]))
+
+ if(NOT beta) then mark = append_array(mark, beta_only_indices)
+
+ ii = complement(menu_desc, mark)
+ if(ii[0] EQ -1) then return, ''
+ menu_desc = menu_desc[ii]
+
+
+ ;-------------------------------------------
+ ; remove consecutive duplicate items
+ ;-------------------------------------------
+ mark = 0
+ for i=1, n_elements(menu_desc)-1 do $
+       if(menu_desc[i] EQ menu_desc[i-1]) then mark = append_array(mark, [i])
+ if(keyword_set(mark)) then menu_desc = rm_list_item(menu_desc, mark)
+
+
+ ;-------------------------------------------
+ ; remove null menus
+ ;-------------------------------------------
+ mark = 0
+ for i=1, n_elements(menu_desc)-1 do $
+       if(strmid(menu_desc[i],0,1) EQ '2') then $
+             if(strmid(menu_desc[i-1],0,1) EQ '1') then mark = append_array(mark, [i])
+ if(keyword_set(mark)) then menu_desc = rm_list_item(menu_desc, mark)
+
 
  return, menu_desc
 end
@@ -10098,13 +8038,16 @@ end
 ; grim_parse_menu_desc
 ;
 ;=============================================================================
-function grim_parse_menu_desc, _menu_desc, map_items=map_items, $
-                                           od_map_items=od_map_items, $
-                                           plot_items=plot_items, $
-                                           plot_indices=plot_indices, $
-                                           plot_only_items=plot_only_items, $
-                                           plot_only_indices=plot_only_indices, $
-                                           beta_only_indices=beta_only_indices
+function grim_parse_menu_desc, _menu_desc, $
+            map_items=map_items, $
+            map_indices=map_indices, $
+            od_map_items=od_map_items, $
+            od_map_indices=od_map_indices, $
+            plot_items=plot_items, $
+            plot_indices=plot_indices, $
+            plot_only_items=plot_only_items, $
+            plot_only_indices=plot_only_indices, $
+            beta_only_indices=beta_only_indices
 
  map_token = '*'
  od_token = '#'
@@ -10123,6 +8066,7 @@ function grim_parse_menu_desc, _menu_desc, map_items=map_items, $
   begin
    ss = str_nnsplit(menu_desc[w], map_token, rem=map_items)
    menu_desc[w] = ss + map_items
+   map_indices = w
   end
 
  p = strpos(menu_desc, od_token)
@@ -10131,6 +8075,7 @@ function grim_parse_menu_desc, _menu_desc, map_items=map_items, $
   begin
    ss = str_nnsplit(menu_desc[w], od_token, rem=od_map_items)
    menu_desc[w] = ss + od_map_items
+   od_map_indices = w
   end
 
  p = strpos(menu_desc, plot_token)
@@ -10176,7 +8121,7 @@ end
 ;  Items containing '?' work only for the beta version.
 ;
 ;=============================================================================
-function grim_menu_desc, user_modes=user_modes
+function grim_menu_desc, cursor_modes=cursor_modes
 
  desc = [ '+*1\File' , $
            '0\Load                \+*grim_menu_file_load_event', $
@@ -10212,29 +8157,10 @@ function grim_menu_desc, user_modes=user_modes
            '0\--------------------\+grim_menu_delim_event', $ 
            '0\Select              \+*grim_select_event', $
            '0\Identify            \+*grim_identify_event', $
-           '2\Close               \+*grim_menu_file_close_event', $
+           '0\Close               \+*grim_menu_file_close_event', $
+           '2\<null>               \+*grim_menu_delim_event', $
 
           '+*1\Mode' , $
-           '0\Activate \*grim_activate_mode_event' , $
-           '0\Zoom     \*grim_zoom_mode_event' , $
-           '0\Pan      \*grim_pan_mode_event' , $
-           '0\Zoom     \%grim_zoom_plot_mode_event' , $
-           '0\Pan      \%grim_pan_plot_mode_event' , $
-           '0\Readout  \*grim_readout_mode_event' , $
-           '0\Tiepoint \+*grim_tiepoints_mode_event' , $
-           '0\Curve    \+*grim_curves_mode_event' , $
-           '0\Mask     \*grim_mask_mode_event' , $
-           '0\Magnify  \*grim_mag_mode_event', $
-           '0\XY Zoom  \*grim_xyzoom_mode_event' , $
-           '0\Remove   \*grim_rm_mode_event', $
-           '0\Trim     \*grim_trim_mode_event', $
-           '0\Select   \*grim_select_mode_event', $
-           '0\Region   \+*grim_region_mode_event', $
-           '0\Smooth   \*grim_smooth_mode_event', $
-           '0\Move     \grim_move_mode_event', $
-           '0\Rotate   \grim_rotate_mode_event', $
-           '0\Spin     \grim_spin_mode_event', $
-           '2\Plane    \*grim_plane_mode_event', $
 
           '+*1\Plane' , $
            '0\Next               \+*grim_menu_plane_next_event' , $
@@ -10249,28 +8175,30 @@ function grim_menu_desc, user_modes=user_modes
            '0\Coregister         \grim_menu_plane_coregister_event', $
            '0\Coadd              \grim_menu_plane_coadd_event', $
            '0\Toggle Highlight   \*grim_menu_plane_highlight_event', $
-           '0\-------------------\grim_menu_delim_event', $ 
+           '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy tie points     \*grim_menu_plane_copy_tiepoints_event', $
            '0\Propagate tie points\*grim_menu_plane_propagate_tiepoints_event', $
            '0\Toggle tie point syncing\*grim_menu_plane_toggle_tiepoint_syncing_event', $
            '0\Clear tie points    \*grim_menu_plane_clear_tiepoints_event', $
-           '0\-------------------\grim_menu_delim_event', $ 
+           '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy curves        \*grim_menu_plane_copy_curves_event', $
 ;;;           '0\Propagate curves    \*grim_menu_plane_propagate_curves_event', $
            '0\Toggle curves syncing\*grim_menu_plane_toggle_curve_syncing_event', $
            '0\Clear curves        \*grim_menu_plane_clear_curves_event', $
-           '0\-------------------\grim_menu_delim_event', $ 
+           '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy mask          \*grim_menu_plane_copy_mask_event', $
            '0\Clear mask         \*grim_menu_plane_clear_mask_event', $
-           '0\-------------------\grim_menu_delim_event', $ 
+           '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy curves        \*grim_menu_plane_copy_curves_event', $
            '0\Toggle curve syncing\*grim_menu_plane_toggle_curve_syncing_event', $
            '0\Clear curves       \*grim_menu_plane_clear_curves_event', $
-           '0\-------------------\grim_menu_delim_event', $ 
-           '2\Settings           \+*grim_menu_plane_settings_event', $
+           '0\-------------------\*grim_menu_delim_event', $ 
+           '0\Settings           \+*grim_menu_plane_settings_event', $
+           '2\<null>               \+*grim_menu_delim_event', $
 
           '+*1\Data' , $
-           '2\Adjust values        \+*grim_menu_data_adjust_event' , $
+           '0\Adjust values        \+*grim_menu_data_adjust_event' , $
+           '2\<null>               \+*grim_menu_delim_event', $
 
           '+*1\View' , $
            '0\Refresh              \+*grim_menu_view_refresh_event' , $
@@ -10296,7 +8224,8 @@ function grim_menu_desc, user_modes=user_modes
              '0\1/7                 \+*grim_menu_view_zoom_1_7_event' , $
              '0\1/8                 \+*grim_menu_view_zoom_1_8_event' , $
              '0\1/9                 \+*grim_menu_view_zoom_1_9_event' , $
-             '2\1/10                 \+*grim_menu_view_zoom_1_10_event' , $
+             '0\1/10                 \+*grim_menu_view_zoom_1_10_event' , $
+             '2\<null>               \+*grim_menu_delim_event', $
            '+*1\Rotate' , $
              '0\0                 \+*grim_menu_view_rotate_0_event' , $
              '0\1                 \+*grim_menu_view_rotate_1_event' , $
@@ -10305,7 +8234,8 @@ function grim_menu_desc, user_modes=user_modes
              '0\4                 \+*grim_menu_view_rotate_4_event' , $
              '0\5                 \+*grim_menu_view_rotate_5_event' , $
              '0\6                 \+*grim_menu_view_rotate_6_event' , $
-             '2\7                 \+*grim_menu_view_rotate_7_event' , $
+             '0\7                 \+*grim_menu_view_rotate_7_event' , $
+             '2\<null>               \+*grim_menu_delim_event', $
            '0\Recenter             \+*grim_menu_view_recenter_event' , $
            '0\Home                 \+*grim_menu_view_home_event' , $
            '0\Save                 \+*grim_menu_view_save_event' , $
@@ -10315,18 +8245,19 @@ function grim_menu_desc, user_modes=user_modes
            '0\Initial              \+*grim_menu_view_initial_event', $
            '0\Reverse Order        \*grim_menu_view_flip_event', $ 
            '0\Frame Active Overlays\*grim_menu_view_frame_active_event', $ 
-           '0\---------------------\grim_menu_delim_event', $ 
+           '0\---------------------\*grim_menu_delim_event', $ 
            '0\Header               \grim_menu_view_header_event', $
            '0\Notes                \grim_menu_notes_event', $
-           '0\--------------------+\grim_menu_delim_event', $ 
+           '0\---------------------\*grim_menu_delim_event', $ 
            '0\Toggle Image         \+*grim_menu_toggle_image_event' , $
            '0\Toggle Image/Overlays \+*grim_menu_toggle_image_overlays_event' , $
            '0\Toggle Context       \+*grim_menu_context_event' , $
            '0\Toggle Axes          \*grim_menu_axes_event' , $
            '0\---------------------\*?grim_delim_event', $ 
            '0\Render               \*?grim_menu_render_event' , $
-           '0\---------------------\*grim_delim_event', $ 
-           '2\Colors               \*grim_menu_view_colors_event', $ 
+           '0\---------------------\*?grim_delim_event', $ 
+           '0\Colors               \*grim_menu_view_colors_event', $ 
+           '2\<null>               \+*grim_menu_delim_event', $
 
           '+*1\Overlays' ,$
            '0\Compute planet centers \grim_menu_points_planet_centers_event', $ 
@@ -10337,38 +8268,37 @@ function grim_menu_desc, user_modes=user_modes
            '0\Compute ring grids     \grim_menu_points_ring_grids_event', $ 
            '0\Compute stars          \grim_menu_points_stars_event', $ 
            '0\Compute shadows        \grim_menu_points_shadows_event', $ 
+           '0\Compute reflections    \?grim_menu_points_reflections_event', $ 
            '0\Compute stations       \*grim_menu_points_stations_event', $ 
            '0\Compute arrays         \*grim_menu_points_arrays_event', $ 
-;           '0\-------------------------\grim_menu_delim_event', $ 
-;           '0\Fill limbs             \grim_menu_points_fill_limbs_event', $        
-;           '0\Fill rings             \grim_menu_points_fill_rings_event', $        
-           '0\-------------------------\grim_menu_delim_event', $ 
+           '0\-------------------------\*grim_menu_delim_event', $ 
            '0\Hide/Unhide all        \+*grim_menu_hide_all_event', $ 
            '0\Clear all              \*grim_menu_clear_all_event', $ 
            '0\Clear active           \*grim_menu_clear_active_event', $ 
            '0\Activate all           \*grim_menu_activate_all_event', $ 
            '0\Deactivate all         \*grim_menu_deactivate_all_event', $ 
            '0\Invert activations     \*grim_menu_invert_event', $ 
-           '0\-------------------------\grim_menu_delim_event', $ 
-           '2\Overlay Settings       \+*grim_menu_points_settings_event' ]
+           '0\-------------------------\*grim_menu_delim_event', $ 
+           '0\Overlay Settings       \+*grim_menu_points_settings_event', $
+           '2\<null>               \+*grim_menu_delim_event']
 
  ;----------------------------------------------
- ; Insert user mode menu items
+ ; Insert cursor mode menu items
  ;----------------------------------------------
- if(keyword_set(user_modes)) then $
+ if(keyword_set(cursor_modes)) then $
   begin
-   p = strpos(desc, '2\Plane')
-   w = (where(p EQ 0))[0]
-   desc[w] = strep(desc[w], '0', 0)
+   p = strpos(desc, '1\Mode')
+   w = (where(p NE -1))[0]
 
-   nn = max([strlen(user_modes.menu), 8])
-   delim = '0\' + str_pad('-', nn, c='-') + '\grim_menu_delim_event'
+   nn = max([strlen(cursor_modes.menu), 8])
 
-   items = '0\' + user_modes.menu + '  \' + user_modes.event_pro
+   items = '0\' + cursor_modes.menu + '  \' + cursor_modes.event_pro
    n = n_elements(items)
-   items[n-1] = strep(items[n-1], '2', 0)
+;   items[n-1] = strep(items[n-1], '2', 0)
+   items = append_array(items, '2\<null>               \+*grim_menu_delim_event')
 
-   desc = [desc[0:w], delim, items, desc[w+1:*]]
+   desc = [desc[0:w], items, desc[w+1:*]]
+   cursor_modes.event_pro = grim_parse_menu_desc(cursor_modes.event_pro)
   end
 
  return, desc
@@ -10406,32 +8336,6 @@ end
 
 
 ;=============================================================================
-; grim_rm_menu_items
-;
-;=============================================================================
-function grim_rm_menu_items, menu_desc, ii
-
- if(NOT defined(ii)) then return, menu_desc
-
- iii = complement(menu_desc, ii)
-
- w = where(strmid(menu_desc[ii], 0, 1) EQ 2)
- if(w[0] NE -1) then $
-  for i=0, n_elements(w)-1 do $
-   begin
-    dw = ii[w[i]] - iii
-    dw = min(dw[where(dw GT 0)])
-    menu_desc[ii[w[i]]-dw] = strep(menu_desc[ii[w[i]]-dw], '2', 0)
-   end
- menu_desc = menu_desc[iii]
-
- return, menu_desc
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_menu_capture
 ;
 ;=============================================================================
@@ -10454,12 +8358,13 @@ end
 ; grim_widgets
 ;
 ;=============================================================================
-pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, user_modes=user_modes, $
+pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes, $
    menu_fname=menu_fname, menu_extensions=menu_extensions
 @grim_constants.common
 
  if(grim_data.retain GT 0) then retain = grim_data.retain
 
+ map = grim_test_map(grim_data)
  plot = grim_data.type EQ 'plot'
  beta = grim_data.beta
 
@@ -10471,7 +8376,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, user_modes=user_modes, $
  grim_data.mbar = mbar
  grim_data.grnum = grim_top_to_grnum(grim_data.base, /new)
 
- menu_desc = grim_menu_desc(user_modes=user_modes)
+ menu_desc = grim_menu_desc(cursor_modes=cursor_modes)
  for i=0, n_elements(menu_extensions)-1 do $
                    menu_desc = [menu_desc, call_function(menu_extensions[i])]
 
@@ -10481,31 +8386,36 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, user_modes=user_modes, $
    if(keyword_set(user_menu_desc)) then menu_desc = [menu_desc, user_menu_desc]
   end
 
+
+ ;-----------------------------------------
+ ; setup menus
+ ;-----------------------------------------
  menu_desc = grim_parse_menu_desc(menu_desc, $
-     map_items=map_items, od_map_items=od_map_items, plot_items=plot_items, $
-     plot_indices=plot_indices, plot_only_items=plot_only_items, $
-     plot_only_indices=plot_only_indices, beta_only_indices=beta_only_indices)
+     map_items=map_items, map_indices=map_indices, $
+     od_map_items=od_map_items, od_map_indices=od_map_indices, $
+     plot_items=plot_items, plot_indices=plot_indices, $
+     plot_only_items=plot_only_items, plot_only_indices=plot_only_indices, $
+     beta_only_indices=beta_only_indices)
 
- if(plot) then $
-     mark = append_array(mark, complement(menu_desc, [plot_indices, plot_only_indices])) $
- else mark = append_array(mark, plot_only_indices) 
 
- if(NOT beta) then mark = append_array(mark, beta_only_indices)
-
- if(keyword_set(mark)) then menu_desc = grim_rm_menu_items(menu_desc, mark)
-
- menu_desc = grim_add_help_menu(menu_desc)
+;;;;; problem is cnecutive 2/<null> lines....
+ menu_desc = grim_cull_menu_desc(menu_desc, plot, map, beta, $
+     map_items=map_items, map_indices=map_indices, $
+     od_map_items=od_map_items, od_map_indices=od_map_indices, $
+     plot_items=plot_items, plot_indices=plot_indices, $
+     plot_only_items=plot_only_items, plot_only_indices=plot_only_indices, $
+     beta_only_indices=beta_only_indices)
 
  grim_data.menu_desc_p = nv_ptr_new(menu_desc)
  grim_data.map_items_p = nv_ptr_new(map_items)
  grim_data.od_map_items_p = nv_ptr_new(od_map_items)
 
-
  grim_data.menu = $
           cw__pdmenu(grim_data.mbar, menu_desc, /mbar, ids=menu_ids, $
-                                               capture='grim_menu_capture')
+                                                  capture='grim_menu_capture')
  grim_data.menu_ids_p = nv_ptr_new(menu_ids)
-
+ help_menu_desc = grim_create_help_menu(menu_desc)
+ grim_data.help_menu = cw__pdmenu(grim_data.mbar, help_menu_desc, /mbar)
 
 
  ;-----------------------------------------
@@ -10710,6 +8620,8 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, user_modes=user_modes, $
 
  grim_data.sub_base = widget_base(grim_data.base, /row, xpad=0, space=2)
 
+
+
  ;-----------------------------------------
  ; mode buttons
  ;-----------------------------------------
@@ -10717,134 +8629,21 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, user_modes=user_modes, $
         widget_base(grim_data.sub_base, /col, space=0, xpad=0, ypad=0, $
                                              resource_name='grim_modes_base')
 
-; grim_data.modes_base1 = $
-;       widget_base(grim_data.modes_base, /col, space=0, xpad=0, ypad=0)
 
- grim_data.modes_base2 = $
-       widget_base(grim_data.modes_base, /col, space=0, xpad=0, ypad=4)
-
- if(NOT plot) then $
-   grim_data.activate_button = widget_button(grim_data.modes_base2, $
-              value=grim_activate_bitmap(), /bitmap, /tracking_events, $
-       event_pro='grim_activate_mode_event', uname='mode', uvalue='activate')
-
- if(NOT plot) then $
-  grim_data.zoom_button = widget_button(grim_data.modes_base2, $
-              value=grim_zoom_bitmap(), /bitmap, /tracking_events, $
-           event_pro='grim_zoom_mode_event', uname='mode', uvalue='zoom') $
- else $
-  grim_data.zoom_button = widget_button(grim_data.modes_base2, $
-              value=grim_zoom_bitmap(), /bitmap, /tracking_events, $
-           event_pro='grim_zoom_plot_mode_event', uname='mode', uvalue='zoom_plot') 
-
- if(NOT plot) then $
-  grim_data.pan_button = widget_button(grim_data.modes_base2, $
-              value=grim_pan_bitmap(), /bitmap, /tracking_events, $
-            event_pro='grim_pan_mode_event', uname='mode', uvalue='pan') $
- else $
-  grim_data.pan_button = widget_button(grim_data.modes_base2, $
-              value=grim_pan_bitmap(), /bitmap, /tracking_events, $
-            event_pro='grim_pan_plot_mode_event', uname='mode', uvalue='pan_plot')
-
- if(NOT plot) then $
-   grim_data.readout_button = widget_button(grim_data.modes_base2, $
-              value=grim_readout_bitmap(), /bitmap, /tracking_events, $
-         event_pro='grim_readout_mode_event', uname='mode', uvalue='readout')
-
- grim_data.tiepoints_button = widget_button(grim_data.modes_base2, $
-              value=grim_tiepoints_bitmap(), /bitmap, /tracking_events, $
-      event_pro='grim_tiepoints_mode_event', uname='mode', uvalue='tiepoints')
-
- grim_data.curves_button = widget_button(grim_data.modes_base2, $
-              value=grim_curves_bitmap(), /bitmap, /tracking_events, $
-      event_pro='grim_curves_mode_event', uname='mode', uvalue='curves')
-
- if(NOT plot) then $
-   grim_data.mask_button = widget_button(grim_data.modes_base2, $
-              value=grim_mask_bitmap(), /bitmap, /tracking_events, $
-         event_pro='grim_mask_mode_event', uname='mode', uvalue='mask')
-
- if(NOT plot) then $
-  grim_data.mag_button = widget_button(grim_data.modes_base2, $
-              value=grim_mag_bitmap(), /bitmap, /tracking_events, $
-          event_pro='grim_mag_mode_event', uname='mode', uvalue='mag')
-
- if(NOT plot) then $
-   grim_data.xyzoom_button = widget_button(grim_data.modes_base2, $
-              value=grim_xyzoom_bitmap(), /bitmap, /tracking_events, $
-           event_pro='grim_xyzoom_mode_event', uname='mode', uvalue='xyzoom')
-
- if(NOT plot) then $
-   grim_data.remove_button = widget_button(grim_data.modes_base2, $
-              value=grim_remove_bitmap(), /bitmap, /tracking_events, $
-           event_pro='grim_remove_mode_event', uname='mode', uvalue='remove')
-
- if(NOT plot) then $
-   grim_data.trim_button = widget_button(grim_data.modes_base2, $
-              value=grim_dagger_bitmap(), /bitmap, /tracking_events, $
-           event_pro='grim_trim_mode_event', uname='mode', uvalue='trim')
-
- if(NOT plot) then $
-   grim_data.select_mode_button = widget_button(grim_data.modes_base2, $
-              value=grim_scalpel_bitmap(), /bitmap, /tracking_events, $
-           event_pro='grim_select_mode_event', uname='mode', uvalue='select')
-
- grim_data.region_button = widget_button(grim_data.modes_base2, $
-              value=grim_lasso_bitmap(), /bitmap, /tracking_events, $
-           event_pro='grim_region_mode_event', uname='mode', uvalue='region')
-
-; if(NOT plot) then $
-;   grim_data.remove_xd_button = widget_button(grim_data.modes_base2, $
-;              value=grim_mp40_bitmap(), /bitmap, /tracking_events, $
-;           event_pro='grim_remove_xd_mode_event', uname='mode', uvalue='remove_xd')
-
- grim_data.smooth_button = widget_button(grim_data.modes_base2, $
-              value=grim_smooth_bitmap(), /bitmap, /tracking_events, $
-      event_pro='grim_smooth_mode_event', uname='mode', uvalue='smooth')
-
- if(NOT plot) then $
-   grim_data.plane_button = widget_button(grim_data.modes_base2, $
-              value=grim_plane_bitmap(), /bitmap, /tracking_events, $
-         event_pro='grim_plane_mode_event', uname='mode', uvalue='plane')
-
-if(beta) then begin
- if(NOT plot) then $
-   grim_data.move_button = widget_button(grim_data.modes_base2, $
-              value=grim_move_bitmap(), /bitmap, /tracking_events, $
-         event_pro='grim_move_mode_event', uname='mode', uvalue='move')
-
- if(NOT plot) then $
-   grim_data.rotate_button = widget_button(grim_data.modes_base2, $
-              value=grim_rotate_bitmap(), /bitmap, /tracking_events, $
-         event_pro='grim_rotate_mode_event', uname='mode', uvalue='rotate')
-
- if(NOT plot) then $
-   grim_data.spin_button = widget_button(grim_data.modes_base2, $
-              value=grim_spin_bitmap(), /bitmap, /tracking_events, $
-         event_pro='grim_spin_mode_event', uname='mode', uvalue='spin')
-end
-
- ;- - - - - - - - - - - - -
- ; user modes
- ;- - - - - - - - - - - - -
- nmodes = n_elements(user_modes)
+ ;-----------------------------------------
+ ; cursor modes
+ ;-----------------------------------------
+ nmodes = n_elements(cursor_modes)
  if(nmodes GT 0) then $
   begin
-   grim_data.modes_base3 = $
-       widget_base(grim_data.modes_base, /col, space=0, xpad=0, ypad=0)
-
-   user_mode_buttons = lonarr(nmodes)
    for i=0, nmodes-1 do $
     begin
-     user_mode_buttons[i] = widget_button(grim_data.modes_base3, $
-              value=user_modes[i].bitmap, /bitmap, /tracking_events, $
-                       event_pro=user_modes[i].event_pro, uname='mode', $
-                                                   uvalue=user_modes[i].name)
-     widget_control, user_mode_buttons[i], set_uvalue=user_modes[i]
+     event_pro = grim_parse_menu_desc(cursor_modes[i].event_pro)
+     w = where(strpos(menu_desc, event_pro) NE -1)
 
-     nid = n_elements(menu_ids)
-     for ii=0, nid-1 do $
+     if(w[0] NE -1) then $
       begin
+       ii = w[0]
        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        ; Because we override the event_pro here, the user modes do not
        ; participate in grim's capture mechanism, so the 'repeat'
@@ -10852,13 +8651,18 @@ end
        ; modes store their data in their button's uvalue, which would
        ; otherwise be used by the capture mechanism.
        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       widget_control, menu_ids[ii], get_value=v
-       if(strtrim(v,2) EQ user_modes[i].menu) then $
-            widget_control, menu_ids[ii], set_uvalue=user_modes[i], $
-                                        event_pro=user_modes[i].event_pro
+       button = widget_button(grim_data.modes_base, $
+                   value=cursor_modes[i].bitmap, /bitmap, /tracking_events, $
+                              event_pro=event_pro, uname='mode', $
+                                                   uvalue=cursor_modes[i].name)
+       widget_control, button, set_uvalue=cursor_modes[i]
+
+       widget_control, menu_ids[ii], set_uvalue=cursor_modes[i], $
+                                        event_pro=cursor_modes[i].event_pro
       end
     end
    end
+
 
  window, /free, /pixmap, xsize=MAG_SIZE_DEVICE, ysize=MAG_SIZE_DEVICE
  grim_data.mag_pixmap = !d.window
@@ -10869,15 +8673,25 @@ end
  ;-----------------------------------------
  ; main draw window
  ;-----------------------------------------
- grim_data.draw_base = widget_base(grim_data.sub_base, space=0, xpad=0, ypad=0)
+ grim_data.draw_base = widget_base(grim_data.sub_base, $
+                      xsize=xsize, ysize=ysize, space=0, xpad=0, ypad=0)
 
+; grim_data.scale_draw = $
+;      widget_draw(grim_data.main_draw_base, $
+;            xsize=xsize+SCALE_WIDTH*2, ysize=ysize+SCALE_WIDTH*2, retain=retain)
+
+
+; grim_data.draw_base = widget_base(grim_data.main_draw_base, $
+;                                xsize=xsize, ysize=ysize, space=0, xoff=0, yoff=0)
  grim_data.draw = $
-     widget_draw(grim_data.draw_base, xsize=xsize, ysize=ysize, $
+     widget_draw(grim_data.draw_base, $
                 /button_events, /tracking_events, /motion_events, $
-                 event_pro='grim_draw_event', resource_name='grim_draw', $
-                 retain=retain)
+                event_pro='grim_draw_event', resource_name='grim_draw', $
+                retain=retain)
  if(idl_v_chrono(!version.release) GE idl_v_chrono('6.4')) then $
                              widget_control, grim_data.draw, /draw_wheel_events
+; widget_control, grim_data.draw_base, map=0
+
 
  ;-----------------------------------------
  ; message line
@@ -10900,6 +8714,9 @@ end
 
  widget_control, grim_data.draw, get_value=wnum
  grim_data.wnum = wnum
+
+; widget_control, grim_data.scale_draw, get_value=scale_wnum
+; grim_data.scale_wnum = scale_wnum
 
 
  ;-----------------------------------------
@@ -11286,6 +9103,18 @@ end
 
 
 ;=============================================================================
+; grim_create_cursor_mode
+;
+;=============================================================================
+function grim_create_cursor_mode, name, arg, cursor_modes
+ cursor_mode = call_function(name, arg)
+ return, append_array(cursor_modes, cursor_mode)
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim
 ;
 ;=============================================================================
@@ -11298,7 +9127,7 @@ pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, sund=sund, od=
 	refresh_callbacks=refresh_callbacks, refresh_callback_data_ps=refresh_callback_data_ps, $
 	plane_callbacks=plane_callbacks, plane_callback_data_ps=plane_callback_data_ps, $
 	nhist=nhist, compress=compress, path=path, symsize=symsize, $
-	user_modes=user_modes, user_psym=user_psym, ups=ups, workdir=workdir, $
+	cursor_modes=cursor_modes, user_psym=user_psym, ups=ups, workdir=workdir, $
         save_path=save_path, load_path=load_path, overlays=overlays, pn=pn, $
 	faint=faint, menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, hide=hide, $
 	menu_extensions=menu_extensions, button_extensions=button_extensions, $
@@ -11314,6 +9143,7 @@ pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, sund=sund, od=
         xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
 common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 @grim_block.include
+@grim_constants.common
 
  if(keyword_set(exit)) then $
   begin
@@ -11349,23 +9179,51 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    menu_extensions = ['grim_default_menus', menu_extensions]
   end
 
- if(keyword_set(button_extensions)) then $
-  begin
-   for i=0, n_elements(button_extensions)-1 do $
-    begin
 
-     if(keyword_set(arg_extensions)) then $
-      begin
-       if(size(arg_extensions, /type) EQ 10) then arg_extension = *arg_extensions[i] $
-       else arg_extension = arg_extensions[i]
+ ;=========================================================
+ ; cursor modes
+ ;=========================================================
+ cursor_modes = grim_create_cursor_mode('grim_mode_activate', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_zoom_plot', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_zoom', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_pan_plot', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_pan', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_readout', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_tiepoints', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_curves', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_mask', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_magnify', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_xyzoom', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_remove', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_trim', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_select', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_region', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_smooth', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_plane', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_drag', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('grim_mode_navigate', 0, cursor_modes)
+
+ ;-------------------------------------------
+ ; cursor mode extensions
+ ;-------------------------------------------
+ n_ext = n_elements(button_extensions)
+ if(n_ext GT 0) then $
+  begin
+   if(NOT keyword_set(arg_extensions)) then arg_extensions = lonarr(n_ext)
+   for i=0, n_ext-1 do $
+    begin
+     if(size(arg_extensions, /type) EQ 10) then arg_extension = *arg_extensions[i] $
+     else arg_extension = arg_extensions[i]
     
-       user_modes = append_array(user_modes, $
-                               call_function(button_extensions[i], arg_extension))
-      end $
-     else user_modes = append_array(user_modes, call_function(button_extensions[i]))
+     cursor_modes = append_array(cursor_modes, $
+                   grim_create_cursor_mode(button_extensions[i], arg_extension))
     end
   end
 
+
+ ;=========================================================
+ ; input defaults
+ ;=========================================================
  new = keyword_set(new)
  if(NOT keyword_set(fov)) then fov = 0
  if(NOT defined(hide)) then hide = 1
@@ -11398,15 +9256,15 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  if(NOT keyword_set(mode)) then $
   begin
-   if(type EQ 'plot') then mode = 'zoom_plot' $
-   else mode = 'activate'
+   if(type EQ 'plot') then mode = 'grim_mode_zoom_plot' $
+   else mode = 'grim_mode_activate'
   end
 
 
  if(type EQ 'plot') then $
   begin
-   if(NOT keyword_set(xsize)) then xsize = 400
-   if(NOT keyword_set(ysize)) then ysize = 400
+   if(NOT keyword_set(xsize)) then xsize = 500
+   if(NOT keyword_set(ysize)) then ysize = 500
   end
 
  ;=========================================================
@@ -11446,7 +9304,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        faint=faint, cursor_swap=cursor_swap, fov=fov, hide=hide, filetype=filetype, $
        trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_sund=trs_sund, trs_ard=trs_ard, $
        color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, $
-       psym=psym, xtitle=xtitle, ytitle=ytitle, user_modes=user_modes, workdir=workdir, $
+       psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        readout_fns=readout_fns, symsize=symsize, nhist=nhist, maintain=maintain, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
        tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, $
@@ -11466,7 +9324,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ; widgets
    ;-----------------------------
    if(type NE 'plot') then grim_get_window_size, grim_data, xsize=xsize, ysize=ysize
-   grim_widgets, grim_data, xsize=xsize, ysize=ysize, user_modes=user_modes, $
+   grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes, $
          menu_fname=menu_fname, menu_extensions=menu_extensions
 
    grnum = grim_data.grnum 
@@ -11480,6 +9338,9 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
    grim_resize, grim_data, /init
    widget_control, grim_data.base, map=1
+   widget_control, grim_data.draw_base, map=1;, $
+             ; xsize=xsize, ysize=ysize;, xoff=SCALE_WIDTH, yoff=SCALE_WIDTH
+
 
    geom = widget_info(grim_data.base, /geom)
    grim_data.base_xsize = geom.xsize
@@ -11508,7 +9369,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 ;   if(keyword_set(button_extensions)) then $
 ;    begin
 ;     for i=0, n_elements(button_extensions)-1 do $
-;                    call_procedure, button_extensions[i]+'_init', grim_data, user_modes[i].data_p
+;                    call_procedure, button_extensions[i]+'_init', grim_data, cursor_modes[i].data_p
 ;    end
 
   end
@@ -11596,7 +9457,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   end
 
 
-
  ;=========================================================
  ; if new instance, setup initial view
  ;=========================================================
@@ -11608,7 +9468,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    widget_control, grim_data.draw, /hourglass
    grim_refresh, grim_data, /default, $
 	xsize=xsize, ysize=ysize, $
-	xrange=xrange, yrange=yrange, $
+	xrange=planes[0].xrange, yrange=planes[0].yrange, $
 	zoom=zoom, $
 	rotate=rotate, $
 	order=order, $
@@ -11630,9 +9490,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	order=order, $
 	offset=offset, no_erase=no_erase
   end
-
-
-
 
 
  ;----------------------------------------------
@@ -11680,19 +9537,22 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    for i=0, n_elements(planes)-1 do grim_activate_all, planes[i]
   end
 
- 
- ;=========================================================
- ; if new instance, initialize extensions
- ;=========================================================
- if(new) then $
-  begin
-   if(keyword_set(button_extensions)) then $
-    begin
-     for i=0, n_elements(button_extensions)-1 do $
-                    call_procedure, button_extensions[i]+'_init', grim_data, user_modes[i].data_p
-    end
-  end
 
+ ;=========================================================
+ ; if new instance, initialize cursor modes
+ ;=========================================================
+; if(new) then $
+;  begin
+;   if(keyword_set(button_extensions)) then $
+;    begin
+;     for i=0, n_elements(button_extensions)-1 do $
+;        call_procedure, button_extensions[i]+'_init', grim_data, cursor_modes[i].data_p
+;    end
+;  end
+
+ if(new) then $
+     for i=0, n_elements(cursor_modes)-1 do $
+        call_procedure, cursor_modes[i].name+'_init', grim_data, cursor_modes[i].data_p
 
 
  ;-------------------------

@@ -28,11 +28,7 @@
 ;       NONE
 ;
 ; KEYWORDS:
-;   INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
+;   INPUT: NONE
 ;
 ;   OUTPUT: 
 ;	valid:	Indices of valid output points.
@@ -58,7 +54,7 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function image_to_surface, cd, bx, p, frame_bd=frame_bd, body_pts=body_pts, $
+function image_to_surface, cd, bx, p, body_pts=body_pts, $
                                 discriminant=discriminant, hit=hit, valid=valid
 
  if(NOT keyword_set(p)) then return, 0
@@ -71,8 +67,7 @@ function image_to_surface, cd, bx, p, frame_bd=frame_bd, body_pts=body_pts, $
                                            discriminant=discriminant, valid=valid)
 
  if(keyword_set(dkx)) then $
-         return, image_to_disk(cd, dkx, p, frame_bd=frame_bd, $
-                                           body_pts=body_pts, hit=hit, valid=valid)
+      return, image_to_disk(cd, dkx, p, body_pts=body_pts, hit=hit, valid=valid)
 
  hit = make_array(n_elements(p[0,*]), val=1b)
  valid = lindgen(n_elements(p[0,*]))

@@ -21,7 +21,7 @@ function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
                         trs_sund=trs_sund, filetype=filetype, hide=hide, type=type, $
                         color=color, xrange=xrange, yrange=yrange, npoints=npoints, $
                         thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
-                        psym=psym, user_modes=user_modes, readout_fns=readout_fns, $
+                        psym=psym, cursor_modes=cursor_modes, readout_fns=readout_fns, $
                         symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
                         compress=compress, extensions=extensions, max=max, beta=beta, $
                         tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
@@ -45,8 +45,8 @@ function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
   if(NOT keyword_set(faint)) then faint = 12
   if(NOT defined(cursor_swap)) then cursor_swap = -1
 
-  if(NOT keyword_set(user_modes)) then user_modes_p = ptr_new(0) $
-  else user_modes_p = ptr_new(user_modes)
+  if(NOT keyword_set(cursor_modes)) then cursor_modes_p = ptr_new(0) $
+  else cursor_modes_p = ptr_new(cursor_modes)
 
   _fov = 1.
   if(keyword_set(fov)) then _fov = float(fov)
@@ -123,39 +123,19 @@ function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
 		identify_button		: 0l, $
 		pixel_grid_button	: 0l, $
 		grid_button		: 0l, $
-		remove_button		: 0l, $
 		remove_xd_button	: 0l, $
-		trim_button		: 0l, $
-		region_button		: 0l, $
 		axes_button		: 0l, $
 		header_button		: 0l, $
 		notes_button		: 0l, $
 		repeat_button		: 0l, $
 		sub_base		: 0l, $
 		modes_base		: 0l, $
-		modes_base1		: 0l, $
-		modes_base2		: 0l, $
-		modes_base3		: 0l, $
 		select_button		: 0l, $
-		select_mode_button	: 0l, $
 		context_button		: 0l, $
-		pan_button		: 0l, $
-		tiepoints_button	: 0l, $
-		curves_button		: 0l, $
-		activate_button		: 0l, $
-		readout_button		: 0l, $
-		mask_button		: 0l, $
-		mag_button		: 0l, $
-		zoom_button		: 0l, $
-		xyzoom_button		: 0l, $
-		smooth_button		: 0l, $
-		plane_button		: 0l, $
-		move_button		: 0l, $
-		rotate_button		: 0l, $
-		spin_button		: 0l, $
 		footprint_button	: 0l, $
 		mbar			: 0l, $
 		menu			: 0l, $
+		help_menu		: 0l, $
 		draw_base		: 0l, $
 		draw			: 0l, $
 		context_draw		: 0l, $
@@ -207,6 +187,7 @@ function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
 		readout_mark		: dblarr(2), $
 		measure_mark		: dblarr(2,2), $
 		selected		: 0, $
+		scale_wnum		: 0, $
 		wnum			: 0, $
 		pixmap_valid		: 0, $
 		pixmap			: -1, $
@@ -240,7 +221,7 @@ function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
 		default_user_line	: user_line, $
 		repeat_fn		: '', $
 		repeat_event_p		: ptr_new(0), $ 
-		user_modes_p		: user_modes_p, $
+		cursor_modes_p		: cursor_modes_p, $
 		workdir			: workdir, $
 		tvd_init_p		: ptr_new(0), $
 		highlight		: 0, $		
@@ -248,6 +229,8 @@ function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
 		curve_syncing		: curve_syncing, $		
 		dd_map_p		: ptr_new(0), $
 		md_map_p		: ptr_new(0), $
+
+		misc_data_p		: ptr_new(0), $
 
 	;---------------
 	; planes

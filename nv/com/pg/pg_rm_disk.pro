@@ -15,7 +15,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_rm_disk, object_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx
+;	pg_rm_disk, object_ptd, cd=cd, od=od, dkx=dkx
 ;	pg_rm_disk, object_ptd, gd=gd, od=od
 ;
 ;
@@ -35,10 +35,6 @@
 ;
 ;	dkx:	Array (n_timesteps) of descriptors of objects 
 ;		which must be a subclass of DISK.
-;
-;	gbx:	Array  of descriptors of objects which must be a subclass 
-;		of GLOBE, describing the primary body for dkx.  For each
-;		timestep, only the first descriptor is used.
 ;
 ;	od:	Array (n_objects, n_timesteps) of descriptors of objects 
 ;		which must be a subclass of BODY.  These objects are used
@@ -86,11 +82,10 @@
 ;
 ; MODIFICATION HISTORY:
 ; 	Written by:	Spitale, 2/1998
-;	7/2004:		Added gbx input; Spitale
 ;	
 ;-
 ;=============================================================================
-pro pg_rm_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, point_ptd, hide_ptd, $
+pro pg_rm_disk, cd=cd, od=od, dkx=dkx, gd=gd, point_ptd, hide_ptd, $
               reveal=reveal, cat=cat
 @pnt_include.pro
 
@@ -100,16 +95,10 @@ pro pg_rm_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, point_ptd, hide_ptd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given;
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dkx=dkx, gbx=_gbx, od=od
+ pgs_gd, gd, cd=cd, dkx=dkx, od=od
  if(NOT keyword_set(cd)) then cd = 0 
 
  if(NOT keyword_set(dkx)) then return
-
- if(NOT keyword_set(_gbx)) then $
-            nv_message, name='pg_rm_disk', 'Globe descriptor required.'
- __gbx = get_primary(cd, _gbx, rx=dkx)
- if(keyword_set(__gbx)) then gbx = __gbx $
- else  gbx = _gbx[0,*]
 
  ;-----------------------------
  ; default observer is camera
@@ -144,14 +133,15 @@ pro pg_rm_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, point_ptd, hide_ptd, $
        pnt_get, point_ptd[j], p=p, vectors=vectors, flags=flags
        point_pts = bod_inertial_to_body_pos(xd, vectors)
 
-       w = dsk_rm_points(xd, Rs, point_pts, frame_bd=gbx)
+       w = dsk_rm_points(xd, Rs, point_pts)
 
      if(hide) then $
       begin
        pnt_get, point_ptd[j], desc=desc, inp=inp
        hide_ptd[j] = $
           pnt_create_descriptors(desc=desc+'-rm_disk', $
-             input=inp+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]))
+;             input=inp+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]))
+             input=inp+pgs_desc_suffix(dkx=dkx[i,0], od=od[0], cd[0]))
       end
 
        if(w[0] NE -1) then $

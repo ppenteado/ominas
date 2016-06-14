@@ -33,7 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	norm:	If set, only the absolute value of the gradint is evaluated.
+;	norm:	If set, only the absolute value of the gradient is evaluated.
 ;
 ;  OUTPUT:
 ;	cc:	Not used, hardwired to 0.9999999d.

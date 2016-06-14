@@ -27,11 +27,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:  
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
-;
-;	dlon:		Azimuthal spacing for the points, instead of specifying
+;	dta:		Azimuthal spacing for the points, instead of specifying
 ;			the np argument.
 ;
 ;  OUTPUT: NONE
@@ -61,13 +57,13 @@
 ; Result is [n_points,3,2].
 ;
 ;===========================================================================
-function _dsk_get_disk_points, dkd, n_points, frame_bd=frame_bd
+function _dsk_get_disk_points, dkd, n_points
 @core.include
  
 
  r = dblarr(n_points, 3, 2)
- r[*,*,0] = dsk_get_inner_disk_points(dkd, n_points, frame_bd=frame_bd)
- r[*,*,1] = dsk_get_outer_disk_points(dkd, n_points, frame_bd=frame_bd)
+ r[*,*,0] = dsk_get_inner_disk_points(dkd, n_points)
+ r[*,*,1] = dsk_get_outer_disk_points(dkd, n_points)
 
  return, r
 end
@@ -82,12 +78,12 @@ end
 ; Result is [n_points,3,2].
 ;
 ;===========================================================================
-function dsk_get_disk_points, dkd, n_points, frame_bd=frame_bd, dlon=dlon
+function dsk_get_disk_points, dkd, n_points, dta=dta
 @core.include
  
 
- r_inner = dsk_get_inner_disk_points(dkd, n_points, frame_bd=frame_bd, dlon=dlon)
- r_outer = dsk_get_outer_disk_points(dkd, n_points, frame_bd=frame_bd, dlon=dlon)
+ r_inner = dsk_get_inner_disk_points(dkd, n_points, ta=ta)
+ r_outer = dsk_get_outer_disk_points(dkd, n_points, ta=ta)
 
  np = n_elements(r_inner)/3
  r = dblarr(n_points, 3, 2)

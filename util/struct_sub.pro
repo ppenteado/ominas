@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Creates a new structure whise fields are the same as those in the 
+;	Creates a new structure whose fields are the same as those in the 
 ;	given structure except for the specified substitutions.
 ;
 ;
@@ -63,7 +63,7 @@ function struct_sub, s, _sub_tags, sub_val_ps
  n = n_elements(tags)
  nsub = n_elements(sub_tags)
 
- new_val_ps = objarr(n+nsub)
+ new_val_ps = ptrarr(n+nsub)
  new_tags = strarr(n+nsub)
 
  ;--------------------------------

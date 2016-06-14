@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_disk(cd=cd, dkx=dkx, gbx=gbx)
+;	result = pg_disk(cd=cd, dkx=dkx)
 ;	result = pg_disk(gd=gd)
 ;
 ;
@@ -30,10 +30,6 @@
 ;
 ;	dkx:	 Array (n_objects, n_timesteps) of descriptors of objects 
 ;		 which must be a subclass of DISK.
-;
-;	gbx:	 Array (n_objects, n_timesteps) of descriptors of objects 
-;		 which must be a subclass of GLOBE, describing the primary 
-;		 body.  For each timestep, only the primaryobject is used.
 ;
 ;	gd:	 Generic descriptor.  If given, the descriptor inputs 
 ;		 are taken from the this structure.
@@ -70,28 +66,20 @@
 ;
 ; MODIFICATION HISTORY:
 ; 	Written by:	Spitale, 2/1998
-;	7/2004:		Added gbx input; Spitale
 ;	
 ;-
 ;=============================================================================
-function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
+function pg_disk, cd=cd, dkx=dkx, gd=gd, fov=fov, cull=cull, $
                   inner=inner, outer=outer, npoints=npoints, reveal=reveal
 @pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dkx=dkx, gbx=_gbx
+ pgs_gd, gd, cd=cd, dkx=dkx
  if(NOT keyword_set(cd)) then cd = 0 
 
  if(NOT keyword_set(dkx)) then return, obj_new()
-
- if(NOT keyword_set(_gbx)) then $
-            nv_message, name='pg_disk', 'Globe descriptor required.'
- __gbx = get_primary(cd, _gbx, rx=dkx)
- if(keyword_set(__gbx[0])) then gbx = __gbx $
- else gbx = reform(_gbx[0,*])
-; else gbx = _gbx[0,*]
 
  ;-----------------------------------
  ; default parameters
@@ -116,8 +104,6 @@ function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
 
  ;-----------------------------------------------------------------------
  ; get all disk outer edges
- ;  Note that no frame descriptor is needed because we are scanning
- ;  all longitudes.
  ;-----------------------------------------------------------------------
  if(keyword_set(outer)) then $
   begin
@@ -133,14 +119,14 @@ function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
        ;- - - - - - - - - - - - - - - - -
        ; fov 
        ;- - - - - - - - - - - - - - - - -
-       dlon = 0
+       ta = 0
        continue = 1
        if(keyword_set(fov)) then $
         begin
-         dsk_image_bounds, cd, xd, gbx, slop=slop, /plane, $
+         dsk_image_bounds, cd, xd, slop=slop, /plane, $
                  lonmin=lonmin, lonmax=lonmax, border_pts_im=border_pts_im
          if(NOT defined(lonmin)) then continue = 0 $
-         else dlon = dindgen(npoints)/double(npoints)*(lonmax-lonmin) + lonmin
+         else ta = dindgen(npoints)/double(npoints)*(lonmax-lonmin) + lonmin
         end
 
        ;- - - - - - - - - - - - - - - - -
@@ -148,17 +134,18 @@ function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
        ;- - - - - - - - - - - - - - - - -
        if(continue) then $
         begin
-         disk_pts = dsk_get_outer_disk_points(xd, npoints, frame=gbx, dlon=dlon)
+         disk_pts = dsk_get_outer_disk_points(xd, npoints, ta=ta)
          inertial_pts = bod_body_to_inertial_pos(xd, disk_pts)
          image_pts = cam_focal_to_image(cd, $
                        cam_body_to_focal(cd, $
                          bod_inertial_to_body_pos(cd, inertial_pts)))
 
          outer_disk_ptd[i] = $
-            pnt_create_descriptors(name = cor_name(xd), $
+            pnt_create_descriptors(name = cor_name(xd) + '-OUTER', $
 		    desc = 'disk_outer', $
-		    input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], cd[0]), $
-		    assoc_idp = cor_idp(xd), $
+;		    input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], cd[0]), $
+		    input = pgs_desc_suffix(dkx=dkx[i,0], cd[0]), $
+		    assoc_xd = xd, $
 		    points = image_pts, $
 		    vectors = inertial_pts)
 
@@ -172,8 +159,6 @@ function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
 
  ;--------------------------------------------------------------------------
  ; get all disk inner edges
- ;  Note that no frame descriptor is needed because we are scanning
- ;  all longitudes.
  ;--------------------------------------------------------------------------
  if(keyword_set(inner)) then $
   begin
@@ -189,14 +174,14 @@ function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
        ;- - - - - - - - - - - - - - - - -
        ; fov 
        ;- - - - - - - - - - - - - - - - -
-       dlon = 0
+       ta = 0
        continue = 1
        if(keyword_set(fov)) then $
         begin
-         dsk_image_bounds, cd, xd, gbx, slop=slop, /plane, $
+         dsk_image_bounds, cd, xd, slop=slop, /plane, $
                lonmin=lonmin, lonmax=lonmax, border_pts_im=border_pts_im
          if(NOT defined(lonmin)) then continue = 0 $
-         else dlon = dindgen(npoints)/double(npoints)*(lonmax-lonmin) + lonmin
+         else ta = dindgen(npoints)/double(npoints)*(lonmax-lonmin) + lonmin
         end
 
        ;- - - - - - - - - - - - - - - - -
@@ -204,17 +189,18 @@ function pg_disk, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, fov=fov, cull=cull, $
        ;- - - - - - - - - - - - - - - - -
        if(continue) then $
         begin
-         disk_pts = dsk_get_inner_disk_points(xd, npoints, frame=gbx, dlon=dlon)
+         disk_pts = dsk_get_inner_disk_points(xd, npoints, ta=ta)
          inertial_pts = bod_body_to_inertial_pos(xd, disk_pts)
          image_pts = cam_focal_to_image(cd, $
                        cam_body_to_focal(cd, $
                          bod_inertial_to_body_pos(cd, inertial_pts)))
 
          inner_disk_ptd[i] = $
-            pnt_create_descriptors(name = cor_name(xd), $
+            pnt_create_descriptors(name = cor_name(xd) + '-INNER', $
 		    desc = 'disk_inner', $
-		    input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], cd[0]), $
-		    assoc_idp = cor_idp(xd), $
+;		    input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], cd[0]), $
+		    input = pgs_desc_suffix(dkx=dkx[i,0], cd[0]), $
+		    assoc_xd = xd, $
 		    points = image_pts, $
 		    vectors = inertial_pts)
          if(NOT bod_opaque(dkx[i,0])) then $

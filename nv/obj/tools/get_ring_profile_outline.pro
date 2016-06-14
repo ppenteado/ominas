@@ -53,13 +53,13 @@
 ;=============================================================================
 function get_ring_profile_outline, cd, dkd, points, rad=crad, lon=clon, $
        xlon=xlon, dir=dir, $
-       nrad=nrad, nlon=nlon, slope=slope, inertial=inertial, frame_bd=frame_bd
+       nrad=nrad, nlon=nlon, slope=slope, inertial=inertial
 
  if(NOT keyword_set(slope)) then slope = 0d
 
  if(NOT keyword_set(crad)) then $
   begin
-   dsk_pts = image_to_disk(cd, dkd, fr=frame_bd, points)
+   dsk_pts = image_to_disk(cd, dkd, points)
    crad = dsk_pts[*,0]
    clon = dsk_pts[*,1]
   end
@@ -108,7 +108,7 @@ function get_ring_profile_outline, cd, dkd, points, rad=crad, lon=clon, $
  ; convert to image coordinates
  ;-------------------------------
  inertial = bod_body_to_inertial_pos(dkd, $
-              dsk_disk_to_body(dkd, rp_pts, frame_bd=frame_bd))
+              dsk_disk_to_body(dkd, rp_pts))
 
  im_pts = cam_focal_to_image(cd, $
             cam_body_to_focal(cd, $

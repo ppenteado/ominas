@@ -45,7 +45,7 @@ function image_predict_ring, cd, gbx, rx, sund=sund, rxt=_rxt
  w = bytarr(nt)
  for i=0, nt-1 do $
   begin
-   ring_ptd = pg_disk(cd=cd, gbx=gbx, dkx=rxt, np=100, /fov)
+   ring_ptd = pg_disk(cd=cd, dkx=rxt, np=100, /fov)
    pg_hide, ring_ptd, cd=cd, gbx=pd, /globe
    if(keyword_set(sund)) then $
                     pg_hide, ring_ptd, cd=cd, od=sund, gbx=pd, /globe

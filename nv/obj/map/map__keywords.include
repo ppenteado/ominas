@@ -6,7 +6,6 @@ fn_data_p=fn_data_p, $
 size=size, $
 origin=origin, $
 center=center, $
-offset=offset, $
 scale=scale, $
 units=units, $
 graphic=graphic, $

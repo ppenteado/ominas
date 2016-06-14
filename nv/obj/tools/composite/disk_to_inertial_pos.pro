@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = disk_to_inertial_pos(dkx, v, frame_bd=frame_bd)
+;       result = disk_to_inertial_pos(dkx, v)
 ;
 ;
 ; ARGUMENTS:
@@ -27,10 +27,7 @@
 ;       NONE
 ;
 ; KEYWORDS:
-;   INPUT:
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
+;   INPUT: NONE
 ;
 ;   OUTPUT: NONE
 ;
@@ -47,10 +44,10 @@
 ;
 ;-
 ;=============================================================================
-function disk_to_inertial_pos, rd, p, frame_bd=frame_bd
+function disk_to_inertial_pos, rd, p
 
  return, bod_body_to_inertial_pos(rd, $
-           dsk_disk_to_body(rd, p, frame_bd=frame_bd))
+           dsk_disk_to_body(rd, p))
 
 end
 ;==================================================================================

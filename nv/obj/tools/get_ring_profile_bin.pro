@@ -64,7 +64,7 @@
 ;-
 ;=============================================================================
 function get_ring_profile_bin, image, cd, dkd, lon_pts, rad_pts, $
-                 slope=slope, azimuthal=azimuthal, frame_bd=frame_bd
+                 slope=slope, azimuthal=azimuthal
 
  if(NOT keyword__set(slope)) then slope = 0d
 
@@ -84,7 +84,7 @@ function get_ring_profile_bin, image, cd, dkd, lon_pts, rad_pts, $
  ; convert to image coordinates
  ;-------------------------------
  inertial = bod_body_to_inertial_pos(dkd, $
-              dsk_disk_to_body(dkd, rp_pts, frame_bd=frame_bd))
+              dsk_disk_to_body(dkd, rp_pts))
 
  im_pts = cam_focal_to_image(cd, $
             cam_body_to_focal(cd, $
@@ -107,7 +107,7 @@ function get_ring_profile_bin, image, cd, dkd, lon_pts, rad_pts, $
  image_points[1,*] = subs/s[1]
  image_data = image(subs)
 
- plane_pts = image_to_disk(cd, dkd, image_points, frame_bd=frame_bd)
+ plane_pts = image_to_disk(cd, dkd, image_points)
 
  ;-----------------------------
  ; bin according to rad or lon

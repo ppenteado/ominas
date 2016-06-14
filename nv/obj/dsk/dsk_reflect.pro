@@ -23,23 +23,16 @@
 ;	v:	 Array (nv x 3 x nt) of column vectors giving the observer
 ;		 position in the body frame.
 ;
-;	r:	 Array (nv x 3 x nt) of column vectors giving the target
+;	r:	 Array (nv x 3 x nt) of column vectors giving the source
 ;		 position in the body frame.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
-;  INPUT:  
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
+;  INPUT: NONE
 ;
 ;  OUTPUT: 
-;	t:	Array(nv x 3 x nt) giving the distances to each reflection.
-;		Values down each column are identical, i.e., this array
-;		is a stack of three identical (nv x 1 x nt) arrays.
-;
 ;	hit: 	Array giving the subscripts of the input rays that actually
 ;	 	reflect on the disk. 
 ;
@@ -55,7 +48,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_reflect, dkd, v, r, t=t, hit=hit, frame_bd=frame_bd
+function dsk_reflect, dkd, v, r, hit=hit
 @core.include
  
 
@@ -88,8 +81,8 @@ function dsk_reflect, dkd, v, r, t=t, hit=hit, frame_bd=frame_bd
  ;---------------------------------------------------------------
  if(arg_present(hit)) then $
   begin
-   p_disk = dsk_body_to_disk(dkd, p, frame_bd=frame_bd)
-   rad = dsk_get_radius(dkd, p_disk[*,1,*], frame_bd)
+   p_disk = dsk_body_to_disk(dkd, p)
+   rad = dsk_get_radius(dkd, p_disk[*,1,*])
    hit = where((p_disk[*,0,*] GT rad[*,0,*]) AND (p_disk[*,0,*] LT rad[*,1,*]))
 
    ;-------------------------------------------

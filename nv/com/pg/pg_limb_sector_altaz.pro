@@ -125,12 +125,12 @@ function pg_limb_sector_altaz, cd=cd, gbx=_gbx, gd=gd, dkd=dkd, $
 
  outline_pts = get_limb_profile_outline(cd, gbx, dkd=dkd, $
                           alt=alt, az=az, nalt=_nalt, naz=_naz, graphic=graphic)
- dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=dkd, outline_pts)
+ dsk_outline_pts = image_to_disk(cd, dkd, outline_pts)
  rads = dsk_outline_pts[_naz+lindgen(_nalt),0]
  lons = dsk_outline_pts[lindgen(_naz), 1]
 
  nazrad = get_ring_profile_n(reform(outline_pts), cd, dkd, $
-                                lons, rads, oversamp=sample, frame_bd=dkd)
+                                                   lons, rads, oversamp=sample)
  nalt = long(nazrad[1])>2 & naz = long(nazrad[0])
 
  if(keyword_set(__naz)) then naz = __naz
@@ -147,7 +147,7 @@ function pg_limb_sector_altaz, cd=cd, gbx=_gbx, gd=gd, dkd=dkd, $
  dsk_outline_pts = 0
 
  if(NOT keyword_set(nodsk)) then $
-       dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=dkd, outline_pts)
+                    dsk_outline_pts = image_to_disk(cd, dkd, outline_pts)
 
  outline_ptd = pnt_create_descriptors(points = outline_pts, $
                       desc = 'pg_limb_sector_altaz', $

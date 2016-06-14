@@ -29,10 +29,6 @@
 ;
 ; KEYWORDS:
 ;   INPUT:
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
 ;	slop:	Amount, in pixels, by which to expand the image size
 ;		considered in the calcultaion.
 ;
@@ -59,7 +55,7 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-pro surface_image_bounds, cd, bx, frame_bd=frame_bd, slop=slop, $
+pro surface_image_bounds, cd, bx, slop=slop, $
        border_pts_im=border_pts_im, $
        latmin=latmin, latmax=latmax, lonmin=lonmin, lonmax=lonmax, status=status
 
@@ -70,7 +66,7 @@ pro surface_image_bounds, cd, bx, frame_bd=frame_bd, slop=slop, $
    glb_image_bounds, cd, gbx, slop=slop, border_pts_im=border_pts_im, $
         latmin=latmin, latmax=latmax, lonmin=lonmin, lonmax=lonmax, status=status $
  else if(keyword_set(dkx)) then $
-   dsk_image_bounds, cd, dkx, frame_bd, slop=slop, border_pts_im=border_pts_im, $
+   dsk_image_bounds, cd, dkx, slop=slop, border_pts_im=border_pts_im, $
       radmin=latmin, radmax=latmax, lonmin=lonmin, lonmax=lonmax, status=status $
  else $
    radec_image_bounds, cd, slop=slop, border_pts_im=border_pts_im, $

@@ -58,8 +58,8 @@
 ;
 ;	all:	 If set, all points are returned, even if invalid.
 ;
-;	iterate: If set, the quadratic equation is solved by iteration 
-;		 instead of direct evaluation of the quadratic formula.
+;	epsilon: If set, shadow points that are closer than this amount 
+;		 to the source point will be excluded.
 ;
 ;	nosolve: If set, shadow points are not computed.  
 ;
@@ -87,7 +87,7 @@
 function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
                           nocull=nocull, both=both, reveal=reveal, $
                           fov=fov, cull=cull, backshadow=backshadow, all=all, $
-                          iterate=iterate, nosolve=nosolve
+                          epsilon=epsilon, nosolve=nosolve
 @pnt_include.pro
 
 
@@ -118,7 +118,7 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
  ;------------------------------------------------
  ; compute shadows for each object on each globe
  ;------------------------------------------------
- n_objects=(size(object_ptd))[1]
+ n_objects = n_elements(object_ptd)
  _shadow_ptd = objarr(n_globes, n_objects)
  shadow_ptd = objarr(n_objects)
 
@@ -129,13 +129,12 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
     if((bod_opaque(gbx[i,0])) OR (keyword_set(reveal))) then $
      begin
       xd = reform(gbx[i,*], nt)
-      idp = cor_idp(xd)
 
       ;---------------------------
       ; get object vectors
       ;---------------------------
-      pnt_get, object_ptd[j], vectors=vectors, assoc_idp=assoc_idp
-      if(idp NE assoc_idp) then $
+      pnt_get, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
+      if(xd NE assoc_xd) then $
        begin
         n_vectors = (size(vectors))[1]
 
@@ -153,9 +152,8 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
         ; project shadows in body frame
         ;---------------------------------
         shadow_pts = $
-           (glb_intersect(iterate=iterate, $
-                           valid=val, nosolve=nosolve, $
-                            xd, v_body, r_body, dis=dis))[0:n_vectors-1,*,*]
+           glb_intersect(/near, $
+                       valid=val, nosolve=nosolve, xd, v_body, r_body, dis=dis)
         w = where(val)
 
         ;---------------------------------------------------------------
@@ -168,56 +166,75 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
             degen(body_to_image_pos(cd, xd, shadow_pts, $
                                           inertial=inertial_pts, valid=valid))
 
-          ;---------------------------------
-          ; store points
-          ;---------------------------------
-          _shadow_ptd[i,j] = $
-              pnt_create_descriptors(points = points, $
-		      desc = 'globe_shadow', $
-		      input = pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), $
-		      vectors = inertial_pts)
+  	  ;---------------------------------------------------------------
+  	  ; remove points closer than epsilon to source
+  	  ;---------------------------------------------------------------
+  	  continue = 1
+  	  if(keyword_set(epsilon)) then $
+  	   begin
+  	    dist = v_mag(inertial_pts - vectors)
+  	    w = where(dist GT epsilon)
+  	    if(w[0] EQ -1) then continue = 0 $
+  	    else $
+  	     begin
+  	      points = points[*,w]
+  	      inertial_pts = inertial_pts[w,*]
+  	     end
+  	   end
+
+  	  if(continue) then $
+  	   begin
+            ;---------------------------------
+            ; store points
+            ;---------------------------------
+            _shadow_ptd[i,j] = $
+                pnt_create_descriptors(points = points, $
+		   desc = 'globe_shadow', $
+		   input = pgs_desc_suffix(gbx=gbx[i,0], od=od[0], srcd=object_ptd[j], cd[0]), $
+		   vectors = inertial_pts)
  
-          ;-----------------------------------------------
-          ; flag points that miss the globe as invisible
-          ;-----------------------------------------------
-          flags = pnt_flags(_shadow_ptd[i,j])
-          flags[*] = flags[*] OR PTD_MASK_INVISIBLE
-          flags[w] = 0
+            ;-----------------------------------------------
+            ; flag points that miss the globe as invisible
+            ;-----------------------------------------------
+            flags = pnt_flags(_shadow_ptd[i,j])
+            flags[*] = flags[*] OR PTD_MASK_INVISIBLE
+            flags[w] = 0
 
-          ss = inertial_pts - v_inertial
+            ss = inertial_pts - v_inertial
 
-          ;-----------------------------------------------------------
-          ; flag backshadows as invisible unless /both or /backshadow
-          ;-----------------------------------------------------------
-          if((NOT keyword_set(backshadow)) AND (NOT keyword_set(both))) then $
-           begin
-            w = where(v_mag(ss) LE v_mag(rr))
-            if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
-           end
+            ;-----------------------------------------------------------
+            ; flag backshadows as invisible unless /both or /backshadow
+            ;-----------------------------------------------------------
+            if((NOT keyword_set(backshadow)) AND (NOT keyword_set(both))) then $
+             begin
+              w = where(v_mag(ss) LE v_mag(rr))
+              if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
+             end
 
-          ;-----------------------------------------------------------
-          ; flag shadows as invisible if /backshadow
-          ;-----------------------------------------------------------
-          if(keyword_set(backshadow)) then $
-           begin
-            w = where(v_mag(ss) GE v_mag(rr))
-            if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
-           end
+            ;-----------------------------------------------------------
+            ; flag shadows as invisible if /backshadow
+            ;-----------------------------------------------------------
+            if(keyword_set(backshadow)) then $
+             begin
+              w = where(v_mag(ss) GE v_mag(rr))
+              if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
+             end
 
-          ;-----------------------------------------------------------
-          ; flag invalid image points as invisible
-          ;-----------------------------------------------------------
-          if(NOT keyword_set(all)) then $
-           if(keyword_set(valid)) then $
-            begin
-             invalid = complement(shadow_pts[*,0], valid)
-             if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-            end
+            ;-----------------------------------------------------------
+            ; flag invalid image points as invisible
+            ;-----------------------------------------------------------
+            if(NOT keyword_set(all)) then $
+             if(keyword_set(valid)) then $
+              begin
+               invalid = complement(shadow_pts[*,0], valid)
+               if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
+              end
 
-          ;---------------------------------
-          ; store flags
-          ;---------------------------------
-          pnt_set_flags, _shadow_ptd[i,j], flags
+            ;---------------------------------
+            ; store flags
+            ;---------------------------------
+            pnt_set_flags, _shadow_ptd[i,j], flags
+  	   end
          end
        end
      end
@@ -226,7 +243,7 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
    ; take only nearest shadow points for this object
    ;-----------------------------------------------------
    shadow_ptd[j] = pnt_compress(_shadow_ptd[*,j])
-   if(obj_valid(shadow_ptd[j])) then pnt_set_desc, shadow_ptd[j], 'globe_shadow'
+
 ;   if(NOT keyword__set(all)) then $
 ;    begin
 ;     sp = pnt_cull(_shadow_ptd[*,j])

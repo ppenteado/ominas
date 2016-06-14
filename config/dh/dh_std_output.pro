@@ -315,7 +315,6 @@ pro dh_std_output, dd, keyword, value, status=status, $
 
 	    if(n_obj EQ 1) then $
 	     begin
-	      dh_put_point, dh, 'map_offset', transpose(map_offset(mds))
 	      dh_put_point, dh, 'map_origin', transpose(map_origin(mds))
 	      dh_put_point, dh, 'map_center', transpose(map_center(mds))
 	      dh_put_point, dh, 'map_units', transpose(map_units(mds))
@@ -324,8 +323,6 @@ pro dh_std_output, dd, keyword, value, status=status, $
 	     end $
 	    else $
 	     begin
-	      dh_put_point, dh, 'map_offset', $
-	                              transpose(map_offset(mds), [1,0,2])
 	      dh_put_point, dh, 'map_origin', $
 	                              transpose(map_origin(mds), [1,0,2])
 	      dh_put_point, dh, 'map_center', $

@@ -8,7 +8,7 @@ function orb_compute_r, rx
  sma = orb_get_sma(rx)
  ecc = orb_get_ecc(rx)
 
- r = sma*(1d - ecc) / (1d + ecc*cos(ta))
+ r = sma*(1d - ecc^2) / (1d + ecc*cos(ta))
 
  return, r
 end

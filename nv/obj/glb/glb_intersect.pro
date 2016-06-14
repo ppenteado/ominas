@@ -29,9 +29,29 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	near:	If set, only the "near" points are returned.  More specifically,
+;		these points correspond to the furthest along the ray from the 
+;		observer to the globe.  If the observer is exterior, these are 
+;		the nearest interesections to the observer; if the observer is 
+;		interior, these intersections are behind the observer.  
 ;
-;  OUTPUT: NONE
+;	far:	If set, only the "far" points are returned.  See above; if the 
+;		observer is exterior, these are the furthest interesections from 
+;		the observer; if the observer is interior, these intersections 
+;		are in front of the observer.
+;
+;	hit:	Array giving the indices of rays the hit the object.
+;
+;	valid:	Array in which each element indicates whether the object
+;		was hit.
+;
+;	nosolve: If set, the intersections are not computed, though the
+;		 discrimiant is.
+;
+;  OUTPUT: 
+;	discriminant:	Discriminant of the quadriatic equation used to 
+;			determine the intersections.
 ;
 ;
 ; RETURN: 
@@ -51,8 +71,8 @@
 ;	
 ;-
 ;===========================================================================
-function glb_intersect, gbd, v, r, hit=hit, near=near, far=far, all=all, frame_bd=frame_bd, $
-          discriminant=discriminant, iterate=iterate, nosolve=nosolve, valid=valid
+function glb_intersect, gbd, v, r, hit=hit, near=near, far=far, $
+                      discriminant=discriminant, nosolve=nosolve, valid=valid
 @core.include
 
  nt = 1
@@ -60,31 +80,25 @@ function glb_intersect, gbd, v, r, hit=hit, near=near, far=far, all=all, frame_b
  nv = dim[0]
  if(n_elements(dim) GT 2) then t = dim[2]
 
- discriminant_fn = 'glb_intersect_discriminant'
-
- points_fn = 'glb_intersect_points'
- if(keyword_set(iterate)) then points_fn = 'glb_intersect_points_iter'
-
  ;----------------------------
  ; compute the discriminant
  ;----------------------------
- discriminant = call_function(discriminant_fn, gbd, v, r, $
+ discriminant = glb_intersect_discriminant(gbd, v, r, $
                                            alpha=alpha, beta=beta, gamma=gamma)
 
  ;----------------------------------
  ; compute the intersection points
  ;----------------------------------
- points = call_function(points_fn, gbd, v, r, discriminant, alpha, beta, gamma, $
-                       valid=valid, nosolve=nosolve) 
+ glb_intersect_points, gbd, v, r, discriminant, alpha, beta, gamma, $
+                            valid=valid, nosolve=nosolve, near=near_pts, far=far_pts
  if(arg_present(hit)) then hit = where(valid NE 0)
 
 
  ;----------------------------------
  ; select outputs
  ;----------------------------------
- near = points[0:nv-1,*,*]
- far = points[nv:*,*,*]
-
- return, points
+ if(keyword_set(near)) then return, near_pts
+ if(keyword_set(far)) then return, far_pts
+ return, [near_pts, far_pts]
 end
 ;===========================================================================
