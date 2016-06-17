@@ -1,13 +1,41 @@
 #!/usr/bin/env bash
-# configure.sh
+# configure.sh: OMINAS auto-configuration script
+# If you are looking in here, something has gone wrong...
+
+#------------------------------------------------------------------------#
+# Want compatibility with your UNIX environment?                         #
+# This configuration script is not POSIX compliant. There are several    #
+# features which may fail on certain shells. The script must be run as   #
+# a source and MAY work with other shells (certainly not the C shell)    #
+# if the 'setting' variable is adjusted to the startup file for your     #
+# shell (e.g., ksh must change these lines to '.profile' and '.kshrc')   #                                                  
+#------------------------------------------------------------------------#
 
 yes="INSTALLED"
 no="NOT INSTALLED"
-nf="NOT FOUND"
+st="SET"
+ns="NOT SET"
 shtype="sh"
 
-shopt -s extglob
+#------------------------------------------------------------------------#
+# Configure will attempt to detect whether it is being run from its      #
+# own directory. The directory is automatically changed if the test      #
+# fails, and changed back at the end of execution.                       #
+#------------------------------------------------------------------------#
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+test $DIR != $PWD && (printf "Warning: configuration should  be run from the OMINAS directory\n"; 
+	cd $DIR;
+	cdflag=true)
 
+trap $(/bin/rm -f paths.pro; test $cdflag && cd $OLDPWD) EXIT
+
+#------------------------------------------------------------------------#
+# The type of bash settings file is detected. Configure requires use     #
+# either '.bash_profile' or '.bashrc'. In general, bash_profile is       #
+# used for login shells and bashrc is used for non-interactive shell     #
+# sessions. If neither settings file is detected, bash_profile is used   #
+# by default (this causes a new file to be made).                        #
+#------------------------------------------------------------------------#
 echo "Detecting .bash_profile..."
 if [ -f ~/.bash_profile ]; then
 	echo ".bash_profile detected!"
@@ -27,6 +55,16 @@ fi
 
 function ext()
 {
+	# EXTRACT -----------------------------------------------------------#
+	#    Extracts files of (almost) any archive file type.               #
+	#    Arg 1 -> File to be extracted                                   #
+	#    Issues: Files such as icy.tar.Z, the archive for the NAIF       #
+	#    Icy toolkit will not break this function, but will two          #
+	#    passes.                                                         #
+	#    Note: No longer used. OMINAS is generally packaged as a git     #
+	#    repository, which extracts itself. Also, this script is con-    #
+	#    tained within the ominas directory...                           #
+	#--------------------------------------------------------------------#
 	if [ -f $1 ]; then
 		case $1 in
 			*.tar.bz2)   tar xvjf $1     ;;
@@ -49,11 +87,13 @@ function ext()
 
 function pkst()
 {
-	# PACKAGE STATUS ----------------------------------------------------------#
-	#	Checks to see if an OMINAS PACKAGE is installed by looking for its 	   #
-	#	presence in the NV_TRANSLATORS environment variable. All packages 	   #
-	# 	modify this variable.												   #
-	#--------------------------------------------------------------------------#
+	# PACKAGE STATUS ----------------------------------------------------#
+	#    Determines whether or not a mission package is installed.       #
+	#    Arg 1 -> Name of the package to be checked                      #
+	#    Checks the NV_TRANSLATORS environment variable, and deter-      #
+	#    mines if the named package is contained in the list of          #
+	#    directories. Returns an "INSTALLED" or "NOT INSTALLED" status.  #
+	#--------------------------------------------------------------------#
 	if [ -z ${NV_TRANSLATORS+x} ]; then
 		echo "$no"
 	else
@@ -65,84 +105,99 @@ function pkst()
 	fi
 }
 
-function pkins()
+function ppkg()
 {
-    # PACKAGE INSTALL ---------------------------------------------------------#
-    # 	Runs the installation script associated with the package.              #
-    # 	.sh scripts should run in bash to avoid issues caused by using the     #
-    # 	older POSIX shell.                                                     #
-    #                                                                          #
-    # 	Note that the filename is fed in to the function as two arguments,     #
-    # 	the first is the name of the package (i.e, ominas_env_*), and the      #
-    # 	second is the script file extension, which can be accepted as .sh,     #
-    # 	.csh, and .tcsh                                                        #
-    #--------------------------------------------------------------------------#
-
+	# PARSE PACKAGE -----------------------------------------------------#
+	#    Parses a numerical argument specifying the mission package.     #
+	#    Arg 1 -> Numerical value to be parsed                           #
+	#--------------------------------------------------------------------#
 	script="ominas_env_${mis[$1-1]}.$shtype"
-	dswb $script
+	pkins $script
 }
 
 function dins()
 {
-	if [ "${dstatus[$1-5]}" != $nf ]; then
-		cat <<CMD >>$setting
-NV_${Data[$1-5]}_DATA=${dstatus[$1-5]}
-export NV_${Data[$1-5]}_DATA
-CMD
-	else
-		echo "Can't add non-existent data to path!" 1>&2
+	# INSTALL DATA ------------------------------------------------------#
+	#    Set a data package to the path.                                 #
+	#    Arg 1 -> Name of the data package to be added to the path.      #
+	#    Checks if the data package has already been written to the      #
+	#    bash settings file, if it has, it will check if you would       #
+	#    like to overwrite before prompting you for the directory.       #
+	#    if you don't know, it will attempt to find it for you.          #
+	#--------------------------------------------------------------------#
+	if grep -q "NV_${Data[$1-5]}_DATA.*" ${setting}; then
+		printf "Warning: ${Data[$1-5]} data files appear to already be set at this location:\n"
+		eval echo \$NV_${Data[$1-5]}_DATA
+		read -rp "Would you like to overwrite this location (y/n)? " ans
+		case $ans in 
+		[Yy]*)
+			grep -v "NV_${Data[$1-5]}_DATA.*" $setting >$HOME/temp
+			mv $HOME/temp $setting	;;
+		*)
+			return 1	
+		esac
+	fi		
+	read -rp "Please enter the data or star catalog path (if not known, press enter): " datapath
+	if ! [ -d $datapath ]; then
+		printf "Attempting to automatically find data location...\n"
+		dirlist=()
+ 		while IFS= read -r -d $'\0'; do
+			dirlist+=("$REPLY")
+		done < <(find $HOME -type d -iname ${Data[$1-5]} -print0 2>/dev/null)
+		printf '%s\n' "${dirlist[@]}" | nl
+		if [ -z ${dirlist[0]} ]; then
+			printf "Warning: directory not found\n" 1>&2
+			return 2
+		fi
+		read -r -p "Please type the number of the matching directory:  " match
+		datapath=${dirlist[$match]}
 	fi
+
+	echo "NV_${Data[$1-5]}_DATA=$datapath; export NV_${Data[$1-5]}_DATA" >>$setting
 }
 
-function dswb()
+function pkins()
 {
-	# DETECT if SCRIPT WRITTEN to .BASHrc/_profile ----------------------------#
-	# 	The first argument is the script to check for in the bash settings	   #
-	# 	file. The second argument specifies whether to check bashrc or		   #
-	#	bash_profile (i.e, 1 or 2 respectively). If no second argument is 	   #
-	#	specified, both files will be checked.								   #
-	#	If the line is detected, then no action is taken. If the line is 	   #
-	#	not present, then the line to run the script will be written to 	   #
-	#	the settings file.													   #
-	#--------------------------------------------------------------------------#
-
-	if [ -z "`grep "$1" "$setting"`" ]; then
+	# INSTALL PACKAGE ---------------------------------------------------#
+	#    Install the name mission package to bash_profile.               #
+	#    Arg 1 -> Name of package to be installed                        #
+	#    Checks if the named package is already written to the bash      #
+	#    settings file before writing a new line.                        #
+	#--------------------------------------------------------------------#
+	if ! grep -q $1 $setting; then
 		echo "source ${OMINAS_DIR}/config/$1" >> $setting
-		echo "Installed package: $1"
+		printf "Installed package: $1\n"
 	fi
 }
 
-echo "The setup will guide you through the installation of OMINAS"
-
-#-------------------------------------------------------------------#
-# Unpacking the OMINAS archive is the first step. In general,  		#
-# OMINAS and other packages may be compressed in any number of		#
-# ways, so for compatibility, the function extract() is used.  		#
-#															   		#
-# By default, the extraction is verbose.					   		#
-#-------------------------------------------------------------------#
+printf "The setup will guide you through the installation of OMINAS\n"
 
 if [ -z ${OMINAS_DIR+x} ]; then
-	echo "Unpacking OMINAS tar archive..."
-	ext ominas_ringsdb_*.tar.gz
-	OMINAS_DIR="$(find `pwd` ./ -type d -name "ringsdb" | grep -m 1 "ringsdb")"
+# NOTE: OMINAS is available in repository form. Extraction is no longer needed
+#	printf "Unpacking OMINAS tar archive...\n"
+#	ext ominas_ringsdb_*.tar.gz
+# DIR is set on line 25 and is the absolute path to the configure.sh script
+	OMINAS_DIR=$DIR
 	echo "OMINAS_DIR=$OMINAS_DIR; export OMINAS_DIR" >> $setting
 fi
 
-echo "OMINAS files located in $OMINAS_DIR"
+printf "OMINAS files located in $OMINAS_DIR\n"
 
-demost="`pkst ${OMINAS_DIR}/demo`"
+# Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
+demost=`pkst ${OMINAS_DIR}/demo`
 declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("SEDR" "TYCHO" "SAO" "GSC")
-for ((d=0; d<${#Data[@]}; d++));
+for ((d=0; d<${#mis[@]}; d++));
 do
 	mstatus[$d]="`pkst ${OMINAS_DIR}/config/${mis[$d]}/`"
-
-	dstatus[$d]="`find $HOME/ -type d -iname "${Data[$d]}" 2>/dev/null | grep -m 1 "${Data[$d]}"`"
-	if [ "${dstatus[$d]}" == "" ]; then
-		dstatus[$d]=$nf
+	if grep -q NV_${Data[$d]}_DATA $setting; then
+		dstatus[$d]=$st
+	else
+		dstatus[$d]=$ns
 	fi
 done
+
+# Print the configuration list with all statuses to the tty's stdout
 
 cat <<PKGS
 	Current OMINAS configuration settings
@@ -160,50 +215,44 @@ Data:
 	8) GSC star catalog  . . . . . . . . . . . ${dstatus[3]}
 PKGS
 
-printf "Modify Current OMINAS configuration (exit/no/{yes=all} 1 2 ...)?  "
-read -r ans
+read -r -p "Modify Current OMINAS configuration (exit/no/{yes=all} 1 2 ...)?  " ans
 
 for num in $ans
 do
 	case $num in
 		exit)
 				return 0 	;;
-		y*|Y*)
-				dswb ominas_env_def.sh
-				pkins 1
-				pkins 2
-				pkins 3
-				pkins 4 	;;
-		n*|N*)
+		[Yy]*)
+				pkins ominas_env_def.sh
+				ppkg 1
+				ppkg 2
+				ppkg 3
+				ppkg 4 	;;
+		[Nn]*)
 				break 		;;
-		1|2|3|4)
-				dswb ominas_env_def.sh
-				pkins $num 	;;
-		5|6|7|8)
-				dswb ominas_env_def.sh
+		[1234])
+				pkins ominas_env_def.sh
+				ppkg $num 	;;
+		[5678])
+				pkins ominas_env_def.sh
 				dins $num 	;;
 		*)
-				echo "Error: Invalid package or catalog specified" 1>&2
+				printf "Error: Invalid package or catalog specified\n" 1>&2
     esac
 done
 
+test "$1" == "-c" &&
+for f in ./ominas_env_*.sh
+do
+	printf "Installing custom package $f...\n"
+	pkins $f
+done
 
-
-#-----------------------------------------------------------------------#
-# 	In this section, all custom packages which are contained in 		#
-# 	the same top-level directory as OMINAS are unpacked and 	  		#
-# 	installed, one at a time. This process is automatic, and 	  		#
-# 	verbose by default.									      			#
-#-----------------------------------------------------------------------#
-
-if [[ "$1" == "-c" ]]; then
-	for f in $(dirname "$0")/ominas_env_*.sh
-	do
-	    echo "Installing custom package $f..."
-	    dswb $f
-	done
-fi
-
+#------------------------------------------------------------------------#
+# Writes an IDL script to check if the IDL path has been written. If     #
+# it has not, the path to the OMINAS directory will be written in the    #
+# IDL_PATH, inside of IDL.                                               #
+#------------------------------------------------------------------------#
 
 addpath=":+$OMINAS_DIR"
 cat <<IDLCMD >paths.pro
@@ -218,6 +267,4 @@ IDLCMD
 
 . $setting
 
-echo "Setup has completed. It is recommended to restart your terminal session before using OMINAS."
-
-trap $(/bin/rm -f paths.pro) EXIT
+printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
