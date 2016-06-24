@@ -28,11 +28,10 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; get path specific to this translator
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
- kpath_specific = getenv(env + '_' + strupcase(prefix))
- kpath_general = getenv(env)
- kpath = append_array(kpath_general, kpath_specific)
+ kpath = str_nsplit(getenv(env), ':')
+ w = where(kpath NE '')
+ if(w[0] EQ -1) then return, ''
 
- if(NOT keyword_set(kpath)) then return, ''
  nkpath = n_elements(kpath)
 
  ;---------------------------------------

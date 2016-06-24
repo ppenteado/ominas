@@ -3,9 +3,9 @@
 ;
 ;
 ;==============================================================================
-function orb_lon_to_arg, xd, lon, frame_bd
+function orb_lon_to_arg, xd, lon, frame_bd, lan=lan
 
- lan = orb_get_lan(xd, frame_bd)
+ if(NOT keyword_set(lan)) then lan = orb_get_lan(xd, frame_bd)
  arg = lon - lan
 
  return, arg

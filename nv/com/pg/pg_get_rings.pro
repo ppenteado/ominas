@@ -131,8 +131,8 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
 	nm=rng__nm, $
 	_m=rng__m, $
 	em=rng__em, $
-	lpm=rng__lpm, $
-	dlpmdt=rng__dlpmdt)
+	tapm=rng__tapm, $
+	dtapmdt=rng__dtapmdt)
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get ring descriptors from the translators
@@ -195,8 +195,8 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    if(n_elements(rng__nm) NE 0) then dsk_set_nm, rd, rng__nm
    if(n_elements(rng__m) NE 0) then dsk_set_m, rd, rng__m
    if(n_elements(rng__em) NE 0) then dsk_set_em, rd, rng__em
-   if(n_elements(rng__lpm) NE 0) then dsk_set_lpm, rd, rng__lpm
-   if(n_elements(rng__dlpmdt) NE 0) then dsk_set_dlpmdt, rd, rng__dlpmdt
+   if(n_elements(rng__tapm) NE 0) then dsk_set_tapm, rd, rng__tapm
+   if(n_elements(rng__dtapmdt) NE 0) then dsk_set_dtapmdt, rd, rng__dtapmdt
   end
 
 

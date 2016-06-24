@@ -85,6 +85,7 @@ function dsk_get_edge_radius, dkd, ta, $
   begin
    a = tr(reform([_dkd.sma[0,ii,*]]))				; 1 x nta
    e = tr(reform([_dkd.ecc[0,ii,*]]))				; 1 x nta
+   dap = tr(reform([_dkd.dap[0,ii,*]]))				; 1 x nta
 
    nm = dsk_get_nm()
    m = reform(transpose(_dkd.m[*,ii,*]), 1,nta,nm, /over)	; 1 x nta x nm

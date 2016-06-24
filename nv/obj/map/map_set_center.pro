@@ -48,7 +48,8 @@ pro map_set_center, md, center, noevent=noevent
 @core.include
  _md = cor_dereference(md)
 
- _md.center=center
+ _md.center = center
+ _md.center[1,*,*] = reduce_angle(_md.center[1,*,*])
 
  cor_rereference, md, _md
  nv_notify, md, type = 0, noevent=noevent

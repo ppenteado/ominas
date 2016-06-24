@@ -62,7 +62,7 @@ map_size = [1200,300]
 ;	) 
 
 md = pg_get_maps(/over, bx=rd[0], $
-	map_type='RECTANGULAR', $	
+	map_type='RECTANGULAR_DISK', $	
 	map_center = [	mean(sma), $			; center radius 
 			!dpi], $			; center longitude
 	map_size=map_size $

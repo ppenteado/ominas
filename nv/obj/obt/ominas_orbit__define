@@ -1,16 +1,16 @@
 ;=============================================================================
-; ominas_disk::init
+; ominas_orbit::init
 ;
 ;=============================================================================
-function ominas_disk::init, ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
-@disk__keywords.include
+function ominas_orbit::init, ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, obd=obd0, $
+@orbit__keywords.include
 end_keywords
 @core.include
  
- void = self->ominas_solid::init(ii, crd=crd0, bd=bd0, sld=sld0, $
-@solid__keywords.include
+ void = self->ominas_disk::init(ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
+@disk__keywords.include
 end_keywords)
- if(keyword_set(dkd0)) then struct_assign, dkd0, self
+ if(keyword_set(obd0)) then struct_assign, obd0, self
 
  self.abbrev = 'DSK'
 
@@ -55,15 +55,15 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	ominas_disk__define
+;	ominas_orbit__define
 ;
 ;
 ; PURPOSE:
-;	Class structure for the DISK class.
+;	Class structure for the orbit class.
 ;
 ;
 ; CATEGORY:
-;	NV/LIB/DSK
+;	NV/LIB/OBT
 ;
 ;
 ; CALLING SEQUENCE:
@@ -203,12 +203,11 @@ end
 ;
 ;
 ; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 1/1998
-; 	Adapted by:	Spitale, 5/2016
+; 	Written by:	Spitale, 6/2016
 ;	
 ;-
 ;=============================================================================
-pro ominas_disk__define
+pro ominas_orbit__define
 
  ndv = bod_ndv()
  nm = dsk_get_nm()
@@ -216,7 +215,7 @@ pro ominas_disk__define
  npht = dsk_npht()
 
  struct = $
-    { ominas_disk, inherits ominas_solid, $
+    { ominas_orbit, inherits ominas_solid, $
 	sma:		 dblarr(ndv+1,2), $	; semimajor axes and derivatives
 						;  Negative sma means no edge
 	ecc:		 dblarr(ndv+1,2), $	; eccentricities and derivatives
@@ -233,7 +232,7 @@ pro ominas_disk__define
 	m:		 intarr(nm,2), $	; m values
 	em:		 dblarr(nm,2), $	; ecc for each m != 1
 	tapm:		 dblarr(nm,2), $	; tap for each m != 1
-	dtapmdt:	 dblarr(nm,2), $	; dtapdt for each m != 1
+	dtapmdt:	dblarr(nm,2), $		; dtapdt for each m != 1
 						; 0=inner edge, 1=outer edge	
 	libam:		 dblarr(nm,2), $	; Libration ampl. for each m != 1
 	libm:		 dblarr(nm,2), $	; Libration phase for each m != 1

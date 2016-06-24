@@ -46,8 +46,6 @@ pro grim_mode_plane_mouse_event, event, data
  widget_control, event.id, get_value=input_wnum
  output_wnum = grim_data.wnum
 
- widget_control, /hourglass
-
  xy = convert_coord(double(event.x), double(event.y), /device, /to_data)
  grim_wset, grim_data, output_wnum
 

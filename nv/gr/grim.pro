@@ -8886,16 +8886,16 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
  n_overlays = n_elements(overlays)
 
  for j=0, nplanes-1 do $
-  for i=0, n_overlays-1 do $
-   begin
-    name = grim_parse_overlay(overlays[i], obj_name)
+  begin
+   for i=0, n_overlays-1 do $
+    begin
+     name = grim_parse_overlay(overlays[i], obj_name)
+     grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
+     grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
+     if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
+    end
+  end
 
-    grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
-
-;print, i, j, ' ', name, ' ', obj_name
-    grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
-    if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
-   end
 
 end
 ;=============================================================================

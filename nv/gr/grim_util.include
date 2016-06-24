@@ -6,11 +6,11 @@ function grim_n_colors, type
 
  case type of
     1: n_colors = 256
-    2 : n_colors = 4096
-    3: n_colors = 4096
-    4: n_colors = 4096
-    5: n_colors = 4096
-    else : n_colors = 4096
+    2 : n_colors = 256
+    3: n_colors = 256
+    4: n_colors = 256
+    5: n_colors = 256
+    else : n_colors = 256
  endcase
 
  return, n_colors
