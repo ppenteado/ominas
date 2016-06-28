@@ -51,7 +51,7 @@ function map_to_surface, md, bx, map_pts
 
  if(class EQ 'CAMERA') then $
               if(NOT keyword_set(bx)) then $
-                 return, image_to_surface(md, 0, map_pts, frame_bd=frame_bd)
+                 return, image_to_surface(md, 0, map_pts)
 
 
  if(keyword_set(md)) then nt = n_elements(md) $

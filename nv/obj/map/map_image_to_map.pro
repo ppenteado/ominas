@@ -58,7 +58,6 @@ function map_image_to_map, md, _image_pts, valid=valid
  ii = transpose(linegen3z(2,nt,nv), [0,2,1])
  jj = transpose(gen3y(nt,nv,1))
 
- offset = (_md.offset)[ii]
  size = (_md.size)[ii]
  rotate = (_md.rotate)[jj]
 
@@ -72,8 +71,6 @@ function map_image_to_map, md, _image_pts, valid=valid
    valid = [-1]
    return, 0
   end
-
- map_pts = map_pts + offset
 
  return, map_pts
 end

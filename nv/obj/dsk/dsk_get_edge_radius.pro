@@ -13,20 +13,17 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	r = dsk_get_edge_radius(dkd, lon, frame_bd)
+;	r = dsk_get_edge_radius(dkd, ta, frame_bd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dkd:	 Array (nt) of any subclass of DISK.
 ;
-;	lon:	 Array (nlon) of longitudes at which to compute radii.
+;	ta:	 Array (nta) of true anomalies at which to compute radii.
 ;
-;	time:	 Array (nlon) of epochs to use instead of that of dkd.
+;	time:	 Array (nta) of epochs to use instead of that of dkd.
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One for each dkd.
 ;
 ;  OUTPUT: NONE
 ;
@@ -41,7 +38,7 @@
 ;
 ;
 ; RETURN:
-;	Array (nt x nlon) of radii computed at each longitude on each 
+;	Array (nt x nta) of radii computed at each true anomaly on each 
 ;	disk.
 ;
 ;
@@ -55,8 +52,8 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_get_edge_radius, dkd, lon, frame_bd, inner=inner, outer=outer, time=time, $
-    one_to_one=one_to_one, noevent=noevent
+function dsk_get_edge_radius, dkd, ta, $
+     inner=inner, outer=outer, time=time, one_to_one=one_to_one, noevent=noevent
 @core.include
  
  nv_notify, dkd, type = 1, noevent=noevent
@@ -65,36 +62,35 @@ function dsk_get_edge_radius, dkd, lon, frame_bd, inner=inner, outer=outer, time
  if(keyword__set(inner)) then ii = 0 $
  else if(keyword__set(outer)) then ii = 1
 
- nlon = n_elements(lon)
+ nta = n_elements(ta)
  nt = n_elements(_dkd)
 
  if(NOT keyword__set(one_to_one)) then $
   begin
-   MM = make_array(nlon,val=1)
+   MM = make_array(nta,val=1)
 
-   a = [reform([_dkd.sma[0,ii,*]])]#MM				; nt x nlon
-   e = [reform([_dkd.ecc[0,ii,*]])]#MM				; nt x nlon
-   lp = orb_arg_to_lon(dkd, dsk_get_ap(dkd, frame_bd), frame_bd)#MM
+   a = [reform([_dkd.sma[0,ii,*]])]#MM				; nt x nta
+   e = [reform([_dkd.ecc[0,ii,*]])]#MM				; nt x nta
+   dap = [reform([_dkd.dap[0,*]])]#MM				; nt x nta
 
    nm = dsk_get_nm()
-   sub = linegen3y(nt,nlon,nm)
+   sub = linegen3y(nt,nta,nm)
 
-   m = (transpose(_dkd.m[*,ii,*]))[sub]			; nt x nlon x nm
-   em = (transpose(_dkd.em[*,ii,*]))[sub]		; nt x nlon x nm
-   lpm = (transpose(_dkd.lpm[*,ii,*]))[sub]		; nt x nlon x nm
-   dlpmdt = (transpose(_dkd.dlpmdt[*,ii,*]))[sub]	; nt x nlon x nm
+   m = (transpose(_dkd.m[*,ii,*]))[sub]			; nt x nta x nm
+   em = (transpose(_dkd.em[*,ii,*]))[sub]		; nt x nta x nm
+   tapm = (transpose(_dkd.tapm[*,ii,*]))[sub]		; nt x nta x nm
+   dtapmdt = (transpose(_dkd.dtapmdt[*,ii,*]))[sub]	; nt x nta x nm
   end $
  else $
   begin
-   a = tr(reform([_dkd.sma[0,ii,*]]))				; 1 x nlon
-   e = tr(reform([_dkd.ecc[0,ii,*]]))				; 1 x nlon
-   lp = tr(orb_arg_to_lon(dkd, dsk_get_ap(dkd, frame_bd), frame_bd))
+   a = tr(reform([_dkd.sma[0,ii,*]]))				; 1 x nta
+   e = tr(reform([_dkd.ecc[0,ii,*]]))				; 1 x nta
 
    nm = dsk_get_nm()
-   m = reform(transpose(_dkd.m[*,ii,*]), 1,nlon,nm, /over)	; 1 x nlon x nm
-   em = reform(transpose(_dkd.em[*,ii,*]), 1,nlon,nm, /over)	; 1 x nlon x nm
-   lpm = reform(transpose(_dkd.lpm[*,ii,*]), 1,nlon,nm, /over)	; nt x nlon x nm
-   dlpmdt = reform(transpose(_dkd.dlpmdt[*,ii,*]), 1,nlon,nm, /over) ; nt x nlon x nm
+   m = reform(transpose(_dkd.m[*,ii,*]), 1,nta,nm, /over)	; 1 x nta x nm
+   em = reform(transpose(_dkd.em[*,ii,*]), 1,nta,nm, /over)	; 1 x nta x nm
+   tapm = reform(transpose(_dkd.tapm[*,ii,*]), 1,nta,nm, /over)	; nt x nta x nm
+   dtapmdt = reform(transpose(_dkd.dtapmdt[*,ii,*]), 1,nta,nm, /over) ; nt x nta x nm
   end
 
 
@@ -102,13 +98,13 @@ function dsk_get_edge_radius, dkd, lon, frame_bd, inner=inner, outer=outer, time
   begin
    dt = time - bod_time(dkd)
 
-   dlpdt = orb_compute_dlpdt(dkd, frame_bd, sma=a)
+dtapdt = orb_compute_dtapdt(dkd, sma=a)
 
-   lp = lp + dt*dlpdt
-   lpm = lpm + (dt#make_array(nm,val=1d))*dlpmdt
+   tap = tap + dt*dtapdt
+   tapm = tapm + (dt#make_array(nm,val=1d))*dtapmdt
   end
 
 
- return, dsk_shape_radial(a, e, lp, lon, m, em, lpm)
+ return, dsk_shape_radial(a, e, dap, ta, m, em, tapm)
 end
 ;===========================================================================

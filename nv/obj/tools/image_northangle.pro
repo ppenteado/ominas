@@ -58,7 +58,7 @@ function image_northangle, cd, gbx, p, valid=valid
  valid = 0
 
  body_pt = body_pt[0,*]
- nn = v_unit(glb_surface_normal(gbx, body_pt))
+ nn = v_unit(glb_get_surface_normal(/body, gbx, body_pt))
  ll = v_unit(v_cross(zz, nn))
 
  northaz = v_cross(nn, ll)

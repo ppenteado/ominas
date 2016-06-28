@@ -172,7 +172,7 @@ function pg_drag, object_ptd, draw=draw, xor_graphics=xor_graphics, $
  
 
  ;------------------------------------------
- ; drag limb with cursor
+ ; drag points with cursor
  ;------------------------------------------
  if(NOT keyword_set(axis_ptd)) then axis = [0l,0l] $
  else axis = pnt_points(axis_ptd)

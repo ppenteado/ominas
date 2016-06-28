@@ -31,10 +31,6 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
-;
 ;	epsilon:	Distance in front of the disk for a point to be
 ;			considered "in front of" the disk.  Default is 1.
 ;
@@ -53,7 +49,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_hide_points, dkd, r, points, epsilon=epsilon, frame_bd=frame_bd;, invert=invert
+function dsk_hide_points, dkd, r, points, epsilon=epsilon;, invert=invert
 @core.include
  
 
@@ -65,7 +61,7 @@ function dsk_hide_points, dkd, r, points, epsilon=epsilon, frame_bd=frame_bd;, i
  rr = r[gen3y(nv,3,nt)]
  v = points-rr
 
- p = dsk_intersect(dkd, rr, v, frame_bd=frame_bd, hit=hit)
+ p = dsk_intersect(dkd, rr, v, hit=hit)
  if(hit[0] EQ -1) then return, -1
 
  ii = colgen(nv,3,nt,hit)
@@ -98,8 +94,7 @@ end
 ; Returns subscripts of points that are hidden from the viewer at r by the disk.
 ;
 ;===========================================================================
-function _dsk_hide_points, dkd, r, points, epsilon=epsilon, frame_bd=frame_bd, $
-              invert=invert
+function _dsk_hide_points, dkd, r, points, epsilon=epsilon, invert=invert
 @core.include
  
 
@@ -111,12 +106,12 @@ function _dsk_hide_points, dkd, r, points, epsilon=epsilon, frame_bd=frame_bd, $
  v = points-rr
  vmag = v_mag(v)
 
- p = dsk_intersect(dkd, rr, v, frame_bd=frame_bd)
+ p = dsk_intersect(dkd, rr, v)
  pmag = v_mag(p-rr)
 
 
- p_rp = dsk_body_to_disk(dkd, p, frame_bd=frame_bd)
- rad = dsk_get_radius(dkd, p_rp[*,1,*], frame_bd)
+ p_rp = dsk_body_to_disk(dkd, p)
+ rad = dsk_get_radius(dkd, p_rp[*,1,*])
 
  if(NOT keyword_set(epsilon)) then epsilon = 1d-8 * rad[0,1,0]
 

@@ -49,7 +49,7 @@ function image_ansa_far, cd, rd
  a1 = bod_inertial_to_body(rd, v_unit(v_cross(c,z)))
  a2 = -a1
 
- dsk_pts = dsk_body_to_disk(rd, [a1, a2], frame=rd)
+ dsk_pts = dsk_body_to_disk(rd, [a1, a2])
  lons = dsk_pts[*,1]
 
  return, lons

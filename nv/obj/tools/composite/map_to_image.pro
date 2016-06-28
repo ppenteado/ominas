@@ -40,10 +40,6 @@
 ;
 ;	body_pts:	Body coordinates of output points.
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
 ;
 ;   OUTPUT: NONE
 ;
@@ -59,15 +55,14 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function map_to_image, md, cd, bx, map_pts, body_pts=body_pts, $
-       valid=valid, frame_bd=frame_bd
+function map_to_image, md, cd, bx, map_pts, body_pts=body_pts, valid=valid
 
  if(NOT keyword_set(map_pts)) then return, 0
 
  if(NOT keyword_set(bx)) then return, map_map_to_image(md, map_pts, valid=valid)
 
  return, surface_to_image(cd, bx, body_pts=body_pts, $
-           map_to_surface(md, bx, map_pts), valid=valid, frame_bd=frame_bd)
+           map_to_surface(md, bx, map_pts), valid=valid)
 
 end
 ;===========================================================================

@@ -5,4 +5,4 @@
    vectors=vectors, $
    flags=flags, $
    tags=tags, data=data, $
-   assoc_idp=assoc_idp, $
+   assoc_xd=assoc_xd, $

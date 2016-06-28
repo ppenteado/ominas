@@ -76,18 +76,18 @@ function get_limb_profile_outline, cd, gbx, points, alt=calt, az=caz, $
  ;----------------------------------------
  if(keyword_set(points)) then $
   begin
-   dsk_pts = image_to_disk(cd, dkd, points, frame=dkd, body=body_pts)
+   dsk_pts = image_to_disk(cd, dkd, points, body=body_pts)
 
    crad = dsk_pts[*,0]
    ss = sort(crad)
    crad = crad[ss]
 
-   clon = dsk_pts[*,1]
-   clon = clon[ss]
+   cta = dsk_pts[*,1]
+   cta = cta[ss]
   end 
 
- if(NOT keyword_set(caz)) then caz = -orb_lon_to_anom(dkd, clon, dkd)
- if(NOT keyword_set(clon)) then clon = orb_anom_to_lon(dkd, -caz, dkd)
+ if(NOT keyword_set(caz)) then caz = -cta
+ if(NOT keyword_set(cta)) then cta = -caz
 
  cmag = v_mag(glb_get_limb_points(gbx, cam_pos_body, 2, alpha=caz))
  if(NOT keyword_set(calt)) then calt = crad - cmag
@@ -107,7 +107,7 @@ function get_limb_profile_outline, cd, gbx, points, alt=calt, az=caz, $
  ;-------------------------------------------------------
  if(keyword_set(graphic)) then $
   begin
-   dirs = glb_surface_normal(gbx, limb_pts_body)
+   dirs = glb_get_surface_normal(/body, gbx, limb_pts_body)
    inner_pts_body = limb_pts_body + dirs * calt[0]
    outer_pts_body = limb_pts_body + dirs * calt[1]
   end $
@@ -123,9 +123,9 @@ function get_limb_profile_outline, cd, gbx, points, alt=calt, az=caz, $
  outer_pts = bod_body_to_inertial_pos(gbx, outer_pts_body)
 
  inner_pts_disk = dsk_body_to_disk(dkd, $
-                   bod_inertial_to_body_pos(dkd, inner_pts), frame=dkd)
+                   bod_inertial_to_body_pos(dkd, inner_pts))
  outer_pts_disk = dsk_body_to_disk(dkd, $
-                   bod_inertial_to_body_pos(dkd, outer_pts), frame=dkd)
+                   bod_inertial_to_body_pos(dkd, outer_pts))
 
 
  ;----------------------------------------

@@ -22,9 +22,6 @@
 ;
 ;	bx:		Body descriptor; globe or disk.
 ;
-;	frame_bd:	Body descriptor giving the reference frame if bx is 
-;			a disk.
-;
 ;  OUTPUT:  NONE
 ;
 ;
@@ -56,7 +53,7 @@
 ;
 ;-
 ;=============================================================================
-function footprint, cd, bx, slop=slop, corners=corners, frame_bd=frame_bd, $
+function footprint, cd, bx, slop=slop, corners=corners, $
                    image_pts=image_pts, body_pts=body_pts, valid=valid, sample=sample
 
  status = -1
@@ -80,8 +77,7 @@ function footprint, cd, bx, slop=slop, corners=corners, frame_bd=frame_bd, $
  ;-----------------------------------
  ; compute footprint
  ;-----------------------------------
- surface_pts = image_to_surface(cd, bx, image_pts, frame_bd=frame_bd, $
-                                                 body_pts=body_pts, valid=valid)
+ surface_pts = image_to_surface(cd, bx, image_pts, body_pts=body_pts, valid=valid)
 
  nsurf = n_elements(surface_pts)/3
  if(nsurf GT np) then $

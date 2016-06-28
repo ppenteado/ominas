@@ -31,7 +31,7 @@
 ;
 ;
 ; RETURN:
-;	Array (2 x 3) giving the ranges in radius, longitude and altitude.
+;	Array (2 x 3) giving the ranges in radius, true anomaly and altitude.
 ;
 ;
 ; MODIFICATION HISTORY:

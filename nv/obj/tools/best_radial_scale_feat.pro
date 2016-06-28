@@ -8,7 +8,7 @@ function best_radial_scale_feat, cd, rd, pd, $
 
 
  if(NOT keyword_set(radmax)) then $
-   dsk_image_bounds, cd, rd, pd, $
+   dsk_image_bounds, cd, rd, $
           radmin=radmin, radmax=radmax, lonmin=lonmin, lonmax=lonmax
 
 
@@ -16,7 +16,7 @@ function best_radial_scale_feat, cd, rd, pd, $
  sma = dsk_sma(rdtest) & sma[0] = max(sma) & dsk_set_sma, rdtest, sma
 
 
- ring_ptd = pg_disk(cd=cd, dkx=rdtest, gbx=pd, fov=1)
+ ring_ptd = pg_disk(cd=cd, dkx=rdtest, fov=1)
 
  image_pts = pnt_points(/vis, ring_ptd[0])
  w = in_image(cd, image_pts)
@@ -30,15 +30,15 @@ function best_radial_scale_feat, cd, rd, pd, $
 
 
  w = where(resperp EQ min(resperp))
- disk_pt = inertial_to_disk(rd, inertial_pts[w,*], frame=pd)
+ disk_pt = inertial_to_disk(rd, inertial_pts[w,*])
 
 
  pp0 = image_pts[*,w]
 
  p = bod_body_to_inertial_pos(rd, $
-       dsk_disk_to_body(rd, frame=pd, $
-         image_to_disk(cd, rd, pp0, frame=pd)))
- vv = dsk_get_perp(cd, rd, p, frame=pd, uu=uu)
+       dsk_disk_to_body(rd, $
+         image_to_disk(cd, rd, pp0)))
+ vv = dsk_get_perp(cd, rd, p, uu=uu)
 
 
  diag = sqrt(total(cam_size(cd)^2))

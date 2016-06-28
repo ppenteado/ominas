@@ -31,8 +31,6 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	frame_bd:  Frame descriptor.
-;
 ;	north:     If set, the retruned normals will be pointed north.  
 ;	           Otherwise, they point toward the observer's hemisphere.
 ;
@@ -54,7 +52,7 @@
 ;	
 ;-
 ;===========================================================================
-function dsk_surface_normal, dkd, v, r, frame_bd=frame_bd, noevent=noevent, north=north
+function dsk_surface_normal, dkd, v, r, noevent=noevent, north=north
 @core.include
  
  nv_notify, dkd, type = 1, noevent=noevent

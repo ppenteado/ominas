@@ -468,11 +468,6 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 			                                hi=hi, status=status)
 
 	   val = $
-	      dh_get_point(dh, 'map_offset', n_obj=n_obj, hi=hi, status=status)
-	   if(keyword_set(val)) then $
-	                      map_offset = reform(val, 2,n_obj, /overwrite)
-
-	   val = $
 	      dh_get_point(dh, 'map_origin', n_obj=n_obj, hi=hi, status=status)
 	   if(keyword_set(val)) then $
 	                      map_origin = reform(val, 2,n_obj, /overwrite)
@@ -516,7 +511,6 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 		rotate=map_rotate, $
 		size=map_size, $
 		units=map_units, $
-		offset=map_offset, $
 		origin=map_origin, $
 		center=map_center, $
 		scale=map_scale, $

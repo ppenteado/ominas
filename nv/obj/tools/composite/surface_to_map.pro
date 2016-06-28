@@ -45,7 +45,7 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function surface_to_map, md, bx, surface_pts, frame_bd=frame_bd
+function surface_to_map, md, bx, surface_pts
 
  if(NOT keyword_set(surface_pts)) then return, 0
 
@@ -54,7 +54,7 @@ function surface_to_map, md, bx, surface_pts, frame_bd=frame_bd
 
  if(class EQ 'CAMERA') then $
                if(NOT keyword_set(bx)) then $
-                 return, surface_to_image(md, 0, surface_pts, frame_bd=frame_bd)
+                 return, surface_to_image(md, 0, surface_pts)
 
  nt = n_elements(md)
  sv = size(surface_pts)

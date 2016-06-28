@@ -13,7 +13,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     rad=pg_ring_sector(cd=cd, dkx=dkx, gbx=gbx)
+;     rad=pg_ring_sector(cd=cd, dkx=dkx)
 ;
 ;
 ; ARGUMENTS:
@@ -31,9 +31,7 @@
 ;
 ;	   dkx:     Disk descriptor describing the ring.
 ;
-;          gbx:     Globe descriptor giving the primary for the ring.
-;
-;           gd:     Generic descriptor containnig the above descriptors.
+;           gd:     Generic descriptor containing the above descriptors.
 ;
 ;      win_num:     Window number of IDL graphics window in which to select
 ;                   box, default is current window.
@@ -87,7 +85,7 @@
 ; pg_ring_sector
 ;
 ;=============================================================================
-function pg_ring_sector, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+function pg_ring_sector, cd=cd, dkx=dkx, gd=gd, $
                          rad=rad, lon=lon, sample=sample, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
@@ -98,7 +96,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
  ; if rad/lon bounds given, just build outline and return
  ;--------------------------------------------------------
  if(keyword_set(rad)) then $
-   return, pg_ring_sector_radlon(cd=cd, dkx=dkx, gbx=_gbx, gd=gd, rad, lon)
+   return, pg_ring_sector_radlon(cd=cd, dkx=dkx, gd=gd, rad, lon)
 
 
  ;----------------------------------------------------------------
@@ -124,7 +122,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
 	;----------------------------------------
 	; left: radial sector
 	;----------------------------------------
-	1: return, pg_ring_sector_rad(cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+	1: return, pg_ring_sector_rad(cd=cd, dkx=dkx, gd=gd, $
                          lon=lon, sample=sample, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
@@ -134,7 +132,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
 	;----------------------------------------
 	; middle:
 	;----------------------------------------
-	2: return, pg_ring_sector_oblique(cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+	2: return, pg_ring_sector_oblique(cd=cd, dkx=dkx, gd=gd, $
                          lon=lon, sample=sample, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
@@ -144,7 +142,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
 	;----------------------------------------
 	; right: perpendicular sector
 	;----------------------------------------
-	4: return, pg_ring_sector_perp(cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+	4: return, pg_ring_sector_perp(cd=cd, dkx=dkx, gd=gd, $
                          lon=lon, sample=sample, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $

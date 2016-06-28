@@ -84,12 +84,12 @@ function dsk_evolve, dkd, dt, nodv=nodv
                                                   [1,2,0]), 1, 2, ndkd, ndt)
 
  ;----------------------------
- ; lpm
+ ; tapm
  ;----------------------------
-; _tdkd.lpm = reduce_angle(_tdkd.lpm + dt* _tdkd.dlpmdt)
+; _tdkd.tapm = reduce_angle(_tdkd.tapm + dt* _tdkd.dtapmdt)
 
  _tdkd.libm = reduce_angle(_tdkd.libm + dt* _tdkd.dlibmdt)
- _tdkd.lpm = reduce_angle(_tdkd.lpm + dt* _tdkd.dlpmdt  $
+ _tdkd.tapm = reduce_angle(_tdkd.tapm + dt* _tdkd.dtapmdt  $
                                          + _tdkd.libam*cos(_tdkd.libm))
 
 

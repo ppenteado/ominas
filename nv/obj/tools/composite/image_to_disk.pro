@@ -30,10 +30,7 @@
 ;
 ;
 ; KEYWORDS:
-;   INPUT:
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
+;   INPUT: NONE
 ;
 ;   OUTPUT:
 ;	valid:	Indices of valid output points.
@@ -55,8 +52,7 @@
 ;       Written by:     Tiscareno (modified from image_to_surface)
 ;-
 ;=============================================================================
-function image_to_disk, cd, dkx, p, frame_bd=frame_bd, hit=hit, valid=valid, $
-           body_pts=v_int
+function image_to_disk, cd, dkx, p, hit=hit, valid=valid, body_pts=v_int
 
  if(NOT keyword_set(p)) then return, 0
 
@@ -89,13 +85,13 @@ hit = 0
 	 rr = image_to_inertial(cd, p)
 	 r = bod_inertial_to_body(dkx, rr)
 
-	 v_int = dsk_intersect(dkx, v, r, hit=hit, frame_bd=frame_bd)
+	 v_int = dsk_intersect(dkx, v, r, hit=hit)
 	 valid = hit
 
 ;         w = where(hit EQ 1)
 ;         if(w[0] EQ -1) then return, 0
 
-	 return, dsk_body_to_disk(dkx, v_int, frame_bd=frame_bd)
+	 return, dsk_body_to_disk(dkx, v_int)
 	end
 
 

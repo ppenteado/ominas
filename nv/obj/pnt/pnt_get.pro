@@ -61,7 +61,7 @@
 pro pnt_get, ptd, cat=cat, condition=condition, nv=nv, nt=nt, $
               points=points, vectors=vectors, flags=flags, $
               name=name, desc=desc, input=input, data=data, tags=tags, $
-              udata=udata, uname=uname, assoc_idp=assoc_idp, noevent=noevent, $
+              udata=udata, uname=uname, assoc_xd=assoc_xd, noevent=noevent, $
 @pnt_condition_keywords.include
 end_keywords
 
@@ -79,7 +79,7 @@ end_keywords)
  if(arg_present(input)) then input = pnt_input(ptd, /noevent)
  if(arg_present(data)) then data = pnt_data(ptd, cat=cat, condition=condition, /noevent)
  if(arg_present(tags)) then tags = pnt_tags(ptd, /noevent)
- if(arg_present(assoc_idp)) then assoc_idp = pnt_assoc_idp(ptd, /noevent)
+ if(arg_present(assoc_xd)) then assoc_xd = pnt_assoc_xd(ptd, /noevent)
  if(arg_present(udata)) then udata = cor_udata(ptd, uname, /noevent)
  if(arg_present(nv)) then nv = pnt_nv(ptd, /noevent, condition=condition)
  if(arg_present(nt)) then nt = pnt_nt(ptd, /noevent, condition=condition)

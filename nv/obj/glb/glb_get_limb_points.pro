@@ -126,8 +126,6 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
    ; compute current limb points
    ;---------------------------------
    rlimb_surface = glb_body_to_globe(gbd, v)
-   lat = rlimb_surface[*,0]
-   lon = rlimb_surface[*,1]
 
    rlimb_surface[*,2] = 0d
    rlimb_body = glb_globe_to_body(gbd, rlimb_surface)
@@ -138,7 +136,7 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
    x = rlimb_body - rr
    x_mag = v_mag(x)
 
-   rnorm_body = v_unit(glb_get_surface_normal(gbd, lat, lon))
+   rnorm_body = glb_get_surface_normal(gbd, rlimb_surface)
    residuals = v_inner(rnorm_body, x) / x_mag
 
    ;---------------------------------

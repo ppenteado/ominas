@@ -40,7 +40,7 @@
 ;
 ;	tags:		Tags for point-by-point data.
 ;
-;	assoc_idp:	IDP of an associated descriptor.
+;	assoc_xd:	Associated descriptor.
 ;
 ;
 ;

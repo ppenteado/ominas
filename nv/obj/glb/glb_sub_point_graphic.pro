@@ -64,7 +64,7 @@ function glb_sub_point_graphic, gbd, v, noevent=noevent
  while(NOT done) do $
   begin
    vv = v_unit(v - result)
-   normal = glb_get_surface_normal_body(gbd, result)
+   normal = glb_get_surface_normal(/body, gbd, result)
 
    theta = v_angle(vv, normal)
 

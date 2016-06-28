@@ -50,7 +50,7 @@ pro dat_unload_data, dd, all=all
 
  if(keyword_set(all)) then dd = *nv_state.dds_p
  if(NOT obj_valid(dd)) then return
- if(NOT keyword_set(*dd[0])) then return
+;;; if(NOT keyword_set(*dd[0])) then return
 
  ndd = n_elements(dd)
  for i=0, ndd-1 do $

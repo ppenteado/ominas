@@ -177,121 +177,125 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ptd, $
    ; get all points
    ;-----------------------------------
    pnt_get, object_ptd[i], points=all_pts, flags=flags, /visible
+     if(keyword_set(all_pts)) then $
+      begin
 
-   ;-----------------------------------
-   ; determine center if possible
-   ;-----------------------------------
-   center = 0
-   if(keyword_set(cd) AND keyword_set(bx)) then $
+     ;-----------------------------------
+     ; determine center if possible
+     ;-----------------------------------
+     center = 0
+     if(keyword_set(cd) AND keyword_set(bx)) then $
                           center = pnt_points(pg_center(cd=cd, bx=bx[i]))
 
-   ;-----------------------------------------------
-   ; compute curve normals at all points and save
-   ;-----------------------------------------------
-   n_pts_all=(size(all_pts))[2]
+     ;-----------------------------------------------
+     ; compute curve normals at all points and save
+     ;-----------------------------------------------
+     n_pts_all=(size(all_pts))[2]
 
-   if(keyword_set(dir)) then $
-    begin
-     all_cos_alpha = make_array(n_pts_all, val=dir[0])
-     all_sin_alpha = make_array(n_pts_all, val=dir[1])
-    end $
-   else icv_compute_directions, all_pts, center=center, $
+     if(keyword_set(dir)) then $
+      begin
+       all_cos_alpha = make_array(n_pts_all, val=dir[0])
+       all_sin_alpha = make_array(n_pts_all, val=dir[1])
+      end $
+     else icv_compute_directions, all_pts, center=center, $
                               cos_alpha=all_cos_alpha, sin_alpha=all_sin_alpha
 
-   ;------------------------------------------------------
-   ; trim points that are invisible or too close to edge
-   ;------------------------------------------------------
-   x0=edge[i] & y0=edge[i]
-   x1=s[1]-1-edge[i] & y1=s[2]-1-edge[i]
-   im_pts = trim_external_points(all_pts, sub=sub, x0, x1, y0, y1)
+     ;------------------------------------------------------
+     ; trim points that are invisible or too close to edge
+     ;------------------------------------------------------
+     x0=edge[i] & y0=edge[i]
+     x1=s[1]-1-edge[i] & y1=s[2]-1-edge[i]
+     im_pts = trim_external_points(all_pts, sub=sub, x0, x1, y0, y1)
 
-   if(sub[0] NE -1) then $
-    begin
-     ;------------------------------------------------------
-     ; if scan_ptd given, just update the relevant offsets
-     ;------------------------------------------------------
-     if(keyword_set(_scan_ptd)) then $
-      begin 
-       pnt_get, _scan_ptd[i], data=scan_data, points=scan_pts
-       cos_alpha = scan_data[0,*]
-       sin_alpha = scan_data[1,*]
-       scan_offsets = scan_data[2,*]
-       cc = scan_data[3,*]
-       sigma = scan_data[4,*]
-       all_pts = scan_data[5:6,*]
-
-       scan_offsets = icv_invert_scan_offsets(im_pts, scan_pts, cos_alpha, sin_alpha)
-      end $
-     ;------------------------------------------------------
-     ; otherwise perform the image scan
-     ;------------------------------------------------------
-     else $
+     if(sub[0] NE -1) then $
       begin
-       cos_alpha = all_cos_alpha[sub]
-       sin_alpha = all_sin_alpha[sub]
-
-       ;-----------------------------------
-       ; get the image strip
-       ;-----------------------------------
-       n_pts = (size(im_pts))[2]
-       strip = icv_strip_curve(cd, image, zero=szero, $
-                             im_pts, width[i], width[i], cos_alpha, sin_alpha)
-
        ;------------------------------------------------------
-       ; determine the edge model - use atan model by default
+       ; if scan_ptd given, just update the relevant offsets
        ;------------------------------------------------------
-       if(NOT keyword_set(model_p)) then $
-        begin
-         model = edge_model_atan(width[i],1,zero=mzero)##make_array(n_pts,val=1.0)
-         mzeros = make_array(n_pts,val=mzero)
+       if(keyword_set(_scan_ptd)) then $
+        begin 
+         pnt_get, _scan_ptd[i], data=scan_data, points=scan_pts
+         cos_alpha = scan_data[0,*]
+         sin_alpha = scan_data[1,*]
+         scan_offsets = scan_data[2,*]
+         cc = scan_data[3,*]
+         sigma = scan_data[4,*]
+         all_pts = scan_data[5:6,*]
+
+         scan_offsets = icv_invert_scan_offsets(im_pts, scan_pts, cos_alpha, sin_alpha)
         end $
+       ;------------------------------------------------------
+       ; otherwise perform the image scan
+       ;------------------------------------------------------
        else $
         begin
-         model = *model_p[i]##make_array(n_pts,val=1.0)
-         if(extend_mz) then mzeros = make_array(n_pts,val=mzero[i]) $
-         else mzeros = mzeros[i,*]
-        end
+         cos_alpha = all_cos_alpha[sub]
+         sin_alpha = all_sin_alpha[sub]
 
-       ;-------------------
-       ; perform the scan
-       ;-------------------
-       if((keyword_set(model_p)) AND (algorithm[0] EQ 'MODEL')) then $
-         if((size(strip))[2] LE (size(model))[2]) then $
-             nv_message, name='pg_cvscan', 'Model width must be less than scan width.'
+         ;-----------------------------------
+         ; get the image strip
+         ;-----------------------------------
+         n_pts = (size(im_pts))[2]
+         strip = icv_strip_curve(cd, image, zero=szero, $
+                             im_pts, width[i], width[i], cos_alpha, sin_alpha)
 
-       scan_offsets = $
-          icv_scan_strip(strip, model, szero, mzeros, $
+         ;------------------------------------------------------
+         ; determine the edge model - use atan model by default
+         ;------------------------------------------------------
+         if(NOT keyword_set(model_p)) then $
+          begin
+           model = edge_model_atan(width[i],1,zero=mzero)##make_array(n_pts,val=1.0)
+           mzeros = make_array(n_pts,val=mzero)
+          end $
+         else $
+          begin
+           model = *model_p[i]##make_array(n_pts,val=1.0)
+           if(extend_mz) then mzeros = make_array(n_pts,val=mzero[i]) $
+           else mzeros = mzeros[i,*]
+          end
+
+         ;-------------------
+         ; perform the scan
+         ;-------------------
+         if((keyword_set(model_p)) AND (algorithm[0] EQ 'MODEL')) then $
+           if((size(strip))[2] LE (size(model))[2]) then $
+               nv_message, name='pg_cvscan', 'Model width must be less than scan width.' 
+
+
+         scan_offsets = $
+            icv_scan_strip(strip, model, szero, mzeros, $
                       algorithm=algorithm[i], arg=arg[i], cc=cc, sigma=sigma)
 
 
-       scan_pts = icv_convert_scan_offsets(im_pts, $
+         scan_pts = icv_convert_scan_offsets(im_pts, $
                                        scan_offsets, cos_alpha, sin_alpha)
-      end 
+        end 
 
-     ;--------------------
-     ; save the scan data
-     ;--------------------
-     scan_data = dblarr(7,n_pts_all)
-     tags = strarr(7)
-     scan_data[0,*] = all_cos_alpha  & tags[0] = 'scan_cos'	  ; cosines
-     scan_data[1,*] = all_sin_alpha  & tags[1] = 'scan_sin'	  ; sines
-     scan_data[2,sub] = scan_offsets & tags[2] = 'scan_offsets'	  ; offsets
-     scan_data[3,sub] = cc	   & tags[3] = 'scan_cc'		  ; correlation
-     scan_data[4,sub] = sigma	   & tags[4] = 'scan_sigma'	  ; offset error
-     scan_data[5,sub] = all_pts[0,sub] & tags[5] = 'scan_model_xpts' ; model pts
-     scan_data[6,sub] = all_pts[1,sub] & tags[6] = 'scan_model_ypts'	
+       ;--------------------
+       ; save the scan data
+       ;--------------------
+       scan_data = dblarr(7,n_pts_all)
+       tags = strarr(7)
+       scan_data[0,*] = all_cos_alpha  & tags[0] = 'scan_cos'	  ; cosines
+       scan_data[1,*] = all_sin_alpha  & tags[1] = 'scan_sin'	  ; sines
+       scan_data[2,sub] = scan_offsets & tags[2] = 'scan_offsets'	  ; offsets
+       scan_data[3,sub] = cc	   & tags[3] = 'scan_cc'		  ; correlation
+       scan_data[4,sub] = sigma	   & tags[4] = 'scan_sigma'	  ; offset error
+       scan_data[5,sub] = all_pts[0,sub] & tags[5] = 'scan_model_xpts' ; model pts
+       scan_data[6,sub] = all_pts[1,sub] & tags[6] = 'scan_model_ypts'	
 
-     scan_pts_all = dblarr(2,n_pts_all)
-     scan_pts_all[*,sub] = scan_pts
+       scan_pts_all = dblarr(2,n_pts_all)
+       scan_pts_all[*,sub] = scan_pts
 
-     tsub = complement(flags, sub)
-     if(tsub[0] NE -1) then flags[tsub] = flags[tsub] OR PTD_MASK_INVISIBLE
+       tsub = complement(flags, sub)
+       if(tsub[0] NE -1) then flags[tsub] = flags[tsub] OR PTD_MASK_INVISIBLE
 
-     scan_ptd[i] = pnt_create_descriptors(points = scan_pts_all, $
+       scan_ptd[i] = pnt_create_descriptors(points = scan_pts_all, $
                           desc = 'cvscan', $
                           data = scan_data, $
                           flags = flags, $
                           tags = tags)
+      end
     end
   end
 

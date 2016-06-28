@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	z = dsk_shape_vertical(dkd, a, i, lan, lon, l, il, lanl)
+;	z = dsk_shape_vertical(dkd, a, ta, l, il, taanl)
 ;
 ;
 ; ARGUMENTS:
@@ -22,17 +22,13 @@
 ;
 ;	a:	 Array (nt) of semimajor axis values. 
 ;
-;	i:	 Array (nt) of inclination values. 
-;
-;	lan:	 Array (nt) of longitudes of ascending node. 
-;
-;	lon:	 Array (nlon) of longitudes at which to compute elevations.
+;	ta:	 Array (nta) of true anomalies at which to compute elevations.
 ;
 ;	l:	 Array (nt) of vertical wavenumbers.
 ;
 ;	il:	 Array (nt) of inclinations for each l.
 ;
-;	lanl:	 Array (nt) of longitudes of ascending node for each l.
+;	taanl:	 Array (nt) of true anomalies of ascending node for each l.
 ;
 ;
 ;  OUTPUT: NONE
@@ -40,10 +36,6 @@
 ;
 ; KEYWORDS:
 ;  INPUT:  
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One for each dkd.
-;
 ;	ll:	If set, only the elevation component for this wavenumber
 ;		is returned.
 ;
@@ -54,7 +46,7 @@
 ;
 ;
 ; RETURN:
-;	Array (nt x nlon) of elevations computed at each longitude on each 
+;	Array (nt x nta) of elevations computed at each true anomaly on each 
 ;	disk.
 ;
 ;
@@ -68,48 +60,46 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_shape_vertical, dkd=dkd, frame_bd=frame_bd, $
-	a, i, lan, $		; nt x nlon
-	lon, $			; nlon
-	l, il, lanl, $		; nt x nlon x nm
+function dsk_shape_vertical, dkd=dkd, $
+	a, $			; nt x nta
+	ta, $			; nta
+	l, il, taanl, $		; nt x nta x nm
 	ll=ll, lii=lii
 
  if(keyword_set(dkd)) then $
   begin						; keyword__set intentional here
    if(NOT keyword_set(a)) then a = (dsk_sma(dkd))[0]
    if(NOT keyword_set(e)) then e = (dsk_ecc(dkd))[0]
-   if(NOT keyword_set(lp)) then $
-       lp = orb_arg_to_lon(dkd, dsk_get_ap(dkd, frame_bd), frame_bd)
    if(NOT keyword_set(m)) then m = (dsk_m(dkd))[*,0]
    if(NOT keyword_set(em)) then em = (dsk_em(dkd))[*,0]
-   if(NOT keyword_set(lpm)) then lpm = (dsk_lpm(dkd))[*,0]
+   if(NOT keyword_set(taanl)) then taanl = (dsk_taanl(dkd))[*,0]
   end
 
- nlon = n_elements(lon)
- nt = n_elements(a)/nlon
+ nta = n_elements(ta)
+ nt = n_elements(a)/nta
 
- z00 = dblarr(nt, nlon)	
+ z00 = dblarr(nt, nta)	
 
  if(NOT keyword_set(l)) then return, z00
  if(l[0] EQ 0) then return, z00
 
- nl = n_elements(l) / nt / nlon
+ nl = n_elements(l) / nt / nta
 
- sub = linegen3z(nt,nlon,nl)
- lons = (lon##make_array(nt,val=1d))[sub]
+ sub = linegen3z(nt,nta,nl)
+ tas = (ta##make_array(nt,val=1d))[sub]
  aa = a[sub]
 
- zl = aa*sin(il)*sin(l*(lons-lanl))
+ zl = aa*sin(il)*sin(l*(tas-taanl))
 
- if(defined(lii)) then return, zl[*,*,lii]		; nt x nlon
+ if(defined(lii)) then return, zl[*,*,lii]		; nt x nta
 
  if(keyword_set(ll)) then $
   begin
    ii = where(l[0,0,*] EQ ll)
-   return, zl[*,*,ii]                                   ; nt x nlon
+   return, zl[*,*,ii]                                   ; nt x nta
   end
 
  if(nl EQ 1) then return, zl
- return, total(zl, 3)					; nt x nlon
+ return, total(zl, 3)					; nt x nta
 end
 ;===========================================================================

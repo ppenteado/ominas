@@ -49,13 +49,13 @@
 ;
 ;-
 ;=============================================================================
-function body_to_image_pos, cd, bx, v, inertial=inertial, valid=valid, frame_bd=frame_bd
+function body_to_image_pos, cd, bx, v, inertial=inertial, valid=valid
 
  class = (cor_class(cd))[0]
 
  case class of 
-  'MAP' : return, surface_to_image(cd, bx, frame_bd=frame_bd, valid=valid, $
-	            body_to_surface(bx, v, frame_bd=frame_bd))
+  'MAP' : return, surface_to_image(cd, bx, valid=valid, $
+	            body_to_surface(bx, v))
 
   'CAMERA' : $
 	begin
@@ -64,7 +64,6 @@ function body_to_image_pos, cd, bx, v, inertial=inertial, valid=valid, frame_bd=
 		   cam_body_to_focal(cd, $
 		     bod_inertial_to_body_pos(cd, inertial)))
 	end
-
 
   else :
  endcase

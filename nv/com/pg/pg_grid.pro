@@ -36,10 +36,6 @@
 ;	bx:	Array (n_objects, n_timesteps) of descriptors of objects 
 ;		that must be a subclass of BODY.
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
 ;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
 ;		are taken from the cd and gbx fields of this structure
 ;		instead of from those keywords.
@@ -97,13 +93,13 @@
 ;=============================================================================
 function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
 		nlat=nlat, nlon=nlon, flat=flat, flon=flon, npoints=npoints, $
-		fov=fov, cull=cull, frame_bd=frame_bd, slat=slat, slon=slon
+		fov=fov, cull=cull, slat=slat, slon=slon
 @pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, bx=bx, gbx=gbx, dkx=dkx, frame_bd=frame_bd
+ pgs_gd, gd, cd=cd, bx=bx, gbx=gbx, dkx=dkx
  if(NOT keyword_set(cd)) then cd = 0 
  if(keyword_set(gbx)) then if(NOT keyword_set(bx)) then bx = gbx
  if(keyword_set(dkx)) then if(NOT keyword_set(bx)) then bx = dkx
@@ -164,12 +160,10 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
 
 
    input = 0
-   idp = 0
    if(keyword_set(bx)) then $
     begin
      xd = reform(bx[i,*], nt)
      input = pgs_desc_suffix(bx=bx[i,0], cd[0])
-     idp = cor_idp(xd)
     end
 
    ;- - - - - - - - - - - - - - - - -
@@ -180,7 +174,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
    continue = 1
    if(keyword_set(fov)) then $
     begin
-     surface_image_bounds, cd, xd, frame_bd=frame_bd, slop=slop, $
+     surface_image_bounds, cd, xd, slop=slop, $
          latmin=latmin, latmax=latmax, lonmin=lonmin, lonmax=lonmax, status=status
      if(status NE 0) then continue = 0 $
     else $
@@ -211,8 +205,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
      grid_pts_map = map_get_grid_points(nt=nt, lat=lat, lon=lon, $
                                         scan_lat=scan_lat, scan_lon=scan_lon)
      flags = bytarr(n_elements(grid_pts_map[0,*]))
-     points = map_to_image(cd, cd, xd, grid_pts_map, valid=valid, $
-                                         body=grid_pts, frame_bd=frame_bd)
+     points = map_to_image(cd, cd, xd, grid_pts_map, valid=valid, body=grid_pts)
      inertial_pts = 0
      if(keyword_set(bx)) then $
       if(keyword_set(grid_pts)) then $
@@ -230,7 +223,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
      grid_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
 		          desc = 'globe_grid', $
 		          input = input, $
-		          assoc_idp = idp, $
+		          assoc_xd = xd, $
 		          points = points, $
 		          flags = flags, $
 		          vectors = inertial_pts)

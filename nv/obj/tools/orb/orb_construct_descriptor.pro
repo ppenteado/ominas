@@ -158,11 +158,11 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
     end
    if(defined(lpm)) then $
     begin
-     __lpm = dsk_lpm(rd) & __lpm[0:nmm-1] = lpm & dsk_set_lpm, rd, __lpm
+     __tapm = dsk_tapm(rd) & __tapm[0:nmm-1] = orb_lon_to_anom(rd, lpm, gbxt) & dsk_set_tapm, rd, __tapm
     end
    if(defined(dlpmdt)) then $
     begin
-     __dlpmdt = dsk_dlpmdt(rd) & __dlpmdt[0:nmm-1] = dlpmdt & dsk_set_dlpmdt, rd, __dlpmdt
+     __dtapmdt = dsk_dtapmdt(rd) & __dtapmdt[0:nmm-1] = orb_lon_to_anom(rd, dlpmdt, gbxt) & dsk_set_dtapmdt, rd, __dtapmdt
     end
 
    if(defined(libam)) then $
@@ -194,11 +194,11 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
     end
    if(defined(lanl)) then $
     begin
-     __lanl = dsk_lanl(rd) & __lanl[0:nll-1] = lanl & dsk_set_lanl, rd, __lanl
+     __taanl = dsk_taanl(rd) & __taanl[0:nll-1] = orb_lon_to_anom(rd, lanl, gbxt) & dsk_set_tanl, rd, __taanl
     end
    if(defined(dlanldt)) then $
     begin
-     __dlanldt = dsk_dlanldt(rd) & __dlanldt[0:nll-1] = dlanldt & dsk_set_dlanldt, rd, __dlanldt
+     __dtaanldt = dsk_dtaanldt(rd) & __dtaanldt[0:nll-1] = orb_lon_to_anom(rd, dlanldt, gbxt) & dsk_set_dtaanldt, rd, __dtaanldt
     end
 
    if(defined(libal)) then $

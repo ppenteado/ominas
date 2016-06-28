@@ -2,12 +2,12 @@
 ; fill_ring
 ;
 ;============================================================================
-function fill_ring, cd, pd, rd, image, sub
+function fill_ring, cd, rd, image, sub
 
 stop
 
  image_pts = w_to_xy(image, sub)
- disk_pts = image_to_disk(cd, rd, image_pts, frame_bd=pd)
+ disk_pts = image_to_disk(cd, rd, image_pts)
 
 
 end

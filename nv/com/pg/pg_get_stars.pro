@@ -198,13 +198,6 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
   end
 
 
- ;-------------------------------------------------------
- ; if sd given, then concatenate with the new 
- ; descriptors
- ;-------------------------------------------------------
- if(NOT keyword__set(sd)) then sd=sd $
- else sd=([sd,sd])
-
  ;------------------------------------------------------------
  ; Make sure that for a given name, only the first 
  ; descriptor obtained from the translators is returned.

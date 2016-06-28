@@ -50,10 +50,10 @@
 ;	em:	Array (nm x 2 x n) giving the eccentricity for each harmonic, for
 ;		each edge.
 ;
-;	lpm:	Array (nm x 2 x n) giving the longitude of periapse for each 
+;	tapm:	Array (nm x 2 x n) giving the true anomaly of periapse for each 
 ;		harmonic, for each edge.
 ;
-;	dlpmdt:	Array (nm x 2 x n) giving the apsidal precession rate for each 
+;	dtapmdt:Array (nm x 2 x n) giving the tapm rate for each 
 ;		harmonic, for each edge.
 ;
 ;	libam:	Array (nm x 2 x n) giving the libration amplitude for each 
@@ -75,10 +75,10 @@
 ;	il:	Array (l x 2 x n) giving the inclination for each harmonic, for
 ;		each edge.
 ;
-;	lanl:	Array (nl x 2 x n) giving the longitude of periapse for each 
+;	taanl:	Array (nl x 2 x n) giving the true anomaly of periapse for each 
 ;		harmonic, for each edge.
 ;
-;	dlanldt:	Array (nl x 2 x n) giving the nodal precession rate for each 
+;	dtaanldt:	Array (nl x 2 x n) giving the taanl rate for each 
 ;			harmonic, for each edge.
 ;
 ;	libal:	Array (nl x 2 x n) giving the libration amplitude for each 

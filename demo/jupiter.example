@@ -3,9 +3,9 @@
 ;
 ;  This example file uses an image of Jupiter, its rings, and satellites to
 ;  demonstrate various capabilities of the OMINAS software.  This includes
-;  fitting the limb and rings simultaneously, hiding the limb and/or rings wrt
-;  other objects in the field of view, plotting radial and longitudinal
-;  sectors on the ring and generating map projections.
+;  fitting the limb, hiding the limb and/or rings wrt other objects in the 
+;  field of view, plotting radial and longitudinal sectors on the ring and 
+;  generating map projections.
 ;
 ;  This example file can be executed from the UNIX command line using
 ;
@@ -30,7 +30,8 @@
 ;  data descriptor (dd) containing the image and label and information obtained
 ;  through OMINAS' configuration tables.  If a file exists in the same directory
 ;  and with the same name as the image, except with the extension ".dh",
-;  then it is assumed to be a detached header and it is read as well. 
+;  then it is assumed to be a detached header and it is read as well (assuming)
+;  te detached header translators are installed). 
 ;
 ;  The files w1352097259.1 and n1352037683.2 are Cassini wide- and narrow-
 ;  angle frames of Jupiter.  2000r.img and 2100r.img are Galileo SSI
@@ -39,7 +40,8 @@
 ;  ctmod is called to reserve several colors in the case of an 8-bit display. 
 ;
 ;  tvim is called to display the image (im) in a new window with the y
-;  coordinate as top-down.
+;  coordinate as top-down.  tvim sets up a data coordinate system tha allows
+;  points arrays (2 x np) to be overlain using plots.  
 ;
 ;-------------------------------------------------------------------------
 ; file = 'data/N1460511143_1.IMG'
@@ -64,13 +66,15 @@
 ;
 ;  NOTES:
 ;
-;   Because the detached header translator dh_std_input appears before
+;   Assuming the detached header translator dh_std_input appears before
 ;   the Cassini Spice input translator in the default translators table, the
 ;   descriptors are taken from the detached header if it exists.  If it doesn't
 ;   exist, then they are obtained through the SPICE kernels.
 ;
 ;   The commented lines shows how translator keywords can be passed to 
-;   override the keywords given in the translators table.
+;   override the keywords given in the translators table.  Translator
+;   kewords appear in quite in the argument list, and are passed directly 
+;   to the translators, so they are application-specific.
 ;
 ;   The keyword 'plt_name' is used in pg_get_planets to select only Jupiter
 ;   and the Galilean satellites.  By default, every body that's relevant to
@@ -79,9 +83,8 @@
 ;   primary target of the observation, if one exists. 
 ;
 ;   The keyword 'str_name' is used in pg_get_stars to select only the Sun.
-;   Otherwise, star catalog stars would also be returned.  Note, however, 
-;   that the star catalog is still searched because it does appear in the 
-;   translators table.
+;   Otherwise, catalog stars would also be returned, assuming a star catalog
+;   is installed.  
 ;
 ;-------------------------------------------------------------------------
 ;cd = pg_get_cameras(dd, 'klist=my_klist.txt')		; Use personal kernel
@@ -124,12 +127,12 @@ sund = pg_get_stars(dd, od=cd, str_name='SUN')
 ;
 ;  This line creates a "generic" descriptor.  This is a convenience
 ;  feature wherein several descriptors are grouped into a structure that
-;  can be passed to functions in one piece.  The field names of a generic
-;  descriptor must follow the convention described in pg_description.txt.
+;  can be passed to functions in one argument.  The field names of a generic
+;  descriptor follow the convention described in pg_description.txt.
 ;
-;    cd - camera descriptor part
-;   gbx - globe descriptor part
-;   dkx - disk descriptor part
+;  cd - camera descriptor part
+;  gbx - globe descriptor part
+;  dkx - disk descriptor part
 ;  sund - sun descriptor part
 ;
 ;-------------------------------------------------------------------------
@@ -143,6 +146,8 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;  These commands compute the limb of each planet, the edges of the Jovian ring
 ;  system, and terminators on each planet.  Note that terminators are computed
 ;  using pg_limb by specifying the sun as the observer instead of the camera.
+;
+;  The returned points are stored in POINT descriptors.  
 ;
 ;-------------------------------------------------------------------------
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
@@ -198,6 +203,10 @@ plabels=[cor_name(pd), $
 ; This section draws the objects in the object array (center, limb, ring,
 ; and terminator) with the colors and plot symbols and labels defined earlier.
 ;
+; The same result could be obtained with separate pg_draw calls for each
+; type of object.  Also note that pg_draw will accept direct points arrays;
+; i.e. 2 x np.  
+;
 ;-------------------------------------------------------------------------
 pg_draw, object_ptd, col=colors, psy=psyms, psi=psizes, csi=csizes, pl=plabels
 stop, '=== Auto-example complete.  Use cut & paste to continue.'
@@ -212,9 +221,9 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;-------------------------------------------------------------------------
 ;
 ;  First-cut Automatic repointing 
-;
+; 
 ;-------------------------------------------------------------------------
-edge_ptd = pg_edges(dd, edge=10)			; Scan image for edges.
+edge_ptd = pg_edges(dd, edge=10)		; Scan image for edges.
 pg_draw, edge_ptd
 dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])	; Try to correlate scanned
 					 	; edges with the computed limb.
@@ -226,7 +235,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;
 ;  Manually repoint the geometry
 ;
-;  This pasteable section first clears the screen of the plotted points
+;  This pasteable section first clears the window of the plotted points
 ;  by redisplaying the image with tvim.  It then calls pg_drag to allow
 ;  the user to use the cursor to drag the pointing, and with it the limb,
 ;  ring and planet center.  To move the pointing with pg_drag, use the left
@@ -263,10 +272,10 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;  least-squares.
 ;
 ;  This section calls pg_cvscan to scan the image around the predicted
-;  limb position and the ring edge position (within width of 80 pixels) and
-;  find the points of highest correlation with a given edge model for each
+;  limb position and the ring edge position (within a width of 80 pixels) and
+;  finds the points of highest correlation with a given edge model for each
 ;  object (edge_model_nav_limb = limb model used in the VICAR program NAV
-;  and edge_model_nav_ring = ring model from NAV) and zeropoint offset in
+;  and edge_model_nav_ring = ring model from NAV) and zero-point offset in
 ;  the given model (lzero).  These points are then plotted.
 ;
 ;  The commented command might be more appropriate for images in which
@@ -325,14 +334,12 @@ pg_draw, cvscan_ptd
 ;  that matches the computed curve to the scanned curve. It then calls
 ;  pg_fit to do the fit with the calculated coefficients to calculate the
 ;  correction in translation (dxy) and rotation (dtheta).  It calls
-;  pg_cvchisq to get the chi square of the fit.  Then calls pg_repoint to
-;  update the pointing. Recalculates the limb and center and replots.
-;  The determination of the curves and their subsequent fit can be 
-;  iterated on.  
+;  pg_cvchisq to get the chi square of the fit.  pg_repoint is used to
+;  update the pointing.  The determination of the curves and their subsequent 
+;  fit can be iterated.  
 ;
-;  Note that, as shown, dx, dy, and dtheta are fit.  To fix any of these 
-;  parameters use the 'fix' keyword to pg_cvscan_coeff.  For example
-;  with 'fix=2', dtheta will be zero.
+;  Note that fix=[2] causes the twist angle to be fixed, so only offsets in dx
+;  are computed. 
 ;
 ;-------------------------------------------------------------------------
 fix = [2]
@@ -383,7 +390,7 @@ pg_hide, plon_ptd[0], cd=cd, gbx=pd[0], /limb
 pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 
 
-dgrid_ptd=pg_grid(gd=gd, bx=rd, frame_bd=pd[0]) & pg_hide, dgrid_ptd, gd=gd, /globe
+dgrid_ptd=pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, /globe
 pg_draw, dgrid_ptd, color=ctpurple()
 
 
@@ -392,10 +399,9 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;  Generate map projections
 ;
-;  This section defines a map descriptor for a simple cylindrical projection
-;  using pg_get_maps.  It then calls pg_map to create a map projection and 
-;  uses tvim to display it in a new window.  Three different map descriptors 
-;  are demonstrated.
+;  This section defines map descriptors for a various projections
+;  using pg_get_maps.  It then calls pg_map to create the map projection and 
+;  uses tvim to display it in a new window.  
 ;
 ;-------------------------------------------------------------------------
 

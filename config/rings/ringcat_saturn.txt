@@ -20,8 +20,13 @@ D_ring/outer	  	  yes	  	  no	  	  yes		  74510000	  0	  	  0	  	  0	  	  0	  	 
 E_ring/inner	  	  no	  	  no	  	  no		  189870000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0
 E_ring/outer	  	  no	  	  no	  	  no		  420000000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0
 
-F_ring/inner	  	  yes	  	  no	  	  yes		  140178700	  0.00254	  24.1	  	  2.7001	  0.0065	  16.1	  	  -2.6876	  0	  0	  	  	  Bosh	  et	  al.	  2002
-F_ring/outer	  	  yes	  	  no	  	  yes		  140268700	  0.00254	  24.1	  	  2.7001	  0.0065	  16.1	  	  -2.6876	  0	  0	  	  	  Bosh	  et	  al.	  2002
+#F_ring/inner	  	  yes	  	  no	  	  yes		  140178700	  0.00254	  24.1	  	  2.7001	  0.0065	  16.1	  	  -2.6876	  0	  0	  	  	  Bosh et al. 2002
+#F_ring/outer	  	  yes	  	  no	  	  yes		  140268700	  0.00254	  24.1	  	  2.7001	  0.0065	  16.1	  	  -2.6876	  0	  0	  	  	  Bosh et al. 2002
+
+#F_ring/inner	  	  yes	  	  no	  	  yes		  140178920	  0.0023636	  8.8	  	  2.7052	  0.00568	  5.3	  	  -2.6859	  0	  0	  	  	  Cooper et al. 2013; fit 11
+#F_ring/outer	  	  yes	  	  no	  	  yes		  140268920	  0.0023636	  8.8	  	  2.7052	  0.00568	  5.3	  	  -2.6859	  0	  0	  	  	  Cooper et al. 2013; fit 11
+F_ring/inner	  	  yes	  	  no	  	  yes		  140175800	  0.002399	  16.7	  	  2.7028	  0.0051	  7	  	  -2.6859	  0	  0	  	  	  Cooper et al. 2013; fit 12
+F_ring/outer	  	  yes	  	  no	  	  yes		  140265800	  0.002399	  16.7	  	  2.7028	  0.0051	  7	  	  -2.6859	  0	  0	  	  	  Cooper et al. 2013; fit 12
 
 G_ring/inner	  	  no	  	  no	  	  no		  165000000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0
 G_ring/outer	  	  no	  	  no	  	  no		  176000000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0

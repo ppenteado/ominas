@@ -276,9 +276,7 @@ function _pgm_disk_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surfa
 
  for i=0, 1 do $
   begin
-   frame_bd = get_primary(gd.cd, gd.gbx)
-   v = image_to_surface(gd.cd, gd.dkx, p[*,i], body_pts=body_pts, $
-                                               frame_bd=frame_bd, hit=hit)
+   v = image_to_surface(gd.cd, gd.dkx, p[*,i], body_pts=body_pts, hit=hit)
    if((NOT keyword_set(v)) OR (hit[0] EQ -1)) then xd[i] = obj_new() $
     else $
      begin
@@ -340,9 +338,7 @@ function _pgm_eqplane_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=su
 
  for i=0, 1 do $
   begin
-   frame_bd = gbx
-   v = image_to_surface(gd.cd, xd[i], p[*,i], body_pt=body_pt, $
-                                               frame_bd=frame_bd, hit=hit)
+   v = image_to_surface(gd.cd, xd[i], p[*,i], body_pt=body_pt, hit=hit)
 
    inertial_pt[0,*,i] = bod_body_to_inertial_pos(xd[i], body_pt)
    surface_pt[0,*,i] = v
@@ -616,8 +612,8 @@ common pgm_table_block, last_labels, first
         begin
          inertial_pt0 = inertial_pts[i,*,0]
          inertial_pt1 = inertial_pts[i,*,1]
-print, inertial_pt0
-print, inertial_pt1
+;print, inertial_pt0
+;print, inertial_pt1
 
          call = 1
          if((v_mag(inertial_pt0))[0] NE 0) then $

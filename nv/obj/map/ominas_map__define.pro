@@ -39,10 +39,6 @@ end_keywords)
  if(keyword_set(center)) then self.center = center[*,ii] $
  else self.center = _md0.center
 
- offset = decrapify(offset)
- if(keyword_set(offset)) then self.offset = offset[*,ii] $
- else self.offset = _md0.offset
-
  radii = decrapify(radii)
  if(n_elements(radii) NE 0) then self.radii = radii[*,ii] $ 
  else self.radii[*] = 1d
@@ -124,12 +120,6 @@ end
 ;		Methods: map_origin, map_set_origin
 ;
 ;
-;	offset:	2-element array giving a lat/lon offset to be applied in 
-;		map transformations.
-;
-;		Methods: map_offset, map_set_offset
-;
-;
 ;	rotate:	Code specifying a rotation to be applied to the map, as in the
 ;		IDL 'rotate' function.
 ;
@@ -165,8 +155,6 @@ pro ominas_map__define
 	scale:		  0d, $			; map 'scale'; Actually zoom.
 	origin:		  dblarr(2), $		; image coords of map center
 	center:		  dblarr(2), $		; lat,lon of map center
-	offset:		  dblarr(2), $		; [lat,lon] offset to be applied
-						;  in transformations.
 	radii:		  dblarr(3), $		; ref. radii of triaxial ellipsoid
 
 	graphic:	  0b, $			; If set, planetographic 
@@ -174,7 +162,7 @@ pro ominas_map__define
 
 	rotate:		  0b, $			; Rotate value as in idl 'rotate'
 
-	fn_data_p:	   nv_ptr_new() $		; data for user functions
+	fn_data_p:	   nv_ptr_new() $	; data for user functions
     }
 
 end

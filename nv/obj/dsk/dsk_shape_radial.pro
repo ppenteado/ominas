@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	z = dsk_shape_radial(dkd, a, e, lp, lon, m, em, lpm)
+;	z = dsk_shape_radial(dkd, a, e, dap, ta, m, em, tapm)
 ;
 ;
 ; ARGUMENTS:
@@ -24,15 +24,15 @@
 ;
 ;	e:	 Array (nt) of eccentricity values. 
 ;
-;	lp:	 Array (nt) of longitudes of periapse. 
+;	dap:	 Array (nt) of apsidal shift values. 
 ;
-;	lon:	 Array (nlon) of longitudes at which to compute elevations.
+;	ta:	 Array (nta) of true anomalies at which to compute radii.
 ;
 ;	m:	 Array (nt) of radial wavenumbers.
 ;
 ;	em:	 Array (nt) of eccentricities for each m.
 ;
-;	lpm:	 Array (nt) of longitudes of periapse for each m.
+;	tapm:	 Array (nt) of true anomalies of periapse for each m.
 ;
 ;
 ;  OUTPUT: NONE
@@ -40,10 +40,6 @@
 ;
 ; KEYWORDS:
 ;  INPUT:  
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One for each dkd.
-;
 ;	mm:	If set, only the radius component for this wavenumber
 ;		is returned.
 ;
@@ -54,7 +50,7 @@
 ;
 ;
 ; RETURN:
-;	Array (nt x nlon) of radii computed at each longitude on each 
+;	Array (nt x nta) of radii computed at each true anomaly on each 
 ;	disk.
 ;
 ;
@@ -68,10 +64,10 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_shape_radial, dkd=dkd, frame_bd=frame_bd, $
-	a, e, lp, $		; nt x nlon
-	lon, $			; nlon
-	m, em, lpm, $		; nt x nlon x nm
+function dsk_shape_radial, dkd=dkd, $
+	a, e, dap, $		; nt x nta
+	ta, $			; nta
+	m, em, tapm, $		; nt x nta x nm
 	mm=mm, mii=mii
 
 
@@ -79,33 +75,32 @@ function dsk_shape_radial, dkd=dkd, frame_bd=frame_bd, $
  ; get ring elements from dkd
  ;-----------------------------------
  if(keyword_set(dkd)) then $
-  begin						; keyword__set intentional here
+  begin	
    if(NOT keyword_set(a)) then a = (dsk_sma(dkd))[0]
    if(NOT keyword_set(e)) then e = (dsk_ecc(dkd))[0]
-   if(NOT keyword_set(lp)) then $
-       lp = orb_arg_to_lon(dkd, dsk_get_ap(dkd, frame_bd), frame_bd)
+   if(NOT keyword_set(dap)) then dap = (dsk_dap(dkd))[0]
    if(NOT keyword_set(m)) then m = (dsk_m(dkd))[*,0]
    if(NOT keyword_set(em)) then em = (dsk_em(dkd))[*,0]
-   if(NOT keyword_set(lpm)) then lpm = (dsk_lpm(dkd))[*,0]
+   if(NOT keyword_set(tapm)) then tapm = (dsk_tapm(dkd))[*,0]
   end
 
 
  ;-----------------------------------
  ; m = 1 : keplerian ellipse
  ;-----------------------------------
- r01 = a*(1d - e^2)/(1d + e*cos(lon-lp))
+ r01 = a*(1d - e^2)/(1d + e*cos(ta-dap))
  if(NOT keyword__set(m)) then return, r01		; keyword__set intended
 
 
  ;--------------------------------------------------
  ; m != 1 : streamline form; valid only for small e
  ;--------------------------------------------------
- nlon = n_elements(lon)
- nt = n_elements(a)/nlon
- nm = n_elements(m) / nt / nlon
+ nta = n_elements(ta)
+ nt = n_elements(a)/nta
+ nm = n_elements(m) / nt / nta
 
- sub = linegen3z(nt,nlon,nm)
- lons = (lon##make_array(nt,val=1d))[sub]
+ sub = linegen3z(nt,nta,nm)
+ tas = (ta##make_array(nt,val=1d))[sub]
  aa = a[sub]
 
 
@@ -114,17 +109,17 @@ function dsk_shape_radial, dkd=dkd, frame_bd=frame_bd, $
  ;       radial variation in time, i.e., a breathing mode.
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ; this doesn't seem right... I don't see how the m=0 can vary with time here
- rm = -aa*em*cos(m*((m NE 0)*lons - lpm))
+ rm = -aa*em*cos(m*((m NE 0)*tas - tapm))
 
- if(defined(mii)) then return, rm[*,*,mii]		; nt x nlon
+ if(defined(mii)) then return, rm[*,*,mii]		; nt x nta
 
  if(keyword_set(mm)) then $
   begin
    ii = where(m[0,0,*] EQ mm)
-   return, rm[*,*,ii]                                   ; nt x nlon
+   return, rm[*,*,ii]                                   ; nt x nta
   end
 
  if(nm EQ 1) then return, r01 + rm
- return, r01 + total(rm, 3)				; nt x nlon
+ return, r01 + total(rm, 3)				; nt x nta
 end
 ;===========================================================================

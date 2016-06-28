@@ -42,7 +42,6 @@ end_keywords
  else self.tasks_p=nv_ptr_new([''])
 
  self.abbrev = 'COR'
- self.idp = nv_ptr_new(1)
  if(keyword_set(name)) then self.name = decrapify(name[ii])
 
  if(keyword_set(udata)) then cor_set_udata, self, uname, udata	;;;;
@@ -75,8 +74,6 @@ end
 ;	xdp:	Pointer to array of objects.  These are dereferenced using the
 ;		overloaded RHS brackets.
 ;	
-;	idp:	Unique ID pointer for descriptor.  Managed in NV/SYS.
-;
 ;	name:	Name of the object.
 ;
 ;		Methods: cor_name, cor_set_name
@@ -112,7 +109,6 @@ pro ominas_core__define
  struct = $
     { ominas_core, inherits IDL_Object, $
 	tasks_p:	 nv_ptr_new(), $	; pointer to task list 
-	idp:		 nv_ptr_new(), $	; ID pointer.
 	name:		 '', $			; Name of object
 	udata_tlp:	 nv_ptr_new(), $	; pointer to user data
 	abbrev:		 '', $			; Abbreviation of descriptor class

@@ -60,7 +60,7 @@ function nv_compress_events, buf
              (buf.handler EQ event.handler) AND $
              (buf.data EQ event.data) AND $
              (buf.data_p EQ event.data_p) AND $
-             (buf.idp EQ event.idp))
+             (buf.xd EQ event.xd))
    if(n_elements(w) GT 1) then mark[w[1:*]] = 1 
   end
 

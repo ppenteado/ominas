@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Replaces the dapdt in each given disk descriptor.
+;	Replaces dapdt in each given disk descriptor.
 ;
 ;
 ; CATEGORY:

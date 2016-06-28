@@ -128,7 +128,7 @@ outline_ptd = pg_ring_sector_box(tr([tr([0,0]),tr([1023,1023])]))
 
 pg_draw,outline_ptd, col=ctred(), psym=-3
 
-profile = pg_profile_ring(dd, cd=cd, dkx=rd, gbx=pd, $
+profile = pg_profile_ring(dd, cd=cd, dkx=rd, $
                                    outline_ptd, dsk_pts=dsk_pts, $
                                    sigma=sigma)
 rads = dsk_pts[*,0]

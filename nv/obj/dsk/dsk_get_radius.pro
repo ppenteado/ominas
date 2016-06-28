@@ -13,18 +13,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	r = dsk_get_radius(dkd, lon, frame_bd)
+;	r = dsk_get_radius(dkd, ta, frame_bd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dkd:	 Array (nt) of any subclass of DISK.
 ;
-;	lon:	 Array (nlon) of longitudes at which to compute radii.
-;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One for each dkd.
+;	ta:	 Array (nta) of true anomalies at which to compute radii.
 ;
 ;  OUTPUT: NONE
 ;
@@ -36,7 +32,7 @@
 ;
 ;
 ; RETURN:
-;	Array (nlon x 2 x nt) of radii computed at each longitude on each 
+;	Array (nta x 2 x nt) of radii computed at each true anomaly on each 
 ;	disk.
 ;
 ;
@@ -50,11 +46,11 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_get_radius, dkd, dlon, frame_bd
+function dsk_get_radius, dkd, ta
 @core.include
 
- r_inner = dsk_get_edge_radius(dkd, dlon, frame_bd, /inner)
- r_outer = dsk_get_edge_radius(dkd, dlon, frame_bd, /outer)
+ r_inner = dsk_get_edge_radius(dkd, ta, /inner)
+ r_outer = dsk_get_edge_radius(dkd, ta, /outer)
 
  s = size(r_inner)
  nt = n_elements(dkd)

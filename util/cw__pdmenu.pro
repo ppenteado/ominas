@@ -282,6 +282,7 @@ pro CW__PDMENU_BUILD, parent, desc, cur, n, ev_type, full_qual_str, $
     ;
     ; Build string with approriate keywords and execute it
     ;
+    if(strtrim(dname,2) EQ '<null>') then dname = ''
     strExecute = 'new = WIDGET_BUTTON(parent, value=dname, MENU=menu'
     if n_elements(a) ge 3 then strExecute = strExecute + ', resource_name="' + strtrim(a[2],2) + '"'
     if ((mbars ne 0) and (HELP_KW ne 0) $

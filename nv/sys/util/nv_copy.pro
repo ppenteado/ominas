@@ -145,6 +145,6 @@ pro nv_copy, dst_xd, src_xd, noevent=noevent
  nv_copy_recurse, dst_xd, src_xd, alloc=0
 
  nv_notify, dst_xd, type=0, desc='ALL', noevent=noevent
-;; nv_notify, /flush, noevent=noevent
+ nv_notify, /flush, noevent=noevent
 end
 ;=============================================================================

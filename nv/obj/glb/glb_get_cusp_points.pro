@@ -102,9 +102,7 @@ function _glb_get_cusp_points, gbd, r1, r2, epsilon, niter
      rcusp_surface[*,2] = 0d
      rcusp_body[i,*] = glb_globe_to_body(gbd, rcusp_surface)
 
-     lat = rcusp_surface[*,0]
-     lon = rcusp_surface[*,1]
-     rnorm_body = v_unit(glb_get_surface_normal(gbd, lat, lon))
+     rnorm_body = glb_get_surface_normal(gbd, rcusp_surface)
 
 
      ;---------------------------------

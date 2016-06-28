@@ -62,7 +62,7 @@ function ray_sub_point_graphic, pd, v, r, vv=vv, normal=normal
   begin
    rr = r*(range#make_array(3,val=1d))
    vrr = v + rr
-   normal = v_unit(glb_get_surface_normal_body(pd, vrr))
+   normal = v_unit(glb_get_surface_normal(/body, pd, vrr))
 
    theta = v_angle(r, normal)
    phi = !dpi/2d - theta

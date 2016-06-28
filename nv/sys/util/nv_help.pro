@@ -261,7 +261,6 @@ pro nv_help_dump_events, capture=capture, items
  repeat $
   begin
    xd = items[i].xd
-   idp = items[i].idp
 
    class = cor_class(xd)
    desc = cor_name(xd)
@@ -269,7 +268,7 @@ pro nv_help_dump_events, capture=capture, items
    type = 'READ'
    if(items[i].type EQ 0) then type = 'WRITE'
 
-   help, out=s, idp[0]
+   help, out=s, xd[0]
    ptr = str_flip(str_nnsplit(str_flip(s), ' '))
 
    s = str_pad(ptr, 18) + str_pad(class, 7) + str_pad(type, 6) + $

@@ -61,7 +61,7 @@ function glb_local_to_body, gbd, v, r
 
  z = dblarr(nv,3,nt) & z[*,2,*] = 1d
 
- zenith = glb_surface_normal(gbd, v)
+ zenith = glb_get_surface_normal(/body, gbd, v)
  east = v_unit(v_cross(z, zenith))
  north = v_cross(zenith, east)
 

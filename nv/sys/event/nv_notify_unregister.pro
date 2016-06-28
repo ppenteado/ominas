@@ -78,13 +78,11 @@ pro nv_notify_unregister, xd, handler, all=all
  ;--------------------------------------------------------------------
  ; select descriptors to remove
  ;--------------------------------------------------------------------
- idp = cor_idp(xd)
-
  ii = [0l]
  for i=0, nsn-1 do $
   begin
-   if(NOT keyword_set(handler)) then w = where(list.idp EQ idp[i]) $
-   else w = where((list.idp EQ idp[i]) AND (list.handler EQ handler[i]))
+   if(NOT keyword_set(handler)) then w = where(list.xd EQ xd[i]) $
+   else w = where((list.xd EQ xd[i]) AND (list.handler EQ handler[i]))
    if(w[0] NE -1) then ii = [ii, w]
   end
  if(n_elements(ii) EQ 1) then return

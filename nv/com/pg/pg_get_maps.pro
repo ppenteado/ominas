@@ -117,8 +117,9 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;----------------------------------------------------------
  if(keyword_set(dkx)) then $
   begin
-   ecc = 0.5*total((dsk_ecc(dkx))[0,*])
-   radii = map_ecc_to_radii(ecc)
+   sma = 0.5d*total((dsk_sma(dkx))[0,*])
+   ecc = 0.5d*total((dsk_ecc(dkx))[0,*])
+   map__radii = [sma*(1d - ecc), sma*(1d - ecc^2), 0d]
    bx = dkx
   end
 

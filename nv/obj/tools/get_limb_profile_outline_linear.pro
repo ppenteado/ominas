@@ -89,7 +89,7 @@ function get_limb_profile_outline_linear, cd, gbx, alt=calt, az0=caz0, rim=crim,
  ;----------------------------------------
  if(keyword_set(graphic)) then $
   begin
-   dir = glb_surface_normal(gbx, limb_pt_body)
+   dir = glb_get_surface_normal(/body, gbx, limb_pt_body)
    inner_pt_body = limb_pt_body + dir * calt[0]
    outer_pt_body = limb_pt_body + dir * calt[1]
   end $

@@ -17,10 +17,7 @@
 ;
 ;
 ; FIELDS:
-;	idp:		ID pointer identifying the descriptor affected by 
-;			this event.
-;
-;	xd:		Descriptor affected by  this event.
+;	xd:		Descriptor affected by this event.
 ;
 ;	handler:	Name of event handler procedure, which should accept
 ;			an array of events as its only argument.
@@ -50,7 +47,6 @@ pro nv_event_struct__define
 
  struct = $
     { nv_event_struct, $
-	idp :		nv_ptr_new(), $	; id pointer.
 	xd:		obj_new(), $	; Affected descriptor.
 	handler:	'', $		; Event handler procedure.
 	data_p :	nv_ptr_new(), $	; Pointer to associated user data.

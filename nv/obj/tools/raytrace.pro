@@ -249,18 +249,10 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; trace the rays
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     fbx = 0
-     if(cor_isa(bx[i], 'DISK')) then $
-      begin
-       fbx = get_primary(bx[i], all_bx)
-       if(NOT keyword_set(fbx)) then nv_message, name='raytrace', $
-                              'No primary descriptor for ' + cor_name(bx[i])
-      end
-
-     p = surface_intersect(bx[i], frame_bd=fbx, $
-                             v[ii,*], r[ii,*], hit=hit, near=near, far=far)
-     hits[ii,*] = near
-     fhits[ii,*] = far
+     p = surface_intersect(bx[i], v[ii,*], r[ii,*], hit=hit)
+     nii = n_elements(ii)
+     hits[ii,*] = p[0:nii-1,*]
+     fhits[ii,*] = p[nii:*,*]
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; add closest result to intercept map

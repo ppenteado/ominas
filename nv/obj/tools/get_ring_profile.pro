@@ -60,7 +60,7 @@
 ;-
 ;=============================================================================
 function get_ring_profile, image, cd, dkd, lon_pts, rad_pts, $
-           azimuthal=azimuthal, frame_bd=frame_bd, $
+           azimuthal=azimuthal, $
            interp=interp, im_pts=im_pts, dx=dx, dsk_pts=dsk_pts, $
            sigma=sigma, width=width, nn=nn, arg_interp=arg_interp
 
@@ -79,7 +79,7 @@ function get_ring_profile, image, cd, dkd, lon_pts, rad_pts, $
    rp_pts[*,0] = rad_pts
    rp_pts[*,1] = lon_pts
 
-   im_pts = disk_to_image(cd, dkd, rp_pts, frame_bd=frame_bd)
+   im_pts = disk_to_image(cd, dkd, rp_pts)
   end
 
 

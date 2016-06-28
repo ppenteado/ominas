@@ -125,6 +125,7 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
 	time=rng__time, $
 	sma=rng__sma, $
 	ecc=rng__ecc, $
+	dap=rng__dap, $
 	opaque=rng__opaque, $
 	opacity=rng__opacity, $
 	nm=rng__nm, $
@@ -189,6 +190,7 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
 
    if(n_elements(rng__sma) NE 0) then dsk_set_sma, rd, rng__sma
    if(n_elements(rng__ecc) NE 0) then dsk_set_ecc, rd, rng__ecc
+   if(n_elements(rng__dap) NE 0) then dsk_set_dap, rd, rng__dap
    if(n_elements(rng__opaque) NE 0) then bod_set_opaque, rd, rng__opaque
    if(n_elements(rng__nm) NE 0) then dsk_set_nm, rd, rng__nm
    if(n_elements(rng__m) NE 0) then dsk_set_m, rd, rng__m

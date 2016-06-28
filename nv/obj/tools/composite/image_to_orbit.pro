@@ -55,7 +55,7 @@ function image_to_orbit, _cd, _gbx, dkx0, image_pts, GG=GG
  cd = make_array(nt, val=_cd)
  gbx = make_array(nt, val=_gbx)
 
- disk_pts = image_to_disk(cd, dkx0, image_pts, body=body_pts, frame_bd=gbx)
+ disk_pts = image_to_disk(cd, dkx0, image_pts, body=body_pts)
  inertial_pts = bod_body_to_inertial_pos(dkx0, body_pts)
 
  dkx = orb_cartesian_to_orbit(gbx, inertial_pts, /circular, GG=GG)

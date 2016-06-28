@@ -1,4 +1,158 @@
 ;=============================================================================
+; grim_add_points
+;
+;=============================================================================
+pro grim_add_points, grim_data, object_ptd, xds, plane=plane, $
+         dep_all=_dep_all, dep_each=dep_each, $
+         name=name, replace=replace, overwrite=overwrite, $
+         cd=cd, select=select, data=data
+
+ if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
+
+ if(keyword_set(_dep_all)) then $
+  begin
+   select = where(_dep_all NE obj_new())
+   if(select[0] NE -1) then dep_all = _dep_all[select]
+  end
+
+ selected = 0
+ if(n_elements(select) NE 0) then if(select[0] NE -1) then selected = 1
+
+ ;--------------------------------------------------------------------
+ ; determine dependencies and which points array to use
+ ;
+ ;  Each points array will depend on all the descriptors given
+ ;  in dep_all.  Each points array for a given xd will also depend on 
+ ;  descriptor whose xd is given in the corresponding position in
+ ;  dep_each.
+ ;
+ ;--------------------------------------------------------------------
+ ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, $
+                                       class=class, dep=dep_classes, ii=ii)
+
+ if(keyword_set(class)) then xd = grim_get_xd(grim_data, plane=plane, class) $
+ else if(keyword_set(dep_each)) then $
+  begin
+   dep_xds = grim_get_xd(grim_data, plane=plane, 'all')
+   gd = pgs_make_gd(dep_xds)
+   xd = gd.pd
+  end
+
+ if(NOT keyword_set(dep_all)) then $
+  begin
+   xds_all = grim_get_xd(grim_data, plane=plane, dep_classes)
+   dep_all = cd
+   if(keyword_set(xds_all)) then dep_all = [dep_all, xds_all]
+  end
+
+ if(keyword_set(dep_each)) then $
+                     if(selected) then dep_each = dep_each[select]
+; if(keyword_set(xd)) then *(*plane.overlay_labels_p)[ii] = cor_name(xd)
+ if(keyword_set(data)) then *(*plane.overlay_data_p)[ii] = data
+
+
+ ;--------------------------------------
+ ; overlay array is nptd x nd
+ ;--------------------------------------
+stop
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; determine nd for overlay array
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+; nd = 1
+ nd = n_elements(object_ptd)
+ if(keyword_set(xd)) then nd = n_elements(xd)
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; nn is the number of objects actually being added
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(selected) then nn = n_elements(select) $
+ else nn = nd
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; determine nptd for overlay array
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ nptd = n_elements(object_ptd)/nn
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; save labels
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(xd)) then $
+          *(*plane.overlay_labels_p)[ii] = $
+                 (cor_name(xd))[lindgen(nd)##make_array(nptd,val=1d)]
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; resize overlay array
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ object_ptd = reform(object_ptd, nptd, nn)
+
+
+
+
+
+ ;--------------------------------------
+ ; add the dependencies lists
+ ;--------------------------------------
+ _xd = [obj_new()]
+ if(keyword_set(dep_all)) then _xd = [dep_all]
+ for i=0, nn-1 do $
+  begin
+   xd = [_xd]
+   if(keyword_set(dep_each)) then xd = [_xd, (dep_each[i,*])[*]]
+   for j=0, nptd-1 do $
+    begin
+     if(pnt_valid(object_ptd[j,i])) then $
+      begin
+       cor_set_udata, object_ptd[j,i], 'grim_dep', xd, /noev
+       cor_set_udata, object_ptd[j,i], 'grim_name', name, /noev
+      end
+    end
+  end
+
+
+ ;--------------------------------------
+ ; update the points arrays
+ ;--------------------------------------
+ if(NOT keyword_set(*ptdp)) then overwrite = 1 $
+ else if(nptd NE (size(*ptdp))[1]) then overwrite = 1
+
+ if(keyword_set(overwrite)) then $
+  begin
+   *ptdp = object_ptd
+   if(selected) then $
+    begin
+     *ptdp = objarr(nptd, nd)
+     (*ptdp)[*,select] = object_ptd
+    end
+  end $
+ else if(keyword_set(replace)) then $
+  begin
+   if(selected) then $
+    begin
+     (*ptdp)[*,select] = object_ptd
+    end $
+   else *ptdp = object_ptd
+  end $
+ else *ptdp = [*ptdp, object_ptd]	; this may not work right because of the dimensions
+
+
+ ;--------------------------------------------------
+ ; register for events on the points arrays
+ ;--------------------------------------------------
+; for i=0, nn-1 do $
+;  for j=0, nptd-1 do $
+;   begin
+;    nv_notify_register, object_ptd[j,i], 'grim_descriptor_notify', $
+;                                                   scalar_data=grim_data.base
+;   end
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_compute_limb
 ;
 ;=============================================================================

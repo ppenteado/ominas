@@ -282,18 +282,7 @@ function _pgc_disk, p, dd, gd=gd, format=format, label=label, name=name
  name = cor_name(rd)
  nt = n_elements(name)
 
-; frame_bd = get_primary(cd, pd);, rx=rd)
-; frame_bd = get_primary(cd, pd, rx=rd)
-
- frame_bd = objarr(nt)
- for i=0, nt-1 do $
-  begin
-   xd = get_primary(cd, pd, rx=rd[i])
-   if(keyword_set(xd)) then frame_bd[i] = xd
-  end
-;stop
-
- v = (image_to_disk(cd, rd, frame_bd=frame_bd, p, hit=w, body=v_int))[*,0:1,*]
+ v = (image_to_disk(cd, rd, p, hit=w, body=v_int))[*,0:1,*]
  v[*,1,*] = 180d/!dpi * v[*,1,*]
  v = reform(v, 2, nt, /over)
 
@@ -307,7 +296,7 @@ function _pgc_disk, p, dd, gd=gd, format=format, label=label, name=name
  range = v_mag(bod_pos(gd.cd) - inertial_pts[w,*])
  v = [v,range]
 
- label = ['RAD', 'LON', 'RANGE']
+ label = ['RAD', 'TA', 'RANGE']
 
  return, v
 end
@@ -332,9 +321,7 @@ function _pgc_disk_scale, p, dd, gd=gd, format=format, label=label, name=name
  name = cor_name(rd)
  nt = n_elements(name)
 
- frame_bd = get_primary(cd, pd);, rx=rd)
-
- v = (image_to_disk(cd, rd, frame_bd=frame_bd, p, hit=w, body=v_int))[*,0:1,*]
+ v = (image_to_disk(cd, rd, p, hit=w, body=v_int))[*,0:1,*]
  v[*,1,*] = 180d/!dpi * v[*,1,*]
  v = reform(v, 2, nt, /over)
 
@@ -416,7 +403,6 @@ end
 ;=============================================================================
 function _pgc_photom_globe, p, dd, gd=gd, format=format, label=label, name=name
 
-;stop
  format = ['(1d10.5)', '(1d10.5)', '(1d10.5)']
  label = ''
 
@@ -459,9 +445,7 @@ function _pgc_photom_disk, p, dd, gd=gd, format=format, label=label, name=name
     (NOT keyword_set(gd.dkx)) OR $
     (NOT keyword_set(gd.gbx))) then return, 0
 
-
- frame_bd = get_primary(gd.cd, gd.gbx)
- pht_angles, p, gd.cd, gd.dkx, gd.sund, frame=frame_bd, emm=emm, inc=inc, g=g, valid=valid
+ pht_angles, p, gd.cd, gd.dkx, gd.sund, emm=emm, inc=inc, g=g, valid=valid
 
  if(valid[0] EQ -1) then return, 0
 

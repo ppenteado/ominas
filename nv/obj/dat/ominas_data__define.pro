@@ -170,9 +170,6 @@ end
 ;
 ;
 ; FIELDS:
-;	idp:	ID pointer.  This pointer is unique to the descriptor
-;		and can be used for identification.
-;
 ;	data_dap:	Pointer to data archive containing the data 
 ;			and nhist past versions.
 ;

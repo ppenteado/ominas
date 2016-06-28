@@ -6,38 +6,37 @@
 ;
 ; PURPOSE:
 ;	Computes the surface normal of a GLOBE object at the given 
-;	lat/lon position.
-;
+;	globe position.
 ;
 ; CATEGORY:
 ;	NV/LIB/GLB
 ;
 ;
 ; CALLING SEQUENCE:
-;	n = glb_get_surface_normal_body(gbd, lat, lon)
+;	n = glb_get_surface_normal_body(gbd, p)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
 ;	gbd:	Array (nt) of any subclass of GLOBE descriptors.
 ;
-;	lat:	Array (nv) of latitudes.
-;
-;	lon:	Array (nv) of longitudes.
+;	p:	Array (nv,3,nt) of points in the GLOBE system.
 ;
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	nonorm:	If set, the returned vectors are not normalized.
+;
+;	body:	If set, the inputs given in the BODY system instead of GLOBE.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; RETURN: 
-;	Array (nv, 3, nt) of surface normals in the BODY frame.  Note that 
-;	the output vectors are not normalized.
+;	Array (nv, 3, nt) of surface normals in the BODY frame.  
 ;
 ;
 ; STATUS:
@@ -50,14 +49,49 @@
 ;	
 ;-
 ;===========================================================================
-function glb_get_surface_normal, gbd, lat, lon, noevent=noevent
+function glb_get_surface_normal, gbd, globe_pts, noevent=noevent, $
+                                                  nonorm=nonorm, body=body
+@core.include
+ 
+ nv_notify, gbd, type = 1, noevent=noevent
+ _gbd = cor_dereference(gbd)
+
+ if(keyword_set(body)) then return, _glb_get_surface_normal_body(_gbd, globe_pts)
+
+ nt = n_elements(_gbd)
+ np = (size(globe_pts, /dim))[0]
+
+ M = make_array(np,val=1)
+
+ a2 = [(_gbd.radii[0,*]^2)]##M				; np x nt
+ b2 = [(_gbd.radii[1,*]^2)]##M				; np x nt
+ c2 = [(_gbd.radii[2,*]^2)]##M				; np x nt
+
+ lon = globe_pts[*,1,*] - [_gbd.lora]##M		; np x nt
+ sin_lat = sin(globe_pts[*,0,*])			; np x nt
+ cos_lat = cos(globe_pts[*,0,*])			; np x nt
+
+ result = dblarr(np,3,nt, /nozero)
+ result[*,0,*] = cos_lat*cos(lon)/a2
+ result[*,1,*] = cos_lat*sin(lon)/b2
+ result[*,2,*] = sin_lat/c2
+
+ if(keyword_set(nonorm)) then return, result
+ return, v_unit(result)
+end
+;===========================================================================
+
+
+
+;===========================================================================
+function ___glb_get_surface_normal, gbd, lat, lon, noevent=noevent
 @core.include
  
  nv_notify, gbd, type = 1, noevent=noevent
  _gbd = cor_dereference(gbd)
 
  nt = n_elements(_gbd)
- np = (size(lat))[1]
+ np = n_elements(lat)
 
  M = make_array(np,val=1)
 
@@ -73,6 +107,8 @@ function glb_get_surface_normal, gbd, lat, lon, noevent=noevent
  result[*,1,*] = cos_lat*sin(lon1)/b2
  result[*,2,*] = sin(lat)/c2
 
- return, result
+return, result
+ if(keyword_set(nonorm)) then return, result
+ return, v_unit(result)
 end
 ;===========================================================================

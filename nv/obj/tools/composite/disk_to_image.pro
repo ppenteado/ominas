@@ -32,10 +32,6 @@
 ;	sund:	If given, longitudes are assumed to be referenced to the 
 ;		sun direction.
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
 ;   OUTPUT:
 ;	valid:	Indices of valid output points.
 ;
@@ -53,7 +49,7 @@
 ;       Written by:     Spitale, 9/2002
 ;-
 ;=============================================================================
-function disk_to_image, cd, dkx, p, body_pts=p_body, frame_bd=frame_bd, valid=valid
+function disk_to_image, cd, dkx, p, body_pts=p_body, valid=valid
 
  nt = n_elements(cd)
  sv = size(p)
@@ -66,7 +62,7 @@ function disk_to_image, cd, dkx, p, body_pts=p_body, frame_bd=frame_bd, valid=va
 
   'CAMERA' : $
 	begin
-	 p_body = dsk_disk_to_body(dkx, p, frame_bd=frame_bd)
+	 p_body = dsk_disk_to_body(dkx, p)
 	 image_pts =  inertial_to_image_pos(cd,  $
                         bod_body_to_inertial_pos(dkx, p_body))
 	 valid = in_image(cd, image_pts, slop=0)

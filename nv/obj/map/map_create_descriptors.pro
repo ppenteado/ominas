@@ -41,8 +41,6 @@
 ;
 ;	origin:	Array (2 x n) of strings giving the map origins.
 ;
-;	offset:	Array (2 x n) of strings giving the map offsets.
-;
 ;	rotate:	Array (1 x n) of strings giving the map rotate codes.
 ;
 ;	graphic:	Array (1 x n) of strings giving the map graphic flags.

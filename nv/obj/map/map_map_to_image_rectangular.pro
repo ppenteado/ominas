@@ -90,7 +90,6 @@ function map_map_to_image_rectangular, md, map_pts
  a = sz*sc*units
 
  result = dblarr(2,nv,nt, /nozero)
-
  result[1,*,*] = origin[1,*,*] + a[0,*,*]*(map_pts[0,*,*]-center[0,*,*])
  result[0,*,*] = origin[0,*,*] + a[1,*,*]*(map_pts[1,*,*]-center[1,*,*])
 

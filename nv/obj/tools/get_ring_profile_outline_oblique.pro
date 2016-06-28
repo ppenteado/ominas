@@ -32,10 +32,6 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
-;
 ;	nrad:	Number of points in the radial direction.
 ;
 ;	nlon:	Number of points in the longitudinal direction.
@@ -53,18 +49,18 @@
 ;-
 ;=============================================================================
 function get_ring_profile_outline_oblique, cd, dkx, points, point, $
-       xlon=xlon, dir=dir, nrad=nrad, nlon=nlon, frame_bd=frame_bd
+       dir=dir, nrad=nrad, nlon=nlon
 
 ; see get_ring_profile_outline to solve wrap-around problem
 
  ;------------------------------------------------
  ; get coords of corners
  ;------------------------------------------------
- dsk_pts = image_to_disk(cd, dkx, fr=frame_bd, points)
+ dsk_pts = image_to_disk(cd, dkx, points)
  dsk_pt0 = dsk_pts[0,*]
  dsk_pt1 = dsk_pts[1,*]
 
- dsk_pt = image_to_disk(cd, dkx, fr=frame_bd, point)
+ dsk_pt = image_to_disk(cd, dkx, point)
 
  ;- - - - - - - - - - - - - - - - - - - -
  ; initial point
@@ -96,7 +92,7 @@ function get_ring_profile_outline_oblique, cd, dkx, points, point, $
  dlon = lon_top1 - lon_top0
  lon_base1 = lon_base0 + dlon
  dsk_pt_base1 = tr([rad_base, lon_base1, 0d])
- base1 = reform(disk_to_image(cd, dkx, dsk_pt_base1, frame_bd=frame_bd))
+ base1 = reform(disk_to_image(cd, dkx, dsk_pt_base1))
 
  ;------------------------------------------------
  ; generate sides of outline
@@ -112,20 +108,20 @@ function get_ring_profile_outline_oblique, cd, dkx, points, point, $
                      tr(lon_pts_base), $
                      tr(make_array(nlon, val=0d))])
 
- im_pts_lon_top = reform(disk_to_image(cd, dkx, dsk_pts_top, frame_bd=frame_bd))
- im_pts_lon_base = reform(disk_to_image(cd, dkx, dsk_pts_base, frame_bd=frame_bd))
+ im_pts_lon_top = reform(disk_to_image(cd, dkx, dsk_pts_top))
+ im_pts_lon_base = reform(disk_to_image(cd, dkx, dsk_pts_base))
 
  im_pts_rad_0 = [tr(dindgen(nrad)/(nrad-1)*(top0[0]-base0[0]) + base0[0]), $
                  tr(dindgen(nrad)/(nrad-1)*(top0[1]-base0[1]) + base0[1])]
 
- dsk_pts_rad_0 = image_to_disk(cd, dkx, im_pts_rad_0, frame_bd=frame_bd)
+ dsk_pts_rad_0 = image_to_disk(cd, dkx, im_pts_rad_0)
  lon_pts_rad_0 = dsk_pts_rad_0[*,1]
  rad_pts_rad_0 = dsk_pts_rad_0[*,0]
  lon_pts_rad_1 = lon_pts_rad_0 + (lon_base1 - lon_base0)
  dsk_pts_rad_1 = dblarr(nrad,3)
  dsk_pts_rad_1[*,0] = rad_pts_rad_0 
  dsk_pts_rad_1[*,1] = lon_pts_rad_1 
- im_pts_rad_1 = disk_to_image(cd, dkx, dsk_pts_rad_1, frame_bd=frame_bd)
+ im_pts_rad_1 = disk_to_image(cd, dkx, dsk_pts_rad_1)
 
 
  ;------------------------------------------------

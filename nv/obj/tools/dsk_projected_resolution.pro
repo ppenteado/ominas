@@ -97,7 +97,7 @@ pro dsk_projected_resolution, dkd, cd, p, scale, $
  ;----------------------------------
  ; perpendicular scale
  ;----------------------------------
- vv = dsk_get_perp(cd, dkd, p, frame=dkd)
+ vv = dsk_get_perp(cd, dkd, p)
 
  resperp = scale * range / v_mag(v_cross(v, vv))
 

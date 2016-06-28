@@ -11,8 +11,8 @@
 ;  2nd half is far points.
 ;
 ;===========================================================================
-function glb_intersect_points, gbd, v, r, discriminant, alpha, beta, gamma, $
-                       valid=valid, nosolve=nosolve
+pro glb_intersect_points, gbd, v, r, discriminant, alpha, beta, gamma, $
+                       valid=valid, nosolve=nosolve, near=points_near, far=points_far
 @core.include
 
  nt = n_elements(gbd)
@@ -20,7 +20,8 @@ function glb_intersect_points, gbd, v, r, discriminant, alpha, beta, gamma, $
  n = nv*nt
 
 
- points = dblarr(2*nv,3,nt)
+ points_near = dblarr(nv,3,nt)
+ points_far = dblarr(nv,3,nt)
 
 ;;;; 'valid' does not come out right here...
  valid = discriminant GE 0
@@ -35,25 +36,20 @@ function glb_intersect_points, gbd, v, r, discriminant, alpha, beta, gamma, $
     b = beta[sub]
     g = gamma[sub]
 
-    tclose = ((-b - sqd)/g)
+    tnear = ((-b - sqd)/g)
     tfar = ((-b + sqd)/g)
-    w = where(tclose LT 0)
+    w = where(tnear LT 0)
 
-    pp = v[ww] + r[ww]*(tclose#make_array(3, val=1d))
+    pp = v[ww] + r[ww]*(tnear#make_array(3, val=1d))
     qq = v[ww] + r[ww]*(tfar#make_array(3, val=1d))
 
     if(w[0] NE -1) then valid[ww[w]] = 0
 
-    points_close = dblarr(nv,3,nt)
-    points_far = dblarr(nv,3,nt)
-    points_close[ww] = pp
+    points_near[ww] = pp
     points_far[ww] = qq
-
-    points[0:nv-1,*,*] = points_close
-    points[nv:*,*,*] = points_far
    end
 
 
- return, points
+; return, points
 end
 ;===========================================================================

@@ -2,13 +2,13 @@
 ; get_radperp
 ;
 ;=============================================================================
-function get_radperp, cd, dkx, p0, p1, dsk_pt0, frame_bd=frame_bd
+function get_radperp, cd, dkx, p0, p1, dsk_pt0
 
  dp = p1 - p0
 
  rng_orient = bod_orient(dkx)
  _dir = v_unit(bod_body_to_inertial(dkx, $
-                dsk_disk_to_body(dkx, dsk_pt0, frame_bd=frame_bd)))
+                dsk_disk_to_body(dkx, dsk_pt0)))
  dir = v_cross(_dir, rng_orient[2,*])
 
  cam_orient = bod_orient(cd)

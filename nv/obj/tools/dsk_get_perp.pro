@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       dir = dsk_get_perp(cd, dkx, p, frame_bd=frame_bd)
+;       dir = dsk_get_perp(cd, dkx, p)
 ;
 ;
 ; ARGUMENTS:
@@ -29,10 +29,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
 ;
@@ -46,7 +43,7 @@
 ;
 ;-
 ;=============================================================================
-function dsk_get_perp, cd, dkd, p, frame_bd=frame_bd, uu=uu
+function dsk_get_perp, cd, dkd, p, uu=uu
 
  nv = n_elements(p)/3					; assume  nt = 1
  mm = make_array(nv, val=1d)
@@ -58,9 +55,9 @@ function dsk_get_perp, cd, dkd, p, frame_bd=frame_bd, uu=uu
  dsk_orient = bod_orient(dkd)
  zz = dsk_orient[2,*] ## mm
 
- dsk_pts = inertial_to_disk_pos(dkd, frame_bd=frame_bd, p)
+ dsk_pts = inertial_to_disk_pos(dkd, p)
  _dir = v_unit(bod_body_to_inertial(dkd, $
-                dsk_disk_to_body(dkd, dsk_pts, frame_bd=frame_bd)))
+                dsk_disk_to_body(dkd, dsk_pts)))
  dir = v_cross(_dir, zz)
 
  dirx = v_inner(dir, cam_orient[0,*]##mm)

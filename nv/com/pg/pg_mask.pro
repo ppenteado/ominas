@@ -107,7 +107,7 @@ end
 ; pg_mask
 ;
 ;=============================================================================
-function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, frame_bd=frame_bd, $
+function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, $
                                     fgbx=fgbx, fdkx=fdkx, fbx=fbx, $
                                     dgbx=dgbx, ddkx=ddkx, dbx=dbx, $
                                     pgbx=pgbx, pdkx=pdkx, pbx=pbx, $
@@ -176,10 +176,7 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
    ii = rotate(sort(sma), 2)
    dkd = dkd[ii]
 
-   if(NOT keyword_set(frame_bd)) then $
-         if(keyword_set(gbx)) then frame_bd = get_primary(dkd[0], gbx)
-
-   ring_ptd = pg_disk(cd=cd, dkx=dkd, gbx=frame_bd, np=np)
+   ring_ptd = pg_disk(cd=cd, dkx=dkd, np=np)
    for i=0, ndkd-1 do $
     begin
      inner_pp = pnt_points(/cat, /vis, ring_ptd[2*i])

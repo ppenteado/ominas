@@ -105,13 +105,13 @@ pro ingrid, grnum, gd=_gd, $
          dd=_dd, cd=_cd, pd=_pd, rd=_rd, sd=_sd, std=_std, ard=_ard, sund=_sund, od=_od, $
          limb_ptd=_limb_ptd, ring_ptd=_ring_ptd, star_ptd=_star_ptd, station_ptd=_station_ptd, array_ptd=_array_ptd, term_ptd=_term_ptd, $
          plgrid_ptd=_plgrid_ptd, center_ptd=_center_ptd, object_ptd=_object_ptd, $
-         tie_ptd=_tie_ptd, curve_ptd=_curve_ptd, shadow_ptd=_shadow_ptd, pn=pn, all=all, grnum=_grnum, $
+         tie_ptd=_tie_ptd, curve_ptd=_curve_ptd, shadow_ptd=_shadow_ptd, reflection_ptd=_reflection_ptd, pn=pn, all=all, grnum=_grnum, $
          active_pd=_active_pd, active_rd=_active_rd, active_sd=_active_sd, $
          active_std=_active_std, active_ard=_active_ard, active_xd=_active_xd, $
          active_limb_ptd=_active_limb_ptd, active_ring_ptd=_active_ring_ptd, $
          active_star_ptd=_active_star_ptd, active_term_ptd=_active_term_ptd, $
          active_plgrid_ptd=_active_plgrid_ptd, active_center_ptd=_active_center_ptd, $
-         active_shadow_ptd=_active_shadow_ptd, active_station_ptd=_active_station_ptd, $
+         active_shadow_ptd=_active_shadow_ptd, active_reflection_ptd=_active_reflection_ptd, active_station_ptd=_active_station_ptd, $
          active_array_ptd=_active_array_ptd
 
 
@@ -183,6 +183,9 @@ pro ingrid, grnum, gd=_gd, $
      if(arg_present(_active_shadow_ptd)) then $
         _active_shadow_ptd = append_array(active_shadow_ptd, $
                           grim_get_active_overlays(grim_data, 'shadow'))
+     if(arg_present(_active_reflection_ptd)) then $
+        _active_reflection_ptd = append_array(active_reflection_ptd, $
+                          grim_get_active_overlays(grim_data, 'reflection'))
      if(arg_present(_active_station_ptd)) then $
         _active_station_ptd = append_array(active_station_ptd, $
                           grim_get_active_overlays(grim_data, 'station'))
@@ -214,6 +217,9 @@ pro ingrid, grnum, gd=_gd, $
      if(arg_present(_shadow_ptd)) then $
       if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'shadow'))) then $
                   shadow_ptd = append_array(shadow_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'shadow'))) 
+     if(arg_present(_reflection_ptd)) then $
+      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'reflection'))) then $
+                  reflection_ptd = append_array(reflection_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'reflection'))) 
      if(arg_present(_object_ptd)) then $
         object_ptd = append_array(object_ptd, grim_cat_points(grim_data))
      if(arg_present(_station_ptd)) then $
@@ -276,6 +282,7 @@ pro ingrid, grnum, gd=_gd, $
  if(w[0] NE -1) then _curve_ptd = curve_ptd
 
  if(keyword_set(shadow_ptd)) then _shadow_ptd = shadow_ptd
+ if(keyword_set(reflection_ptd)) then _reflection_ptd = reflection_ptd
 
  gd = pgs_make_gd(dd=dd, crd=crd, bd=bd, md=md, dkd=dkd, $
                   gbd=gbd, pd=pd, sd=sd, std=std, ard=ard, rd=rd, cd=cd, sund=sund, od=od)

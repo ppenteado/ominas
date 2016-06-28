@@ -100,8 +100,7 @@ pro nv_notify_register, _xd, handler, type, data=data, $
  ;-----------------------------------------------
  ; set up new list item
  ;-----------------------------------------------
- idp = cor_idp(xd, /noevent)
- n = n_elements(idp)
+ n = n_elements(xd)
 
  if(n_elements(handler) EQ 1) then handler = make_array(n, val=handler)
  if(n_elements(type) EQ 1) then type = make_array(n, val=type)
@@ -109,7 +108,6 @@ pro nv_notify_register, _xd, handler, type, data=data, $
  items = replicate({nv_notify_list_struct}, n)
 
  if(keyword_set(data)) then items.data_p = nv_ptr_new(data)
- items.idp = idp
  items.xd = xd
  items.dynamic = dynamic
  items.handler = handler

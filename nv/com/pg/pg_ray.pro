@@ -62,9 +62,8 @@
 ;
 ;
 ; RETURN:
-;	Array (nt) of POINT each containing image
-;	points (2,nv,npoints) and the corresponding inertial vectors 
-;	(nv,3,npoints).  
+;	Array (nt) of POINT each containing image points (2,nv,npoints) and 
+;	the corresponding inertial vectors (nv,3,npoints).  
 ;
 ;
 ;
@@ -84,7 +83,8 @@
 ;
 ;=============================================================================
 function pgr_density_uniform, np, nv, len
- return, len * reform(transpose((dindgen(np)/double(np) # make_array(3, val=1d))[linegen3z(np,3,nv)]), nv,3,np)
+ return, len * reform(transpose((dindgen(np)/double(np) $
+                   # make_array(3, val=1d))[linegen3z(np,3,nv)]), nv,3,np)
 end
 ;=============================================================================
 

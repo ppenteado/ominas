@@ -32,10 +32,6 @@
 ;	bx:	If md is not a map descriptor, bx gives a subclass of BODY
 ;		needed for transforming surface to map coordinates.
 ;
-;	frame_bd:	Subclass of BODY giving the frame against which to 
-;			measure inclinations and nodes, e.g., a planet 
-;			descriptor.  One per bx.
-;
 ;   OUTPUT:
 ;	valid:	Indices of valid output points.
 ;
@@ -53,7 +49,7 @@
 ;       Written by:     Spitale;
 ;-
 ;=============================================================================
-function image_to_map, md, p, bx=bx, valid=valid, body_pts=body_pts, frame_bd=frame_bd
+function image_to_map, md, p, bx=bx, valid=valid, body_pts=body_pts
 
  if(NOT keyword_set(p)) then return, 0
 
@@ -62,7 +58,7 @@ function image_to_map, md, p, bx=bx, valid=valid, body_pts=body_pts, frame_bd=fr
  if(class EQ 'MAP') then return, map_image_to_map(md, p, valid=valid)
 
  return, surface_to_map(md, bx, $
-           image_to_surface(md, bx, p, frame_bd=frame_bd, valid=valid))
+           image_to_surface(md, bx, p, valid=valid))
 end
 ;==========================================================================
 

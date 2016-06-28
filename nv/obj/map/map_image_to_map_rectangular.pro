@@ -90,6 +90,7 @@ function map_image_to_map_rectangular, md, image_pts, valid=valid
 
  lon = (image_pts[0,*,*] - origin[0,*,*])/a[1,*,*] + center[1,*,*]
 
+stop
  valid = where((lon-center[1,*,*] GE -!dpi) AND (lon-center[1,*,*] LE !dpi))
  if(valid[0] EQ -1) then return, 0
  nvalid = n_elements(valid)
@@ -108,6 +109,7 @@ function map_image_to_map_rectangular, md, image_pts, valid=valid
  r0[valid] = (im1 - o1)/a0 + c0
 
  result = [r0,r1]
+
  return, result
 end
 ;===========================================================================

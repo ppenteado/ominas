@@ -20,19 +20,16 @@ Coordinate systems
 
  - Disk
 	Cylindrical coordinate system defined with respect to a disk. 
-	Vectors are given as [radius, longitude, altitude] columns vectors
+	Vectors are given as [radius, true anomaly, altitude] columns vectors
 	with respect to the plane whose orientation and reference direction 
-	are specified by the disk orientation matrix.  Disk longitude is zero 
-	at the ascending node of the disk plane on the inertial x-y plane and 
-	increases in a right-handed sense about the z-axis of the body
-	orientation matrix.  The reference direction (X-axis of the orientation 
-	matrix) points toward periapse.
+	are specified by the disk orientation matrix.  The reference direction 
+	(X-axis of the orientation matrix) points toward periapse.
 
 
 Data objects
 ------------
  - orientation matrix
-	The orientation matrix is inherited from BODY.  Th b2 axis corresponds
+	The orientation matrix is inherited from BODY.  The b2 axis corresponds
 	to the normal to the plane of the disk and the b0 axis gives the
 	periapse direction as shown.
 

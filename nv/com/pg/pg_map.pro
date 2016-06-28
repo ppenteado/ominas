@@ -207,7 +207,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
    if(cor_class(test_md) EQ 'CAMERA') then cam_set_scale, test_md, cam_scale(md)*test_factor
 
-   test_map = project_map(image, bounds=bounds, frame_bd=gbx, interp=interp,  $
+   test_map = project_map(image, bounds=bounds, interp=interp,  $
             md=test_md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
 ;            hide_fn=hide_fn, hide_data_p=hide_data_p, $
             arg_interp=arg_interp, $
@@ -256,7 +256,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ; create the map
  ;---------------------------------------
  if(NOT keyword_set(map)) then $
-    map = project_map(image, bounds=bounds, frame_bd=gbx, interp=interp,  $
+    map = project_map(image, bounds=bounds, interp=interp,  $
             md=md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
             hide_fn=hide_fn, hide_data_p=hide_data_p, arg_interp=arg_interp, $
             offset=offset, wind_fn=wind_fn, wind_data=wind_data, edge=edge, $

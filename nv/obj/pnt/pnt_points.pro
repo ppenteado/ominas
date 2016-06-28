@@ -75,6 +75,7 @@ end_keywords
 @pnt_condition_keywords.include 
 end_keywords)
 
+
  ptd = ptd0
  if(keyword_set(cat)) then ptd = pnt_compress(ptd)
 
