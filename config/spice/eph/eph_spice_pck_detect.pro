@@ -10,7 +10,7 @@ function eph_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=stric
  ;--------------------------------
  ; new naming convention
  ;--------------------------------
- all_files = findfile(kpath + 'cpck*.tpc')
+ all_files = file_search(kpath + 'cpck*.tpc')
  if(keyword__set(all_files)) then $
   begin
    if(keyword__set(all)) then kernels = append_array(kernels, all_files)

@@ -35,7 +35,7 @@
 ;
 ;-------------------------------------------------------------------------
 ;dd = dat_read('data/c1138223.gem', im, label)
-dd = dat_read('~/casIss/1456/N1456251768_1.IMG', im, label)
+dd = dat_read('data/N1456251768_1.IMG', im, label)
 
 tvim, im, zoom=0.75, /order
 
@@ -50,9 +50,9 @@ tvim, im, zoom=0.75, /order
 ;  the regular translator would return.
 ;
 ;-------------------------------------------------------------------------
-cd = pg_get_cameras(dd, 'sedr_source=NAV')
-pd = pg_get_planets(dd, od=cd, 'sedr_source=NAV')
-rd = pg_get_rings(dd, pd=pd, od=cd, 'sedr_source=NAV')
+cd = pg_get_cameras(dd)
+pd = pg_get_planets(dd, od=cd); , 'sedr_source=NAV')
+rd = pg_get_rings(dd, pd=pd, od=cd);, 'sedr_source=NAV')
 
 
 ;-------------------------------------------------------------------------

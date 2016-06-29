@@ -121,7 +121,7 @@ common spice_klist_block, klist_last, _inlines
    line = inlines[i]
    if(keyword__set(line)) then $
     begin
-     files = findfile(line)
+     files = file_search_env(line)
      if(keyword__set(files)) then $
       begin
        n = n_elements(files)

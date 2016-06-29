@@ -3,16 +3,30 @@
 #
 ###############################################################################
 
+# default kernels
 $NV_SPICE_LSK/naif0007.tls
-$NV_SPICE_CK/001011_001014ra.bc
-
-$NV_SPICE_PCK/cpck14Dec2001.tpc
-$NV_SPICE_SPK/010420R_SCPSE_EP1_JP83.bsp
+$NV_SPICE_SCK/cas00083.tsc
 $NV_SPICE_FK/cas_v37.tf
 $NV_SPICE_IK/cas_iss_v08.ti
-$NV_SPICE_SCK/cas00083.tsc
+$NV_SPICE_PCK/pck00007.tpc
 
+# jupiter.example and mosaic.example
+$NV_SPICE_CK/001011_001014ra.bc
+$NV_SPICE_CK/001026_001029ra.bc
+$NV_SPICE_PCK/cpck14Dec2001.tpc
+$NV_SPICE_PCK/cpck30Sep2004_jupiter.tpc
+$NV_SPICE_SPK/010420R_SCPSE_EP1_JP83.bsp
 
+# map-disk.example and map-globe.example
+$NV_SPICE_SPK/030201AP_SK_SM546_T45.bsp
+$NV_SPICE_SPK/981005_PLTEPH-DE405S.bsp
+$NV_SPICE_SPK/020514_SE_SAT105.bsp
+$NV_SPICE_CK/051008_051217pc.bc
+$NV_SPICE_CK/03358_04002ra.bc
+$NV_SPICE_CK/04092_04135pf.bc
+$NV_SPICE_CK/04092_04135pg.bc
+$NV_SPICE_CK/04087_04094ra.bc
+$NV_SPICE_PCK/cpck01Oct2002.tpc
 
 #/raid/httpd/html/iss_internal/downloads/naif_kernels/lsk/naif0007.tls
 #/raid/httpd/html/iss_internal/downloads/naif_kernels/ck/001011_001014ra.bc
@@ -22,5 +36,3 @@ $NV_SPICE_SCK/cas00083.tsc
 #/raid/httpd/html/iss_internal/downloads/naif_kernels/fk/cas_v39.tf
 #/raid/httpd/html/iss_internal/downloads/naif_kernels/ik/cas_iss_v10.ti
 #/raid/httpd/html/iss_internal/downloads/naif_kernels/sclk/cas00106.tsc
-
-

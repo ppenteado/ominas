@@ -31,6 +31,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  kpath_specific = getenv(env + '_' + strupcase(prefix))
  kpath_general = getenv(env)
  kpath = append_array(kpath_general, kpath_specific)
+ kpath = strsplit(kpath, ':', /extract)
 
  if(NOT keyword_set(kpath)) then return, ''
  nkpath = n_elements(kpath)
@@ -38,7 +39,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  ;---------------------------------------
  ; parse value list
  ;---------------------------------------
- _k_in = strtrim(str_nsplit(_k_in, ';'), 2)
+ _k_in = strtrim(strsplit(_k_in, ':', /extract), 2)
  k_in = ''
 
  for i=0, n_elements(_k_in)-1 do $

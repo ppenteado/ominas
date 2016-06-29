@@ -7,7 +7,7 @@ function eph_spice_lsk_detect, dd, kpath, time=time, reject=reject, strict=stric
  ;--------------------------------
  ; new naming convention
  ;--------------------------------
- all_files = findfile(kpath + 'naif????.tls')
+ all_files = file_search(kpath + 'naif*.tls')
 ; if(NOT keyword__set(all_files)) then nv_message, $
 ;       name='eph_spice_lsk_detect', 'No kernel files found in ' + kpath + '.'
 

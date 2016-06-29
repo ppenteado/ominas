@@ -11,7 +11,7 @@
 ;-------------------------------
 ; load image
 ;-------------------------------
-file = '~/casIss/1460/N1460002670_1.IMG'
+file = 'data/N1460002670_1.IMG'
 dd = dat_read(file, im)
 ctmod, top=top
 tvim, im, zoom=0.5, /order, /new, top=top
@@ -45,7 +45,6 @@ limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
           pg_hide, limb_ptd, /limb, gd=gd, od=sund
 tvim, im
 pg_draw, limb_ptd
-
 
 ;------------------------------------------------------
 ; generate map projections

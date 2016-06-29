@@ -213,8 +213,8 @@ function tycho2_get_stars, filename, cam_vel=cam_vel, $
          faint=faint, bright=bright, nbright=nbright, $
          noaberr=noaberr, names=names, mag=mag, jtime=jtime
 
-stop
- f = findfile(filename)
+
+ f = file_search(filename)
  if(f[0] eq '') then $
   begin
    nv_message, name='tycho2_get_stars', 'File does not exist - ' + filename
