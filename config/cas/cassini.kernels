@@ -18,8 +18,9 @@
 
 #constants (always loaded)
 #NOTE: adding this one until we figure out why some sats are missing from cpck01Oct2002.tpc
+$NV_SPICE_LSK/naif0011.tls
 $NV_SPICE_PCK/cpck14Dec2001.tpc
-
+$NV_SPICE_SCK/cas00167.tsc
 
 #(recon) Launch to Venus1+32
 START_TIME = 1997-288T09:27:11.572
@@ -1153,7 +1154,7 @@ START_TIME = 2011-150T12:00:00.001
  $NV_SPICE_PCK/$SAT_PCK_ROCK
  $NV_SPICE_PCK/$SAT_PCK
 # $NV_SPICE_SPK/sat164.bsp
- $NV_SPICE_SPK/de430.bsp
+ ~/Documents/naif/generic_kernels/spk/de430.bsp
  $NV_SPICE_SPK/110818AP_SCPSE_11175_17265.bsp
  $NV_SPICE_SPK/$SAT_ROCKS
 STOP_TIME = 2017-265T00:00:00.000

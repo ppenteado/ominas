@@ -13,15 +13,15 @@
 ;  	@boresight.example
 ;
 ;=======================================================================
-
+!quiet=1
 ;=======================================================================
 ; load and display images
 ;=======================================================================
-file_nac = './data/n1354897340.1'
-file_wac = './data/w1354897340.1'
+file_nac = 'data/N1354897340_1.IMG'
+file_wac = 'data/W1354897340_1.IMG'
 
-dd_nac = dat_read(file_nac, im_nac, silent)
-dd_wac = dat_read(file_wac, im_wac, silent)
+dd_nac = dat_read(file_nac, im_nac, /silent)
+dd_wac = dat_read(file_wac, im_wac, /silent)
 
 ctmod, top=top
 tvim, im_nac, zoom=0.45, /order, /new
@@ -79,18 +79,10 @@ pg_draw, limb_ps_wac
 ;  Here, pg_repoint is used without any image offsets.  Instead, we
 ;  give it the corrected WAC camera descriptor and a rotation matrix
 ;  to correct for misalignments between the cameras.
-; 
+;
 ;=======================================================================
 pg_repoint, gd=gd_nac, bore_cd=cd_wac, bore_rot=cas_mx_wac_to_nac()
 
 limb_ps_nac = pg_limb(gd=gd_nac) 
 tvim, w_nac, im_nac
 pg_draw, limb_ps_nac
-
-
-
-
-
-
-
-
