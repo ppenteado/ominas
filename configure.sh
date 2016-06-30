@@ -112,7 +112,18 @@ function ppkg()
 	#    Arg 1 -> Numerical value to be parsed                           #
 	#--------------------------------------------------------------------#
 	script="ominas_env_${mis[$1-1]}.$shtype"
-	pkins $script
+	case ${mis[$1-1]} in 
+		"cas")
+			kername="CASSINI"	;;
+		"gll")
+			kername="GALILEO"	;;
+		"vgr")
+			kername="VOYAGER"	;;
+		"dawn")
+			kername="DAWN"	;;
+		*)
+	esac
+	pkins $script $kername
 }
 
 function dins()
@@ -138,19 +149,10 @@ function dins()
 		esac
 	fi		
 	read -rp "Please enter the data or star catalog path (if not known, press enter): " datapath
-	if ! [ -d $datapath ]; then
-		printf "Attempting to automatically find data location...\n"
-		dirlist=()
- 		while IFS= read -r -d $'\0'; do
-			dirlist+=("$REPLY")
-		done < <(find $HOME -type d -iname ${Data[$1-5]} -print0 2>/dev/null)
-		printf '%s\n' "${dirlist[@]}" | nl
-		if [ -z ${dirlist[0]} ]; then
-			printf "Warning: directory not found\n" 1>&2
-			return 2
-		fi
-		read -r -p "Please type the number of the matching directory:  " match
-		datapath=${dirlist[$match]}
+	echo $datapath
+	if ! [[ -d $datapath ]]; then
+		echo "hello"
+		setdir ${Data[$1-5]}
 	fi
 
 	echo "NV_${Data[$1-5]}_DATA=$datapath; export NV_${Data[$1-5]}_DATA" >>$setting
@@ -161,13 +163,34 @@ function pkins()
 	# INSTALL PACKAGE ---------------------------------------------------#
 	#    Install the name mission package to bash_profile.               #
 	#    Arg 1 -> Name of package to be installed                        #
+	#    Arg 2 -> Name of the kernel package name                        #
 	#    Checks if the named package is already written to the bash      #
 	#    settings file before writing a new line.                        #
 	#--------------------------------------------------------------------#
-	if ! grep -q $1 $setting; then
-		echo "source ${OMINAS_DIR}/config/$1" >> $setting
-		printf "Installed package: $1\n"
+	setdir $2
+	if [[ $datapath != "" ]]; then
+		if ! grep -q $datapath $setting; then
+			grep -v ".*$1.*" $setting >$HOME/temp
+			mv $HOME/temp $setting
+			echo "SPICE_KER=${datapath}; source ${OMINAS_DIR}/config/$1" >> $setting
+			printf "Installed package: $1\n"
+		fi
 	fi
+}
+
+function setdir() {
+	printf "Attempting to automatically find data location...\n"
+    dirlist=()
+    while IFS= read -r -d $'\0'; do
+        dirlist+=("$REPLY")
+    done < <(find $HOME -type d -iname $1 -print0 2>/dev/null)
+    if [ -z ${dirlist[0]} ]; then
+        printf "Warning: directory not found\n" 1>&2
+        return 2
+    fi
+    printf '%s\n' "${dirlist[@]}" | nl
+    read -r -p "Please type the number of the matching directory:  " match
+    datapath=${dirlist[$match-1]}
 }
 
 printf "The setup will guide you through the installation of OMINAS\n"
@@ -189,7 +212,7 @@ declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("SEDR" "TYCHO" "SAO" "GSC")
 for ((d=0; d<${#mis[@]}; d++));
 do
-	mstatus[$d]="`pkst ${OMINAS_DIR}/config/${mis[$d]}/`"
+	mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
 	if grep -q NV_${Data[$d]}_DATA $setting; then
 		dstatus[$d]=$st
 	else
@@ -222,8 +245,10 @@ do
 	case $num in
 		exit)
 				return 0 	;;
+		[Dd]*)
+				pkins ominas_env_def.sh "generic_kernels"	;;
 		[Yy]*)
-				pkins ominas_env_def.sh
+				pkins ominas_env_def.sh "generic_kernels"
 				ppkg 1
 				ppkg 2
 				ppkg 3
@@ -231,10 +256,9 @@ do
 		[Nn]*)
 				break 		;;
 		[1234])
-				pkins ominas_env_def.sh
+				pkins ominas_env_def.sh "generic_kernels"
 				ppkg $num 	;;
 		[5678])
-				pkins ominas_env_def.sh
 				dins $num 	;;
 		*)
 				printf "Error: Invalid package or catalog specified\n" 1>&2
