@@ -1752,12 +1752,14 @@ end
 
 
 ;=============================================================================
-; grim_rm_indexed_array_by_box
+; grim_select_array_by_box
 ;
 ;
 ;=============================================================================
-pro grim_rm_indexed_array_by_box, grim_data, ptdp, cx, cy, plane=plane
+function grim_select_array_by_box, grim_data, ptd, cx, cy, plane=plane
 @pnt_include.pro
+
+ ii = -1
 
  ;---------------------------------
  ; get get data coords of corners
@@ -1767,10 +1769,10 @@ pro grim_rm_indexed_array_by_box, grim_data, ptdp, cx, cy, plane=plane
  ;-------------------------------------
  ; scan arrays
  ;-------------------------------------
- for i=0, n_elements(*ptdp)-1 do $
-  if(pnt_valid((*ptdp)[i])) then $
+ for i=0, n_elements(ptd)-1 do $
+  if(pnt_valid(ptd[i])) then $
    begin
-    pts = pnt_points((*ptdp)[i])
+    pts = pnt_points(ptd[i])
 
     if(keyword_set(pts)) then $
      begin
@@ -1778,34 +1780,36 @@ pro grim_rm_indexed_array_by_box, grim_data, ptdp, cx, cy, plane=plane
                     AND (min(pts[0,*]) GE min(corners[0,*])) $
                        AND (max(pts[1,*]) LE max(corners[1,*])) $
                           AND (min(pts[1,*]) GE min(corners[1,*])))
-      if(w[0] NE -1) then nv_free, (*ptdp)[i]
+      if(w[0] NE -1) then ii = [ii, i]
      end
    end
 
- grim_set_plane, grim_data, plane, pn=plane.pn
- grim_set_data, grim_data, grim_data.base
+ nii = n_elements(ii)
+ if(nii GT 1) then ii = ii[1:*]
+
+ return, ii
 end
 ;=============================================================================
 
 
 
 ;=============================================================================
-; grim_rm_indexed_array_by_point
+; grim_select_array_by_point
 ;
 ;=============================================================================
-function grim_rm_indexed_array_by_point, grim_data, ptdp, p, all=all, plane=plane
+function grim_select_array_by_point, grim_data, ptd, p, all=all, plane=plane
 
 d2min = 100
- stat = -1
+ ii = -1
 
 
  ;-----------------------------------------------------
  ; compute distance from p to each array
  ;-----------------------------------------------------
- for i=0, n_elements(*ptdp)-1 do $
-  if(pnt_valid((*ptdp)[i])) then $
+ for i=0, n_elements(ptd)-1 do $
+  if(pnt_valid(ptd[i])) then $
    begin
-    pts = pnt_points((*ptdp)[i])
+    pts = pnt_points(ptd[i])
     n = n_elements(pts)/2
 
     q = (convert_coord(/data, /to_device, p[0], p[1]))[0:1,*]
@@ -1819,18 +1823,59 @@ d2min = 100
     ; remove lowest numbered array in range
     ;- - - - - - - - - - - - - - - - - - - - -
     w = where(d2 LE d2min)
-    if(w[0] NE -1) then $
-     begin
-      nv_free, (*ptdp)[i]
-      stat = 0
-     end
+    if(w[0] NE -1) then ii = [ii, i]
    end
 
+ nii = n_elements(ii)
+ if(nii GT 1) then ii = ii[1:*]
 
- grim_set_plane, grim_data, plane, pn=plane.pn
- grim_set_data, grim_data, grim_data.base
+ return, ii
+end
+;=============================================================================
 
- return, stat
+
+
+;=============================================================================
+; grim_select_array
+;
+;=============================================================================
+function grim_select_array, grim_data, plane=plane, ptd, p
+
+d2min = 9
+
+ ;---------------------------------------------
+ ; remove array under initial cursor point
+ ;---------------------------------------------
+ ii = grim_select_array_by_point(grim_data, ptd, p, all=all, plane=plane)
+ if(ii[0] NE -1) then return, ii
+
+ ;-----------------------------------------------------------------------------
+ ; if nothing removed by the initial click, get user-defined box on image
+ ;-----------------------------------------------------------------------------
+
+ ;- - - - - - - - - - - - - - -
+ ; drag box
+ ;- - - - - - - - - - - - - - -
+ q = (convert_coord(/data, /to_device, p[0], p[1]))[0:1,*]
+ box = tvrec(/restore, p0=q, col=ctyellow())
+
+ cx = box[0,*]
+ cy = box[1,*]
+ d2 = (cx[0] - cx[1])^2 + (cy[0] - cy[1])^2 
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; select overlays inside box, if dragged
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ box = 1
+ if(d2 LE d2min) then box = 0
+
+ if(box) then $
+  begin
+   ii = grim_select_array_by_box(grim_data, ptd, cx, cy, plane=plane)
+   if(ii[0] NE -1) then return, ii
+  end
+
+ return, -1
 end
 ;=============================================================================
 
@@ -1842,47 +1887,23 @@ end
 ;=============================================================================
 pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all
 
-d2min = 9
  ptdp = grim_get_indexed_array(plane, name)
 
  if(keyword__set(all)) then $
   begin
    nv_free, *ptdp
    *ptdp = obj_new()
-   return
-  end
-
-
- ;---------------------------------------------
- ; remove array under initial cursor point
- ;---------------------------------------------
- stat = grim_rm_indexed_array_by_point(grim_data, ptdp, p, all=all, plane=plane)
-
-
- ;-----------------------------------------------------------------------------
- ; if nothing removed by the initial click, get user-defined box on image
- ;-----------------------------------------------------------------------------
- if(stat EQ -1) then $
+  end $
+; else grim_rm_array, grim_data, plane=plane, *ptdp, p
+ else $
   begin
-   ;- - - - - - - - - - - - - - -
-   ; drag box
-   ;- - - - - - - - - - - - - - -
-   q = (convert_coord(/data, /to_device, p[0], p[1]))[0:1,*]
-   box = tvrec(/restore, p0=q, col=ctyellow())
-
-   cx = box[0,*]
-   cy = box[1,*]
-   d2 = (cx[0] - cx[1])^2 + (cy[0] - cy[1])^2 
- 
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   ; select overlays inside box, if dragged
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   box = 1
-   if(d2 LE d2min) then box = 0
-
-   if(box) then grim_rm_indexed_array_by_box, grim_data, ptdp, cx, cy, plane=plane
+   ii = grim_select_array(grim_data, plane=plane, *ptdp, p)
+   if(ii[0] NE -1) then nv_free, (*ptdp)[ii]
   end
 
+
+ grim_set_plane, grim_data, plane, pn=plane.pn
+ grim_set_data, grim_data, grim_data.base
 end
 ;=============================================================================
 
@@ -2524,8 +2545,11 @@ function grim_get_object_overlays, plane, xd
    if(keyword_set(ptd0)) then $
     begin
      for j=0, n_elements(ptd0)-1 do $
-         if(cor_udata(ptd0[j], 'grim_xd') EQ xd) then $
-                                          ptd = append_array(ptd, ptd0[j])
+      begin
+       udata = cor_udata(ptd0[j], 'grim_xd')
+       if(obj_valid(udata)) then $
+         if(udata EQ xd) then ptd = append_array(ptd, ptd0[j])
+      end
     end
   end
 

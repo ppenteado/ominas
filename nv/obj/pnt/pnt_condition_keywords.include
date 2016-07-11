@@ -1,3 +1,4 @@
 visible=visible, $
 invisible=invisible, $
-select=select, $
+selected=selected, $
+unselected=unselected, $

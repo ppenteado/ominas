@@ -78,6 +78,8 @@ _md = cor_dereference(md)
  scale = (_md.scale)[jj]
  size = double((_md.size)[ii])
  center = (_md.center)[ii]
+ range0 = (_md.range[*,0,*])[ii]
+ range1 = (_md.range[*,1,*])[ii]
  origin = (_md.origin)[ii]
 
  sz = dblarr(2,nv,nt, /nozero)
@@ -89,7 +91,8 @@ _md = cor_dereference(md)
 
  lon = (image_pts[0,*,*] - origin[0,*,*])/a[1,*,*] + center[1,*,*]
 
- valid = where((lon-center[1,*,*] GE -!dpi) AND (lon-center[1,*,*] LE !dpi))
+ valid = where((lon-center[1,*,*] GE range1[0,*,*]) $
+                   AND (lon-center[1,*,*] LE range1[1,*,*]) )
  if(valid[0] EQ -1) then return, 0
  nvalid = n_elements(valid)
 

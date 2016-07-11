@@ -39,6 +39,10 @@ end_keywords)
  if(keyword_set(center)) then self.center = center[*,ii] $
  else self.center = _md0.center
 
+ range = decrapify(range)
+ if(keyword_set(range)) then self.range = range[*,*,ii] $
+ else self.range = [[-1d100,1d100], [-1,1]*!dpi]
+
  radii = decrapify(radii)
  if(n_elements(radii) NE 0) then self.radii = radii[*,ii] $ 
  else self.radii[*] = 1d
@@ -114,6 +118,12 @@ end
 ;		Methods: map_center, map_set_center
 ;
 ;
+;	range:	2-element array giving the map coordinates of the
+;		lat/lon ranges of the map.
+;
+;		Methods: map_range, map_set_range
+;
+;
 ;	origin:	2-element array giving the image coordinates corresponding
 ;		to the center of the map.
 ;
@@ -155,6 +165,7 @@ pro ominas_map__define
 	scale:		  0d, $			; map 'scale'; Actually zoom.
 	origin:		  dblarr(2), $		; image coords of map center
 	center:		  dblarr(2), $		; lat,lon of map center
+	range:		  dblarr(2,2), $	; lat,lon map ranges
 	radii:		  dblarr(3), $		; ref. radii of triaxial ellipsoid
 
 	graphic:	  0b, $			; If set, planetographic 

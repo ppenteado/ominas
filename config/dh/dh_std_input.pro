@@ -64,6 +64,7 @@
 ;=============================================================================
 
 
+
 ;=============================================================================
 ; dhsi_get_core
 ;
@@ -88,6 +89,7 @@ function dhsi_get_core, dh, prefix
  return, crds
 end
 ;=============================================================================
+
 
 
 ;=============================================================================
@@ -453,14 +455,6 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   crds = dhsi_get_core(dh, 'map')
 	   if(NOT keyword_set(crds)) then return, 0
 
-	   map_fn_map_to_image = $
-	       dh_get_string(dh, 'map_fn_a2i', n_obj=n_obj, dim=dim, $
-			                                hi=hi, status=status)
-
-	   map_fn_image_to_map = $
-	       dh_get_string(dh, 'map_fn_i2m', n_obj=n_obj, dim=dim, $
-			                                hi=hi, status=status)
-
 	   map_fn_data_p = dh_get_array(dh, 'map_fn_data', n_obj=n_obj, $
 	                                       dim=dim, hi=hi, status=status)
 
@@ -499,13 +493,13 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   map_size = dh_get_point(dh, 'map_size', n_obj=n_obj, dim=dim, $
 	                                                hi=hi, status=status)
 
+	   map_range = dh_get_array(dh, 'map_range', n_obj=n_obj, dim=dim, $
+			                               hi=hi, status=status)
 
 	   n_obj = n_elements(crds)
 	   mds = map_create_descriptors(n_obj, $
 		crd=crds, $
 		type=map_type, $
-		fn_map_to_image=fn_map_to_image, $
-		fn_image_to_map=fn_image_to_map, $
 		fn_data_p=map_fn_data_p, $
 		graphic=map_graphic, $
 		rotate=map_rotate, $
@@ -513,6 +507,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 		units=map_units, $
 		origin=map_origin, $
 		center=map_center, $
+		range=map_range, $
 		scale=map_scale, $
 		radii=map_radii)
 

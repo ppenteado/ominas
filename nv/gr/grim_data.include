@@ -13,7 +13,7 @@ end
 ; grim_init
 ;
 ;=============================================================================
-function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
+function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
                         retain=retain, user_callbacks=user_callbacks, $
                         user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, faint=faint, cursor_swap=cursor_swap, $
                         path=path, save_path=save_path, load_path=load_path, fov=fov, $
@@ -30,6 +30,7 @@ function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
 @grim_block.include
 
  
+  if(NOT keyword_set(dd0)) then dd0 = obj_new()
   if(NOT keyword_set(nhist)) then nhist = 1
 
   beta = keyword_set(beta)
@@ -229,6 +230,7 @@ function grim_init, dd, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
 		curve_syncing		: curve_syncing, $		
 		dd_map_p		: ptr_new(0), $
 		md_map_p		: ptr_new(0), $
+		dd0			: dd0, $
 
 		misc_data_p		: ptr_new(0), $
 

@@ -58,10 +58,7 @@ function _pnt_apply_condition, _ps, condition
 @pnt_include.pro
 
  flags = *_ps.flags_p
-
- test = flags AND condition.mask
-
- if(condition.state EQ PTD_FALSE) then return, where(test EQ 0)
- return, where(test EQ condition.mask)
+ compare = flags AND condition.mask
+ return, where(compare EQ condition.state)
 end
 ;===============================================================================

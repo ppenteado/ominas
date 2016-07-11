@@ -327,7 +327,7 @@ pro nv_help_doc, name, capture=capture
  ; find the doc files
  ;------------------------------------------------------
  doc_dir = getenv('OMINAS_DIR') + '/doc/'
- doc_files = findfile(doc_dir+'doc_*.txt')
+ doc_files = file_search(doc_dir+'doc_*.txt')
  doc_pfs = str_nnsplit(str_flip(str_nnsplit(str_flip(doc_files), '_')), '.')
 
 

@@ -69,7 +69,6 @@
 function pg_mosaic, dd, combine_fn=_combine_fn, wt_fns=_wt_fns, data=data, mosaic=mosaic, $
           weight=weight, pc_xsize=pc_xsize, pc_ysize=pc_ysize, scales=scales
 
-
  if(keyword_set(_combine_fn)) then combine_fn = 'cm_combine_' + _combine_fn $
  else combine_fn = 'cm_combine_median'
 

@@ -36,6 +36,7 @@ function spice_get_planets, names, ref, et, $
  orient = dblarr(3,3,n) & orient[diaggen(3,n)] = 1
  gm = dblarr(n)
  lora = dblarr(n)
+
  rref = dblarr(n)
  refl_fn = strarr(n)
  refl_parm = dblarr(10,n)
@@ -113,7 +114,6 @@ function spice_get_planets, names, ref, et, $
      ;- - - - - - - - - - - - - - - - - - - - - -
      ; get body state w.r.t. SS barycenter
      ;- - - - - - - - - - - - - - - - - - - - - -
-;if(name EQ 'PLUTO') then stop
      catch, failed
      if(failed EQ 0) then cspice_spkgeo, id, et, ref, obs, targ_state, ltime
      catch, /cancel

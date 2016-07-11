@@ -31,7 +31,7 @@
 ;=============================================================================
 pro fdelete, filespec
 
- files = findfile(filespec)
+ files = file_search(filespec)
  nfiles = n_elements(files)
 
  for i=0, nfiles-1 do $

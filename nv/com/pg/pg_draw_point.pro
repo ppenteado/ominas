@@ -302,10 +302,7 @@ pro pg_draw_point, _pp, literal=literal, $
    ;- - - - - - - - - - - - - - - - -
    ; visible, unselected points
    ;- - - - - - - - - - - - - - - - -
-;   points = pnt_points(pp[i], /visible, /unselected)
-   points = pnt_points(pp[i], /visible)
-   points = pnt_points(pp[i], $
-        condition={mask:PTD_MASK_INVISIBLE OR PTD_MASK_SELECT, state:PTD_FALSE})
+   points = pnt_points(pp[i], /visible, /unselected)
 
    if(keyword_set(points)) then $
      pgdp_draw, points, $
@@ -316,15 +313,26 @@ pro pg_draw_point, _pp, literal=literal, $
    ;- - - - - - - - - - - - - - - - -
    ; visible, selected points
    ;- - - - - - - - - - - - - - - - -
-;   points = pnt_points(pp[i], /visible, /selected)
-   points = pnt_points(pp[i], $
-        condition={mask:PTD_MASK_INVISIBLE OR PTD_MASK_SELECT, state:PTD_TRUE})
+   points = pnt_points(pp[i], /visible, /selected)
 
    if(keyword_set(points)) then $
-       pgdp_draw, points, $
-         colors[i], 6, psizes[i], thick[i], line[i], $
+    begin
+     size = psizes[i]
+     psym = psyms[i]
+     th = thick[i]
+
+     if(psym EQ 3) then $
+      begin
+       psym = 4
+       size = 0.5
+      end $
+     else th = th*2 
+
+     pgdp_draw, points, $
+         colors[i], psym, size, th, line[i], $
          csizes[i], cthicks[i], corient[i], align[i], plabel_offset, label_colors[i], $
          label_points=label_points, plabels=plabels[i]
+    end
 
   end
 

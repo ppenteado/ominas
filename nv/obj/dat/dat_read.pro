@@ -91,15 +91,6 @@
 ;	expansion of the given file specifications.
 ;
 ;
-; RESTRICTIONS:
-;	Under unix, the IDL findfile routine does not expand the ~ symbol,
-;	but openr does.  In order to salvage some functionality, dat_read 
-;	allows filespecs to pass even if they don't expand to anything using
-;	findfile.  In this way, a filespec contianing ~ can be properly
-;	expanded, but only if it expands to one filename.  If it expands
-;	to multiple filenames, then openr will choke on it.
-;
-;
 ; PROCEDURE:
 ;	dat_read expands all file specifications and then attempts to detect
 ;	the filetype for each resulting filename using the filetype detectors
@@ -149,7 +140,7 @@ function dat_read, filespec, data, header, $
  ;------------------------------
  ; expand filespec
  ;------------------------------
- filenames = findfile1(filespec)
+ filenames = file_search(filespec)
 
  ;========================================
  ; create data descriptors for each file
@@ -171,7 +162,7 @@ function dat_read, filespec, data, header, $
       begin
        dot = '.'
        if(strmid(extensions[ii], 0, 1) EQ '.') then dot = ''
-       filename = findfile(_filename + dot + extensions[ii])
+       filename = file_search(_filename + dot + extensions[ii])
        ii = ii + 1
       end
     end

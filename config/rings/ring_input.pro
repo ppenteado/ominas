@@ -216,8 +216,7 @@ function ring_input, dd, keyword, prefix, $
    ; read relevant ring catalog
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    catfile = catpath + '/ringcat_' + strlowcase(planet) + '.txt'
-   ff = findfile(catfile)   
-   if(keyword_set(ff)) then $
+   if(file_test(catfile)) then $
     begin
      dat = ri_load(catfile, reload=reload)
 

@@ -31,21 +31,23 @@
 ;
 ;	type:	Array (1 x n) of strings giving the map types.
 ;
-;	units:	Array (2 x n) of strings giving the map units.
+;	units:	Array (2 x n) giving the map units.
 ;
-;	size:	Array (2 x n) of strings giving the map sizes.
+;	size:	Array (2 x n) giving the map sizes.
 ;
-;	scale:	Array (1 x n) of strings giving the map scales.
+;	scale:	Array (1 x n) giving the map scales.
 ;
-;	center:	Array (2 x n) of strings giving the map centers.
+;	center:	Array (2 x n) giving the map centers.
 ;
-;	origin:	Array (2 x n) of strings giving the map origins.
+;	range:	Array (2x2 x n) giving the map centers.
 ;
-;	rotate:	Array (1 x n) of strings giving the map rotate codes.
+;	origin:	Array (2 x n) giving the map origins.
 ;
-;	graphic:	Array (1 x n) of strings giving the map graphic flags.
+;	rotate:	Array (1 x n) giving the map rotate codes.
 ;
-;	radii:	Array (3 x n) of strings giving the map ellipsoid radii.
+;	graphic: Array (1 x n) giving the map graphic flags.
+;
+;	radii:	Array (3 x n) giving the map ellipsoid radii.
 ;
 ;	radii:	Array (1 x n) of pointers giving the map functon data.
 ;

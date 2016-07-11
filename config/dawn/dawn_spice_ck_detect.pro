@@ -57,7 +57,7 @@ common dawn_spice_ck_block, all_files, all_names_block, ckpath_block, $
 
  if(NOT keyword_set(jd_start_block)) then $
   begin
-   all_files = findfile(ckpath + '/dawn_sc_??????_??????*.bc')
+   all_files = file_search(ckpath + '/dawn_sc_??????_??????*.bc')
    if(keyword_set(all)) then return, all_files
 
 

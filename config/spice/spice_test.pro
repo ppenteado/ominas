@@ -4,7 +4,7 @@
 ;===============================================================================
 function spice_test
 
- if(NOT keyword_set(getenv('NV_SPICE_CK'))) then return, 0
+ if(NOT keyword_set(getenv('NV_SPICE'))) then return, 0
 
  return, 1
 end

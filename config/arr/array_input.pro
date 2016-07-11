@@ -194,7 +194,7 @@ function array_input, dd, keyword, prefix, $
    ; read relevant array catalogs
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    dir = catpath + '/' + strlowcase(primary) + '/'
-   files = findfiles(dir + '*.arr')
+   files = file_search(dir + '*.arr')
    split_filename, files, dirs, files
 
    if(keyword_set(files)) then $

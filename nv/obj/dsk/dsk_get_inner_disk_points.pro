@@ -55,7 +55,7 @@ function dsk_get_inner_disk_points, dkd, n_points, ta=ta, $
  nt = n_elements(dkd)
 
  ;----------------------------------------
- ; disk true anomaly of each point
+ ; true anomaly of each point
  ;----------------------------------------
  if(NOT keyword__set(ta)) then ta = dindgen(n_points)*2.*!dpi/n_points $
  else n_points = n_elements(ta)
@@ -65,7 +65,6 @@ function dsk_get_inner_disk_points, dkd, n_points, ta=ta, $
  ;-------------------------------------
  r_disk = dblarr(n_points, 3, nt)
 
-; r_disk[*,0,*] = dsk_get_inner_radius(dkd, ta)
  r_disk[*,0,*] = dsk_get_edge_radius(dkd, ta, /inner)
  r_disk[*,1,*] = ta
 

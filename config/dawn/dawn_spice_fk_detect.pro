@@ -7,7 +7,7 @@ function dawn_spice_fk_detect, dd, kpath, time=time, reject=reject, strict=stric
  ;--------------------------------
  ; new naming convention
  ;--------------------------------
- all_files = findfile(kpath + 'dawn_v??.tf')
+ all_files = file_search(kpath + 'dawn_v??.tf')
 
  if(keyword__set(all)) then return, all_files
 
