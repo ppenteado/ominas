@@ -16,6 +16,7 @@ no="NOT INSTALLED"
 st="SET"
 ns="NOT SET"
 shtype="sh"
+cwd = $PWD
 
 #------------------------------------------------------------------------#
 # Configure will attempt to detect whether it is being run from its      #
@@ -23,11 +24,15 @@ shtype="sh"
 # fails, and changed back at the end of execution.                       #
 #------------------------------------------------------------------------#
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-test $DIR != $PWD && (printf "Warning: configuration should  be run from the OMINAS directory\n"; 
+test $DIR != $PWD && 
+	(printf "Warning: configuration should  be run from the OMINAS directory\n"; 
 	cd $DIR;
 	cdflag=true)
 
-trap $(/bin/rm -f paths.pro; test $cdflag && cd $OLDPWD) EXIT
+trap $(/bin/rm -f paths.pro;
+    test $cdflag &&
+    cd $cwd)
+    EXIT
 
 #------------------------------------------------------------------------#
 # The type of bash settings file is detected. Configure requires use     #
@@ -59,8 +64,8 @@ function ext()
 	#    Extracts files of (almost) any archive file type.               #
 	#    Arg 1 -> File to be extracted                                   #
 	#    Issues: Files such as icy.tar.Z, the archive for the NAIF       #
-	#    Icy toolkit will not break this function, but will two          #
-	#    passes.                                                         #
+	#    Icy toolkit will not break this function, but will require      #
+	#	 two passes.                                                     #
 	#    Note: No longer used. OMINAS is generally packaged as a git     #
 	#    repository, which extracts itself. Also, this script is con-    #
 	#    tained within the ominas directory...                           #
@@ -151,7 +156,6 @@ function dins()
 	read -rp "Please enter the data or star catalog path (if not known, press enter): " datapath
 	echo $datapath
 	if ! [[ -d $datapath ]]; then
-		echo "hello"
 		setdir ${Data[$1-5]}
 	fi
 
@@ -179,9 +183,17 @@ function pkins()
 }
 
 function setdir() {
+	# SET DIRECTORY -----------------------------------------------------#
+	#    Set the location of a data set, in particular a kernel pool.    #
+	#    Arg 1 -> Name of data pool to detect                            #
+	#    Data pool location must have name of data type to be detected,  #
+	#    for example the tycho catalog must be in a folder called        #
+	#    tychox (x is based on the version number), but is not case      #
+	#    sensitive.                                                      #
+	#--------------------------------------------------------------------#
 	printf "Attempting to automatically find data location...\n"
     dirlist=()
-    while IFS= read -r -d $'\0'; do
+    while IFS= read -rd $'\0'; do
         dirlist+=("$REPLY")
     done < <(find $HOME -type d -iname $1 -print0 2>/dev/null)
     if [ -z ${dirlist[0]} ]; then
@@ -189,7 +201,7 @@ function setdir() {
         return 2
     fi
     printf '%s\n' "${dirlist[@]}" | nl
-    read -r -p "Please type the number of the matching directory:  " match
+    read -rp "Please type the number of the matching directory:  " match
     datapath=${dirlist[$match-1]}
 }
 
@@ -220,7 +232,7 @@ do
 	fi
 done
 
-# Print the configuration list with all statuses to the tty's stdout
+# Print the configuration list with all statuses to stdout
 
 cat <<PKGS
 	Current OMINAS configuration settings
@@ -238,7 +250,7 @@ Data:
 	8) GSC star catalog  . . . . . . . . . . . ${dstatus[3]}
 PKGS
 
-read -r -p "Modify Current OMINAS configuration (exit/no/{yes=all} 1 2 ...)?  " ans
+read -rp "Modify Current OMINAS configuration (exit/no/{yes=all} 1 2 ...)?  " ans
 
 for num in $ans
 do
@@ -265,7 +277,33 @@ do
     esac
 done
 
-test "$1" == "-c" &&
+printf "OMINAS requires the NAIF Icy toolkit to process SPICE kernels.\n"
+setdir "icy"
+if ! [[ -d $datapath ]]; then
+	read -rp "Icy was not found on this computer. Would you like to install it now? " ans
+	case $ans in
+		[Yy]*)
+			bits=$(uname -m)
+			if [[ $bits == "x86_64" ]]; then bstr="64bit"; else bstr="32bit"; fi
+			os=$(uname -s)
+			if [[ $os == "Darwin" ]]; then ostr="MacIntel_OSX_AppleC"; else ostr="PC_Linux_GCC"; fi
+
+			curl "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_$bstr/packages/icy.tar.Z" >"../icy.tar.Z"
+			ext "icy.tar.Z" && ext "icy.tar"
+			cd ../icy
+			cdflag=true
+			datapath=$PWD
+			/bin/csh makeall.csh
+			cd $OMINAS_DIR	;;
+		*)
+			break
+	esac
+fi
+icydir=$datapath
+
+XIDL_DIR=$OMINAS_DIR/util/xidl/
+
+test "$1" == "c" &&
 for f in ./ominas_env_*.sh
 do
 	printf "Installing custom package $f...\n"
@@ -279,15 +317,22 @@ done
 #------------------------------------------------------------------------#
 
 addpath=":+$OMINAS_DIR"
+icypath=":+$icydir"
+xidlpath=":+$XIDL_DIR"
 cat <<IDLCMD >paths.pro
 path=pref_get('IDL_PATH')
-IF STRPOS(path, '$addpath') EQ -1 THEN path=path+'$addpath'
+IF STRPOS(path, '$addpath') EQ -1 THEN path=path+'$icypath'
+IF STRPOS(path, '$icypath') EQ -1 THEN path=path+'$addpath'
+IF STRPOS(path, '$xidlpath') EQ -1 THEN path=path+'$addpath'
 pref_set, 'IDL_PATH', path, /commit
+dlm_path=pref_get('IDL_DLM_PATH')
+IF STRPOS(dlm_path, '$icypath') EQ -1 THEN dlm_path=dlm_path+'$icypath'
+pref_set, 'IDL_DLM_PATH', dlm_path, /commit
 print, '$OMINAS_DIR added to IDL_PATH'
 exit
 IDLCMD
 
-/Applications/exelis/idl85/bin/idl paths.pro
+$IDL_DIR/bin/idl paths.pro
 
 . $setting
 

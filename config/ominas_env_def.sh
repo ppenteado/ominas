@@ -123,3 +123,10 @@ export NV_ORBIT_DATA
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
 NV_STATION_DATA=$OMINAS_DIR/config/stn/
 export NV_STATION_DATA
+
+XIDL_DIR='$OMINAS_DIR/util/xidl'
+export XIDL_DIR
+alias xidl='/bin/csh $XIDL_DIR/xidl.csh'
+alias grim='xidl grim.bat +'
+alias brim='xidl brim.bat +'
+alias rim='xidl rim.bat +'

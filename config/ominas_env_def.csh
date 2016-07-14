@@ -21,7 +21,7 @@
 setenv NV_CONFIG	$OMINAS_DIR/config/
 
 setenv NV_FTP_DETECT	$NV_CONFIG/tab/filetype_detectors.tab
-setenv NV_IO		$NV_CONFIG/tab/io.tab
+setenv NV_IO			$NV_CONFIG/tab/io.tab
 setenv NV_SPICE         $NV_CONFIG/spice/
 
 setenv NV_TRANSLATORS	$NV_CONFIG/tab/translators.tab
@@ -36,7 +36,7 @@ setenv NV_INS_DETECT	$NV_CONFIG/tab/instrument_detectors.tab
 #    The above setup should allow you to run the first example script, which  #
 #    enters all geometric information explicitly instead of accessing an      #
 #    external source, which will require additional configuration (see below).#
-#    cd to $OMINAS_DIR/demo and type:                                         #                       #
+#    cd to $OMINAS_DIR/demo and type:                                         #
 #                                                                             #
 #    idl        saturn.example                                                #
 #                                                                             #
@@ -104,3 +104,9 @@ setenv NV_ORBIT_DATA     $OMINAS_DIR/config/orb/
 # provided in the default OMINAS installation.
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
 setenv NV_STATION_DATA     $OMINAS_DIR/config/stn/
+
+setenv XIDL_DIR    '$OMINAS_DIR/util/xidl'
+alias xidl         'csh $XIDL_DIR/xidl.csh'
+alias grim         'xidl grim.bat +'
+alias brim         'xidl brim.bat +'
+alias rim          'xidl rim.bat +'
