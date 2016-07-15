@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Computes radii along the iner and outer edges of a disk.
+;	Computes radii along the inner and outer edges of a disk.
 ;
 ;
 ; CATEGORY:
@@ -20,7 +20,7 @@
 ;  INPUT:
 ;	dkd:	 Array (nt) of any subclass of DISK.
 ;
-;	ta:	 Array (nta) of true anomalies at which to compute radii.
+;	ta:	 Array (nv x nt) of true anomalies at which to compute radii.
 ;
 ;  OUTPUT: NONE
 ;
@@ -32,7 +32,7 @@
 ;
 ;
 ; RETURN:
-;	Array (nta x 2 x nt) of radii computed at each true anomaly on each 
+;	Array (nv x 2 x nt) of radii computed at each true anomaly on each 
 ;	disk.
 ;
 ;
@@ -46,7 +46,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_get_radius, dkd, ta
+function dsk_get_radius, dkd, ta, one_to_one=one_to_one
 @core.include
 
  r_inner = dsk_get_edge_radius(dkd, ta, /inner)

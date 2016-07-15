@@ -106,7 +106,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
                      dlandt = orb_compute_dlandt(rd, gbxt, GG=GG)
   end
 
- if(defined(dlpdt)) then dapdt = dlpdt - dlandt
+ if(defined(dlpdt)) then dapdt = orb_lon_to_arg_rate(rd, dlpdt, gbxt, dlandt=dlandt)
  if(NOT defined(dapdt)) then $
   begin
    dapdt = 0d
@@ -115,7 +115,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
 
 
 ; if(NOT defined(dmldt)) then dmldt = orb_compute_dmldt(rd, gbxt, GG=GG)
- if(defined(dmldt)) then dmadt = dmldt - dlandt - dapdt
+ if(defined(dmldt)) then dmadt = orb_lon_to_anom_rate(rd, dmldt, gbxt, dlandt=dlandt)
  if(NOT defined(dmadt)) then $
   begin
    dmadt = 0d
@@ -162,7 +162,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
     end
    if(defined(dlpmdt)) then $
     begin
-     __dtapmdt = dsk_dtapmdt(rd) & __dtapmdt[0:nmm-1] = orb_lon_to_anom(rd, dlpmdt, gbxt) & dsk_set_dtapmdt, rd, __dtapmdt
+     __dtapmdt = dsk_dtapmdt(rd) & __dtapmdt[0:nmm-1] = orb_lon_to_anom_rate(rd, dlpmdt, gbxt) & dsk_set_dtapmdt, rd, __dtapmdt
     end
 
    if(defined(libam)) then $

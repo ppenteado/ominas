@@ -55,7 +55,7 @@ function dsk_get_outer_disk_points, dkd, n_points, ta=ta, $
  nt = n_elements(dkd)
 
  ;----------------------------------------
- ; disk true anomaly of each point
+ ; true anomaly of each point
  ;----------------------------------------
  if(NOT keyword_set(ta)) then ta = dindgen(n_points)*2d*!dpi/float(n_points)
 

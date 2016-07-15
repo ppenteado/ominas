@@ -38,7 +38,7 @@ pro grim_rc_settings, rcfile=rcfile, $
  ;----------------------------------------------------
  ; return if no resource file
  ;----------------------------------------------------
- fname = findfile('$HOME/' + rcfile)
+ fname = file_search('$HOME/' + rcfile)
  if(NOT keyword_set(fname)) then return
 
  ;----------------------------------------------------

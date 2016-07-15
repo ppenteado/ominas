@@ -4,7 +4,7 @@
 ;=============================================================================
 function spice_kernel_parse, dd, prefix, type, time=_time, $
                   reject=reject, explicit=explicit, strict=strict, all=all
- 
+
  if(keyword_set(_time)) then time = _time
 
  ;---------------------------------------
@@ -12,7 +12,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  ; name of auto-detect function
  ;---------------------------------------
  kw = strlowcase(type) + '_in'
- env = 'NV_SPICE_' + strupcase(type)
+ env = strupcase(prefix) + '_SPICE_' + strupcase(type)
  fn = prefix + '_spice_' + strlowcase(type) + '_detect'
 
  ;---------------------------------------
@@ -28,11 +28,10 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; get path specific to this translator
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
- kpath_specific = getenv(env + '_' + strupcase(prefix))
- kpath_general = getenv(env)
- kpath = append_array(kpath_general, kpath_specific)
+ kpath = getenv(env)
+ w = where(kpath NE '')
+ if(w[0] EQ -1) then return, ''
 
- if(NOT keyword_set(kpath)) then return, ''
  nkpath = n_elements(kpath)
 
  ;---------------------------------------
@@ -56,7 +55,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
        if(keyword_set(dir)) then path = dir 
        _ff = call_function(fn, dd, path, $
                       reject=reject_kernels, all=all, strict=strict, time=time)
-       if(keyword_set(_ff)) then ff = _ff
+      if(keyword_set(_ff)) then ff = _ff
       end
     end $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -68,7 +67,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
      for j=0, nkpath-1 do $
       begin
        if(strpos(_k_in[i], '/') EQ -1) then _k_in[i] = kpath[j] + _k_in[i]
-       ff = findfile(_k_in[i])
+       ff = file_search(_k_in[i])
        if(keyword_set(ff)) then explicit = append_array(explicit, ff) ;$
       end
     end

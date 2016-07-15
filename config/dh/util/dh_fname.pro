@@ -7,6 +7,7 @@ function dhfn_findfile, dir, name, ext
  ;---------------------------------------------------------------
  ; try replacing existing extension
  ;---------------------------------------------------------------
+stop
  ff = findfile(dir + '/' + name + '.dh')
  if(keyword_set(ff)) then return, ff
 

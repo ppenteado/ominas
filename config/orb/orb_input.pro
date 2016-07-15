@@ -230,8 +230,7 @@ function orb_input, dd, keyword, prefix, $
    dat = oi_load(catpath, catfile, reload=reload)
 
 ;   catfile = getenv('NV_ORBIT_DATA') + '/orbcat_' + strlowcase(planet) + '.txt'
-;   ff = findfile(catfile)   
-;   if(keyword_set(ff)) then $
+;   if(keyword_set(file_test(catfile))) then $
    if(keyword_set(dat)) then $
     begin
 ;     dat = oi_load(catfile, reload=reload)

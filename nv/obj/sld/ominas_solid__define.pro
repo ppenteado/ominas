@@ -35,8 +35,13 @@ end_keywords)
        self.phase_parm[0:(n_elements(phase_parm)<npht)-1] $
                = phase_parm[0:(n_elements(phase_parm)<npht)-1,ii]
 
- if(keyword_set(albedo)) then self.albedo = albedo[ii] $
- else self.albedo = 1d
+ self.albedo = 1
+ if(defined(albedo)) then $
+  begin
+   w = where(albedo EQ 0)
+   if(w[0] NE -1) then albedo[w] = 1
+   self.albedo = albedo[ii]
+  end
 
  if(keyword_set(opacity)) then self.opacity=decrapify(opacity[ii]) $
  else self.opacity = 1d

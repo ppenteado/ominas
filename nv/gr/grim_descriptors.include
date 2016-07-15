@@ -791,6 +791,35 @@ end
 
 
 
+;=============================================================================
+; grim_clear_descriptors
+;
+;=============================================================================
+pro grim_clear_descriptors, grim_data, planes=planes
+
+ if(NOT keyword_set(planes)) then planes = grim_get_plane(grim_data)
+ n = n_elements(planes)
+
+ for i=0, n-1 do $
+  begin
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].cd_p
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].pd_p
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].rd_p
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sd_p
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].std_p
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].ard_p
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sund_p
+
+   if(keyword_set(all)) then *planes[i].active_xd_p = 0
+  end
+
+ grim_set_data, grim_data, grim_data.base
+
+end
+;=============================================================================
+
+
+
 
 
 

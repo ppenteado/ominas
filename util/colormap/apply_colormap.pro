@@ -123,6 +123,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    2 : table = b_curr
   endcase
 
+
  if(keyword_set(table)) then for i=0, nplanes-1 do map[*,i] = table[map[*,i]]
 
  map_image = degen(lonarr(dim[0],nplanes))

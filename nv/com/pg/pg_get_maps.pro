@@ -142,12 +142,11 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
 	rotate=map__rotate, $
 	type=map__type, $
 	units=map__units, $
-	fn_map_to_image=map__fn_map_to_image, $
-	fn_image_to_map=map__fn_image_to_map, $
 	fn_data_p=map__fn_data_p, $
 	size=map__size, $
 	origin=map__origin, $
 	center=map__center, $
+	range=map__range, $
 	scale=map__scale, $
 	radii=map__radii)
   end $
@@ -198,10 +197,7 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
    if(n_elements(map__radii) NE 0) then map_set_radii, mds, map__radii
    if(n_elements(map__origin) NE 0) then map_set_origin, mds, map__origin
    if(n_elements(map__center) NE 0) then map_set_center, mds, map__center
-   if(n_elements(map__fn_map_to_image) NE 0) then $
-                            map_set_fn_map_to_image, mds, map__fn_map_to_image
-   if(n_elements(map__fn_image_to_map) NE 0) then $
-                           map_set_fn_image_to_map, mds, map__fn_image_to_map
+   if(n_elements(map__range) NE 0) then map_set_range, mds, map__range
    if(n_elements(map__fn_data_p) NE 0) then $
                                      map_set_fn_data_p, mds, map__fn_data_p
   

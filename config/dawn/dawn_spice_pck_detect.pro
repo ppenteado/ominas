@@ -14,7 +14,7 @@ function dawn_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=stri
  ;-----------------------------------
  ; dawn-specific pck's
  ;-----------------------------------
- all_files = findfile(kpath + 'dawn_vesta_v??.tpc')
+ all_files = file_search(kpath + 'dawn_vesta_v??.tpc')
 
  if(keyword__set(all)) then vk = all_files $
  else $

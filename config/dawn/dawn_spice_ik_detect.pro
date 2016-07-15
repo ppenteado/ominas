@@ -7,7 +7,7 @@ function dawn_spice_ik_detect, dd, kpath, time=time, reject=reject, strict=stric
  ;--------------------------------
  ; new naming convention
  ;--------------------------------
- all_files = findfile(kpath + 'dawn_fc_v??.ti')
+ all_files = file_search(kpath + 'dawn_fc_v??.ti')
 ; if(NOT keyword__set(all_files)) then nv_message, $
 ;   name='dawn_spice_ik_detect', 'No kernel files found in ' + kpath + '.'
 

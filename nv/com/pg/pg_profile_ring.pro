@@ -247,11 +247,14 @@ function pg_profile_ring, dd, cd=cd, dkx=dkx, gd=gd, outline_ptd, $
 
  dd_prof = [ dat_create_descriptors(1, data=[tr(abscissa), $
                                     tr(profile)], name=cor_name(dd), $
-                                    header=dat_header(dd)), $
-             dat_create_descriptors(1, data=[tr(abscissa), $
-                                    tr(sigma)], name=cor_name(dd), $
                                     header=dat_header(dd)) ]
   
+ if(keyword_set(sigma)) then $
+     dd_prof = [dd_prof, $
+                 dat_create_descriptors(1, data=[tr(abscissa), $
+                                    tr(sigma)], name=cor_name(dd), $
+                                    header=dat_header(dd)) ]
+
  return, dd_prof
 end
 ;=============================================================================

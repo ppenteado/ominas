@@ -35,8 +35,11 @@
 ;	invisible:	Returns a condition structure corresponding to 
 ;			points whose visible flag is set.
 ;
-;	select:		Returns a condition structure corresponding to 
+;	selected:	Returns a condition structure corresponding to 
 ;			points whose select flag is set.
+;
+;	unselected:	Returns a condition structure corresponding to 
+;			points whose select flag is not set.
 ;
 ;  OUTPUT: NONE
 ;
@@ -57,19 +60,51 @@
 ;	
 ;-
 ;=============================================================================
+
+
+
+;=============================================================================
+; pnt_condition_set
+;
+;=============================================================================
+pro pnt_condition_set, state, mask, flag
+ state = state OR flag
+ mask = mask OR flag
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pnt_condition_unset
+;
+;=============================================================================
+pro pnt_condition_unset, state, mask, flag
+ state = state AND NOT flag
+ mask = mask OR flag
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pnt_condition
+;
+;=============================================================================
 function pnt_condition, condition=condition, $
 @pnt_condition_keywords.include
 end_keywords
 @pnt_include.pro
 
-;;;; need to be able to combine these; i.e., /visible, /active
-
  if(keyword_set(condition)) then return, condition
 
- if(keyword_set(visible)) then return, {mask:PTD_MASK_INVISIBLE, state: PTD_FALSE}
- if(keyword_set(invisible)) then return, {mask:PTD_MASK_INVISIBLE, state: PTD_TRUE}
- if(keyword_set(select)) then return, {mask:PTD_MASK_SELECT, state: PTD_TRUE}
-
- return, 0
+ mask = (state = 0b)
+ if(keyword_set(visible)) then pnt_condition_unset, state, mask, PTD_MASK_INVISIBLE 
+ if(keyword_set(invisible)) then pnt_condition_set, state, mask, PTD_MASK_INVISIBLE 
+ if(keyword_set(selected)) then pnt_condition_set, state, mask, PTD_MASK_SELECT 
+ if(keyword_set(unselected)) then pnt_condition_unset, state, mask, PTD_MASK_SELECT 
+ 
+ if(mask EQ 0) then return, 0
+ return, {mask:mask, state:state}
 end
 ;===============================================================================

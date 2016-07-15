@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	norm_pts = surface_normal(bx, r)
+;	norm_pts = surface_normal(bx, v, r)
 ;
 ;
 ; ARGUMENTS:

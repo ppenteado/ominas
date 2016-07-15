@@ -30,8 +30,8 @@ pro spice_write_cameras, dd, ref, ck_file, cd, $
 
  cam_name = (dat_instrument(dd))[0]
 
- spawn, 'echo ' + ck_file, ck_file
- ck_file = ck_file[0]
+; spawn, 'echo ' + ck_file, ck_file
+; ck_file = ck_file[0]
 
  comment = cor_udata(cd, 'CK_COMMENT')
  if(NOT keyword_set(comment)) then comment = ' '

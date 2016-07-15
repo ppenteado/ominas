@@ -18,8 +18,7 @@ pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
  cam_pos = (bod_pos(cd))[gen3y(np,3,nt)]
  v = bod_inertial_to_body_pos(bx, cam_pos)
 
- if(keyword_set(body_pts)) then $
-         r = v_unit(bod_inertial_to_body_pos(cd, cam_pos) - body_pts) $
+ if(keyword_set(body_pts)) then r = v_unit(body_pts - v) $
  else $
   begin
    if(keyword_set(inertial)) then r_inertial = image_pts $
@@ -44,7 +43,7 @@ pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
  ;-------------------------------
  sun_pos_inertial = (bod_pos(sund))[gen3y(np,3,nt)]
  sun_pos = bod_inertial_to_body_pos(bx, sun_pos_inertial)
- s = v_unit(sun_pos - body_pts)
+ s = v_unit(body_pts - sun_pos)
 
  ;-------------------------------
  ; compute surface normals
@@ -58,14 +57,14 @@ pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
  sww = s[ww]
 
  _emm = v_inner(-rww, normals[ww])
- _inc = v_inner(sww, normals[ww])
- _g = v_inner(-rww, sww)
+ _inc = v_inner(-sww, normals[ww])
+ _g = v_inner(rww, sww)
 
  emm = dblarr(np,nt)
- emm[valid] = _emm < 1d
+ emm[valid] = _emm < 1d > 0d
  
  inc = dblarr(np,nt)
- inc[valid] = _inc < 1d
+ inc[valid] = _inc < 1d > 0d
 
  g = dblarr(np,nt)
  g[valid] = _g < 1d

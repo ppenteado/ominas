@@ -1125,7 +1125,7 @@ pro grim_write_user_points, grim_data, plane, fname=_fname
  if(w[0] NE -1) then pnt_write, fname, user_ptd $
  else $
   begin
-   ff = findfile(fname)
+   ff = file_search(fname)
    if(keyword_set(ff)) then spawn, 'rm -f ' + fname
   end
 
@@ -1161,7 +1161,7 @@ pro grim_write_mask, grim_data, plane, fname=fname
  if(mask[0] NE -1) then write_mask, fname, mask, dim=dat_dim(plane.dd) $
  else $
   begin
-   ff = findfile(fname)
+   ff = file_search(fname)
    if(keyword_set(ff)) then spawn, 'rm -f ' + fname
   end
 
@@ -1178,7 +1178,7 @@ pro grim_read_user_points, grim_data, plane
 
  fname = grim_user_ptd_fname(grim_data, plane)
 
- ff = (findfile(fname))[0]
+ ff = (file_search(fname))[0]
  if(keyword_set(ff)) then user_ptd = pnt_read(ff) $
  else user_ptd = 0
 
@@ -1220,7 +1220,7 @@ pro grim_read_mask, grim_data, plane, fname=fname
 
  if(NOT keyword_set(fname)) then fname = grim_mask_fname(grim_data, plane)
 
- ff = (findfile(fname))[0]
+ ff = (file_search(fname))[0]
  if(keyword_set(ff)) then mask = read_mask(ff, sub=sub) $
  else mask = -1
 
@@ -1852,7 +1852,7 @@ end
 ; grim_middle
 ;
 ;=============================================================================
-pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers
+pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers, output_wnum
 
  if(press NE 2) then return
 
@@ -1929,7 +1929,10 @@ pro grim_draw_event, event
     ;- - - - - - - - - - - - - - - - -
     ; middle button -- pan / activate
     ;- - - - - - - - - - - - - - - - -
-    0 : grim_middle, grim_data, plane, event.id, event.x, event.y, event.press, event.clicks, event.modifiers
+    0 : grim_middle, grim_data, plane, $
+           event.id, event.x, event.y, $
+           event.press, event.clicks, event.modifiers, output_wnum
+
     else : 
    endcase
 
@@ -1947,6 +1950,7 @@ pro grim_draw_event, event
 
 
  grim_wset, grim_data, grim_data.wnum
+ grim_set_mode, grim_data
 
 end
 ;=============================================================================
@@ -8886,16 +8890,16 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
  n_overlays = n_elements(overlays)
 
  for j=0, nplanes-1 do $
-  for i=0, n_overlays-1 do $
-   begin
-    name = grim_parse_overlay(overlays[i], obj_name)
+  begin
+   for i=0, n_overlays-1 do $
+    begin
+     name = grim_parse_overlay(overlays[i], obj_name)
+     grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
+     grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
+     if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
+    end
+  end
 
-    grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
-
-;print, i, j, ' ', name, ' ', obj_name
-    grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
-    if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
-   end
 
 end
 ;=============================================================================
@@ -8906,7 +8910,7 @@ end
 ; grim_get_args_recurse
 ;
 ;=============================================================================
-pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, $
+pro __grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions
 
 
@@ -8920,8 +8924,6 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
   begin
    if(dat_valid_descriptor(arg_ps[0])) then arg = arg_ps[0] $
    else arg = *arg_ps[0]
-
-;   arg = *arg_ps[0]
 
    type = size(arg, /type)
    dim = size(arg, /dim) 
@@ -8946,7 +8948,7 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
     for i=0, n_dd-1 do $
      begin
       __dd = _dd[i]
-      if(n_elements(dat_dim(_dd[i])) NE 2) then $
+      if(n_elements(dat_dim(__dd)) NE 2) then $
        begin
         arg = dat_data(__dd)
         nv_free, __dd & __dd = obj_new()
@@ -8972,7 +8974,9 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, 
          begin
           arr = dat_data(_dd[i])
 
-;          if(n_elements(size(arr, /dim)) EQ 1) then $
+          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+          ; 1-D array assumed to be ordinate; need to add abscissa
+          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
           if(n_elements(dat_dim(_dd[i])) EQ 1) then $
            begin
             grim_suspend_events
@@ -9054,10 +9058,122 @@ end
 
 
 ;=============================================================================
-; grim_get_args
+; grim_get_args_recurse
 ;
 ;=============================================================================
-pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
+pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, nhist=nhist, $
+               maintain=maintain, compress=compress, extensions=extensions
+
+
+ nargs = n_elements(arg_ps)
+
+ ;-----------------------------------
+ ; check first arg
+ ;-----------------------------------
+ if(dat_valid_descriptor(arg_ps[0])) then arg = arg_ps[0] $
+ else arg = *arg_ps[0]
+
+ type = size(arg, /type)
+ dim = size(arg, /dim) 
+ ndim = n_elements(dim)
+
+
+ ;---------------------------------------------------------------------
+ ; build dd list
+ ;---------------------------------------------------------------------
+ done = 1
+ case type of 
+  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ; string -- assume file name(s); read and add descriptors to list
+  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  7:  $
+   begin
+    _dd = dat_read(arg, maintain=maintain, compress=compress, extensions=extensions, nhist=nhist)
+    dd = append_array(dd, _dd)
+   end
+  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ; object -- assume data descriptor(s), add to dd list
+  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  11 : dd = append_array(dd, arg)
+
+  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ; other types...
+  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  else: done = 0
+ endcase
+
+
+ ;-----------------------------------
+ ; non-object args
+ ;-----------------------------------
+ if(NOT done) then $
+  begin
+   ;- - - - - - - - - - - - - - 
+   ; scalar arg is grnum
+   ;- - - - - - - - - - - - - - 
+   if((ndim EQ 1) AND (dim[0] EQ 0)) then grnum = arg $
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; 1-D arg: assume ordinate; need to add abscissa
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   else if(ndim EQ 1) then $
+    begin
+     yarr = arg
+     xarr = dindgen(n_elements(yarr))
+     _dd = dat_create_descriptors(1, data=[transpose(xarr), transpose(yarr)], nhist=nhist)
+     dd = append_array(dd, _dd)
+    end $
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; 2-D arg: assme image; make dd
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   else if(ndim EQ 2) then $
+    begin
+     _dd = dat_create_descriptors(1, data=arg, nhist=nhist, maintain=maintain, compress=compress)
+     dd = append_array(dd, _dd)
+    end $
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; 3-D arg: assume multiple data arrays (e.g. cube)
+   ;   create master descriptor and one dd per plane
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   else if(ndim EQ 3) then $
+    begin
+     nn = dim[2]
+     for i=0, nn-1 do $
+      begin
+       _dd = dat_create_descriptors(1, data=arg[*,*,i], nhist=nhist, maintain=maintain, compress=compress)
+       dd = append_array(dd, _dd)
+      end
+    end $
+   else grim_message, 'Invalid argument.'
+  end
+
+
+ ;-----------------------------------
+ ; recurse to next arg
+ ;-----------------------------------
+ arg_ps = rm_list_item(arg_ps, 0, only=nv_ptr_new())
+ if(keyword_set(arg_ps[0])) then grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_args
+;
+; Possible arguments to GRIM:
+; 	dd (object)
+; 	filename (string)
+; 	grnum (scalar)
+; 	image (2d array)
+; 	plot (1d array)
+; 	cube (3d array)
+;
+;=============================================================================
+pro grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions
 
  ;--------------------------------
@@ -9069,11 +9185,46 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
 
  w = where(ptr_valid(arg_ps))
  if(w[0] NE -1) then $
-         grim_get_args_recurse, arg_ps[w], dd=dd, grnum=grnum, xarr, yarr, nhist=nhist, $
-                                maintain=maintain, compress=compress, extensions=extensions
+     grim_get_args_recurse, arg_ps[w], dd=dd, grnum=grnum, nhist=nhist, $
+                    maintain=maintain, compress=compress, extensions=extensions
 
  if(keyword_set(arg_ps[0])) then nv_ptr_free, arg_ps[0]
  if(keyword_set(arg_ps[1])) then nv_ptr_free, arg_ps[1]
+
+
+ ;----------------------------
+ ; process data descriptors
+ ;----------------------------
+ ndd = n_elements(dd)
+ for i=0, ndd-1 do $
+  begin
+   ;- - - - - - - - - - - - - - - - - - - - - - - -
+   ; process data array
+   ;- - - - - - - - - - - - - - - - - - - - - - - -
+   arr = dat_data(dd[i])
+   _dd = 0
+   grim_get_args_recurse, (p=ptr_new(arr)), dd=_dd, nhist=nhist, $
+                    maintain=maintain, compress=compress, extensions=extensions
+   nv_free, p
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; if one descriptor emerges, copy data and free _dd
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(n_elements(_dd) EQ 1) then $
+    begin
+     dat_set_data, dd[i], dat_data(_dd)
+     nv_free, _dd
+    end $
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; if multiple descriptors emerge, remove original from list, call it master
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   else $
+    begin
+     dd0 = dd[i]
+     dd[i] = _dd[0]
+     dd = [dd, _dd[1:*]]
+    end
+  end
 
 
  ;----------------------------
@@ -9096,6 +9247,7 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
    data[0,*] = data[0,*] - data[0,0]
    dat_set_data, dd, data
   end
+
 
 end
 ;=============================================================================
@@ -9245,9 +9397,9 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  if(NOT keyword_set(ytitle)) then ytitle = ''
 
  ;=========================================================
- ; arg is either image, data descriptor or grnum
+ ; resolve arguments
  ;=========================================================
- grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
+ grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions
 
 ; if(keyword_set(rendering)) then ....
@@ -9298,7 +9450,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;----------------------------------------------
    ; initialize data structure and common block
    ;----------------------------------------------
-   grim_data = grim_init(dd, zoom=zoom, wnum=wnum, grnum=grnum, type=type, $
+   grim_data = grim_init(dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, type=type, $
        filter=filter, retain=retain, user_callbacks=user_callbacks, $
        user_psym=user_psym, path=path, save_path=save_path, load_path=load_path, $
        faint=faint, cursor_swap=cursor_swap, fov=fov, hide=hide, filetype=filetype, $
@@ -9393,6 +9545,22 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  pgs_gd, gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, sund=sund, od=od
 
  grim_data = grim_get_data()
+ nplanes = n_elements(planes)
+
+ ;----------------------------------------------------------------------
+ ; if master dd0 defined (i.e., cube input) replicate descriptors
+ ;  for all planes
+ ;----------------------------------------------------------------------
+ if(keyword_set(dd0)) then $
+  begin
+   if(keyword_set(cd)) then cd = make_array(nplanes, val=cd)
+   if(keyword_set(pd)) then pd = pd[lindgen(n_elements(pd))#make_array(nplanes,val=1l)]
+   if(keyword_set(rd)) then rd = rd[lindgen(n_elements(rd))#make_array(nplanes,val=1l)]
+   if(keyword_set(sd)) then sd = sd[lindgen(n_elements(sd))#make_array(nplanes,val=1l)]
+   if(keyword_set(std)) then std = std[lindgen(n_elements(std))#make_array(nplanes,val=1l)]
+   if(keyword_set(sund)) then sund = make_array(nplanes, val=sund)
+   if(keyword_set(od)) then od = make_array(nplanes, val=od)
+  end
  ncd = n_elements(cd)
 
  ;----------------------------------------------------------------------
@@ -9427,7 +9595,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   end
 
  ;----------------------------------------------------------------------
- ; if descriptors given, then the descriptors must be arays 
+ ; if descriptors given, then the descriptors must be arrays 
  ; with the following dimensions:
  ;
  ;  cd -- nplanes

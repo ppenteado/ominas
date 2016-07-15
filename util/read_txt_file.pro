@@ -97,9 +97,9 @@ function rtf_read, fname, notes, status=status, note=note, lf=lf, $
  ;----------------------------------------
  status = 0
 
- check = findfile0(fname)
+ check = file_test(fname)
 
- if(check[0] EQ '') then $
+ if(NOT check) then $
   begin
    status = -1
    return, ['']

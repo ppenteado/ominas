@@ -5,6 +5,7 @@ map_scale=map__scale, $
 map_ecc=map__ecc, $
 map_origin=map__origin, $
 map_center=map__center, $
+map_range=map__range, $
 map_offset=map__offset, $
 map_limits=map__limits, $
 map_fn_map_to_image=map__fn_map_to_image, $

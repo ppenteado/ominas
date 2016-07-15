@@ -100,8 +100,8 @@ function pg_farfit, dd, base_ptd, model_ptd, nsamples=nsamples, show=show, $
  ;------------------------------------------------------------
  ; dereference POINT objects
  ;------------------------------------------------------------
- base_pts = pnt_points(/vis, base_ptd)
- model_pts = pnt_points(/vis, model_ptd)
+ base_pts = pnt_points(/vis, base_ptd, /cat)
+ model_pts = pnt_points(/vis, model_ptd, /cat)
  if(NOT keyword__set(model_pts)) then nv_message, name='pg_farfit', $
                                                    'No visible model points.'
 

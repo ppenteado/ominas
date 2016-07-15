@@ -233,7 +233,7 @@ pro ominas_disk__define
 	m:		 intarr(nm,2), $	; m values
 	em:		 dblarr(nm,2), $	; ecc for each m != 1
 	tapm:		 dblarr(nm,2), $	; tap for each m != 1
-	dtapmdt:		dblarr(nm,2), $	; dtapdt for each m != 1
+	dtapmdt:	 dblarr(nm,2), $	; dtapdt for each m != 1
 						; 0=inner edge, 1=outer edge	
 	libam:		 dblarr(nm,2), $	; Libration ampl. for each m != 1
 	libm:		 dblarr(nm,2), $	; Libration phase for each m != 1

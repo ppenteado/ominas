@@ -6,7 +6,7 @@ function get_pro_by_prefix, prefix, dir=dir
 
  if(keyword_set(dir)) then $
   begin
-   ff = findfiles(dir + '/*.pro')
+   ff = file_search(dir + '/*.pro')
    split_filename, ff, dir, names, ext
   end $
  else $

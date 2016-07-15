@@ -268,11 +268,11 @@ OMINAS Classes
                                \     \   |      |     |
                                  \     SOLID   /     /
                                    \     |   /     /
-                                     \   | /     /
-                                       BODY    /
-                                         |   / 
-                                         | / 
-                                       CORE 
+                    POINT   DATA     \   | /     /  ARRAY
+                       \      \        BODY    /     /
+                         \      \        |   /     /
+                           \      \      | /     /
+                             --------- CORE ----
 
 
 

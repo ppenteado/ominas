@@ -120,7 +120,6 @@ common grim_mode_navigate_reposition_xz_block, name, bx, inertial_pt0
 
  xy = (convert_coord(double(xarr), double(yarr), /device, /to_data))[0:1,*]
 
-
  ;-------------------------------------------
  ; get initial point on first call
  ;-------------------------------------------
@@ -133,6 +132,8 @@ common grim_mode_navigate_reposition_xz_block, name, bx, inertial_pt0
 
    body_pt0 = body_pts[0,*]
    inertial_pt0 = bod_body_to_inertial_pos(bx, body_pt0)
+
+   if(name NE 'SKY') then grim_draw_vectors, cd, curves_ptd, points_ptd
    return
   end
  if(keyword_set(name)) then if(name EQ 'SKY') then return
@@ -181,6 +182,7 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
    body_pt0 = body_pts[0,*]
    bx = bx[0]
 
+   if(name NE 'SKY') then grim_draw_vectors, cd, curves_ptd, points_ptd
    return
   end
  if(keyword_set(name)) then if(name EQ 'SKY') then return
@@ -196,10 +198,11 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
  ;- - - - - - - - - - - - - - - - - - - -
  ; rotate cd position about bx center
  ;- - - - - - - - - - - - - - - - - - - -
- body_pt = glb_intersect(/near, hit=hit, bx, $
+ body_pt = surface_intersect(/near, hit=hit, bx, $
                     bod_inertial_to_body_pos(bx, bod_pos(cd)), $
                                         bod_inertial_to_body(bx, $
                                           image_to_inertial(cd, xy[*,1])))
+ body_pt = body_pt[0,*]
 
  n = v_unit(v_cross(body_pt, body_pt0))
  theta = v_angle(body_pt0, body_pt)
@@ -217,7 +220,7 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
              bod_inertial_to_body_pos(bx, bod_pos(cd0)))
  surf_pt = body_to_surface(bx, $
              bod_inertial_to_body_pos(bx, bod_pos(cd)))
- n = glb_get_surface_normal(/body, bx, body_pt)
+ n = surface_normal(bx, pos_body, body_pt)
  alt0 = surf_pt0[2]
  alt = surf_pt[2]
  bod_set_pos, cd, bod_pos(cd) + n*(alt-alt0)
@@ -233,6 +236,23 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
 
 
  grim_draw_vectors, cd, curves_ptd, points_ptd
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_mode_navigate_draw
+;
+;=============================================================================
+pro grim_mode_navigate_draw, wnum, pixmap, erase_pixmap, cd, curves_ptd, points_ptd
+
+ wset, pixmap
+ device, copy=[0,0, !d.x_size,!d.y_size, 0,0, erase_pixmap]
+ grim_draw_vectors, cd, curves_ptd, points_ptd
+ wset, wnum
+ device, copy=[0,0, !d.x_size,!d.y_size, 0,0, pixmap]
+
 end
 ;=============================================================================
 
@@ -318,11 +338,11 @@ common grim_mode_navigate_reposition_y_block, name, bx, surf_pt0, body_pt0
  pos = pos + v*speed*dm
  bod_set_pos, cd, pos
 
- wset, pixmap
- device, copy=[0,0, !d.x_size,!d.y_size, 0,0, erase_pixmap]
- grim_draw_vectors, cd, curves_ptd, points_ptd
- wset, wnum
- device, copy=[0,0, !d.x_size,!d.y_size, 0,0, pixmap]
+
+ ;---------------------------------------------------------------
+ ; draw points
+ ;---------------------------------------------------------------
+ grim_mode_navigate_draw, wnum, pixmap, erase_pixmap, cd, curves_ptd, points_ptd
 
 
 end
@@ -359,6 +379,8 @@ pro grim_mode_navigate_reposition_y, grim_data
  window, /free, /pixmap, xsize=!d.x_size, ysize=!d.y_size
  erase_pixmap = !d.window
  device, copy=[0,0, !d.x_size,!d.y_size, 0,0, wnum]
+
+ grim_mode_navigate_draw, wnum, pixmap, erase_pixmap, cd, curves_ptd, points_ptd
 
 
  *grim_data.misc_data_p = {cd:cd, curves_ptd:curves_ptd, points_ptd:points_ptd, event_pro:event_pro, $
@@ -480,7 +502,7 @@ pro grim_mode_navigate_mouse_event, event, data
  fn = ''
  fn_data = {curves_ptd:curves_ptd, points_ptd:points_ptd, cd:cd, grim_data:grim_data}
 
- grim_refresh, grim_data, plane=plane, /use_pixmap, /no_objects, /noglass
+; grim_refresh, grim_data, plane=plane, /use_pixmap, /no_objects, /noglass
 
  ;- - - - - - - - - - - - - - - - - - -
  ; reposition mode
@@ -493,12 +515,10 @@ pro grim_mode_navigate_mouse_event, event, data
  else fn = event.press EQ 1 ? 'reorient_nod' : 'reorient_twist'
 
  if(keyword_set(fn)) then $
-		   pp = tvline(p0=p0, fn_draw='grim_mode_navigate_'+fn, fn_data=fn_data)
+       pp = tvline(p0=p0, fn_draw='grim_mode_navigate_'+fn, fn_data=fn_data)
 
  nv_copy, *plane.cd_p, cd
  nv_free, [cd, points_ptd, curves_ptd]
-
-
 
 end
 ;=============================================================================

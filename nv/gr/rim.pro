@@ -66,7 +66,7 @@ pro rim, files, keywords=keywords
    for i=0, n_elements(files)-1 do $
     begin
      if(strpos(files[i], '/') EQ -1) then files[i] = getenv('PWD') + '/' + files[i]
-     ff = findfile(files[i])
+     ff = file_search(files[i])
      if(keyword_set(ff)) then _files = append_array(_files, ff)
     end
    if(NOT keyword_set(_files)) then return

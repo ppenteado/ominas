@@ -1,11 +1,10 @@
 @core__keywords.include
 type=type, $
-fn_map_to_image=fn_map_to_image, $
-fn_image_to_map=fn_image_to_map, $
 fn_data_p=fn_data_p, $
 size=size, $
 origin=origin, $
 center=center, $
+range=range, $
 scale=scale, $
 units=units, $
 graphic=graphic, $

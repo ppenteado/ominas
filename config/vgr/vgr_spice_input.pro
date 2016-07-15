@@ -158,7 +158,6 @@ function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
                     cam_exposure = vicar_vgrkey(label, 'EXP') / 1000d
 
 
-
  return, vgr_to_ominas( $
            spice_cameras(dd, ref, '', '', pos=pos, $
 		sc = sc, $

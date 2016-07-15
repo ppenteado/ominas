@@ -494,8 +494,9 @@ function spice_input, dd, keyword, prefix, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ck_in = ''
    if(NOT keyword_set(pos) AND (NOT keyword_set(od))) then $
-     if(NOT keyword_set(constants)) then ck_in = spice_kernel_parse(dd, prefix, 'ck', $
-        reject=ck_reject, exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
+     if(NOT keyword_set(constants)) then $
+       ck_in = spice_kernel_parse(dd, prefix, 'ck', $
+          reject=ck_reject, exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
 
    if(NOT keyword_set(constants)) then spk_in = spice_kernel_parse(dd, prefix, 'spk', $
         reject=spk_reject, exp=spk_exp, strict=spk_strict, all=spk_all, time=time)

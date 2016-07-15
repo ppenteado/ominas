@@ -54,7 +54,6 @@ function surface_to_image, cd, bx, p, body_pts=body_pts, valid=valid
  if(class EQ 'MAP') then $
       return, map_map_to_image(cd, surface_to_map(cd, bx, p), valid=valid)
 
-
  gbx = cor_select(bx, 'GLOBE', /class)
  dkx = cor_select(bx, 'DISK', /class)
 

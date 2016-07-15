@@ -215,6 +215,7 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
  ; construct output image by considering only unique data coords and
  ; averaging all visible planes
  ;----------------------------------------------------------------------
+ im = (weight = 0)
  for i=0, nplanes-1 do $
   begin
    ; - - - - - - - - - - - - - - -
@@ -222,7 +223,6 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
    ; - - - - - - - - - - - - - - -
    _im = dat_data(planes[i].dd, sample=data_xy)
    max = dat_max(plane.dd)
-
 
    ; - - - - - - - - - - - - - - -
    ; apply color map
@@ -236,16 +236,8 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
    ; - - - - - - - - - - - - - - -
    ; add current image
    ; - - - - - - - - - - - - - - -
-   if(i EQ 0) then $
-    begin
-     im = _im
-     weight = fix(_im<1)
-    end $
-   else $
-    begin
-     im = im + _im
-     weight = weight + fix(_im<1)
-    end
+   im = im + _im
+   weight = weight + fix(_im<1)
 
    grim_set_plane, grim_data, plane
   end
