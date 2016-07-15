@@ -1,7 +1,7 @@
 @compile_arr
 @compile_bod
 @compile_cam
-@compile_class
+;@compile_class does not exist
 @compile_cor
 @compile_dsk
 @compile_glb

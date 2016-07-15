@@ -5,7 +5,7 @@ extract_doc, /page, $
 @doc_arr
 @doc_bod
 @doc_cam
-@doc_class
+;@doc_class does not exist
 @doc_cor
 @doc_dsk
 @doc_glb
