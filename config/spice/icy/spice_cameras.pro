@@ -11,7 +11,9 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
 		cam_fn_data=cam_fn_data, tol=tol, constants=constants, $
 		n_obj=n_obj, dim=dim, status=status, orient=orient, $
                 spice_fn = spice_fn, pos=pos, cam_fn_psf=cam_fn_psf, $
-                cam_filters=cam_filters, obs=obs
+                cam_filters=cam_filters, obs=obs,$
+                cam_fn_body_to_image=cam_fn_body_to_image,$
+                cam_fn_body_to_inertial=cam_fn_body_to_inertial
 
  if(NOT keyword_set(tol)) then tol = 1d
 
@@ -37,9 +39,14 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
  ;--------------------------------------------------------------------
  if(NOT keyword_set(constants)) then $
   begin
-   status = spice_get_cameras(sc, inst, plat, ref, cam_time, tol, $
+   nets=n_elements(cam_time)
+   cmats=dblarr(3,3,nets)
+   for iet=nets-1,0,-1 do begin
+   status = spice_get_cameras(sc, inst, plat, ref, cam_time[iet], tol, $
                                 cam_pos, cam_vel, cmat, cam_avel, pos, obs=obs)
-
+   cmats[*,*,iet]=cmat
+   endfor
+   if (n_elements(*cam_fn_data[0]) gt 0) then (*cam_fn_data[0]).orients=cmats 
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; handle spice errors
    ;- - - - - - - - - - - - - - - - - - - - - -
@@ -90,7 +97,9 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
 		fn_psf=cam_fn_psf, $
 		filters=cam_filters, $
 		size=cam_size, $
-		oaxis=cam_oaxis)
+		oaxis=cam_oaxis,$
+		fn_body_to_image=cam_fn_body_to_image,$
+		fn_body_to_inertial=cam_fn_body_to_inertial)
 
   return, cd
 end

@@ -91,21 +91,25 @@ pro cam_reorient, cd0, image_axis, dxy, dtheta, absolute=absolute, $
  ;-----------------------------------------------------
  ; get inertial vector pointing at each image point
  ;-----------------------------------------------------
- u0 = bod_body_to_inertial(cd, $
-          cam_focal_to_body(cd, $
-             cam_image_to_focal(cd, p0)))
+; u0 = bod_body_to_inertial(cd, $
+;          cam_focal_to_body(cd, $
+;             cam_image_to_focal(cd, p0)))
+ u0=bod_image_to_inertial(cd,p0)
 
- u1 = bod_body_to_inertial(cd, $
-          cam_focal_to_body(cd, $
-             cam_image_to_focal(cd, p1)))
+; u1 = bod_body_to_inertial(cd, $
+;          cam_focal_to_body(cd, $
+;             cam_image_to_focal(cd, p1)))
+ u1=bod_image_to_inertial(cd,p1)
 
- v0 = bod_body_to_inertial(cd, $
-          cam_focal_to_body(cd, $
-             cam_image_to_focal(cd, q0)))
+; v0 = bod_body_to_inertial(cd, $
+;          cam_focal_to_body(cd, $
+;             cam_image_to_focal(cd, q0)))
+ v0=bod_image_to_inertial(cd,q0)
 
- v1 = bod_body_to_inertial(cd, $
-          cam_focal_to_body(cd, $
-             cam_image_to_focal(cd, q1)))
+; v1 = bod_body_to_inertial(cd, $
+;          cam_focal_to_body(cd, $
+;             cam_image_to_focal(cd, q1)))
+ v1=bod_image_to_inertial(cd,q1)
 
 
  ;=========================================
@@ -190,6 +194,12 @@ pro cam_reorient, cd0, image_axis, dxy, dtheta, absolute=absolute, $
  ; rotate orientation matrices
  ;-----------------------------
  bod_set_orient, cd, v_rotate_11(bod_orient(cd), n, [sin_angle], [cos_angle])
+ if ptr_valid(cam_fn_data_p(cd)) then begin
+   fnd=cam_fn_data_p(cd)
+   orients=(*fnd).orients
+   for i=0,n_elements((*fnd).times)-1 do (orients)[*,*,i]=v_rotate_11((orients)[*,*,i], n, [sin_angle], [cos_angle])
+   (*fnd).orients=orients
+ endif
 
 
  if(reformed) then cd0=reform(cd, 1, nt) $
