@@ -132,7 +132,7 @@ pro grim_mode_select_mode, grim_data, data_p
 
  grim_mode_select_cursor, swap=swap
  grim_print, grim_data, $
-       'LEFT: Select overlay points; RIGHT: Deselect overlay points'
+       'SELECT WITHIN OVERLAYS -- LEFT: Select; MIDDLE: Cancel; RIGHT: Deselect'
 
 end
 ;=============================================================================

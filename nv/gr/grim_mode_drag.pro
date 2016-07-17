@@ -72,7 +72,8 @@ pro grim_mode_drag_mouse_event, event, data
 
    xy = (convert_coord(double(pp[0,*]), double(pp[1,*]), /device, /to_data))[0:1,*]
    dxy = xy[*,0] - xy[*,1]
-   pg_shift, plane.dd, cd=*plane.cd_p, round(dxy)
+;   pg_shift, plane.dd, cd=*plane.cd_p, round(dxy)
+   pg_shift, plane.dd, round(dxy)
   end
 
 
@@ -90,7 +91,8 @@ pro grim_mode_drag_mode, grim_data, data_p
 
  device, cursor_standard = 52
  grim_print, grim_data, $
-      'LEFT: Translate, RIGHT: Rotate'
+;      'DRAG IMAGE -- LEFT: Translate, RIGHT: Rotate'
+      'DRAG IMAGE -- LEFT: Translate'
 
 end
 ;=============================================================================
@@ -104,7 +106,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Selects the navigate cursor mode.
+;	Selects the drag cursor mode.
 ;
 ;
 ; CATEGORY:
@@ -112,7 +114,7 @@ end
 ;
 ;
 ; OPERATION:
-;	Allow the user to fly around the system.
+;	Allow the user to drag the image.
 ;
 ;
 ; MODIFICATION HISTORY:

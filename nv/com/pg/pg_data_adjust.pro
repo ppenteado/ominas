@@ -45,7 +45,7 @@
 pro pg_data_adjust, dd
 
  device, cursor_standard=30
- data = dat_data(dd)
+ data = dat_data(dd)		; requesting the entire data array is not ideal
  dim = dat_dim(dd)
 
  ndim = 2

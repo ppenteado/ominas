@@ -81,7 +81,7 @@ end
 pro grim_mode_mask_mode, grim_data, data_p
 
  device, cursor_standard = 22
- grim_print, grim_data, 'LEFT: Add pixels; RIGHT: Remove pixels'
+ grim_print, grim_data, 'MASK -- LEFT: Add pixels; RIGHT: Remove pixels'
 
 end
 ;=============================================================================

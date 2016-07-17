@@ -3,6 +3,7 @@
 	dim=dim, $
 	type=type, $
 	data=data, $
+	abscissa=abscissa, $
 	nhist=nhist, $
 	header=header, $
 	filetype=filetype, $

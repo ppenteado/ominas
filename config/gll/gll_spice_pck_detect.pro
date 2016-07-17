@@ -1,12 +1,11 @@
 ;=============================================================================
-; gll_spice_ck_detect
+; gll_spice_pck_detect
+;
 ;
 ;=============================================================================
-function gll_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
-                             all=all, reject=reject, strict=strict
+function gll_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
 
- all_files = file_search(ckpath + '*.plt')
-
- return, all_files
+ return, eph_spice_pck_detect( $
+         dd, kpath, time=time, reject=reject, strict=strict, all=all)
 end
 ;=============================================================================

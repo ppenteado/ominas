@@ -84,23 +84,23 @@ function pgs_make_gd, xds, gd=gd, $
    if(w[0] NE -1) then sund = append_array(sund, xds[w])
   end
 
- if(NOT keyword_set(dd)) then dd = 0
- if(NOT keyword_set(crd)) then crd = 0
- if(NOT keyword_set(bd)) then bd = 0
- if(NOT keyword_set(md)) then md = 0
- if(NOT keyword_set(dkd)) then dkd = 0
- if(NOT keyword_set(gbd)) then gbd = 0
- if(NOT keyword_set(pd)) then pd = 0
- if(NOT keyword_set(sd)) then sd = 0
- if(NOT keyword_set(std)) then std = 0
- if(NOT keyword_set(ard)) then ard = 0
- if(NOT keyword_set(rd)) then rd = 0
- if(NOT keyword_set(cd)) then cd = 0
- if(NOT keyword_set(sund)) then sund = 0
+ if(NOT keyword_set(dd)) then dd = obj_new()
+ if(NOT keyword_set(crd)) then crd = obj_new()
+ if(NOT keyword_set(bd)) then bd = obj_new()
+ if(NOT keyword_set(md)) then md = obj_new()
+ if(NOT keyword_set(dkd)) then dkd = obj_new()
+ if(NOT keyword_set(gbd)) then gbd = obj_new()
+ if(NOT keyword_set(pd)) then pd = obj_new()
+ if(NOT keyword_set(sd)) then sd = obj_new()
+ if(NOT keyword_set(std)) then std = obj_new()
+ if(NOT keyword_set(ard)) then ard = obj_new()
+ if(NOT keyword_set(rd)) then rd = obj_new()
+ if(NOT keyword_set(cd)) then cd = obj_new()
+ if(NOT keyword_set(sund)) then sund = obj_new()
  if(NOT keyword_set(od)) then od = cd
  if(NOT keyword_set(dkx)) then dkx = rd
  if(NOT keyword_set(gbx)) then gbx = pd
- if(NOT keyword_set(bx)) then bx = 0
+ if(NOT keyword_set(bx)) then bx = obj_new()
 
  return, {dd:dd, crd:crd, bd:bd, md:md, dkd:dkd, gbd:gbd, pd:pd, sd:sd, std:std, ard:ard, $
                  rd:rd, cd:cd, sund:sund, od:od, dkx:dkx, gbx:gbx, bx:bx}

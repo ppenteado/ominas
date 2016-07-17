@@ -124,7 +124,7 @@ end
 pro grim_mode_xyzoom_mode, grim_data, data_p
 
  grim_mode_xyzoom_cursor, swap=swap
- grim_print, grim_data, 'LEFT: Zoom; RIGHT: Unzoom'
+ grim_print, grim_data, 'XYZOOM -- LEFT: Increase; RIGHT: Decrease'
 
 end
 ;=============================================================================

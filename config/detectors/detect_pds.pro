@@ -15,9 +15,11 @@ function detect_pds, filename, udata
  ;=================================
  ; check the first few characters
  ;=================================
- record = assoc(unit, bytarr(14,/nozero))
+ record = assoc(unit, bytarr(160,/nozero))
  s = string(record[0])
- if(s EQ 'PDS_VERSION_ID') then status = 1
+ if(strpos(s,'PDS_VERSION_ID') NE -1) then status = 1
+ if(strpos(s,'SFDU_LABEL') NE -1) then status = 1
+ if(strpos(s,'XV_COMPATIBILITY') NE -1) then status = 1
 
  ;==============================
  ; close config file

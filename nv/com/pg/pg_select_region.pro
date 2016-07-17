@@ -58,7 +58,7 @@
 ;
 ; RETURN:
 ;	Array of subscripts of all image points which lie within the selected
-;	region.
+;	region.  -1 is returned if the cancel button is pressed.
 ;
 ;
 ; STATUS:

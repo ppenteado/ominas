@@ -177,9 +177,8 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ptd, $
    ; get all points
    ;-----------------------------------
    pnt_get, object_ptd[i], points=all_pts, flags=flags, /visible
-     if(keyword_set(all_pts)) then $
-      begin
-
+   if(keyword_set(all_pts)) then $
+    begin
      ;-----------------------------------
      ; determine center if possible
      ;-----------------------------------

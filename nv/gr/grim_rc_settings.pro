@@ -27,12 +27,12 @@ pro grim_rc_settings, rcfile=rcfile, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
 	fov=fov, menu_extensions=menu_extensions, button_extensions=button_extensions, $
 	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, trs_sund=trs_sund, $
-	filetype=filetype, hide=hide, readout_fns=readout_fns, xzero=xzero, $
+	filetype=filetype, hide=hide, readout_fns=readout_fns, xzero=xzero, rgb=rgb, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
-        tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, $
-        render_sample=render_sample, render_pht_min=render_pht_min
+        tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
+        render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays
 	
 
  ;----------------------------------------------------
@@ -234,7 +234,7 @@ pro grim_rc_settings, rcfile=rcfile, $
 
  if(n_elements(loadct) EQ 0) then $
                         _loadct = grim_rc_value(keywords, value_ps, 'LOADCT')
- if(keyword_set(_loadct)) then nhist = _loadct
+ if(keyword_set(_loadct)) then loadct = _loadct
 
  if(n_elements(max) EQ 0) then $
                         _max = grim_rc_value(keywords, value_ps, 'MAX')
@@ -264,9 +264,17 @@ pro grim_rc_settings, rcfile=rcfile, $
                         _curve_syncing = grim_rc_value(keywords, value_ps, 'CURVE_SYNCING')
  if(keyword_set(_curve_syncing)) then curve_syncing = fix(_curve_syncing)
 
+ if(n_elements(rgb) EQ 0) then $
+                        _rgb = grim_rc_value(keywords, value_ps, 'RGB')
+ if(keyword_set(_rgb)) then rgb = fix(_rgb)
+
  if(n_elements(visibility) EQ 0) then $
                         _visibility = grim_rc_value(keywords, value_ps, 'VISIBILITY')
  if(keyword_set(_visibility)) then visibility = fix(_visibility)
+
+ if(n_elements(channel) EQ 0) then $
+                        _channel = grim_rc_value(keywords, value_ps, 'CHANNEL')
+ if(keyword_set(_channel)) then channel = fix(_channel)
 
  if(n_elements(render_pht_min) EQ 0) then $
                         _render_pht_min = grim_rc_value(keywords, value_ps, 'RENDER_PHT_MIN')
@@ -275,6 +283,10 @@ pro grim_rc_settings, rcfile=rcfile, $
  if(n_elements(render_sample) EQ 0) then $
                         _render_sample = grim_rc_value(keywords, value_ps, 'RENDER_SAMPLE')
  if(keyword_set(_render_sample)) then render_sample = fix(_render_sample)
+
+ if(n_elements(slave_overlays) EQ 0) then $
+                        _slave_overlays = grim_rc_value(keywords, value_ps, 'SLAVE_OVERLAYS')
+ if(keyword_set(_slave_overlays)) then slave_overlays = fix(_slave_overlays)
 
 
 

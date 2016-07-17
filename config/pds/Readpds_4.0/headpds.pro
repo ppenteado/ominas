@@ -71,7 +71,7 @@ function HEADPDS, filename, SILENT=silent, FILE=file, FORMAT=format
             return, "-1"
         endif
     endif
-   
+
     ; initialize label variables:
     lbl = ""                ; holds the label string array
     flag = 0                ; set to -1 when END keyword is encountered
@@ -134,7 +134,7 @@ function HEADPDS, filename, SILENT=silent, FILE=file, FORMAT=format
     struct = PDSPAR(lbl, "^STRUCTURE", COUNT=strcount, INDEX=strindex)
     if (!ERR NE -1) then begin
         endobj = PDSPAR(lbl, "END_OBJECT", COUNT=eobjcount, INDEX=eobjindex)
-      
+
         ; obtain the position where the contents of STRUCTURE file are
         ; to go in the lbl array, viz., before the last END_OBJECT keyword:
         structpos = where (eobjindex GT strindex[0])

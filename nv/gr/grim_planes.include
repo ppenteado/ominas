@@ -291,6 +291,39 @@ end
 
 
 ;=============================================================================
+; grim_channel_to_rgb
+;
+;=============================================================================
+function grim_channel_to_rgb, channel
+
+ rgb = [0b,0b,0b]
+ 
+ ;----------------------------------
+ ; string: channel may be r, g, b
+ ;----------------------------------
+ if(size(channel, /type) EQ 7) then $
+  begin
+   rgb[0] = channel[i] EQ 'r' ? 1:0
+   rgb[1] = channel[i] EQ 'g' ? 1:0
+   rgb[2] = channel[i] EQ 'b' ? 1:0
+   return, rgb
+  end
+
+ ;----------------------------------
+ ; byte -- channel is bit mask
+ ;----------------------------------
+;stop
+ rgb[0] = (channel AND 1b) NE 0
+ rgb[1] = (channel AND 2b) NE 0
+ rgb[2] = (channel AND 4b) NE 0
+
+ return, rgb
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_add_planes
 ;
 ;=============================================================================
@@ -299,8 +332,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
                       trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, $
                       trs_sund=trs_sund, color=color, xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
-                      psym=psym, symsize=symsize, max=max, visibility=visibility, $
-                      render_sample=render_sample, render_pht_min=render_pht_min
+                      psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
+                      render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
 
   pns = 0
   MAX_OVERLAYS = 128
@@ -313,6 +346,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
   if(NOT keyword_set(hide)) then hide = grim_data.def_hide
   if(NOT keyword_set(filter)) then filter = grim_data.def_filter
   if(NOT keyword_set(visibility)) then visibility = 0
+  if(NOT keyword_set(data_offsets)) then data_offsets = lonarr(n_planes)
   if(NOT defined(render_pht_min)) then render_pht_min = 0.02
   if(NOT keyword_set(render_sample)) then render_sample = 1
 
@@ -383,6 +417,13 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
     flag = 1
     if(cor_name(dd[i]) EQ 'BLANK') then flag = 2
 
+    vis = 0b
+    if(keyword_set(visibility)) then vis = visibility
+    if(n_elements(vis) GT 1) then vis = vis[i]
+
+    rgb = [1,1,1]
+    if(keyword_set(channel)) then rgb = grim_channel_to_rgb(channel[i])
+
     plane = {grim_planes_struct, $
 	;---------------
 	; bookkeeping
@@ -398,12 +439,13 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 		render_sample	:	render_sample, $
 		render_pht_min	:	render_pht_min, $
 		render_show	:	1b, $
-		visible		:	0, $		; overlays always visible?
+		visible		:	0, $			; overlays always visible?
 		image_visible	:	0, $
 		cradec		:	dblarr(1,3), $
 		dradec		:	dblarr(1,3), $
 		max		:	double(max), $
-		t0		:	0d, $		; last cd time, $
+		t0		:	0d, $			; last cd time, $
+		data_offset	:	data_offsets[i], $	; offset in data array 
 
 	;---------------
 	; plot viewing
@@ -449,7 +491,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 		overlay_ptdps		:	ptr_new(0), $
 		overlay_names_p		:	ptr_new(''), $
 		overlay_classes_p	:	ptr_new(0), $
-		overlay_genres_p		:	ptr_new(0), $
+		overlay_genres_p	:	ptr_new(0), $
 		overlay_dep_p		:	ptr_new(0), $
 		overlay_labels_p	:	ptr_new(0), $
 		overlay_color_p		:	ptr_new(''), $
@@ -489,8 +531,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	;-------------------
 	; image visibility
 	;-------------------
-		rgb		:	[1b,1b,1b], $ 	; 1=selected
-		visibility	:	byte(visibility), $		; 0=normal, 1=always
+		rgb		:	byte(rgb), $ 		; 1=selected
+		visibility	:	byte(vis), $		; 0=normal, 1=always
 
 	;-----------------
 	; points settings

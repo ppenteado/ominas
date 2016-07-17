@@ -33,7 +33,6 @@
 ;
 ;-------------------------------------------------------------------------
 dd = dat_read('data/c3440346.gem', im, label)
-;dd = dat_read('/images/joe/vgr/s_rings/c3440346.img', im, label)
 ctmod, top=top
 tvim, im, zoom=0.4, /order, /new, top=top
 

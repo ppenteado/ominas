@@ -41,8 +41,8 @@ pro grim_mode_curves_mouse_event, event, data
  output_wnum = grim_data.wnum
 
  struct = tag_names(event, /struct)
-
  if(struct NE 'WIDGET_DRAW') then return
+
  if(input_wnum NE grim_data.wnum) then return
 
  if(event.press EQ 1) then $
@@ -51,8 +51,12 @@ pro grim_mode_curves_mouse_event, event, data
 		p0=[event.x,event.y], $
 		/autoclose, /noclose, /noverbose, color=ctgreen(), $
 		cancel_button=2, select_button=1)
-   grim_add_curve, grim_data, p
-   grim_draw, grim_data, /curves, /nopoints
+   if(n_elements(p) GT 1) then $
+    begin
+     grim_add_curve, grim_data, p
+     grim_draw, grim_data, /curves, /nopoints
+    end $
+   else grim_refresh, grim_data, /use_pixmap
   end $
  else if(event.press EQ 4) then $
   begin
@@ -131,7 +135,7 @@ end
 pro grim_mode_curves_mode, grim_data, data_p
 
  grim_mode_curves_cursor, swap=swap
- grim_print, grim_data, 'LEFT: Add tiepoint; RIGHT: Remove tiepoint'
+ grim_print, grim_data, 'CURVE -- LEFT: Add; MIDDLE: Cancel; RIGHT: Remove'
 
 end
 ;=============================================================================

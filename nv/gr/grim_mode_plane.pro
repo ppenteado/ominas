@@ -53,6 +53,8 @@ pro grim_mode_plane_mouse_event, event, data
  else if(event.press EQ 4) then jplane = grim_get_plane_by_overlay(grim_data, xy) $
  else return
 
+ if(NOT keyword_set(jplane)) then return
+
  grim_jump_to_plane, grim_data, jplane.pn
  grim_refresh, grim_data, /use_pixmap;, /noglass
 end
@@ -68,7 +70,7 @@ pro grim_mode_plane_mode, grim_data, data_p
 
  device, cursor_standard = 59
  grim_print, grim_data, $
-          'LEFT: Select Plane by Data; RIGHT: Select Plane by Overlay'
+          'SELECT PLANE -- LEFT: By Data; RIGHT: Select By Overlay'
 
 end
 ;=============================================================================

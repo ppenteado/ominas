@@ -163,6 +163,10 @@ function map_image_to_map_stereographic, md, _image_pts, valid=valid
  result[1,*,*] = center[1,*,*] + atan(image_pts[0,*,*]*sin(ce), $
          rho*cos(X1)*cos(ce) - image_pts[1,*,*]*sin(X1)*sin(ce)) / units[1,*,*]
 
+ w = where(rho EQ 0)
+ if(w[0] NE -1) then result[w] = _md.center[0]
+
+
  valid = lindgen(nv*nt)
 
  return, result

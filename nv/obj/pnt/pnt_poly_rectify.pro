@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Rearrangs polygon vertices to mke them contiguous.
+;	Rearrangs polygon vertices to make them contiguous.
 ;
 ;
 ; CATEGORY:
@@ -44,6 +44,7 @@ pro pnt_poly_rectify, ptd
  p = pnt_points(ptd)
  v = pnt_vectors(ptd, /noevent)
  flags = pnt_flags(ptd, /noevent)
+; data...
 
  pp = poly_rectify(p, sub=ii)
  vv = 0

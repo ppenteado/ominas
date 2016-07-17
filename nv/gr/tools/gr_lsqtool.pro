@@ -706,12 +706,13 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
                                   algorithm=lsqd.algorithm, arg=inner)
 
         for l=0, n_elements(scan_ptd)-1 do $
+          if(pnt_valid(scan_ptd[l])) then $
             cor_set_udata, scan_ptd[l], 'grlsq_scan_data', $
                     {lsqd:lsqd, model_p:model_p, mzero:mzero, inner:inner}
         for l=0, n_elements(scan_ptd)-1 do $
+           if(pnt_valid(scan_ptd[l])) then $
                        cor_set_udata, scan_ptd[l], 'grlsq_scanned', 1b
       end
-
 
      if(keyword_set(scan_ptd)) then $
       begin
@@ -799,43 +800,45 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
 
      if(keyword_set(_scan_ptd)) then $
       begin
-       scanned = cor_udata(_scan_ptd, 'grlsq_scanned')
-       if(NOT scanned) then $
+       _scan_pts = pnt_points(_scan_ptd, /visible)
+       if(keyword_set(_scan_pts)) then $
         begin
-         scan_data = cor_udata(_scan_ptd, 'grlsq_scan_data')
-         __scan_ptd = $
-           pg_cvscan(dd, scan_ptd=_scan_ptd, cd=cd, bx=rds, [ptd], edge=scan_data.lsqd.edge, $
-                          width=scan_data.lsqd.width, $
-                          model=scan_data.model_p, mzero=scan_data.mzero, $
-                          algorithm=scan_data.lsqd.algorithm, arg=scan_data.inner)
+         scanned = cor_udata(_scan_ptd, 'grlsq_scanned')
+
+;         if(NOT scanned) then $
+;          begin
+;           scan_data = cor_udata(_scan_ptd, 'grlsq_scan_data')
+;           __scan_ptd = $
+;             pg_cvscan(dd, scan_ptd=_scan_ptd, cd=cd, bx=rds, [ptd], edge=scan_data.lsqd.edge, $
+;                          width=scan_data.lsqd.width, $
+;                          model=scan_data.model_p, mzero=scan_data.mzero, $
+;                          algorithm=scan_data.lsqd.algorithm, arg=scan_data.inner)
+;          end
+
+        scan_ptd = append_array(scan_ptd, _scan_ptd)
+
+         ;-----------------------------------
+         ; stars and planet centers
+         ;-----------------------------------
+         if(strpos(tag, 'CENTER') NE -1) then $
+          begin
+           _ptscan_cf = pg_ptscan_coeff(scan_ptd, axis=axis, fix=fix)
+           ptscan_cf = append_array(ptscan_cf, _ptscan_cf)
+           for l=0, n_elements(scan_ptd)-1 do  $
+                          cor_set_udata, scan_ptd[l], 'grlsq_scanned', 0b
+          end $
+         ;-----------------------------------
+         ; curves
+         ;-----------------------------------
+         else $
+          begin
+           _cvscan_cf = pg_cvscan_coeff(scan_ptd, axis=axis, fix=fix)
+           cvscan_cf = append_array(cvscan_cf, _cvscan_cf)
+           for l=0, n_elements(scan_ptd)-1 do  $
+                          cor_set_udata, scan_ptd[l], 'grlsq_scanned', 0b
+          end
+
         end
-
-       if(NOT keyword_set(scan_ptd)) then scan_ptd = _scan_ptd $
-       else scan_ptd = [scan_ptd, _scan_ptd]
-
-       ;-----------------------------------
-       ; stars and planet centers
-       ;-----------------------------------
-       if(strpos(tag, 'CENTER') NE -1) then $
-        begin
-         _ptscan_cf = pg_ptscan_coeff(scan_ptd, axis=axis, fix=fix)
-         if(NOT keyword_set(ptscan_cf)) then ptscan_cf = _ptscan_cf $
-         else ptscan_cf = [ptscan_cf, _ptscan_cf]
-         for l=0, n_elements(scan_ptd)-1 do  $
-                        cor_set_udata, scan_ptd[l], 'grlsq_scanned', 0b
-        end $
-       ;-----------------------------------
-       ; curves
-       ;-----------------------------------
-       else $
-        begin
-         _cvscan_cf = pg_cvscan_coeff(scan_ptd, axis=axis, fix=fix)
-         if(NOT keyword_set(cvscan_cf)) then cvscan_cf = _cvscan_cf $
-         else cvscan_cf = [cvscan_cf, _cvscan_cf]
-         for l=0, n_elements(scan_ptd)-1 do  $
-                        cor_set_udata, scan_ptd[l], 'grlsq_scanned', 0b
-        end
-
       end
     end
 
@@ -972,27 +975,20 @@ pro gr_lsqtool_event, event
  	 grlsq_set_entry, data.ids, data.tags, 'FIX', lsqd.fix
 	 if(stat EQ 0) then lsqd.scanned = 1
 	 grim_refresh, grim_data;, /use_pixmap
+	 grlsq_print, data, '', /clear
 	end
 
   ;---------------------------------------------------------
   ; 'Fit' button --
   ;  Perform a simultaneous fit 
   ;---------------------------------------------------------
-  'FIT' : $
-	begin
-	 grlsq_fit, grim_data, data, lsqd, status=status
-;	 if(NOT keyword_set(status)) then $
-          lsqd.scanned = 0
-	end
+  'FIT' : grlsq_fit, grim_data, data, lsqd, status=status
 
   ;----------------------------------------------------------------------
   ; One of the 'Fix' buttons --
   ;  If there is no planet center, make sure theta remains fixed 
   ;----------------------------------------------------------------------
-  'FIX' : $
-	begin
- 	 grlsq_set_entry, data.ids, data.tags, 'FIX', lsqd.fix
-	end
+  'FIX' : grlsq_set_entry, data.ids, data.tags, 'FIX', lsqd.fix
 
   ;----------------------------------------------------------------------
   ; 'Invert Model' --
@@ -1200,7 +1196,6 @@ pro gr_lsqtool, top
 
  grim_data = grim_get_data(top)
  grim_set_user_data, grim_data, 'GRLSQ_DATA', data
- grlsq_scan, /noscan, grim_data, data
 
 end
 ;=============================================================================

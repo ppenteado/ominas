@@ -533,7 +533,7 @@ pro grim_mode_navigate_mode, grim_data, data_p
 
  device, cursor_standard = 142
  grim_print, grim_data, $
-      'LEFT: Nod; RIGHT: Twist  <Shift> LEFT:XZ; RIGHT: track; WHEEL: Y '
+      'NAVIGATE CAMERA -- LEFT: Nod; RIGHT: Twist  <Shift> LEFT:XZ; RIGHT: track; WHEEL: Y '
 
 end
 ;=============================================================================

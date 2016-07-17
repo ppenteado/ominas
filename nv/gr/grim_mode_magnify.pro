@@ -176,6 +176,8 @@ pro grim_magnify, grim_data, plane, p_device, data=data
    region = grim_scale_image(grim_data, $
         xrange=[x0,x1], yrange=[y0,y1], top=top, no_scale=no_scale, plane=plane)
 
+region = region[*,*,0]	; need to be able to handle multi-channel image!!!
+
    if(grim_data.mag_last_x0 GE 0) then grim_mag_erase, grim_data, wnum
 
    mag_region = congrid(region, size_device, size_device)
@@ -297,7 +299,7 @@ end
 pro grim_mode_magnify_mode, grim_data, data_p
 
  grim_mode_magnify_cursor, swap=swap
- grim_print, grim_data, 'LEFT: Magnify display; RIGHT: Magnify data'
+ grim_print, grim_data, 'MAGNIFY -- LEFT: Magnify Data; RIGHT: Magnify Display'
 
 end
 ;=============================================================================

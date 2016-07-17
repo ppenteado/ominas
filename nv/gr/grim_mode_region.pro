@@ -63,9 +63,13 @@ pro grim_mode_region_mouse_event, event, data
   end $
  else return
 
- xx = p[0,*] & yy = p[1,*]
- pp = convert_coord(/device, /to_data, double(xx), double(yy))
- grim_set_roi, grim_data, roi, pp[0:1,*]
+ if(n_elements(roi) GT 1) then $
+  begin
+   xx = p[0,*] & yy = p[1,*]
+   pp = convert_coord(/device, /to_data, double(xx), double(yy))
+   grim_set_roi, grim_data, roi, pp[0:1,*]
+  end
+
  grim_refresh, grim_data, /use_pixmap
 
 
@@ -82,7 +86,7 @@ pro grim_mode_region_mode, grim_data, data_p
 
  device, cursor_standard = 32
  grim_print, grim_data, $
-          'LEFT: Define rectangular region; RIGHT: Define irregular region'
+          'DEFINE REGION -- LEFT: rectangular; RIGHT: Irregular'
 
 end
 ;=============================================================================

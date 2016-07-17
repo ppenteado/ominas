@@ -140,6 +140,8 @@ end_keywords)
    dat_set_nhist, self, nhist
   end  
  
+ if(defined(abscissa)) then dat_set_data, self, data, /silent, /abscissa
+ 
  _header = ''
  if(keyword_set(header)) then _header = header
  dat_set_header, self, _header
@@ -272,6 +274,7 @@ pro ominas_data__define
  struct = $
     { ominas_data, inherits ominas_core, $
 	data_dap:		nv_ptr_new(), $	; Pointer to the data archive
+	abscissa_dap:		nv_ptr_new(), $	; Pointer to the abscissa archive
 	header_dap:		nv_ptr_new(), $	; Pointer to the generic header archive
         dap_index:		0, $		; data archive index
 	max:			0d, $		; Maximum data value

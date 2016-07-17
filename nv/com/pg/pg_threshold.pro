@@ -90,7 +90,7 @@ pro pg_threshold, scan_ptd, tag=tag, min=min, max=max, relative=relative
  ;----------------------------
  ; threshold all objects
  ;----------------------------
- for i=0, n_objects-1 do $
+ for i=0, n_objects-1 do if(pnt_valid(scan_ptd[i])) then $
   begin
    pnt_get, scan_ptd[i], data=scan_data, flags=flags, tags=tags
 

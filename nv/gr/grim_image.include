@@ -48,12 +48,50 @@ function grim_get_plane_by_xy, grim_data, xy
  dn = dblarr(nplanes)
  for i=0, nplanes-1 do $
   begin
-   im = dat_data(planes[i].dd)		; shouldn't do this
+   im = dat_data(planes[i].dd)
    w = xy_to_w(im, round(xy))
    dn[i] = im[w]
   end
 
  w = where(dn EQ max(dn))
+ return, planes[w[0]]
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_plane_by_overlay
+;
+;=============================================================================
+function grim_get_plane_by_overlay, grim_data, xy
+
+ plane = grim_get_plane(grim_data)
+ planes = grim_get_plane(grim_data, /all)
+ nplanes = n_elements(planes)
+
+ dist = make_array(nplanes, val=1d100)
+
+ for i=0, nplanes-1 do $
+  if((planes[i].pn EQ plane.pn) OR planes[i].visible) then $
+  begin
+   ptdp = grim_get_overlay_ptdp(grim_data, plane=planes[i], 'all')
+   nptdp = n_elements(ptdp)
+   for j=0, nptdp-1 do $
+    begin
+     ptd = *ptdp[j]
+     if(keyword_set(ptd)) then $ 
+      begin
+       ii = grim_nearest_overlay(plane, xy, ptd, mm=mm)
+       if(ii[0] NE -1) then if(mm LT dist[i]) then dist[i] = mm
+      end
+    end
+  end
+
+ w = where(dist LT 1d100)
+ if(w[0] EQ -1) then return, 0
+
+ w = min(where(dist EQ min(dist)))
  return, planes[w[0]]
 end
 ;=============================================================================
@@ -180,7 +218,7 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
  ctmod, top=top
- dim = dat_dim(plane.dd)
+ dim = (dat_dim(plane.dd))[0:1]
 
  ;---------------------------------------
  ; get all visible planes
@@ -210,7 +248,6 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
  if(n_elements(vp) EQ 1) then return, 0
 
 
-
  ;----------------------------------------------------------------------
  ; construct output image by considering only unique data coords and
  ; averaging all visible planes
@@ -219,8 +256,14 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
  for i=0, nplanes-1 do $
   begin
    ; - - - - - - - - - - - - - - -
+   ; add data offset
+   ; - - - - - - - - - - - - - - -
+   if(keyword_set(planes[i].data_offset)) then vp = vp + planes[i].data_offset
+
+   ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
+;   _im = dat_data(planes[i].dd, sample=vp)
    _im = dat_data(planes[i].dd, sample=data_xy)
    max = dat_max(plane.dd)
 
@@ -450,8 +493,24 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
 
  for i=0, nplanes-1 do $
   begin
+; need to just sample here instead of getting entire array...
    if(NOT keyword_set(_data)) then data = dat_data(planes[i].dd) $
    else data = _data
+
+   ;---------------------------------------------------
+   ; determine whether an abscissa is present
+   ;---------------------------------------------------
+   dim = dat_dim(planes[i].dd)
+   if(n_elements(dim) EQ 1) then $
+    begin
+     yarr = data
+     xarr = lindgen(dim[0])
+    end $
+   else $
+    begin
+     yarr = data[1,*]
+     xarr = data[0,*]
+    end
 
    ;---------------------------------------
    ; set view unless forced
@@ -467,7 +526,7 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
        if((plane.xrange[0] NE 0) OR (plane.xrange[1] NE 0)) then xrange = plane.xrange $
      else $;if((tvd.xrange[0] NE 0) OR (tvd.xrange[1] NE 0)) then xrange = tvd.xrange
       begin
-       xarr = data[0,*]
+;       xarr = data[0,*]
        xrange = [min(xarr), max(xarr)]
       end
 
@@ -475,7 +534,7 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
        if((plane.yrange[0] NE 0) OR (plane.yrange[1] NE 0)) then yrange = plane.yrange $
      else $;if((tvd.yrange[0] NE 0) OR (tvd.yrange[1] NE 0)) then yrange = tvd.yrange
       begin
-       yarr = data[1,*]
+;       yarr = data[1,*]
        yrange = [min(yarr), max(yarr)]
       end
 
@@ -510,7 +569,8 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
   end
 
 
-   xarr = data[0,*] & yarr = data[1,*]
+;   xarr = data[0,*]
+;   yarr = data[1,*]
 
    parm = planes[i].parm
 
@@ -543,7 +603,7 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
     end
 
    if(i GT 0) then erase = 0
- 
+
    tvgr, wnum, xarr, yarr, xrange=xrange, yrange=yrange, no_wset=no_wset, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, position=position, dx=dx, dy=dy, $
@@ -616,39 +676,44 @@ pro grim_display, grim_data, data, plane=plane, wnum=wnum, home=home, $
  ;------------------------------------------------------
  ; if image display is off then just erase
  ;------------------------------------------------------
- if(NOT plane.image_visible) then erase $
+ if(NOT plane.image_visible) then $
+  begin
+   erase 
+   return
+  end
+
  ;------------------------------------------------------------
  ; otherwise if /use_pixmap then just copy from stored image
  ;------------------------------------------------------------
- else if((keyword_set(use_pixmap)) AND (grim_data.pixmap_valid)) then $
+ if(keyword_set(use_pixmap)) then $
   begin
-   if(plane.image_visible) then $
-    begin
-     x0 = 0 & y0 = 0
-     xsize = !d.x_size-1 
-     ysize = !d.y_size-1
+   x0 = 0 & y0 = 0
+   xsize = !d.x_size-1 
+   ysize = !d.y_size-1
 
-     if(keyword_set(pixmap_box_center)) then $
-      begin 
-       x0 = (pixmap_box_center[0] - pixmap_box_side/2) > 0
-       y0 = (pixmap_box_center[1] - pixmap_box_side/2) > 0
-       xsize = pixmap_box_side < $
-                        abs(xsize - pixmap_box_center[0] + pixmap_box_side/2)
-       ysize = pixmap_box_side < $
-                        abs(ysize - pixmap_box_center[1] + pixmap_box_side/2)
-      end
+   if(keyword_set(pixmap_box_center)) then $
+    begin 
+     x0 = (pixmap_box_center[0] - pixmap_box_side/2) > 0
+     y0 = (pixmap_box_center[1] - pixmap_box_side/2) > 0
+     xsize = pixmap_box_side < $
+		      abs(xsize - pixmap_box_center[0] + pixmap_box_side/2)
+     ysize = pixmap_box_side < $
+		      abs(ysize - pixmap_box_center[1] + pixmap_box_side/2)
+    end
 
-     wset, wnum
-     if((x0 GE 0) AND (x0 LT !d.x_size) AND $
-        (y0 GE 0) AND (y0 LT !d.y_size) AND $
-        (xsize GT 0) AND (ysize GT 0)) then $
-               device, copy=[x0,y0, xsize,ysize, x0,y0, pixmap_to_use]
-   end
-  end 
+   wset, wnum
+   if((x0 GE 0) AND (x0 LT !d.x_size) AND $
+      (y0 GE 0) AND (y0 LT !d.y_size) AND $
+      (xsize GT 0) AND (ysize GT 0)) then $
+	     device, copy=[x0,y0, xsize,ysize, x0,y0, pixmap_to_use]
+  end $
+
  ;------------------------------------------------------
  ; otherwise generate a new image
  ;------------------------------------------------------
- if(grim_data.type NE 'plot') then $
+ else $
+  begin
+   if(grim_data.type NE 'plot') then $
      grim_display_image, grim_data, data, plane=plane, no_copy=no_copy, $
        entire=entire, wnum=wnum, doffset=doffset, zoom=zoom, rotate=rotate, order=order, $
        default=default, previous=previous, flip=flip, restore=restore, $
@@ -656,11 +721,12 @@ pro grim_display, grim_data, data, plane=plane, wnum=wnum, home=home, $
        no_scale=no_scale, no_wset=no_wset, no_coord=no_coord, tvimage=tvimage, $
        min=min, max=max, home=home, draw_pixmap=draw_pixmap, current=current $
 
- else grim_display_plot, grim_data, data, plane=plane, doffset=doffset, $
+   else grim_display_plot, grim_data, data, plane=plane, doffset=doffset, $
        wnum=wnum, xrange=xrange, yrange=yrange, no_wset=no_wset, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, position=position, dx=dx, dy=dy, current=current, $
        entire=entire, erase=erase, no_coord=no_coord, color=color, nodraw=nodraw
+  end
 
 
  ;-------------------------------------

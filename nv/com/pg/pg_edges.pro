@@ -127,6 +127,7 @@ function pg_edges, dd, threshold=threshold, edge=edge, npoints=npoints, $
  ;-------------------------
  ; select points
  ;-------------------------
+;threshold = 30
  w = where(act GT threshold)
  if(w[0] EQ -1) then return, 0
 

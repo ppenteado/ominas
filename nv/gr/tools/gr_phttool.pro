@@ -187,6 +187,7 @@ end
 ;
 ;=============================================================================
 pro grpht_apply_correction_primary, grim_data, data, phtd
+@pnt_include.pro
 
  ;---------------------------
  ; get data
@@ -196,8 +197,10 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
   begin
    grim_message, 'No outline points.'
    return
-  end $
- else outline_ptd = pnt_compress(limb_ptd)
+  end
+
+ outline_ptd = nv_clone(limb_ptd[0])
+ flags = pnt_flags(outline_ptd) & flags[*] = NOT PTD_MASK_INVISIBLE & pnt_set_flags, outline_ptd, flags
 
  ingrid, dd=dd, cd=cd, sund=sund, active_pd=pd
 
@@ -383,6 +386,7 @@ function grpht_get_functions, type, default=_default
  env_dir = getenv('GR_PHT_DIR')
 
  names_dir = get_pro_by_prefix(prefix, dir=dir)
+ names_dir = names_dir[where(names_dir NE prefix+'corr')]
  names_env_dir = get_pro_by_prefix(prefix, dir=env_dir)
  names_comp = get_pro_by_prefix(prefix)
 
@@ -610,7 +614,7 @@ end
 ;=============================================================================
 pro gr_phttool, top
 
- ;if(xregistered('gr_phttool')) then return
+ if(xregistered('gr_phttool')) then return
 
 
  ;-----------------------------------------------
