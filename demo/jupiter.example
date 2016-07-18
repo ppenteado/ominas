@@ -50,7 +50,7 @@ nv_message, /silent
  file = 'data/N1350122987_2.IMG'			; cas
 ; file = '~/casIss/1511/W1511633833_1.IMG'			; cas
 ; file = 'data/2100r.img'			; gll
-; file = 'data/c3494828.gem'			; vgr, requires sedr files
+; file = 'data/c3494828.gem'			; vgr
 
  dd = dat_read(file, im, label, /silent)
 ; dd = dat_read(file, im, label, /silent, input_transform='cas_delut')

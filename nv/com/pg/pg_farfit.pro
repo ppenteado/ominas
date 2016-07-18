@@ -96,7 +96,6 @@ function pg_farfit, dd, base_ptd, model_ptd, nsamples=nsamples, show=show, $
                           sigma=sigma, cc=cc, mcc=mcc, bias=bias, $
                           nosearch=nosearch
 
-
  ;------------------------------------------------------------
  ; dereference POINT objects
  ;------------------------------------------------------------

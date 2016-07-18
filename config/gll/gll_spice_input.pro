@@ -101,7 +101,7 @@ function gll_spice_cameras, dd, ref, pos=pos, constants=constants, $
  sc = -77l
  plat = 0l
  inst= -77001l
- fn = 'gll_cmat_to_orient_ssi'
+ orient_fn = 'gll_cmat_to_orient_ssi'
 
  label = dat_header(dd)
 
@@ -164,7 +164,7 @@ function gll_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		cam_fn_image_to_focal = cam_image_to_focal_linear, $
 		cam_fn_data = [nv_ptr_new()], $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
-                  , orient_fn )
+                   orient_fn )
 
 end
 ;===========================================================================

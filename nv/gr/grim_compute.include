@@ -141,6 +141,8 @@ function grim_compute_terminator, map=map, fov=fov, hide=hide, $
                              data=data, $
                              npoints=npoints, xds=xds
 
+ if(NOT keyword_set(gd.sund)) then return, 0
+
  grim_message, /clear
 
  pds = cor_select(active_xds, 'PLANET', /class)
@@ -243,17 +245,19 @@ function grim_compute_planet_grid, map=map, fov=fov, hide=hide, $
   begin
    pg_hide, grid_ptd, cd=gd.cd, od=od, gbx=pds, /limb, hide_ptd_limb, /cat
    if(hide) then hide_ptd_limb = objarr(npd)
+
+   if(keyword_set(gd.rd)) then $
+     pg_hide, grid_ptd, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ptd_disk, /cat
+   grim_message
+   if(hide) then hide_ptd_disk = objarr(npd)
+
+   if(keyword_set(gd.sund)) then $
+       pg_hide, grid_ptd, cd=gd.cd, gbx=pds, od=gd.sund, /limb, hide_ptd_term, /cat
+   grim_message
+
   end
  grim_message
 
- if(keyword_set(gd.rd)) then $
-   pg_hide, grid_ptd, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ptd_disk, /cat
- grim_message
- if(hide) then hide_ptd_disk = objarr(npd)
-
- if(keyword_set(gd.sund)) then $
-     pg_hide, grid_ptd, cd=gd.cd, gbx=pds, od=gd.sund, /limb, hide_ptd_term, /cat
- grim_message
 
  ;-------------------------------------
  ; order points correctly
@@ -536,8 +540,8 @@ function grim_compute_star, map=map, fov=fov, hide=hide, $
 ;;;;                  pg_hide, star_ptd, cd=gd.cd, dkx=gd.rd, gbx=gd.pd, /disk
 ;;;; grim_message
 
-;;;; if(keyword_set(gd.pd)) then pg_hide, star_ptd, cd=gd.cd, gbx=gd.pd, /globe, hide_ptd_globe, /cat
-;;;; grim_message
+ if(keyword_set(gd.pd)) then pg_hide, star_ptd, cd=gd.cd, gbx=gd.pd, /globe, hide_ptd_globe, /cat
+ grim_message
 
  if(hide) then hide_ptd_globe = objarr(nsd)
 
@@ -833,6 +837,7 @@ function grim_compute_ring_grid, map=map, fov=fov, hide=hide, $
  ;--------------------------------------------------------
  rds = cor_select(active_xds, 'RING', /class)
  if(NOT keyword_set(rds)) then rds = gd.rd
+ if(NOT keyword_set(rds)) then return, 0
 
  nrd = n_elements(rds)
 

@@ -2,7 +2,7 @@
 ; dh_read_mask.pro
 ;
 ;=============================================================================
-function dh_read_mask, filename, header, udata, dim, type, $
+function dh_read_mask, filename, header, udata, dim, type, abscissa=abscissa, $
                           silent=silent, sample=sample, nodata=nodata
 ; tag_list_set, udata, 'DETACHED_HEADER', $
 ;               dh_read(dh_fname(filename), silent=silent)

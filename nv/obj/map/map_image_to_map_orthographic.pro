@@ -110,8 +110,8 @@ function map_image_to_map_orthographic, md, _image_pts, valid=valid
  rho = rho[valid]
  c = asin(rho/R) 
 
- r0 = dblarr(1,nv,nt)
- r1 = dblarr(1,nv,nt)
+ lat = dblarr(1,nv,nt)
+ lon = dblarr(1,nv,nt)
 
  c0 = (center[0,*,*])[valid]
  im0 = (image_pts[0,*,*])[valid]
@@ -119,10 +119,13 @@ function map_image_to_map_orthographic, md, _image_pts, valid=valid
  u0 = (units[0,*,*])[valid]
  u1 = (units[1,*,*])[valid]
 
- r0[valid] = asin(cos(c)*sin(c0) + (im1*sin(c)*cos(c0)/rho)) / u0
- r1[valid] = center[1,*,*] + atan(im0*sin(c), (rho*cos(c0)*cos(c) - im1*sin(c0)*sin(c))) / u1
+ lat[valid] = asin(cos(c)*sin(c0) + (im1*sin(c)*cos(c0)/rho)) / u0
+ lon[valid] = center[1,*,*] + atan(im0*sin(c), (rho*cos(c0)*cos(c) - im1*sin(c0)*sin(c))) / u1
 
- result = [r0,r1]
+ w = where(rho EQ 0)
+ if(w[0] NE -1) then lat[w] = _md.center[0]
+
+ result = [lat,lon]
  return, result
 end
 ;===========================================================================

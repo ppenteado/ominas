@@ -675,6 +675,7 @@ pro grim_draw_user_points, grim_data, plane, tags, xmap=xmap
                p = grim_shade_threshold(user_ptd[j], shade, user_shade_threshold) $
        else p = pnt_points(user_ptd[j], /visible)
 
+
        ;- - - - - - - - - - - - - - - - - - - -
        ; proceed with visible points
        ;- - - - - - - - - - - - - - - - - - - -
@@ -1273,7 +1274,7 @@ pro grim_add_points, grim_data, ptd, xds, plane=plane, $
  ;-------------------------------------------------------------------- 
  else *ptdp = ptd
 
- *ptdp = pnt_cull(*ptdp)
+ *ptdp = pnt_cull(*ptdp, /nofree)
  ptd = *ptdp
  n = n_elements(ptd) 
 
@@ -1537,10 +1538,11 @@ pro grim_place_readout_mark, grim_data, p
  ;------------------------
  ; erase old mark
  ;------------------------
- q = convert_coord(grim_data.readout_mark[0], grim_data.readout_mark[1], $
-                                                           /data, /to_device)
- grim_display, grim_data, /use_pixmap, $
-                pixmap_box_center=q[0:1], pixmap_box_side=10
+; grim_refresh, grim_data, /use_pixmap
+; q = convert_coord(grim_data.readout_mark[0], grim_data.readout_mark[1], $
+;                                                           /data, /to_device)
+; grim_display, grim_data, /use_pixmap, $
+;                     pixmap_box_center=q[0:1], pixmap_box_side=10
 
 
  ;------------------------
@@ -1578,7 +1580,6 @@ pro grim_place_measure_mark, grim_data, p
 
 
  grim_set_data, grim_data, grim_data.base
-
 end
 ;=============================================================================
 
@@ -1675,26 +1676,10 @@ function grim_unique_array_label, ptdp, prefix=prefix
  ptd = *ptdp
  nptd = n_elements(ptd)
 
- label = '0'
+ n = 0
+ for i=0, nptd-1 do if(keyword_set(ptd[i])) then n = n + 1
 
- labels = strarr(nptd) 
- for i=0, nptd-1 do if(obj_valid(ptd[i])) then $
-                 labels[i] = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL')
- 
- p = strpos(labels, '.')
- w = where(p EQ -1)
- labels = long(labels[w])
-return, strtrim(max(labels) + 1, 2)
-
-
-
-; ss = sort(labels)
-; labels = labels[ss]
- 
-; s = (shift(labels,-1) - labels)[0:nptd-2]
-; w  = where(s GT 1)
-; if(w[0] EQ -1) then label = nptd
-
+ return, strtrim(n, 2)
 end
 ;=============================================================================
 
@@ -1737,12 +1722,10 @@ pro grim_add_indexed_array, ptdp, p, ptd=ptd, $
         udata=label)
 
 
- ;----------------------------------------------------------------
- ; find the first free slot and add the array
- ;----------------------------------------------------------------
- w = where(pnt_valid(*ptdp) EQ 0)
- if(w[0] NE -1) then (*ptdp)[w[0]] = ptd $
- else *ptdp = [*ptdp, ptd]
+ ;------------------------------------------------------------------------
+ ; add the array; empty slots are left to keep numbering consistent
+ ;------------------------------------------------------------------------
+ *ptdp = [*ptdp, ptd]
 
  if(defined(flags)) then pnt_set_flags, ptd, flags
 
@@ -1894,7 +1877,6 @@ pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all
    nv_free, *ptdp
    *ptdp = obj_new()
   end $
-; else grim_rm_array, grim_data, plane=plane, *ptdp, p
  else $
   begin
    ii = grim_select_array(grim_data, plane=plane, *ptdp, p)
@@ -1959,11 +1941,13 @@ end
 ; grim_rm_tiepoint
 ;
 ;=============================================================================
-pro grim_rm_tiepoint, grim_data, p, all=all, plane=plane
+pro grim_rm_tiepoint, grim_data, p, all=all, plane=plane, nosync=nosync
 
  if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
  grim_rm_indexed_array, grim_data, plane=plane, 'TIE', p, all=all
 
+ if(NOT keyword_set(no_sync)) then $
+                   grim_push_indexed_array, grim_data, ptd, 'TIE', /rm
 end
 ;=============================================================================
 
@@ -1973,11 +1957,13 @@ end
 ; grim_rm_curve
 ;
 ;=============================================================================
-pro grim_rm_curve, grim_data, p, all=all, plane=plane
+pro grim_rm_curve, grim_data, p, all=all, plane=plane, nosync=nosync
 
  if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
  grim_rm_indexed_array, grim_data, plane=plane, 'CURVE', p, all=all
 
+ if(NOT keyword_set(no_sync)) then $
+                grim_push_indexed_array, grim_data, ptd, 'CURVE', /rm
 end
 ;=============================================================================
 
@@ -2251,9 +2237,10 @@ function grim_surface_to_image, grim_data, plane, surf_pts, names, valid=valid
    valid = where(names EQ name)
 
    if(valid[0] NE -1) then $
-          image_pts[*,valid] = surface_to_image(cd, 0, surf_pts[valid,*])
-
-   flags[valid] = 1
+    begin
+     image_pts[*,valid] = surface_to_image(cd, 0, surf_pts[valid,*])
+     flags[valid] = 1
+    end
   end $
  ;- - - - - - - - - - - - - - - - - - - - - - - - -
  ; non-map 
@@ -2271,7 +2258,8 @@ function grim_surface_to_image, grim_data, plane, surf_pts, names, valid=valid
 	   image_pts[*,w] = surface_to_image(cd, bx[k], surf_pts[w,*], $
                                                             body_pts=body_pts)
      r = bod_inertial_to_body_pos(bx[k], bod_pos(cd))
-     sub = glb_hide_points_limb(bx[k], r, body_pts)
+
+     sub = surface_hide_points(bx[k], r, body_pts)
      if(sub[0] NE -1) then flags[sub] = 0
     end
 
@@ -2326,7 +2314,7 @@ pro grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _plane, _ptdp
   begin
    grim_add_indexed_array, _ptdp, _pts[*,valid], label=label
    if(keyword_set(far_pts)) then $
-       grim_add_indexed_array, _ptdp, far_pts[*,valid], label='['+label+']'
+       grim_add_indexed_array, _ptdp, far_pts[*,valid], label='-'+label
   end
 
 end
@@ -2338,7 +2326,7 @@ end
 ; grim_push_indexed_array
 ;
 ;=============================================================================
-pro grim_push_indexed_array, grim_data, ptd, name
+pro grim_push_indexed_array, grim_data, ptd, name, rm=rm
 @grim_block.include
 @pnt_include.pro
 
@@ -2368,7 +2356,9 @@ pro grim_push_indexed_array, grim_data, ptd, name
        if((tops[i] NE top) OR (_planes[ii].pn NE plane.pn)) then $
         begin
          _ptdp = grim_get_indexed_array(_planes[ii], name)
-         grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _planes[ii], _ptdp
+         if(NOT keyword_set(rm)) then $
+               grim_sync_indexed_array, $
+                           grim_data, plane, ptd, _grim_data, _planes[ii], _ptdp 
         end
     end
    if(tops[i] NE top) then grim_refresh, _grim_data, /use_pixmap
@@ -3482,7 +3472,7 @@ pro grim_create_overlays, grim_data, plane
 		class='planet', $
 		dep_classes=['sun', 'ring'], $
 		genre='curve', $
-		col='yellow', psym=3, tlab=0, tfill=0, tshade=1
+		col='green', psym=3, tlab=0, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'station', $
@@ -3581,7 +3571,9 @@ end
 pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=source_ptd, $
                                    obj_name=obj_name, replace=replace, temp=temp
 
+ if(grim_data.slave_overlays) then plane = grim_get_plane(grim_data, pn=0)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
+
 
  ;------------------------------------------------
  ; get points array
@@ -3600,6 +3592,8 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
    ; recompute the overlay points
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    gd = pgs_make_gd(dep)
+   if(keyword_set(gd.md)) then gd.od = *plane.od_p
+   if(keyword_set(gd.md)) then gd.cd = gd.md
 
    _ptd = call_function(fn, gd=gd, $
           map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
@@ -3624,7 +3618,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  ; make sure relevant descriptors are loaded
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
  grim_load_descriptors, grim_data, name, plane=plane, $
-       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, $
+       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
        replace=replace, gd=gd
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -3655,6 +3649,20 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
    grim_add_points, grim_data, plane=plane, ptd, xds, name=name, cd=cd, data=data
 
  grim_resume_events
+
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; replicate overlays if slaving turned on
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(grim_data.slave_overlays) then $
+  begin
+   planes = grim_get_plane(grim_data, /all)
+   nplanes = n_elements(planes)
+;   if(planes GT 1) then $
+;    for i=1, nplanes-1 do $
+;      ...
+;  need to make structures in plane structure for descriptors, overlays...
+  end
 
 end
 ;=============================================================================

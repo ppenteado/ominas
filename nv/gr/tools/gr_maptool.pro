@@ -122,7 +122,12 @@ pro grmt_create_map, data, md
            gbx = pd[0]
 	   map_pd = pd[0]
           end $
-         else cor_set_name, md, cor_name(cd)
+;         else cor_set_name, md, cor_name(cd)
+         else $
+          begin
+           grim_message, 'No planet descriptor.'
+           return
+          end
 
 	 aux= ['EMM']
 
@@ -136,6 +141,10 @@ pro grmt_create_map, data, md
 
   'DISK' : $
 	begin
+; need to sort out the map units...
+ grim_message, 'Not complete.'
+ return
+
 	 if(NOT keyword_set(rd)) then $
 	  begin
 	   grim_message, 'No active ring descriptor.'
@@ -147,14 +156,14 @@ pro grmt_create_map, data, md
 	   return
 	  end
 
-	 ;set_core_name, md, cor_name(rd[0]) ;no such function
+	 cor_set_name, md, cor_name(rd[0])
 
 	 dd_map = pg_map(dd, bx=rd[0], $
-                  md=md, $
-                  cd=cd, $
-                  sund=sund, $
-                  gbx=all_pd, $
-                  hide_fn=hide_fn, hide_data_p=hide_data_p)
+                    md=md, $
+                    cd=cd, $
+                    sund=sund, $
+                    gbx=all_pd, $
+                    hide_fn=hide_fn, hide_data_p=hide_data_p)
 
 	 map_rd = rd[0]
 	end
@@ -166,8 +175,8 @@ pro grmt_create_map, data, md
  ; open map in grim
  ;-----------------------------------
  if(cor_class(cd) NE 'MAP') then od = cd
- grim, /new, dd_map, cd=md, od=od, sund=sund, pd=map_pd, rd=map_rd
-
+ grim, /new, dd_map, cd=md, od=od, sund=sund, pd=map_pd, rd=map_rd, $
+              /tiepoint_sync, /curve_sync, order=1-data.order
 
 
 end
@@ -404,7 +413,7 @@ pro gr_maptool_event, event
   ; 'Close' button --
   ;  Just destroy the form and forget about it
   ;---------------------------------------------------------
-  'CLASS' :  widget_control, base, /destroy
+  'CLOSE' :  widget_control, base, /destroy
 
   ;---------------------------------------------------------
   ; 'Project' button --
@@ -471,7 +480,7 @@ end
 ; gr_maptool
 ;
 ;=============================================================================
-pro gr_maptool
+pro gr_maptool, order=order
 
  if(xregistered('gr_maptool')) then return
 
@@ -491,8 +500,8 @@ pro gr_maptool
           'Mercator', $
           'Orthographic', $
           'Stereographic', $
-          'Sinusoidal', $
-          'Mollweide', $
+;          'Sinusoidal', $
+;          'Mollweide', $
           'Oblique Disk']
  ntypes = n_elements(types)
  dl_types = types[0]
@@ -534,6 +543,7 @@ pro gr_maptool
 		tags		:	tags, $
 		types		:	types, $
 		classes		:	classes, $
+		order		:	order, $
 	;---------------
 	; book keeping
 	;---------------
@@ -554,12 +564,12 @@ pro gr_maptool
 					  map_create_descriptors(1,$
 					   type='STEREOGRAPHIC', $
 					   size = [400,400]), $
-					  map_create_descriptors(1,$
-					   type='SINUSOIDAL', $
-					   size = [800,400]), $
-					  map_create_descriptors(1,$
-					   type='MOLLWEIDE', $
-					   size = [800,400]), $
+;					  map_create_descriptors(1,$
+;					   type='SINUSOIDAL', $
+;					   size = [800,400]), $
+;					  map_create_descriptors(1,$
+;					   type='MOLLWEIDE', $
+;					   size = [800,400]), $
 					  map_create_descriptors(1,$
 					   type='OBLIQUE_DISK', $
 					   size = [400,400]) ] $ 

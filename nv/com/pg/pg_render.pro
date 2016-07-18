@@ -205,6 +205,11 @@ function pg_render, cd=cd, sund=sund, $
     dim = size(psf, /dim)
     if(dim[0] EQ 0) then psf = cam_psf(cd, npsf)
 
+    ;- - - - - - - - - - - - - - - - - -
+    ; use generic psf if none found
+    ;- - - - - - - - - - - - - - - - - -
+    if(NOT keyword_set(psf)) then psf = gauss_2d(0,0, 1, 6,6)
+
     image = convol(image, psf, /center)
    end
 

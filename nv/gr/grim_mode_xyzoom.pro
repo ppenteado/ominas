@@ -42,6 +42,7 @@ pro grim_mode_xyzoom_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(event.press EQ 2) then return
 
  minbox = 5
  if(event.press EQ 1) then $
@@ -124,7 +125,7 @@ end
 pro grim_mode_xyzoom_mode, grim_data, data_p
 
  grim_mode_xyzoom_cursor, swap=swap
- grim_print, grim_data, 'LEFT: Zoom; RIGHT: Unzoom'
+ grim_print, grim_data, 'XYZOOM -- LEFT: Increase; RIGHT: Decrease'
 
 end
 ;=============================================================================

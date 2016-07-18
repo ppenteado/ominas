@@ -694,7 +694,7 @@ pro grim_menu_pointing_farfit_event, event
  ; construct the outlines to use based on currently existing points
  ;----------------------------------------------------------------------
  point_ptd = grim_cat_points(grim_data, /active)
- if(NOT keyword__set(point_ptd)) then $
+ if(NOT keyword_set(point_ptd)) then $
   begin
    grim_message, 'No active image points.'
    return
@@ -703,11 +703,9 @@ pro grim_menu_pointing_farfit_event, event
  ;------------------------------------------------
  ; scan for edges
  ;------------------------------------------------
-; np = n_elements(pnt_points(/cat, point_ptd))/2
- np = pnt_nv(point_ptd)
+ np = n_elements(pnt_points(/cat, point_ptd))/2
  edge_ptd = pg_edges(plane.dd, edge=10, np=4*np)
  pg_draw, edge_ptd, col=ctgreen()
-;stop
 
  ;------------------------------------------------
  ; find the offset
@@ -1186,7 +1184,8 @@ pro grim_menu_project_map_event, event
  ;------------------------------------------------
  ; open a gr_maptool
  ;------------------------------------------------
- gr_maptool
+ grim_wset, grim_data, grim_data.wnum, get_info=tvd
+ gr_maptool, order=tvd.order
 
 
 end
@@ -1221,20 +1220,26 @@ pro grim_menu_mosaic_help_event, event
 end
 ;----------------------------------------------------------------------------
 pro grim_menu_mosaic_event, event
+;grim_message, 'Not implemented.'
+;return
 
  ;------------------------------------------------
  ; get all visible planes
  ;------------------------------------------------
  widget_control, /hourglass
 
- grim_data = grim_get_data(event.top)
- planes = grim_visible_planes(grim_data)
-
+ tops = grim_get_selected()
+ ntops = n_elements(tops)
+ for i=0, ntops-1 do $
+  begin
+   grim_data = grim_get_data(tops[i])
+   planes = append_array(planes, grim_visible_planes(grim_data))
+  end
 
  ;------------------------------------------------
  ; construct mosaic
  ;------------------------------------------------
- dd_mosaic = pg_mosaic(planes.dd, combine='pgms_combine_median')
+ dd_mosaic = pg_mosaic(planes.dd, combine='mean')
 
 
  ;--------------------------------------------------------------
@@ -1282,12 +1287,11 @@ function grim_default_menus
             '0\Azimuthal\grim_menu_limb_profile_azimuthal_event', $
             '2\<null>               \+*grim_menu_delim_event', $
            '0\Image Profile\*grim_menu_image_profile_event', $ 
-           '0\*Read Mind\grim_menu_read_mind_event', $ 
+           '0\Read Mind\*grim_menu_read_mind_event', $ 
            '2\<null>               \+*grim_menu_delim_event', $
 
 	  '*1\Corrections', $
            '1\Pointing' , $
-            '0\Manual\grim_menu_pointing_manual_event', $ 
             '0\Farfit\grim_menu_pointing_farfit_event', $
             '0\Least Squares\grim_menu_pointing_lsq_event', $
             '2\<null>               \+*grim_menu_delim_event', $
@@ -1299,7 +1303,7 @@ function grim_default_menus
             '0\Up   \*grim_menu_shift_up_event', $
             '0\Down \*grim_menu_shift_down_event', $
            '2\<null>               \+*grim_menu_delim_event', $
-           '0\Photometry\grim_menu_corrections_photometry_event' , $
+           '0\Photometry     \grim_menu_corrections_photometry_event' , $
            '2\<null>               \+*grim_menu_delim_event', $
 
           '#1\Reproject' , $

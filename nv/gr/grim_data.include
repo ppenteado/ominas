@@ -14,19 +14,19 @@ end
 ;
 ;=============================================================================
 function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
-                        retain=retain, user_callbacks=user_callbacks, $
-                        user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, faint=faint, cursor_swap=cursor_swap, $
-                        path=path, save_path=save_path, load_path=load_path, fov=fov, $
-                        trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, $
-                        trs_sund=trs_sund, filetype=filetype, hide=hide, type=type, $
-                        color=color, xrange=xrange, yrange=yrange, npoints=npoints, $
-                        thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
-                        psym=psym, cursor_modes=cursor_modes, readout_fns=readout_fns, $
-                        symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
-                        compress=compress, extensions=extensions, max=max, beta=beta, $
-                        tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
-                        visibility=visibility, title=title, $
-                        render_sample=render_sample, render_pht_min=render_pht_min
+           retain=retain, user_callbacks=user_callbacks, $
+           user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, faint=faint, cursor_swap=cursor_swap, $
+           path=path, save_path=save_path, load_path=load_path, fov=fov, $
+           trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, $
+           trs_sund=trs_sund, filetype=filetype, hide=hide, type=type, $
+           color=color, xrange=xrange, yrange=yrange, npoints=npoints, $
+           thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
+           psym=psym, cursor_modes=cursor_modes, readout_fns=readout_fns, $
+           symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
+           compress=compress, extensions=extensions, max=max, beta=beta, $
+           tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
+           visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
+           render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
 @grim_block.include
 
  
@@ -43,6 +43,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(user_graphics_fn)) then user_graphics_fn = 3
   if(NOT keyword_set(user_thick)) then user_thick = 1
   if(NOT keyword_set(user_line)) then user_line = 0
+  if(NOT keyword_set(slave_overlays)) then slave_overlays = 0
   if(NOT keyword_set(faint)) then faint = 12
   if(NOT defined(cursor_swap)) then cursor_swap = -1
 
@@ -190,7 +191,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		selected		: 0, $
 		scale_wnum		: 0, $
 		wnum			: 0, $
-		pixmap_valid		: 0, $
 		pixmap			: -1, $
 		redraw_pixmap		: -1, $
 		overlay_pixmap		: -1, $
@@ -231,6 +231,8 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		dd_map_p		: ptr_new(0), $
 		md_map_p		: ptr_new(0), $
 		dd0			: dd0, $
+
+	slave_overlays		: slave_overlays, $
 
 		misc_data_p		: ptr_new(0), $
 
@@ -279,8 +281,8 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   ;---------------------
   grim_add_planes, grim_data, dd, $
      xrange=xrange, yrange=yrange, xtitle=xtitle, ytitle=ytitle, max=max, $
-                    color=color, thick=thick, visibility=visibility, $
-                       render_sample=render_sample, render_pht_min=render_pht_min
+                    color=color, thick=thick, visibility=visibility, channel=channel, $
+                       render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
 
  ;----------------------
  ; common block

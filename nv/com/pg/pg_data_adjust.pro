@@ -45,11 +45,10 @@
 pro pg_data_adjust, dd
 
  device, cursor_standard=30
- data = dat_data(dd)
+ data = dat_data(dd, abscissa=abscissa)	; requesting the entire data array is not ideal
  dim = dat_dim(dd)
 
- ndim = 2
- if(dim[0] EQ 2) then ndim = 1
+ ndim = n_elements(dim)
 
  ;----------------------------------------------------
  ; adjust values until right button pressed
@@ -91,7 +90,7 @@ pro pg_data_adjust, dd
      if(ndim EQ 1) then $
       begin
        ii = round(pp[0])
-       data[1,ii] = qq[1]
+       data[ii] = qq[1]
       end
 
      ;- - - - - - - - - - - - - - - - -
@@ -123,6 +122,7 @@ pro pg_data_adjust, dd
      ;- - - - - - - - - - - - - - - - -
      ; interpolate onto abscissa grid
      ;- - - - - - - - - - - - - - - - -
+; need to look at actual dd abscissa...
      xxmin = ceil(min(xx))
      xxmax = floor(max(xx))
      x = dindgen(xxmax-xxmin+1) + xxmin
@@ -134,7 +134,7 @@ pro pg_data_adjust, dd
      ;- - - - - - - - - - - - - - - - -
      ; 1-D array
      ;- - - - - - - - - - - - - - - - -
-     if(ndim EQ 1) then data[1,x] = y
+     if(ndim EQ 1) then data[x] = y
 
     end
   endrep until(release EQ 4)

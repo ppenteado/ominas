@@ -883,7 +883,7 @@ common tvim_block, tvd, tvim_top
      tvimage[*,*,1] = bytscl(tvimage[*,*,1], top=tvim_top)
      tvimage[*,*,2] = bytscl(tvimage[*,*,2], top=tvim_top)
    end $
-   else $
+   else if(NOT keyword_set(no_scale)) then $
     begin
 ;     tvimage[*,*,0] = $
 ;        bytscl(tvimage[*,*,0], min=min[0], max=max[0], top=tvim_top)

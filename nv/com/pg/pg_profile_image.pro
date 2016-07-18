@@ -104,10 +104,9 @@ function pg_profile_image, dd, cd=cd, gd=gd, outline_ptd, distance=distance, $
        distance=distance, interp=interp, arg_interp=arg_interp, sigma=sigma, image_pts=image_pts)
  if(keyword_set(bg)) then profile = profile - bg[0]
 
- dd_prof = [ dat_create_descriptors(1, data=[tr(distance), $
-                                    tr(profile)], name=cor_name(dd)), $
-             dat_create_descriptors(1, data=[tr(distance), $
-                                    tr(sigma)], name=cor_name(dd)) ]
+ dd_prof = [ dat_create_descriptors(1, data=profile, abscissa=distance, name=cor_name(dd)), $
+             dat_create_descriptors(1, data=sigma, abscissa=distance, name=cor_name(dd)) ]
+
  dat_set_header, dd_prof[0], dat_header(dd)
  dat_set_header, dd_prof[1], dat_header(dd)
 

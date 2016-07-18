@@ -42,6 +42,7 @@ pro grim_mode_tiepoints_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(event.press EQ 2) then return
 
  grim_wset, grim_data, input_wnum
  p = convert_coord(double(event.x), double(event.y), /device, /to_data)
@@ -136,7 +137,7 @@ end
 pro grim_mode_tiepoints_mode, grim_data, data_p
 
  grim_mode_tiepoints_cursor, swap=swap
- grim_print, grim_data, 'LEFT: Add tiepoint; RIGHT: Remove tiepoint'
+ grim_print, grim_data, 'TIEPOINTS -- LEFT: Add; RIGHT: Remove'
 
 end
 ;=============================================================================

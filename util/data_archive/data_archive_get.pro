@@ -5,7 +5,8 @@
 ;
 ;===========================================================================
 function data_archive_get, dap, index, samples=_samples
-
+ 
+ if(NOT ptr_valid(dap)) then return, 0
  if(NOT keyword_set(index)) then index = 0
 
  daps = *dap

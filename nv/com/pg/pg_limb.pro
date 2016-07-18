@@ -143,7 +143,6 @@ function pg_limb, cd=cd, od=od, gbx=gbx, gd=gd, fov=fov, cull=cull, $
   begin
    xd = reform(gbx[i,*], nt)
 
-;stop
    Rs = bod_inertial_to_body_pos(xd, obs_pos)		; Source position
 							; in object i's body
 							; frame for all t.

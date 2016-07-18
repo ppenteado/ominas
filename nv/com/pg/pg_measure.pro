@@ -53,7 +53,7 @@
 ;	xy:	If set, this is taken as the first point, and the user selects
 ;		only the second point. 
 ;
-;	fn:	Name of a function to be called whenever a ppoint is selected. 
+;	fn:	Name of a function to be called whenever a point is selected. 
 ;		The function is called as follows:
 ;
 ;		value = call_function(fn, p, image, gd=gd, $
@@ -325,6 +325,7 @@ end
 function _pgm_eqplane_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt
 
  gbx = get_primary(gd.cd, gd.gbx)
+ if(NOT obj_valid(gbx)) then return, 0
 
  dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
 	orient = bod_orient(gbx), $
@@ -388,6 +389,19 @@ end
 
 
 ;=============================================================================
+; _pgm_map_test
+;
+;=============================================================================
+function _pgm_map_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt
+ inertial_pt = dblarr(1,3,2)
+ surface_pt = dblarr(1,3,2)
+ return, [gd.cd, gd.cd]
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; _pgm_map
 ;
 ;=============================================================================
@@ -398,14 +412,13 @@ function _pgm_map, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=ine
 
  nt = n_elements(name)
 
- v = image_to_map(gd.cd, p, valid=valid)
+ v = image_to_map(gd.cd, p[*,1], valid=valid) - image_to_map(gd.cd, p[*,0], valid=valid)
  if(NOT keyword_set(v)) then return, 0
  if(valid[0] EQ -1) then return, 0
  
  v = v[*,valid] * 180d/!dpi
- name = name[valid]
 
- label = ['LAT', 'LON']
+ label = ['dLAT', 'dLON']
 
  return, v 
 end
@@ -552,18 +565,23 @@ common pgm_table_block, last_labels, first
       begin
        _xd = call_function(fn[i]+'_test', p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt)
 
-       xd = append_array(xd, transpose(_xd))
-       inertial_pts = append_array(inertial_pts, inertial_pt)
-       surface_pts = append_array(surface_pts, surface_pt)
-      end
+       if(keyword_set(_xd)) then $
+        begin
+         xd = append_array(xd, transpose(_xd))
+         inertial_pts = append_array(inertial_pts, inertial_pt)
+         surface_pts = append_array(surface_pts, surface_pt)
+        end
+     end
 
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - 
      ; select nearest intersections where applicable
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+     ntest = n_elements(xd)/2
      nearest = [-1,-1]
      dist = [1d100,1d100]
-     for i=0, nfn-1 do $
+     for i=0, ntest-1 do $
       begin
        inertial_pt0 = inertial_pts[i,*,0]
        inertial_pt1 = inertial_pts[i,*,1]
@@ -597,23 +615,19 @@ common pgm_table_block, last_labels, first
        label_p = append_array(label_p, nv_ptr_new(label))
        format_p = append_array(format_p, nv_ptr_new(format))
        all_names = append_array(all_names, name)
-
-
       end
 
 
      ;- - - - - - - - - - - - - - - - -
      ; collect all the function data
      ;- - - - - - - - - - - - - - - - -
-     for i=0, nfn-1 do $
+     for i=0, ntest-1 do $
       begin
        xds = xd[i,*]
        if(obj_valid(xds[0])) then $  
         begin
          inertial_pt0 = inertial_pts[i,*,0]
          inertial_pt1 = inertial_pts[i,*,1]
-;print, inertial_pt0
-;print, inertial_pt1
 
          call = 1
          if((v_mag(inertial_pt0))[0] NE 0) then $
@@ -633,7 +647,7 @@ common pgm_table_block, last_labels, first
          else $
           begin
            if(names[0] EQ names[1]) then name = names[0] $
-           else name = str_comma_list(names, delim='--')
+           else value = 0
           end
 
          if(keyword_set(value)) then $

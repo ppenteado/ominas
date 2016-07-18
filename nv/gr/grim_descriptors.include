@@ -88,6 +88,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
        end
      end
 
+
    ;- - - - - - - - - - - - - - - - - - - - - - - -
    ; get rid of redundant dependencies
    ;- - - - - - - - - - - - - - - - - - - - - - - -
@@ -834,7 +835,7 @@ end
 ;
 ;=============================================================================
 pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
-       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, $
+       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
        obj_name=obj_name, replace=replace, gd=gd
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
@@ -848,7 +849,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;----------------------------------------------------------------
  ; load descriptors based on dependencies for this type of object
  ;----------------------------------------------------------------
- cd = (pd = (rd = (sund = (sd = (std = (ard = 0))))))
+ cd = (pd = (rd = (sund = (sd = (std = (ard = (od = 0)))))))
 
  cd = grim_get_cameras(grim_data, plane=plane)
  if(NOT keyword_set(cd[0])) then return
@@ -883,6 +884,12 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
      if(class EQ 'star') then names = obj_name
      sd = grim_get_stars(grim_data, plane=plane, names=names, replace=replace)
     end
+  end $
+ else $
+  begin
+   pd = *plane.pd_p
+   sund = *plane.sund_p
+   od = *plane.od_p
   end
 
 
@@ -911,7 +918,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
        sd: sd, $
        std: std, $
        ard: ard, $
-       od: 0}
+       od: od}
 
 end
 ;=============================================================================

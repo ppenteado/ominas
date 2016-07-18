@@ -42,6 +42,7 @@ pro grim_mode_select_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(event.press EQ 2) then return
 
  if(input_wnum NE grim_data.wnum) then return
 
@@ -132,7 +133,7 @@ pro grim_mode_select_mode, grim_data, data_p
 
  grim_mode_select_cursor, swap=swap
  grim_print, grim_data, $
-       'LEFT: Select overlay points; RIGHT: Deselect overlay points'
+       'SELECT WITHIN OVERLAYS -- LEFT: Select; MIDDLE: Cancel; RIGHT: Deselect'
 
 end
 ;=============================================================================

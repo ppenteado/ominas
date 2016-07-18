@@ -28,6 +28,8 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
+;	abscissa: If set, the given array is taken as the abscissa.
+;
 ;	update:	Update mode flag.  If not given, it will be taken from dd.
 ;
 ;	silent:	If set, messages are suppressed.
@@ -52,7 +54,7 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent
+pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent, abscissa=_abscissa
 @core.include
  _dd = cor_dereference(dd)
 
@@ -67,18 +69,30 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent
  ;--------------------------------------------
  ; compress data if necessary
  ;--------------------------------------------
+ if(keyword_set(_abscissa)) then abscissa = _abscissa
  if(keyword_set(_dd.compress)) then $
-     data = call_function('dat_compress_data_' + _dd.compress, _dd, _data) $
+     data = call_function('dat_compress_data_' + _dd.compress, _dd, _data, abscissa=abscissa) $
  else data = _data
+
 
  ;--------------------------------------------
  ; modify data array if update = 0
  ;--------------------------------------------
  if(NOT keyword_set(update)) then $
   begin
+   dap = 0
    if(keyword_set(_dd.data_dap)) then dap = _dd.data_dap
    data_archive_set, dap, data, index=_dd.dap_index
    _dd.data_dap = dap
+
+   if(keyword_set(abscissa)) then $
+    begin
+     dap = 0
+     if(keyword_set(_dd.abscissa_dap)) then dap = _dd.abscissa_dap
+     data_archive_set, dap, abscissa, index=_dd.dap_index
+     _dd.abscissa_dap = dap
+    end
+
    _dd.dap_index = 0
 
    if(NOT ptr_valid(_dd.dim_p)) then _dd.dim_p = nv_ptr_new(0)
@@ -93,7 +107,7 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent
   begin
    dd_new = nv_clone(dd)
    dat_set_sibling, dd, dd_new
-   dat_set_data, dd_new, data, update=0
+   dat_set_data, dd_new, data, update=0, abscissa=abscissa
    dd = dd_new
   end
 
@@ -112,7 +126,6 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent
  nv_notify, dd, type=0, desc='DATA', noevent=noevent
  nv_notify, /flush, noevent=noevent
 
- 
 end
 ;===========================================================================
 

@@ -478,6 +478,7 @@ pro grim_mode_navigate_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(event.press EQ 2) then return
 
  ;---------------------------------------
  ; scroll wheel -- adjust distance
@@ -533,7 +534,7 @@ pro grim_mode_navigate_mode, grim_data, data_p
 
  device, cursor_standard = 142
  grim_print, grim_data, $
-      'LEFT: Nod; RIGHT: Twist  <Shift> LEFT:XZ; RIGHT: track; WHEEL: Y '
+      'NAVIGATE CAMERA -- LEFT: Nod; RIGHT: Twist  <Shift> LEFT:XZ; RIGHT: track; WHEEL: Y '
 
 end
 ;=============================================================================

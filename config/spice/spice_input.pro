@@ -547,7 +547,6 @@ function spice_input, dd, keyword, prefix, $
    ;-----------------------------------------
    ; load/unload kernels
    ;-----------------------------------------
-;print, kernels_to_load
    spice_load, kernels_to_load, uk_in=kernels_to_unload
 ;   spice_cull
   end

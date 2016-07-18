@@ -105,7 +105,7 @@ function pg_cvscan_coeff, scan_ptd, axis_ptd=_axis_ptd, fix=fix
    ;---------------------------------------------------------------
    if(keyword_set(scan_data)) then $
     begin
-     n_scans=n_scans+1
+     n_scans = n_scans+1
      cos_alpha = scan_data[0,*]
      sin_alpha = scan_data[1,*]
      scan_offsets = scan_data[2,*]

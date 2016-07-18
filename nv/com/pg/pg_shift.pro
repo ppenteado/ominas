@@ -72,7 +72,7 @@ pro pg_shift, dd, dxy, cd=cd, gd=gd
 
  if(keyword_set(cd)) then $
   begin
-   cam_reorient, cd, cam_oaxis(cd), -dxy, [0]
+   set_image_origin, cd, image_origin(cd) - dxy
    cor_add_task, cd, 'pg_shift' 
   end
   
