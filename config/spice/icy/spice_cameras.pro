@@ -46,7 +46,11 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
                                 cam_pos, cam_vel, cmat, cam_avel, pos, obs=obs)
    cmats[*,*,iet]=cmat
    endfor
-   if (n_elements(*cam_fn_data[0]) gt 0) then (*cam_fn_data[0]).orients=cmats 
+   if ptr_valid(cam_fn_data[0]) && isa(*cam_fn_data[0],'struct') then begin
+    tn=tag_names(*cam_fn_data[0])
+    void=where(tn eq 'ORIENTS',count)
+    if (count gt 0) then (*cam_fn_data[0]).orients=cmats
+   endif
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; handle spice errors
    ;- - - - - - - - - - - - - - - - - - - - - -
