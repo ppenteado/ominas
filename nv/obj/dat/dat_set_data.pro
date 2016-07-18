@@ -80,12 +80,14 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent, absc
  ;--------------------------------------------
  if(NOT keyword_set(update)) then $
   begin
+   dap = 0
    if(keyword_set(_dd.data_dap)) then dap = _dd.data_dap
    data_archive_set, dap, data, index=_dd.dap_index
    _dd.data_dap = dap
 
    if(keyword_set(abscissa)) then $
     begin
+     dap = 0
      if(keyword_set(_dd.abscissa_dap)) then dap = _dd.abscissa_dap
      data_archive_set, dap, abscissa, index=_dd.dap_index
      _dd.abscissa_dap = dap

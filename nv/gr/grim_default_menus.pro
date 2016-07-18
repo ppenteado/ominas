@@ -704,7 +704,6 @@ pro grim_menu_pointing_farfit_event, event
  ; scan for edges
  ;------------------------------------------------
  np = n_elements(pnt_points(/cat, point_ptd))/2
-print, np
  edge_ptd = pg_edges(plane.dd, edge=10, np=4*np)
  pg_draw, edge_ptd, col=ctgreen()
 
@@ -1288,12 +1287,11 @@ function grim_default_menus
             '0\Azimuthal\grim_menu_limb_profile_azimuthal_event', $
             '2\<null>               \+*grim_menu_delim_event', $
            '0\Image Profile\*grim_menu_image_profile_event', $ 
-           '0\*Read Mind\grim_menu_read_mind_event', $ 
+           '0\Read Mind\*grim_menu_read_mind_event', $ 
            '2\<null>               \+*grim_menu_delim_event', $
 
 	  '*1\Corrections', $
            '1\Pointing' , $
-;            '0\Manual\grim_menu_pointing_manual_event', $ 
             '0\Farfit\grim_menu_pointing_farfit_event', $
             '0\Least Squares\grim_menu_pointing_lsq_event', $
             '2\<null>               \+*grim_menu_delim_event', $
@@ -1305,7 +1303,7 @@ function grim_default_menus
             '0\Up   \*grim_menu_shift_up_event', $
             '0\Down \*grim_menu_shift_down_event', $
            '2\<null>               \+*grim_menu_delim_event', $
-           '0\Photometry\grim_menu_corrections_photometry_event' , $
+           '0\Photometry     \grim_menu_corrections_photometry_event' , $
            '2\<null>               \+*grim_menu_delim_event', $
 
           '#1\Reproject' , $

@@ -1493,7 +1493,7 @@ pro grim_render, grim_data, plane=plane
  ; Create new plane unless the current one is a rendering
  ;  The new plane will include a transformation that allows
  ;  the rendering to appear in the correct location in the
- ;  display relative to the dat coordinate system.
+ ;  display relative to the data coordinate system.
  ;---------------------------------------------------------
  if(NOT plane.rendering) then $
   begin
@@ -5822,11 +5822,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_view_frame_active_event
+;	grim_menu_view_frame_event
 ;
 ;
 ; PURPOSE:
-;	Modifies view settings so as to display the active overlays. 
+;	Modifies view settings so as to display the either all overlays
+;	or those that are active. 
 ;
 ;
 ; CATEGORY:
@@ -5838,13 +5839,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_view_frame_active_help_event, event
+pro grim_menu_view_frame_help_event, event
  text = ''
- nv_help, 'grim_menu_view_frame_active_event', cap=text
+ nv_help, 'grim_menu_view_frame_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_view_frame_active_event, event
+pro grim_menu_view_frame_event, event
 
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
@@ -5852,6 +5853,10 @@ pro grim_menu_view_frame_active_event, event
  widget_control, grim_data.draw, /hourglass
 
  ptd = grim_get_all_active_overlays(grim_data, plane=plane)
+ if(NOT keyword_set(ptd)) then $
+   ptd = grim_get_all_overlays(grim_data, plane=plane)
+ if(NOT keyword_set(ptd)) then return
+
  grim_frame_overlays, grim_data, plane, ptd
 
  grim_refresh, grim_data
@@ -8264,7 +8269,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Entire               \+*grim_menu_view_entire_event', $
            '0\Initial              \+*grim_menu_view_initial_event', $
            '0\Reverse Order        \*grim_menu_view_flip_event', $ 
-           '0\Frame Active Overlays\*grim_menu_view_frame_active_event', $ 
+           '0\Frame Overlays\*grim_menu_view_frame_event', $ 
            '0\---------------------\*grim_menu_delim_event', $ 
            '0\Header               \grim_menu_view_header_event', $
            '0\Notes                \grim_menu_notes_event', $
@@ -8273,9 +8278,9 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Toggle Image/Overlays \+*grim_menu_toggle_image_overlays_event' , $
            '0\Toggle Context       \+*grim_menu_context_event' , $
            '0\Toggle Axes          \*grim_menu_axes_event' , $
-           '0\---------------------\*?grim_delim_event', $ 
-           '0\Render               \*?grim_menu_render_event' , $
-           '0\---------------------\*?grim_delim_event', $ 
+           '0\---------------------\*grim_menu_delim_event', $ 
+           '0\Render               \grim_menu_render_event' , $
+           '0\---------------------\*grim_menu_delim_event', $ 
            '0\Colors               \*grim_menu_view_colors_event', $ 
            '2\<null>               \+*grim_menu_delim_event', $
 
@@ -8418,7 +8423,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
      beta_only_indices=beta_only_indices)
 
 
-;;;;; problem is cnecutive 2/<null> lines....
+;;;;; problem is consecutive 2/<null> lines....
  menu_desc = grim_cull_menu_desc(menu_desc, plot, map, beta, $
      map_items=map_items, map_indices=map_indices, $
      od_map_items=od_map_items, od_map_indices=od_map_indices, $
@@ -8517,7 +8522,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
               value=grim_hide_image_bitmap() AND grim_hide_bitmap(), /bitmap, /tracking_events, $
                                               event_pro='grim_toggle_image_overlays_event')
 
- if(NOT plot) then $
+ if((NOT plot) AND (NOT map)) then $
    grim_data.render_button = widget_button(grim_data.shortcuts_base4, $
               resource_name='grim_render_button', $
               value=grim_render_bitmap(), /bitmap, /tracking_events, $
@@ -8992,20 +8997,9 @@ pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, nhist=nhist, $
    if((ndim EQ 1) AND (dim[0] EQ 0)) then grnum = arg $
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; 1-D arg: assume ordinate; need to add abscissa
+   ; 1-D or 2-D arg: make dd
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else if(ndim EQ 1) then $
-    begin
-     yarr = arg
-     xarr = dindgen(n_elements(yarr))
-     _dd = dat_create_descriptors(1, data=[transpose(xarr), transpose(yarr)], nhist=nhist)
-     dd = append_array(dd, _dd)
-    end $
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; 2-D arg: assme image; make dd
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else if(ndim EQ 2) then $
+   else if(ndim LT 3) then $
     begin
      _dd = dat_create_descriptors(1, data=arg, nhist=nhist, maintain=maintain, compress=compress)
      dd = append_array(dd, _dd)
@@ -9052,6 +9046,7 @@ end
 ; 	cube (3d array)
 ;
 ;=============================================================================
+;xx
 pro grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
 
@@ -9115,7 +9110,7 @@ pro grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, 
  if(keyword_set(dd)) then $
   begin 
    dim = dat_dim(dd[0])
-   if(dim[0] EQ 2) then type = 'plot'
+   if(n_elements(dim) EQ 1) then type = 'plot'
   end
 
 
@@ -9206,6 +9201,7 @@ end
 ; 	cube (3d array)
 ;
 ;=============================================================================
+;xx
 pro __grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions, rgb=rgb, offsets=offsets
 
@@ -9238,16 +9234,6 @@ pro __grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhi
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(ndim LT 3) then $
     begin
-;     ;- - - - - - - - - - - - - - - - - -
-;     ; 1-D array requires an abscissa
-;     ;- - - - - - - - - - - - - - - - - -
-;     if(ndim EQ 1) then $
-;      begin
-;       yarr = dat_data(_dd[i])
-;       xarr = dindgen(n_elements(yarr))
-;       dat_set_data, _dd[i], [transpose(xarr), transpose(yarr)]
-;      end
-
      dd = append_array(dd, _dd[i])
      offsets = append_array(offsets, [0])
     end $ 
@@ -9424,9 +9410,9 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  ; resolve arguments
  ;=========================================================
-; grim_get_args, arg1, arg2, dd=dd, offsets=data_offsets, grnum=grnum, type=type, $
-;             nhist=nhist, maintain=maintain, compress=compress, $
-;             extensions=extensions, rgb=rgb
+;xx grim_get_args, arg1, arg2, dd=dd, offsets=data_offsets, grnum=grnum, type=type, $
+;xx             nhist=nhist, maintain=maintain, compress=compress, $
+;xx             extensions=extensions, rgb=rgb
  grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
 

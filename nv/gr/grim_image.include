@@ -213,7 +213,7 @@ end
 ; grim_image
 ;
 ;=============================================================================
-function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
+function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
                      channel=channel, current=current, xrange=xrange, yrange=yrange
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
@@ -225,6 +225,7 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
  ;---------------------------------------
  planes = grim_visible_planes(grim_data, current=current, plane=plane)
  rgb = planes.rgb
+ max = max(dat_max(planes.dd))
 
 
  ;---------------------------------------
@@ -263,9 +264,8 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
    ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
-;   _im = dat_data(planes[i].dd, sample=vp)
+;xx   _im = dat_data(planes[i].dd, sample=vp)
    _im = dat_data(planes[i].dd, sample=data_xy)
-   max = dat_max(plane.dd)
 
    ; - - - - - - - - - - - - - - -
    ; apply color map
@@ -301,7 +301,6 @@ function grim_image, grim_data, _data, plane=plane, pn=pn, colormap=colormap, $
  image = make_array(type=size(im, /type), dim=device_size)
  image[vpi] = im
 
-
  image = bytscl(image, max=plane.cmd.n_colors)
 
  return, image
@@ -314,14 +313,14 @@ end
 ; grim_scale_image
 ;
 ;=============================================================================
-function grim_scale_image, grim_data, data, r, g, b, current=current, $
+function grim_scale_image, grim_data, r, g, b, current=current, $
      plane=plane, no_scale=no_scale, top=top, xrange=xrange, yrange=yrange
 
  ;------------------------------------------------------
  ; test for single-channel
  ;------------------------------------------------------
  if(grim_test_single_channel(grim_data)) then $
-   image = grim_image(grim_data, data, plane=plane, current=current, xrange=xrange, yrange=yrange) $
+   image = grim_image(grim_data, plane=plane, current=current, xrange=xrange, yrange=yrange) $
 
  ;------------------------------------------------------------------
  ; otherwise display according to current channel settings 
@@ -330,9 +329,9 @@ function grim_scale_image, grim_data, data, r, g, b, current=current, $
   begin
    ctmod, visual=visual
 
-   red = grim_image(grim_data, data, channel=0, current=current, xrange=xrange, yrange=yrange)
-   grn = grim_image(grim_data, data, channel=1, current=current, xrange=xrange, yrange=yrange)
-   blu = grim_image(grim_data, data, channel=2, current=current, xrange=xrange, yrange=yrange)     
+   red = grim_image(grim_data, channel=0, current=current, xrange=xrange, yrange=yrange)
+   grn = grim_image(grim_data, channel=1, current=current, xrange=xrange, yrange=yrange)
+   blu = grim_image(grim_data, channel=2, current=current, xrange=xrange, yrange=yrange)     
 
    ;---------------------------------------
    ; pseudo-color (8-bit) display
@@ -382,7 +381,7 @@ end
 ; grim_display_image
 ;
 ;=============================================================================
-pro grim_display_image, grim_data, data, plane=plane, $
+pro grim_display_image, grim_data, plane=plane, $
        entire=entire, wnum=wnum, doffset=doffset, zoom=zoom, rotate=rotate, order=order, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, offset=offset, top=top, noplot=no_plot, $
@@ -420,7 +419,7 @@ pro grim_display_image, grim_data, data, plane=plane, $
  ;---------------
  ; scale image
  ;---------------
- tvimage = grim_scale_image(grim_data, data, r, g, b, current=current, $
+ tvimage = grim_scale_image(grim_data, r, g, b, current=current, $
                                       plane=plane, no_scale=no_scale, top=top)
  if(NOT keyword_set(tvimage)) then $
   begin
@@ -480,7 +479,7 @@ end
 ; grim_display_plot
 ;
 ;=============================================================================
-pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
+pro grim_display_plot, grim_data, plane=plane, doffset=doffset, $
        wnum=wnum, xrange=xrange, yrange=yrange, no_wset=no_wset, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, position=position, dx=dx, dy=dy, $
@@ -493,24 +492,8 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
 
  for i=0, nplanes-1 do $
   begin
-; need to just sample here instead of getting entire array...
-   if(NOT keyword_set(_data)) then data = dat_data(planes[i].dd) $
-   else data = _data
-
-   ;---------------------------------------------------
-   ; determine whether an abscissa is present
-   ;---------------------------------------------------
-   dim = dat_dim(planes[i].dd)
-   if(n_elements(dim) EQ 1) then $
-    begin
-     yarr = data
-     xarr = lindgen(dim[0])
-    end $
-   else $
-    begin
-     yarr = data[1,*]
-     xarr = data[0,*]
-    end
+; need to sample here instead of getting entire array...
+   yarr = dat_data(planes[i].dd, abscissa=xarr)
 
    ;---------------------------------------
    ; set view unless forced
@@ -524,53 +507,16 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
 
      if(NOT keyword_set(xrange)) then $
        if((plane.xrange[0] NE 0) OR (plane.xrange[1] NE 0)) then xrange = plane.xrange $
-     else $;if((tvd.xrange[0] NE 0) OR (tvd.xrange[1] NE 0)) then xrange = tvd.xrange
-      begin
-;       xarr = data[0,*]
-       xrange = [min(xarr), max(xarr)]
-      end
+     else xrange = [min(xarr), max(xarr)]
 
      if(NOT keyword_set(yrange)) then $
        if((plane.yrange[0] NE 0) OR (plane.yrange[1] NE 0)) then yrange = plane.yrange $
-     else $;if((tvd.yrange[0] NE 0) OR (tvd.yrange[1] NE 0)) then yrange = tvd.yrange
-      begin
-;       yarr = data[1,*]
-       yrange = [min(yarr), max(yarr)]
-      end
+     else yrange = [min(yarr), max(yarr)]
 
      if(NOT keyword_set(position)) then $
        if((planes[i].position[0] NE 0) OR (planes[i].position[1] NE 0)) then position = planes[i].position $
      else if((tvd.position[0] NE 0) OR (tvd.position[1] NE 0)) then position = tvd.position
-
-
-
-;   if(NOT keyword_set(xrange)) then $
-;    begin
-;     if((plane.yrange[0] NE 0) OR (plane.yrange[1] NE 0)) then $
-;      begin
-;       xrange = plane.xrange
-;       yrange = plane.yrange
-;       position = plane.position
-;      end $
-;     else $
-;      begin
-;       tvgr, grim_data.wnum, get=tvd
-;       if((tvd.xrange[0] NE 0) OR (tvd.xrange[1] NE 0)) then $
-;        begin
-;         xrange = tvd.xrange
-;yarr = data[1,*]
-;yrange = [min(yarr), max(yarr)]
-
-;;         yrange = tvd.yrange
-;         position = tvd.position
-;        end
-;      end
-;    end
-  end
-
-
-;   xarr = data[0,*]
-;   yarr = data[1,*]
+    end
 
    parm = planes[i].parm
 
@@ -614,10 +560,6 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
 
   end
 
-
-
-
-
  ;----------------------------
  ; save view
  ;----------------------------
@@ -637,11 +579,8 @@ pro grim_display_plot, grim_data, _data, plane=plane, doffset=doffset, $
   end
 
 
-
  plane.position = tvd.position
  grim_set_plane, grim_data, plane, pn=plane.pn
-
-
 
 end
 ;=============================================================================
@@ -652,7 +591,7 @@ end
 ; grim_display
 ;
 ;=============================================================================
-pro grim_display, grim_data, data, plane=plane, wnum=wnum, home=home, $
+pro grim_display, grim_data, plane=plane, wnum=wnum, home=home, $
        no_image=no_image, no_axes=no_axes, doffset=doffset, no_erase=no_erase, $
        zoom=zoom, rotate=rotate, order=order, xsize=xsize, ysize=ysize, offset=offset, $
        default=default, previous=previous, flip=flip, restore=restore,$
@@ -714,14 +653,14 @@ pro grim_display, grim_data, data, plane=plane, wnum=wnum, home=home, $
  else $
   begin
    if(grim_data.type NE 'plot') then $
-     grim_display_image, grim_data, data, plane=plane, no_copy=no_copy, $
+     grim_display_image, grim_data, plane=plane, no_copy=no_copy, $
        entire=entire, wnum=wnum, doffset=doffset, zoom=zoom, rotate=rotate, order=order, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, offset=offset, top=top, noplot=no_plot, $
        no_scale=no_scale, no_wset=no_wset, no_coord=no_coord, tvimage=tvimage, $
        min=min, max=max, home=home, draw_pixmap=draw_pixmap, current=current $
 
-   else grim_display_plot, grim_data, data, plane=plane, doffset=doffset, $
+   else grim_display_plot, grim_data, plane=plane, doffset=doffset, $
        wnum=wnum, xrange=xrange, yrange=yrange, no_wset=no_wset, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, position=position, dx=dx, dy=dy, current=current, $
@@ -985,7 +924,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  if(NOT keyword_set(no_image)) then $
   if(NOT keyword_set(no_main)) then $
    begin
-    grim_display, grim_data, data, wnum=wnum, plane=plane, xrange=xrange, yrange=yrange, $
+    grim_display, grim_data, wnum=wnum, plane=plane, xrange=xrange, yrange=yrange, $
          no_axes=no_axes, doffset=doffset, no_wset=no_wset, no_back=no_back, $
          no_erase=no_erase, zoom=zoom, rotate=rotate, order=order, entire=entire, $
          default=default, previous=previous, flip=flip, restore=restore, $
@@ -1005,11 +944,11 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
     begin
      tvim, grim_data.wnum, get=tvd, /no_coord
 
-     grim_display, grim_data, data, wnum=grim_data.context_pixmap, plane=plane, $
+     grim_display, grim_data, wnum=grim_data.context_pixmap, plane=plane, $
 ;           use_pixmap=use_pixmap, pixmap_to_use=grim_data.context_pixmap, $
            /entire, order=tvd.order, nodraw=nodraw, /no_back
 
-     grim_display, grim_data, data, wnum=grim_data.context_wnum, plane=plane, $
+     grim_display, grim_data, wnum=grim_data.context_wnum, plane=plane, $
            /entire, order=tvd.order, /no_back, /no_image, /no_erase, nodraw=nodraw
      grim_wset, grim_data, grim_data.wnum
     end
@@ -1116,11 +1055,12 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ; update render button
  ;-----------------------------------
  if(grim_data.type NE 'plot') then $
-  begin
-   bm = grim_render_bitmap()
-   if(plane.rendering) then bm = grim_unrender_bitmap()
-   widget_control, grim_data.render_button, set_value=bm
-  end
+  if(NOT grim_test_map(grim_data)) then $
+   begin
+    bm = grim_render_bitmap()
+    if(plane.rendering) then bm = grim_unrender_bitmap()
+    widget_control, grim_data.render_button, set_value=bm
+   end
 
  ;-----------------------------------
  ; update active and primary arrays

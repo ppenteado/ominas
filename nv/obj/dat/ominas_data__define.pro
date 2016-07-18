@@ -136,12 +136,10 @@ end_keywords)
  ;-----------------------
  if(defined(data)) then $
   begin
-   dat_set_data, self, data, /silent
+   dat_set_data, self, data, abscissa=abscissa, /silent
    dat_set_nhist, self, nhist
   end  
- 
- if(defined(abscissa)) then dat_set_data, self, data, /silent, /abscissa
- 
+  
  _header = ''
  if(keyword_set(header)) then _header = header
  dat_set_header, self, _header
@@ -173,6 +171,9 @@ end
 ;
 ; FIELDS:
 ;	data_dap:	Pointer to data archive containing the data 
+;			and nhist past versions.
+;
+;	abscissa_dap:	Pointer to data archive containing the abscissa 
 ;			and nhist past versions.
 ;
 ;	dap_index:	Index of archived data to use.  

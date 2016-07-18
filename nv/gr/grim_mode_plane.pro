@@ -42,6 +42,7 @@ pro grim_mode_plane_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(event.press EQ 2) then return
 
  widget_control, event.id, get_value=input_wnum
  output_wnum = grim_data.wnum

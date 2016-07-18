@@ -540,8 +540,8 @@ function grim_compute_star, map=map, fov=fov, hide=hide, $
 ;;;;                  pg_hide, star_ptd, cd=gd.cd, dkx=gd.rd, gbx=gd.pd, /disk
 ;;;; grim_message
 
-;;;; if(keyword_set(gd.pd)) then pg_hide, star_ptd, cd=gd.cd, gbx=gd.pd, /globe, hide_ptd_globe, /cat
-;;;; grim_message
+ if(keyword_set(gd.pd)) then pg_hide, star_ptd, cd=gd.cd, gbx=gd.pd, /globe, hide_ptd_globe, /cat
+ grim_message
 
  if(hide) then hide_ptd_globe = objarr(nsd)
 

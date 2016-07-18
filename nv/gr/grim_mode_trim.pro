@@ -42,6 +42,7 @@ pro grim_mode_trim_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(event.press EQ 2) then return
 
  if(input_wnum NE grim_data.wnum) then return
 

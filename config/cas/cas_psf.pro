@@ -39,9 +39,12 @@ function cas_psf, cd, x, y
  if(NOT keyword_set(dir)) then dir = getenv('OMINAS_CAS') + '/psfs'
  dir = dir + '/'
 
- filespec = dir + $
+ if(keyword_set(filters)) then $
+  begin
+   filespec = dir + $
      strmid(inst, 7,2) + 'C_' + filters[0] + '_' + filters[1] + '_PSF_reb_*.dat'
- ff = findfile(filespec)
+   ff = findfile(filespec)
+  end
 
  if(NOT keyword_set(ff)) then $
   begin

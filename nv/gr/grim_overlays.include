@@ -1676,26 +1676,10 @@ function grim_unique_array_label, ptdp, prefix=prefix
  ptd = *ptdp
  nptd = n_elements(ptd)
 
- label = '0'
+ n = 0
+ for i=0, nptd-1 do if(keyword_set(ptd[i])) then n = n + 1
 
- labels = strarr(nptd) 
- for i=0, nptd-1 do if(obj_valid(ptd[i])) then $
-                 labels[i] = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL')
- 
- p = strpos(labels, '.')
- w = where(p EQ -1)
- labels = long(labels[w])
-return, strtrim(max(labels) + 1, 2)
-
-
-
-; ss = sort(labels)
-; labels = labels[ss]
- 
-; s = (shift(labels,-1) - labels)[0:nptd-2]
-; w  = where(s GT 1)
-; if(w[0] EQ -1) then label = nptd
-
+ return, strtrim(n, 2)
 end
 ;=============================================================================
 
@@ -1738,12 +1722,10 @@ pro grim_add_indexed_array, ptdp, p, ptd=ptd, $
         udata=label)
 
 
- ;----------------------------------------------------------------
- ; find the first free slot and add the array
- ;----------------------------------------------------------------
- w = where(pnt_valid(*ptdp) EQ 0)
- if(w[0] NE -1) then (*ptdp)[w[0]] = ptd $
- else *ptdp = [*ptdp, ptd]
+ ;------------------------------------------------------------------------
+ ; add the array; empty slots are left to keep numbering consistent
+ ;------------------------------------------------------------------------
+ *ptdp = [*ptdp, ptd]
 
  if(defined(flags)) then pnt_set_flags, ptd, flags
 
@@ -2255,9 +2237,10 @@ function grim_surface_to_image, grim_data, plane, surf_pts, names, valid=valid
    valid = where(names EQ name)
 
    if(valid[0] NE -1) then $
-          image_pts[*,valid] = surface_to_image(cd, 0, surf_pts[valid,*])
-
-   flags[valid] = 1
+    begin
+     image_pts[*,valid] = surface_to_image(cd, 0, surf_pts[valid,*])
+     flags[valid] = 1
+    end
   end $
  ;- - - - - - - - - - - - - - - - - - - - - - - - -
  ; non-map 

@@ -44,6 +44,7 @@ pro grim_mode_zoom_plot_mouse_event, event, data
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
  if(NOT keyword_set(event.press)) then return
+ if(event.press EQ 2) then return
 
  tvgr, input_wnum, get_info=tvd
  box = tvrec(p0=[event.x, event.y], color=ctred())
