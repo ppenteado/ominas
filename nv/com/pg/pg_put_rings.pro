@@ -110,8 +110,8 @@ pro pg_put_rings, dd, trs, rds=rds, ods=ods, gd=gd, $
    if(n_elements(rng__nm) NE 0) then dsk_set_nm, rds, rng__nm
    if(n_elements(rng__m) NE 0) then dsk_set_m, rds, rng__m
    if(n_elements(rng__em) NE 0) then dsk_set_em, rds, rng__em
-   if(n_elements(rng__wm) NE 0) then dsk_set_wm, rds, rng__wm
-   if(n_elements(rng__dwmdt) NE 0) then dsk_set_dwmdt, rds, rng__dwmdt
+   ;if(n_elements(rng__wm) NE 0) then dsk_set_wm, rds, rng__wm ;no such function
+   ;if(n_elements(rng__dwmdt) NE 0) then dsk_set_dwmdt, rds, rng__dwmdt ;no such function
 
 
  ;-------------------------------

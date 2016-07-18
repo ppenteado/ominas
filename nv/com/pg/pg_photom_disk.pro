@@ -157,7 +157,7 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  ; compute photometric angles
  ;---------------------------------------
 ;;; should be pht_angle, I think...
- pht_angles_disk, image_pts, cd, dkx, sund, emm=mu, inc=mu0, g=g, valid=valid
+ ;pht_angles_disk, image_pts, cd, dkx, sund, emm=mu, inc=mu0, g=g, valid=valid ;no such function
  if(valid[0] EQ -1) then $
          nv_message, name='pg_photom_disk', 'No valid points in image region.'
 

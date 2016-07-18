@@ -147,7 +147,7 @@ pro grmt_create_map, data, md
 	   return
 	  end
 
-	 set_core_name, md, cor_name(rd[0])
+	 ;set_core_name, md, cor_name(rd[0]) ;no such function
 
 	 dd_map = pg_map(dd, bx=rd[0], $
                   md=md, $

@@ -190,10 +190,10 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, no_sort=no_sort, 
    if(n_elements(plt__mass) NE 0) then sld_set_mass, pd, plt__mass
    if(n_elements(plt__lora) NE 0) then glb_set_lora, pd, plt__lora
    if(n_elements(plt__albedo) NE 0) then sld_set_albedo, pd, plt__albedo
-   if(n_elements(plt__refl_fn) NE 0) then sld_set__refl_fn, pd, plt__refl_fn
-   if(n_elements(plt__refl_parm) NE 0) then sld_set__refl_parm, pd, plt__refl_parm
-   if(n_elements(plt__phase_fn) NE 0) then sld_set__phase_fn, pd, plt__phase_fn
-   if(n_elements(plt__phase_parm) NE 0) then sld_set__phase_parm, pd, plt__phase_parm
+   if(n_elements(plt__refl_fn) NE 0) then sld_set_refl_fn, pd, plt__refl_fn
+   ;if(n_elements(plt__refl_parm) NE 0) then sld_set_refl_parm, pd, plt__refl_parm ; no such function
+   if(n_elements(plt__phase_fn) NE 0) then sld_set_phase_fn, pd, plt__phase_fn
+   ;if(n_elements(plt__phase_parm) NE 0) then sld_set_phase_parm, pd, plt__phase_parm ;no such function
    if(n_elements(plt__opaque) NE 0) then bod_set_opaque, pd, plt__opaque
    if(n_elements(plt__opacity) NE 0) then sld_set_opacity, pd, plt__opacity
   end

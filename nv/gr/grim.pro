@@ -775,8 +775,8 @@ pro grim_write, grim_data
  if(keyword_set(*plane.sd_p)) then $
               pg_put_stars, plane.dd, sd=*plane.sd_p, od=od
 
- if(keyword_set(*plane.std_p)) then $
-              pg_put_stations, plane.dd, std=*plane.std_p, od=od
+; if(keyword_set(*plane.std_p)) then $ 
+ ;             pg_put_stations, plane.dd, std=*plane.std_p, od=od ;no such function
 
  if(keyword_set(*plane.sund_p)) then $
               pg_put_stars, plane.dd, sd=*plane.sund_p, od=od
@@ -3972,8 +3972,8 @@ pro grim_menu_plane_copy_mask_event, event
  n = n_elements(planes)
  pn = plane.pn
 
- for i=0, n-1 do if(i NE pn) then $
-       grim_copy_mask, grim_data, plane, planes[i]
+; for i=0, n-1 do if(i NE pn) then $
+       ;grim_copy_mask, grim_data, plane, planes[i] ;no such function
 
 end
 ;=============================================================================
