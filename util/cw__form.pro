@@ -376,7 +376,10 @@ pro CW__FORM_BUILD, parent, desc, cur, ids, tags, lasttag   ; Spitale, 7/2002
     if n_elements(values) ge 2 then begin
         type = 0
         if CW__FORM_PARSE(e, 'SET_VALUE', temp) then begin
-           result = execute('sval=fix('+temp+')')
+           if (!version.release ge '8.4') then begin 
+             lf=lambda('x:'+temp)
+             sval=fix(call_function(lf,0))
+           endif else result = execute('sval=fix('+temp+')')
            new = cw__bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
 		        EXCLUSIVE = exclusive, NONEXCLUSIVE = 1-exclusive, $
 		        FRAME=frame, NO_RELEASE = no_release, $
