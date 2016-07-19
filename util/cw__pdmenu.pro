@@ -294,7 +294,13 @@ pro CW__PDMENU_BUILD, parent, desc, cur, n, ev_type, full_qual_str, $
     strExecute = strExecute + ', UNAME="'+uname+'_BUTTON_'+dname+'"'
     strExecute = strExecute + ')'
 
-    status = EXECUTE(strExecute)
+    ;status = EXECUTE(strExecute)
+    resource_name=(n_elements(a) ge 3) ? strtrim(a[2],2) : !null
+    if ((mbars ne 0) and (HELP_KW ne 0) $
+      and (strupcase(dname) eq 'HELP')) then help=1 else help=0
+    new = WIDGET_BUTTON(parent, value=dname, MENU=menu,$
+      SEPARATOR=separator,UNAME=uname+'_BUTTON_'+dname,$
+      help=help,font=font,resource_name=resource_name)
 
     ; Set requested Return value
     case ev_type of
