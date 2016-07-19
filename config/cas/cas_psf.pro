@@ -48,7 +48,7 @@ function cas_psf, cd, x, y
   begin
    filespec = dir + $
      strmid(inst, 7,2) + 'C_' + filters[0] + '_' + filters[1] + '_PSF_reb_*.dat'
-   endif else else filespec=dir+'default_psf_generic_00200.dat'
+   endif else filespec=dir+'default_psf_generic_00200.dat'
    ff = findfile(filespec)
   ;end
 
