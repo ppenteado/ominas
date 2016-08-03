@@ -70,9 +70,13 @@ function vims_body_to_inertial, bd, v,camvecs
 rs=list()
 foreach orient,orients,ior do begin
   
- M0 = (_bd.orient[*,0,*])[sub]
- M1 = (_bd.orient[*,1,*])[sub]
- M2 = (_bd.orient[*,2,*])[sub]
+; M0 = (_bd.orient[*,0,*])[sub]
+; M1 = (_bd.orient[*,1,*])[sub]
+; M2 = (_bd.orient[*,2,*])[sub]
+ M0 = (orient[*,0,*])[sub]
+ M1 = (orient[*,1,*])[sub]
+ M2 = (orient[*,2,*])[sub]
+
 
  r = dblarr(nv,3,nt,/nozero)
  r[*,0,*] = total(M0*v,2)

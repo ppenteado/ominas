@@ -41,15 +41,24 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
   begin
    nets=n_elements(cam_time)
    cmats=dblarr(3,3,nets)
+   cam_poss=dblarr(1,3,nets)
+   cam_vels=dblarr(1,3,nets)
    for iet=nets-1,0,-1 do begin
    status = spice_get_cameras(sc, inst, plat, ref, cam_time[iet], tol, $
                                 cam_pos, cam_vel, cmat, cam_avel, pos, obs=obs)
    cmats[*,*,iet]=cmat
+   cam_poss[*,*,iet]=cam_pos
+   cam_vels[*,*,iet]=cam_vel
    endfor
    if ptr_valid(cam_fn_data[0]) && isa(*cam_fn_data[0],'struct') then begin
     tn=tag_names(*cam_fn_data[0])
     void=where(tn eq 'ORIENTS',count)
-    if (count gt 0) then (*cam_fn_data[0]).orients=cmats
+    if (count gt 0) then begin
+      (*cam_fn_data[0]).orients=cmats
+      (*cam_fn_data[0]).poss=cam_poss
+      (*cam_fn_data[0]).vels=cam_vels
+    endif
+    
    endif
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; handle spice errors

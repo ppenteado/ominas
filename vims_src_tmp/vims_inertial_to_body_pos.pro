@@ -66,7 +66,8 @@ function vims_inertial_to_body_pos, bd, v
   orientt=transpose(fnd.orients,[1,0,2])
   for i=0,nor-1 do begin
     orientts.add,orientt[*,*,i]
-    poss.add,_bd.pos;fnd.poss[*,i]
+    ;poss.add,_bd.pos
+    poss.add,fnd.poss[*,*,i]
   endfor
  endif else begin
   nor=1

@@ -154,8 +154,10 @@ function vims_spice_cameras, dd, ref, pos=pos, constants=constants, $
 	     times=dindgen(npixels)*(endjd-startjd)*86400d0/(npixels*1d0)
 	     cam_time+=times
 	     orients=dblarr(3,3,npixels)+!values.d_nan
+	     poss=dblarr(1,3,npixels)+!values.d_nan
+	     vels=poss
 	     inds=array_indices([cam_nx,cam_ny],dindgen(npixels),/dimensions)
-	     fnd={t0:startjd,times:times,orients:orients,inds:inds}
+	     fnd={t0:startjd,times:times,orients:orients,inds:inds,poss:poss,vels:vels}
 	     fn_data=[ptr_new(fnd)]
 	   end
 	   'VIMS_VIS': begin
@@ -199,6 +201,8 @@ function vims_spice_cameras, dd, ref, pos=pos, constants=constants, $
     cmat=(*fnd).orients(*,*,i)
     (*fnd).orients[*,*,i]=call_function(orient_fn,cmat)
   endfor
+  (*fnd).poss=(*fnd).poss*1d3
+  (*fnd).vels=(*fnd).vels*1d3
   
   return,ret
 
