@@ -15,3 +15,4 @@ map_units=map__units, $
 map_graphic=map__graphic, $
 map_rotate=map__rotate, $
 map_radii=map__radii, $
+map_pole=map_pole,$

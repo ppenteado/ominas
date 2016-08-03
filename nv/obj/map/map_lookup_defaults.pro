@@ -8,6 +8,10 @@ function map_lookup_defaults, md0
  _md = {ominas_map}
  _md0 = cor_dereference(md0)
 
+ _md.pole={ominas_map_pole}
+ _md.pole.lat=!values.d_nan
+ _md.pole.lon=!values.d_nan
+ _md.pole.rot=!values.d_nan
 ; type = _md0[0].type
  type = map_match_type(_md0[0].type)
 
