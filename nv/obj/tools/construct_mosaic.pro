@@ -487,7 +487,7 @@ end
 ;
 ;=============================================================================
 function cm_combine_sum, maps, data, aux
- return, total(maps,3)
+ return, size(maps,/n_dim) eq 3 ? total(maps,3) : maps
 end
 ;=============================================================================
 
@@ -658,7 +658,7 @@ function cm_wt_emm, maps, data, aux
 
  wt = emms^x
 
- norm = (total(wt, 3))[linegen3z(xsize,ysize,n)]
+ norm = n gt 1 ? (total(wt, 3))[linegen3z(xsize,ysize,n)] : wt
  w = where(norm EQ 0)
  if(w[0] NE -1) then norm[w] = 1
  wt = wt / norm
