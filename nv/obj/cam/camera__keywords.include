@@ -1,5 +1,5 @@
 @body__keywords.include
 fn_focal_to_image=fn_focal_to_image, $
 fn_image_to_focal=fn_image_to_focal, $
-fn_data_p=fn_data_p, scale=scale, oaxis=oaxis, exposure=exposure, $
+fi_data=fi_data, scale=scale, oaxis=oaxis, exposure=exposure, $
 size=size, fn_psf=fn_psf, filters=filters, $

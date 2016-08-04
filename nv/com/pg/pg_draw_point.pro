@@ -116,7 +116,7 @@ pro pgdp_draw, points, $
             colors, psyms, psizes, thick, line, $
             csizes, cthicks, corient, align, plabel_offset, label_colors, $
             label_points=label_points, plabels=plabels
-
+ 
 
  p = (convert_coord(points, /data, /to_device))[0:1,*]
  w = in_image(0, p, slop=1, $
@@ -196,6 +196,7 @@ pro pg_draw_point, _pp, literal=literal, $
  if(keyword_set(print)) then print, print
 
  if(NOT keyword_set(_pp)) then return
+ pp = reform(_pp)
 
  if(NOT keyword_set(label_shade)) then label_shade = 1.0
  if(NOT defined(_colors)) then _colors = ctwhite()
@@ -233,10 +234,10 @@ pro pg_draw_point, _pp, literal=literal, $
  ;------------------------------------------------------
  ; if inputs given as points array, draw and return
  ;------------------------------------------------------
- type = size(_pp, /type)
+ type = size(pp, /type)
  if(type NE 11) then $
   begin
-   pgdp_draw, _pp, $
+   pgdp_draw, pp, $
        _colors, _psyms, _psizes, _thick, _line, $
        _csizes, _cthicks, _corient, _align, plabel_offset, label_colors, $
        label_points=label_points, plabels=plabels
@@ -249,7 +250,7 @@ pro pg_draw_point, _pp, literal=literal, $
  ;---------------------------------------------------------
  ; for POINT input, draw one-at-a-time
  ;---------------------------------------------------------
- pp = pnt_cull(_pp, /nofree)
+ pp = pnt_cull(pp, /nofree)
  n_objects = n_elements(pp)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -

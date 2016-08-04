@@ -3,12 +3,12 @@
 ;
 ;
 ;=============================================================================
-function dawn_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
+function dawn_spice_pck_detect, dd, kpath, time=time, strict=strict, all=all
 
  ;-----------------------------------
  ; general pck's
  ;-----------------------------------
- genk = eph_spice_pck_detect(dd, kpath, time=time, reject=reject, strict=strict, all=all)
+ genk = eph_spice_pck_detect(dd, kpath, time=time, strict=strict, all=all)
 
  
  ;-----------------------------------

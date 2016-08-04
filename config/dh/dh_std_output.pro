@@ -234,7 +234,7 @@ pro dh_std_output, dd, keyword, value, status=status, $
 	    dh_put_string, dh, 'cam_fn_psf', cam_fn_psf(cds)
 	    dh_put_string, dh, 'cam_fn_f2i', cam_fn_focal_to_image(cds)
 	    dh_put_string, dh, 'cam_fn_i2f', cam_fn_image_to_focal(cds)
-	    dh_put_array, dh, 'cam_fn_data', cam_fn_data_p(cds)
+	    dh_put_array, dh, 'cam_fi_data', cam_fi_data(cds)
 	    dh_put_point, dh, 'cam_size', $
 	                             reform(cam_size(cds), 2,1,n_obj, /over)
 	    dh_put_point, dh, 'cam_scale', $
@@ -275,7 +275,7 @@ pro dh_std_output, dd, keyword, value, status=status, $
 	    dhso_put_solid, dh, rds, 'rng'
 	    dhso_put_disk, dh, rds, 'rng'
 
-	    dh_put_string, dh, 'rng_primary', rng_primary(rds)
+	    dh_put_string, dh, 'rng_primary', cor_name(rng_primary(rds))
 
 	    if(keyword_set(format)) then $
 	             dh_put_string, dh, 'rng_format', format, $
@@ -340,7 +340,7 @@ pro dh_std_output, dd, keyword, value, status=status, $
 	     end
 
 	    dh_put_array, dh, 'map_range', map_range(mds)
-	    dh_put_array, dh, 'map_fn_data', map_fn_data_p(mds)
+	    dh_put_array, dh, 'map_fn_data', map_fn_data(mds)
 
 
 	    if(keyword_set(format)) then $

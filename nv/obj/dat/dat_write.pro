@@ -133,13 +133,7 @@ pro dat_write, filespec, dd, nodata=nodata, $
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; first transform the data if necessary
    ;- - - - - - - - - - - - - - - - - - - - - -
-   output_transforms = ''
-   if(ptr_valid(_dd[i].output_transforms_p)) then $
-                          output_transforms = *_dd[i].output_transforms_p
-
-   if((keyword_set(output_transforms)) AND (NOT keyword_set(nodata))) then $
-       for j=0, n_elements(output_transforms)-1 do $
-          data = call_function(output_transforms[j], data, header, silent=silent)
+   data = dat_transform_output(_dd[i], data, header, silent=silent)
 
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; write data

@@ -13,14 +13,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       abcorr, obs_bx, targ_bx, c=c
+;       targ_bx = abcorr(obs_bx, targ_bx0, c=c)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	obs_bx:	Any subclass of BODY describing the observer.
+;	obs_bx:	  Any subclass of BODY describing the observer.
 ;
-;	obs_bx:	Array(nt) of any subclass of BODY describing the targets.
+;	targ_bx0: Array(nt) of any subclass of BODY describing the targets.
 ;
 ;  OUTPUT:  NONE
 ;
@@ -38,7 +38,8 @@
 ;  OUTPUT: NONE
 ;
 ;
-; RETURN: NONE
+; RETURN: 
+;	New target descriptors.  
 ;
 ;
 ;
@@ -47,17 +48,18 @@
 ;
 ;-
 ;=============================================================================
-pro abcorr, obs_bx, targ_bx, c=c, iterate=iterate, epsilon=epsilon, fast=fast
+function abcorr, obs_bx, targ_bx0, c=c, iterate=iterate, epsilon=epsilon, fast=fast
 
  ;-----------------------------------------------
  ; correct for light-travel time
  ;-----------------------------------------------
- ltcorr, obs_bx, targ_bx, c=c, iterate=iterate, epsilon=epsilon
+ targ_bx = ltcorr(obs_bx, targ_bx0, c=c, iterate=iterate, epsilon=epsilon)
 
  ;-----------------------------------------------
  ; correct for stellar aberration
  ;-----------------------------------------------
  stellab, obs_bx, targ_bx, c=c, fast=fast
 
+ return, targ_bx
 end
 ;============================================================================

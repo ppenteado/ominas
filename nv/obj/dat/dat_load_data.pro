@@ -44,17 +44,31 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_load_data, dd, sample=sample
+pro dat_load_data, dd, sample=sample, data=data
 @nv_block.common
 @core.include
  _dd = cor_dereference(dd)
 
+ ;----------------------------------
+ ; manage loaded data
+ ;----------------------------------
  if(_dd.maintain EQ 1) then dat_manage_dd, dd
-
  if(NOT keyword_set(_dd.input_fn)) then return
 
- data = call_function(_dd.input_fn, _dd.filename, /silent, header, udata, abscissa=abscissa, sample=sample)
+ ;----------------------------------
+ ; read data
+ ;----------------------------------
+ data = call_function(_dd.input_fn, _dd.filename, /silent, $
+                          header, udata, abscissa=abscissa, sample=sample)
 
+ ;----------------------------------
+ ; transform data
+ ;----------------------------------
+ data = dat_transform_input(_dd, data, header, silent=silent)
+
+ ;----------------------------------
+ ; set data on descriptor
+ ;----------------------------------
  if(_dd.maintain LT 2) then $
   begin
    nv_suspend_events

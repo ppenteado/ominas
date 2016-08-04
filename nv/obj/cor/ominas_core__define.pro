@@ -18,7 +18,9 @@ function ominas_core::dereference, struct
 @core.include
 
  if(NOT keyword_set(struct)) then $
-              stat = execute('struct = {' + obj_class(self) + '}')
+              struct = create_struct(obj_class(self))
+;              stat = execute('struct = {' + obj_class(self) + '}')
+
  struct_assign, self, struct
  return, struct
 end
@@ -45,6 +47,8 @@ end_keywords
  if(keyword_set(name)) then self.name = decrapify(name[ii])
 
  if(keyword_set(udata)) then cor_set_udata, self, uname, udata	;;;;
+
+ if(keyword_set(assoc_xd)) then self.__protect__assoc_xd = assoc_xd[ii]
 
  return, 1
 end
@@ -108,11 +112,13 @@ pro ominas_core__define
 
  struct = $
     { ominas_core, inherits IDL_Object, $
-	tasks_p:	 nv_ptr_new(), $	; pointer to task list 
+	tasks_p:	 nv_ptr_new(), $	; Pointer to task list 
 	name:		 '', $			; Name of object
-	udata_tlp:	 nv_ptr_new(), $	; pointer to user data
+	udata_tlp:	 nv_ptr_new(), $	; Pointer to user data
 	abbrev:		 '', $			; Abbreviation of descriptor class
-	user:		 '' $			; name of user
+	user:		 '', $			; Name of user
+
+	__PROTECT__assoc_xd: 	obj_new() $	; Associated descriptor
     }
 
 end

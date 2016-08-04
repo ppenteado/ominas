@@ -170,8 +170,6 @@ end
 ;
 ;	vectors_p:	Pointer to inertial vectors.
 ;
-;	assoc_xd:	Associated descriptor, if applicable.
-;
 ;	data_p:		Pointer to a point-by-point user data array.
 ;
 ;	tags_p:		Tags for point-by-point user data.
@@ -192,7 +190,7 @@ end
 ;
 ;
 ; MODIFICATION HISTORY:
-;  Spitale, 11/2015; 	Adapted from pg_POINT__define
+;  Spitale, 11/2015; 	Adapted from pg_points_struct__define
 ;	
 ;-
 ;=============================================================================
@@ -207,12 +205,7 @@ pro ominas_point__define
 		tags_p:		ptr_new(), $	; tags for p-b-p user data
 		input:		'', $		; description of input data
 		nv:		0l, $
-		nt:		0l, $
-
-		dst: 		{nv_directive_stop}, $	; Protect subsequent pointers
-
-
-		assoc_xd:	obj_new() $	; associated descriptor
+		nt:		0l $
 	}
 
 end

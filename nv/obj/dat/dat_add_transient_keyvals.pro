@@ -44,7 +44,7 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_add_transient_keyvals, _dd, trs
+function dat_add_transient_keyvals, _dd, trs
 @core.include
 
  if(ptr_valid(_dd.transient_keyvals_p)) then nv_ptr_free, _dd.transient_keyvals_p
@@ -60,6 +60,7 @@ pro dat_add_transient_keyvals, _dd, trs
   end
 
 
+ return, _dd
 end
 ;===========================================================================
 

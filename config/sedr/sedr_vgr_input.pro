@@ -33,10 +33,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned.
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ;	j2000:		If set, returned quantites are rotated to j2000
@@ -64,7 +60,7 @@
 ;	
 ;-
 ;=============================================================================
-function sedr_vgr_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function sedr_vgr_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords

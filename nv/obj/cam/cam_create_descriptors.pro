@@ -48,8 +48,6 @@
 ;	fn_image_to_focal:	Array (n) of image-to-focal function names 
 ;				for each camera.
 ;
-;	fn_data_p:	Array (n) of data pointers for each camera.
-;
 ;	fn_psf:	Array (n) of point-spread function names for each camera.
 ;
 ;

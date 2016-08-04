@@ -283,18 +283,30 @@ pro CW__PDMENU_BUILD, parent, desc, cur, n, ev_type, full_qual_str, $
     ; Build string with approriate keywords and execute it
     ;
     if(strtrim(dname,2) EQ '<null>') then dname = ''
-    strExecute = 'new = WIDGET_BUTTON(parent, value=dname, MENU=menu'
-    if n_elements(a) ge 3 then strExecute = strExecute + ', resource_name="' + strtrim(a[2],2) + '"'
-    if ((mbars ne 0) and (HELP_KW ne 0) $
-        and (strupcase(dname) eq 'HELP')) then $
-      strExecute = strExecute + ', /HELP'
-    if (keyword_set(font)) then strExecute = strExecute + ',  FONT=font'
-    strExecute = strExecute + ', SEPARATOR=separator'
-;    strExecute = strExecute + ', UNAME="'+uname+'_BUTTON'+STRTRIM(cur,2)+'"'
-    strExecute = strExecute + ', UNAME="'+uname+'_BUTTON_'+dname+'"'
-    strExecute = strExecute + ')'
 
-    status = EXECUTE(strExecute)
+
+;;    strExecute = 'new = WIDGET_BUTTON(parent, value=dname, MENU=menu'
+;;    if n_elements(a) ge 3 then strExecute = strExecute + ', resource_name="' + strtrim(a[2],2) + '"'
+;;    if ((mbars ne 0) and (HELP_KW ne 0) $
+;;        and (strupcase(dname) eq 'HELP')) then $
+;;      strExecute = strExecute + ', /HELP'
+;;    if (keyword_set(font)) then strExecute = strExecute + ',  FONT=font'
+;;    strExecute = strExecute + ', SEPARATOR=separator'
+;;;    strExecute = strExecute + ', UNAME="'+uname+'_BUTTON'+STRTRIM(cur,2)+'"'
+;;    strExecute = strExecute + ', UNAME="'+uname+'_BUTTON_'+dname+'"'
+;;    strExecute = strExecute + ')'
+
+;;    status = EXECUTE(strExecute)
+
+
+    resource_name=(n_elements(a) ge 3) ? strtrim(a[2],2) : !null
+    if ((mbars ne 0) and (HELP_KW ne 0) $
+      and (strupcase(dname) eq 'HELP')) then help=1 else help=0
+    new = WIDGET_BUTTON(parent, value=dname, MENU=menu,$
+      SEPARATOR=separator,UNAME=uname+'_BUTTON_'+dname,$
+      help=help,font=font,resource_name=resource_name)
+
+
 
     ; Set requested Return value
     case ev_type of

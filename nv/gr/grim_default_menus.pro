@@ -6,8 +6,9 @@
 ;
 ; PURPOSE:
 ;	This option allows you extract a brightness profile in an arbitrary 
-;	direction.  The left button selects the region's length and then 
-;	width; the right button selects a region with a width of one-pixel.
+;	direction in the image.  The left button selects the region's length 
+;	and then width; the right button selects a region with a width of 
+;	one-pixel.
 ;
 ;
 ; CATEGORY:
@@ -59,6 +60,94 @@ pro grim_menu_image_profile_event, event
  widget_control, /hourglass
  grim, dd, xtitle='Distance (pixels)', ytitle=['<DN>', 'Sigma'], $
                    title=['Image profile', 'Image profile sigma'], /new
+ 
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_core_event
+;
+;
+; PURPOSE:
+;	This option allows you extract a brightness profile at the selected
+;	location for each plane in the image.  The left button selects a single 
+;	point, and the right button selects a region to average over.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2016
+;	
+;-
+;=============================================================================
+pro grim_menu_core_help_event, event
+ text = ''
+ nv_help, 'grim_menu_core_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_core_event, event
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+ planes = grim_get_plane(grim_data, /all)
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ cd = grim_get_cameras(grim_data)
+
+ ;------------------------------------------------
+ ; select region
+ ;------------------------------------------------
+ cursor, px, py, /down
+ button = !err
+ p0 = (convert_coord(/data, /to_device, [px,py]))[0:1]
+
+ color = ctyellow()
+
+ if(button EQ 1) then box = 1 $
+ else if(button EQ 4) then box = 0 $
+ else return
+
+ grim_logging, grim_data, /start
+ region = pg_select_region(box=box, 0, p0=p0, /autoclose, $
+                       cancel_button=2, end_button=-1, select_button=4, $
+                                                    color=color, image_pts=p)
+ grim_logging, grim_data, /stop
+
+ pp = (convert_coord(/device, /to_data, double(p[0,*]), double(p[1,*])))[0:1,*]
+ outline_ptd = pnt_create_descriptors(points=pp)
+
+; dim = dat_dim(dd)
+; sub = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
+
+
+ ;------------------------------------------------
+ ; save the outline
+ ;------------------------------------------------
+ grim_add_user_points, outline_ptd, color='red', psym=3, plane=plane
+
+
+ ;------------------------------------------------
+ ; open a new grim window with the core
+ ;------------------------------------------------
+return
+ grim_message, /clear
+; dd = pg_core(planes.dd, sigma=sigma, cd=*plane.cd_p, outline_ptd, distance=distance)
+ grim_message
+ if(NOT keyword_set(dd)) then return
+
+ widget_control, /hourglass
+ grim, dd, xtitle='Plane', ytitle=['<DN>', 'Sigma'], $
+                                    title=['Core', 'Core sigma'], /new
  
 end
 ;=============================================================================
@@ -1286,7 +1375,8 @@ function grim_default_menus
             '0\Radial\grim_menu_limb_profile_radial_event', $ 
             '0\Azimuthal\grim_menu_limb_profile_azimuthal_event', $
             '2\<null>               \+*grim_menu_delim_event', $
-           '0\Image Profile\*grim_menu_image_profile_event', $ 
+           '0\Image Profile    \*grim_menu_image_profile_event', $ 
+           '0\Core          \*grim_menu_core_event', $ 
            '0\Read Mind\*grim_menu_read_mind_event', $ 
            '2\<null>               \+*grim_menu_delim_event', $
 

@@ -77,10 +77,46 @@ pro grim_add_user_points, grnum=grnum, user_ptd, tag, update=update, $
 
  if(NOT keyword_set(inactive)) then grim_activate_user_overlay, plane, index
 
+
  if(keyword_set(nodraw)) then return
 
  if(NOT keyword_set(no_refresh)) then grim_refresh, grim_data, /use_pixmap
 
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_user_notify
+;
+;=============================================================================
+pro grim_user_notify, grim_data, plane=plane
+
+ if(NOT keyword_set(plane.user_ptd_tlp)) then return
+ if(NOT ptr_valid(plane.user_ptd_tlp)) then return
+
+ names = tag_list_names(plane.user_ptd_tlp)
+ n = n_elements(names)
+
+ cd = *plane.cd_p
+
+ nv_suspend_events
+
+ for i=0, n-1 do $
+  begin
+   user_struct = tag_list_get(plane.user_ptd_tlp, names[i])
+   ptd = *user_struct.user_ptdp
+   nptd = n_elements(ptd)
+   for j=0, nptd-1 do $
+    begin
+     v = pnt_vectors(ptd[j])
+     if(keyword_set(v)) then $
+                pnt_set_points, ptd[j], reform(inertial_to_image_pos(cd, v))
+    end
+  end
+
+ nv_resume_events
 end
 ;=============================================================================
 

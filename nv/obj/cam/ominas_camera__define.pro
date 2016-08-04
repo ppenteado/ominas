@@ -10,16 +10,15 @@ end_keywords
  void = self->ominas_body::init(ii, crd=crd0, bd=bd0, $
 @body__keywords.include
 end_keywords)
- if(keyword_set(md0)) then struct_assign, cd0, self
+ if(keyword_set(cd0)) then struct_assign, cd0, self
 
  self.abbrev = 'CAM'
 
- if(keyword_set(scale)) then self.scale = scale[ii]
-; if(keyword_set(scale)) then self.scale = scale[*,ii]	;; should be like this
+ if(keyword_set(scale)) then self.scale = scale[*,ii]
  if(keyword_set(oaxis)) then self.oaxis = oaxis[*,ii]
  if(keyword_set(exposure)) then self.exposure = decrapify(exposure[ii])
  if(keyword_set(fn_psf)) then self.fn_psf = fn_psf[ii]
- if(keyword_set(filters)) then self.filters[0:n_elements(filters)-1] = filters[*,ii]
+ if(keyword_set(filters)) then self.filters[0:(size(filters,/dim))[0]-1] = filters[*,ii]
  if(keyword_set(size)) then self.size = size[*,ii]
  if(keyword_set(fn_focal_to_image)) then $
                         self.fn_focal_to_image=decrapify(fn_focal_to_image[ii]) $
@@ -27,8 +26,7 @@ end_keywords)
  if(keyword_set(fn_image_to_focal)) then $
                           self.fn_image_to_focal=decrapify(fn_image_to_focal[ii]) $
  else self.fn_image_to_focal = decrapify('cam_image_to_focal_linear')
- if(keyword_set(fn_data_p)) then self.fn_data_p=decrapify(fn_data_p[ii])
-
+;;; if(keyword_set(fi_data)) then cam_set_fi_data, cd0, fi_data[ii]
 
  return, 1
 end
@@ -106,10 +104,6 @@ end
 ;				         cam_set_fn_image_to_focal
 ;
 ;
-;	fn_data_p:	Pointer to generic data intended to be used by 
-;			the above user-defined focal <--> image functions. 
-;
-;
 ;	fn_psf:	String giving the name of a function to be defined as 
 ;		follows:
 ;
@@ -160,8 +154,7 @@ pro ominas_camera__define
 	fn_psf:		'', $			; Point-spread fn.
 
 	fn_focal_to_image:   '', $		; user procedures to tranform
-	fn_image_to_focal:   '', $		; between focal and image
-	fn_data_p:	 nv_ptr_new() $		; data for functions
+	fn_image_to_focal:   '' $		; between focal and image
     }
 
 end

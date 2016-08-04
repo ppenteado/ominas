@@ -2,7 +2,7 @@
 ; cas_spice_ik_detect
 ;
 ;=============================================================================
-function cas_spice_ik_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
+function cas_spice_ik_detect, dd, kpath, time=time, strict=strict, all=all
 
  ;--------------------------------
  ; new naming convention

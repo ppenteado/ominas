@@ -50,13 +50,14 @@
 ;=============================================================================
 function get_primary, od, gbx, planets=planets, rx=rx
 
+
  nt = n_elements(od)
 
  if(keyword__set(rx)) then if(cor_isa(rx[0], 'RING')) then rd = rx
 
  if(NOT keyword_set(gbx)) then return, 0
 
- if(keyword_set(rd)) then planets = rng_primary(rd)
+ if(keyword_set(rd)) then return, rng_primary(rd)
 
  if(NOT keyword_set(planets)) then $
    planets = ['mercury', 'venus', 'earth', 'mars', $

@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function spice_kernel_parse, dd, prefix, type, time=_time, $
-                  reject=reject, explicit=explicit, strict=strict, all=all
+                       explicit=explicit, strict=strict, all=all
 
  if(keyword_set(_time)) then time = _time
 
@@ -53,8 +53,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
       begin
        path = kpath[j]
        if(keyword_set(dir)) then path = dir 
-       _ff = call_function(fn, dd, path, $
-                      reject=reject_kernels, all=all, strict=strict, time=time)
+       _ff = call_function(fn, dd, path, all=all, strict=strict, time=time)
       if(keyword_set(_ff)) then ff = _ff
       end
     end $
@@ -75,16 +74,6 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
    if(keyword_set(ff)) then  k_in = append_array(k_in, ff)
   end
 
-
- ;-------------------------------------------------------------
- ; record names of kernels rejected by the auto-detect routine
- ;-------------------------------------------------------------
- if(keyword_set(reject) AND keyword_set(reject_kernels)) then $
-  begin
-   split_filename, reject_kernels, dirs, names
-   tag = strupcase(type) + '_REJECTED_KERNELS'
-   cor_set_udata, dd, tag, names
-  end
 
 
  return, k_in

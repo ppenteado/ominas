@@ -53,31 +53,37 @@ pro nvf_recurse, p
  type = size(p, /type)
  n = n_elements(p)
 
+ ;----------------------------------------------
+ ; pointer 
+ ;----------------------------------------------
  if(type EQ 10) then $
   begin
    for i=0, n-1 do if(ptr_valid(p[i])) then nvf_recurse, *p[i]
    nv_ptr_free, p
   end $
+ ;----------------------------------------------
+ ; structure 
+ ;----------------------------------------------
  else if(type EQ 8) then $
   begin
    for i=0, n-1 do $
     begin
-     if(nv_get_directive(p[i]) EQ 'NV_STOP') then return
-
      ntags = n_tags(p[i])
-     for j=0, ntags-1 do nvf_recurse, p[i].(j)
+     tags = tag_names(p[i])
+     for j=0, ntags-1 do if(NOT nv_protected(tags[j])) then nvf_recurse, p[i].(j)
     end
   end $
+ ;----------------------------------------------
+ ; object 
+ ;----------------------------------------------
  else if(type EQ 11) then $
   begin
    for i=0, n-1 do if(obj_valid(p[i])) then $
     begin
      _p = cor_dereference(p[i])
-
-     if(nv_get_directive(_p) EQ 'NV_STOP') then return
-
      ntags = n_tags(_p)
-     for j=0, ntags-1 do nvf_recurse, _p.(j)
+     tags = tag_names(_p)
+     for j=0, ntags-1 do if(NOT nv_protected(tags[j])) then nvf_recurse, _p.(j)
      obj_destroy, p
     end
   end 

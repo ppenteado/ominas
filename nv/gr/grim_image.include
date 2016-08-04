@@ -259,13 +259,14 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
    ; - - - - - - - - - - - - - - -
    ; add data offset
    ; - - - - - - - - - - - - - - -
-   if(keyword_set(planes[i].data_offset)) then vp = vp + planes[i].data_offset
+;   if(keyword_set(planes[i].data_offset)) then vp = vp + planes[i].data_offset
 
    ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
-;xx   _im = dat_data(planes[i].dd, sample=vp)
-   _im = dat_data(planes[i].dd, sample=data_xy)
+;   _im = dat_data(planes[i].dd, sample=vp)
+;   _im = dat_data(planes[i].dd, sample=data_xy)
+   _im = dat_data(planes[i].dd, sample=data_xy, offset=planes[i].data_offset)
 
    ; - - - - - - - - - - - - - - -
    ; apply color map

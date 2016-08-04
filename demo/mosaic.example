@@ -46,9 +46,9 @@ gd = replicate(_gd, n)
 
 for i=0, n-1 do gd[i].cd = pg_get_cameras(dd[i])
 for i=0, n-1 do $
-       gd[i].gbx = pg_get_planets(dd[i], od=gd[i].cd, plt_name='JUPITER')
+       gd[i].gbx = pg_get_planets(dd[i], od=gd[i].cd, name='JUPITER')
 for i=0, n-1 do gd[i].dkx = pg_get_rings(dd[i], pd=gd[i].gbx, od=gd[i].cd)
-for i=0, n-1 do gd[i].sund = pg_get_stars(dd[i], od=gd[i].cd, str_name='SUN')
+for i=0, n-1 do gd[i].sund = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
 
 
 ;---------------------------------------------------
@@ -124,31 +124,31 @@ map_ysize = 400
 
 
 md = pg_get_maps(/over, gbx = pd1, $
-	map_name='JUPITER',$
-	map_type='RECTANGULAR', $
-	map_fn_data=ptr_new(), $
-	map_size=[map_xsize,map_ysize], $
-	map_origin=[map_xsize,map_ysize]/2 $
+	name='JUPITER',$
+	type='RECTANGULAR', $
+	fn_data=ptr_new(), $
+	size=[map_xsize,map_ysize], $
+	origin=[map_xsize,map_ysize]/2 $
 	)
 
 ;md = pg_get_maps(/over, gbx=pd1, $
-;	map_name='JUPITER',$
-;	map_type='ORTHOGRAPHIC', $
-;;	map_type='STEREOGRAPHIC', $
-;	map_fn_data=ptr_new(), $
-;;	map_center=[!dpi/2d,0], $	; polar
-;	map_center=[!dpi/4d,0], $
-;	map_size=[map_xsize,map_ysize], $
-;	map_origin=[map_xsize,map_ysize]/2 $
+;	name='JUPITER',$
+;	type='ORTHOGRAPHIC', $
+;;	type='STEREOGRAPHIC', $
+;	fn_data=ptr_new(), $
+;;	center=[!dpi/2d,0], $	    ; polar
+;	center=[!dpi/4d,0], $
+;	size=[map_xsize,map_ysize], $
+;	origin=[map_xsize,map_ysize]/2 $
 ;	)
 
 ;md = pg_get_maps(/over, gbx=pd1, $
-;	map_name='JUPITER',$
-;;	map_type='MOLLWEIDE', $
-;	map_type='MERCATOR', $
-;	map_fn_data=ptr_new(), $
-;	map_size=[map_xsize,map_ysize], $
-;	map_origin=[map_xsize,map_ysize]/2 $
+;	name='JUPITER',$
+;;	type='MOLLWEIDE', $
+;	type='MERCATOR', $
+;	fn_data=ptr_new(), $
+;	size=[map_xsize,map_ysize], $
+;	origin=[map_xsize,map_ysize]/2 $
 ;	)
 
 

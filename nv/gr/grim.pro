@@ -778,6 +778,9 @@ pro grim_write, grim_data
  if(keyword_set(*plane.std_p)) then $
               pg_put_stations, plane.dd, std=*plane.std_p, od=od
 
+ if(keyword_set(*plane.ard_p)) then $
+              pg_put_stations, plane.dd, ard=*plane.ard_p, od=od
+
  if(keyword_set(*plane.sund_p)) then $
               pg_put_stars, plane.dd, sd=*plane.sund_p, od=od
 
@@ -851,9 +854,10 @@ pro grim_kill_notify, top
    if(keyword_set(*plane.rd_p)) then nv_notify_unregister, *plane.rd_p, 'grim_descriptor_notify'
    if(keyword_set(*plane.sd_p)) then nv_notify_unregister, *plane.sd_p, 'grim_descriptor_notify'
    if(keyword_set(*plane.std_p)) then nv_notify_unregister, *plane.std_p, 'grim_descriptor_notify'
+   if(keyword_set(*plane.ard_p)) then nv_notify_unregister, *plane.ard_p, 'grim_descriptor_notify'
    if(keyword_set(*plane.sund_p)) then nv_notify_unregister, *plane.sund_p, 'grim_descriptor_notify'
 
-   nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, plane.sund_p, $
+   nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, plane.ard_p, plane.sund_p, $
              plane.od_p, plane.active_xd_p, plane.active_overlays_ptdp,$
              grim_get_overlay_ptdp(grim_data, plane=plane, 'limb'), $
              grim_get_overlay_ptdp(grim_data, plane=plane, 'ring'), $
@@ -1504,7 +1508,7 @@ pro grim_render, grim_data, plane=plane
    dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn'
 
    dat_set_dim_fn, new_plane.dd, 'grim_render_dim_fn'
-   dat_set_dim_fn_data, new_plane.dd, dat_dim(plane.dd)
+   dat_set_dim_data, new_plane.dd, dat_dim(plane.dd)
 
    nv_notify_register, new_plane.dd, 'grim_descriptor_notify', scalar_data=grim_data.base
 
@@ -1525,7 +1529,7 @@ pro grim_render, grim_data, plane=plane
  image_pts = (convert_coord(device_pts, /device, /to_data))[0:1,*]
  image_pts = reform(image_pts, 2, !d.x_size,!d.y_size, /over)
 
- dat_set_sampling_fn_data, new_plane.dd, image_pts
+ dat_set_sampling_data, new_plane.dd, image_pts
  grim_set_plane, grim_data, new_plane
  grim_set_data, grim_data, grim_data.base
 
@@ -1689,9 +1693,11 @@ function grim_render_sampling_fn, dd, source_image_pts_sample, source_image_pts_
  xdim = dat_dim(dd)
 
  dim = size(source_image_pts_sample, /dim)
+ n = n_elements(source_image_pts_sample)
 
  if(dim[0] NE 2) then $
          source_image_pts_sample = w_to_xy(xdim, source_image_pts_sample)
+ n = n_elements(source_image_pts_sample)/2
 
  render_image_pts_grid = gridgen(rdim, /rec, /double)
 
@@ -1705,6 +1711,9 @@ function grim_render_sampling_fn, dd, source_image_pts_sample, source_image_pts_
               OR render_image_pts_sample[1,*] GE rdim[1])
 
  samples = xy_to_w(rdim, render_image_pts_sample)
+
+; w = where((samples LT 0) OR (samples GT n))
+
  if(w[0] NE -1) then samples[w] = -1
 
  return, samples
@@ -2428,7 +2437,7 @@ pro grim_menu_file_save_tie_ptd_event, event
  ;------------------------------------------------------
  ; write data
  ;------------------------------------------------------
- grim_write_indexed_arrays, grim_data, plane, 'TIE', fname=fname
+ grim_write_indexed_arrays, grim_data, plane, 'TIEPOINT', fname=fname
  grim_print, grim_data, 'Tie points saved.'
 
 end
@@ -4195,10 +4204,55 @@ pro grim_menu_plane_toggle_tiepoint_syncing_event, event
 
 
  grim_data = grim_get_data(event.top)
- grim_data.tie_syncing = 1 - grim_data.tie_syncing
+ grim_data.tiepoint_syncing = 1 - grim_data.tiepoint_syncing
  grim_set_data, grim_data, event.top
  
 ; grim_sync_tiepoints, grim_data
+; grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_toggle_plane_syncing_event
+;
+;
+; PURPOSE:
+;	Toggles plane syncing on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2016
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_toggle_plane_syncing_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_toggle_plane_syncing_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_toggle_plane_syncing_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+ grim_data.plane_syncing = 1 - grim_data.plane_syncing
+ grim_set_data, grim_data, event.top
+ 
+; grim_sync_planes, grim_data
 ; grim_refresh, grim_data, /use_pixmap
 
 end
@@ -8019,7 +8073,7 @@ function grim_cull_menu_desc, _menu_desc, plot, map, beta, $
  menu_desc = _menu_desc
 
  ;-------------------------------------------
- ; remove items 
+ ; mark items to cull
  ;-------------------------------------------
  if(plot) then mark = complement(menu_desc, [plot_indices, plot_only_indices]) $
  else mark = plot_only_indices
@@ -8199,6 +8253,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Dump               \*grim_menu_plane_dump_event', $
            '0\Coregister         \grim_menu_plane_coregister_event', $
            '0\Coadd              \grim_menu_plane_coadd_event', $
+           '0\Toggle Syncing   \*grim_menu_plane_toggle_plane_syncing_event', $
            '0\Toggle Highlight   \*grim_menu_plane_highlight_event', $
            '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy tie points     \*grim_menu_plane_copy_tiepoints_event', $
@@ -8207,16 +8262,12 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Clear tie points    \*grim_menu_plane_clear_tiepoints_event', $
            '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy curves        \*grim_menu_plane_copy_curves_event', $
-;;;           '0\Propagate curves    \*grim_menu_plane_propagate_curves_event', $
+;           '0\Propagate curves    \*grim_menu_plane_propagate_curves_event', $
            '0\Toggle curves syncing\*grim_menu_plane_toggle_curve_syncing_event', $
            '0\Clear curves        \*grim_menu_plane_clear_curves_event', $
            '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy mask          \*grim_menu_plane_copy_mask_event', $
            '0\Clear mask         \*grim_menu_plane_clear_mask_event', $
-           '0\-------------------\*grim_menu_delim_event', $ 
-           '0\Copy curves        \*grim_menu_plane_copy_curves_event', $
-           '0\Toggle curve syncing\*grim_menu_plane_toggle_curve_syncing_event', $
-           '0\Clear curves       \*grim_menu_plane_clear_curves_event', $
            '0\-------------------\*grim_menu_delim_event', $ 
            '0\Settings           \+*grim_menu_plane_settings_event', $
            '2\<null>               \+*grim_menu_delim_event', $
@@ -9047,7 +9098,7 @@ end
 ;
 ;=============================================================================
 ;xx
-pro grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
+pro __grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
 
  ;--------------------------------
@@ -9131,6 +9182,18 @@ end
 
 
 ;=============================================================================
+; grim_cube_dim_fn
+;
+;
+;=============================================================================
+function grim_cube_dim_fn, dd, dat
+ return, (dat_dim(dd, /true))[0:1]
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_get_arg
 ;
 ;=============================================================================
@@ -9202,7 +9265,7 @@ end
 ;
 ;=============================================================================
 ;xx
-pro __grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
+pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions, rgb=rgb, offsets=offsets
 
  ;--------------------------------------------
@@ -9225,9 +9288,9 @@ pro __grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhi
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; set dd controls
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(nhist)) then dat_set_nhist, _dd[i], nhist
-   if(keyword_set(maintain)) then dat_set_maintain, _dd[i], maintain
-   if(keyword_set(compress)) then dat_set_compress, _dd[i], compress
+   if(keyword_set(nhist)) then dat_set_nhist, _dd[i], nhist[0]
+   if(keyword_set(maintain)) then dat_set_maintain, _dd[i], maintain[0]
+   if(keyword_set(compress)) then dat_set_compress, _dd[i], compress[0]
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; non-3-D arrays get a plane and a zero offset
@@ -9244,6 +9307,7 @@ pro __grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhi
     begin
      dd = append_array(dd, make_array(dim[2], val=_dd[i]))
      offsets = append_array(offsets, lindgen(dim[2])*dim[0]*dim[1])
+dat_set_dim_fn, dd, 'grim_cube_dim_fn'
     end 
   end
 
@@ -9281,7 +9345,7 @@ end
 ; grim
 ;
 ;=============================================================================
-pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, sund=sund, od=od, $
+pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od, $
 	silent=silent, new=new, inherit=inherit, xsize=xsize, ysize=ysize, $
 	default=default, previous=previous, restore=restore, activate=activate, $
 	doffset=doffset, no_erase=no_erase, filter=filter, rgb=rgb, visibility=visibility, channel=channel, exit=exit, $
@@ -9298,7 +9362,7 @@ pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, sund=sund, od=
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
 	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, $
         trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, $
-        readout_fns=readout_fns, tiepoint_syncing=tiepoint_syncing, $
+        readout_fns=readout_fns, plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
      ;----- extra keywords for plotting only ----------
@@ -9328,7 +9392,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
-        tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
+        plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
 	visibility=visibility, channel=channel, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, rgb=rgb
 
@@ -9410,11 +9474,11 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  ; resolve arguments
  ;=========================================================
-;xx grim_get_args, arg1, arg2, dd=dd, offsets=data_offsets, grnum=grnum, type=type, $
-;xx             nhist=nhist, maintain=maintain, compress=compress, $
-;xx             extensions=extensions, rgb=rgb
- grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
-               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
+ grim_get_args, arg1, arg2, dd=dd, offsets=data_offsets, grnum=grnum, type=type, $
+             nhist=nhist, maintain=maintain, compress=compress, $
+             extensions=extensions, rgb=rgb
+;xx grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
+;xx               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
 
 ; if(keyword_set(rendering)) then ....
 
@@ -9473,7 +9537,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        readout_fns=readout_fns, symsize=symsize, nhist=nhist, maintain=maintain, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
-       tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
+       plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
        visibility=visibility, channel=channel, data_offsets=data_offsets, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
        render_pht_min=render_pht_min)
@@ -9557,26 +9621,34 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;======================================================================
  ; regardless of new or existing, update descriptors if any given
  ;======================================================================
- pgs_gd, gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, sund=sund, od=od
+ pgs_gd, gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od
 
  grim_data = grim_get_data()
  nplanes = n_elements(planes)
-
- ;----------------------------------------------------------------------
- ; if master dd0 defined (i.e., cube input) replicate descriptors
- ;  for all planes
- ;----------------------------------------------------------------------
-; if(keyword_set(dd0)) then $
-;  begin
-;   if(keyword_set(cd)) then cd = make_array(nplanes, val=cd)
-;   if(keyword_set(pd)) then pd = pd[lindgen(n_elements(pd))#make_array(nplanes,val=1l)]
-;   if(keyword_set(rd)) then rd = rd[lindgen(n_elements(rd))#make_array(nplanes,val=1l)]
-;   if(keyword_set(sd)) then sd = sd[lindgen(n_elements(sd))#make_array(nplanes,val=1l)]
-;   if(keyword_set(std)) then std = std[lindgen(n_elements(std))#make_array(nplanes,val=1l)]
-;   if(keyword_set(sund)) then sund = make_array(nplanes, val=sund)
-;   if(keyword_set(od)) then od = make_array(nplanes, val=od)
-;  end
  ncd = n_elements(cd)
+
+
+; for i=0, nplanes-1 do $
+;  begin
+;   if(keyword_set(cd)) then $
+;	 grim_add_descriptor, grim_data, planes[i].cd_p, cd, /one, assoc_xd=planes[i].dd
+;   if(keyword_set(pd)) then $
+;	 grim_add_descriptor, grim_data, planes[i].pd_p, pd, assoc_xd=planes[i].dd
+;   if(keyword_set(rd)) then $
+;	 grim_add_descriptor, grim_data, planes[i].rd_p, rd, assoc_xd=planes[i].dd
+;   if(keyword_set(std)) then $
+;	 grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_xd=planes[i].dd
+;   if(keyword_set(ard)) then $
+;	 grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_xd=planes[i].dd
+;   if(keyword_set(sd)) then $
+;	 grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_xd=planes[i].dd
+;   if(keyword_set(sund)) then $
+;	 grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one, assoc_xd=planes[i].dd
+;   if(keyword_set(od)) then $
+;     grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister, assoc_xd=planes[i].dd
+;  end
+
+
 
  ;----------------------------------------------------------------------
  ; if one cd, just use current plane
@@ -9603,6 +9675,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    if(keyword_set(rd)) then grim_add_descriptor, grim_data, plane.rd_p, rd
    if(keyword_set(sd)) then grim_add_descriptor, grim_data, plane.sd_p, sd
    if(keyword_set(std)) then grim_add_descriptor, grim_data, plane.std_p, std
+   if(keyword_set(ard)) then grim_add_descriptor, grim_data, plane.ard_p, std
    if(keyword_set(sund)) then $
              grim_add_descriptor, grim_data, plane.sund_p, sund, /one
    if(keyword_set(od)) then $
@@ -9618,6 +9691,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;  rd -- [nrd, nplanes]
  ;  sd -- [nsd, nplanes]
  ;  std -- [nstd, nplanes]
+ ;  ard -- [nstd, nplanes]
+ ;  ard -- [nard, nplanes]
  ;  sund -- nplanes
  ;  od -- nplanes
  ;
@@ -9631,6 +9706,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
                 grim_add_descriptor, grim_data, planes[i].rd_p, rd[*,i]
    if(keyword_set(std)) then $
                 grim_add_descriptor, grim_data, planes[i].std_p, std[*,i]
+   if(keyword_set(ard)) then $
+                grim_add_descriptor, grim_data, planes[i].ard_p, ard[*,i]
    if(keyword_set(sd)) then $
                 grim_add_descriptor, grim_data, planes[i].sd_p, sd[*,i]
    if(keyword_set(sund)) then $
@@ -9638,6 +9715,9 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    if(keyword_set(od)) then $
        grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister
   end
+
+
+
 
 
  ;=========================================================

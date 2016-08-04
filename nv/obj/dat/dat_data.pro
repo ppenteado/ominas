@@ -63,14 +63,14 @@
 ;	
 ;-
 ;=============================================================================
-function dat_data, dd, samples=_samples, nd=nd, true=true, noevent=noevent, abscissa=_abscissa
+function dat_data, dd, samples=_samples, offset=offset, $
+                  nd=nd, true=true, noevent=noevent, abscissa=_abscissa
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
 
  sampled = 0
-
- if(NOT ptr_valid(_dd.data_dap)) then return, 0
+ if(NOT keyword_set(offset)) then offset = 0
 
  ;-------------------------------------------------------------------------
  ; If there is a sampling function, but no samples are given, then 
@@ -98,7 +98,7 @@ function dat_data, dd, samples=_samples, nd=nd, true=true, noevent=noevent, absc
    samples = _samples
    if(keyword_set(_dd.sampling_fn)) then $
       samples = call_function(_dd.sampling_fn, dd, samples, $
-                                              *(_dd.sampling_fn_data_p))
+                                                     dat_sampling_data(_dd))
 
    ; - - - - - - - - - - - - - - - - -
    ; convert samples to 1D
@@ -108,7 +108,7 @@ function dat_data, dd, samples=_samples, nd=nd, true=true, noevent=noevent, absc
    if((n_elements(sdim) NE 1) OR keyword_set(nd)) then $
                                  samples = nd_to_w(*(_dd.dim_p), samples)
   end
-
+ if(keyword_set(samples)) then samples = samples + offset
 
 
  ;-------------------------------------------------------------------------

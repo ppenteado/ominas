@@ -295,6 +295,12 @@ function render, image_pts, cd=cd, sund=sund, $
  if(NOT defined(limit_source)) then limit_source = 0
  if(NOT defined(standoff)) then standoff = 1
 
+ if(NOT keyword_set(sund)) then $
+  begin
+   sund = 0
+   no_secondary = (no_pht = 1)
+  end
+
  show = keyword_set(show)
  if(NOT keyword_set(sample)) then sample = 1
  sample = double(sample)

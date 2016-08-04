@@ -18,7 +18,7 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:	Data descriptor containing the image.
+;	dd:	Data descriptor containing an image.
 ;
 ;  OUTPUT: NONE
 ;

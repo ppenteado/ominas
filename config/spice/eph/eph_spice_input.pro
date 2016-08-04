@@ -34,10 +34,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned.
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ;	ref:		Name of the reference frame for the output quantities.
@@ -82,12 +78,12 @@
 ;
 ;
 ;===========================================================================
-function eph_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function eph_spice_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
- return, spice_input(dd, keyword, 'eph', n_obj=n_obj, dim=dim, values=values, status=status, $
+ return, spice_input(dd, keyword, 'eph', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)

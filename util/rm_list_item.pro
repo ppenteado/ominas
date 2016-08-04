@@ -22,7 +22,7 @@
 ;  INPUT:
 ;	list:	The list from which to remove item with index i.
 ;
-;	i:	Index of item in list to be removed.
+;	i:	Index of items in list to be removed.
 ;
 ;  OUTPUT: NONE
 ;
@@ -51,9 +51,9 @@
 function rm_list_item, list, i, only=only, scalar=scalar
 
 
- n=n_elements(list)
- bl=bytarr(n)
- bl[i]=1
+ n = n_elements(list)
+ bl = bytarr(n)
+ bl[i] = 1
  sub = where(bl EQ 0)
 
  if(sub[0] EQ -1) then $

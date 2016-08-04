@@ -8,6 +8,7 @@ function spice_get_planets, names, ref, et, $
 			gm, jcoef, found, ids, rref, refl_fn, refl_parm, $
 			phase_fn, phase_parm, albedo, constants=constants, obs=obs
 
+ n = n_elements(names)
 
  ;----------------------------------------------------------------------
  ; convert obs name to id if necessary
@@ -18,15 +19,6 @@ function spice_get_planets, names, ref, et, $
    tp = size(obs, /type)
    if (tp EQ 7 ) then cspice_bodn2c, obs, obs, name_found
   end
-
-
- ;----------------------------------------------------------------------
- ; get object names
- ;  If no names are requested, then only bodies with known radii are
- ;  returned.
- ;----------------------------------------------------------------------
- if(NOT keyword_set(names)) then names = spice_get_all_target_names()
- n = n_elements(names)
 
  pos = dblarr(3,n)
  vel = dblarr(3,n)

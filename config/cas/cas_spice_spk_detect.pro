@@ -160,13 +160,11 @@ end
 ; rejected.  Otherwise, they're accepted, but given lowest priority.
 ;
 ;=============================================================================
-function cas_spice_spk_detect, dd, kpath, reject=spk_reject_files, $
-                   strict=strict, all=all, time=_time
+function cas_spice_spk_detect, dd, kpath, strict=strict, all=all, time=_time
 common cas_spice_spk_block, data
 
  if(keyword__set(_time)) then time = _time
 
- reject = keyword__set(reject)
  label = dat_header(dd)
 
  ;--------------------------------

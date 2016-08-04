@@ -35,10 +35,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ;	system:		Asks translator to return a single ring descriptor
@@ -130,8 +126,7 @@ end
 ; ring_input
 ;
 ;=============================================================================
-function ring_input, dd, keyword, prefix, $
-                      n_obj=n_obj, dim=dim, values=values, status=status, $
+function ring_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
@@ -145,29 +140,14 @@ function ring_input, dd, keyword, prefix, $
    return, 0
   end
 
-
  ;----------------------------------------------
  ; if no ring catalog, then use old translator
  ;----------------------------------------------
- nocat = tr_keyword_value(dd, 'nocat')
  catpath = getenv('NV_RING_DATA')
  if(NOT keyword_set(catpath)) then $
-   nv_message, /con, name='ring_input', $
-     'Warning: Not using using catalog because NV_RING_DATA environment variable is undefined.'
-
- if((NOT keyword_set(catpath)) OR (keyword_set(nocat))) then $
-   return, ring_input_nocat(dd, keyword, prefix, $
-                      n_obj=n_obj, dim=dim, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
-	end_keywords)
-
-
-
+   nv_message, /con, name='ring_input', 'NV_RING_DATA environment variable is undefined.'
 
  status = 0
- n_obj = 0
- dim = [1]
 
  deg2rad = !dpi/180d
  degday2radsec = !dpi/180d / 86400d
@@ -199,7 +179,6 @@ function ring_input, dd, keyword, prefix, $
  ; object names passed as key8
  ;-----------------------------------------------
  if(keyword_set(key8) AND (NOT keyword_set(sel_names))) then sel_names = key8
-
 
 
  ;-----------------------------------------------
@@ -373,7 +352,8 @@ function ring_input, dd, keyword, prefix, $
            dsk_widen, dkd_peak[j], 0d
 
            dkds = append_array(dkds, dkd_peak[j])
-           primaries = append_array(primaries, cor_name(pds[i]))
+           primaries = append_array(primaries, pds[i])
+           assoc_xd = append_array(assoc_xd, cor_assoc_xd(pds[i]))
            ppds = append_array(ppds, pds[i])
            end
 
@@ -405,7 +385,8 @@ function ring_input, dd, keyword, prefix, $
            dsk_widen, dkd_trough[j], 0d
 
            dkds = append_array(dkds, dkd_trough[j])
-           primaries = append_array(primaries, cor_name(pds[i]))
+           primaries = append_array(primaries, pds[i])
+           assoc_xd = append_array(assoc_xd, cor_assoc_xd(pds[i]))
            ppds = append_array(ppds, pds[i])
           end
         end
@@ -462,7 +443,8 @@ function ring_input, dd, keyword, prefix, $
           end
 
          dkds = append_array(dkds, dkd)
-         primaries = append_array(primaries, make_array(ndkd, val=cor_name(pds[i])))
+         primaries = append_array(primaries, make_array(ndkd, val=pds[i]))
+         assoc_xd = append_array(assoc_xd, make_array(ndkd, val=cor_assoc_xd(pds[i])))
          ppds = append_array(ppds, make_array(n_elements(dkd), val=pds[i]))
         end
       end
@@ -506,10 +488,12 @@ function ring_input, dd, keyword, prefix, $
   dkdts[i] = rng_evolve(dkds[i], bod_time(ppds[i]) - bod_time(dkds[i]))
  nv_free, dkdx
 
+
  ;------------------------------------------------------------------
  ; make ring descriptors
  ;------------------------------------------------------------------
  rds = rng_create_descriptors(n_obj, $
+		assoc_xd=assoc_xd, $
 		primary=primaries, $
 		name=cor_name(dkdts), $
 		opaque=bod_opaque(dkdts), $

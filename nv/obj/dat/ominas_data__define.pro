@@ -101,14 +101,6 @@ end_keywords)
 
 
  ;---------------------------------
- ; fn data
- ;---------------------------------
- if(NOT keyword_set(self.sampling_fn_data_p)) then $
-				  self.sampling_fn_data_p = nv_ptr_new(0)
- if(NOT keyword_set(self.dim_fn_data_p)) then $
-				  self.dim_fn_data_p = nv_ptr_new(0)
-
- ;---------------------------------
  ; transforms
  ;---------------------------------
  if(keyword_set(input_transforms)) then $
@@ -123,6 +115,10 @@ end_keywords)
  ;-----------------------
  self.max = -1d100
  self.min = 1d100
+
+ if(defined(min)) then self.min = min
+ if(defined(max)) then self.max = max
+
  if(defined(data)) then $
   begin
    self.max = max(data)
@@ -130,16 +126,15 @@ end_keywords)
   end
  
 
-
  ;-----------------------
  ; data and header
  ;-----------------------
  if(defined(data)) then $
-  begin
    dat_set_data, self, data, abscissa=abscissa, /silent
-   dat_set_nhist, self, nhist
-  end  
-  
+
+ dat_set_nhist, self, nhist
+
+
  _header = ''
  if(keyword_set(header)) then _header = header
  dat_set_header, self, _header
@@ -224,15 +219,11 @@ end
 ;
 ;				function sampling_fn, dd, samples, data
 ;
-;	sampling_fn_data_p:	Pointer to data for sampling_fn.
-;
 ;	dim_fn:			Optional function to cause dat_dim() to report
 ;				dimensions other than those stored in the
 ;				data descriptor:
 ;
 ;				function dim_fn, dd, data
-;
-;	dim_fn_data_p:		Pointer to data for dim_fn.
 ;
 ;	compress:	Compression suffix.  The full name of the 
 ;			compression function is dat_compress_data_<suffix>.
@@ -278,9 +269,9 @@ pro ominas_data__define
 	abscissa_dap:		nv_ptr_new(), $	; Pointer to the abscissa archive
 	header_dap:		nv_ptr_new(), $	; Pointer to the generic header archive
         dap_index:		0, $		; data archive index
+
 	max:			0d, $		; Maximum data value
 	min:			0d, $		; Minimum data value
-
 	dim_p:			nv_ptr_new(), $	; data dimensions
 	type:			0b, $		; data type
 
@@ -300,9 +291,7 @@ pro ominas_data__define
 	last_translator:	lonarr(2), $	; Description of last translator
 						; called
 	sampling_fn:		'', $		; Optional sampling function.
-	sampling_fn_data_p:	ptr_new(), $	
 	dim_fn:			'', $		; Optional dimension function.
-	dim_fn_data_p:		ptr_new(), $	
 
 ;	segment:		{nv_seg_struct}, $
 

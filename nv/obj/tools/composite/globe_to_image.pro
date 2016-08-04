@@ -55,11 +55,11 @@ function globe_to_image, cd, gbx, p, body_pts=body_pts, valid=valid
 	 body_pts = glb_globe_to_body(gbx, p)
 	 image_pts = inertial_to_image_pos(cd, $
                            bod_body_to_inertial_pos(gbx, body_pts))
-	 valid = in_image(cd, image_pts, slop=0)
+         valid = lindgen(nv,nt)
 	 return, image_pts
 	end
 
-  default :
+  else :
  endcase
 
 end

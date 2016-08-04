@@ -34,10 +34,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned.
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ;	ref:		Name of the reference frame for the output quantities.
@@ -90,7 +86,7 @@
 function timer_spice_cameras, dd, ref, pos=pos, constants=constants, $
       n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
- cam_name = dat_instrument(dd)
+ ndd = n_elements(dd)
 
  sc = -650l
  plat = -650000l
@@ -121,7 +117,7 @@ function timer_spice_cameras, dd, ref, pos=pos, constants=constants, $
 ; bin = 1024./cam_nx
 bin = 1
 
- case cam_name of
+ case dat_instrument(dd[0]) of
 	'TIMER_WA': $
 	  begin
 ;	   inst=-82360l
@@ -144,15 +140,15 @@ bin = 1
 		plat = plat, $
 		orient = orient, $
 		cam_time = cam_time, $
-		cam_scale = cam_scale, $
+		cam_scale = make_array(2,ndd, val=scale), $
 		cam_oaxis = cam_oaxis, $
-;		cam_fn_psf = 'timer_psf', $
+;		cam_fn_psf = make_array(ndd, val='timer_psf'), $
 		cam_filters = filters, $
 		cam_size = [cam_nx, cam_ny], $
 		cam_exposure = cam_exposure, $
 		cam_fn_focal_to_image = cam_focal_to_image_linear, $
 		cam_fn_image_to_focal = cam_image_to_focal_linear, $
-		cam_fn_data = [nv_ptr_new()], $
+		cam_fi_data = [nv_ptr_new()], $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs) )
 
 end
@@ -231,12 +227,12 @@ end
 ;
 ;
 ;===========================================================================
-function timer_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function timer_spice_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
- return, spice_input(dd, keyword, 'timer', n_obj=n_obj, dim=dim, values=values, status=status, $
+ return, spice_input(dd, keyword, 'timer', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)

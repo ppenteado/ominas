@@ -129,21 +129,15 @@ end
 ;
 ;=============================================================================
 function cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
-                             all=all, reject=reject, strict=strict
+                                               all=all, strict=strict
 
  if(NOT keyword_set(djd)) then djd = 1d			; days, +/-
 
- label = dat_header(dd)
-; all_files = ''
- 
 
  ;--------------------------------
  ; get image jd
  ;--------------------------------
- if(NOT keyword_set(time)) then jd = spice_str2jed(cas_spice_time(label)) $
- else jd = spice_et2jed(time)
-
- jd = jd[0]
+ jd = spice_et2jed(time)
 
  ;--------------------------------
  ; get ck jd's
@@ -238,7 +232,8 @@ function cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
  ;--------------------------------------------------------------------
  ; compare dates
  ;--------------------------------------------------------------------
- w = where((jd GE jd_start-djd) AND (jd LE jd_stop+djd))
+; w = where((jd GE jd_start-djd) AND (jd LE jd_stop+djd))
+ w = where((jd_start-djd LT min(jd)) AND (jd_stop+djd GT max(jd)))
  if(w[0] NE -1) then $
   begin 
    ii = ii[w]
@@ -259,15 +254,16 @@ function cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
 
 
  ;---------------------------------------------------------
- ; match kernels whose names contain the image id string
+ ; match kernels whose names start with the image name
  ;---------------------------------------------------------
  if(keyword_set(all_files)) then $
   begin
    split_filename, cor_name(dd), dir, name, ext
    if(keyword_set(name)) then $
     begin 
-     p = strpos(strupcase(all_names), strupcase(name))
-     w = where(p NE -1) 
+     len = max(strlen(name))
+     _all_names = strmid(all_names, 0, len)
+     w = str_nmatch(_all_names, name)
      if(w[0] NE -1) then ck_files = append_array(ck_files, all_files[w])
     end 
   end
@@ -294,7 +290,6 @@ function cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
  ;----------------------------------------------------------
  if(NOT keyword_set(ck_files)) then ck_files = all_files[0]
 
-
  return, ck_files
 end
 ;=============================================================================
@@ -320,7 +315,7 @@ end
 ;
 ;=============================================================================
 function ____cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
-                             all=all, reject=reject, strict=strict
+                             all=all, strict=strict
 ;common cas_spice_ck_block, all_files, all_names_block, ckpath_block, $
 ;      jd_start_block, jd_stop_block, type_block, version_block, desc_block, ii_block
 

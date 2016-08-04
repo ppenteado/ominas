@@ -30,7 +30,7 @@
 ;
 ;
 ; RETURN:
-;	Primary string associated with each given station descriptor.
+;	Primary descriptor associated with each given station descriptor.
 ;
 ;
 ; STATUS:
@@ -48,7 +48,7 @@ function stn_primary, std, noevent=noevent
 
  nv_notify, std, type = 1, noevent=noevent
  _std = cor_dereference(std)
- return, _std.primary
+ return, _std.__PROTECT__primary
 end
 ;===========================================================================
 

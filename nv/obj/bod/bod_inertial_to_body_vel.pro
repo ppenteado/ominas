@@ -56,6 +56,23 @@ function bod_inertial_to_body_vel, bd, v
  nv = sv[1]
 
  sub = linegen3x(nv,3,nt)
+ vv = (v - (_bd.vel))[sub]	; this won't work for derivatives
+ return, bod_inertial_to_body(bd, vv, _sub=sub)
+end
+;===========================================================================
+
+
+
+;===========================================================================
+function __bod_inertial_to_body_vel, bd, v
+@core.include
+ _bd = cor_dereference(bd)
+
+ nt = n_elements(_bd)
+ sv = size(v)
+ nv = sv[1]
+
+ sub = linegen3x(nv,3,nt)
 
  M0 = (_bd.orientT[*,0,*])[sub]
  M1 = (_bd.orientT[*,1,*])[sub]

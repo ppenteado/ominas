@@ -64,7 +64,6 @@ function glb_globe_to_graphic, gbd, v
 
 
 
-
  sv = size(v)
  nv = sv[1]
  nt = n_elements(_gbd)

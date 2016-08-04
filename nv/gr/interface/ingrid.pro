@@ -230,18 +230,29 @@ pro ingrid, grnum, gd=_gd, $
                   array_ptd = append_array(array_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'array'))) 
 
      if(arg_present(_tie_ptd)) then $
-                    tie_ptd = append_array(tie_ptd, *plane.tie_ptdp)
+                    tie_ptd = append_array(tie_ptd, *plane.tiepoint_ptdp)
 
      if(arg_present(_curve_ptd)) then $
                   curve_ptd = append_array(curve_ptd, *plane.curve_ptdp)
     end
   end
- if(keyword_set(pd)) then pd = reform(tr(pd))
- if(keyword_set(rd)) then rd = reform(tr(rd))
- if(keyword_set(sd)) then sd = reform(tr(sd))
- if(keyword_set(std)) then std = reform(tr(std))
- if(keyword_set(ard)) then ard = reform(tr(ard))
-
+ 
+ if(npn NE 1) then $
+  begin
+   if(keyword_set(pd)) then pd = transpose(pd)
+   if(keyword_set(rd)) then rd = transpose(rd)
+   if(keyword_set(sd)) then sd = transpose(sd)
+   if(keyword_set(std)) then std = transpose(std)
+   if(keyword_set(ard)) then ard = transpose(ard)
+  end $
+ else $
+  begin
+   if(keyword_set(pd)) then pd = reform(pd)
+   if(keyword_set(rd)) then rd = reform(rd)
+   if(keyword_set(sd)) then sd = reform(sd)
+   if(keyword_set(std)) then std = reform(std)
+   if(keyword_set(ard)) then ard = reform(ard)
+  end
 
  if(keyword_set(dd)) then _dd = dd 
  if(keyword_set(cd)) then _cd = cd 

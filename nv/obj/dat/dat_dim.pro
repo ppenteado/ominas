@@ -55,6 +55,6 @@ function dat_dim, dd, true=true, noevent=noevent
 
  if(keyword_set(true) OR (NOT keyword_set(_dd.dim_fn))) then return, *_dd.dim_p
 
- return, call_function(_dd.dim_fn, dd, *_dd.dim_fn_data_p)
+ return, call_function(_dd.dim_fn, dd, dat_dim_data(dd))
 end
 ;=============================================================================

@@ -19,6 +19,10 @@ function xy_to_w, im, p, sx=sx, sy=sy
 
  w = round(p[0,*] + p[1,*]*sx)
 
+; ii = where((p[0,*] LT 0) OR (p[0,*] GE sx) $
+;               OR (p[1,*] LT 0) OR (p[1,*] GE sy))
+; if(ii[0] NE -1) then w[ii] = -1
+
  return, reform(w)
 end
 ;==============================================================================

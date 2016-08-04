@@ -499,10 +499,10 @@ pro gr_maptool, order=order
  types = ['Rectangular', $
           'Mercator', $
           'Orthographic', $
-          'Stereographic', $
+          'Stereographic'];, $
 ;          'Sinusoidal', $
 ;          'Mollweide', $
-          'Oblique Disk']
+;          'Oblique Disk']
  ntypes = n_elements(types)
  dl_types = types[0]
  for i=1, ntypes-1 do dl_types = dl_types + '|' + types[i]
@@ -563,16 +563,16 @@ pro gr_maptool, order=order
 					   size = [400,400]), $
 					  map_create_descriptors(1,$
 					   type='STEREOGRAPHIC', $
-					   size = [400,400]), $
+					   size = [400,400])   ]$;, $
 ;					  map_create_descriptors(1,$
 ;					   type='SINUSOIDAL', $
 ;					   size = [800,400]), $
 ;					  map_create_descriptors(1,$
 ;					   type='MOLLWEIDE', $
 ;					   size = [800,400]), $
-					  map_create_descriptors(1,$
-					   type='OBLIQUE_DISK', $
-					   size = [400,400]) ] $ 
+;					  map_create_descriptors(1,$
+;					   type='OBLIQUE_DISK', $
+;					   size = [400,400]) ] $ 
 	     }
 
  data.types = map_type(data.mds)

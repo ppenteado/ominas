@@ -33,10 +33,6 @@
 ;  OUTPUT:
 ;	status:  Zero if valid data is returned
 ;
-;	n_obj:  Number of objects returned.
-;
-;	dim:  Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ;	NONE
@@ -117,8 +113,7 @@ end
 ; station_input
 ;
 ;=============================================================================
-function station_input, dd, keyword, prefix, $
-                      n_obj=n_obj, dim=dim, values=values, status=status, $
+function station_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
  end_keywords
@@ -143,8 +138,6 @@ function station_input, dd, keyword, prefix, $
 
 
  status = 0
- n_obj = 0
- dim = [1]
 
 
  ;-----------------------------------------------
@@ -153,40 +146,38 @@ function station_input, dd, keyword, prefix, $
  select_all = tr_keyword_value(dd, 'all')
  reload = tr_keyword_value(dd, 'reload')
  names = str_nsplit(tr_keyword_value(dd, 'name'), ';')
- primaries = str_nsplit(tr_keyword_value(dd, 'primary'), ';')
- if(NOT keyword_set(names[0])) then names= '' $
+ if(NOT keyword_set(names)) then names= '' $
  else select_all = 1
 
+
+ ;-----------------------------------------------
+ ; observer descriptor passed as key1
+ ;-----------------------------------------------
+ if(keyword_set(key1)) then od = key1
+ if(NOT keyword_set(od)) then nv_message, name='station_input', 'No observer.'
 
  ;-----------------------------------------------
  ; primary descriptor passed as key2
  ;-----------------------------------------------
  if(keyword_set(key2)) then bx = key2
 
-
  ;-----------------------------------------------
  ; station names passed as key8
  ;-----------------------------------------------
  if(keyword_set(key8) AND (NOT keyword_set(names))) then names = key8
 
-
- ;-----------------------------------------------
- ; primary names passed as key6
- ;-----------------------------------------------
- if(keyword_set(key6) AND (NOT keyword_set(primaries))) then primaries = key6
- if(NOT keyword_set(primaries)) then primaries = cor_name(bx)
- if(NOT keyword_set(primaries)) then $
-                      nv_message, name='station_input', 'no primary.'
-
-
  ;-----------------------------------------------
  ; set up station descriptors
  ;-----------------------------------------------
- n = n_elements(primaries)
+ if(keyword_set(bx)) then xd = bx $
+ else if(keyword_set(od)) then xd = od $
+ else nv_message, name='station_input', 'No primary descriptor.'
+
+ n = n_elements(xd)
  for i=0, n-1 do $
   begin
    _stds = 0
-   primary = primaries[i]
+   primary = cor_name(xd[i])
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; read relevant station catalog
@@ -214,12 +205,12 @@ function station_input, dd, keyword, prefix, $
      if(continue) then $
       begin
        ndat = n_elements(dat)
-       _stds = stn_create_descriptors(ndat)
+       _stds = stn_create_descriptors(ndat, assoc_xd=make_array(ndat, val=cor_assoc_xd(xd[i])))
 
        pos_surf = transpose([transpose([dat.lat]), transpose([dat.lon]), transpose([dat.alt])])
 
        cor_set_name, _stds, dat.name
-       stn_set_primary, _stds, primary
+       stn_set_primary, _stds, xd[i]
        stn_set_surface_pt, _stds, reform(transpose(pos_surf), 1,3,ndat,/over)
       end
     end
@@ -234,8 +225,6 @@ function station_input, dd, keyword, prefix, $
   end
 
 
-
- n_obj = n_elements(stds)
  return, stds
 end
 ;===========================================================================

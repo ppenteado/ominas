@@ -24,7 +24,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
            psym=psym, cursor_modes=cursor_modes, readout_fns=readout_fns, $
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
-           tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
+           plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
            render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
 @grim_block.include
@@ -34,6 +34,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(nhist)) then nhist = 1
 
   beta = keyword_set(beta)
+  plane_syncing = keyword_set(plane_syncing)
   tiepoint_syncing = keyword_set(tiepoint_syncing)
   curve_syncing = keyword_set(curve_syncing)
 
@@ -226,7 +227,8 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		workdir			: workdir, $
 		tvd_init_p		: ptr_new(0), $
 		highlight		: 0, $		
-		tie_syncing		: tiepoint_syncing, $		
+		plane_syncing		: plane_syncing, $		
+		tiepoint_syncing	: tiepoint_syncing, $		
 		curve_syncing		: curve_syncing, $		
 		dd_map_p		: ptr_new(0), $
 		md_map_p		: ptr_new(0), $
@@ -665,7 +667,7 @@ end
 ; grim_jump_to_plane
 ;
 ;=============================================================================
-pro grim_jump_to_plane, grim_data, pn, valid=valid
+pro grim_jump_to_plane, grim_data, pn, valid=valid, nosync=nosync
 
  if(NOT keyword_set(grim_data)) then grim_data = grim_get_data()
 
@@ -686,6 +688,45 @@ pro grim_jump_to_plane, grim_data, pn, valid=valid
 
  grim_set_data, grim_data
  grim_call_plane_callbacks, grim_data
+ if(NOT keyword_set(nosync)) then grim_sync_planes, grim_data
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_sync_planes
+;
+;=============================================================================
+pro grim_sync_planes, grim_data, norefresh=norefresh
+@grim_block.include
+
+ if(NOT keyword_set(_all_tops)) then return
+
+ plane = grim_get_plane(grim_data)
+ pn = plane.pn 
+
+ top = _top
+ tops = _all_tops
+ ntops = n_elements(tops)
+
+ ;-------------------------------------------------
+ ; project arrays in other planes and windows
+ ;-------------------------------------------------
+ for i=0, ntops-1 do if(tops[i] NE top) then $
+  begin
+   _grim_data = grim_get_data(tops[i])
+
+   if(grim_data.type NE 'plot') then $
+    if(_grim_data.plane_syncing) then $
+     if(_grim_data.n_planes NE 1) then $
+      begin
+       grim_jump_to_plane, _grim_data, pn, /nosync 
+       grim_refresh, _grim_data, /use_pixmap
+      end
+  end
+
+ grim_data = grim_get_data(top)
 end
 ;=============================================================================
 

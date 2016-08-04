@@ -14,7 +14,7 @@ end_keywords)
 
  self.abbrev = 'RNG'
 
- if(keyword__set(primary)) then self.primary = decrapify(primary[ii])
+ if(keyword__set(primary)) then self.__PROTECT__primary = decrapify(primary[ii])
  if(keyword__set(desc)) then self.desc = decrapify(desc[ii])
 
  return, 1
@@ -47,7 +47,7 @@ end
 ;		Methods: rng_disk, rng_set_disk
 ;
 ;
-;	primary:	String giving the name of the primary body.
+;	primary:	Primary body descriptor.
 ;
 ;			Methods: rng_primary, rng_set_primary
 ;
@@ -71,8 +71,8 @@ pro ominas_ring__define
 
  struct = $
     { ominas_ring, inherits ominas_disk, $
-	desc:		 '', $			; 'EDGE', 'PEAK', 'TROUGH'
-	primary:	 '' $			; Name of primary planet
+	desc:			'', $		; 'EDGE', 'PEAK', 'TROUGH'
+        __PROTECT__primary:     obj_new() $	; primary pd
     }
 
 end

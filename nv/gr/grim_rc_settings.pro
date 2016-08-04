@@ -31,7 +31,7 @@ pro grim_rc_settings, rcfile=rcfile, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
-        tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
+        plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
         render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays
 	
 
@@ -255,6 +255,10 @@ pro grim_rc_settings, rcfile=rcfile, $
  if(n_elements(npoints) EQ 0) then $
                         _npoints = grim_rc_value(keywords, value_ps, 'NPOINTS')
  if(keyword_set(_npoints)) then npoints = fix(_npoints)
+
+ if(n_elements(plane_syncing) EQ 0) then $
+                        _plane_syncing = grim_rc_value(keywords, value_ps, 'PLANE_SYNCING')
+ if(keyword_set(_plane_syncing)) then npoints = fix(_plane_syncing)
 
  if(n_elements(tiepoint_syncing) EQ 0) then $
                         _tiepoint_syncing = grim_rc_value(keywords, value_ps, 'TIEPOINT_SYNCING')
