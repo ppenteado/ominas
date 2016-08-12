@@ -51,16 +51,8 @@
 ;===========================================================================
 pro cam_set_poly_matrices, cd, XX, YY, PP, QQ, noevent=noevent
 @core.include
-
- _cd = cor_dereference(cd)
-
-
- if(ptr_valid(_cd.fn_data_p)) then nv_ptr_free, _cd.fn_data_p
-
- _cd.fn_data_p = nv_ptr_new([nv_ptr_new(XX), nv_ptr_new(YY), nv_ptr_new(PP), nv_ptr_new(QQ)])
-
- cor_rereference, cd, _cd
- nv_notify, cd, type = 0, noevent=noevent
+ cam_set_fi_data, cd, $
+      [nv_ptr_new(XX), nv_ptr_new(YY), nv_ptr_new(PP), nv_ptr_new(QQ)]
 end
 ;===========================================================================
 

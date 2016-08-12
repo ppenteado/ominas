@@ -35,10 +35,6 @@
 ;  OUTPUT:
 ;	status:  Zero if valid data is returned
 ;
-;	n_obj:  Number of objects returned.
-;
-;	dim:  Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ;	NONE
@@ -119,8 +115,7 @@ end
 ; array_input
 ;
 ;=============================================================================
-function array_input, dd, keyword, prefix, $
-                      n_obj=n_obj, dim=dim, values=values, status=status, $
+function array_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
  end_keywords
@@ -145,8 +140,6 @@ function array_input, dd, keyword, prefix, $
 
 
  status = 0
- n_obj = 0
- dim = [1]
 
 
  ;-----------------------------------------------
@@ -161,10 +154,15 @@ function array_input, dd, keyword, prefix, $
 
 
  ;-----------------------------------------------
+ ; observer descriptor passed as key1
+ ;-----------------------------------------------
+ if(keyword_set(key1)) then od = key1
+ if(NOT keyword_set(od)) then nv_message, name='array_input', 'No observer.'
+
+ ;-----------------------------------------------
  ; primary descriptor passed as key2
  ;-----------------------------------------------
  if(keyword_set(key2)) then bx = key2
-
 
  ;-----------------------------------------------
  ; array names passed as key8
@@ -173,22 +171,17 @@ function array_input, dd, keyword, prefix, $
 
 
  ;-----------------------------------------------
- ; primary names passed as key6
- ;-----------------------------------------------
- if(keyword_set(key6) AND (NOT keyword_set(primaries))) then primaries = key6
- if(NOT keyword_set(primaries)) then primaries = cor_name(bx)
- if(NOT keyword_set(primaries)) then $
-                      nv_message, name='array_input', 'no primary.'
-
-
- ;-----------------------------------------------
  ; set up array descriptors
  ;-----------------------------------------------
- n = n_elements(primaries)
+ if(keyword_set(bx)) then xd = bx $
+ else if(keyword_set(od)) then xd = od $
+ else nv_message, name='array_input', 'No primary descriptor.'
+
+ n = n_elements(xd)
  for i=0, n-1 do $
   begin
    _ards = 0
-   primary = primaries[i]
+   primary = cor_name(xd[i])
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; read relevant array catalogs
@@ -221,10 +214,10 @@ function array_input, dd, keyword, prefix, $
          ;- - - - - - - - - - - - - - - - - - - - - - - -
          ; construct descriptors
          ;- - - - - - - - - - - - - - - - - - - - - - - -
-         _ards = arr_create_descriptors(1)
+         _ards = arr_create_descriptors(1, assoc_xd=cor_assoc_xd(xd[i]))
 
          cor_set_name, _ards, name
-         arr_set_primary, _ards, primary
+         arr_set_primary, _ards, xd[i]
          arr_set_surface_pts, _ards, dat
         end
        ards = append_array(ards, _ards)
@@ -240,8 +233,6 @@ function array_input, dd, keyword, prefix, $
   end
 
 
-
- n_obj = n_elements(ards)
  return, ards
 end
 ;===========================================================================

@@ -65,7 +65,7 @@ function disk_to_image, cd, dkx, p, body_pts=p_body, valid=valid
 	 p_body = dsk_disk_to_body(dkx, p)
 	 image_pts =  inertial_to_image_pos(cd,  $
                         bod_body_to_inertial_pos(dkx, p_body))
-	 valid = in_image(cd, image_pts, slop=0)
+         valid = lindgen(nv,nt)
 	 return, image_pts
 	end
 

@@ -33,10 +33,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned.
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ; 	jtime:		Years since 1950 (the epoch of catalog) for precession
@@ -208,7 +204,7 @@ end
 ; tycho2_get_stars 
 ;
 ;==========================================================================
-function tycho2_get_stars, filename, cam_vel=cam_vel, $
+function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
          noaberr=noaberr, names=names, mag=mag, jtime=jtime
@@ -531,6 +527,7 @@ w2 = min(where(ra2 LE ra_start))
  lum = Lsun * 10.d^( (4.83d0-m)/2.5d ) 
 
  _sd = str_create_descriptors(n, $
+	assoc_xd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
         avel=avel, $
@@ -555,13 +552,13 @@ end
 ; strcat_tycho2_input
 ;
 ;=============================================================================
-function strcat_tycho2_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function strcat_tycho2_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
 
- return, strcat_input('tycho2', dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+ return, strcat_input('tycho2', dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )

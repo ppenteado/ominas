@@ -33,10 +33,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned.
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ; 	jtime:		Years since 1950 (the epoch of catalog) for precession
@@ -208,7 +204,7 @@ end
 ; ucact_get_stars 
 ;
 ;==========================================================================
-function ucact_get_stars, filename, cam_vel=cam_vel, $
+function ucact_get_stars, dd, filename, cam_vel=cam_vel, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
          noaberr=noaberr, names=names, mag=mag, jtime=jtime
@@ -532,6 +528,7 @@ if(w2[0] EQ -1) then w2 = n_elements(ra_start)-1
  lum = Lsun * 10.d^( (4.83d0-m)/2.5d ) 
 
  _sd = str_create_descriptors(n, $
+	assoc_xd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
         avel=avel, $
@@ -556,17 +553,22 @@ end
 ; strcat_ucact_input
 ;
 ;=============================================================================
-function strcat_ucact_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function strcat_ucact_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
-
- return, strcat_input('ucact', dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+ ndd = n_elements(dd)
+ for i=0, ndd-1 do $
+  begin
+  _sd = strcat_input('ucact', dd[i], keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )
+   sd = append_array(sd, _sd)
+  end
 
+ return, sd
 end
 ;=============================================================================
 

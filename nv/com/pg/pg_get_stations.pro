@@ -35,11 +35,6 @@
 ;  INPUT:
 ;	std:		Input station descriptors; used by some translators.
 ;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
-;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
@@ -79,7 +74,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_stations, dd, trs, od=od, pd=pd, std=_std, gd=gd, no_sort=no_sort, $
+function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, gd=gd, $
                           override=override, verbatim=verbatim, $
 @station_keywords.include
 @nv_trs_keywords_include.pro
@@ -88,7 +83,7 @@ function pg_get_stations, dd, trs, od=od, pd=pd, std=_std, gd=gd, no_sort=no_sor
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, od=od, pd=pd, dd=dd
+ pgs_gd, gd, od=od, bx=bx, dd=dd
 
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -97,7 +92,7 @@ function pg_get_stations, dd, trs, od=od, pd=pd, std=_std, gd=gd, no_sort=no_sor
  if(keyword_set(stn__name)) then tr_first = 1
 ;tr_first = 1
 
- stds = dat_get_value(dd, 'STN_DESCRIPTORS', key1=od, key2=pd, key4=_std, key6=stn__primary, $$
+ stds = dat_get_value(dd, 'STN_DESCRIPTORS', key1=od, key2=bx, key4=_std, key6=stn__primary, $
                              key7=stn__time, key8=stn__name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
@@ -128,14 +123,6 @@ function pg_get_stations, dd, trs, od=od, pd=pd, std=_std, gd=gd, no_sort=no_sor
  n = n_elements(sub)
  stds = stds[sub]
 
-
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then stds = stds[pgs_name_sort(cor_name(stds))]
 
 
  return, stds

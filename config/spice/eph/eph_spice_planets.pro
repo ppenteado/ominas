@@ -7,6 +7,7 @@ function eph_spice_planets, dd, ref, target=target, time=sc_time, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
+ ndd = n_elements(dd)
  if(NOT keyword_set(sc)) then sc = 0l
 
  ;----------------------------------------------------------------
@@ -23,18 +24,23 @@ function eph_spice_planets, dd, ref, target=target, time=sc_time, $
  ;   record that string in the data descriptor.  The value of TARGET_DESC
  ;   is also provided as a backup.
  ;----------------------------------------------------------------------------
- if(NOT keyword_set(target)) then target = 'UNKNOWN' $
- else $
+ if(NOT keyword_set(target)) then target = make_array(ndd, val='UNKNOWN') $
+ else if(keyword_set(planets)) then $
   begin
-   cor_set_udata, dd, 'TARGET', target
-
-   w = where(planets EQ target)
-   if(w[0] NE -1) then $
+   nplanets = n_elements(planets)
+   names = strarr(nplanets,ndd)
+   for i=0, ndd-1 do $
     begin
-     if(n_elements(planets) EQ 1) then planets = target $
-     else planets = [target, rm_list_item(planets, w[0], only='')]
+     w = where(planets EQ target[i])
+     if(w[0] EQ -1) then names[*,i] = planets $
+     else $
+      begin
+       if(nplanets EQ 1) then names[i] = target[i] $
+       else names[*,i] = [target[i], rm_list_item(planets, w[0], only='')]
+      end
     end
   end
+ for i=0, ndd-1 do cor_set_udata, dd[i], 'TARGET', target[i]
 
 
  ;-----------------------------------------------------------
@@ -44,7 +50,7 @@ function eph_spice_planets, dd, ref, target=target, time=sc_time, $
             spice_planets(dd, ref, $
 		time = sc_time, $
 		target = target, $
-		plt_name = planets, $
+		name = names, $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs) )
 
 

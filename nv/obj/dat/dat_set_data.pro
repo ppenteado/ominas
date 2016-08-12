@@ -41,7 +41,7 @@
 ;
 ;
 ; STATUS:
-;	Complete
+;	Does not yet support sampling.
 ;
 ;
 ; SEE ALSO:

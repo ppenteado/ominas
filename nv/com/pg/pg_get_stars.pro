@@ -48,11 +48,6 @@
 ;
 ;	raw:		If set, no aberration corrections are performed.
 ;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
-;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
@@ -98,7 +93,7 @@
 ;-
 ;=============================================================================
 function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
-                     no_sort=no_sort, override=override, verbatim=verbatim, raw=raw, $
+                     override=override, verbatim=verbatim, raw=raw, $
                      radec=radec, corners=corners, $
 @star_keywords.include
 @nv_trs_keywords_include.pro
@@ -184,27 +179,19 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
    ;-------------------------------------------------------------------
    ; override the specified values (str__name cannot be overridden)
    ;-------------------------------------------------------------------
-   if(n_elements(str__lum) NE 0) then str_set_lum, sd, str__lum
-   if(n_elements(str__sp) NE 0) then str_set_sp, sd, str__sp
-   if(n_elements(str__orient) NE 0) then bod_set_orient, sd, str__orient
-   if(n_elements(str__avel) NE 0) then bod_set_avel, sd, str__avel
-   if(n_elements(str__pos) NE 0) then bod_set_pos, sd, str__pos
-   if(n_elements(str__vel) NE 0) then bod_set_vel, sd, str__vel
-   if(n_elements(str__time) NE 0) then bod_set_time, sd, str__time
-   if(n_elements(str__radii) NE 0) then glb_set_radii, sd, str__radii
-   if(n_elements(str__lora) NE 0) then glb_set_lora , sd, str__lora
-   if(n_elements(str__opaque) NE 0) then bod_set_opaque, sd, str__opaque
-   if(n_elements(str__opacity) NE 0) then sld_set_opacity, sd, str__opacity
+   w = nwhere(dd, cor_assoc_xd(sd))
+   if(n_elements(str__time) NE 0) then bod_set_time, sd, str__time[w]
+   if(n_elements(str__lum) NE 0) then str_set_lum, sd, str__lum[w]
+   if(n_elements(str__sp) NE 0) then str_set_sp, sd, str__sp[w]
+   if(n_elements(str__orient) NE 0) then bod_set_orient, sd, str__orient[*,*,w]
+   if(n_elements(str__avel) NE 0) then bod_set_avel, sd, str__avel[*,*,w]
+   if(n_elements(str__pos) NE 0) then bod_set_pos, sd, str__pos[*,*,w]
+   if(n_elements(str__vel) NE 0) then bod_set_vel, sd, str__vel[*,*,w]
+   if(n_elements(str__radii) NE 0) then glb_set_radii, sd, str__radii[*,w]
+   if(n_elements(str__lora) NE 0) then glb_set_lora , sd, str__lora[w]
+   if(n_elements(str__opaque) NE 0) then bod_set_opaque, sd, str__opaque[w]
+   if(n_elements(str__opacity) NE 0) then sld_set_opacity, sd, str__opacity[w]
   end
-
-
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword__set(no_sort)) then sd=sd[pgs_name_sort(cor_name(sd))]
 
 
 

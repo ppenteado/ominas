@@ -1,6 +1,6 @@
 @core__keywords.include
 type=type, $
-fn_data_p=fn_data_p, $
+fn_data=fn_data, $
 size=size, $
 origin=origin, $
 center=center, $

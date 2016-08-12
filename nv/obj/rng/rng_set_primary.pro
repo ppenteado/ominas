@@ -44,12 +44,12 @@
 ;	
 ;-
 ;===========================================================================
-pro rng_set_primary, rd, primary, noevent=noevent
+pro rng_set_primary, rd, xd, noevent=noevent
 @core.include
 
  _rd = cor_dereference(rd)
 
- _rd.primary=primary
+ _rd.__PROTECT__primary=xd
 
  cor_rereference, rd, _rd
  nv_notify, rd, type = 0, noevent=noevent

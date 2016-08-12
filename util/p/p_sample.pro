@@ -62,6 +62,7 @@ function p_sample, p, dd, spline=spline, lsquadratic=lsquadratic, quadratic=quad
  ; compute output spacings, and total path offsets 
  ;------------------------------------------------------------
  npp = round(len / dd)
+ if(npp EQ 0) then return, 0
  xx = dd * dindgen(npp)
 
 

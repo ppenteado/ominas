@@ -98,7 +98,7 @@ pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
                  map_set_fn_map_to_image, mds, map__fn_map_to_image
  if(n_elements(map__fn_image_to_map) NE 0) then $
                  map_set_fn_image_to_map, mds, map__fn_image_to_map
- if(n_elements(map__fn_data) NE 0) then map_set_fn_data_p, mds, map__fn_data
+ if(n_elements(map__fn_data) NE 0) then map_set_fn_data, mds, map__fn_data
  if(n_elements(map__scale) NE 0) then map_set_scale, mds, map__scale
  ;if(n_elements(map__ecc) NE 0) then map_set_ecc, mds, map__ecc ;no such function
  if(n_elements(map__radii) NE 0) then map_set_radii, mds, map__radii

@@ -325,24 +325,21 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
  ;--------------------------------------------------------
  ; determine primary
  ;--------------------------------------------------------
- if(map) then primary = cor_name(gd.cd) $ 
- else $
+ if(NOT map) then $
   begin
    pds = cor_select(active_xds, 'PLANET', /class)
-   if(NOT keyword_set(pds)) then pd = gd.pd $
-   else pd = pds
-
-   primary = cor_name(pd)
+   if(NOT keyword_set(pds)) then bx = gd.pd $
+   else bx = pds
   end
 
 
  stds = gd.std
  if(NOT keyword_set(stds)) then return, 0
 
- if(keyword_set(primary)) then $
+ if(keyword_set(bx)) then $
   begin
    for i=0, n_elements(stds)-1 do $
-     if((where(stn_primary(stds[i]) EQ primary))[0] NE -1) then select = append_array(select, i, /def)
+     if((where(cor_name(stn_primary(stds[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
    stds = stds[select]
   end
 
@@ -351,8 +348,7 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; compute points
  ;--------------------------------
-;;; station_ptd = pg_center(cd=gd.cd, bx=stds, fov=fov)
- station_ptd = pg_station(cd=gd.cd, std=stds, bx=pd, fov=fov)
+ station_ptd = pg_station(cd=gd.cd, std=stds, bx=bx, fov=fov)
  grim_message
 
 
@@ -361,7 +357,7 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, station_ptd, cd=gd.cd, gbx=pd, /globe, hide_ptd_globe, /cat, /one
+   pg_hide, station_ptd, cd=gd.cd, gbx=bx, /globe, hide_ptd_globe, /cat, /one
    grim_message
    if(hide) then hide_ptd_globe = objarr(nstd)
   end
@@ -427,23 +423,20 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
  ;--------------------------------------------------------
  ; determine primary
  ;--------------------------------------------------------
- if(map) then primary = cor_name(gd.cd) $ 
- else $
+ if(NOT map) then $
   begin
    pds = cor_select(active_xds, 'PLANET', /class)
-   if(NOT keyword_set(pds)) then pd = gd.pd $
-   else pd = pds
-
-   primary = cor_name(pd)
+   if(NOT keyword_set(pds)) then bx = gd.pd $
+   else bx = pds
   end
 
  ards = gd.ard
  if(NOT keyword_set(ards)) then return, 0
 
- if(keyword_set(primary)) then $
+ if(keyword_set(bx)) then $
   begin
    for i=0, n_elements(ards)-1 do $
-     if((where(arr_primary(ards[i]) EQ primary))[0] NE -1) then select = append_array(select, i, /def)
+     if((where(cor_name(arr_primary(ards[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
    ards = ards[select]
   end
 
@@ -452,7 +445,7 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; compute points
  ;--------------------------------
- array_ptd = pg_array(cd=gd.cd, ard=ards, bx=pd, fov=fov)
+ array_ptd = pg_array(cd=gd.cd, ard=ards, bx=bx, fov=fov)
  grim_message
 
 
@@ -461,7 +454,7 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, array_ptd, cd=gd.cd, gbx=pd, /globe, hide_ptd_globe, /cat, /one
+   pg_hide, array_ptd, cd=gd.cd, gbx=bx, /globe, hide_ptd_globe, /cat, /one
    grim_message
    if(hide) then hide_ptd_globe = objarr(nard)
   end

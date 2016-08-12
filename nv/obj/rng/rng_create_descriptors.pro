@@ -37,7 +37,7 @@
 ;
 ;	crd:	Core descriptor(s) to pass to cor_create_descriptors.
 ;
-;	primary:	Array (n) of primary strings.
+;	primary:	Array (n) of primary descriptors.
 ;
 ;	desc:	Array (n) of description strings.
 ;

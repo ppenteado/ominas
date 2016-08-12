@@ -1,5 +1,7 @@
 @core__keywords.include
 	filename=filename, $
+	min=min, $
+	max=max, $
 	dim=dim, $
 	type=type, $
 	data=data, $

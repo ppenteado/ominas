@@ -53,8 +53,7 @@ end_keywords)
  if(keyword_set(pole)) then self.pole = decrapify(pole[ii]) $
  else self.pole = _md0.pole
 
- if(keyword_set(fn_data_p)) then $
-   self.fn_data_p = decrapify(fn_data_p[ii])
+;;; if(keyword_set(fn_data)) then map_set_fn_data, md0, fn_data
 
  if(keyword_set(graphic)) then self.graphic = decrapify(graphic[ii])
 
@@ -101,8 +100,8 @@ end
 ;		Methods: map_type, map_set_type
 ;
 ;
-;	units:	2-element array to converts map radians to other
-;  		units (map radians/unit).
+;	units:	2-element array (lat,lon) to converts map radians to other
+;  		units (map radians/unit).  
 ;
 ;		Methods: map_units, map_set_units
 ;
@@ -146,9 +145,6 @@ end
 ;		Only the relative ratios are important.  All elements are 
 ;		set to 1 by default.
 ;
-;	fn_data_p:	Pointer to any data to be passed to transfrmation 
-;			functions.
-;
 ;
 ; STATUS:
 ;	Complete
@@ -181,8 +177,10 @@ pro ominas_map__define
 	rotate:		  0b, $			; Rotate value as in idl 'rotate'
 
 	fn_data_p:	   nv_ptr_new(), $	; data for user functions
-  pole:           pole }		; location of the map projection's pole
+        pole:           pole }		; location of the map projection's pole
     
+	rotate:		  0b $			; Rotate value as in idl 'rotate'
+    }
 
 end
 ;===========================================================================

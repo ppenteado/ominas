@@ -67,10 +67,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned.
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ;	ref:		Name of the reference frame for the output quantities.
@@ -149,10 +145,6 @@
 ;			depends on the routine, but typically this should
 ;			result in all kernels of the given type being loaded.  
 ;
-;	<type>_reject:	If set, the names of all kernels of the given type 
-;			are placed in the data descriptor in a user value with 
-;			a name of the form <type>_REJECTED_KERNELS.  
-;
 ;	protect:	Semicolon-delimited list of file specifications.  All
 ;			kernels matched are left untouched in the kernel pool.
 ;			If a file specification starts with '!', then only 
@@ -217,8 +209,7 @@
 ;	
 ;-
 ;=============================================================================
-function spice_input, dd, keyword, prefix, $
-                      n_obj=n_obj, dim=dim, values=values, status=status, $
+function spice_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
@@ -346,9 +337,6 @@ function spice_input, dd, keyword, prefix, $
    else if((size(_time, /type) NE 7)) then time = _time
   end
 
-;;;;; if(defined(time)) then $
-;;;;;  if(size(time, /type) EQ 7) then time = spice_str2et(time)
-
  ;- - - - - - - - - - - - - - - - - - -
  ; nokernels
  ;- - - - - - - - - - - - - - - - - - -
@@ -407,21 +395,6 @@ function spice_input, dd, keyword, prefix, $
  lsk_reverse= fix(tr_keyword_value(dd, 'lsk_reverse'))
  xk_reverse= fix(tr_keyword_value(dd, 'xk_reverse'))
 
- ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; reject keywords
- ;  If one of these keywords is set, the names of the all kernels of that 
- ;  type that are rejected by the auto-detect routine are stored in a data 
- ;  descriptor user value with a name of the form: <type>_REJECTED_KERNELS; 
- ;  e.g., "LSK_REJECTED_KERNELS".
- ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ck_reject = fix(tr_keyword_value(dd, 'ck_reject'))
- spk_reject = fix(tr_keyword_value(dd, 'spk_reject'))
- pck_reject = fix(tr_keyword_value(dd, 'pck_reject'))
- fk_reject = fix(tr_keyword_value(dd, 'fk_reject'))
- ik_reject = fix(tr_keyword_value(dd, 'ik_reject'))
- sck_reject = fix(tr_keyword_value(dd, 'sck_reject')) 
- lsk_reject = fix(tr_keyword_value(dd, 'lsk_reject'))
- xk_reject = fix(tr_keyword_value(dd, 'xk_reject'))
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; protect keyword
@@ -434,7 +407,7 @@ function spice_input, dd, keyword, prefix, $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if((NOT keyword_set(time)) AND keyword_set(od)) then $
   begin
-   if(NOT cor_isa(od, 'BODY')) then $
+   if(NOT cor_isa(od[0], 'BODY')) then $
     begin
      status = -1
      return, 0
@@ -455,7 +428,7 @@ function spice_input, dd, keyword, prefix, $
    if(NOT keyword_set(constants)) then $
     begin
      lsk_in = spice_kernel_parse(dd, prefix, 'lsk', $
-         reject=lsk_reject, exp=lsk_exp, strict=lsk_strict, all=lsk_all, time=time)
+                exp=lsk_exp, strict=lsk_strict, all=lsk_all, time=time)
 
      spice_sort_kernels, lsk_in, $
        reload=reload, reverse=reverse, protect=protect, $
@@ -481,8 +454,7 @@ function spice_input, dd, keyword, prefix, $
          kpath = spice_get_kpath('NV_SPICE_KER', klist)
          klist = kpath + '/' + klist
         end
-       k_in = spice_read_klist(klist, silent=silent, $
-                            time=time, prefix=prefix, label=dat_header(dd))
+       k_in = spice_read_klist(dd, klist, silent=silent, time=time, prefix=prefix)
       end
     end
 
@@ -496,20 +468,20 @@ function spice_input, dd, keyword, prefix, $
    if(NOT keyword_set(pos) AND (NOT keyword_set(od))) then $
      if(NOT keyword_set(constants)) then $
        ck_in = spice_kernel_parse(dd, prefix, 'ck', $
-          reject=ck_reject, exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
+                 exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
 
    if(NOT keyword_set(constants)) then spk_in = spice_kernel_parse(dd, prefix, 'spk', $
-        reject=spk_reject, exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
+                    exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
    pck_in = spice_kernel_parse(dd, prefix, 'pck', $
-        reject=pck_reject, exp=pck_exp, strict=pck_strict, all=pck_all, time=time)
+                    exp=pck_exp, strict=pck_strict, all=pck_all, time=time)
    fk_in = spice_kernel_parse(dd, prefix, 'fk', $
-        reject=fk_reject, exp=fk_exp, strict=fk_strict, all=fk_all, time=time)
+                    exp=fk_exp, strict=fk_strict, all=fk_all, time=time)
    ik_in = spice_kernel_parse(dd, prefix, 'ik', $
-        reject=ik_reject, exp=ik_exp, strict=ik_strict, all=ik_all, time=time)
+                    exp=ik_exp, strict=ik_strict, all=ik_all, time=time)
    if(NOT keyword_set(constants)) then sck_in = spice_kernel_parse(dd, prefix, 'sck', $
-        reject=sck_reject, exp=sck_exp, strict=sck_strict, all=sck_all, time=time)
+                    exp=sck_exp, strict=sck_strict, all=sck_all, time=time)
    xk_in = spice_kernel_parse(dd, prefix, 'xk', $
-        reject=xk_reject, exp=xk_exp, strict=xk_strict, all=xk_all, time=time)
+                    exp=xk_exp, strict=xk_strict, all=xk_all, time=time)
 
 
    all_kernels = ''
@@ -632,6 +604,7 @@ function spice_input, dd, keyword, prefix, $
      cor_set_udata, dd, tag, names
     end
   end
+
 
 
  return, result

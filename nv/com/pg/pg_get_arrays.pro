@@ -35,11 +35,6 @@
 ;  INPUT:
 ;	ard:		Input array descriptors; used by some translators.
 ;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
-;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
@@ -79,7 +74,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, no_sort=no_sort, $
+function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, $
                           override=override, verbatim=verbatim, $
 @array_keywords.include
 @nv_trs_keywords_include.pro
@@ -127,15 +122,6 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, no_sort=no_sort,
 
  n = n_elements(sub)
  ards = ards[sub]
-
-
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then ards = ards[pgs_name_sort(cor_name(ards))]
 
 
  return, ards

@@ -2,7 +2,7 @@
 ; dh_read_pds.pro
 ;
 ;=============================================================================
-function dh_read_pds, filename, label, udata, dim, type, abscissa=abscissa, $
+function dh_read_pds, filename, label, udata, dim, type, min, max, abscissa=abscissa, $
                           silent=silent, sample=sample, nodata=nodata
 
  tag_list_set, udata, 'DETACHED_HEADER', $
@@ -37,6 +37,8 @@ function dh_read_pds, filename, label, udata, dim, type, abscissa=abscissa, $
 ;;; type = pdspar(label, 'SAMPLE_TYPE')
 ;;; need to convert this to IDL type code
 ;;; see imagepds.pro
+min=0
+max=0
 
  if(keyword_set(nodata)) then return, 0
 

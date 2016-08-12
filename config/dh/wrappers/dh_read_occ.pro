@@ -2,11 +2,13 @@
 ; dh_read_occ.pro
 ;
 ;=============================================================================
-function dh_read_occ, filename, label, udata, dim, type, abscissa=abscissa, $
+function dh_read_occ, filename, label, udata, dim, type, min, max, abscissa=abscissa, $
                    silent=silent, sample=sample, nodata=nodata
  tag_list_set, udata, 'DETACHED_HEADER', $
                dh_read(dh_fname(filename), silent=silent)
 
+min=0
+max=0
  read_occ, filename, label, disk_pts=disk_pts, $
                      silent=silent, sample=sample, nodata=nodata, $
                      time_offset=time_offset, time_units=time_units, $

@@ -35,11 +35,6 @@
 ;  INPUT:
 ;	mds:		Input map descriptors; used by some translators.
 ;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
-;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
@@ -84,7 +79,7 @@
 ;-
 ;=============================================================================
 function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
-                        no_sort=no_sort, override=override, verbatim=verbatim, $
+                        override=override, verbatim=verbatim, $
 @map_keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
@@ -142,7 +137,7 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
 	rotate=map__rotate, $
 	type=map__type, $
 	units=map__units, $
-	fn_data_p=map__fn_data_p, $
+	fn_data=map__fn_data, $
 	size=map__size, $
 	origin=map__origin, $
 	center=map__center, $
@@ -198,20 +193,8 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
    if(n_elements(map__origin) NE 0) then map_set_origin, mds, map__origin
    if(n_elements(map__center) NE 0) then map_set_center, mds, map__center
    if(n_elements(map__range) NE 0) then map_set_range, mds, map__range
-   if(n_elements(map__fn_data_p) NE 0) then $
-                                     map_set_fn_data_p, mds, map__fn_data_p
-  
+   if(n_elements(map__fn_data) NE 0) then map_set_fn_data, mds, map__fn_data
   end
-
-
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then mds=mds[pgs_name_sort(cor_name(mds))]
-
 
 
  return, mds

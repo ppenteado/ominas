@@ -75,10 +75,9 @@ pro nv_clone_recurse, xd
   begin
    for i=0, n-1 do $
     begin
-;;     if(nv_get_directive(xd[i]) EQ 'NV_STOP') then return
-
      ntags = n_tags(xd[i])
-     for j=0, ntags-1 do $
+     tags = tag_names(xd[i])
+     for j=0, ntags-1 do if(NOT nv_protected(tags[j])) then $
       begin
        val = xd[i].(j)
        nv_clone_recurse, val
@@ -94,10 +93,10 @@ pro nv_clone_recurse, xd
    for i=0, n-1 do if(obj_valid(xd[i])) then $
     begin
      _xd = cor_dereference(xd[i])
-;;     if(nv_get_directive(_xd) EQ 'NV_STOP') then return
 
      ntags = n_tags(_xd)
-     for j=0, ntags-1 do $
+     tags = tag_names(_xd)
+     for j=0, ntags-1 do if(NOT nv_protected(tags[j])) then $
       begin
        val = _xd.(j)
        nv_clone_recurse, val

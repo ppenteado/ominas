@@ -2,7 +2,7 @@
 ; dawn_spice_sck_detect
 ;
 ;=============================================================================
-function dawn_spice_sck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
+function dawn_spice_sck_detect, dd, kpath, time=time, strict=strict, all=all
 
  ;--------------------------------
  ; new naming convention

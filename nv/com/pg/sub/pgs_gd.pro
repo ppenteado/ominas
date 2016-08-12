@@ -42,7 +42,7 @@
 pro pgs_gd, gd, $
                  dd=dd, crd=crd, bd=bd, md=md, dkx=dkx, gbx=gbx, dkd=dkd, $
                  gbd=gbd, pd=pd, sd=sd, std=std, rd=rd, cd=cd, sund=sund, bx=bx, $
-                 od=od, ard=ard, frame_bd=frame_bd
+                 od=od, ard=ard, xd=xd, frame_bd=frame_bd
 
  if(NOT keyword_set(gd)) then return
 
@@ -90,6 +90,9 @@ pro pgs_gd, gd, $
  if(NOT keyword_set(sund)) then $
     if((where(tags EQ 'SUND'))[0] NE -1) then $
                            if(keyword_set(gd.sund)) then sund = gd.sund
+ if(NOT keyword_set(xd)) then $
+    if((where(tags EQ 'xd'))[0] NE -1) then $
+                           if(keyword_set(gd.xd)) then xd = gd.xd
  if(NOT keyword_set(bx)) then $
     if((where(tags EQ 'BX'))[0] NE -1) then $
                            if(keyword_set(gd.bx)) then bx = gd.bx

@@ -14,6 +14,9 @@ end_keywords)
 
  self.abbrev = 'ARR'
 
+ if(keyword__set(primary)) then self.__PROTECT__primary = decrapify(primary[ii])
+ if(keyword__set(surface_pts)) then $
+           self.surface_pts_p = nv_ptr_new(decrapify(surface_pts[*,*,ii]))
 
 
  return, 1
@@ -46,7 +49,7 @@ end
 ;		Methods: arr_body, arr_set_body
 ;
 ;
-;	primary:	String giving the name of the primary body.
+;	primary:	Primary descriptor.
 ;
 ;			Methods: arr_primary, arr_set_primary
 ;
@@ -71,7 +74,7 @@ pro ominas_array__define
  struct = $
     { ominas_array, inherits ominas_core, $
 	surface_pts_p:	 ptr_new(), $		; Surface coords of location.
-        primary:         '' $                   ; Name of primary body
+        __PROTECT__primary:     obj_new() $	; primary pd
     }
 
 end

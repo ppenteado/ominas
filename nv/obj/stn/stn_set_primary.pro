@@ -20,7 +20,7 @@
 ;  INPUT: 
 ;	std:	Array (nt) of STATION descriptors.
 ;
-;	primary:	Array (nt) of primary strings.
+;	primary:	Array (nt) of primary descriptors.
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,7 +49,7 @@ pro stn_set_primary, std, primary, noevent=noevent
 
  _std = cor_dereference(std)
 
- _std.primary=primary
+ _std.__PROTECT__primary=primary
 
  cor_rereference, std, _std
  nv_notify, std, type = 0, noevent=noevent

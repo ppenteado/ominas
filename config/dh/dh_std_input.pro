@@ -34,10 +34,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ;	history:	History index to use in matching the keyword.  If not 
@@ -61,6 +57,19 @@
 ; 	Written by:	Spitale, 1998
 ;	
 ;-
+;=============================================================================
+
+
+
+;=============================================================================
+; dhsi_match_primary
+;
+;=============================================================================
+function dhsi_match_primary, xd, s
+ w = where(cor_name(xd) EQ s)
+ if(w[0] EQ -1) then return, obj_new()
+ return, xs[w[0]]
+end
 ;=============================================================================
 
 
@@ -273,7 +282,7 @@ end
 ; dh_std_input
 ;
 ;=============================================================================
-function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function dh_std_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
@@ -289,18 +298,21 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
  history = tr_keyword_value(dd, 'history')
  if(keyword_set(history)) then hi = fix(history)
 
+ xds = 0
+ ndd = n_elements(dd)
+ for i=0, ndd-1 do $
+  begin
+   ;--------------------------
+   ; get detached header
+   ;--------------------------
+   dh = dh_get(dd[i])
+   if(NOT keyword_set(dh)) then return, 0
 
- ;--------------------------
- ; get detached header
- ;--------------------------
- dh = dh_get(dd)
- if(NOT keyword_set(dh)) then return, 0
 
-
- ;--------------------------
- ; match keyword
- ;--------------------------
- case keyword of $
+   ;--------------------------
+   ; match keyword
+   ;--------------------------
+   case keyword of $
 
 	;-------------------camera keywords--------------------
 
@@ -336,7 +348,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	       dh_get_string(dh, 'cam_fn_i2f', n_obj=n_obj, dim=dim, $
 			                               hi=hi, status=status)
 
-	   cam_fn_data = dh_get_array(dh, 'cam_fn_data', n_obj=n_obj, dim=dim, $
+	   cam_fi_data = dh_get_array(dh, 'cam_fi_data', n_obj=n_obj, dim=dim, $
 			                               hi=hi, status=status)
 
 	   cam_fn_psf = $
@@ -348,11 +360,12 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 
 	   n_obj = n_elements(crds)
 	   cds = cam_create_descriptors(n_obj, crd=crds, bd=bds, $
+		assoc_xd=dd, $
 		exposure=cam_exposure, $
 		fn_focal_to_image=cam_fn_focal_to_image, $
 		fn_image_to_focal=cam_fn_image_to_focal, $
 		filters=cam_filters, $
-		fn_data=cam_fn_data, $
+		fi_data=cam_fi_data, $
 		fn_psf=cam_fn_psf, $
 		scale=cam_scale, $
 		size=cam_size, $
@@ -364,7 +377,8 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   status = 0
            dim = [1]
 
-	   return, cds
+	   xds = append_array(xds, cds)
+;	   return, cds
 	  end
 
 
@@ -379,7 +393,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   gbds = dhsi_get_globe(dh, 'plt', crds=crds, bds=bds, slds=slds)
 
 	   n_obj = n_elements(crds)
-	   pds = plt_create_descriptors(n_obj, crd=crds, bd=bds, gbd=gbds, slds=slds)
+	   pds = plt_create_descriptors(n_obj, crd=crds, bd=bds, gbd=gbds, slds=slds, assoc_xd=dd)
 
 	   format = dh_get_string(dh, 'plt_format', hi=hi)
 	   if(keyword_set(format)) then pds = dh_to_ominas(format[0], pds)
@@ -387,26 +401,28 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   status = 0
            dim = [1]
 
-	   return, pds
+	   xds = append_array(xds, pds)
+;	   return, pds
 	  end
 
 	;-------------------ring keywords--------------------
 
 	'RNG_DESCRIPTORS'   : $
 	  begin
+	   if(keyword_set(key1)) then pd = key1
 	   crds = dhsi_get_core(dh, 'rng')
 	   if(NOT keyword_set(crds)) then return, 0
 	   bds = dhsi_get_body(dh, 'rng', crds=crds)
 	   slds = dhsi_get_solid(dh, 'rng', bds=bds)
 	   dkds = dhsi_get_disk(dh, 'rng', crds=crds, bds=bds, slds=slds)
 
-	   rng_primary = $
+	   rng_primary = dh_match_primary(pd, $
                  dh_get_string(dh, 'rng_primary', n_obj=n_obj, dim=dim, $
-			                                hi=hi, status=status)
+			                                hi=hi, status=status) )
 
 	   n_obj = n_elements(crds)
 	   rds = rng_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, dkd=dkds, $
-		primary=rng_primary)
+		primary=rng_primary, assoc_xd=dd)
 
 	   format = dh_get_string(dh, 'rng_format', hi=hi)
 	   if(keyword_set(format)) then rds = dh_to_ominas(format[0], rds)
@@ -414,7 +430,8 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   status = 0
            dim = [1]
 
-	   return, rds
+	   xds = append_array(xds, rds)
+;	   return, rds
 	  end
 
         ;-------------------star keywords--------------------
@@ -434,7 +451,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 			                                hi=hi, status=status)
 
 	   n_obj = n_elements(crds)
-	   sds = str_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, gbd=gbds, $
+	   sds = str_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, gbd=gbds, assoc_xd=dd, $
 		lum=str_lum, $
 		sp=str_sp)
 
@@ -444,7 +461,8 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   status = 0
            dim = [1]
 
-	   return, sds
+	   xds = append_array(xds, sds)
+;	   return, sds
 	  end
 
 
@@ -455,7 +473,7 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   crds = dhsi_get_core(dh, 'map')
 	   if(NOT keyword_set(crds)) then return, 0
 
-	   map_fn_data_p = dh_get_array(dh, 'map_fn_data', n_obj=n_obj, $
+	   map_fn_data = dh_get_array(dh, 'map_fn_data', n_obj=n_obj, $
 	                                       dim=dim, hi=hi, status=status)
 
 	   map_type = dh_get_string(dh, 'map_type', n_obj=n_obj, dim=dim, $
@@ -498,9 +516,10 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 
 	   n_obj = n_elements(crds)
 	   mds = map_create_descriptors(n_obj, $
+		assoc_xd=dd, $
 		crd=crds, $
 		type=map_type, $
-		fn_data_p=map_fn_data_p, $
+		fn_data=map_fn_data, $
 		graphic=map_graphic, $
 		rotate=map_rotate, $
 		size=map_size, $
@@ -517,14 +536,16 @@ function dh_std_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=
 	   status = 0
            dim = [1]
 
-	   return, mds
+	   xds = append_array(xds, mds)
+;	   return, mds
 	  end
 
 
 
 	else : 	status = -1
- endcase
+   endcase
+  end
 
-
+ return, xds
 end
 ;===========================================================================

@@ -63,7 +63,7 @@ pro pnt_set, ptd, points=points, vectors=vectors, flags=flags, $
  if(defined(input)) then pnt_set_input, ptd, input, /noevent
  if(defined(data)) then pnt_set_data, ptd, data, /noevent
  if(defined(tags)) then pnt_set_tags, ptd, tags, /noevent
- if(defined(assoc_xd)) then pnt_set_assoc_xd, ptd, assoc_xd, /noevent
+ if(defined(assoc_xd)) then cor_set_assoc_xd, ptd, assoc_xd, /noevent
  if(defined(udata)) then cor_set_udata, ptd, udata, uname, /noevent
 
  nv_notify, ptd, type = 0, noevent=noevent

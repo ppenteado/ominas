@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function gll_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
-                             all=all, reject=reject, strict=strict
+                             all=all, strict=strict
 
  all_files = file_search(ckpath + '*.plt')
 

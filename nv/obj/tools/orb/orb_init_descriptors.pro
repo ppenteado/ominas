@@ -32,7 +32,7 @@ function orb_create_descriptors, n, gbx, $
 
  rd = rng_create_descriptors(n, $
 		name=name, $
-		primary = make_array(n, val=cor_name(gbx)), $
+		primary = make_array(n, val=gbx), $
 		orient = (bod_orient(gbx))[linegen3z(3,3,n)], $
 		pos = reform(tr(bod_pos(gbx)) # $
                                     make_array(n, val=1d), 1,3,n, /over), $

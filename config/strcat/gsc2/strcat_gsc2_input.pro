@@ -32,10 +32,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned.
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ;  TRANSLATOR KEYWORDS:
 ; 	jtime:		Years since 1950 (the epoch of catalog) for precession
@@ -382,6 +378,7 @@ function gsc2_get_stars, filename, b1950=b1950, cam_vel=cam_vel, $
  lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d ) 
 
  _sd = str_create_descriptors( n, $
+	assoc_xd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
         avel=avel, $
@@ -405,13 +402,13 @@ end
 ; strcat_gsc2_input
 ;
 ;=============================================================================
-function strcat_gsc2_input, dd, keyword, n_obj=n_obj, dim=dim, status=status, $
+function strcat_gsc2_input, dd, keyword, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
 
- return, strcat_input('gsc2', dd, keyword, n_obj=n_obj, dim=dim, status=status, $
+ return, strcat_input('gsc2', dd, keyword, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )

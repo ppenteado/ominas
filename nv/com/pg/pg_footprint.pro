@@ -29,11 +29,10 @@
 ;	bx:	Array (n_objects, n_timesteps) of descriptors of objects 
 ;		which must be a subclass of BODY.
 ;
-;	gd:	Generic descriptor.  If given, the cd and bx inputs 
-;		are taken from the cd and bx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the cd, od, and bx inputs 
+;		are taken from this structure instead of from those keywords.
 ;
-;	fov:	 If set points are computed only within this many camera
+;	fov:	 If set, points are computed only within this many camera
 ;		 fields of view.
 ;
 ;	sample:	 Sampling rate; default is 1 pixel.
@@ -55,7 +54,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, fov=fov, $
+function pg_footprint, cd=cd, bx=bx, gd=gd, fov=fov, $
     sample=sample
 @pnt_include.pro
 
@@ -84,45 +83,38 @@ function pg_footprint, cd=cd, od=od, bx=bx, gd=gd, fov=fov, $
  ;-----------------------------------------------
  ; determine points description
  ;-----------------------------------------------
- desc = cor_class(bx) + '_footprint'
 
 
  ;-----------------------------------
- ; get footprint for each object
+ ; get footprints
  ;-----------------------------------
- footprint_ptd = objarr(n_objects)
 
- for i=0, n_objects-1 do $
-  begin
-   surface_pts = footprint(od, bx, sample=sample, valid=valid, body_pts=body_pts)
-   if(keyword_set(surface_pts)) then $
-    begin 
-     flags = bytarr(n_elements(body_pts[*,0]))
-     points = body_to_image_pos(cd, bx, body_pts, inertial=inertial_pts, valid=valid)
+ inertial_p = footprint(cd, bx, sample=sample, body_p=body_p, hit=ii)
+ if(keyword_set(inertial_p)) then $
+  begin 
+   nhit = n_elements(inertial_p)
+   footprint_ptd = objarr(nhit)
 
-     if(keyword__set(valid)) then $
-      begin
-       invalid = complement(body_pts[*,0], valid)
-       if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-      end
+   for i=0, nhit-1 do $
+    begin
+     bx0 = bx[ii[i]]
+     inertial_pts = *inertial_p[i]
+     body_pts = *body_p[i]
+     np = n_elements(inertial_pts)/3
+
+     points = body_to_image_pos(cd, bx0, body_pts)
 
      footprint_ptd[i] = $
-        pnt_create_descriptors(name = cor_name(bx), $
-		desc = desc[i], $
-		input = pgs_desc_suffix(bx=bx[i,0], cd[0]), $
-		assoc_xd = bx, $
-		vectors = inertial_pts, $
-                flags = flags, $
-		points = points)
+        pnt_create_descriptors(name = cor_name(bx0), $
+              desc = cor_class(bx0) + '_footprint', $
+              input = pgs_desc_suffix(bx=bx0, cd[0]), $
+              assoc_xd = bx0, $
+              vectors = inertial_pts, $
+              points = points)
 
-     cor_set_udata, footprint_ptd[i], 'SURFACE_PTS', surface_pts
      cor_set_udata, footprint_ptd[i], 'BODY_PTS', body_pts
-
-     if(NOT bod_opaque(bx[i,0])) then 
-              pnt_set_flags, footprint_ptd[i], $
-                           make_array(n_elements(flags), val=PTD_MASK_INVISIBLE)
-    end 
-  end
+    end
+  end 
 
 
  ;------------------------------------------------------

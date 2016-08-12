@@ -41,11 +41,6 @@
 ;
 ;	gd:		Generic descriptors.  Can be used in place of od.
 ;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
-;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
@@ -91,7 +86,7 @@
 ;-
 ;=============================================================================
 function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
-                      no_sort=no_sort, override=override, verbatim=verbatim, $
+                      override=override, verbatim=verbatim, $
 @ring_keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
@@ -178,36 +173,26 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    ;-------------------------------------------------------------------
    ; override the specified values (rng__name cannot be overridden)
    ;-------------------------------------------------------------------
-   if(n_elements(rng__primary) NE 0) then rng_set_primary, rd, rng__primary
-
-   if(n_elements(rng__orient) NE 0) then bod_set_orient, rd, rng__orient
-   if(n_elements(rng__avel) NE 0) then bod_set_avel, rd, rng__avel
-   if(n_elements(rng__pos) NE 0) then bod_set_pos, rd, rng__pos
-   if(n_elements(rng__vel) NE 0) then bod_set_vel, rd, rng__vel
-   if(n_elements(rng__time) NE 0) then bod_set_time, rd, rng__time
-   if(n_elements(rng__opaque) NE 0) then bod_set_opaque, grd, rng__opaque
-   if(n_elements(rng__opacity) NE 0) then sld_set_opacity, grd, rng__opacity
-
-   if(n_elements(rng__sma) NE 0) then dsk_set_sma, rd, rng__sma
-   if(n_elements(rng__ecc) NE 0) then dsk_set_ecc, rd, rng__ecc
-   if(n_elements(rng__dap) NE 0) then dsk_set_dap, rd, rng__dap
-   if(n_elements(rng__opaque) NE 0) then bod_set_opaque, rd, rng__opaque
-   if(n_elements(rng__nm) NE 0) then dsk_set_nm, rd, rng__nm
-   if(n_elements(rng__m) NE 0) then dsk_set_m, rd, rng__m
-   if(n_elements(rng__em) NE 0) then dsk_set_em, rd, rng__em
-   if(n_elements(rng__tapm) NE 0) then dsk_set_tapm, rd, rng__tapm
-   if(n_elements(rng__dtapmdt) NE 0) then dsk_set_dtapmdt, rd, rng__dtapmdt
+   w = nwhere(dd, cor_assoc_xd(rd))
+   if(n_elements(rng__time) NE 0) then bod_set_time, rd, rng__time[w]
+   if(n_elements(rng__primary) NE 0) then rng_set_primary, rd, rng__primary[w]
+   if(n_elements(rng__orient) NE 0) then bod_set_orient, rd, rng__orient[*,*,w]
+   if(n_elements(rng__avel) NE 0) then bod_set_avel, rd, rng__avel[*,*,w]
+   if(n_elements(rng__pos) NE 0) then bod_set_pos, rd, rng__pos[*,*,w]
+   if(n_elements(rng__vel) NE 0) then bod_set_vel, rd, rng__vel[*,*,w]
+   if(n_elements(rng__opaque) NE 0) then bod_set_opaque, grd, rng__opaque[w]
+   if(n_elements(rng__opacity) NE 0) then sldd_set_opacity, grd, rng__opacity[w]
+   if(n_elements(rng__sma) NE 0) then dsk_set_sma, rd, rng__sma[*,*,w]
+   if(n_elements(rng__ecc) NE 0) then dsk_set_ecc, rd, rng__ecc[*,*,w]
+   if(n_elements(rng__dap) NE 0) then dsk_set_dap, rd, rng__dap[*,*,w]
+   if(n_elements(rng__opaque) NE 0) then bod_set_opaque, rd, rng__opaque[w]
+   if(n_elements(rng__nm) NE 0) then dsk_set_nm, rd, rng__nm[w]
+   if(n_elements(rng__m) NE 0) then dsk_set_m, rd, rng__m[*,*,w]
+   if(n_elements(rng__em) NE 0) then dsk_set_em, rd, rng__em[*,*,w]
+   if(n_elements(rng__tapm) NE 0) then dsk_set_tapm, rd, rng__tapm[*,*,w]
+   if(n_elements(rng__dtapmdt) NE 0) then dsk_set_dtapmdt, rd, rng__dtapmdt[*,*,w]
   end
 
-
-
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword__set(no_sort)) then rd=rd[pgs_name_sort(cor_name(rd))]
 
  return, rd
 end

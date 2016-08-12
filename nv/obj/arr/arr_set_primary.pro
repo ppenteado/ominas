@@ -20,7 +20,7 @@
 ;  INPUT: 
 ;	ard:	Array (nt) of ARRAY descriptors.
 ;
-;	primary:	Array (nt) of primary strings.
+;	primary:	Array (nt) of primary descriptors.
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,7 +49,7 @@ pro arr_set_primary, ard, primary, noevent=noevent
 
  _ard = cor_dereference(ard)
 
- _ard.primary=primary
+ _ard.__PROTECT__primary=primary
 
  cor_rereference, ard, _ard
  nv_notify, ard, type = 0, noevent=noevent

@@ -125,8 +125,15 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
                ptd=*points_ptd_list[i], source_ptd=*source_points_ptd_list[i]
 
    for i=0, nn-1 do ptr_free, dep_list[i], points_ptd_list[i], source_points_ptd_list[i]
+
+
   end
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; Call user overlay notification function
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+; if() then $
+grim_user_notify, grim_data, plane=plane
 end
 ;=============================================================================
 
@@ -340,12 +347,24 @@ end
 ; grim_add_descriptor
 ;
 ;=============================================================================
-pro grim_add_descriptor, grim_data, xdp, xd, one=one, replace=replace, $
-                         noregister=noregister
+pro grim_add_descriptor, grim_data, xdp, _xd, one=one, replace=replace, $
+                         noregister=noregister, assoc_xd=assoc_xd
 @grim_constants.common
 
- if(NOT keyword_set(xd)) then return
+ if(NOT keyword_set(_xd)) then return
  plane = grim_get_plane(grim_data)
+
+ xd = _xd
+
+ ;------------------------------------------------------
+ ; add only asociated descriptors if assoc_xd given
+ ;------------------------------------------------------
+ if(keyword_set(assoc_xd)) then $
+  begin
+   w = where(cor_assoc_xd(xd) EQ assoc_xd)
+   if(w[0] EQ -1) then return
+   xd = xd[w]
+  end
 
  grim_mark_descriptor, xd, MARK_FRESH
 
@@ -440,7 +459,7 @@ function grim_get_cameras, grim_data, replace=replace, plane=plane
     end
 
    grim_message, /clear
-   cd = pg_get_cameras(plane.dd, plane.trs_cd, cam_time=t, orient=orient)
+   cd = pg_get_cameras(plane.dd, plane.trs_cd, time=t, default_orient=orient)
    md = pg_get_maps(plane.dd)
    grim_message
 
@@ -511,13 +530,13 @@ function grim_get_planets, grim_data, $
  if(NOT load) then pd = get_object_by_name(*plane.pd_p, names) $
  else $
   begin
-   pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, plt_name=names, plane.trs_pd)
+   pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, name=names, plane.trs_pd)
    if(NOT keyword_set(pd)) then return, 0
 
    ;- - - - - - - - - - - - - - - - - - - - - - - -
    ; get planets that require primary descriptors
    ;- - - - - - - - - - - - - - - - - - - - - - - -
-   pdd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, pd=pd, plt_name=names, plane.trs_pd)
+   pdd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, pd=pd, name=names, plane.trs_pd)
    if(keyword_set(pdd)) then pd = [pd, pdd]
 
    names = cor_name(pd)
@@ -561,7 +580,7 @@ function grim_get_sun, grim_data, replace=replace, plane=plane
      if(w[0] NE -1) then star = 0
     end 
 
-   if(star) then sund = pg_get_stars(plane.dd, od=*plane.cd_p, str_name='SUN', plane.trs_sund) $
+   if(star) then sund = pg_get_stars(plane.dd, od=*plane.cd_p, name='SUN', plane.trs_sund) $
    else $
     begin
      pd = (pg_get_planets(plane.dd, od=*plane.cd_p, plane.trs_sund))[1]
@@ -679,7 +698,7 @@ function grim_get_stars, grim_data, replace=replace, silent=silent, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(copy NE -1) then sd = nv_clone(*planes[copy].sd_p) $
    else sd = pg_get_stars(plane.dd, od=*plane.cd_p, $
-                     /no_sort, str_name=names, plane.trs_sd, corners=corners)
+                     '/tr_nosort', name=names, plane.trs_sd, corners=corners)
    if(NOT keyword_set(sd)) then $
     begin
      grim_rm_descriptor, grim_data, plane=plane, plane.sd_p
@@ -714,7 +733,7 @@ function grim_get_rings, grim_data, replace=replace, plane=plane, names=names
 ;   grim_clear_objects, grim_data, /rd, plane=plane
 
    rd = pg_get_rings(plane.dd, $
-                  od=*plane.cd_p, pd=*plane.pd_p, rng_name=names, plane.trs_rd)
+                  od=*plane.cd_p, pd=*plane.pd_p, name=names, plane.trs_rd)
 
    if(NOT keyword_set(rd)) then return, 0
 
@@ -743,11 +762,12 @@ function grim_get_stations, grim_data, replace=replace, plane=plane, names=names
  if(mark EQ MARK_FRESH) then std = get_object_by_name(*plane.std_p, names) $
  else $
   begin
-   if(NOT map) then primaries = cor_name(*plane.pd_p) $
-   else primaries = cor_name(*plane.cd_p)
+;   if(NOT map) then primaries = cor_name(*plane.pd_p) $
+;   else primaries = cor_name(*plane.cd_p)
+   if(NOT map) then bx = *plane.pd_p
 
    std = pg_get_stations(plane.dd, $
-                  od=*plane.cd_p, stn_primary=primaries, stn_name=names, plane.trs_std)
+                  od=*plane.cd_p, bx=bx, name=names, plane.trs_std)
 
    if(NOT keyword_set(std)) then return, 0
 
@@ -775,11 +795,12 @@ function grim_get_arrays, grim_data, replace=replace, plane=plane, names=names
  if(mark EQ MARK_FRESH) then ard = get_object_by_name(*plane.ard_p, names) $
  else $
   begin
-   if(NOT map) then primaries = cor_name(*plane.pd_p) $
-   else primaries = cor_name(*plane.cd_p)
+;   if(NOT map) then primaries = cor_name(*plane.pd_p) $
+;   else primaries = cor_name(*plane.cd_p)
+   if(NOT map) then bx = *plane.pd_p
 
    ard = pg_get_arrays(plane.dd, $
-                  od=*plane.cd_p, arr_primary=primaries, arr_name=names, plane.trs_ard)
+                  od=*plane.cd_p, bx=bx, name=names, plane.trs_ard)
 
    if(NOT keyword_set(ard)) then return, 0
 

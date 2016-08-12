@@ -211,11 +211,11 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
       if(keyword_set(grid_pts)) then $
        inertial_pts = bod_body_to_inertial_pos(xd, grid_pts)
  
-;     if(keyword__set(valid)) then $
-;      begin
-;       invalid = complement(points[0,*], valid)
-;       if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-;      end
+     if(keyword__set(valid)) then $
+      begin
+       invalid = complement(points[0,*], valid)
+       if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
+      end
 
      ;-----------------------------------
      ; store grid

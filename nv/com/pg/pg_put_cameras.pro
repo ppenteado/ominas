@@ -102,7 +102,7 @@ pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
                 cam_set_fn_focal_to_image, cds, cam__fn_focal_to_image
  if(n_elements(cam__fn_image_to_focal) NE 0) then $
                 cam_set_fn_image_to_focal, cds, cam__fn_image_to_focal
- if(n_elements(cam__fn_data) NE 0) then cam_set_fn_data_p, cds, cam__fn_data
+ if(n_elements(cam__fi_data) NE 0) then cam_set_fi_data, cds, cam__fi_data
  if(n_elements(cam__scale) NE 0) then cam_set_scale, cds, cam__scale
  if(n_elements(cam__oaxis) NE 0) then cam_set_oaxis, cds, cam__oaxis
  if(n_elements(cam__size) NE 0) then cam_set_size, cds, cam__size

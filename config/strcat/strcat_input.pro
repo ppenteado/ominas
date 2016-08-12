@@ -70,7 +70,7 @@ function strcat_input, cat, dd, keyword, n_obj=n_obj, dim=dim, values=values, st
  first = 1
  for i=0, nregions-1 do $
   begin
-   _sd = call_function(fn_get_stars, regions[i], noaberr=noaberr, cam_vel=cam__vel, $
+   _sd = call_function(fn_get_stars, dd, regions[i], noaberr=noaberr, cam_vel=cam__vel, $
                        ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
                        faint=faint, bright=bright, nbright=nbright, $
                        b1950=b1950, names=names, mag=mag, jtime=jtime)

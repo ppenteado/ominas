@@ -59,21 +59,21 @@ override = 1
 ;- - - - - - - - - - - - - 
 if(override) then $
  cd = pg_get_cameras(dd, /over, $
-	cam_name='VGR1_ISS_NA', $
-	cam_orient= $
-		 [ [-0.177287575, -0.966450211, -0.185857758 ], $
-		   [ 0.507898045, -0.251604865,  0.823853487 ], $
-		   [ 0.842976092, -0.051662194, -0.535464589 ] ], $
-	cam_avel=tr([0.0, 0.0, 0.0]), $
-	cam_pos=tr([0.0, 0.0, 0.0]), $
-	cam_vel=tr([0.0, 0.0, 0.0]), $
-	cam_time=972603249.d, $
-	cam_scale=[7.858656e-06,7.858656e-06], $
-	cam_oaxis=[499.0,499.0], $
-	cam_size=[1000,1000], $
-	cam_fn_focal_to_image='cam_focal_to_image_linear', $
-	cam_fn_image_to_focal='cam_image_to_focal_linear', $
-	cam_fn_data=ptr_new() $
+	name='VGR1_ISS_NA', $
+	orient= $
+	     [ [-0.177287575, -0.966450211, -0.185857758 ], $
+	       [ 0.507898045, -0.251604865,  0.823853487 ], $
+	       [ 0.842976092, -0.051662194, -0.535464589 ] ], $
+	avel=tr([0.0, 0.0, 0.0]), $
+	pos=tr([0.0, 0.0, 0.0]), $
+	vel=tr([0.0, 0.0, 0.0]), $
+	time=972603249.d, $
+	scale=[7.858656e-06,7.858656e-06], $
+	oaxis=[499.0,499.0], $
+	size=[1000,1000], $
+	fn_focal_to_image='cam_focal_to_image_linear', $
+	fn_image_to_focal='cam_image_to_focal_linear', $
+	fi_data=ptr_new() $
    )
 
 ;- - - - - - - - - - - - - 
@@ -81,18 +81,18 @@ if(override) then $
 ;- - - - - - - - - - - - - 
 if(override) then $
  pd = pg_get_planets(dd, od=cd, /over, $
-	plt_name='SATURN', $
-	plt_orient= $
-		 [ [-0.254669368,  0.963251789,  0.085378596], $
-		   [-0.962535206, -0.260997177,  0.073528563], $
-		   [ 0.093110093, -0.063454432,  0.993631746] ], $
-	plt_avel=tr([0.0854, 0.0732, 0.9937])*1.74e-4, $
-	plt_pos=tr([-23433172000.0, -6105736000.0, -1223129375.0]), $
-	plt_vel=[ tr([9500.0, 0.0, 0.0]), $
-	          tr([0.0, 0.1, 0.0]) ], $
-	plt_time=972603249.d, $
-	plt_radii=[60268000.,60268000.,54364000.], $
-	plt_lora=0.0 $
+	name='SATURN', $
+	orient= $
+	     [ [-0.254669368,  0.963251789,  0.085378596], $
+	       [-0.962535206, -0.260997177,  0.073528563], $
+	       [ 0.093110093, -0.063454432,  0.993631746] ], $
+	avel=tr([0.0854, 0.0732, 0.9937])*1.74e-4, $
+	pos=tr([-23433172000.0, -6105736000.0, -1223129375.0]), $
+	vel=[ tr([9500.0, 0.0, 0.0]), $
+	      tr([0.0, 0.1, 0.0]) ], $
+	time=972603249.d, $
+	radii=[60268000.,60268000.,54364000.], $
+	lora=0.0 $
    )
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -123,14 +123,14 @@ if(override) then $
 ;	      tr([60268000.,60268000.,54364000.])])
 ;plt_lora = [0.0,0.0]
 ;pd = pg_get_planets(dd, od=cd, $
-;	plt_name=plt_name, $
-;	plt_orient=plt_orient, $
-;	plt_avel=plt_avel, $
-;	plt_pos=plt_pos, $
-;	plt_vel=plt_vel, $
-;	plt_time=plt_time, $
-;	plt_radii=plt_radii, $
-;	plt_lora=plt_lora $
+;	name=plt_name, $
+;	orient=plt_orient, $
+;	avel=plt_avel, $
+;	pos=plt_pos, $
+;	vel=plt_vel, $
+;	time=plt_time, $
+;	radii=plt_radii, $
+;	lora=plt_lora $
 ;  )
 
 ;- - - - - - - - - - - - - 
@@ -138,23 +138,23 @@ if(override) then $
 ;- - - - - - - - - - - - - 
 if(override) then $
  rd = pg_get_rings(dd, pd=pd, od=cd, /over, $
-	rng_name='MAIN_RING_SYSTEM', $
-	rng_primary='SATURN', $
-	rng_orient= $
-		 [ [-0.254669368,  0.963251789,  0.085378596], $
-		   [-0.962535206, -0.260997177,  0.073528563], $
-		   [ 0.093110093, -0.063454432,  0.993631746] ], $
-	rng_avel=tr([0.0854, 0.0732, 0.9937])*1.74e-4, $
-	rng_pos=tr([-23433172000.0, -6105736000.0, -1223129375.0]), $
-	rng_vel=[tr([9500.0, 0.0, 0.0]), $
-	         tr([0.0, 0.1, 0.0]) ] , $
-	rng_time=972603249.d, $
-;	rng_m = tr([tr([16,0,0,0]), $
-;	        tr([8,0,0,0])]), $
-;	rng_em = tr([tr([0.05d,0,0,0]), $
-;	             tr([0.05d,0,0,0])]), $
-	rng_sma=tr([75000000.0,136800000.0]), $
-	rng_ecc=tr([0.0, 0.0]) $
+	name='MAIN_RING_SYSTEM', $
+	primary='SATURN', $
+	orient= $
+	     [ [-0.254669368,  0.963251789,  0.085378596], $
+	       [-0.962535206, -0.260997177,  0.073528563], $
+	       [ 0.093110093, -0.063454432,  0.993631746] ], $
+	avel=tr([0.0854, 0.0732, 0.9937])*1.74e-4, $
+	pos=tr([-23433172000.0, -6105736000.0, -1223129375.0]), $
+	vel=[tr([9500.0, 0.0, 0.0]), $
+	     tr([0.0, 0.1, 0.0]) ] , $
+	time=972603249.d, $
+;	m = tr([tr([16,0,0,0]), $
+;	    tr([8,0,0,0])]), $
+;	em = tr([tr([0.05d,0,0,0]), $
+;		 tr([0.05d,0,0,0])]), $
+	sma=tr([75000000.0,136800000.0]), $
+	ecc=tr([0.0, 0.0]) $
 	)
 
 ;- - - - - - - - - - - - - 
@@ -162,14 +162,14 @@ if(override) then $
 ;- - - - - - - - - - - - - 
 if(override) then $
  sund = pg_get_stars(dd, od=cd, /over, $
-	str_name='SUN', $
-	str_pos=tr([1.421392d12,4.3105676d10,-4.3613585d10]) $
+	name='SUN', $
+	pos=tr([1.421392d12,4.3105676d10,-4.3613585d10]) $
    )
 
 if(NOT override) then cd = pg_get_cameras(dd)
 if(NOT override) then pd = pg_get_planets(dd, od=cd)
 if(NOT override) then rd = pg_get_rings(dd, pd=pd, od=cd, '/system')
-if(NOT override) then sund = pg_get_stars(dd, od=cd, str_name='SUN')
+if(NOT override) then sund = pg_get_stars(dd, od=cd, name='SUN')
 
 
 ;-------------------------------------------------------------------------

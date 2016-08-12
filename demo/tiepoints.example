@@ -22,7 +22,7 @@ ndd = n_elements(dd)
 cd = objarr(ndd)
 pd = objarr(ndd)
 for i=0, ndd-1 do cd[i] = pg_get_cameras(dd[i])
-for i=0, ndd-1 do pd[i] = pg_get_planets(dd[i], od=cd[i], plt_name=['ENCELADUS'])
+for i=0, ndd-1 do pd[i] = pg_get_planets(dd[i], od=cd[i], name=['ENCELADUS'])
 
 
 ;-------------------------------------------------------------------------

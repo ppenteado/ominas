@@ -48,8 +48,8 @@ pro strcat_get_inputs, dd, env, key, $
  ; observer descriptor passed as key1
  ;-----------------------------------------------
  if(keyword_set(key1)) then ods = key1 
- if(NOT cor_isa(ods[0], 'BODY')) then ods = 0
  if(NOT keyword_set(ods)) then return
+ if(NOT cor_isa(ods[0], 'BODY')) then ods = 0
 
  ;-----------------------------------------------
  ; sun descriptor passed as key2

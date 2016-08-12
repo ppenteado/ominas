@@ -78,7 +78,7 @@ nv_message, /silent
 ;   kewords appear in quite in the argument list, and are passed directly 
 ;   to the translators, so they are application-specific.
 ;
-;   The keyword 'plt_name' is used in pg_get_planets to select only Jupiter
+;   The keyword 'name' is used in pg_get_planets to select only Jupiter
 ;   and the Galilean satellites.  By default, every body that's relevant to
 ;   the mission and can be found in the kernel list is returned.  Also, the 
 ;   SPICE translator organizes the pd array such that pd[0] gives the 
@@ -102,24 +102,20 @@ cd = pg_get_cameras(dd)					; Use any defaults in
 							; translators.tab
 
 ;pd = pg_get_planets(dd, od=cd, $
-;       plt_name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
-;       plt_name=['SATURN', 'TITAN'])
-; pd = pg_get_planets(dd, od=cd, plt_name=['JUPITER'])
+;       name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
+;       name=['SATURN', 'TITAN'])
+; pd = pg_get_planets(dd, od=cd, name=['JUPITER'])
 
 ;pd = pg_get_planets(dd)			; No observer descriptor,
 						;  so no aberration corrections
-;;ltcorr, cd, pd, c=pgc_const('c')		; Light-time correction
-;;stellab, cd, pd, c=pgc_const('c')		; Stellar aberration correction
-;abcorr, cd, pd, c=pgc_const('c')		; Light-time and stellar ab.
-						;  corections
 
 pd = pg_get_planets(dd, od=cd)
 
 rd = pg_get_rings(dd, pd=pd, od=cd)
 ;rd = pg_get_rings(dd, pd=pd, od=cd, $
-;          rng_name=['MAIN_RING_SYSTEM', 'A_RING', 'B_RING', 'C_RING'])
+;          name=['MAIN_RING_SYSTEM', 'A_RING', 'B_RING', 'C_RING'])
 
-sund = pg_get_stars(dd, od=cd, str_name='SUN')
+sund = pg_get_stars(dd, od=cd, name='SUN')
 
 
 
@@ -408,37 +404,37 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;-------------------------------------------------------------------------
 
 md = pg_get_maps(/over, bx=pd[0], $
-	map_type='RECTANGULAR', $
-	/map_graphic,  $
-	map_fn_data=ptr_new(), $
-	map_scale=1.0, $
-;	map_center=[0d,!dpi],$
-;	map_size=[800,400] $
-	map_size=[400,200] $
+	type='RECTANGULAR', $
+	/graphic,  $
+	fn_data=ptr_new(), $
+	scale=1.0, $
+;	center=[0d,!dpi],$
+;	size=[800,400] $
+	size=[400,200] $
 	)
 
 md = pg_get_maps(/over, bx=pd[0], $
-	map_type='ORTHOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_size=[400,400], $
-	map_center=[!dpi/6d,!dpi] $
-;	map_center=[!dpi/2d,0] $	; north polar
-;	map_center=[-!dpi/2d,0] $	; south polar
+	type='ORTHOGRAPHIC', $
+	fn_data=ptr_new(), $
+	size=[400,400], $
+	center=[!dpi/6d,!dpi] $
+;	center=[!dpi/2d,0] $	    ; north polar
+;	center=[-!dpi/2d,0] $	    ; south polar
 	)
 
 md = pg_get_maps(/over, bx=pd[0], $
-	map_type='STEREOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_scale=0.5, $
-	map_size=[400,400], $
-	map_center=[!dpi/2d,0d] $
+	type='STEREOGRAPHIC', $
+	fn_data=ptr_new(), $
+	scale=0.5, $
+	size=[400,400], $
+	center=[!dpi/2d,0d] $
 	)
 
 md = pg_get_maps(/over, bx=pd[0], $
-	map_type='MERCATOR', $	
-;	map_type='MOLLWEIDE', $	
-	map_fn_data=ptr_new(), $
-	map_size=[400,200] $
+	type='MERCATOR', $  
+;	type='MOLLWEIDE', $ 
+	fn_data=ptr_new(), $
+	size=[400,200] $
 	)
 
 ;to set projection bounds...
@@ -459,11 +455,11 @@ tvim, /new, map
 ; reproject the previous map
 ;------------------------------------------------
 md1 = pg_get_maps(/over, bx=pd[0], $
-	map_type='ORTHOGRAPHIC', $
-;	map_type='STEREOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_size=[400,400], $
-	map_center=[!dpi/6d,!dpi] $
+	type='ORTHOGRAPHIC', $
+;	type='STEREOGRAPHIC', $
+	fn_data=ptr_new(), $
+	size=[400,400], $
+	center=[!dpi/6d,!dpi] $
 	)
 
 map=0

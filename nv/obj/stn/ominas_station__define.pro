@@ -14,6 +14,8 @@ end_keywords)
 
  self.abbrev = 'STN'
 
+ if(keyword__set(primary)) then self.__PROTECT__primary = decrapify(primary[ii])
+ if(keyword__set(surface_pt)) then self.surface_pt = decrapify(surface_pts[*,*,ii])
 
 
  return, 1
@@ -46,7 +48,7 @@ end
 ;		Methods: stn_body, stn_set_body
 ;
 ;
-;	primary:	String giving the name of the primary body.
+;	primary:	Primary body descriptor.
 ;
 ;			Methods: stn_primary, stn_set_primary
 ;
@@ -75,7 +77,7 @@ pro ominas_station__define
  struct = $
     { ominas_station, inherits ominas_body, $
 	surface_pt:	 dblarr(1,3), $		; Surface coords of location.
-        primary:         '' $                   ; Name of primary planet
+        __PROTECT__primary:     obj_new() $	; primary pd
     }
 
 end

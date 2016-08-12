@@ -13,14 +13,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       ltcorr, obs_bx, targ_bx, c=c
+;       targ_bx = (ltcorr, obs_bx, targ_bx0, c=c)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	obs_bx:	Any subclass of BODY describing the observer.
+;	obs_bx:  Any subclass of BODY describing the observer.
 ;
-;	obs_bx:	Array(nt) of any subclass of BODY describing the targets.
+;	targ_bx0: Array(nt) of any subclass of BODY describing the targets.
 ;
 ;  OUTPUT:  NONE
 ;
@@ -38,8 +38,8 @@
 ;  OUTPUT: NONE
 ;
 ;
-; RETURN: NONE
-;
+; RETURN: 
+;	New target descriptors.  
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -47,7 +47,7 @@
 ;
 ;-
 ;=============================================================================
-pro ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate
+function ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate
 
  if(NOT keyword_set(epsilon)) then epsilon = 1d-7
  if(NOT keyword_set(iterate)) then epsilon = 1d100
@@ -85,6 +85,8 @@ pro ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate
    w = where(abs(dt) GT epsilon)
   end
 
+
+ return, targ_bxt
 end
 ;=============================================================================
 

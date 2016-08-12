@@ -33,10 +33,6 @@
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned
 ;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
 ;
 ; RETURN:
 ;	Data associated with the requested keyword.
@@ -147,8 +143,7 @@ end
 ; orb_input
 ;
 ;=============================================================================
-function orb_input, dd, keyword, prefix, $
-                      n_obj=n_obj, dim=dim, values=values, status=status, $
+function orb_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
@@ -164,8 +159,6 @@ function orb_input, dd, keyword, prefix, $
 
 
  status = 0
- n_obj = 0
- dim = [1]
 
  ;-----------------------------------------------
  ; translator arguments
@@ -303,6 +296,7 @@ function orb_input, dd, keyword, prefix, $
          pos = orb_to_cartesian(dkd, vel=vel)
          
          _pd = plt_create_descriptors(1, $
+		assoc_xd=dd, $
 		name=cor_name(dkd), $
 		pos=pos, $
 		vel=vel, $
@@ -322,7 +316,6 @@ function orb_input, dd, keyword, prefix, $
   end
 
 
- n_obj = n_elements(orb_pds)
  return, orb_pds
 end
 ;===========================================================================

@@ -3,11 +3,12 @@
 ;
 ;
 ;===========================================================================
-function spice_read_klist, klist, ck_out=ck_out, silent=silent, $
-                                time=_time, prefix=prefix, label=label
+function spice_read_klist, dd, klist, ck_out=ck_out, silent=silent, $
+                                                time=_time, prefix=prefix
 common spice_klist_block, klist_last, _inlines
 
  fn_spice_time = prefix + '_spice_time'
+ ndd = n_elements(dd)
 
 ; if(NOT keyword_set(_time)) then $
 ;   et = spice_str2et(call_function(fn_spice_time, label)) $
@@ -81,9 +82,12 @@ common spice_klist_block, klist_last, _inlines
  if(wstart[0] NE -1) then $
   begin
    if(NOT defined(_time)) then $
-     et = spice_str2et(call_function(fn_spice_time, label)) $
+    for i=0, ndd-1 do $
+      et = append_array(et, $
+                spice_str2et(call_function(fn_spice_time, dat_header(dd[i]))) ) $
    else et = _time
-   et = et[0]
+   et = et
+  _time = et
 
    standard_lines = standard_lines[0:wstart[0]-1]
 
@@ -102,7 +106,7 @@ common spice_klist_block, klist_last, _inlines
    et_start = spice_str2et(start_times)
    et_stop = spice_str2et(stop_times)
 
-   w = where((et GE et_start) AND (et LE et_stop))
+   w = where((et_start LT min(et)) AND (et_stop GT max(et)))
    if(w[0] NE -1) then time_lines = inlines[wstart[w[0]]+1:wstop[w[0]]-1]
   end
 

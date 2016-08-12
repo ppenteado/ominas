@@ -57,6 +57,6 @@
 function pp_build_extra,keys,vals
 compile_opt idl2,logical_predicate
 ret=(!version.release ge '8.3') ? orderedhash() : hash()
-foreach key,keys,ik do ret[key]=*(vals[ik])
+if(keyword_set(keys)) then foreach key,keys,ik do ret[key]=*(vals[ik])
 return,ret.tostruct()
 end

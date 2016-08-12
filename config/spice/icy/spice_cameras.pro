@@ -8,18 +8,17 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
 		cam_exposure=cam_exposure, cam_size=cam_size, $
 		cam_fn_focal_to_image=cam_fn_focal_to_image, $
 		cam_fn_image_to_focal=cam_fn_image_to_focal, $
-		cam_fn_data=cam_fn_data, tol=tol, constants=constants, $
+		cam_fi_data=cam_fi_data, tol=tol, constants=constants, $
 		n_obj=n_obj, dim=dim, status=status, orient=orient, $
                 spice_fn = spice_fn, pos=pos, cam_fn_psf=cam_fn_psf, $
                 cam_filters=cam_filters, obs=obs,$
                 cam_fn_body_to_image=cam_fn_body_to_image,$
                 cam_fn_body_to_inertial=cam_fn_body_to_inertial
 
+ ndd = n_elements(dd)
  if(NOT keyword_set(tol)) then tol = 1d
 
  status = 0
- n_obj = 1 
- dim = [1]
 
  cam_name = dat_instrument(dd)
 
@@ -39,63 +38,63 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
  ;--------------------------------------------------------------------
  if(NOT keyword_set(constants)) then $
   begin
-   nets=n_elements(cam_time)
-   cmats=dblarr(3,3,nets)
-   cam_poss=dblarr(1,3,nets)
-   cam_vels=dblarr(1,3,nets)
-   for iet=nets-1,0,-1 do begin
-   status = spice_get_cameras(sc, inst, plat, ref, cam_time[iet], tol, $
-                                cam_pos, cam_vel, cmat, cam_avel, pos, obs=obs)
-   cmats[*,*,iet]=cmat
-   cam_poss[*,*,iet]=cam_pos
-   cam_vels[*,*,iet]=cam_vel
-   endfor
-   if ptr_valid(cam_fn_data[0]) && isa(*cam_fn_data[0],'struct') then begin
-    tn=tag_names(*cam_fn_data[0])
-    void=where(tn eq 'ORIENTS',count)
-    if (count gt 0) then begin
-      (*cam_fn_data[0]).orients=cmats
-      (*cam_fn_data[0]).poss=cam_poss
-      (*cam_fn_data[0]).vels=cam_vels
-    endif
-    
-   endif
-   ;- - - - - - - - - - - - - - - - - - - - - -
-   ; handle spice errors
-   ;- - - - - - - - - - - - - - - - - - - - - -
-   if(status NE 0) then $
-    begin
-     if(keyword_set(orient)) then $
-      begin
-       cmat = orient
-       status = 0
-      end $
-     else $
-      begin
-       nv_message, name = 'spice_cameras', /continue, $
-                         'Error obtaining camera data for ' + cor_name(dd)
-       return, 0
-      end
-    end
+   cmat = dblarr(3,3,ndd)
+   cam_pos = dblarr(1,3,ndd)
+   cam_vel = dblarr(1,3,ndd)
+   cam_avel = dblarr(1,3,ndd)
 
-   ;- - - - - - - - - - - - - - - - - - - - - -
-   ; validate orientation matrix
-   ;- - - - - - - - - - - - - - - - - - - - - -
-   if(NOT pos) then $
-    if(NOT valid_rotation(cmat)) then $
-     begin
-      nv_message, name = 'spice_cameras', /continue, $
-                    'Invalid C-matrix for ' + cor_name(dd) + '.'
-      status = -1
-      return, 0
-     end
+   for i=0, ndd-1 do $
+    begin
+     status = spice_get_cameras(sc, inst, plat, ref, cam_time[i], tol, $
+                              _cam_pos, _cam_vel, _cmat, _cam_avel, pos, obs=obs)
+
+     ;- - - - - - - - - - - - - - - - - - - - - -
+     ; handle spice errors
+     ;- - - - - - - - - - - - - - - - - - - - - -
+     if(status NE 0) then $
+      begin
+       if(keyword_set(orient)) then $
+        begin
+         _cmat = orient
+         status = 0
+        end $
+       else $
+        begin
+         nv_message, name = 'spice_cameras', /continue, $
+                           'Error obtaining camera data for ' + cor_name(dd[i])
+         return, 0
+        end
+      end
+
+     ;- - - - - - - - - - - - - - - - - - - - - -
+     ; validate orientation matrix
+     ;- - - - - - - - - - - - - - - - - - - - - -
+     if(NOT pos) then $
+      if(NOT valid_rotation(_cmat)) then $
+       begin
+        nv_message, name = 'spice_cameras', /continue, $
+                      'Invalid C-matrix for ' + cor_name(dd[i]) + '.'
+        status = -1
+        return, 0
+       end
+
+     ;- - - - - - - - - - - - - - - - - - - - - -
+     ; store results for this input
+     ;- - - - - - - - - - - - - - - - - - - - - -
+     if(keyword_set(_cmat)) then cmat[*,*,i] = _cmat
+     cam_pos[0,*,i] = _cam_pos
+     cam_vel[0,*,i] = _cam_vel
+;     cam_avel[0,*,i] = _cam_avel
+
+    end
   end
 
 
  ;------------------------------
  ; create a camera descriptor
  ;------------------------------
- cd = cam_create_descriptors(n_obj, $
+ cd = cam_create_descriptors(ndd, $
+		assoc_xd=dd, $
 		name=cam_name, $
 		orient=cmat, $
 		exposure=cam_exposure, $
@@ -105,7 +104,7 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
 		time=cam_time, $
 		fn_focal_to_image=cam_fn_focal_to_image, $
 		fn_image_to_focal=cam_fn_image_to_focal, $
-		fn_data=cam_fn_data, $
+		fi_data=cam_fi_data, $
 		scale=cam_scale, $
 		fn_psf=cam_fn_psf, $
 		filters=cam_filters, $

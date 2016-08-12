@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Returns the primary string for each given array descriptor.
+;	Returns the primary descriptor for each given array descriptor.
 ;
 ;
 ; CATEGORY:
@@ -30,7 +30,7 @@
 ;
 ;
 ; RETURN:
-;	Primary string associated with each given array descriptor.
+;	Primary descriptors associated with each given array descriptor.
 ;
 ;
 ; STATUS:
@@ -48,7 +48,7 @@ function arr_primary, ard, noevent=noevent
 
  nv_notify, ard, type = 1, noevent=noevent
  _ard = cor_dereference(ard)
- return, _ard.primary
+ return, _ard.__PROTECT__primary
 end
 ;===========================================================================
 

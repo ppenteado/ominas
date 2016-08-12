@@ -45,7 +45,17 @@
 ;	
 ;-
 ;=============================================================================
-function bod_body_to_inertial, bd, v
+function bod_body_to_inertial, bd, v, _sub=sub
+@core.include
+ _bd = cor_dereference(bd)
+ return, call_function(_bd[0].fn_body_to_inertial, bd, v, _sub=sub)
+end
+;===========================================================================
+
+
+
+;=============================================================================
+function bod_body_to_inertial, bd, v, _sub=sub
 @core.include
  _bd = cor_dereference(bd)
 
@@ -53,7 +63,7 @@ function bod_body_to_inertial, bd, v
  sv = size(v)
  nv = sv[1]
 
- sub = linegen3x(nv,3,nt)
+ if(NOT keyword_set(sub)) then sub = linegen3x(nv,3,nt)
 
  M0 = (_bd.orient[*,0,*])[sub]
  M1 = (_bd.orient[*,1,*])[sub]

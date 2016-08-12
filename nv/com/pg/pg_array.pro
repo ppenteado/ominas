@@ -99,7 +99,7 @@ function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
      xd = 0
      if(keyword_set(bx)) then $
       begin
-       w = where(arr_primary(ard[i,j]) EQ cor_name(bx[*,j]))
+       w = where(arr_primary(ard[i,j]) EQ bx[*,j])
 
        if(w[0] NE -1) then $
         begin
@@ -129,9 +129,10 @@ function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
 		             assoc_xd = xd, $
 		             points = points, $
 		             vectors = inertial_pts)
-   flags = pnt_flags(array_ptd[i,j])
-   if(NOT keyword__set(valid)) then flags[*] = PTD_MASK_INVISIBLE
-   pnt_set_flags, array_ptd[i,j], flags
+     cor_set_udata, array_ptd[i], 'SURFACE_PTS', surf_pts
+     flags = pnt_flags(array_ptd[i,j])
+     if(NOT keyword__set(valid)) then flags[*] = PTD_MASK_INVISIBLE
+     pnt_set_flags, array_ptd[i,j], flags
 
      if(keyword_set(xd)) then $
        if(NOT bod_opaque(xd[0])) then pnt_set_flags, array_ptd[i,j], hide_flag

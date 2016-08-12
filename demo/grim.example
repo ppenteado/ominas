@@ -31,7 +31,7 @@
 ;-------------------------------------
 file = 'data/n1350122987.2'
 
-dd = dat_read(file, im, label, /silent)
+dd = dat_read(file, /silent)
 ;grim, dd
 ;stop
 
@@ -45,9 +45,9 @@ grim, dd, zoom=0.75, /order
 ;-------------------------------------
 cd = pg_get_cameras(dd, 'ck_in=auto')
 pd = pg_get_planets(dd, od=cd, $
-       plt_name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
+       name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
 rd = pg_get_rings(dd, pd=pd, od=cd)
-sund = pg_get_stars(dd, od=cd, str_name='SUN')
+sund = pg_get_stars(dd, od=cd, name='SUN')
 
 gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 

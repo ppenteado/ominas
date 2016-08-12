@@ -52,12 +52,12 @@ function glb_graphic_to_globe, gbd, v, noevent=noevent
  nv_notify, gbd, type = 1, noevent=noevent
  _gbd = cor_dereference(gbd)
 
-stop
- result = v
- result[*,[0,1],*] = $
-    transpose($
-        graphic_to_centric(_gbd.radii, transpose(v[*,[0,1],*], [1,0,2])), [1,0,2])
- return, result
+;stop
+; result = v
+; result[*,[0,1],*] = $
+;    transpose($
+;        graphic_to_centric(_gbd.radii, transpose(v[*,[0,1],*], [1,0,2])), [1,0,2])
+; return, result
 
 
 

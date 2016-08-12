@@ -14,7 +14,7 @@ pro data_archive_set, dap, data, nhist=nhist, index=index
    if(NOT keyword_set(nhist)) then nhist = 2
    daps = ptrarr(nhist)
    for i=0, nhist-1 do daps[i] = nv_ptr_new(0)
-   *daps[0] = data
+   if(keyword_set(data)) then *daps[0] = data
    dap = nv_ptr_new(daps)
    return
   end

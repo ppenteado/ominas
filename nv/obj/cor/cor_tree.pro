@@ -52,8 +52,7 @@ function cor_tree, od
    super = cor_class(od, /super)
    classes = append_array(classes, class)
    if(class EQ 'CORE') then return, classes
-   ;stat = execute('od = obj_new("' + super[0] + '", 1)')
-   od=obj_new(super[0],1)
+   od = obj_new(super[0],1)
    class = super
   endrep until(0)
 

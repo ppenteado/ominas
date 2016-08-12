@@ -36,8 +36,8 @@ w_wac = !d.window
 cd_nac = pg_get_cameras(dd_nac)
 cd_wac = pg_get_cameras(dd_wac)
 
-pd_nac = pg_get_planets(dd_nac, od=cd_nac, plt_name=['JUPITER'])
-pd_wac = pg_get_planets(dd_wac, od=cd_wac, plt_name=['JUPITER'])
+pd_nac = pg_get_planets(dd_nac, od=cd_nac, name=['JUPITER'])
+pd_wac = pg_get_planets(dd_wac, od=cd_wac, name=['JUPITER'])
 
 gd_nac = {cd:cd_nac, gbx:pd_nac}
 gd_wac = {cd:cd_wac, gbx:pd_wac}

@@ -74,12 +74,5 @@ if(keyword__set(___files)) then $
    end &$
  end
 
-;if(keyword__set(___files)) then dd = nv_read(___files, /silent)
-;___stat = execute(xidl_command('grim, dd', ___keys, ___val_ps))
-
-;print,xidl_command('grim, ___files', ___keys, ___val_ps)
-;___stat = execute(xidl_command('grim, ___files', ___keys, ___val_ps))
-;help,pp_build_extra(___keys,___val_ps)
 call_procedure,'grim',___files,_extra=pp_build_extra(___keys,___val_ps)
-
 

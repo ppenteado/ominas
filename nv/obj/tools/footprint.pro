@@ -18,9 +18,9 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	cd:		Camera descripor.
+;	cd:		Camera descripor.  Only one allowed.
 ;
-;	bx:		Body descriptor; globe or disk.
+;	bx:		Body descriptors.
 ;
 ;  OUTPUT:  NONE
 ;
@@ -40,12 +40,14 @@
 ;  OUTPUT: 
 ;	image_pts:	Footprint points in the image frame.
 ;
-;	body_pts:	Footprint points in the body frame.
+;	body_p:		Array (nhit) of pointers to body footprint points for 
+;			each body hit.
 ;
-;       valid:  	Indices of valid output points.
+;	hit_indices:	Array (nhit) of bx indices.  
 ;
 ; RETURN: 
-;	Array nv,3,nt of surface points.
+;	Array (nhit) of pointers to inertial footprint points for each body hit.  
+;	Zero is returned if no bodies are hit.
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -53,10 +55,9 @@
 ;
 ;-
 ;=============================================================================
-function footprint, cd, bx, slop=slop, corners=corners, $
-                   image_pts=image_pts, body_pts=body_pts, valid=valid, sample=sample
+function footprint, cd, bx, slop=slop, corners=corners, hit_indices=ii, $
+                   image_pts=image_pts, body_p=body_p, sample=sample
 
- status = -1
 
  ;-----------------------------------
  ; compute image border points
@@ -66,28 +67,28 @@ function footprint, cd, bx, slop=slop, corners=corners, $
  np = n_elements(image_pts)/2
 
 
- ;--------------------------------------------------
- ; get body edge points
- ;--------------------------------------------------
-; limb_pts_body = $
-;     glb_get_limb_points(bx, bod_inertial_to_body_pos(bx, bod_pos(cd)))
-;;; edge_pts_body = get_edge_points(cd=cd, bx=bx)
+ ;-----------------------------------
+ ; compute intersections
+ ;-----------------------------------
+ raytrace, image_pts, cd=cd, bx=bx, $
+                  hit_matrix=body_pts, hit_list=ii, hit_indices=hit
+ if(ii[0] EQ -1) then return, 0
 
 
  ;-----------------------------------
- ; compute footprint
+ ; compute inertial points
  ;-----------------------------------
- surface_pts = image_to_surface(cd, bx, image_pts, body_pts=body_pts, valid=valid)
-
- nsurf = n_elements(surface_pts)/3
- if(nsurf GT np) then $
+ nhit = n_elements(ii)
+ inertial_p = ptrarr(nhit)
+ body_p = ptrarr(nhit)
+ for i=0, nhit-1 do $
   begin
-   surface_pts = surface_pts[0:np-1,*]
-   body_pts = body_pts[0:np-1,*]
+   w = where(hit EQ ii[i])
+   inertial_p[i] = ptr_new(bod_body_to_inertial_pos(bx[ii[i]], body_pts[w,*]))
+   body_p[i] = ptr_new(body_pts[w,*])
   end
 
-;;; test whether any limb points fall inside footprint; in image space
 
- return, surface_pts
+ return, inertial_p
 end
 ;================================================================================

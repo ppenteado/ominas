@@ -36,7 +36,7 @@ end
 ;
 ;=============================================================================
 function dawn_spice_spk_detect, dd, spkpath, djd=djd, time=time, $
-                             all=all, reject=reject, strict=strict
+                             all=all, strict=strict
 common dawn_spice_spk_block, all_files, all_names_block, spkpath_block, $
       jd_start_block, jd_stop_block, jd_release_block
 

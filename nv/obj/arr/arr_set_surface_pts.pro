@@ -18,7 +18,7 @@
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	ard:	Array (nt) of ARRAY descriptors.
+;	ard:		Array (nt) of ARRAY descriptors.
 ;
 ;	surface_pts:	Array (nv,3,nt) of surface_pts vectors.
 ;

@@ -2,11 +2,9 @@
 ; gll_from_ominas
 ;
 ;=============================================================================
-function gll_from_ominas, _od, orient_fn
+function gll_from_ominas, od, orient_fn
 
- if(NOT keyword__set(_od)) then return, 0
-
- od = nv_clone(_od)
+ if(NOT keyword__set(od)) then return, 0
 
  if(cor_isa(od, 'CAMERA')) then $
   begin

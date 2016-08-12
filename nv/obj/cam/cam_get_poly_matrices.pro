@@ -52,15 +52,15 @@
 pro cam_get_poly_matrices, cd, XX, YY, PP, QQ
 @core.include
 
- _cd = cor_dereference(cd)
+ data = cam_fi_data(cd)
 
  ;---------------------------------------------------------
- ; distortion matrices and inverses are in fn_data
+ ; distortion matrices and inverses are in fi_data
  ;---------------------------------------------------------
- XX = *(*(_cd.fn_data_p))[0] 
- YY = *(*(_cd.fn_data_p))[1]
- PP = *(*(_cd.fn_data_p))[2] 
- QQ = *(*(_cd.fn_data_p))[3]
+ XX = *data[0] 
+ YY = *data[1]
+ PP = *data[2] 
+ QQ = *data[3]
 
 end
 ;===========================================================================

@@ -30,7 +30,7 @@ end
 ;
 ;=============================================================================
 function dawn_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
-                             all=all, reject=reject, strict=strict
+                             all=all, strict=strict
 common dawn_spice_ck_block, all_files, all_names_block, ckpath_block, $
       jd_start_block, jd_stop_block
 

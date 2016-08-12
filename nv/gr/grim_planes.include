@@ -61,7 +61,7 @@ end
 ;=============================================================================
 pro grim_next_plane, grim_data, norefresh=norefresh
 
-; if(NOT keyword_set(grim_data)) then grim_data = grim_get_data()
+ if(grim_data.n_planes EQ 1) then return
 
  ;-----------------------------------
  ; change to next valid plane
@@ -82,6 +82,7 @@ pro grim_next_plane, grim_data, norefresh=norefresh
  if(NOT keyword_set(norefresh)) then grim_refresh, grim_data, no_erase=no_erase, /noglass
 
  grim_call_plane_callbacks, grim_data
+ grim_sync_planes, grim_data
 end
 ;=============================================================================
 
@@ -92,6 +93,8 @@ end
 ;
 ;=============================================================================
 pro grim_previous_plane, grim_data
+
+ if(grim_data.n_planes EQ 1) then return
 
  ;-----------------------------------
  ; change to next valid plane
@@ -111,6 +114,7 @@ pro grim_previous_plane, grim_data
  
  grim_refresh, grim_data, no_erase=no_erase, /noglass
  grim_call_plane_callbacks, grim_data
+ grim_sync_planes, grim_data
 end
 ;=============================================================================
 
@@ -518,7 +522,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 		roi_ptd		:	pnt_create_descriptors(), $
 		star_labels_p	:	ptr_new(0), $
 		mask_p		: 	ptr_new(-1), $
-		tie_ptdp		: 	ptr_new(obj_new()), $
+		tiepoint_ptdp	: 	ptr_new(obj_new()), $
 		curve_ptdp	: 	ptr_new(obj_new()), $
 		user_ptd_tlp	:	ptr_new(), $	
 		notes_p		:	ptr_new(''), $
