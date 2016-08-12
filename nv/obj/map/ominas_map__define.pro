@@ -177,10 +177,7 @@ pro ominas_map__define
 	rotate:		  0b, $			; Rotate value as in idl 'rotate'
 
 	fn_data_p:	   nv_ptr_new(), $	; data for user functions
-        pole:           pole }		; location of the map projection's pole
-    
-	rotate:		  0b $			; Rotate value as in idl 'rotate'
-    }
+  pole:           pole }		; location of the map projection's pole
 
 end
 ;===========================================================================
