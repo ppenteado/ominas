@@ -32,4 +32,8 @@
         -       station_input                   -
 	-       ring_input			-
 	-  	strcat_ucact_input		-		/j2000
+
+ CAS_RADAR     dh_std_input            dh_std_output
+       -       cas_radar_input
+
   END

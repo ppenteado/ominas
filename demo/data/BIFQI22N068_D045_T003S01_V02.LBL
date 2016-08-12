@@ -1,0 +1,102 @@
+PDS_VERSION_ID                   = PDS3
+
+/*       PRODUCT DESCRIPTION */
+
+DATA_SET_ID                      = "CO-SSA-RADAR-5-BIDR-V1.0"
+DATA_SET_NAME                    = "CASSINI ORBITER SSA RADAR 5 BIDR V1.0"
+PRODUCER_INSTITUTION_NAME        = "JET PROPULSION LABORATORY"
+PRODUCER_ID                      = JPL
+PRODUCER_FULL_NAME               = "Inst Lead Charles Elachi contact Bryan Stiles"
+PRODUCT_ID                       = BIFQI22N068_D045_T003S01_V02
+PRODUCT_VERSION_ID               = 01
+INSTRUMENT_HOST_NAME             = "CASSINI ORBITER"
+INSTRUMENT_HOST_ID               = CO
+INSTRUMENT_NAME                  = "CASSINI RADAR"
+INSTRUMENT_ID                    = RADAR
+TARGET_NAME                      = TITAN
+START_TIME                       = 2005-046T06:36:25.878
+STOP_TIME                        = 2005-046T07:18:52.414
+SPACECRAFT_CLOCK_START_COUNT     = 1487142170
+SPACECRAFT_CLOCK_STOP_COUNT      = 1487144716
+PRODUCT_CREATION_TIME            = 2008-101T09:16:39.000
+SOURCE_PRODUCT_ID                = LBDR_14_D045_V01
+MISSION_PHASE_NAME               = TOUR
+MISSION_NAME                     = "CASSINI-HUYGENS"
+SOFTWARE_VERSION_ID              = "V1.0"
+
+/*       DESCRIPTION OF COMPRESSED AND UNCOMPRESSED FILES */
+
+OBJECT                           = COMPRESSED_FILE
+  FILE_NAME                      = "BIFQI22N068_D045_T003S01_V02.ZIP"
+  RECORD_TYPE                    = UNDEFINED
+  ENCODING_TYPE                  = ZIP
+  INTERCHANGE_FORMAT             = BINARY
+  UNCOMPRESSED_FILE_NAME         = "BIFQI22N068_D045_T003S01_V02.IMG"
+  REQUIRED_STORAGE_BYTES         = 721179648
+  ^DESCRIPTION                   = "SOFTWARE/SOFTINFO.TXT"
+END_OBJECT                       = COMPRESSED_FILE
+
+OBJECT                           = UNCOMPRESSED_FILE
+  FILE_NAME                      = "BIFQI22N068_D045_T003S01_V02.IMG"
+  RECORD_TYPE                    = FIXED_LENGTH
+  RECORD_BYTES                   = 21504
+  FILE_RECORDS                   = 33537
+  LABEL_RECORDS                  = 1
+
+/*       POINTERS TO START RECORDS OF OBJECTS IN FILE */
+
+  ^IMAGE                         = ("BIFQI22N068_D045_T003S01_V02.IMG", 2)
+
+/*       DESCRIPTION OF OBJECTS CONTAINED IN FILE */
+
+  OBJECT                         = IMAGE
+    LINES                        = 33536
+    LINE_SAMPLES                 = 5376
+    SAMPLE_TYPE                  = "PC_REAL"
+    SAMPLE_BITS                  = 32
+    CHECKSUM                     = 000000000
+    SCALING_FACTOR               = 1.00000000
+    OFFSET                       = 0.00000000
+    MISSING_CONSTANT             = "16#FF7FFFFB#"
+    NOTE                         = "The data values in this file are Synthetic Aperture Radar (SAR) normalized backscatter cross-section values.  The values are physical scale (not in dB) and have been corrected for incidence-angle effects and biases due to thermal and quantization noise have been removed.  The raw backscatter values have been multiplied by the function f(I), where I is the incidence angle and f(I) = 0.2907/(f1(I)+f2(I)+f3(I)), for f1(I)=2.8126*(cos(I)^4+893.9677*sin(I)^2)^(-1.5), f2(I)=0.5824*(cos(I)^4+34.1366*sin(I)^2)^(-1.5), and f3(I)=0.3767*cos(I)^1.9782."
+  END_OBJECT                     = IMAGE
+
+  OBJECT                         = IMAGE_MAP_PROJECTION
+    ^DATA_SET_MAP_PROJECTION     = "DSMAP.CAT"
+    MAP_PROJECTION_TYPE          = "OBLIQUE CYLINDRICAL"
+    A_AXIS_RADIUS                = 2575.000000 <km>
+    B_AXIS_RADIUS                = 2575.000000 <km>
+    C_AXIS_RADIUS                = 2575.000000 <km>
+    FIRST_STANDARD_PARALLEL      = "N/A"
+    SECOND_STANDARD_PARALLEL     = "N/A"
+    POSITIVE_LONGITUDE_DIRECTION = WEST
+    CENTER_LATITUDE              = 0.000000 <deg>
+    CENTER_LONGITUDE             = 0.000000 <deg>
+    REFERENCE_LATITUDE           = 30.045955 <deg>
+    REFERENCE_LONGITUDE          = 69.095075 <deg>
+    LINE_FIRST_PIXEL             = 1
+    LINE_LAST_PIXEL              = 33536
+    SAMPLE_FIRST_PIXEL           = 1
+    SAMPLE_LAST_PIXEL            = 5376
+    MAP_PROJECTION_ROTATION      = 90.0
+    MAP_RESOLUTION               = 256.0 <pix/deg>
+    MAP_SCALE                    = 0.17555558 <km/pix>
+    MAXIMUM_LATITUDE             =  32.12119186 <deg>
+    MINIMUM_LATITUDE             =  -6.36004836 <deg>
+    EASTERNMOST_LONGITUDE        = 358.24978751 <deg>
+    WESTERNMOST_LONGITUDE        = 137.10130868 <deg>
+    LINE_PROJECTION_OFFSET       = 16639.500
+    SAMPLE_PROJECTION_OFFSET     = 4863.500
+    OBLIQUE_PROJ_POLE_LATITUDE   = 59.876855 <deg>
+    OBLIQUE_PROJ_POLE_LONGITUDE  = 244.581579 <deg>
+    OBLIQUE_PROJ_POLE_ROTATION   = 176.094024 <deg>
+    OBLIQUE_PROJ_X_AXIS_VECTOR   = ( 0.30887052, -0.80864335, 0.50069445 )
+    OBLIQUE_PROJ_Y_AXIS_VECTOR   = ( 0.92638924, 0.37501237, 0.03418639 )
+    OBLIQUE_PROJ_Z_AXIS_VECTOR   = ( -0.21541121, 0.45327879, 0.86494876 )
+    LOOK_DIRECTION               = RIGHT
+    COORDINATE_SYSTEM_TYPE       = "BODY-FIXED ROTATING"
+    COORDINATE_SYSTEM_NAME       = "PLANETOGRAPHIC"
+  END_OBJECT                     = IMAGE_MAP_PROJECTION
+
+END_OBJECT                       = UNCOMPRESSED_FILE
+END
