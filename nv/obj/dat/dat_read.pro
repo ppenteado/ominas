@@ -209,7 +209,7 @@ function dat_read, filespec, data, header, $
        if(NOT silent) then print, 'Reading ' + filename
        _data = call_function(input_fn, filename, $
                        _header, _udata, _dim, _type, _min, _max, $
-                                            /nodata, /silent, sample=sample)
+                                            nodata=nodata, /silent, sample=sample)
 ;       if(NOT defined(_type)) then $
 ;        begin
 ;         nv_message, /con, name='dat_read', $
