@@ -41,7 +41,7 @@
 ;	tr_first:	If set, dat_get_value returns after the first
 ;			successful translator.
 ;
-;	tr_nosort:	By default, outpur descriptors are sorted to remove
+;	tr_nosort:	By default, output descriptors are sorted to remove
 ;			those with duplicate names, retaining only the first
 ;			descriptor of a given name for each input data 
 ;			descriptor.  /tr_nosort disables this action.
@@ -137,16 +137,13 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ; sort xds
  ;----------------------------------------------------------------
  result = 0
- if(keyword_set(xds)) then $
-  begin
+ if(keyword_set(xds)) then begin
    status = 0
-   if(NOT keyword_set(tr_nosort)) then $
-    for i=0, ndd-1 do $
-     begin
+   if(NOT keyword_set(tr_nosort)) then begin
+    for i=0, ndd-1 do begin
       w = where(cor_assoc_xd(xds) EQ dd[i])
       nw = n_elements(w)
-      if(w[0] NE -1) then $
-       begin
+      if(w[0] NE -1) then begin
         names = cor_name(xds[w])
         ss = sort(names)
         uu = uniq(names[ss])
@@ -156,10 +153,10 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
         ii = ii[sort(ii)]
 
         result = append_array(result, xds[ii])
-       end
-     end $
-    else result = xds
-  end
+      endif
+    endfor
+   endif else result = xds
+ endif
 
  return, result
 end
