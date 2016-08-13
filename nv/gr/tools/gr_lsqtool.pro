@@ -464,15 +464,13 @@ function  grlsq_get_model_fn, lsqd, tag
  type = grlsq_get_model_type(tag)
 
  case(strupcase(type)) of 
-;  'LIMB'		: return, 'edge_model_nav_limb'
-;  'TERMINATOR'		: return, 'edge_model_nav_limb'
-
   'LIMB'		: return, 'grlsq_edge_model_atan'
   'TERMINATOR'		: return, 'grlsq_edge_model_atan'
   'SHADOW'		: return, 'grlsq_edge_model_nav_limb'
   'REFLECTION'		: return, 'grlsq_edge_model_nav_limb'
   'DISK_OUTER'		: return, 'grlsq_edge_model_psf_ring'
   'DISK_INNER'		: return, 'grlsq_edge_model_psf_ring' 
+   else 		: return, 'grlsq_edge_model_atan'
  endcase
 
 end
@@ -495,6 +493,7 @@ function  grlsq_get_inner, cd, rd, tag
   'REFLECTION'		: return, 0
   'DISK_OUTER'		: return, 0
   'DISK_INNER'		: return, 1
+   else			: return, 0
  endcase
 
 end

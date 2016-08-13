@@ -148,21 +148,26 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
 
        w = dsk_hide_points(xd, Rs, object_pts)
 
-     if(hide) then $
-      begin
-       pnt_get, object_ptd[j], desc=desc, inp=inp
-       hide_ptd[j,i] = $
-          pnt_create_descriptors(desc=desc+'-hide_disk', $
-             input=inp+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]))
-      end
+      if(w[0] NE -1) then $
+       begin
+        _flags = flags
+        _flags[w] = _flags[w] OR PTD_MASK_INVISIBLE
+        pnt_set_flags, object_ptd[j], _flags
+       end
 
-       if(w[0] NE -1) then $
-        begin
-         if(hide) then $
-           pnt_set, hide_ptd[j,i], p=p[*,w], flags=flags[w], vectors=vectors[w,*]
-         flags[w]=flags[w] OR PTD_MASK_INVISIBLE
-         pnt_set_flags, object_ptd[j], flags
-        end
+      if(hide) then $
+       begin
+        hide_ptd[j,i] = nv_clone(object_ptd[j])
+
+        pnt_get, object_ptd[j], desc=desc, inp=inp
+
+        ww = complement(flags, w)
+        _flags = flags
+        if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
+
+        pnt_set, hide_ptd[j,i], desc=desc+'-hide_disk', $
+             input=inp+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]), flags=_flags
+       end
       end
     end
 

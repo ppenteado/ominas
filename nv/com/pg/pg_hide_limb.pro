@@ -131,28 +131,33 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
   if((bod_opaque(gbx[i,0])) OR (keyword_set(reveal))) then $
    begin
     xd = reform(gbx[i,*], nt)
-
     Rs = bod_inertial_to_body_pos(xd, obs_pos)
+;w = where(cor_assoc_xd(point_ptd) EQ )
 
     pnt_get, point_ptd[i], p=p, vectors=vectors, flags=flags
     object_pts = bod_inertial_to_body_pos(xd, vectors)
 
     w = glb_hide_points_limb(xd, Rs, object_pts)
 
-    if(hide) then $
-     begin
-      pnt_get, point_ptd[i], desc=desc, inp=inp
-      hide_ptd[i] = $
-         pnt_create_descriptors(desc=desc+'-hide_limb', $
-                 input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]))
-     end
-
     if(w[0] NE -1) then $
      begin
-      if(hide) then $
-           pnt_set, hide_ptd[i], p=p[*,w], flags=flags[w], vectors=vectors[w,*]
-      flags[w] = flags[w] OR PTD_MASK_INVISIBLE
-      pnt_set_flags, point_ptd[i], flags
+      _flags = flags
+      _flags[w] = _flags[w] OR PTD_MASK_INVISIBLE
+      pnt_set_flags, point_ptd[i], _flags
+     end
+
+    if(hide) then $
+     begin
+      hide_ptd[i] = nv_clone(point_ptd[i])
+
+      pnt_get, point_ptd[i], desc=desc, inp=inp
+
+      ww = complement(flags, w)
+      _flags = flags
+      if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
+
+      pnt_set, hide_ptd[i], desc=desc+'-hide_limb', $
+           input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), flags=_flags
      end
    end
 

@@ -119,8 +119,8 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
  ; compute shadows for each object on each globe
  ;------------------------------------------------
  n_objects = n_elements(object_ptd)
- _shadow_ptd = objarr(n_globes, n_objects)
- shadow_ptd = objarr(n_objects)
+ shadow_ptd = objarr(n_globes, n_objects)
+; shadow_ptd = objarr(n_objects)
 
  obs_pos = bod_pos(od)
  for j=0, n_objects-1 do if(obj_valid(object_ptd[j])) then  $
@@ -187,8 +187,10 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
             ;---------------------------------
             ; store points
             ;---------------------------------
-            _shadow_ptd[i,j] = $
+            shadow_ptd[i,j] = $
                 pnt_create_descriptors(points = points, $
+                   name = 'shadow-' + cor_name(object_ptd[j]), $
+                   assoc_xd = object_ptd[j], $
 		   desc = 'globe_shadow', $
 		   input = pgs_desc_suffix(gbx=gbx[i,0], od=od[0], srcd=object_ptd[j], cd[0]), $
 		   vectors = inertial_pts)
@@ -196,7 +198,7 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
             ;-----------------------------------------------
             ; flag points that miss the globe as invisible
             ;-----------------------------------------------
-            flags = pnt_flags(_shadow_ptd[i,j])
+            flags = pnt_flags(shadow_ptd[i,j])
             flags[*] = flags[*] OR PTD_MASK_INVISIBLE
             flags[w] = 0
 
@@ -233,32 +235,18 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
             ;---------------------------------
             ; store flags
             ;---------------------------------
-            pnt_set_flags, _shadow_ptd[i,j], flags
+            pnt_set_flags, shadow_ptd[i,j], flags
   	   end
          end
        end
      end
-
-   ;-----------------------------------------------------
-   ; take only nearest shadow points for this object
-   ;-----------------------------------------------------
-   shadow_ptd[j] = pnt_compress(_shadow_ptd[*,j])
-
-;   if(NOT keyword__set(all)) then $
-;    begin
-;     sp = pnt_cull(_shadow_ptd[*,j])
-;     if(keyword__set(sp)) then $
-;      begin
-;       if(n_elements(sp) EQ 1) then shadow_ptd[j] = sp $
-;       else shadow_ptd[j] = pg_nearest_points(object_ptd[j], sp) 
-;      end
-;    end
    end
 
 
  ;-------------------------------------------------------------------------
  ; by default, remove empty POINT objects and reform to one dimension 
  ;-------------------------------------------------------------------------
+ shadow_ptd = reform(shadow_ptd, n_elements(shadow_ptd), /over)
  if(NOT keyword__set(nocull)) then shadow_ptd = pnt_cull(shadow_ptd)
 
 

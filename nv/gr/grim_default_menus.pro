@@ -1,74 +1,6 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_image_profile_event
-;
-;
-; PURPOSE:
-;	This option allows you extract a brightness profile in an arbitrary 
-;	direction in the image.  The left button selects the region's length 
-;	and then width; the right button selects a region with a width of 
-;	one-pixel.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 6/2005
-;	
-;-
-;=============================================================================
-pro grim_menu_image_profile_help_event, event
- text = ''
- nv_help, 'grim_menu_image_profile_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_image_profile_event, event
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
- ;------------------------------------------------
- ; make sure relevant descriptors are loaded
- ;------------------------------------------------
- cd = grim_get_cameras(grim_data)
-
- ;------------------------------------------------
- ; select the sector by dragging
- ;------------------------------------------------
- grim_logging, grim_data, /start
- outline_ptd = pg_image_sector(col=ctred())
- grim_logging, grim_data, /stop
-
- ;------------------------------------------------
- ; save the sector outline
- ;------------------------------------------------
- grim_add_user_points, outline_ptd, color='red', psym=3, plane=plane
-
- ;------------------------------------------------
- ; open a new grim window with the profile
- ;------------------------------------------------
- grim_message, /clear
- dd = pg_profile_image(plane.dd, sigma=sigma, $
-                    cd=*plane.cd_p, outline_ptd, distance=distance)
- grim_message
- if(NOT keyword_set(dd)) then return
-
- widget_control, /hourglass
- grim, dd, xtitle='Distance (pixels)', ytitle=['<DN>', 'Sigma'], $
-                   title=['Image profile', 'Image profile sigma'], /new
- 
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
 ;	grim_menu_core_event
 ;
 ;
@@ -157,6 +89,78 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_image_profile_event
+;
+;
+; PURPOSE:
+;	This option allows you extract a brightness profile in an arbitrary 
+;	direction in the image.  The left button selects the region's length 
+;	and then width; the right button selects a region with a width of 
+;	one-pixel.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 6/2005
+;	
+;-
+;=============================================================================
+pro grim_menu_image_profile_help_event, event
+ text = ''
+ nv_help, 'grim_menu_image_profile_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_image_profile_event, event
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ cd = grim_get_cameras(grim_data)
+
+ ;------------------------------------------------
+ ; select the sector by dragging
+ ;------------------------------------------------
+ grim_logging, grim_data, /start
+ outline_ptd = pg_image_sector(col=ctred())
+ grim_logging, grim_data, /stop
+
+ w = where(~ finite(pnt_points(outline_ptd))) 
+ if(w[0] NE -1) then return
+
+
+ ;------------------------------------------------
+ ; save the sector outline
+ ;------------------------------------------------
+ grim_add_user_points, outline_ptd, color='red', psym=3, plane=plane
+
+ ;------------------------------------------------
+ ; open a new grim window with the profile
+ ;------------------------------------------------
+ grim_message, /clear
+ dd = pg_profile_image(plane.dd, sigma=sigma, $
+                    cd=*plane.cd_p, outline_ptd, distance=distance)
+ grim_message
+ if(NOT keyword_set(dd)) then return
+
+ widget_control, /hourglass
+ grim, dd, xtitle='Distance (pixels)', ytitle=['<DN>', 'Sigma'], $
+                   title=['Image profile', 'Image profile sigma'], /new
+ 
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_ring_box_profile_radial_event
 ;
 ;
@@ -225,6 +229,8 @@ pro grim_menu_ring_box_profile_radial_event, event
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, w=w, nn=nn, $
                   cd=*plane.cd_p, dkx=rd[0], outline_ptd, dsk_pts=dsk_pts)
+ if(NOT keyword_set(dd)) then return
+
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
  cor_set_udata, dd[0], 'RING_BOX_PROFILE_RADIAL_OUTLINE', outline_ptd
  grim_message
@@ -311,6 +317,8 @@ pro grim_menu_ring_box_profile_longitudinal_event, event
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
                  cd=*plane.cd_p, dkx=rd[0], outline_ptd, dsk_pts=dsk_pts, /az)
+ if(NOT keyword_set(dd)) then return
+
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
  cor_set_udata, dd[0], 'RING_BOX_PROFILE_LONGITUDINAL_OUTLINE', outline_ptd
  grim_message
@@ -392,6 +400,14 @@ pro grim_menu_ring_profile_radial_event, event
  outline_ptd = pg_ring_sector(cd=*plane.cd_p, dkx=rd[0], col=ctred())
  grim_logging, grim_data, /stop
 
+ p = pnt_points(outline_ptd)
+
+ w = where(~ finite(p)) 
+ if(w[0] NE -1) then return
+
+ if(stdev(p[0,*]) EQ 0) then return
+ if(stdev(p[1,*]) EQ 0) then return
+
  ;------------------------------------------------
  ; save the ring sector outline
  ;------------------------------------------------
@@ -403,8 +419,11 @@ pro grim_menu_ring_profile_radial_event, event
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
                   cd=*plane.cd_p, dkx=rd[0], outline_ptd, dsk_pts=dsk_pts)
+ if(NOT keyword_set(dd)) then return
+
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
  cor_set_udata, dd[0], 'RING_PROFILE_RADIAL_OUTLINE', outline_ptd
+
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -477,6 +496,14 @@ pro grim_menu_ring_profile_longitudinal_event, event
  outline_ptd = pg_ring_sector(cd=*plane.cd_p, dkx=rd[0], lon=lon, col=ctred())
  grim_logging, grim_data, /stop
 
+ p = pnt_points(outline_ptd)
+
+ w = where(~ finite(p)) 
+ if(w[0] NE -1) then return
+
+ if(stdev(p[0,*]) EQ 0) then return
+ if(stdev(p[1,*]) EQ 0) then return
+
  ;------------------------------------------------
  ; save the ring sector outline
  ;------------------------------------------------
@@ -488,6 +515,8 @@ pro grim_menu_ring_profile_longitudinal_event, event
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
                  cd=*plane.cd_p, dkx=rd[0], outline_ptd, dsk_pts=dsk_pts, /az)
+ if(NOT keyword_set(dd)) then return
+
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
  cor_set_udata, dd[0], 'RING_PROFILE_LONGITUDINAL_OUTLINE', outline_ptd
  grim_message
@@ -559,6 +588,14 @@ pro grim_menu_limb_profile_azimuthal_event, event
  outline_ptd = pg_limb_sector(cd=*plane.cd_p, gbx=pd[0], $
                                       col=ctred(), dkd=dkd, az=scan_az)
  grim_logging, grim_data, /stop
+
+ p = pnt_points(outline_ptd)
+
+ w = where(~ finite(p)) 
+ if(w[0] NE -1) then return
+
+ if(stdev(p[0,*]) EQ 0) then return
+ if(stdev(p[1,*]) EQ 0) then return
 
  ;------------------------------------------------
  ; save the ring sector outline
@@ -640,6 +677,14 @@ pro grim_menu_limb_profile_radial_event, event
  grim_logging, grim_data, /start
  outline_ptd = pg_limb_sector(cd=*plane.cd_p, gbx=pd[0], col=ctred(), dkd=dkd)
  grim_logging, grim_data, /stop
+
+ p = pnt_points(outline_ptd)
+
+ w = where(~ finite(p)) 
+ if(w[0] NE -1) then return
+
+ if(stdev(p[0,*]) EQ 0) then return
+ if(stdev(p[1,*]) EQ 0) then return
 
  ;------------------------------------------------
  ; save the ring sector outline

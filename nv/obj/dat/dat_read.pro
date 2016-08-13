@@ -210,12 +210,12 @@ function dat_read, filespec, data, header, $
        _data = call_function(input_fn, filename, $
                        _header, _udata, _dim, _type, _min, _max, $
                                             /nodata, /silent, sample=sample)
-;       if(NOT defined(_type)) then $
-;        begin
-;         nv_message, /con, name='dat_read', $
-;                   'WARNING: Type code not determined, converting to byte.'
-;         _type = 1
-;        end
+       if(NOT defined(_type)) then $
+        begin
+         nv_message, /con, name='dat_read', $
+                   'WARNING: Type code not determined, converting to byte.'
+         _type = 1
+        end
 
        ;---------------------------------
        ; check for multiple data arrays

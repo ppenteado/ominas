@@ -139,6 +139,8 @@ end_keywords)
  if(keyword_set(nv)) then self.nv = nv[ii]
  if(keyword_set(nt)) then self.nt = nt[ii]
 
+
+
  return, 1
 end
 ;=============================================================================
@@ -156,7 +158,7 @@ end
 ;
 ;
 ; CATEGORY:
-;	NV/SYS/PS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:

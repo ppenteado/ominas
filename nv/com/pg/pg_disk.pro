@@ -126,7 +126,7 @@ function pg_disk, cd=cd, dkx=dkx, gd=gd, fov=fov, cull=cull, $
          dsk_image_bounds, cd, xd, slop=slop, /plane, $
                  lonmin=lonmin, lonmax=lonmax, border_pts_im=border_pts_im
          if(NOT defined(lonmin)) then continue = 0 $
-         else ta = dindgen(npoints)/double(npoints)*(lonmax-lonmin) + lonmin
+         else ta = dindgen(npoints)/double(npoints-1)*(lonmax-lonmin) + lonmin
         end
 
        ;- - - - - - - - - - - - - - - - -
@@ -181,7 +181,7 @@ function pg_disk, cd=cd, dkx=dkx, gd=gd, fov=fov, cull=cull, $
          dsk_image_bounds, cd, xd, slop=slop, /plane, $
                lonmin=lonmin, lonmax=lonmax, border_pts_im=border_pts_im
          if(NOT defined(lonmin)) then continue = 0 $
-         else ta = dindgen(npoints)/double(npoints)*(lonmax-lonmin) + lonmin
+         else ta = dindgen(npoints)/double(npoints-1)*(lonmax-lonmin) + lonmin
         end
 
        ;- - - - - - - - - - - - - - - - -

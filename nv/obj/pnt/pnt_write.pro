@@ -9,7 +9,7 @@
 ;
 ;
 ; CATEGORY:
-; 	NV/PNT
+; 	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:

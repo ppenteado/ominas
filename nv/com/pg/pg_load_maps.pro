@@ -25,7 +25,8 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	bx:	Body descriptors indicating which maps to load.
 ;
 ;
 ;  OUTPUT: 
@@ -52,7 +53,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_load_maps, dir, md=md, dd=dd
+function pg_load_maps, dir, md=md, bx=bx, dd=dd
 
  ;--------------------------------------------------------------
  ; get map directory
@@ -68,7 +69,16 @@ function pg_load_maps, dir, md=md, dd=dd
  ;--------------------------------------------------------------
  ; get map files
  ;--------------------------------------------------------------
- files = file_search(dir + '/*/*.*')
+ dirs = file_search(dir + '/*')
+ split_filename, dirs, dir, name
+
+ names = cor_name(bx)
+
+ w = nwhere(strupcase(names), strupcase(name))
+ if(w[0] EQ -1) then return, 0
+
+ dirs = dirs[w]
+ files = file_search(dirs + '/*.*')
 
 
  ;------------------------------------------------------------------

@@ -282,7 +282,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;  narrower region.
 ;
 ;-------------------------------------------------------------------------
-cvscan_ptd=pg_cvscan(dd, gd=gd, [limb_ptd[0]], edge=30, width=80, $
+cvscan_ptd = pg_cvscan(dd, gd=gd, [limb_ptd[0]], edge=30, width=80, $
    model=[make_array(nlimb,val=ptr_new(edge_model_nav_limb(zero=lzero)))], $
    mzero=[make_array(nlimb,val=lzero)] )
 ; cvscan_ptd=pg_cvscan(dd, [limb_ptd], edge=30, width=20, $

@@ -84,9 +84,8 @@ common spice_klist_block, klist_last, _inlines
    if(NOT defined(_time)) then $
     for i=0, ndd-1 do $
       et = append_array(et, $
-                spice_str2et(call_function(fn_spice_time, dat_header(dd[i]))) ) $
+                 call_function(fn_spice_time, dat_header(dd[i]))) $
    else et = _time
-   et = et
   _time = et
 
    standard_lines = standard_lines[0:wstart[0]-1]

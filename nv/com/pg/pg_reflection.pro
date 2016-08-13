@@ -108,14 +108,10 @@ function pg_reflection, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd
  ; combine results
  ;----------------------------------
  if(keyword_set(globe_reflection_ptd)) then $
-   _reflection_ptd = append_array(_reflection_ptd, transpose_struct(globe_reflection_ptd))
+            reflection_ptd = append_array(reflection_ptd, globe_reflection_ptd)
  if(keyword_set(disk_reflection_ptd)) then $
-   _reflection_ptd = append_array(_reflection_ptd, transpose_struct(disk_reflection_ptd))
+            reflection_ptd = append_array(reflection_ptd, disk_reflection_ptd)
 
- n = n_elements(object_ptd)
- reflection_ptd = objarr(n)
- for i=0, n-1 do reflection_ptd[i] = pnt_compress(_reflection_ptd[*,i])
-  
  if(NOT keyword_set(nocull)) then reflection_ptd = pnt_cull(reflection_ptd)
 
  return, reflection_ptd

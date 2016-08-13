@@ -19,7 +19,6 @@ function ominas_core::dereference, struct
 
  if(NOT keyword_set(struct)) then $
               struct = create_struct(obj_class(self))
-;              stat = execute('struct = {' + obj_class(self) + '}')
 
  struct_assign, self, struct
  return, struct

@@ -415,7 +415,6 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
    time = bod_time(od)
   end
 
-
  ;----------------------------------
  ; manage kernels
  ;----------------------------------

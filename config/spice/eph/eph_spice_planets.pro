@@ -21,8 +21,7 @@ function eph_spice_planets, dd, ref, target=target, time=sc_time, $
  ;   If no planet names have been specified, or if TARGET_NAME was not in the
  ;   list, then the spice interface will retrieve all possible bodies from
  ;   the kernel pool.  In that case, TARGET_NAME is lost, so here, we 
- ;   record that string in the data descriptor.  The value of TARGET_DESC
- ;   is also provided as a backup.
+ ;   record that string in the data descriptor.  
  ;----------------------------------------------------------------------------
  if(NOT keyword_set(target)) then target = make_array(ndd, val='UNKNOWN') $
  else if(keyword_set(planets)) then $
