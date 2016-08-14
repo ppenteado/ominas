@@ -24,7 +24,7 @@ function map_optimize, md=md0, $
 			scale=scale, $
 			origin=origin, $
 			units=units, $
-			center=center
+			center=center)
 
  return, md
 end
