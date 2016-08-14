@@ -71,7 +71,38 @@ function map_image_to_map, md, _image_pts, valid=valid
    valid = [-1]
    return, 0
   end
+  
+ nmap_pts=map_pts
+ if finite(_md.pole.lat)+finite(_md.pole.lon)+finite(_md.pole.rot) eq 3 then begin
+   pole_lat=30d0*!dpi/180d0;_md.pole.lat
+   pole_lon=90d0*!dpi/180d0;-_md.pole.lon
+   pole_rot=0d0*!dpi/180d0;_md.pole.rot
+   pole_lat=_md.pole.lat
+   pole_lon=-_md.pole.lon
+   pole_rot=_md.pole.rot
+   lons=reform(map_pts[1,*])
+   lats=reform(map_pts[0,*])
 
- return, map_pts
+   
+   
+   p1=ominas_body()
+   bod_rotate,p1,pole_lon,axis=2
+   bod_rotate,p1,(0.5d0*!dpi-pole_lat),axis=1
+   bod_rotate,p1,pole_rot,axis=2
+   ;bod_set_orient,p1,transpose(bod_orient(p1))
+
+   
+   z=sin(lats)
+   x=cos(lats)*cos(lons)
+   y=cos(lats)*sin(lons)
+   xyz=bod_body_to_inertial(p1,[[x],[y],[z]])
+   lat1=asin(xyz[*,2])
+   lon1=atan(xyz[*,1],xyz[*,0])
+   
+   nmap_pts[1,*]=lon1;mlon
+   nmap_pts[0,*]=lat1;mlat
+ endif
+
+ return, nmap_pts
 end
 ;===========================================================================

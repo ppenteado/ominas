@@ -58,6 +58,36 @@ function map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
  pi2 = !dpi/2d
  
  map_pts = _map_pts
+ nmap_pts=map_pts
+ if finite(_md.pole.lat)+finite(_md.pole.lon)+finite(_md.pole.rot) eq 3 then begin
+   pole_lat=30d0*!dpi/180d0;_md.pole.lat
+   pole_lon=90d0*!dpi/180d0;-_md.pole.lon
+   pole_rot=0d0*!dpi/180d0;_md.pole.rot
+   pole_lat=_md.pole.lat
+   pole_lon=-_md.pole.lon
+   pole_rot=_md.pole.rot
+   lons=reform(map_pts[1,*])
+   lats=reform(map_pts[0,*])
+
+   
+   
+   p1=ominas_body()
+   bod_rotate,p1,pole_lon,axis=2
+   bod_rotate,p1,(0.5d0*!dpi-pole_lat),axis=1
+   bod_rotate,p1,pole_rot,axis=2
+   bod_set_orient,p1,transpose(bod_orient(p1))
+
+   
+   z=sin(lats)
+   x=cos(lats)*cos(lons)
+   y=cos(lats)*sin(lons)
+   xyz=bod_body_to_inertial(p1,[[x],[y],[z]])
+   lat1=asin(xyz[*,2])
+   lon1=atan(xyz[*,1],xyz[*,0])
+   
+   nmap_pts[1,*]=lon1;mlon
+   nmap_pts[0,*]=lat1;mlat
+ endif
 
  ii = transpose(linegen3z(2,nt,nv), [0,2,1])
  jj = transpose(gen3y(nt,nv,1))
@@ -67,13 +97,15 @@ function map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
 
  fn = map_fn_map_to_image(md[0])
 
- image_pts = call_function(fn, md, map_pts)
+ image_pts = call_function(fn, md, nmap_pts)
  image_pts = rotate_coord(image_pts, rotate, size=size)
 
  if(NOT keyword_set(nowrap)) then image_pts = map_wrap_points(_md, image_pts, map_pts)
 
  if(NOT keyword_set(all)) then valid = map_valid_points(_md, map_pts, image_pts) $
  else valid = lindgen(nv*nt)
+
+
 
  return, image_pts
 end
