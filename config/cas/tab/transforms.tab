@@ -3,4 +3,5 @@
 #------------------------------------------------------------------------------
   CAS_ISSNA		cas_delut		- #cas_relut
   CAS_ISSWA		cas_delut		- #cas_relut
+  CAS_RADAR             cas_radar_transform     -
   END

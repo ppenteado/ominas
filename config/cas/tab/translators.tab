@@ -38,3 +38,5 @@
 	-  	strcat_ucact_input		-		/j2000
 #	-  	strcat_tycho2_input		-		/j2000
 
+ CAS_RADAR     dh_std_input            dh_std_output
+       -       cas_radar_input			-
