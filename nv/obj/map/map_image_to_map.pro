@@ -48,7 +48,7 @@
 ;	
 ;-
 ;=============================================================================
-function map_image_to_map, md, _image_pts, valid=valid
+function _map_image_to_map, md, _image_pts, valid=valid
 @core.include
  _md = cor_dereference(md)
 
@@ -104,5 +104,37 @@ function map_image_to_map, md, _image_pts, valid=valid
  endif
 
  return, nmap_pts
+end
+;===========================================================================
+
+
+
+
+;===========================================================================
+function map_image_to_map, md, _image_pts, valid=valid
+@core.include
+ _md = cor_dereference(md)
+
+ nt = n_elements(_md)
+ nv = n_elements(_image_pts)/2/nt
+
+ ii = transpose(linegen3z(2,nt,nv), [0,2,1])
+ jj = transpose(gen3y(nt,nv,1))
+
+ size = (_md.size)[ii]
+ rotate = (_md.rotate)[jj]
+
+ image_pts = rotate_coord(_image_pts, rotate, /inverse, size=size)
+
+ fn = map_fn_image_to_map(md)
+
+ map_pts = call_function(fn, md, image_pts, valid=valid)
+ if(NOT keyword_set(map_pts)) then $
+  begin
+   valid = [-1]
+   return, 0
+  end
+
+ return, map_pts
 end
 ;===========================================================================
