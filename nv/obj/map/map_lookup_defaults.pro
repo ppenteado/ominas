@@ -52,18 +52,6 @@ function map_lookup_defaults, md0
   end
 
  ;---------------------------------
- ; equatorial disk projection
- ;---------------------------------
- w = where(strmatch(type,'*RING'))
- if(w[0] NE -1) then $
-  begin
-   _md[w].scale = 1d
-   _md[w].origin = _md0.size/2
-   _md[w].center = [0d,0d]
-; !! this won't work for multiple descriptors!!
-  end
-
- ;---------------------------------
  ; mercator projection
  ;---------------------------------
  w = where(type EQ 'MERCATOR')

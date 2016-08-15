@@ -16,9 +16,7 @@ function map_match_type, _type
                 'MOLLWEIDE', $
                 'SINUSOIDAL', $
                 'PERSPECTIVE', $
-                'OBLIQUE_DISK', $
-                'EQUATORIAL_RING', $
-                'RING' $
+                'OBLIQUE_DISK' $
                 ]
 
  types = strarr(n)
