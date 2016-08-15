@@ -48,7 +48,7 @@
 ;	
 ;-
 ;=============================================================================
-function _map_image_to_map, md, _image_pts, valid=valid
+function map_image_to_map, md, _image_pts, valid=valid
 @core.include
  _md = cor_dereference(md)
 
@@ -111,7 +111,7 @@ end
 
 
 ;===========================================================================
-function map_image_to_map, md, _image_pts, valid=valid
+function _map_image_to_map, md, _image_pts, valid=valid
 @core.include
  _md = cor_dereference(md)
 

@@ -49,7 +49,7 @@
 ;	
 ;-
 ;=============================================================================
-function _map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
+function map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
  _md = cor_dereference(md)
 
  nt = n_elements(_md)
@@ -114,7 +114,7 @@ end
 
 
 ;=============================================================================
-function map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
+function _map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
  _md = cor_dereference(md)
 
  nt = n_elements(_md)
