@@ -139,7 +139,7 @@ end
 ;=============================================================================
 pro ominas_body__define
 
- ndv=bod_ndv()
+ ndv = bod_ndv()
 
  struct = $
     { ominas_body, inherits ominas_core, $

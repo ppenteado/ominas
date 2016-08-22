@@ -145,7 +145,10 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------------------
  catpath = getenv('NV_RING_DATA')
  if(NOT keyword_set(catpath)) then $
-   nv_message, /con, name='ring_input', 'NV_RING_DATA environment variable is undefined.'
+   nv_message, /con, name='ring_input', $
+     'NV_RING_DATA environment variable is undefined.', $
+       exp=['NV_RING_DATA specifies directory in which this translator', $
+            'searches for ring catalog files.']
 
  status = 0
 

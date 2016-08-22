@@ -3,7 +3,9 @@
 	min=min, $
 	max=max, $
 	dim=dim, $
+	cache=cache, $
 	type=type, $
+	gff=gff, $
 	data=data, $
 	abscissa=abscissa, $
 	nhist=nhist, $

@@ -637,16 +637,9 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
  ;---------------------------------------------------------
  if(size(files, /type) EQ 7) then $
   begin
-;   if(n_elements(files) EQ 1) then $
-;    begin
-;     if(strpos(files[0], '/') EQ -1) then files = getenv('PWD') + '/' + files
-;     files = file_search(files)
-;    end 
-;   if(NOT keyword_set(files)) then return
-
    for i=0, n_elements(files)-1 do $
     begin
-     if(strpos(files[i], '/') EQ -1) then files[i] = getenv('PWD') + '/' + files[i]
+     if(strpos(files[i], '/') EQ -1) then files[i] = pwd() + '/' + files[i]
      ff = file_search(files[i])
      if(keyword_set(ff)) then _files = append_array(_files, ff)
     end

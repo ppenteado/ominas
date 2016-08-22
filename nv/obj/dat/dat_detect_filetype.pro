@@ -58,9 +58,16 @@ function dat_detect_filetype, filename, silent=silent, default=default, all=all,
  ;=====================================================
  ; read the filetype table if it doesn't exist
  ;=====================================================
+ stat = 0
  if(NOT keyword_set(*nv_state.ftp_table_p)) then $
-   dat_read_config, 'NV_FTP_DETECT', $
+   dat_read_config, 'NV_FTP_DETECT', stat=stat, $
               nv_state.ftp_table_p, nv_state.ftp_detectors_filenames_p
+ if(stat NE 0) then $
+   nv_message, name='dat_detect_filetype', $
+     'No filetype table.', /con, $
+       exp=['The filetype table specifies the names of file type detector functions.', $
+            'Without this table, OMINAS cannot read input data.']
+
  table = *nv_state.ftp_table_p
  actions = strupcase(table[*,2])
 

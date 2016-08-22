@@ -18,7 +18,6 @@ end_keywords)
  _nhist = getenv('NV_NHIST')
  if(keyword_set(_nhist)) then nhist = fix(_nhist)
 
-
  ;-----------------------
  ; filename
  ;-----------------------
@@ -38,6 +37,11 @@ end_keywords)
  ; type
  ;-----------------------
  if(keyword_set(type)) then self.type = type
+
+ ;-----------------------
+ ; gff
+ ;-----------------------
+ if(keyword_set(gff)) then self.gffp = nv_ptr_new(gff)
 
  ;-----------------------
  ; file properties
@@ -100,6 +104,13 @@ end_keywords)
  if(keyword_set(dim)) then self.dim_p = nv_ptr_new(dim)
 
 
+ ;-----------------------
+ ; cache size
+ ;-----------------------
+ if(keyword_set(cache)) then self.cache = cache $
+ else self.cache = dat_cache()
+
+
  ;---------------------------------
  ; transforms
  ;---------------------------------
@@ -129,8 +140,16 @@ end_keywords)
  ;-----------------------
  ; data and header
  ;-----------------------
- if(defined(data)) then $
-   dat_set_data, self, data, abscissa=abscissa, /silent
+ dap = self.sample_dap
+ data_archive_set, dap, -1, nhist=nhist
+ self.sample_dap = dap
+
+ dap = self.order_dap
+ data_archive_set, dap, -1, nhist=nhist
+ self.order_dap = dap
+
+ if(defined(data)) then dat_set_data, self, data, abscissa=abscissa, /silent
+
 
  dat_set_nhist, self, nhist
 
@@ -176,6 +195,9 @@ end
 ;	max:		Maximum data value.
 ;
 ;	min:		Minimum data value.
+;
+;	cache:		Max cache size data array.  Used to deterine whether 
+;			to load / unload data samples.  -1 means infinite.
 ;
 ;	dim_p:	Pointer to array giving data dimensions.
 ;
@@ -263,12 +285,18 @@ end
 ;=============================================================================
 pro ominas_data__define
 
+
  struct = $
     { ominas_data, inherits ominas_core, $
 	data_dap:		nv_ptr_new(), $	; Pointer to the data archive
 	abscissa_dap:		nv_ptr_new(), $	; Pointer to the abscissa archive
+	sample_dap:		nv_ptr_new(), $	; Pointer to the sample archive
+	order_dap:		nv_ptr_new(), $	; Pointer to the sample load order
 	header_dap:		nv_ptr_new(), $	; Pointer to the generic header archive
         dap_index:		0, $		; data archive index
+
+	cache:			0l, $		; Max. cache size for data array (Mb)
+						;  Doesn't apply to maintenance 0
 
 	max:			0d, $		; Maximum data value
 	min:			0d, $		; Minimum data value
@@ -292,6 +320,8 @@ pro ominas_data__define
 						; called
 	sampling_fn:		'', $		; Optional sampling function.
 	dim_fn:			'', $		; Optional dimension function.
+
+	gffp:			nv_ptr_new(), $	; GFF pointer
 
 ;	segment:		{nv_seg_struct}, $
 

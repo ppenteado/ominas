@@ -49,8 +49,14 @@ pro dat_manage_dd, dd
  ; add dd to list
  ;------------------------------------------------
  dds = *nv_state.dds_p
- if(NOT keyword_set(dds[0])) then dds = dd $
- else dds = [dds, dd]
+
+ if(keyword_set(dds)) then $
+  begin
+   w = where(dds EQ dd)
+   if(w[0] NE -1) then return
+  end
+
+ dds = append_array(dds, dd)
 
  *nv_state.dds_p = dds
  ndd = n_elements(dds)

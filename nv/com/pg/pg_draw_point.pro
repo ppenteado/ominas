@@ -200,7 +200,7 @@ pro pg_draw_point, _pp, literal=literal, $
 
  if(NOT keyword_set(label_shade)) then label_shade = 1.0
  if(NOT defined(_colors)) then _colors = ctwhite()
- if(keyword_set(wnum)) then wset, wnum
+ if(keyword_set(wnum)) then tvim, wnum
 
 
  ;---------------------------------------
