@@ -3,13 +3,14 @@
 #
 ###############################################################################
 
-$CAS_SPICE_LSK/naif0007.tls
-$CAS_SPICE_PCK/cpck14Dec2001.tpc
-$CAS_SPICE_CK/001011_001014ra.bc
-$CAS_SPICE_SPK/010420R_SCPSE_EP1_JP83.bsp
-$CAS_SPICE_FK/cas_v37.tf
-$CAS_SPICE_IK/cas_iss_v08.ti
-$CAS_SPICE_SCK/cas00083.tsc
+$DEMO_SPICE_LSK/naif0007.tls
+$DEMO_SPICE_CK/001011_001014ra.bc
+
+$DEMO_SPICE_PCK/cpck14Dec2001.tpc
+$DEMO_SPICE_SPK/010420R_SCPSE_EP1_JP83.bsp
+$DEMO_SPICE_FK/cas_v37.tf
+$DEMO_SPICE_IK/cas_iss_v08.ti
+$DEMO_SPICE_SCK/cas00083.tsc
 
 
 

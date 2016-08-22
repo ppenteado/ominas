@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
   CAS_ISSNA	dh_std_input		dh_std_output		format=cas
 	-	cas_spice_input		cas_spice_output \
-							klist=cassini.kernels \
+							klist=demo.kernels \
 							ck_in=auto \
 #							spk_in=auto \
 #							pck_in=auto \
@@ -15,21 +15,21 @@
 							ck_out=ck_out.bc
 	-       station_input                   -
 	-       ring_input			-
-	-  	strcat_ucact_input		-		/j2000
+	-  	strcat_tycho2_input		-		/j2000
 
   CAS_ISSWA	dh_std_input		dh_std_output		format=cas
 	-	cas_spice_input		cas_spice_output \
-							klist=cassini.kernels \
+							klist=demo.kernels \
 							ck_in=auto \
-							spk_in=auto \
-							pck_in=auto \
+#							spk_in=auto \
+#							pck_in=auto \
 							lsk_in=auto \
-							fk_in=auto \
-							ik_in=auto \
-							sck_in=auto \
+#							fk_in=auto \
+#							ik_in=auto \
+#							sck_in=auto \
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
         -       station_input                   -
 	-       ring_input			-
-	-  	strcat_ucact_input		-		/j2000
+	-  	strcat_tycho2_input		-		/j2000
   END
