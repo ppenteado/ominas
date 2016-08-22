@@ -37,10 +37,9 @@ function gff_read, gff, subscripts=_subscripts
    if(ptr_valid(gff.data_offset_p)) then data_offset = *gff.data_offset_p
 
    x = w_to_nd(dim, subscripts)
-   xoff = w_to_nd(dim, data_offset)
-   xx = x + xoff#make_array(n, val=1l)
+   xx = x + data_offset#make_array(n, val=1l)
 
-   subscripts = nd_to_w(dim, xx)
+   subscripts = nd_to_w(dim+data_offset, xx)
 
 ; could improve speed by detceting contiguous blocks of subscripts..
    for i=0, n-1 do data[i] = array[subscripts[i]]

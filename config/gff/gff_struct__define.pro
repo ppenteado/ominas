@@ -5,6 +5,9 @@
 ;===========================================================================
 pro gff_struct__define
 
+
+; need to include byte order and floating pt formats
+
  struct = $
     { gff_struct, $
 	filename:	'', $

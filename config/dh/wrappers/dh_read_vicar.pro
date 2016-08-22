@@ -37,7 +37,7 @@ function dh_read_vicar, filename, label, udata, dim, type, min, max, abscissa=ab
  data_offset[0] = nbb/elm_size
 
  gff = gff_create(filename[0], dim, type, $
-         file_offset=file_offset, data_offset=nd_to_w(dim, data_offset))
+                 file_offset=file_offset, data_offset=data_offset)
 
 
  return, data
