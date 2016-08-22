@@ -22,15 +22,22 @@ function dh_read_vicar, filename, label, udata, dim, type, min, max, abscissa=ab
  dim = degen_array([ns, nl, nb])
 
  ;-----------------------------------------------------------------------
- ; construct generif file format descriptor
+ ; construct generic file format descriptor
  ;-----------------------------------------------------------------------
  lblsize = long(vicgetpar(label, 'LBLSIZE'))
- data_offset = lonarr(n_elements(dim))
- nbb = vicgetpar(label, 'NBB')
  nlb = vicgetpar(label, 'NLB')
- data_offset[0] = nbb
+ nbb = vicgetpar(label, 'NBB')
+
+ elm_size = sizeof(type, /type)
+ bh_size = ((dim[0]*elm_size) + nbb)*nlb
+
+ file_offset = lblsize + bh_size
+
+ data_offset = lonarr(n_elements(dim))
+ data_offset[0] = nbb/elm_size
+
  gff = gff_create(filename[0], dim, type, $
-         file_offset=lblsize, data_offset=nd_to_w(dim, data_offset))
+         file_offset=file_offset, data_offset=nd_to_w(dim, data_offset))
 
 
  return, data

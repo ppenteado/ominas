@@ -2,11 +2,12 @@
 ; sizeof
 ;
 ;===============================================================================
-function sizeof, x
+function sizeof, x, type=type
 
- type = size(x, /type)
+ if(keyword_set(type)) then typ = x $
+ else typ = size(x, /type)
 
- case type of:
+ case typ of
   0 :	return, -1
   1 :	return, 1
   2 :	return, 2

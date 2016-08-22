@@ -42,6 +42,7 @@ function gff_read, gff, subscripts=_subscripts
 
    subscripts = nd_to_w(dim, xx)
 
+; could improve speed by detceting contiguous blocks of subscripts..
    for i=0, n-1 do data[i] = array[subscripts[i]]
   end
 
