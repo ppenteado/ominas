@@ -46,7 +46,7 @@ IDLCMD
 	rm -f unins.bat
 fi
 
-if ! [[ $1 == "r" ]]; then
+if [[ $1 == "r" ]]; then
 	echo "rm -rf $OMINAS_DIR"
 fi
 
