@@ -99,8 +99,7 @@ pro dat_load_data, dd, sample=sample, data=data
 ;_dd.cache = 0
  if((_dd.cache NE -1) AND ptr_valid(_dd.gffp)) then $
                data = gff_read(*_dd.gffp, subscripts=samples_to_load) $
- else $
-     data = call_function(_dd.input_fn, _dd.filename, /silent, $
+ else data = call_function(_dd.input_fn, _dd.filename, /silent, $
                        header, udata, abscissa=abscissa, sample=samples_to_load)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

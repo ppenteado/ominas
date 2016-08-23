@@ -81,7 +81,6 @@ common nv_message_block, last_message, cb_tlp, silent
 @core.include
 
  silent = keyword_set(silent)
-silent = 0
 
  if(defined(_silent)) then silent = _silent
 
