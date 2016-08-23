@@ -1,13 +1,11 @@
-;=============================================================================
+; docformat = 'rst'
 ;+
-; NAME:
-;       str_aberr_pos
-;
-;
-; PURPOSE:
 ;	Corrects star positions for stellar aberration due to the velocity
 ;	of the observer.
 ;
+; Purpose
+; =======
+; 
 ;	Star catalogues are compiled for a reference frame in which the 
 ;	Sun (or alternately the Solar System Barycenter or SSB) is 
 ;	stationary.  For an observer moving at a large velocity wrt the
@@ -27,99 +25,87 @@
 ;
 ;		     v*sin(omega)
 ;
-;			<-----
-;			^     ^
-;			 \    |
-;	   apparent path  \   | actual path
-;	   of starlight	   \  | of starlight
-;		(c)	    \ |
-;			     \|
+;	              	 <-----
+;			             ^     ^
+;			              \    |
+;	   apparent path   \   | actual path
+;	   of starlight	    \  | of starlight
+;		     (c)	         \ |
+;			                  \|
 ;
-;	Therefore, we arrive at an expression for the deflection angle:
+;	Therefore, we arrive at an expression for the deflection angle::
 ;
 ;		sin(phi) = v*sin(omega) / c
 ;
+; Restrictions
+; ============
 ;
-; CATEGORY:
-;       LIB/STR
+; Input vel must be a 1x3 vector in inertial Cartesian coordinates,
+; in units of meters/second.
 ;
+; :Categories:
+;       nv, config, str
 ;
-; CALLING SEQUENCE:
-;       str_aberr_pos, pos, vel, posout
+; :Params:
+;     pos : in, type="double array"
+;        Array of column vectors (1,3,n) from observer to objects 
+;     vel : in, type="double array"
+;        Velocity of the observer, in meters/second wrt Solar System
+;	       Barycenter, or Sun, which is close enough
+;     posout : out, type="double array"
+;        Apparent position of objects from observer corrected for
+;        stellar aberration
 ;
+; :Version:
+;     Completed.  Checked vs SPICE routine STELAB
 ;
-; ARGUMENTS:
-;  INPUT:
-;            pos:    Array of column vectors (1,3,n) from observer to objects 
-;
-;            vel:    Velocity of the observer, in meters/second wrt Solar System
-;	             Barycenter, or Sun, which is close enough
-;
-;  OUTPUT:
-;         posout:    Apparent position of objects from observer corrected for
-;                    stellar aberration
-;
-;
-; KEYWORDS:
-;  INPUT:
-;       NONE
-;
-;  OUTPUT:
-;       NONE
-;
-;
-; RESTRICTIONS:
-;	Input vel must be a 1x3 vector in inertial Cartesian coordinates,
-;       in units of meters/second.
-;
-; STATUS:
-;       Completed.  Checked vs SPICE routine STELAB
-;
-;
-; MODIFICATION HISTORY:
-;       Written by:     Tiscareno, 7/00
-;      Modified by:     Haemmerle, 12/00
+; :Hidden:
+; :Obsolete:
+; 
+; :History:
+;     Tiscareno, 7/00
+;     
+;     Haemmerle, 12/00
 ;
 ;-
-;=============================================================================
+
 pro str_aberr_pos, pos, vel, posout
 
-; stellar aberration is now performed downstream.  translators are instead
-; required to return uncorrected positions. 
-; I haven't yet tested this; Spitale 3/2006
-;;posout = pos
-;;return
+;----------------------------------------------------------
+; Stellar aberration is now performed downstream.  
+; Translators are instead required to return uncorrected
+; positions. I haven't yet tested this; Spitale 3/2006
+;----------------------------------------------------------
+;posout = pos
+;return
 
-
-; We reverse the velocity here because stellab_pos treats the observer as
-;  stationary, while this routine treats the target as stationary.
-
-; posout = stellab_pos(pos, -vel, c=299792.458d3)
+;----------------------------------------------------------
+; We reverse the velocity here because stellab_pos treats 
+; the observer as stationary, while this routine treats 
+; the target as stationary.
+;----------------------------------------------------------
  posout = stellab_pos(pos, -vel, c=pgc_const('c'))
  return
-
-
-
-
+ 
  n=n_elements(pos)/3
  c=299792.458d3  ; Speed of light
 
  r=[pos[0,0,*],pos[0,1,*],pos[0,2,*]]
  r=reform(r,n,3,/overwrite)
 
- ;------------------------------------------------------
+ ;---------------------------------------------------------
  ; Get rotation axis (perpendicular to both pos and vel)
- ;------------------------------------------------------
+ ;---------------------------------------------------------
  h=v_cross(v_unit(r),rebin(vel,n,3)/c )
 
- ;--------------------------------------------------------
+ ;---------------------------------------------------------
  ; Get rotation angle sin(phi) = (v/c*sin(omega)) = mag(h)
- ;--------------------------------------------------------
+ ;---------------------------------------------------------
  phi=asin(v_mag(h))
 
- ;-------------------------------------------------------
+ ;---------------------------------------------------------
  ; Rotate about h by phi radians to get apparent position
- ;-------------------------------------------------------
+ ;---------------------------------------------------------
  if((v_mag(vel))[0] NE 0d0) THEN $
   begin
    abrpos=v_rotate(r,v_unit(h),sin(phi),cos(phi))

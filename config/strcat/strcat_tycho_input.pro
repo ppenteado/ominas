@@ -1,104 +1,60 @@
-;==================================================================
+; docformat = 'rst'
 ;+
-; NAME:
-;       strcat_tycho_input
+;
+;        Input translator for Tycho-1 star catalog.
+;
+; Usage
+; =====
+; ; This routine is called via `dat_get_value`, which is used to read the
+; translator table. In particular, the specific translator for the scene
+; to be processed should contain the following line::
+;
+;      -   strcat_tycho_input     -       /j2000    # or /b1950 if desired
+;
+; For the star catalog translator system to work properly, only one type
+; of catalog may be used at a time for a particular instrument.
+; The version of the TYCHO catalog that this translator expects can be
+; obtained from the original CD's. The catalog data is grouped into 
+; approx 10,000 separate regions in numbered files in 24 separate 
+; subdirectories. Each star has a data record of 16 bytes.Two identifying
+; numbers: TYCHO_ID_1 and TYCHO_ID_2, RA_DEG and DEC_DEG (degrees), 
+; RApm and DECpm (milliarcseconds/year), and MAG (Visual Magnitude). 
+; The real values (RA_DEG, DEC_DEG, RApm, DECpm, and MAG) are in XDR,
+; the GSC_ID and CLASS are network-order short integers.
 ;
 ;
-; PURPOSE:
-;        Input translator for Tycho-2 star catalog.
+; Restrictions
+; ============
+; 
+; Since the distance to stars are not given in the GSC catalog, the
+; position vector magnitude is set as 10 parsec and the luminosity
+; is calculated from the visual magnitude and the 10 parsec distance.
 ;
 ;
-; CATEGORY:
-;       NV/PG
-;
-;
-; CALLING SEQUENCE(only to be called by dat_get_value):
-;       result = strcat_tycho_input(dd, keyword)
-;
-;
-; ARGUMENTS:
-;  INPUT:
-;	dd:		Data descriptor.
-;
-;	keyword:	String giving the name of the translator quantity.
-;
-;  OUTPUT:
-;       NONE
-;
-; KEYWORDS:
-;  INPUT:
-;	key1:		Observer descriptor, must be of subclass CAMERA.
-;
-;  OUTPUT:
-;	status:		Zero if valid data is returned.
-;
-;
-;  TRANSLATOR KEYWORDS:
-; 	jtime:		Years since 1950 (the epoch of catalog) for precession
-;			and proper motion correction.  If not given, it is taken
-;			from the object descriptor bod_time, which is assumed to
-;			be seconds past 1950 unless keyword /j2000 is set.
-;
-;	j2000:		If set, coordinates are output wrt j2000.
-;
-;	b1950:		If set, coordinates are output wrt b1950.
-;
-;	path_tycho:	The directory of the star catalog.   If not given, the
-; 			routine uses the environment variable 'NV_TYCHO_DATA'.  
-;			The catalog data is grouped into approx 10,000 separate
-;			regions in numbered files in 24 separate subdirectories.
-;			Each star has a data record of 16 bytes.
-;			Two identifying numbers: TYCHO_ID_1 and TYCHO_ID_2, 
-;			RA_DEG and DEC_DEG (degrees), RApm and DECpm 
-;			(milliarcseconds/year), and MAG (Visual Magnitude). 
-;			The real values (RA_DEG, DEC_DEG, RApm, DECpm, and MAG) 
-;			are in XDR, the GSC_ID and CLASS are network-order 
-;			short integers.
-;
-;	faint:		Stars with magnitudes fainter than this will not be
-;			returned.
-;
-;	bright:		Stars with magnitudes brighter than this will not be
-;			returned.
-;
-;
-;  ENVIRONMENT VARIABLES:
-;	NV_TYCHO_DATA:	Directory containing the TYCHO catalog data unless
-;			overridden using the path_tycho translator keyword.
-;
-;
-; RETURN:
-;       Star descriptor containing all the stars found.  The Sp part of
-;       the star descriptor contains neither the Spectral type nor the 
-;       GSC class. 
-;
-; RESTRICTIONS:
-;       Since the distance to stars are not given in the GSC catalog, the
-;       position vector magnitude is set as 10 parsec and the luminosity
-;       is calculated from the visual magnitude and the 10 parsec distance.
-;
-;
-; PROCEDURE:
-;       Stars are found in a square area in RA and DEC around a given
-;       or calculated center.  The star descriptor is filled with stars
-;       that fit in this area.  If B1950 is selected, input RA, DEC and/or
+; Procedure
+; =========
+; 
+; Stars are found in a square area in RA and DEC around a given
+; or calculated center.  The star descriptor is filled with stars
+; that fit in this area.  If B1950 is selected, input RA, DEC and/or
 ;	ods orient matrix is assumed to be B1950 also, if not, input is
 ;	assumed to be J2000, like the catalog.  
 ;
+; :Categories:
+; nv, config
 ;
-; MODIFICATION HISTORY:
-;       Written by:     Vance Haemmerle, 3/2000 (pg_get_stars_gsc.pro)
+; :History:
+;       Written by:     Vance Haemmerle, 3/2000
 ;       Modified:       Tiscareno, 8/2000
-;	Modified:	Haemmerle, 12/2000
-;       Modified:       Spitale 9/2001 - changed to strcat_tycho_input.pro
+;	      Modified:	      Haemmerle, 12/2000
+;       Modified:       Spitale 9/2001
 ;
 ;-
-;=============================================================================
 
-;====================================================================
-; tycho_fzone:  Determine the Declination zone of a GSC/Tycho region
-;
-;====================================================================
+;+
+; :Private:
+; :Hidden:
+;-
 function tycho_fzone, declow, dechi
 
   dec = (declow + dechi) / 2.0
@@ -110,10 +66,11 @@ function tycho_fzone, declow, dechi
   return, zone
 end
 
-;====================================================================
-; tycho_initzd: Initialize GSC/Tycho directory names
-;
-;====================================================================
+;+
+; :Private:
+; :Hidden:
+; Initialize zone directory names for TYCHO catalog
+;-
 pro tycho_initzd, zdir
 
   zdir(0)  = 'N0000'
@@ -143,19 +100,32 @@ pro tycho_initzd, zdir
   zdir(23) = 'S8230'
 end
 
-;===========================================================================
-; tycho_get_regions -- Search the index table to find the region identifiers
-;                      whose coordinate limits overlap the specified field.
-;                      Save list of paths to gsc files for these regions.
-;
-;===========================================================================
+;+
+; :Private:
+; :Hidden:
+; Search the index table to find the region identifiers whose coordinate
+; limits overlap the specified field. Save list of paths to gsc files for
+; these regions.
+; :Params:
+;   ra1 : in, required, type=double
+;      lower bound in right ascension of scene in hours
+;   ra2 : in, required, type=double
+;      upper bound in right ascension of scene in hours
+;   dec1 : in, required, type=double
+;      lower bound in declination of scene in degrees
+;   dec2 : in, required, type=double
+;      upper bound in declination of scene in degrees
+;      
+; :Keywords:
+;    path_tycho : in, required, type=string, default='NV_TYCHO_DATA'
+;       Sets the path to look for catalog files. Uses the value of
+;       the NV_TYCHO_DATA environment variable by default.
+;       
+; :Returns:
+;    Table to store regions found (to search for guide stars)
+;    
+;-
 function tycho_get_regions, ra1, ra2, dec1, dec2, path_tycho=path_tycho
-
-  ; ra1, ra2           Right ascension limits in hours
-  ; dec1, dec2         Declination limits in degrees
-  ; path_gsc           Path of GSC catalog
-  ; Returned:
-  ; region_list        Table to store regions found (to search for guide stars)
 
   ; Initialize the directory name for each zone
   zdir = strarr(24)
@@ -276,13 +246,54 @@ next: a = 1
  return, region_list
 end
 
-;========================================================================
-; tycho_get_stars -  Given a Tycho/GSC region filename, load the stars 
-;                    that fit within region (ra1 - ra2) and (dec1 - dec2)
-;                    into a star descriptor.
+;+
+; :Private:
+; :Hidden:
+; Ingests a set of records from the TYCHO-2 star catalog and generates star 
+; descriptors for each star within a specified scene.
 ;
-;========================================================================
-function tycho_get_stars, dd, filename, b1950=b1950, cam_vel=cam_vel, $
+; :Returns:
+;   array of star descriptors
+;
+; :Params:
+;   dd : in, required, type="data descriptor"
+;      data descriptor
+;   filename : in, required, type=string
+;      name of index file, or regions file
+;  
+; :Keywords:
+;   cam_vel : in, optional, type=double
+;      camera velocity from scene data, used to correct for stellar
+;      aberration
+;   b1950 : in, optional, type=string
+;      if set, coordinates are output wrt b1950
+;   ra1 : in, required, type=double
+;      lower bound in right ascension of scene
+;   ra2 : in, required, type=double
+;      upper bound in right ascension of scene
+;   dec1 : in, required, type=double
+;      lower bound in declination of scene
+;   dec2 : in, required, type=double
+;      upper bound in declination of scene
+;   faint : in, optional, type=double
+;      stars with magnitudes fainter than this will not be returned
+;   bright : in, optional, type=double
+;      stars with magnitudes brighter than this will not be returned
+;   nbright : in, optional, type=double
+;      if set, selects only the n brightest stars
+;   noaberr : in, optional, type=string
+;      if set, stellar aberration will not be calculated
+;   names : in, optional, type="string array"
+;      if set, will return only the stars with the expected names
+;   mag : out, required, type=double
+;      magnitude of returned stars
+;   jtime : in, optional, type=double
+;      Years since 1950 (the epoch of catalog) for precession
+;      and proper motion correction. If not given, it is taken
+;      from the object descriptor bod_time, which is assumed to
+;      be seconds past 2000, unless keyword /b1950 is set
+;-
+function tycho_get_stars, filename, b1950=b1950, cam_vel=cam_vel, $
          jtime=jtime, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, noaberr=noaberr, names=names, mag=mag
 
@@ -485,7 +496,6 @@ function tycho_get_stars, dd, filename, b1950=b1950, cam_vel=cam_vel, $
  lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d ) 
 
  _sd = str_create_descriptors( n, $
-	assoc_xd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
         avel=avel, $
@@ -500,35 +510,28 @@ function tycho_get_stars, dd, filename, b1950=b1950, cam_vel=cam_vel, $
  return, _sd
 end
 
-;=============================================================================
-
-
-
-;=============================================================================
-; strcat_tycho_input
-;
-;=============================================================================
-function _strcat_tycho_input, dd, keyword, status=status, $
+;+
+; :Private:
+; :Hidden:
+;-
+function _strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
 
- return, strcat_input('tycho', dd, keyword, status=status, $
+ return, strcat_input('tycho', dd, keyword, n_obj=n_obj, dim=dim, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )
 
 end
-;=============================================================================
 
-
-
-;=============================================================================
-; strcat_tycho_input
-;
-;=============================================================================
-function strcat_tycho_input, dd, keyword, values=values, status=status, $
+;+
+; :Private:
+; :Hidden:
+;-
+function strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
