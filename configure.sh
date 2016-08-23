@@ -199,26 +199,26 @@ function dins()
 	#    like to overwrite before prompting you for the directory.       #
 	#    if you don't know, it will attempt to find it for you.          #
 	#--------------------------------------------------------------------#
-	#:local mnum=(($1 - ${#mis[@]} + 1))
-	local dat=${Data[$mnum]}
-	if grep -q "NV_$dat_DATA.*" ${setting}; then
+	mnum=$(($1 - ${#mis[@]} - 1))
+	dat=${Data[$mnum]}
+	if grep -q "NV_${dat}_DATA" ${setting}; then
 		printf "Warning: $dat data files appear to already be set at this location:\n"
-		eval echo \$NV_$dat_DATA
+		eval echo \$NV_${dat}_DATA
 		read -rp "Would you like to overwrite this location (y/n)? " ans
 		case $ans in 
 		[Yy]*)
-			grep -v "NV_$dat_DATA.*" $setting >$HOME/temp
+			grep -v "NV_${dat}_DATA.*" $setting >$HOME/temp
 			mv $HOME/temp $setting	;;
 		*)
 			return 1
 		esac
 	fi		
-	read -rp "Please enter the data or star catalog path (if not known, press enter): " datapath
+	read -rp "Please enter the path to $dat (if not known, press enter): " datapath
 	if ! [[ -d $datapath ]]; then
-		setdir ${Data[$1-$mnum]}
+		setdir $dat
 	fi
 
-	echo "NV_$dat_DATA=$datapath; export NV_$dat_DATA" >>$setting
+	echo "NV_${dat}_DATA=$datapath; export NV_${dat}_DATA" >>$setting
 }
 
 function pkins()
@@ -246,7 +246,7 @@ function pkins()
 	case $ans in
 		[Yy]*)
 			read -rp "Please enter the location of your $2 kernel pool: " datapath
-			if ! [ -d $datapath ]; then
+			if ! [[ -d $datapath ]]; then
 				setdir $2
 			fi
 			pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}"	;;
@@ -270,7 +270,7 @@ function setdir() {
 	#    sensitive.                                                      #
 	#--------------------------------------------------------------------#
 	searchdir=$HOME
-	if ! [ $2 == "" ]; then searchdir=$2; fi
+	if ! [ -z ${2+x} ]; then searchdir=$2; fi
 	printf "Attempting to automatically find data location from $searchdir...\n"
     dirlist=()
     while IFS= read -rd $'\0'; do
@@ -289,12 +289,13 @@ function setdir() {
     fi
     printf '%s\n' "${dirlist[@]}" | nl
     read -rp "Please type the number of the matching directory:  " match
-	datapath=${dirlist[$match-1]}
+	n=$(($match - 1))
+	datapath=${dirlist[$n]}
 }
 
 printf "The setup will guide you through the installation of OMINAS\n"
 
-if [ -z ${OMINAS_DIR+x} ]; then
+if grep -q OMINAS ${setting}; then
 # NOTE: OMINAS is available in repository form. Extraction is no longer needed
 #	printf "Unpacking OMINAS tar archive...\n"
 #	ext ominas_ringsdb_*.tar.gz
@@ -308,10 +309,6 @@ printf "OMINAS files located in $OMINAS_DIR\n"
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
 demost=`pkst ${OMINAS_DIR}/config/tab/`
 
-# Print the configuration list with all statuses to stdout
-
-
-PKGS
 declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("SEDR" "TYCHO2" "SAO" "GSC" "UCAC4" "UCACT")
 for ((d=0; d<${#mis[@]}; d++));
@@ -326,6 +323,8 @@ do
 		dstatus[$d]=$ns
 	fi
 done
+
+# Print the configuration list with all statuses to stdout
 cat <<PKGS
 	Current OMINAS configuration settings
 Required:
@@ -365,7 +364,7 @@ do
 		[1234])
 				pkins ominas_env_def.sh "generic_kernels"
 				ppkg $num 	;;
-		[5678])
+		[56789]|10)
 				dins $num 	;;
 		*)
 				printf "Error: Invalid package or catalog specified\n" 1>&2

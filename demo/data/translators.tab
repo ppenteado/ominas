@@ -4,10 +4,10 @@
   CAS_ISSNA	dh_std_input		dh_std_output		format=cas
 	-	cas_spice_input		cas_spice_output \
 							klist=demo.kernels \
-							ck_in=auto \
+#							ck_in=auto \
 #							spk_in=auto \
 #							pck_in=auto \
-							lsk_in=auto \
+#							lsk_in=auto \
 #							fk_in=auto \
 #							ik_in=auto \
 #							sck_in=auto \
@@ -20,10 +20,10 @@
   CAS_ISSWA	dh_std_input		dh_std_output		format=cas
 	-	cas_spice_input		cas_spice_output \
 							klist=demo.kernels \
-							ck_in=auto \
+#							ck_in=auto \
 #							spk_in=auto \
 #							pck_in=auto \
-							lsk_in=auto \
+#							lsk_in=auto \
 #							fk_in=auto \
 #							ik_in=auto \
 #							sck_in=auto \
