@@ -82,6 +82,24 @@
 ;	The version of Icy should be printed. If both of these functions return
 ;	successfully, then Icy has been installed correctly.
 ;
+;	Note: Demo
+;	==========
+;
+;	If the demo configuration is set for OMINAS, no other types of images can
+;	be processed other than the example scripts. To change this setting at a
+;	later point, run the uninstall.sh script to unconfigure OMINAS, then run
+;	configure.sh again, selecting not to configure the demo.
+;
+;	Alternatively, the following information can be changed in the
+;	`~/.bash_profile' or '~/.bashrc' file::
+;
+;	 DFLAG=true; source <...>
+;	
+;	where <...> is the rest of the line. This line should be changed to::
+;
+;	 DFLAG=false; source <...>
+;
+;
 ;	Troubleshooting
 ;	===============
 ;
