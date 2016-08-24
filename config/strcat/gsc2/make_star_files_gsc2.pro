@@ -1,6 +1,9 @@
-; make_star_files
+; docformat = 'rst'
+;+
+; Used to create the GSC2 records for use by `strcat_gsc2_input`.
 ;
-; Used to create the GSC2 records for use by pg_get_stars_gsc2
+; Purpose
+; =======
 ;
 ; The full catalog file for GSC 2.2 is not available for download by 
 ; researchers, but the data is accessible through a WWW query engine at
@@ -9,8 +12,14 @@
 ; project (see /raid/matt/pointing.sav and /raid/matt/pointing.pro), and
 ; created 40 data files by cut-and-paste from the WWW query engine.  This
 ; routine compiles those data files into a single structure that can be
-; accessed by OMINAS.  
+; accessed by OMINAS.
 ;
+; :Private:
+;-
+
+;+
+; :Hidden:
+;-
 pro make_star_files_gsc2, indir=indir, catfile=catfile, outdir=outdir, $
 	outfile=outfile, ns=ns
 

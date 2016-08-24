@@ -1,6 +1,5 @@
 ; docformat = 'rst'
 ;+
-; :Private:
 ; Format of the standardized star structure.
 ; 
 ; :Fields:
@@ -22,6 +21,8 @@
 ;       mean epoch of observation
 ;    epochdec : type=float
 ;       mean epoch of observation
+;
+; :Private:
 ;-
 pro tycho2_star__define
 struct = $

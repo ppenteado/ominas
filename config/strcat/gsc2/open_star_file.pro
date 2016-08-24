@@ -1,3 +1,9 @@
+; docformat = 'rst'
+;+
+; :Private:
+; :Hidden:
+;-
+
 pro open_star_file, filename, stars, gsc=gsc, gsc2=gsc2
 
 ; Opens star catalog file into a pointer array, byteswaps if necessary.

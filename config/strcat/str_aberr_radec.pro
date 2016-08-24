@@ -4,38 +4,37 @@
 ;	of the observer.
 ; 
 ; Purpose
-; =======
+; ======= 
 ; 
-;	Star catalogues are compiled for a reference frame in which the 
-;	Sun (or alternately the Solar System Barycenter or SSB) is 
-;	stationary.  For an observer moving at a large velocity wrt the
-;	SSB, a correction must be done.  Let v be the observer's velocity.
-;	If omega is the angle between the observer's velocity vector and 
-;	the vector pointing towards the star, then v*sin(omega) is the 
-;	component of the observer's velocity that is tangential to the 
-;	star's position.  To transform the starlight's velocity vector
-;	from the SSB-stationary frame into the observer's frame, this
-;	velocity must be vector-subtracted from the starlight's vector.
-;	The result is the starlight's path as observed in the observer's
-;	frame, which is deflected by an angle phi (the angle at the
-;	bottom of the triangle below).  Since, according to Special
-;	Relativity, the velocity of light is c = 3e8 m/s in all frames,
-;	the hypoteneuse of the triangle below (representing the light's
-;	path in the observer's frame) has a vector magnitude of c.
+; Star catalogues are compiled for a reference frame in which the 
+; Sun (or alternately the Solar System Barycenter or SSB) is 
+; stationary.  For an observer moving at a large velocity wrt the
+; SSB, a correction must be done.  Let v be the observer's velocity.
+; If omega is the angle between the observer's velocity vector and 
+; the vector pointing towards the star, then `v*sin(omega)` is the 
+; component of the observer's velocity that is tangential to the 
+; star's position.  To transform the starlight's velocity vector
+; from the SSB-stationary frame into the observer's frame, this
+; velocity must be vector-subtracted from the starlight's vector.
+; The result is the starlight's path as observed in the observer's
+; frame, which is deflected by an angle phi (the angle at the
+; bottom of the triangle below).  Since, according to Special
+; Relativity, the velocity of light is `c = 3e8 m/s` in all frames,
+; the hypoteneuse of the triangle below (representing the light's
+; path in the observer's frame) has a vector magnitude of `c`::
 ;
-;		     v*sin(omega)
+;                      v*sin(omega)
+;                       <-------
+;                        ^     ^
+;                         \    |
+;          apparent path   \   | actual path
+;          of starlight     \  | of starlight
+;            (c)             \ |
+;                             \|
 ;
-;			             <-----
-;			             ^     ^
-;			              \    |
-;	   apparent path   \   | actual path
-;	   of starlight	    \  | of starlight
-;		     (c)	         \ |
-;			                  \|
+; Therefore, we arrive at an expression for the deflection angle::
 ;
-;	Therefore, we arrive at an expression for the deflection angle::
-;
-;		sin(phi) = v*sin(omega) / c
+;  sin(phi) = v*sin(omega) / c
 ;
 ; Restrictions
 ; ============
@@ -46,6 +45,19 @@
 ; :Categories:
 ;       nv, config, str
 ;
+; :Version:
+;     Completed.  Checked vs SPICE routine STELAB
+;       
+; :Obsolete:
+;
+; :History:
+; 	Tiscareno, 7/00
+;      
+; 	Haemmerle, 12/00
+;
+;-
+
+;+
 ; :Params:
 ;    ra : in, type=double
 ;       Array of Right Ascension (radians)
@@ -59,19 +71,8 @@
 ;    abr_dec : out, type="double array"
 ;       Array of aberration corrected Declination (radians)
 ;
-; :Version:
-;     Completed.  Checked vs SPICE routine STELAB
-;       
-; :Obsolete:
-; :Hidden:
-;
-; :History:
-;      Tiscareno, 7/00
-;      
-;      Haemmerle, 12/00
-;
+; :Hidden: 
 ;-
-
 pro str_aberr_radec, ra, dec, vel, abr_ra, abr_dec
 
 ;----------------------------------------------------------

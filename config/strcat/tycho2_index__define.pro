@@ -1,7 +1,7 @@
 ; docformat = 'rst'
 ;+
-; :Private:
 ; Format of one line in TYCHO-2 index.dat
+;
 ; :Fields:
 ;    rec_t2 : type=long
 ;       Tycho-2 record of first star in GSC region
@@ -15,6 +15,8 @@
 ;       smallest DEC in region
 ;    DEmax : type=float
 ;       largest DEC in region
+;
+; :Private:
 ;-
 pro tycho2_index__define
 

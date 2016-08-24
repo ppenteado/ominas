@@ -1,6 +1,5 @@
 ; docformat = 'rst'
 ;+
-; :Private:
 ; Format of one line of the TYCHO-2 tyc2.dat catalog file
 ; 
 ; :Fields:
@@ -74,6 +73,8 @@
 ;       [ DP] type of Tycho-2 solution
 ;    corr : type=float
 ;       [-1,1] correlation (RAdeg,DEdeg)
+;
+; :Private:
 ;-
 pro tycho2_record__define
 

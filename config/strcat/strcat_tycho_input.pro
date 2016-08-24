@@ -5,7 +5,7 @@
 ;
 ; Usage
 ; =====
-; ; This routine is called via `dat_get_value`, which is used to read the
+; This routine is called via `dat_get_value`, which is used to read the
 ; translator table. In particular, the specific translator for the scene
 ; to be processed should contain the following line::
 ;
@@ -45,8 +45,11 @@
 ;
 ; :History:
 ;       Written by:     Vance Haemmerle, 3/2000
+;
 ;       Modified:       Tiscareno, 8/2000
+;
 ;	      Modified:	      Haemmerle, 12/2000
+;
 ;       Modified:       Spitale 9/2001
 ;
 ;-
