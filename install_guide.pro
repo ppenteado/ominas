@@ -29,7 +29,7 @@
 ;
 ;	Procedure
 ;	=========
-;	
+;
 ;	1. Please ensure that OMINAS has been properly downloaded from the
 ;	`Github repository <https://github.com/ppenteado/ominas>` by entering
 ;	the following command at the terminal::
@@ -160,7 +160,7 @@
 ;
 ;	The SPK kernels must be loaded from a mission kernel list. If they are not
 ;	being loaded correctly, then the kernel list is not being read as expected,
-; 	usually this is due to an incorrect kernel list path.
+;	usually this is due to an incorrect kernel list path.
 ;
 ;
 ;	In some cases, a demo script will run and no error will appear to occur,
