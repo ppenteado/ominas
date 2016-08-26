@@ -295,7 +295,7 @@ function setdir() {
 
 printf "The setup will guide you through the installation of OMINAS\n"
 
-if grep -q OMINAS ${setting}; then
+if ! grep -q "OMINAS_DIR=.*; export OMINAS_DIR" ${setting}; then
 # NOTE: OMINAS is available in repository form. Extraction is no longer needed
 #	printf "Unpacking OMINAS tar archive...\n"
 #	ext ominas_ringsdb_*.tar.gz
