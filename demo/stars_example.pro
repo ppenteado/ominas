@@ -48,6 +48,13 @@
 ;
 ; Note: Users with a 24-bit display, you may want to do the device command
 ; `'pseudo=8'` so that xloadct can be used to contrast enhance the image.
+;
+; Code::
+;
+;  ;dd = dat_read('data/c1138223.gem', im, label)           ; VICAR format file
+;  dd = dat_read('data/N1456251768_1.IMG', im, label)       ; Cas ISS-NA image
+;  tvim, im, zoom=0.75, /order
+;
 ;-
 ;-------------------------------------------------------------------------
 ;dd = dat_read('data/c1138223.gem', im, label)			; VICAR format file
@@ -68,6 +75,17 @@ tvim, im, zoom=0.75, /order
 ; of using the normal SEDR the regular translator would return.
 ;
 ; If the Cassini image is chosen, this option will be ignored.
+; 
+; Code::
+;
+;  ; Voyager descriptor-generating code
+;  ;cd = pg_get_cameras(dd, 'sedr_source=NAV')
+;  ;pd = pg_get_planets(dd, od=cd, 'sedr_source=NAV')
+;  ;rd = pg_get_rings(dd, pd=pd, od=cd, 'sedr_source=NAV')
+;  ; Cassini descriptor-generating code
+;  cd = pg_get_cameras(dd)
+;  pd = pg_get_planets(dd, od=cd)
+;  rd = pg_get_rings(dd, pd=pd, od=cd)
 ;-
 ;-------------------------------------------------------------------------
 ; Voyager descriptor-generating code
@@ -93,6 +111,10 @@ rd = pg_get_rings(dd, pd=pd, od=cd)
 ;  cd - camera descriptor part
 ;  gbx - globe descriptor part
 ;  dkx - disk descriptor part
+; 
+; Code::
+;
+;  gd = {cd:cd, gbx:pd, dkx:rd}
 ;-
 ;-------------------------------------------------------------------------
 gd = {cd:cd, gbx:pd, dkx:rd}
@@ -130,6 +152,11 @@ gd = {cd:cd, gbx:pd, dkx:rd}
 ;  by the translators.  In the first case, we have specified that only one
 ;  translator will be called, and we know that it will not return 
 ;  duplicate objects.
+;
+; Code::
+;
+;  ;sd = pg_get_stars(dd, od=cd, /no_sort, tr_ov='strcat_gsc2_input', 'faint=8')
+;  sd = pg_get_stars(dd, od=cd, 'faint=14')
 ;-
 ;-------------------------------------------------------------------------
 ;sd = pg_get_stars(dd, od=cd, /no_sort, tr_ov='strcat_gsc2_input', 'faint=8')
@@ -156,7 +183,15 @@ sd = pg_get_stars(dd, od=cd, 'faint=14')
 ; The star elements are chosen to be red, with a symbol type of * 
 ; (code 2), a font size of 2, and labels corresponding to the name of
 ; each star. Stars can have either catalog names or common names.
-; 
+;
+; Code::
+;
+;  star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;  n_stars=n_elements(sd)
+;  color = ctred()
+;  psym = 6
+;  csizes = 2
+;  plabels = cor_name(sd)
 ;-
 ;-------------------------------------------------------------------------
 star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
@@ -176,6 +211,10 @@ plabels = cor_name(sd)
 ; symbols, font size, and labels defined earlier.
 ; 
 ; In this particular example, the planet does not appear in the image.
+;
+; Code::
+; 
+;  pg_draw, star_ptd, color=color, psym=psym, plabel=plabels, csi=csizes
 ;-
 ;-------------------------------------------------------------------------
 pg_draw, star_ptd, color=color, psym=psym, plabel=plabels, csi=csizes
@@ -194,6 +233,13 @@ stop, '=== Auto-test complete.  Use multi-window cut & paste to continue.'
 ; spectral types of the stars and uses them instead of the star names. If
 ; the spectral type is not available for the catalog, then no information
 ; will be plotted in the labels.
+;
+; Code::
+;
+;  tvim, im
+;  spt=str_sp(sd)
+;  psyms_str=make_array(n_stars,val=6)
+;  pg_draw, star_ptd, color=color, psym=psym, plabel=spt, csi=csizes
 ;-
 ;-------------------------------------------------------------------------
 tvim, im
@@ -208,6 +254,14 @@ pg_draw, star_ptd, color=color, psym=psym, plabel=spt, csi=csizes
 ;
 ; This pasteable section uses the stellar library function str_get_mag to get
 ; visual magnitudes of the stars and uses them instead of the star names.
+;
+; Code::
+;
+;  tvim, im
+;  sm = str_get_mag(sd)
+;  smag = string(sm, format='(f4.1)')
+;  psyms_str=make_array(n_stars,val=6)
+;  pg_draw, star_ptd, color=color, psym=psym, plabel=smag, csi=csizes
 ;-
 ;-------------------------------------------------------------------------
 tvim, im
@@ -236,6 +290,16 @@ pg_draw, star_ptd, color=color, psym=psym, plabel=smag, csi=csizes
 ; camera descriptor (cd, passed by gd).  The limb, ring and star points
 ; are then recalculated, the image redisplayed to clear the objects drawn,
 ; and then `pg_draw` is called to replot.
+;
+; Code::
+;
+;  optic_ptd = pnt_create_descriptors(points=cam_oaxis(cd))
+;  tvim, im
+;  dxy = pg_drag(star_ptd, dtheta=dtheta, axis=optic_ptd, symbol=6)  ; square
+;  pg_repoint, dxy, dtheta, axis=optic_ptd, gd=gd
+;  star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;  tvim, im
+;  pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 ;-
 ;-------------------------------------------------------------------------
 optic_ptd = pnt_create_descriptors(points=cam_oaxis(cd))
@@ -257,6 +321,11 @@ pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 ; star positions (within width of 40 pixels) and find the pixels with 
 ; the highest correlation with a given edge model (example uses the
 ; default gaussian) for each star.  These points are then plotted.
+;
+; Code::
+;
+;  ptscan_ptd = pg_ptscan(dd, star_ptd, edge=30, width=40)
+;  pg_draw, ptscan_ptd, psym=1, col=ctyellow() 
 ;-
 ;-------------------------------------------------------------------------
 ptscan_ptd = pg_ptscan(dd, star_ptd, edge=30, width=40)
@@ -271,6 +340,14 @@ pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 ; correlation coefficients.  This example only keeps stars with a 
 ; correlation coefficient above 0.6.  Notice that each object can have
 ; its own min and max value.
+;
+; Code::
+;
+;  pg_threshold, ptscan_ptd, min=make_array(n_stars,val=0.6), $
+;                            max=make_array(n_stars,val=1.0)
+;  tvim, im
+;  pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+;  pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 ;-
 ;-------------------------------------------------------------------------
 pg_threshold, ptscan_ptd, min=make_array(n_stars,val=0.6), $
@@ -292,6 +369,14 @@ pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 ; mouse button to end the region.  `pg_trim` removes the points in the
 ; just defined region.  The scan points are then replotted.
 ; Repeat these statements for each region a user wants to remove.
+;
+; Code::
+;
+;  region=pg_select(dd)
+;  pg_trim, dd, ptscan_ptd, region
+;  tvim, im
+;  pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+;  pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 ;-
 ;-------------------------------------------------------------------------
 region=pg_select(dd)
@@ -314,6 +399,19 @@ pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 ; rotation (dtheta).  It calls `pg_ptchisq` to get the chi square of the
 ; fit.  It then calls `pg_repoint` to update the pointing.  Recalculates
 ; the limb, rings and stars and replots.
+;
+; Code::
+;
+;  optic_ptd = pnt_create_descriptors(points=cam_oaxis(cd))
+;  ptscan_cf = pg_ptscan_coeff(ptscan_ptd, axis=optic_ptd)
+;  dxy = pg_fit([ptscan_cf], dtheta=dtheta)
+;  chisq = pg_chisq(dxy, dtheta, ptscan_ptd, axis=optic_ptd[0])
+;  covar = pg_covariance([ptscan_cf])
+;  print, dxy, dtheta*180./!pi, chisq, covar
+;  pg_repoint, dxy, dtheta, axis=optic_ptd, gd=gd
+;  star_ptd = pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;  tvim, im
+;  pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 ;-
 ;-------------------------------------------------------------------------
 optic_ptd = pnt_create_descriptors(points=cam_oaxis(cd))
@@ -331,15 +429,20 @@ pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 
 
 
-;=========================================================================
-;
+;-------------------------------------------------------------------------
+;+
 ; Output the new state
 ; ====================
 ;
-;  This section (optional) shows how you can save your output: any changes
-;  to the image data into a new file and the new pointing into a detached
-;  header.
+; This section (optional) shows how you can save your output: any changes
+; to the image data into a new file and the new pointing into a detached
+; header.
 ;
+; Code::
+;
+;  pg_put_cameras, dd, gd=gd
+;  dat_write, 'data/c1138223_nv.gem', dd
+;-
 ;-------------------------------------------------------------------------
 pg_put_cameras, dd, gd=gd
 dat_write, 'data/c1138223_nv.gem', dd
