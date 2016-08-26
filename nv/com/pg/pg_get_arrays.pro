@@ -41,10 +41,10 @@
 ;	arr_*:		All array override keywords are accepted.  See
 ;			array_keywords.include. 
 ;
-;			If arr_name is specified, then only descriptors with
+;			If name is specified, then only descriptors with
 ;			those names are returned.
 ;
-;	verbatim:	If set, the descriptors requested using arr_name
+;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
 ;
@@ -63,8 +63,8 @@
 ;	If /override, then a array descriptor is created and initialized
 ;	using the specified values.  Otherwise, the descriptor is obtained
 ;	through the translators.  Note that if /override is not used,
-;	values (except arr_name) can still be overridden by specifying 
-;	them as keyword parameters.  If arr_name is specified, then
+;	values (except name) can still be overridden by specifying 
+;	them as keyword parameters.  If name is specified, then
 ;	only descriptors corresponding to those names will be returned.
 ;	
 ;
@@ -76,7 +76,7 @@
 ;=============================================================================
 function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, $
                           override=override, verbatim=verbatim, $
-@array_keywords.include
+@arr__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -89,11 +89,11 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if names requested, the force tr_first
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(keyword_set(arr__name)) then tr_first = 1
+ if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
- ards = dat_get_value(dd, 'ARR_DESCRIPTORS', key1=od, key2=bx, key4=_ard, key6=arr__primary, $$
-                             key8=arr__name, trs=trs, $
+ ards = dat_get_value(dd, 'ARR_DESCRIPTORS', key1=od, key2=bx, key4=_ard, key6=primary, $$
+                             key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
@@ -102,7 +102,7 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, $
  n = n_elements(ards)
 
  ;---------------------------------------------------
- ; If arr__name given, determine subscripts such that
+ ; If name given, determine subscripts such that
  ; only values of the named objects are returned.
  ;
  ; Note that each translator has this opportunity,
@@ -111,10 +111,10 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, $
  ; If arr_name is not given, then all descriptors
  ; will be returned.
  ;---------------------------------------------------
- if(keyword__set(arr__name)) then $
+ if(keyword__set(name)) then $
   begin
    tr_names = cor_name(ards)
-   sub = nwhere(strupcase(tr_names), strupcase(arr__name))
+   sub = nwhere(strupcase(tr_names), strupcase(name))
    if(sub[0] EQ -1) then return, obj_new()
    if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
   end $

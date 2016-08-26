@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_data::init, ii, crd=crd0, dd=dd0, $
-@data__keywords.include
+@dat__keywords.include
 end_keywords
 @core.include
 
  void = self->ominas_core::init(ii, crd=crd0, $
-@core__keywords.include
+@cor__keywords.include
 end_keywords)
  if(keyword_set(dd0)) then struct_assign, dd0, self
 

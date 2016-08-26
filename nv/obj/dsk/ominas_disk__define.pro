@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_disk::init, ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
-@disk__keywords.include
+@dsk__keywords.include
 end_keywords
 @core.include
  
  void = self->ominas_solid::init(ii, crd=crd0, bd=bd0, sld=sld0, $
-@solid__keywords.include
+@sld__keywords.include
 end_keywords)
  if(keyword_set(dkd0)) then struct_assign, dkd0, self
 

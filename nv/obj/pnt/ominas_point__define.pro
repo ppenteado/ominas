@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_point::init, ii, crd=crd0, ptd=ptd0, $
-@point__keywords.include
+@pnt__keywords.include
 end_keywords
 @core.include
  
  void = self->ominas_core::init(ii, crd=crd0, $
-@core__keywords.include
+@cor__keywords.include
 end_keywords)
  if(keyword_set(ptd0)) then struct_assign, ptd0, self
 

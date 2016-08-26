@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_station::init, ii, crd=crd0, bd=bd0, std=std0, $
-@station__keywords.include
+@stn__keywords.include
 end_keywords
 @core.include
  
  void = self->ominas_body::init(ii, crd=crd0, bd=bd0,  $
-@body__keywords.include
+@bod__keywords.include
 end_keywords)
  if(keyword_set(bd0)) then struct_assign, bd0, self
 

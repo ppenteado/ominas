@@ -95,15 +95,15 @@ pro pg_put_planets, dd, trs, pds=pds, ods=ods, gd=gd, $
 
 
  ;-------------------------------------------------------------------
- ; override the specified values (plt__name cannot be overridden)
+ ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
- if(n_elements(plt__orient) NE 0) then bod_set_orient, pds, plt__orient
- if(n_elements(plt__avel) NE 0) then bod_set_avel, pds, plt__avel
- if(n_elements(plt__pos) NE 0) then bod_set_pos, pds, plt__pos
- if(n_elements(plt__vel) NE 0) then bod_set_vel, pds, plt__vel
- if(n_elements(plt__time) NE 0) then bod_set_time, pds, plt__time
- if(n_elements(plt__radii) NE 0) then glb_set_radii, pds, plt__radii
- if(n_elements(plt__lora) NE 0) then glb_set_lora, pds, plt__lora
+ if(n_elements(orient) NE 0) then bod_set_orient, pds, orient
+ if(n_elements(avel) NE 0) then bod_set_avel, pds, avel
+ if(n_elements(pos) NE 0) then bod_set_pos, pds, pos
+ if(n_elements(vel) NE 0) then bod_set_vel, pds, vel
+ if(n_elements(time) NE 0) then bod_set_time, pds, time
+ if(n_elements(radii) NE 0) then glb_set_radii, pds, radii
+ if(n_elements(lora) NE 0) then glb_set_lora, pds, lora
 
 
  ;-------------------------------

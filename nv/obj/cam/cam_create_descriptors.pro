@@ -70,7 +70,7 @@
 ;-
 ;=============================================================================
 function cam_create_descriptors, n, crd=crd0, bd=bd0, cd=cd0, $
-@camera__keywords.include
+@cam__keywords.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -81,7 +81,7 @@ end_keywords
   begin
 
    cd[i] = ominas_camera(i, crd=crd0, bd=bd0, cd=cd0, $
-@camera__keywords.include
+@cam__keywords.include
 end_keywords)
 
   end
