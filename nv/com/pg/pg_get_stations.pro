@@ -76,7 +76,7 @@
 ;=============================================================================
 function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, gd=gd, $
                           override=override, verbatim=verbatim, $
-@station_keywords.include
+@stn__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 

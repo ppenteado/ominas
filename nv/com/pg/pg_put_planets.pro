@@ -75,7 +75,7 @@
 ;-
 ;=============================================================================
 pro pg_put_planets, dd, trs, pds=pds, ods=ods, gd=gd, $
-@planet_keywords.include
+@plt__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 

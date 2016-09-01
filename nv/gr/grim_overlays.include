@@ -671,13 +671,17 @@ pro grim_draw_user_points, grim_data, plane, tags, xmap=xmap
        if(keyword_set(user_shade_fn) AND defined(user_shade_threshold)) then $
                p = grim_shade_threshold(user_ptd[j], shade, user_shade_threshold) $
        else p = pnt_points(user_ptd[j], /visible)
-
+;print, '---------'
+;print, cor_name(user_ptd[j])
+;;if(cor_name(user_ptd[j]) EQ 'CURTAIN_CAIRO-8') then stop
+;print, min(pnt_flags(user_ptd[j]))
 
        ;- - - - - - - - - - - - - - - - - - - -
        ; proceed with visible points
        ;- - - - - - - - - - - - - - - - - - - -
        if(keyword_set(p)) then $
         begin
+;print, cor_name(user_ptd[j])
          ;- - - - - - - - - - - - - - - - - - - -
          ; parse user color
          ;- - - - - - - - - - - - - - - - - - - -
