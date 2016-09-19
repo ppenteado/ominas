@@ -10,6 +10,7 @@
   detect_vgr_cd			VGR_CD		read
   detect_tdl			TDL		read
   detect_multi			MULTI		read
+  pp_detect_isis                ISIS            read
   detect_pds			PDS		read
   detect_ext			EXT		read
 

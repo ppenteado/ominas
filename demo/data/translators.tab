@@ -33,29 +33,6 @@
 	-       ring_input			-
 	-  	strcat_tycho2_input		-		/j2000
 
-  VIMS_IR       dh_std_input            dh_std_output
-        -       station_input                   -
-        -       array_input                     -
-        -       vims_spice_input         vims_spice_output \
-                                                  klist=cassini.kernels \
-                                                        ck_in=auto \
-                                                        pck_in=auto \
-                                                        lsk_in=auto \
-                                                        fk_in=auto \
-                                                        ik_in=auto \
-                                                        sck_in=auto \
-                                                        xk_in=extra.tpc  \
-                                                        /spk_strict \
-                                                        spk_in=auto
-        -       ring_input                      -
-        -       orb_input                       -       suffix=-orb
-        -       strcat_ucact_input              -               /j2000
-
-
-
-
- CAS_RADAR     dh_std_input            dh_std_output
-       -       cas_radar_input
 
 
 
