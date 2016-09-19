@@ -8,7 +8,7 @@ end_keywords
 @core.include
  
  void = self->ominas_core::init(ii, crd=crd0,  $
-@core__keywords.include
+@cor__keywords.include
 end_keywords)
  if(keyword_set(md0)) then struct_assign, md0, self
 

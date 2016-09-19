@@ -32,7 +32,7 @@ end
 ;
 ;=============================================================================
 function ominas_core::init, ii, crd=crd0, $
-@core__keywords.include
+@cor__keywords.include
 end_keywords
 @core.include
  

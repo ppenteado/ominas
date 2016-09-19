@@ -47,10 +47,10 @@
 ;	rng_*:		All ring override keywords are accepted.  See
 ;			ring_keywords.include.
 ;
-;			If rng_name is specified, then only descriptors with
+;			If name is specified, then only descriptors with
 ;			those names are returned.
 ;
-;	verbatim:	If set, the descriptors requested using rng_name
+;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
 ;
@@ -69,8 +69,8 @@
 ;	If /override, then a ring descriptor is created and initialized
 ;	using the specified values.  Otherwise, the descriptor is obtained
 ;	through the translators.  Note that if /override is not used,
-;	values (except rng_name) can still be overridden by specifying 
-;	them as keyword parameters.  If rng_name is specified, then
+;	values (except name) can still be overridden by specifying 
+;	them as keyword parameters.  If name is specified, then
 ;	only descriptors corresponding to those names will be returned.
 ;	
 ;
@@ -87,7 +87,7 @@
 ;=============================================================================
 function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
                       override=override, verbatim=verbatim, $
-@ring_keywords.include
+@rng__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -102,30 +102,30 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
  ;-------------------------------------------------------------------
  if(keyword__set(override)) then $
   begin
-   n = n_elements(rng__name)
+   n = n_elements(name)
 
-   if(NOT keyword__set(rng__orient)) then rng__orient = bod_orient(pd)
-;   if(NOT keyword__set(rng__avel)) then rng__avel = bod_avel(pd)
-   if(NOT keyword__set(rng__pos)) then rng__pos = bod_pos(pd)
-   if(NOT keyword__set(rng__vel)) then rng__vel = bod_vel(pd)
-   if(NOT keyword__set(rng__time)) then rng__time = bod_time(pd)
+   if(NOT keyword__set(orient)) then orient = bod_orient(pd)
+;   if(NOT keyword__set(avel)) then avel = bod_avel(pd)
+   if(NOT keyword__set(pos)) then pos = bod_pos(pd)
+   if(NOT keyword__set(vel)) then vel = bod_vel(pd)
+   if(NOT keyword__set(time)) then time = bod_time(pd)
 
    rd=rng_create_descriptors(n, $
-	name=rng__name, $
-	primary=rng__primary, $
-	orient=rng__orient, $
-	avel=rng__avel, $
-	pos=rng__pos, $
-	vel=rng__vel, $
-	time=rng__time, $
-	sma=rng__sma, $
-	ecc=rng__ecc, $
-	dap=rng__dap, $
-	opaque=rng__opaque, $
-	opacity=rng__opacity, $
-	nm=rng__nm, $
-	_m=rng__m, $
-	em=rng__em, $
+	name=name, $
+	primary=primary, $
+	orient=orient, $
+	avel=avel, $
+	pos=pos, $
+	vel=vel, $
+	time=time, $
+	sma=sma, $
+	ecc=ecc, $
+	dap=dap, $
+	opaque=opaque, $
+	opacity=opacity, $
+	nm=nm, $
+	_m=m, $
+	em=em, $
 	tapm=rng__tapm, $
 	dtapmdt=rng__dtapmdt)
   end $
@@ -137,10 +137,10 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(rng__name)) then tr_first = 1
+   if(keyword_set(name)) then tr_first = 1
 
    rd = dat_get_value(dd, 'RNG_DESCRIPTORS', key1=pd, key2=od, key4=_rd, $
-                            key7=rng__time, key8=rng__name, trs=trs, $
+                            key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
@@ -149,19 +149,19 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    n = n_elements(rd)
 
    ;---------------------------------------------------
-   ; If rng__name given, determine subscripts such that
+   ; If name given, determine subscripts such that
    ; only values of the named objects are returned.
    ;
    ; Note that each translator has this opportunity,
    ; but this code guarantees that it is done.
    ;
-   ; If rng__name is not given, then all descriptors
+   ; If name is not given, then all descriptors
    ; will be returned.
    ;---------------------------------------------------
-   if(keyword__set(rng__name)) then $
+   if(keyword__set(name)) then $
     begin
      tr_names = cor_name(rd)
-     sub = nwhere(strupcase(tr_names), strupcase(rng__name))
+     sub = nwhere(strupcase(tr_names), strupcase(name))
      if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
@@ -171,24 +171,23 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    _rs = rd[sub]
 
    ;-------------------------------------------------------------------
-   ; override the specified values (rng__name cannot be overridden)
+   ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
    w = nwhere(dd, cor_assoc_xd(rd))
-   if(n_elements(rng__time) NE 0) then bod_set_time, rd, rng__time[w]
-   if(n_elements(rng__primary) NE 0) then rng_set_primary, rd, rng__primary[w]
-   if(n_elements(rng__orient) NE 0) then bod_set_orient, rd, rng__orient[*,*,w]
-   if(n_elements(rng__avel) NE 0) then bod_set_avel, rd, rng__avel[*,*,w]
-   if(n_elements(rng__pos) NE 0) then bod_set_pos, rd, rng__pos[*,*,w]
-   if(n_elements(rng__vel) NE 0) then bod_set_vel, rd, rng__vel[*,*,w]
-   if(n_elements(rng__opaque) NE 0) then bod_set_opaque, grd, rng__opaque[w]
-   if(n_elements(rng__opacity) NE 0) then sldd_set_opacity, grd, rng__opacity[w]
-   if(n_elements(rng__sma) NE 0) then dsk_set_sma, rd, rng__sma[*,*,w]
-   if(n_elements(rng__ecc) NE 0) then dsk_set_ecc, rd, rng__ecc[*,*,w]
-   if(n_elements(rng__dap) NE 0) then dsk_set_dap, rd, rng__dap[*,*,w]
-   if(n_elements(rng__opaque) NE 0) then bod_set_opaque, rd, rng__opaque[w]
-   if(n_elements(rng__nm) NE 0) then dsk_set_nm, rd, rng__nm[w]
-   if(n_elements(rng__m) NE 0) then dsk_set_m, rd, rng__m[*,*,w]
-   if(n_elements(rng__em) NE 0) then dsk_set_em, rd, rng__em[*,*,w]
+   if(n_elements(time) NE 0) then bod_set_time, rd, time[w]
+   if(n_elements(primary) NE 0) then rng_set_primary, rd, primary[w]
+   if(n_elements(orient) NE 0) then bod_set_orient, rd, orient[*,*,w]
+   if(n_elements(avel) NE 0) then bod_set_avel, rd, avel[*,*,w]
+   if(n_elements(pos) NE 0) then bod_set_pos, rd, pos[*,*,w]
+   if(n_elements(vel) NE 0) then bod_set_vel, rd, vel[*,*,w]
+   if(n_elements(opacity) NE 0) then sldd_set_opacity, rd, opacity[w]
+   if(n_elements(sma) NE 0) then dsk_set_sma, rd, sma[*,*,w]
+   if(n_elements(ecc) NE 0) then dsk_set_ecc, rd, ecc[*,*,w]
+   if(n_elements(dap) NE 0) then dsk_set_dap, rd, dap[*,*,w]
+   if(n_elements(opaque) NE 0) then bod_set_opaque, rd, opaque[w]
+   if(n_elements(nm) NE 0) then dsk_set_nm, rd, nm[w]
+   if(n_elements(m) NE 0) then dsk_set_m, rd, m[*,*,w]
+   if(n_elements(em) NE 0) then dsk_set_em, rd, em[*,*,w]
    if(n_elements(rng__tapm) NE 0) then dsk_set_tapm, rd, rng__tapm[*,*,w]
    if(n_elements(rng__dtapmdt) NE 0) then dsk_set_dtapmdt, rd, rng__dtapmdt[*,*,w]
   end

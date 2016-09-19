@@ -299,7 +299,7 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
    ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
-   _im = dat_data(planes[i].dd, sample=data_xy, offset=offset)
+   _im = dat_data(planes[i].dd, sample=data_xy, offset=offset, abscissa=grid)
 
    ; - - - - - - - - - - - - - - -
    ; apply color map

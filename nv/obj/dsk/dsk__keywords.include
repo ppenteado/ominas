@@ -1,4 +1,4 @@
-@solid__keywords.include
+@sld__keywords.include
 sma=sma, ecc=ecc, dap=dap, scale=scale, $
 nm=nm, _m=m, em=em, tapm=tapm, dtapmdt=dtapmdt, $
 libam=libam, libm=libm, dlibmdt=dlibmdt, $

@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_body::init, ii, crd=crd0, bd=bd0, $
-@body__keywords.include
+@bod__keywords.include
 end_keywords
 @core.include
  
  void = self->ominas_core::init(ii, crd=crd0, $
-@core__keywords.include
+@cor__keywords.include
 end_keywords)
  if(keyword_set(bd0)) then struct_assign, bd0, self
 
@@ -139,7 +139,7 @@ end
 ;=============================================================================
 pro ominas_body__define
 
- ndv=bod_ndv()
+ ndv = bod_ndv()
 
  struct = $
     { ominas_body, inherits ominas_core, $

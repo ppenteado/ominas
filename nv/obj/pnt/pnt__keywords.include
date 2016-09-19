@@ -1,4 +1,4 @@
-@core__keywords.include
+@cor__keywords.include
    desc=desc, $
    input=input, $
    points=points, $

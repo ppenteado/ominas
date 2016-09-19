@@ -7,8 +7,6 @@
 pro spice_write_cameras, dd, ref, ck_file, cd, $
                 sc=sc, inst=inst, plat=plat, status=status
 
-; path = spice_bin_path()
-
  status = 0
 
  ;-------------------------------

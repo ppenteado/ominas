@@ -62,9 +62,17 @@ pro dat_lookup_transforms, instrument, $
  ;=====================================================
  ; read the transforms table if it doesn't exist
  ;=====================================================
+ stat = 0
  if(NOT keyword_set(*nv_state.trf_table_p)) then $
-   dat_read_config, 'NV_TRANSFORMS', /con, $
+   dat_read_config, 'NV_TRANSFORMS', stat=stat, /con, $
               nv_state.trf_table_p, nv_state.transforms_filenames_p
+ if(stat NE 0) then $
+   nv_message, name='dat_lookup_transforms', /con, $
+     'No transforms table.', $
+       exp=['The transforms table specifies the names of programs to transform', $
+            'data values as they are read or written.  OMINAS should work fine', $
+            'without this table, but some data sources may have problems.']
+
 
  table = *nv_state.trf_table_p
  if(NOT keyword_set(table)) then return
