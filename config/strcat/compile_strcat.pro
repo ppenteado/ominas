@@ -1,3 +1,8 @@
+; docformat = 'rst'
+;+
+; :Hidden:
+;-
+
 .rnew gsc_record__define.pro
 .rnew gsc_region__define.pro
 .rnew sao_record__define.pro

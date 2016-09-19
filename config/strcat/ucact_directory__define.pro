@@ -1,3 +1,8 @@
+; docformat = 'rst'
+;+
+; :Hidden:
+;-
+
 pro ucact_directory__define
 
  struct = $
