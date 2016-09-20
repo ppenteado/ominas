@@ -49,7 +49,8 @@ pro dat_load_data, dd, sample=sample, data=data
 @core.include
  _dd = cor_dereference(dd)
 
- sample0 = data_archive_get(_dd.sample_dap, _dd.dap_index)
+
+ sample0 = *_dd.sample_p
  if(data_archive_defined(_dd.data_dap, _dd.dap_index)) then $
                                              if(sample0[0] EQ -1) then return
 

@@ -3,7 +3,7 @@
 ;
 ;
 ;===========================================================================
-pro data_archive_set, dap, data, nhist=nhist, index=index
+pro data_archive_set, dap, data, nhist=nhist, index=index, noarchive=noarchive
 
 
  ;-------------------------------------------------
@@ -55,11 +55,16 @@ pro data_archive_set, dap, data, nhist=nhist, index=index
  nhist = n_elements(daps)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if archiving disabled:
+ ;  - replace data in first position
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(noarchive)) then ii = lindgen(nhist) $
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if inserting data at nonzero position:
  ;  - delete all data at smaller indices
- ;  - shift everything so such that new data is at zero position
+ ;  - shift everything such that new data is at zero position
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(keyword_set(index)) then $
+ else if(keyword_set(index)) then $
   begin
    ii = lindgen(nhist) + index - 1
    w = where(ii GE nhist)
@@ -70,9 +75,8 @@ pro data_archive_set, dap, data, nhist=nhist, index=index
      for i=0, nw-1 do  *daps[ii[w[i]]] = 0
     end
   end $
-
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; otherwise, cycle everything back and insert new data at front
+ ; otherwise, shift everything back and insert new data at front
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  else $
   begin

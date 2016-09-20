@@ -76,12 +76,12 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent, $
  ;----------------------------------------------
  if(sample[0] NE -1) then $
   begin
-   sample0 = data_archive_get(_dd.sample_dap, _dd.dap_index)
+   sample0 = *_dd.sample_p
    if(sample0[0] NE -1) then $
     begin
      data0 = data_archive_get(_dd.data_dap, _dd.dap_index)
      abscissa0 = data_archive_get(_dd.abscissa_dap, _dd.dap_index)
-     order0 = data_archive_get(_dd.order_dap, _dd.dap_index)
+     order0 = *_dd.order_p
 
      sample = set_union(sample0, sample, ii)
      data = ([data0, data])[ii]
@@ -99,28 +99,27 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent, $
  ;--------------------------------------------
  if(NOT keyword_set(update)) then $
   begin
+   ;- - - - - - - - - - - - - - - - - - - - - - -
+   ; do not archive if maintain > 0
+   ;- - - - - - - - - - - - - - - - - - - - - - -
+   index = 0
+   if(_dd.maintain EQ 0) then index = _dd.dap_index
+
    dap = 0
    if(keyword_set(_dd.data_dap)) then dap = _dd.data_dap
-   data_archive_set, dap, data, index=_dd.dap_index
+   data_archive_set, dap, data, index=index
    _dd.data_dap = dap
-
-   dap = 0
-   if(keyword_set(_dd.sample_dap)) then dap = _dd.sample_dap
-   data_archive_set, dap, sample, index=_dd.dap_index
-   _dd.sample_dap = dap
-
-   dap = 0
-   if(keyword_set(_dd.order_dap)) then dap = _dd.order_dap
-   data_archive_set, dap, order, index=_dd.dap_index
-   _dd.order_dap = dap
 
    if(keyword_set(abscissa)) then $
     begin
      dap = 0
      if(keyword_set(_dd.abscissa_dap)) then dap = _dd.abscissa_dap
-     data_archive_set, dap, abscissa, index=_dd.dap_index
+     data_archive_set, dap, abscissa, index=index
      _dd.abscissa_dap = dap
     end
+
+   if(keyword_set(sample)) then *_dd.sample_p = sample
+   if(keyword_set(order)) then *_dd.order_p = order
 
    _dd.dap_index = 0
 
