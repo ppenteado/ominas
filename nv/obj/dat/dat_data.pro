@@ -182,7 +182,6 @@ function dat_data, dd, samples=_samples, offset=offset, $
  ;-------------------------------------------------------------------------
  ; restore compression
  ;-------------------------------------------------------------------------
-;stop
  _dat_compress_data, _dd, cdata=cdata, cabscissa=cabscissa
 
 

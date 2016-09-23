@@ -6,6 +6,8 @@
 pro data_archive_set, dap, data, nhist=nhist, index=index, noarchive=noarchive
 
 
+ if(NOT defined(index)) then index = 0
+
  ;-------------------------------------------------
  ; construct new dap if not given
  ;-------------------------------------------------
@@ -53,12 +55,17 @@ pro data_archive_set, dap, data, nhist=nhist, index=index, noarchive=noarchive
  ;----------------------------------------------------------------------
  daps = *dap
  nhist = n_elements(daps)
+ jj = 0
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if archiving disabled:
- ;  - replace data in first position
+ ;  - replace data in indexed position
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(keyword_set(noarchive)) then ii = lindgen(nhist) $
+ if(keyword_set(noarchive)) then $
+  begin
+   ii = lindgen(nhist)
+   jj = index
+  end $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if inserting data at nonzero position:
  ;  - delete all data at smaller indices
@@ -85,7 +92,7 @@ pro data_archive_set, dap, data, nhist=nhist, index=index, noarchive=noarchive
   end
 
  daps = daps[ii]
- *daps[0] = data
+ *daps[jj] = data
  *dap = daps
 end
 ;===========================================================================

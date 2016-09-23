@@ -103,7 +103,7 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent, $
    ; do not archive if maintain > 0
    ;- - - - - - - - - - - - - - - - - - - - - - -
    index = 0
-   if(_dd.maintain EQ 0) then index = _dd.dap_index
+   if(_dd.maintain GT 0) then index = _dd.dap_index
 
    dap = 0
    if(keyword_set(_dd.data_dap)) then dap = _dd.data_dap
