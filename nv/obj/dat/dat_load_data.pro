@@ -60,24 +60,26 @@ pro dat_load_data, dd, sample=sample, data=data
  if(_dd.maintain EQ 1) then dat_manage_dd, dd
  if(NOT keyword_set(_dd.input_fn)) then return
 
- ;--------------------------------------------------------
- ; determine samples such that no new data are loaded
- ;--------------------------------------------------------
+ ;-------------------------------------------------------------
+ ; determine samples such that no loaded samples are reloaded
+ ;-------------------------------------------------------------
  if(keyword_set(sample)) then $
   begin
    ss = sort(sample)
    uu = uniq(sample[ss])
-   _sample = sample[uu[ss]]
+   requested_samples = sample[uu[ss]]
 
-   samples_to_load = _sample
+   samples_to_load = requested_samples
 
    if(sample0[0] NE -1) then $
     begin
-     loaded_samples = set_intersection(sample0, _sample)
+;stop
+     loaded_samples = set_intersection(sample0, requested_samples)
      if(loaded_samples[0] NE -1) then $
-                  samples_to_load = set_difference(loaded_samples, _sample)
+                  samples_to_load = set_difference(loaded_samples, requested_samples)
     end
    if(samples_to_load[0] EQ -1) then return
+samples_to_load = sample
   end
 
  ;----------------------------------
@@ -97,7 +99,7 @@ pro dat_load_data, dd, sample=sample, data=data
  ;----------------------------------
  ; read data
  ;----------------------------------
-;_dd.cache = 0
+_dd.cache = 0
  if((_dd.cache NE -1) AND ptr_valid(_dd.gffp)) then $
                data = gff_read(*_dd.gffp, subscripts=samples_to_load) $
  else data = call_function(_dd.input_fn, _dd.filename, /silent, $

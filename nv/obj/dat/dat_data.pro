@@ -156,7 +156,7 @@ function dat_data, dd, samples=_samples, offset=offset, $
 
 
  ;-------------------------------------------------------------------------
- ; compute data ranges -- not accurate if data array is being subsampled
+ ; compute data ranges -- not reliable if data array is being subsampled
  ;-------------------------------------------------------------------------
  max = max(data)
  min = min(data)
