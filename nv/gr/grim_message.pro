@@ -44,6 +44,8 @@ common grim_message_block, suspended
  error = 0
  if(NOT keyword_set(question)) then error = 1
 
+print, message	; temporarily turn off dialog messages.  These can get annoying
+return		; maybe should just pop up if not a /continue message
  result = dialog_message(message, question=question, error=error) 
 
 
