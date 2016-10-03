@@ -1,68 +1,46 @@
+; docformat = 'rst'
 ;=============================================================================
 ;+
-; NAME:
-;	gsc2_catalog_inputs
+; Generates commands necessary for obtaining a prtion of the GSCII
+; guide star catalog and converting it to a format readable by the
+; translator strcat_gsc2_input. See also: `strcat_gsc2_input`
 ;
+; PROCEDURE
+; =========
 ;
-; PURPOSE:
-;	Generates commands necessary for obtaining a prtion of the GSCII
-;	guide star catalog and converting it to a format readable by the
-;	translator strcat_gsc2_input. 
+; This procedure uses the given information to generate and print a URL
+; that the user can enter into a web browser to automatically search the
+; guide star catalog.  The user is instructed to save the results in
+; a file in the directory given by the environment variable NV_GSC2_DATA.
+; A command is then printed that will convert all such data files in that
+; directory into a single binary file in the same directory, readable by
+; the gsc2 translator.
 ;
+; :Author:
+;	Spitale, 2/2002
 ;
-; CATEGORY:
-;	NV/CONFIG
-;
-;
-; CALLING SEQUENCE:
-;	gsc2_catalog_inputs, dd, cd=cd
-;
-;
-; ARGUMENTS:
-;  INPUT:
-;	dd:		Data descriptor.
-;
-;  OUTPUT:
-;	NONE
-;
-;
-; KEYWORDS:
-;  INPUT:
-;	cd:	Camera descriptor, required.
-;
-;	n:	Maximum number of stars searched in catalog.  Default is 5000.
-;
-;	m1:	Brightest visual magnitude to match.  Default is 0.
-;
-;	m2:	Faintest visual magnitude to match.  Default is 19.5.
-;
-;  OUTPUT:
-;	NONE
-;
-;
-; PROCEDURE:
-;	This procedure uses the given information to generate and print a URL
-;	that the user can enter into a web browser to automatically search the
-;	guide star catalog.  The user is instructed to save the results in
-;	a file in the directory given by the environment variable NV_GSC2_DATA.
-;	A command is then printed that will convert all such data files in that
-;	directory into a single binary file in the same directory, readable by
-;	the gsc2 translator.
-;
-;
-; STATUS:
-;	Complete
-;
-;
-; SEE ALSO:
-;	strcat_gsc2_input
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 2/2002
-;	
 ;-
-;=============================================================================
+;==============================================================================
+
+;+
+;	Generates user-facing text for compiling GSC catalog.
+;
+; :Params:
+;	dd : required, type="data descriptor"
+;		Data descriptor.
+;
+; :Keywords:
+;	cd : in, required, type="camera desciptor"
+;		Camera descriptor, required.
+;	n : in, type=integer, default=5000
+;		Maximum number of stars searched in catalog.
+;	m1 : in, type=float, default=0.0
+;		Brightest visual magnitude to match.
+;	m2 : in, type=float, default=19.5
+;		Faintest visual magnitude to match.
+;
+; :Hidden:
+;-
 pro gsc2_catalog_inputs, dd, cd=cd, n=n, m1=m1, m2=m2
 
  if(NOT keyword__set(n)) then n = 5000
@@ -99,7 +77,7 @@ pro gsc2_catalog_inputs, dd, cd=cd, n=n, m1=m1, m2=m2
  print
 
 
- files = findfile(path_gsc2+'gsc*.dat')
+ files = file_search(path_gsc2+'gsc*.dat')
  num = n_elements(files)
  if(NOT keyword__set(files)) then name = 'gsc0.dat' $
  else name = 'gsc'+strtrim(num,2)+'.dat' 

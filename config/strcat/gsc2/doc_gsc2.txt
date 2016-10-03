@@ -38,7 +38,7 @@ GSC2 Program Reference
 			<-----
 			^     ^
 			 \    |
-	   apparent path  \   | actual path
+	   apparent path \   | actual path
 	   of starlight	   \  | of starlight
 		(c)	    \ |
 			     \|
