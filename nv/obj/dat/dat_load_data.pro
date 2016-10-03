@@ -99,7 +99,7 @@ samples_to_load = sample
  ;----------------------------------
  ; read data
  ;----------------------------------
-_dd.cache = 0
+_dd.cache = -1
  if((_dd.cache NE -1) AND ptr_valid(_dd.gffp)) then $
                data = gff_read(*_dd.gffp, subscripts=samples_to_load) $
  else data = call_function(_dd.input_fn, _dd.filename, /silent, $
