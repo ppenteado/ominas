@@ -160,14 +160,10 @@ pro ominas_camera__define
 	fn_psf:		'', $			; Point-spread fn.
 
 	fn_focal_to_image:   '', $		; user procedures to tranform
-<<<<<<< HEAD
-	fn_image_to_focal:   '', $		; between focal and image
 	fn_data_p:	 nv_ptr_new(), $		; data for functions
 	fn_body_to_image:'',$
-        fn_body_to_inertial:''$
-=======
+  ;fn_body_to_inertial:'',$
 	fn_image_to_focal:   '' $		; between focal and image
->>>>>>> Spitale
     }
 
 end

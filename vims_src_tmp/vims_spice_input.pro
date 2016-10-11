@@ -186,8 +186,8 @@ function vims_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		cam_exposure = cam_exposure, $
 		cam_fn_focal_to_image = 'vims_focal_to_image_linear', $
 		cam_fn_image_to_focal = 'vims_image_to_focal_linear', $
-		cam_fn_body_to_image='vims_body_to_image',$
-                cam_fn_body_to_inertial='vims_body_to_inertial',$
+		;cam_fn_body_to_image='vims_body_to_image',$
+    ;            cam_fn_body_to_inertial='vims_body_to_inertial',$
 		cam_fi_data = fn_data,$;[nv_ptr_new()], $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
                   orient_fn )
