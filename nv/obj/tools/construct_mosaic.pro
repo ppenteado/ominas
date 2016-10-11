@@ -487,7 +487,7 @@ end
 ;
 ;=============================================================================
 function cm_combine_sum, maps, data, aux
- return, size(maps,/n_dim) eq 3 ? total(maps,3) : maps
+ return, size(maps,/n_dim) EQ 3 ? total(maps,3) : maps
 end
 ;=============================================================================
 

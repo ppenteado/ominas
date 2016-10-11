@@ -76,7 +76,7 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
  ;--------------------------------
  ; Angle to each limb point
  ;--------------------------------
- if(NOT keyword_set(alpha)) then alpha = dindgen(n_points)*2.*!dpi/n_points
+ if(NOT keyword_set(alpha)) then alpha = dindgen(n_points)*2.*!dpi/(n_points-1)
 
  ;--------------------------------------
  ; Unit vectors from planet to observer

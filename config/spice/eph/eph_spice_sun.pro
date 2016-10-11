@@ -14,7 +14,7 @@ function eph_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
  pd = eph_to_ominas( $
 	spice_planets(dd, ref, $
 		time = sc_time, $
-		name = make_array(ndd, val='SUN'), $
+		name = make_array(1,ndd, val='SUN'), $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs) )
  if(status NE 0) then return, 0
 
@@ -27,8 +27,8 @@ function eph_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
 		orient=bod_orient(pd), $
 		avel=bod_avel(pd), $
 		pos=bod_pos(pd), $
-		lum=make_array(ndd, val=3.862d26), $
-		mass=make_array(ndd, val=1.98892d30), $
+		lum=make_array(1,ndd, val=3.862d26), $
+		mass=make_array(1,ndd, val=1.98892d30), $
 		vel=bod_vel(pd), $
 		time=bod_time(pd), $
 		lref=glb_lref(pd), $

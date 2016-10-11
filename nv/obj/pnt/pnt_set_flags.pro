@@ -1,6 +1,6 @@
 ;=============================================================================
 ;+
-; points:
+; NAME:
 ;	pnt_set_flags
 ;
 ;
@@ -9,7 +9,7 @@
 ;
 ;
 ; CATEGORY:
-;	NV/SYS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:

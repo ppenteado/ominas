@@ -68,9 +68,17 @@ pro dat_lookup_translators, instrument, $
  ;=====================================================
  ; read the translators table if it doesn't exist
  ;=====================================================
+ stat = 0
  if(NOT keyword_set(*nv_state.tr_table_p)) then $
-   dat_read_config, 'NV_TRANSLATORS', $
+   dat_read_config, 'NV_TRANSLATORS', stat=stat, $
               nv_state.tr_table_p, nv_state.translators_filenames_p
+ if(stat NE 0) then $
+   nv_message, name='dat_lookup_translators', /con, $
+     'No translators table.', $
+       exp=['The translators table specifies the names of translators for', $
+            'instrument-specific information.  Without this table, OMINAS', $
+            'cannot obtain geometry descriptors.']
+
  table = *nv_state.tr_table_p
  if(NOT keyword_set(table)) then return
 

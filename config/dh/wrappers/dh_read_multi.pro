@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function dh_read_multi, filename, label, udata, dim, type, min, max, abscissa=abscissa, $
-                          silent=silent, sample=sample, nodata=nodata
+                          silent=silent, sample=sample, nodata=nodata, gff=gff
 ; tag_list_set, udata, 'DETACHED_HEADER', $
 ;               dh_read(dh_fname(filename), silent=silent)
 

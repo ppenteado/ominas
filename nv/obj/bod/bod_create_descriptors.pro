@@ -69,7 +69,7 @@
 ;-
 ;=============================================================================
 function bod_create_descriptors, n, crd=crd0, bd=bd0, $
-@body__keywords.include
+@bod__keywords.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -79,7 +79,7 @@ end_keywords
   begin
 
    bd[i] = ominas_body(i, crd=crd0, bd=bd0, $
-@body__keywords.include
+@bod__keywords.include
 end_keywords)
 
   end

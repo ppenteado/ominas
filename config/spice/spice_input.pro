@@ -228,6 +228,8 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
 
  if(NOT spice_test()) then $
   begin
+   nv_message, name='spice_input', /con, $
+     'Aborting because the NAIF/SPICE interface not installed.'
    status = -1
    return, 0
   end
@@ -415,7 +417,6 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
    time = bod_time(od)
   end
 
-
  ;----------------------------------
  ; manage kernels
  ;----------------------------------
@@ -429,6 +430,8 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
     begin
      lsk_in = spice_kernel_parse(dd, prefix, 'lsk', $
                 exp=lsk_exp, strict=lsk_strict, all=lsk_all, time=time)
+     if(NOT keyword_set(lsk_in)) then $
+            nv_message, name='spice_input', 'No leap-second kernels.'
 
      spice_sort_kernels, lsk_in, $
        reload=reload, reverse=reverse, protect=protect, $

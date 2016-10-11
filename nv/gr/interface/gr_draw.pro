@@ -234,19 +234,19 @@ pro gr_draw, pp, gd=gd, cd=_cd, pd=_pd, rd=_rd, sd=_sd, ard=_ard, std=_std, sund
    ; set object points
    ;------------------------------
    if(keyword_set(limb_ptd)) then $
-     grim_add_points, grim_data, limb_ptd, pd, cd=cd, name='limb', plane=planes[j]
+     grim_add_points, grim_data, limb_ptd, cd=cd, name='limb', plane=planes[j]
    if(keyword_set(ring_ptd)) then $
-     grim_add_points, grim_data, ring_ptd, [rd,rd], cd=cd, name='ring', plane=planes[j]
+     grim_add_points, grim_data, ring_ptd, cd=cd, name='ring', plane=planes[j]
    if(keyword_set(term_ptd)) then $
-     grim_add_points, grim_data, term_ptd, pd, cd=cd, name='terminator', plane=planes[j]
+     grim_add_points, grim_data, term_ptd, cd=cd, name='terminator', plane=planes[j]
    if(keyword_set(star_ptd)) then $
-     grim_add_points, grim_data, star_ptd, sd, cd=cd, name='star', plane=planes[j]
+     grim_add_points, grim_data, star_ptd, cd=cd, name='star', plane=planes[j]
    if(keyword_set(center_ptd)) then $
-     grim_add_points, grim_data, center_ptd, pd, cd=cd, name='planet_center', plane=planes[j]
+     grim_add_points, grim_data, center_ptd, cd=cd, name='planet_center', plane=planes[j]
    if(keyword_set(station_ptd)) then $
-     grim_add_points, grim_data, station_ptd, std, cd=cd, name='station', plane=planes[j]
+     grim_add_points, grim_data, station_ptd, cd=cd, name='station', plane=planes[j]
    if(keyword_set(array_ptd)) then $
-     grim_add_points, grim_data, array_ptd, ard, cd=cd, name='array', plane=planes[j]
+     grim_add_points, grim_data, array_ptd, cd=cd, name='array', plane=planes[j]
 
 
    ;------------------------------

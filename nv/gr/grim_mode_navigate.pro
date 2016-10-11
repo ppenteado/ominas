@@ -125,18 +125,22 @@ common grim_mode_navigate_reposition_xz_block, name, bx, inertial_pt0
  ;-------------------------------------------
  if(p_mag(xy[*,1]-xy[*,0]) EQ 0) then $
   begin
+   name = ''
    surf_pts = grim_image_to_surface(grim_data, plane, xy[*,0], $
                                          bx=bx, names=names, body_pts=body_pts)
-   name = names[0]
-   bx = bx[0]
+   if(keyword_set(surf_pts)) then $
+    begin
+     name = names[0]
+     bx = bx[0]
 
-   body_pt0 = body_pts[0,*]
-   inertial_pt0 = bod_body_to_inertial_pos(bx, body_pt0)
+     body_pt0 = body_pts[0,*]
+     inertial_pt0 = bod_body_to_inertial_pos(bx, body_pt0)
 
-   if(name NE 'SKY') then grim_draw_vectors, cd, curves_ptd, points_ptd
+     grim_draw_vectors, cd, curves_ptd, points_ptd
+    end
    return
   end
- if(keyword_set(name)) then if(name EQ 'SKY') then return
+ if(NOT keyword_set(name)) then return
 
 
  ;-------------------------------------------
@@ -176,16 +180,19 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
  ;-------------------------------------------
  if(p_mag(xy[*,1]-xy[*,0]) EQ 0) then $
   begin
+   name = ''
    surf_pts = grim_image_to_surface(grim_data, plane, xy[*,0], $
                                          bx=bx, names=names, body_pts=body_pts)
-   name = names[0]
-   body_pt0 = body_pts[0,*]
-   bx = bx[0]
-
-   if(name NE 'SKY') then grim_draw_vectors, cd, curves_ptd, points_ptd
+   if(keyword_set(surf_pts)) then $
+    begin
+     name = names[0]
+     body_pt0 = body_pts[0,*]
+     bx = bx[0]
+     grim_draw_vectors, cd, curves_ptd, points_ptd
+    end
    return
   end
- if(keyword_set(name)) then if(name EQ 'SKY') then return
+ if(NOT keyword_set(name)) then return
 
 
  ;-------------------------------------------------------------------------
@@ -407,7 +414,7 @@ pro grim_mode_navigate_reorient_nod, data, xarr, yarr, pixmap, win_num
 
  xy = (convert_coord(double(xarr), double(yarr), /device, /to_data))[0:1,*]
  dxy = xy[*,1] - xy[*,0]
- 
+
  nv_copy, cd, cd0
  cam_reorient, cd, [0,0], dxy, 0
 

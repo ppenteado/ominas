@@ -66,7 +66,6 @@ pro cor_rereference, xd, _xd, new=new
     x = xd[ii]
     if(obj_valid(x)) then x.rereference, _xd[ii]
     xd[ii] = x
-;    if(obj_valid(xd[ii])) then xd[ii].rereference, _xd[ii]
    end
 
 

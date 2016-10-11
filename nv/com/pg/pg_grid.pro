@@ -78,8 +78,8 @@
 ;
 ;
 ; RETURN:
-;	Array (n_objects) of POINT containing image points and
-;	the corresponding inertial vectors.
+;	Array of POINT containing image points and the corresponding inertial 
+;	vectors.
 ;
 ;
 ; STATUS:
@@ -113,15 +113,13 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
  nplat = npoints
  nplon = npoints
 
- pgs_count_descriptors, bx, nd=n_objects, nt=nt
+ pgs_count_descriptors, bx, nd=n_objects
 
 
  ;-----------------------------------
  ; compute grid for each body
  ;-----------------------------------
  hide_flags = make_array(npoints, val=PTD_MASK_INVISIBLE)
-
- grid_ptd = objarr(n_objects)
 
  for i=0, n_objects-1 do $
   begin
@@ -162,7 +160,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
    input = 0
    if(keyword_set(bx)) then $
     begin
-     xd = reform(bx[i,*], nt)
+     xd = reform(bx[i,*])
      input = pgs_desc_suffix(bx=bx[i,0], cd[0])
     end
 
@@ -187,8 +185,8 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
      end
     end
 
-   scan_lat = dindgen(nplat)/nplat*scan_dranges[0] + scan_ranges[0,0]
-   scan_lon = dindgen(nplon)/nplon*scan_dranges[1] + scan_ranges[0,1]
+   scan_lat = dindgen(nplat)/(nplat-1)*scan_dranges[0] + scan_ranges[0,0]
+   scan_lon = dindgen(nplon)/(nplon-1)*scan_dranges[1] + scan_ranges[0,1]
 
    if(defined(slat)) then scan_lat = slat
    if(defined(slon)) then scan_lon = slon
@@ -202,33 +200,42 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
    ;- - - - - - - - - - - - - - - - -
    if(continue) then $
     begin
-     grid_pts_map = map_get_grid_points(nt=nt, lat=lat, lon=lon, $
+     grid_pts_map = map_get_grid_points(lat=lat, lon=lon, $
                                         scan_lat=scan_lat, scan_lon=scan_lon)
-     flags = bytarr(n_elements(grid_pts_map[0,*]))
-     points = map_to_image(cd, cd, xd, grid_pts_map, valid=valid, body=grid_pts)
-     inertial_pts = 0
-     if(keyword_set(bx)) then $
-      if(keyword_set(grid_pts)) then $
-       inertial_pts = bod_body_to_inertial_pos(xd, grid_pts)
- 
-     if(keyword__set(valid)) then $
+;     for j=0, nlat+nlon-1 do $
+j=0
       begin
-       invalid = complement(points[0,*], valid)
-       if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-      end
+       ii = lindgen(npoints) + j*npoints
+;       _grid_pts_map = grid_pts_map[*,ii]
+_grid_pts_map = grid_pts_map
 
-     ;-----------------------------------
-     ; store grid
-     ;-----------------------------------
-     grid_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
-		          desc = 'globe_grid', $
-		          input = input, $
-		          assoc_xd = xd, $
-		          points = points, $
-		          flags = flags, $
-		          vectors = inertial_pts)
-     if(keyword_set(bx)) then $
-       if(NOT bod_opaque(bx[i,0])) then pnt_set_flags, grid_ptd[i], hide_flags
+       flags = bytarr(n_elements(_grid_pts_map[0,*]))
+       points = map_to_image(cd, cd, xd, _grid_pts_map, valid=valid, body=grid_pts)
+       inertial_pts = 0
+       if(keyword_set(bx)) then $
+        if(keyword_set(grid_pts)) then $
+         inertial_pts = bod_body_to_inertial_pos(xd, grid_pts)
+ 
+       if(keyword__set(valid)) then $
+        begin
+         invalid = complement(points[0,*], valid)
+         if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
+        end
+
+       ;-----------------------------------
+       ; store grid
+       ;-----------------------------------
+       _grid_ptd = pnt_create_descriptors(name = cor_name(xd), $
+        		 desc = 'globe_grid', $
+        		 input = input, $
+        		 assoc_xd = xd, $
+        		 points = points, $
+        		 flags = flags, $
+        		 vectors = inertial_pts)
+       if(keyword_set(bx)) then $
+         if(NOT bod_opaque(bx[i,0])) then pnt_set_flags, _grid_ptd, hide_flags
+       grid_ptd = append_array(grid_ptd, _grid_ptd)
+      end
     end
   end
 

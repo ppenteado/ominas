@@ -1,6 +1,6 @@
 ;=============================================================================
 ;+
-; vectors:
+; NAME:
 ;	pnt_template
 ;
 ;
@@ -9,7 +9,7 @@
 ;
 ;
 ; CATEGORY:
-;	NV/SYS/PS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:

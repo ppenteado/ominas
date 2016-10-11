@@ -1,11 +1,19 @@
-;=============================================================================
-; strcat_get_inputs
-;
-; NOTES: (Spitale)
-;	- assumes star positions are wrt SSB, not sun
-;	- assumes camera coordinate system is Earth equatorial (I think)
-;
-;=============================================================================
+; docformat = 'rst'
+;+
+; Obtains scene data to be used by star catalog translator.
+; 
+; Notes
+; =====
+;	Assumes star positions are wrt SSB, not sun
+;	
+;	Assumes camera coordinate system is Earth equatorial
+;	
+;	:Private:
+;-
+
+;+
+; :Hidden:
+;-
 pro strcat_get_inputs, dd, env, key, $
 	b1950=b1950, j2000=j2000, time=time, jtime=jtime, cam_vel=cam_vel, $
 	path=path, names=names, noaberr=noaberr, $
@@ -17,9 +25,9 @@ pro strcat_get_inputs, dd, env, key, $
 
  status = -1
 
- ;-----------------------------------------------
- ; translator keywords
- ;-----------------------------------------------
+ ;---------------------------------------------------------
+ ; Translator keywords
+ ;---------------------------------------------------------
  all = tr_keyword_value(dd, 'all')
  b1950 = tr_keyword_value(dd, 'b1950')
  jtime = double(tr_keyword_value(dd, 'jtime'))
@@ -31,9 +39,9 @@ pro strcat_get_inputs, dd, env, key, $
  if(_bright NE '') then bright = double(_bright)
  nbright = long(tr_keyword_value(dd, 'nbright'))
 
- ;-----------------------------------------------
- ; star catalog path
- ;-----------------------------------------------
+ ;---------------------------------------------------------
+ ; Star catalog path
+ ;---------------------------------------------------------
  path = tr_keyword_value(dd, key)
  if(NOT keyword_set(path)) then path = getenv(env);
  if(NOT keyword_set(path)) then $
@@ -44,48 +52,48 @@ pro strcat_get_inputs, dd, env, key, $
   end
    
 
- ;-----------------------------------------------
- ; observer descriptor passed as key1
- ;-----------------------------------------------
+ ;---------------------------------------------------------
+ ; Observer descriptor passed as key1
+ ;---------------------------------------------------------
  if(keyword_set(key1)) then ods = key1 
- if(NOT keyword_set(ods)) then return
  if(NOT cor_isa(ods[0], 'BODY')) then ods = 0
+ if(NOT keyword_set(ods)) then return
 
- ;-----------------------------------------------
- ; sun descriptor passed as key2
- ;-----------------------------------------------
+ ;---------------------------------------------------------
+ ; Sun descriptor passed as key2
+ ;---------------------------------------------------------
 ; if(keyword_set(key2)) then sund = key2
 
- ;-----------------------------------------------
- ; image corners passed as key5
- ;-----------------------------------------------
+ ;---------------------------------------------------------
+ ; Image corners passed as key5
+ ;---------------------------------------------------------
  if(keyword_set(key5)) then _corners = key5
 
 
- ;-----------------------------------------------
+ ;---------------------------------------------------------
  ; ra/dec corners passed as key6
- ;-----------------------------------------------
+ ;---------------------------------------------------------
  if(keyword_set(key6)) then _radec = key6
 
- ;-----------------------------------------------
- ; names passed as key8
- ;-----------------------------------------------
+ ;---------------------------------------------------------
+ ; Names passed as key8
+ ;---------------------------------------------------------
  if(keyword_set(key8)) then names = key8
 
- ;------------------------------------------------------------
- ; get jtime 
- ;------------------------------------------------------------
+ ;---------------------------------------------------------
+ ; Get jtime 
+ ;---------------------------------------------------------
  time = bod_time(ods[0])
  if(NOT keyword_set(jtime)) then $
   begin
-   jtime = time/(365.25d*86400d) ; assuming camtime is secs past 2000
+   jtime = time/(365.25d*86400d)      ; assuming camtime is secs past 2000
    if(keyword__set(b1950)) then jtime = jtime + 50.
   end
 
 
- ;------------------------------------------------------------
- ; get ra/dec limits 
- ;------------------------------------------------------------
+ ;---------------------------------------------------------
+ ; Get ra/dec limits 
+ ;---------------------------------------------------------
  if(keyword_set(all)) then $
   begin
    ra1 = 0d & ra2 = 2d*!dpi * 0.999

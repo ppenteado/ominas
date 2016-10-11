@@ -3319,6 +3319,58 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_open_as_rgb_event
+;
+;
+; PURPOSE:
+;	Opens a new grim window with the current channal configuration 
+;	reduced to a 3-channel RGB cube.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2016
+;	
+;-
+;=============================================================================
+pro grim_menu_open_as_rgb_help_event, event
+ text = ''
+ nv_help, 'grim_menu_open_as_rgb_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_open_as_rgb_event, event
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ widget_control, /hourglass
+ grim_wset, grim_data, grim_data.wnum, get_info=tvd
+
+ dim = dat_dim(plane.dd)
+ cube = grim_scale_image(grim_data, r, g, b, plane=plane, $
+                                 xrange=[0,dim[0]-1], yrange=[0,dim[1]-1])
+
+; look at render event to transfer overlays, etc
+; dd = nv_clone(plane.dd)
+; dat_set_data, dd, cube
+; dat_set_data_offset, dd, 0
+ dd = dat_create_descriptors(1, data=cube)
+
+ grim, /new, /rgb, dd, order=tvd.order, zoom=tvd.zoom[0], offset=tvd.offset, $
+       xsize=!d.x_size, ysize=!d.y_size
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_plane_evolve_event
 ;
 ;
@@ -8207,6 +8259,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Browse              \*grim_menu_file_browse_event', $
            '0\Save                \+*grim_menu_file_save_event', $
            '0\Save As             \+*grim_menu_file_save_as_event', $
+           '0\Open As RGB          \+*grim_menu_open_as_rgb_event', $
            '0\--------------------\+grim_menu_delim_event', $ 
            '0\Save User Points    \+*grim_menu_file_save_user_ptd_event', $
            '0\Save All User Points\+*grim_menu_file_save_all_user_ptd_event', $
@@ -8980,208 +9033,6 @@ end
 
 
 ;=============================================================================
-; grim_get_args_recurse
-;
-;=============================================================================
-pro grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, nhist=nhist, $
-               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
-
-
- nargs = n_elements(arg_ps)
-
- ;-----------------------------------
- ; check first arg
- ;-----------------------------------
- if(dat_valid_descriptor(arg_ps[0])) then arg = arg_ps[0] $
- else arg = *arg_ps[0]
-
- type = size(arg, /type)
- dim = size(arg, /dim) 
- ndim = n_elements(dim)
-
-
- ;---------------------------------------------------------------------
- ; build dd list
- ;---------------------------------------------------------------------
- done = 1
- case type of 
-  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ; string -- assume file name(s); read and add descriptors to list
-  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  7:  $
-   begin
-    _dd = dat_read(arg, maintain=maintain, compress=compress, extensions=extensions, nhist=nhist)
-    dd = append_array(dd, _dd)
-   end
-  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ; object -- assume data descriptor(s), add to dd list
-  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  11 : $
-   begin
-    _dd = arg
-    dd = append_array(dd, _dd)
-
-    n_dd = n_elements(_dd)
-    for i=0, n_dd-1 do $
-     begin
-      if(keyword_set(nhist)) then dat_set_nhist, _dd[i], nhist
-      if(keyword_set(maintain)) then dat_set_maintain, _dd[i], maintain
-      if(keyword_set(compress)) then dat_set_compress, _dd[i], compress
-     end
-   end
-
-  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ; other types...
-  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  else: done = 0
- endcase
-
-
- ;-----------------------------------
- ; non-object args
- ;-----------------------------------
- if(NOT done) then $
-  begin
-   ;- - - - - - - - - - - - - - 
-   ; scalar arg is grnum
-   ;- - - - - - - - - - - - - - 
-   if((ndim EQ 1) AND (dim[0] EQ 0)) then grnum = arg $
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; 1-D or 2-D arg: make dd
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else if(ndim LT 3) then $
-    begin
-     _dd = dat_create_descriptors(1, data=arg, nhist=nhist, maintain=maintain, compress=compress)
-     dd = append_array(dd, _dd)
-    end $
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; 3-D arg: assume multiple data arrays (e.g. cube)
-   ;   create master descriptor and one dd per plane
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else if(ndim EQ 3) then $
-    begin
-     nn = dim[2]
-     for i=0, nn-1 do $
-      begin
-       _dd = dat_create_descriptors(1, data=arg[*,*,i], nhist=nhist, maintain=maintain, compress=compress)
-       dd = append_array(dd, _dd)
-      end
-    end $
-   else grim_message, 'Invalid argument.'
-  end
-
-
- ;-----------------------------------
- ; recurse to next arg
- ;-----------------------------------
- arg_ps = rm_list_item(arg_ps, 0, only=nv_ptr_new())
- if(keyword_set(arg_ps[0])) then $
-             grim_get_args_recurse, arg_ps, dd=dd, grnum=grnum, rgb=rgb
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_get_args
-;
-; Possible arguments to GRIM:
-; 	dd (object)
-; 	filename (string)
-; 	grnum (scalar)
-; 	image (2d array)
-; 	plot (1d array)
-; 	cube (3d array)
-;
-;=============================================================================
-;xx
-pro __grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
-               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
-
- ;--------------------------------
- ; recurse through args
- ;--------------------------------
- arg_ps = ptrarr(2)
- if(defined(arg1)) then arg_ps[0] = nv_ptr_new(arg1)
- if(defined(arg2)) then arg_ps[1] = nv_ptr_new(arg2)
-
- w = where(ptr_valid(arg_ps))
- if(w[0] NE -1) then $
-     grim_get_args_recurse, arg_ps[w], dd=dd, grnum=grnum, nhist=nhist, rgb=rgb, $
-                    maintain=maintain, compress=compress, extensions=extensions
-
- if(keyword_set(arg_ps[0])) then nv_ptr_free, arg_ps[0]
- if(keyword_set(arg_ps[1])) then nv_ptr_free, arg_ps[1]
-
-
- ;----------------------------
- ; process data descriptors
- ;----------------------------
- ndd = n_elements(dd)
- for i=0, ndd-1 do $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   ; process data array
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   arr = dat_data(dd[i])
-;;;; no!!  do not ever read full data array!!
-   _dd = 0
-   grim_get_args_recurse, (p=ptr_new(arr)), dd=_dd, nhist=nhist, $
-            maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
-   nv_free, p
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if one descriptor emerges, copy data and free _dd
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; no!!  do not ever read full data array!!
-   if(n_elements(_dd) EQ 1) then $
-    begin
-     dat_set_data, dd[i], dat_data(_dd)
-     nv_free, _dd
-    end $
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if multiple descriptors emerge, remove original from list, call it master
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else $
-    begin
-     dd0 = dd[i]
-     dd[i] = _dd[0]
-     dd = [dd, _dd[1:*]]
-    end
-  end
-
-
- ;----------------------------
- ; determine type
- ;----------------------------
- type = 'image'
- if(keyword_set(dd)) then $
-  begin 
-   dim = dat_dim(dd[0])
-   if(n_elements(dim) EQ 1) then type = 'plot'
-  end
-
-
- ;---------------------------------------------------
- ; shift x axis to zero if desired
- ;---------------------------------------------------
- if(keyword_set(plot) AND keyword_set(xzero)) then $
-  begin
-   data = dat_data(dd)
-   data[0,*] = data[0,*] - data[0,0]
-   dat_set_data, dd, data
-  end
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_cube_dim_fn
 ;
 ;
@@ -9264,7 +9115,6 @@ end
 ; 	cube (3d array)
 ;
 ;=============================================================================
-;xx
 pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
                maintain=maintain, compress=compress, extensions=extensions, rgb=rgb, offsets=offsets
 
@@ -9295,15 +9145,17 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; non-3-D arrays get a plane and a zero offset
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(ndim LT 3) then $
+   if((ndim LT 3) OR keyword_set(rgb)) then $
     begin
      dd = append_array(dd, _dd[i])
      offsets = append_array(offsets, [0])
+
+if(keyword_set(rgb)) then dat_set_dim_fn, dd, 'grim_cube_dim_fn'
     end $ 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; 3-D arrays are either rgb or multi-plane
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else if(NOT keyword_set(rgb)) then $
+   else $
     begin
      dd = append_array(dd, make_array(dim[2], val=_dd[i]))
      offsets = append_array(offsets, lindgen(dim[2])*dim[0]*dim[1])
@@ -9361,7 +9213,7 @@ pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=
 	arg_extensions=arg_extensions, loadct=loadct, max=max, grnum=grnum, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
 	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, $
-        trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, $
+        trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, assoc_xd=assoc_xd, $
         readout_fns=readout_fns, plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
@@ -9477,8 +9329,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  grim_get_args, arg1, arg2, dd=dd, offsets=data_offsets, grnum=grnum, type=type, $
              nhist=nhist, maintain=maintain, compress=compress, $
              extensions=extensions, rgb=rgb
-;xx grim_get_args, arg1, arg2, dd0, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
-;xx               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
 
 ; if(keyword_set(rendering)) then ....
 
@@ -9619,102 +9469,117 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
 
  ;======================================================================
- ; regardless of new or existing, update descriptors if any given
+ ; update descriptors if any given
+ ;  If one plane, then descriptors all go to that plane; in that case
+ ;   only one cd, od, sund are allowed
+ ;  If mutiple planes, descriptors are sorted using assoc_xd
+ ;  If assoc_xd given as argument, use those instead.  
+ ;   In that case, if a map descriptor given, associate cd with dd
+ ;   instead of assoc_xd since dd will be the corresponding map.
  ;======================================================================
  pgs_gd, gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od
 
  grim_data = grim_get_data()
+ planes = grim_get_plane(grim_data, /all)
  nplanes = n_elements(planes)
- ncd = n_elements(cd)
+;ncd = n_elements(cd)
 
-
-; for i=0, nplanes-1 do $
-;  begin
-;   if(keyword_set(cd)) then $
-;	 grim_add_descriptor, grim_data, planes[i].cd_p, cd, /one, assoc_xd=planes[i].dd
-;   if(keyword_set(pd)) then $
-;	 grim_add_descriptor, grim_data, planes[i].pd_p, pd, assoc_xd=planes[i].dd
-;   if(keyword_set(rd)) then $
-;	 grim_add_descriptor, grim_data, planes[i].rd_p, rd, assoc_xd=planes[i].dd
-;   if(keyword_set(std)) then $
-;	 grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_xd=planes[i].dd
-;   if(keyword_set(ard)) then $
-;	 grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_xd=planes[i].dd
-;   if(keyword_set(sd)) then $
-;	 grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_xd=planes[i].dd
-;   if(keyword_set(sund)) then $
-;	 grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one, assoc_xd=planes[i].dd
-;   if(keyword_set(od)) then $
-;     grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister, assoc_xd=planes[i].dd
-;  end
-
-
-
- ;----------------------------------------------------------------------
- ; if one cd, just use current plane
- ;----------------------------------------------------------------------
- if(ncd EQ 1) then planes = grim_get_plane(grim_data) $
- ;----------------------------------------------------------------------
- ; if more than one cd, then one for each plane
- ;----------------------------------------------------------------------
- else if(ncd GT 1) then $
+ for i=0, nplanes-1 do $
   begin
-   planes = grim_get_plane(grim_data, /all)
-   if(n_elements(planes) NE ncd) then $
-                nv_message, name='grim', $
-                     'There must be one camera descriptor for each plane.'
-  end $
- ;----------------------------------------------------------------------
- ; if no camera descriptors given, then you can still give other
- ; descriptors to use for the current plane
- ;----------------------------------------------------------------------
- else $
-  begin
-   plane = grim_get_plane(grim_data, pn=pn)
-   if(keyword_set(pd)) then grim_add_descriptor, grim_data, plane.pd_p, pd
-   if(keyword_set(rd)) then grim_add_descriptor, grim_data, plane.rd_p, rd
-   if(keyword_set(sd)) then grim_add_descriptor, grim_data, plane.sd_p, sd
-   if(keyword_set(std)) then grim_add_descriptor, grim_data, plane.std_p, std
-   if(keyword_set(ard)) then grim_add_descriptor, grim_data, plane.ard_p, std
-   if(keyword_set(sund)) then $
-             grim_add_descriptor, grim_data, plane.sund_p, sund, /one
-   if(keyword_set(od)) then $
-             grim_add_descriptor, grim_data, plane.od_p, od, /one, /noregister
-  end
+   _assoc_xd = 0
+   if(nplanes NE 1) then _assoc_xd = planes[i].dd
+   if(keyword_set(assoc_xd)) then _assoc_xd = assoc_xd[i]
 
- ;----------------------------------------------------------------------
- ; if descriptors given, then the descriptors must be arrays 
- ; with the following dimensions:
- ;
- ;  cd -- nplanes
- ;  pd -- [npd, nplanes]
- ;  rd -- [nrd, nplanes]
- ;  sd -- [nsd, nplanes]
- ;  std -- [nstd, nplanes]
- ;  ard -- [nstd, nplanes]
- ;  ard -- [nard, nplanes]
- ;  sund -- nplanes
- ;  od -- nplanes
- ;
- ;----------------------------------------------------------------------
- for i=0, ncd-1 do $
-  begin
-   grim_add_descriptor, grim_data, planes[i].cd_p, cd[i], /one
    if(keyword_set(pd)) then $
-                grim_add_descriptor, grim_data, planes[i].pd_p, pd[*,i]
+	 grim_add_descriptor, grim_data, planes[i].pd_p, pd, assoc_xd=_assoc_xd
    if(keyword_set(rd)) then $
-                grim_add_descriptor, grim_data, planes[i].rd_p, rd[*,i]
+	 grim_add_descriptor, grim_data, planes[i].rd_p, rd, assoc_xd=_assoc_xd
    if(keyword_set(std)) then $
-                grim_add_descriptor, grim_data, planes[i].std_p, std[*,i]
+	 grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_xd=_assoc_xd
    if(keyword_set(ard)) then $
-                grim_add_descriptor, grim_data, planes[i].ard_p, ard[*,i]
+	 grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_xd=_assoc_xd
    if(keyword_set(sd)) then $
-                grim_add_descriptor, grim_data, planes[i].sd_p, sd[*,i]
+	 grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd
    if(keyword_set(sund)) then $
-                grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one
+	 grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one, assoc_xd=_assoc_xd
    if(keyword_set(od)) then $
-       grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister
+     grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister, assoc_xd=_assoc_xd
+
+   if(keyword_set(cd)) then $
+    begin
+     if(keyword_set(_assoc_xd)) then $
+       if(cor_class(cd[i]) EQ 'MAP') then _assoc_xd = planes[i].dd
+     grim_add_descriptor, grim_data, planes[i].cd_p, cd, /one, assoc_xd=_assoc_xd
+    end
   end
+
+
+
+;;----------------------------------------------------------------------
+;; if one cd, just use current plane
+;;----------------------------------------------------------------------
+;if(ncd EQ 1) then planes = grim_get_plane(grim_data) $
+;;----------------------------------------------------------------------
+;; if more than one cd, then one for each plane
+;;----------------------------------------------------------------------
+;else if(ncd GT 1) then $
+; begin
+;  planes = grim_get_plane(grim_data, /all)
+;  if(n_elements(planes) NE ncd) then $
+;               nv_message, name='grim', $
+;                    'There must be one camera descriptor for each plane.'
+; end $
+;;----------------------------------------------------------------------
+;; if no camera descriptors given, then you can still give other
+;; descriptors to use for the current plane
+;;----------------------------------------------------------------------
+;else $
+; begin
+;  plane = grim_get_plane(grim_data, pn=pn)
+;  if(keyword_set(pd)) then grim_add_descriptor, grim_data, plane.pd_p, pd
+;  if(keyword_set(rd)) then grim_add_descriptor, grim_data, plane.rd_p, rd
+;  if(keyword_set(sd)) then grim_add_descriptor, grim_data, plane.sd_p, sd
+;  if(keyword_set(std)) then grim_add_descriptor, grim_data, plane.std_p, std
+;  if(keyword_set(ard)) then grim_add_descriptor, grim_data, plane.ard_p, std
+;  if(keyword_set(sund)) then $
+;            grim_add_descriptor, grim_data, plane.sund_p, sund, /one
+;  if(keyword_set(od)) then $
+;            grim_add_descriptor, grim_data, plane.od_p, od, /one, /noregister
+; end
+
+;;----------------------------------------------------------------------
+;; if descriptors given, then the descriptors must be arrays 
+;; with the following dimensions:
+;;
+;;  cd -- nplanes
+;;  pd -- [npd, nplanes]
+;;  rd -- [nrd, nplanes]
+;;  sd -- [nsd, nplanes]
+;;  std -- [nstd, nplanes]
+;;  ard -- [nstd, nplanes]
+;;  ard -- [nard, nplanes]
+;;  sund -- nplanes
+;;  od -- nplanes
+;;
+;;----------------------------------------------------------------------
+;for i=0, ncd-1 do $
+; begin
+;  grim_add_descriptor, grim_data, planes[i].cd_p, cd[i], /one
+;  if(keyword_set(pd)) then $
+;               grim_add_descriptor, grim_data, planes[i].pd_p, pd[*,i]
+;  if(keyword_set(rd)) then $
+;               grim_add_descriptor, grim_data, planes[i].rd_p, rd[*,i]
+;  if(keyword_set(std)) then $
+;               grim_add_descriptor, grim_data, planes[i].std_p, std[*,i]
+;  if(keyword_set(ard)) then $
+;               grim_add_descriptor, grim_data, planes[i].ard_p, ard[*,i]
+;  if(keyword_set(sd)) then $
+;               grim_add_descriptor, grim_data, planes[i].sd_p, sd[*,i]
+;  if(keyword_set(sund)) then $
+;               grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one
+;  if(keyword_set(od)) then $
+;      grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister
+; end
 
 
 

@@ -17,7 +17,7 @@ function data_archive_get, dap, index, samples=_samples
  if(defined(_samples)) then samples = _samples
 
 
- if(NOT keyword_set(samples)) then return, *daps[index]
+ if(NOT defined(samples)) then return, *daps[index]
 
  return, (*daps[index])[samples]
 end

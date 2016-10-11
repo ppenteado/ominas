@@ -135,8 +135,14 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------------------
  catpath = getenv('NV_ARRAY_DATA')
  if(NOT keyword_set(catpath)) then $
-   nv_message, name='array_input', $
-     'NV_ARRAY_DATA environment variable is undefined.'
+  begin
+   nv_message, name='array_input', /con, $
+     'NV_ARRAY_DATA environment variable is undefined.', $
+       exp=['NV_ARRAY_DATA specifies the directory under which this translator', $
+            'searches for data files.']
+   status = -1
+   return, 0
+  end
 
 
  status = 0

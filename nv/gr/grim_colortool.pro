@@ -194,7 +194,7 @@ pro grim_colortool_event, event
  ;---------------------------
  else if(event.id EQ data.auto_button) then $
   begin
-   test = image_eq(bytscl(nv_data(data.dd)), frac=0.99999, low=1, min=min, max=max)
+   test = image_eq(bytscl(dat_data(data.dd)), frac=0.99999, low=1, min=min, max=max)
    top = float(max)/256 * 100
    bottom = float(min)/256 * 100
 

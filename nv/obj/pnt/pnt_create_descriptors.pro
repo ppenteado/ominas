@@ -9,7 +9,7 @@
 ;
 ;
 ; CATEGORY:
-;	NV/SYS/PS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:
@@ -61,7 +61,7 @@
 ;-
 ;=============================================================================
 function pnt_create_descriptors, n, crd=crd0, ptd=ptd0, $
-@point__keywords.include
+@pnt__keywords.include
 end_keywords
  if(NOT keyword_set(n)) then n = 1
 
@@ -70,7 +70,7 @@ end_keywords
   begin
 
    ptd[i] = ominas_point(i, crd=crd0, ptd=ptd0, $
-@point__keywords.include
+@pnt__keywords.include
 end_keywords)
 
   end

@@ -2,9 +2,7 @@
 ; gll_spice_time
 ;
 ;===========================================================================
-function gll_spice_time, label, dt=dt, status=status
-
- status = 0
+function gll_spice_time, label, dt=dt, string=close_time
 
  dt = 0d
 
@@ -18,14 +16,14 @@ function gll_spice_time, label, dt=dt, status=status
  else if(scet_msec GT 9) then scet_msec = '0' + strtrim(scet_msec,2) $
  else scet_msec = '00' + strtrim(scet_msec,2)
 
- time = scet_year $
+ close_time = scet_year $
         +'-'+ scet_day $
         +'T'+ scet_hour $
         +':'+ scet_min $
         +':'+ scet_sec $
         +'.'+ scet_msec
 
- return, time
+ return, spice_str2et(close_time) + dt
 end
 ;===========================================================================
 

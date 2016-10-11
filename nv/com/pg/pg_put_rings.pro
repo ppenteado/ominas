@@ -75,7 +75,7 @@
 ;-
 ;=============================================================================
 pro pg_put_rings, dd, trs, rds=rds, ods=ods, gd=gd, $
-@ring_keywords.include
+@rng__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -95,23 +95,23 @@ pro pg_put_rings, dd, trs, rds=rds, ods=ods, gd=gd, $
 
 
    ;-------------------------------------------------------------------
-   ; override the specified values (rng__name cannot be overridden)
+   ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   if(n_elements(rng__primary) NE 0) then rng_set_primary, rds, rng__primary
+   if(n_elements(primary) NE 0) then rng_set_primary, rds, primary
 
-   if(n_elements(rng__orient) NE 0) then bod_set_orient, rds, rng__orient
-   if(n_elements(rng__avel) NE 0) then bod_set_avel, rds, rng__avel
-   if(n_elements(rng__pos) NE 0) then bod_set_pos, rds, rng__pos
+   if(n_elements(orient) NE 0) then bod_set_orient, rds, orient
+   if(n_elements(avel) NE 0) then bod_set_avel, rds, avel
+   if(n_elements(pos) NE 0) then bod_set_pos, rds, pos
    if(n_elements(rng__vel) NE 0) then bod_set_vel, rds, rng__vel
-   if(n_elements(rng__time) NE 0) then bod_set_time, rds, rng__time
+   if(n_elements(time) NE 0) then bod_set_time, rds, time
 
-   if(n_elements(rng__sma) NE 0) then dsk_set_sma, rds, rng__sma
-   if(n_elements(rng__ecc) NE 0) then dsk_set_ecc, rds, rng__ecc
-   if(n_elements(rng__nm) NE 0) then dsk_set_nm, rds, rng__nm
-   if(n_elements(rng__m) NE 0) then dsk_set_m, rds, rng__m
-   if(n_elements(rng__em) NE 0) then dsk_set_em, rds, rng__em
-   ;if(n_elements(rng__wm) NE 0) then dsk_set_wm, rds, rng__wm ;no such function
-   ;if(n_elements(rng__dwmdt) NE 0) then dsk_set_dwmdt, rds, rng__dwmdt ;no such function
+   if(n_elements(sma) NE 0) then dsk_set_sma, rds, sma
+   if(n_elements(ecc) NE 0) then dsk_set_ecc, rds, ecc
+   if(n_elements(nm) NE 0) then dsk_set_nm, rds, nm
+   if(n_elements(m) NE 0) then dsk_set_m, rds, m
+   if(n_elements(em) NE 0) then dsk_set_em, rds, em
+   ;if(n_elements(wm) NE 0) then dsk_set_wm, rds, wm ;no such function
+   ;if(n_elements(dwmdt) NE 0) then dsk_set_dwmdt, rds, dwmdt ;no such function
 
 
  ;-------------------------------

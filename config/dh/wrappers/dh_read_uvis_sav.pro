@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function dh_read_uvis_sav, filename, label, udata, dim, type, min, max, abscissa=abscissa, $
-                          silent=silent, sample=sample, nodata=nodata
+                          silent=silent, sample=sample, nodata=nodata, gff=gff
  udata = dh_read(dh_fname(filename), silent=silent)
  label = ''
 min=0

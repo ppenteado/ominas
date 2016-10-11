@@ -58,7 +58,7 @@
 ;
 ;	term_ptd:	POINT giving the terminator points.
 ;
-;	plgrid_ptd:	POINT giving teh planet grid points.
+;	plgrid_ptd:	POINT giving the planet grid points.
 ;
 ;	center_ptd:	POINT giving the planet centers.
 ;

@@ -109,7 +109,7 @@
 ;-
 ;=============================================================================
 function dsk_create_descriptors, n, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
-@disk__keywords.include
+@dsk__keywords.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -120,7 +120,7 @@ end_keywords
   begin
 
    dkd[i] = ominas_disk(i, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
-@disk__keywords.include
+@dsk__keywords.include
 end_keywords)
 
   end

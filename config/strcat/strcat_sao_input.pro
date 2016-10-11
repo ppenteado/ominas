@@ -1,136 +1,129 @@
-;==================================================================
+; docformat = 'rst'
 ;+
-; NAME:
-;       strcat_sao_input
 ;
+; Input translator for SAO star catalog.
 ;
-; PURPOSE:
-;        Input translator for SAO star catalog.
+; Usage
+; =====
+; This routine is called via `dat_get_value`, which is used to read the
+; translator table. In particular, the specific translator for the scene
+; to be processed should contain the following line::
 ;
+;      -   strcat_sao_input     -       /j2000    # or /b1950 if desired
+; 
+; For the star catalog translator system to work properly, only one type
+; of catalog may be used at a time for a particular instrument.
 ;
-; CATEGORY:
-;       NV/CONFIG
+;	The version of the SAO catalog which is expected by this translator is
+; the 1984 binary catalog format used by NAV. The star catalog file,
+; sao_idl.str, must be kept in the location of the path_sao variable,
+; which uses the NV_SAO_DATA environment variable by default.
+;	
+; In the file, the data is grouped into 18 segments of 10 degrees each.
+; Each star has a data record of 36 bytes.  RA (radians), RAMu (pm in 
+; sec time/year), DEC (radians), DECMu (pm in sec arc/year), Visual 
+; Magnitude, 13-byte Name and 3-byte Spectral type. The first 4 records
+; of the output catalog are 18 sets of pointers to the records for the 
+; start and end of each segment. The real values (RA, RAMu, DEC, DECMu 
+; and Mag) are in XDR.  The pointer integers are in network byte order.
 ;
+; The catalog uses the b1950 epoch, but all coordinates can be precessed
+; to J2000 by using the /j2000 keyword.
 ;
-; CALLING SEQUENCE(only to be called by dat_get_value):
-;       result = strcat_sao_input(dd, keyword)
+; Restrictions
+; ============
+; Since the distance to stars are not given in the SAO catalog, the
+; position vector magnitude is set as 10 parsec and the luminosity
+; is calculated from the visual magnitude and the 10 parsec distance.
 ;
+; :History:
+;       Written by:     Vance Haemmerle,  5/1998
 ;
-; ARGUMENTS:
-;  INPUT:
-;	dd:		Data descriptor.
+;	      Modified:                         1/1999
 ;
-;	keyword:	String giving the name of the translator quantity.
+;       Modified:       Tiscareno,        7/2000
 ;
-;  OUTPUT:
-;       NONE
+;       Modified:       Haemmerle,       12/2000
 ;
-; KEYWORDS:
-;  INPUT:
-;	key1:		Observer descriptor, must be of subclass CAMERA.
-;
-;  OUTPUT:
-;	status:		Zero if valid data is returned.
-;
-;
-;  TRANSLATOR KEYWORDS:
-; 	jtime:		Years since 1950 (the epoch of catalog) for precession
-;			and proper motion correction.  If not given, it is taken
-;			from the object descriptor bod_time, which is assumed to
-;			be seconds past 1950 unless keyword /j2000 is set.
-;
-;	j2000:		If set, coordinates are output wrt j2000.
-;
-;	b1950:		If set, coordinates are output wrt b1950.
-;
-;	path_sao:	The directory of the star catalog, sao_idl.str.   
-;			In the file, the data is grouped into 18 segments of 
-;			10 degrees each.  Each star has a data record of 36
-;			bytes.  RA (radians), RAMu (pm in sec time/year)
-;			DEC (radians), DECMu (pm in sec arc/year)
-;			Visual Magnitude,  13-byte Name and 3-byte Spectral type
-;			The first 4 records of the output catalog are 18 sets
-;			of pointers to the records for the start and end of
-;			each segment.
-;			The real values (RA, RAMu, DEC, DECMu and Mag) are in
-;			XDR.  The pointer integers are in network byte order.
-;
-;	faint:		Stars with magnitudes fainter than this will not be
-;			returned.
-;
-;	bright:		Stars with magnitudes brighter than this will not be
-;			returned.
-;
-;
-;  ENVIRONMENT VARIABLES:
-;	NV_SAO_DATA:	Directory containing the SAO catalog data unless
-;			overridden using the path_sao translator keyword.
-;
-;
-; RETURN:
-;       Star descriptor containing all the stars found.
-;
-; RESTRICTIONS:
-;       Since the distance to stars are not given in the SAO catalog, the
-;       position vector magnitude is set as 10 parsec and the luminosity
-;       is calculated from the visual magnitude and the 10 parsec distance.
-;
-;
-; PROCEDURE:
-;       Stars are found in a square area in RA and DEC around a given
-;       or calculated center.  The star descriptor is filled with stars
-;       that fit in this area.  If J2000 is selected, input RA, DEC and/or
-;	ods orient matrix is assumed to be J2000 also, if not, input is
-;	assumed to be B1950, like the catalog. 
-;
-;
-; MODIFICATION HISTORY:
-;       Written by:     Vance Haemmerle, 5/1998
-;	Modified:       1/1999
-;       Modified:       Tiscareno, 7/2000 (stellar aberration added)
-;       Modified:       Haemmerle, 12/2000
-;       Modified:       Spitale 9/2001 - changed to strcat_sao_input.pro
+;       Modified:       Spitale,          9/2001
 ;
 ;-
-;=============================================================================
 
-
-
-;==========================================================================
-;  sao_get_regions
-;
-;==========================================================================
+;+
+; :Private:
+; :Hidden:
+;-
 function sao_get_regions, ra1, ra2, dec1, dec2, path_sao=path_sao
  return, path_sao + 'sao_idl.str'	; there's only one sao "region"
 end
-;==========================================================================
 
-
-
-;===================================================================
-; sao_get_stars 
+;+
+; :Private:
+; :Hidden:
+; Ingests a set of records from the SAO star catalog and generates star
+; descriptors for each star within a specified scene.
 ;
-;===================================================================
-function sao_get_stars, dd, filename, cam_vel=cam_vel, $
+; :Returns:
+;   array of star descriptors
+;
+; :Params:
+;   dd : in, required, type="data descriptor"
+;      data descriptor
+;   filename : in, required, type=string
+;      name of index file, or regions file
+;
+; :Keywords:
+;   cam_vel : in, optional, type=double
+;      camera velocity from scene data, used to correct for stellar
+;      aberration
+;   b1950 : in, optional, type=string
+;      if set, coordinates are output wrt b1950
+;   ra1 : in, required, type=double
+;      lower bound in right ascension of scene
+;   ra2 : in, required, type=double
+;      upper bound in right ascension of scene
+;   dec1 : in, required, type=double
+;      lower bound in declination of scene
+;   dec2 : in, required, type=double
+;      upper bound in declination of scene
+;   faint : in, optional, type=double
+;      stars with magnitudes fainter than this will not be returned
+;   bright : in, optional, type=double
+;      stars with magnitudes brighter than this will not be returned
+;   nbright : in, optional, type=double
+;      if set, selects only the n brightest stars
+;   noaberr : in, optional, type=string
+;      if set, stellar aberration will not be calculated
+;   names : in, optional, type="string array"
+;      if set, will return only the stars with the expected names
+;   mag : out, required, type=double
+;      magnitude of returned stars
+;   jtime : in, optional, type=double
+;      Years since 1950 (the epoch of catalog) for precession
+;      and proper motion correction. If not given, it is taken
+;      from the object descriptor bod_time, which is assumed to
+;      be seconds past 2000, unless keyword /b1950 is set
+;-
+function sao_get_stars, filename, cam_vel=cam_vel, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
          noaberr=noaberr, names=names, mag=mag, jtime=jtime
 
- ra1= ra1 * !dpi/180d
- ra2= ra2 * !dpi/180d
- dec1= dec1 * !dpi/180d
- dec2= dec2 * !dpi/180d
+ ra1 = ra1 * !dpi/180d
+ ra2 = ra2 * !dpi/180d
+ dec1 = dec1 * !dpi/180d
+ dec2 = dec2 * !dpi/180d
 
- ;---------------------
+ ;---------------------------------------------------------
  ; Open file
- ;---------------------
+ ;---------------------------------------------------------
  openr, unit, filename, /get_lun
  record = assoc(unit,{sao_record})
  pointer = assoc(unit,lonarr(9))
 
- ;-------------------------
+ ;---------------------------------------------------------
  ; Get segment pointers
- ;-------------------------
+ ;---------------------------------------------------------
  ptr = lonarr(36)
  ptr=[pointer[0],pointer[1],pointer[2],pointer[3]]
  byteorder, ptr, /ntohl
@@ -151,9 +144,9 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
 
 ;print, 'Whole segment is ',start_record,' to ',end_record
 
- ;--------------------------------------------------
+ ;---------------------------------------------------------
  ; Search within segment to find RA limits
- ;--------------------------------------------------
+ ;---------------------------------------------------------
    if(end_record-start_record GT 100) then $
    begin
     ra_ptr = ptr(2*i) + lindgen(37)*((ptr(2*i+1)-ptr(2*i))/36)
@@ -200,9 +193,9 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
 
 ;print, 'After DEC test, star contains',n_elements(_star),' stars'
 
- ;------------------------------------
+ ;---------------------------------------------------------
  ; select within magnitude limits
- ;------------------------------------
+ ;---------------------------------------------------------
  if(keyword__set(faint)) then $
   begin
    status = -1
@@ -228,9 +221,9 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
   end
 
 
- ;-------------------------
+ ;---------------------------------------------------------
  ; Unpack the _star array
- ;-------------------------
+ ;---------------------------------------------------------
    if(dec_count NE 0) then $
     begin
      _RA = _star.RA
@@ -246,29 +239,30 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
      byteorder, _DECpm, /XDRTOF
      byteorder, _Mag, /XDRTOF
 
- ;-------------------------------------------------------
+ ;---------------------------------------------------------
  ; Apply proper motion to star (JTIME = years past 1950.0)
- ;-------------------------------------------------------
+ ;---------------------------------------------------------
      _RA = _RA + (double(_RApm)*JTIME/240.D0)*!DTOR 
      _DEC = _DEC + (double(_DECpm)*JTIME/3600.D0)*!DTOR
 
- ;---------------------------------------------------------------
- ; Correct for stellar aberration if camera velocity is available
- ;---------------------------------------------------------------
+ ;---------------------------------------------------------
+ ; Correct for stellar aberration if camera velocity
+ ; is available
+ ;---------------------------------------------------------
      if keyword__set(cam_vel) then $
       str_aberr_radec, _RA, _DEC, cam_vel, _RA, _DEC 
    end
 
- ;-----------------------------------
+ ;---------------------------------------------------------
  ; Print out data
- ;-----------------------------------
-;    print, _Name, _RA, _DEC, Mag, ' ',_Sp
-;    if(n_elements(_Name) NE 0) then $
-;    print, _Name
+ ;---------------------------------------------------------
+ ; print, _Name, _RA, _DEC, Mag, ' ',_Sp
+ ; if(n_elements(_Name) NE 0) then $
+ ;  print, _Name
 
- ;----------------------
+ ;---------------------------------------------------------
  ; Build arrays
- ;---------------------
+ ;---------------------------------------------------------
     if(dec_count NE 0) then $
     begin
      if(first_segment EQ 1) then $
@@ -292,13 +286,50 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
 
    end ;segment end
 
- ;-------------------------------------
- ; select named stars
- ;-------------------------------------
+ ;---------------------------------------------------------
+ ; Input common names. Star names are found via an 
+ ; internal document which is cross indexed with several 
+ ; catalogs. SAO occupies the fifth column of that
+ ; document.
+ ;---------------------------------------------------------
+ file = file_search(getenv('OMINAS_DIR')+'/config/strcat/stars.txt')
+ openr, names_lun, file, /get_lun
+ line = ''
+ linarr = strarr(file_lines(file), 7)
+ i = 0
+ while not eof(names_lun) do $
+  begin
+   readf, names_lun, line
+   fields = strtrim(strsplit(line, '|', /extract), 2)
+   linarr[i, *] = fields
+   i = i + 1
+  endwhile
+ close, names_lun
+ free_lun, names_lun
+ 
+ n = n_elements(stars)
+ matches = intarr(n)
+ ;---------------------------------------------------------
+ ; Match names with the fifth column (SAO)
+ ;---------------------------------------------------------
+ for i=0, n - 1 do matches[i] = where(strpos(linarr[*,4], Name[i]) ne -1)
+ Name = 'SAO ' + Name
+ ndx = where(matches ne -1)
+ matches = matches[ndx]
+ for i = 0, n_elements(matches) - 1 do $
+  begin
+    lin_ndx = matches[i]
+    if strtrim(linarr[lin_ndx, 1], 2) ne '-1' then Name[ndx[i]] = linarr[lin_ndx, 1]
+    if strtrim(linarr[lin_ndx, 0], 2) ne '-1' then Name[ndx[i]] = linarr[lin_ndx, 0]
+  endfor
+
+ ;---------------------------------------------------------
+ ; Select named stars
+ ;---------------------------------------------------------
  if(keyword__set(names)) then $
   begin
    status = -1
-   w = where(names EQ name)
+   w = where(names EQ Name)
    if(w[0] NE -1) then star = _star[w]
    if(NOT keyword__set(star)) then return, ''
    _star = star
@@ -307,9 +338,9 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
 
  close, unit
  free_lun, unit
- ;-----------------------
- ;  Fill star descriptors
- ;-----------------------
+ ;---------------------------------------------------------
+ ; Fill star descriptors
+ ;---------------------------------------------------------
 
  n = n_elements(Name)
 
@@ -318,9 +349,9 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
  if(n EQ 0) then return, ''
  status = 0
 
- ;-----------------------------
+ ;---------------------------------------------------------
  ; Calculate "dummy" properties
- ;-----------------------------
+ ;---------------------------------------------------------
 
  orient = make_array(3,3,n)
  _orient = [ [1d,0d,0d], [0d,1d,0d], [0d,0d,1d] ]
@@ -332,10 +363,10 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
  radii = make_array(3,n,value=1d)
  lora = make_array(n, value=0d)
 
- ;-----------------------------------------------------
+ ;---------------------------------------------------------
  ; Calculate position vector, use distance as 10 parsec 
  ; to have apparent magnitude = absolute magnitude
- ;-----------------------------------------------------
+ ;---------------------------------------------------------
 
  dist = 3.085678d+17 ; 10pc in meters
  pos = make_array(3,n,value=0d)
@@ -343,14 +374,14 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
  pos[1,*] = sin(RA)*cos(DEC)*dist
  pos[2,*] = sin(DEC)*dist
 
- ;-----------------------------------------------------
+ ;---------------------------------------------------------
  ; Precess B1950 to J2000 if wanted
- ;-----------------------------------------------------
+ ;---------------------------------------------------------
 
  if(keyword__set(j2000)) then pos = transpose(b1950_to_j2000(transpose(pos)))
  pos = reform(pos,1,3,n)
 
- ;-------------------------------------------------------
+ ;---------------------------------------------------------
  ; Calculate "luminosity" from visual Magnitude
  ; Use Sun as model, though this is wrong for other stars
  ; but since we don't know A (space absorption) and may
@@ -358,12 +389,12 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
  ; use formula Mv = 4.83 - 2.5*log(L/Lsun) and since
  ; distance is 10pc mv = Mv
  ; Lum is expressed in J/sec (Lsun = 3.826e+26 J/sec)
- ;-------------------------------------------------------
+ ;---------------------------------------------------------
 
- lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d ) 
+ lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d )
 
  _sd = str_create_descriptors( n, $
-	assoc_xd=make_array(n, val=dd), $
+  assoc_xd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
         avel=avel, $
@@ -377,20 +408,17 @@ function sao_get_stars, dd, filename, cam_vel=cam_vel, $
 
  return, _sd
 end
-;==========================================================================
 
-
-       
-;==========================================================================
-; strcat_sao_input
-;
-;==========================================================================
-function strcat_sao_input, dd, keyword, values=values, status=status, $
+;+
+; :Private:
+; :Hidden:
+;-
+function strcat_sao_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
- return, strcat_input('sao', dd, keyword, values=values, status=status, $
+ return, strcat_input('sao', dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )

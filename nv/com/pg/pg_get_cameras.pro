@@ -84,7 +84,7 @@
 function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
                           override=override, verbatim=verbatim, default_orient=default_orient, $
                           no_default=no_default, $
-@camera_keywords.include
+@cam__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -103,26 +103,26 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
  ;-------------------------------------------------------------------
  if(keyword_set(override)) then $
   begin
-   n = n_elements(cam__name)
+   n = n_elements(name)
 
    cds=cam_create_descriptors(n, $
-	name=cam__name, $
-	orient=cam__orient, $
-	avel=cam__avel, $
-	pos=cam__pos, $
-	vel=cam__vel, $
-	time=cam__time, $
-	fn_focal_to_image=cam__fn_focal_to_image, $
-	fn_image_to_focal=cam__fn_image_to_focal, $
-	fi_data=cam__fi_data, $
-;	fn_filter=cam__fn_filter, $
-	filters=cam__filters, $
-	scale=cam__scale, $
-	fn_psf=cam__fn_psf, $
-	size=cam__size, $
-	opaque=cam__opaque, $
-	exposure=cam__exposure, $
-	oaxis=cam__oaxis)
+	name=name, $
+	orient=orient, $
+	avel=avel, $
+	pos=pos, $
+	vel=vel, $
+	time=time, $
+	fn_focal_to_image=fn_focal_to_image, $
+	fn_image_to_focal=fn_image_to_focal, $
+	fi_data=fi_data, $
+;	fn_filter=fn_filter, $
+	filters=filters, $
+	scale=scale, $
+	fn_psf=fn_psf, $
+	size=size, $
+	opaque=opaque, $
+	exposure=exposure, $
+	oaxis=oaxis)
   end $
  else $
   begin
@@ -135,11 +135,11 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(cam__name)) then tr_first = 1
+   if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
    cds = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cds, key3=default_orient, $
-                             key7=cam__time, key8=cam__name, trs=trs, $
+                             key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
@@ -147,19 +147,19 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
    n = n_elements(cds)
 
    ;---------------------------------------------------
-   ; If cam__name given, determine subscripts such that
+   ; If name given, determine subscripts such that
    ; only values of the named objects are returned.
    ;
    ; Note that each translator has this opportunity,
    ; but this code guarantees that it is done.
    ;
-   ; If cam__name is not given, then all descriptors
+   ; If name is not given, then all descriptors
    ; will be returned.
    ;---------------------------------------------------
-   if(keyword__set(cam__name)) then $
+   if(keyword__set(name)) then $
     begin
      tr_names = cor_name(cds)
-     sub = nwhere(strupcase(tr_names), strupcase(cam__name))
+     sub = nwhere(strupcase(tr_names), strupcase(name))
      if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
@@ -169,28 +169,26 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
    cds = cds[sub]
 
    ;-------------------------------------------------------------------
-   ; override the specified values (cam__name cannot be overridden)
+   ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
    w = nwhere(dd, cor_assoc_xd(cds))
-   if(n_elements(cam__orient) NE 0) then bod_set_orient, cds, cam__orient[*,*,w]
-   if(n_elements(cam__avel) NE 0) then bod_set_avel, cds, cam__avel[*,*,w]
-   if(n_elements(cam__pos) NE 0) then bod_set_pos, cds, cam__pos[*,*,w]
-   if(n_elements(cam__vel) NE 0) then bod_set_vel, cds, cam__vel[*,*,w]
-;   if(n_elements(cam__time) NE 0) then bod_set_time, cds, cam__time[w]
-   if(n_elements(cam__fn_focal_to_image) NE 0) then $
-                 cam_set_fn_focal_to_image, cds, cam__fn_focal_to_image[w]
-   if(n_elements(cam__fn_image_to_focal) NE 0) then $
-                 cam_set_fn_image_to_focal, cds, cam__fn_image_to_focal[w]
-   if(n_elements(cam__fi_data) NE 0) then cam_set_fi_data, cds, cam__fi_data[w]
-   if(n_elements(cam__filters) NE 0) then $
-                                    cam_set_filters, cds, cam__filters[*,w]
-   if(n_elements(cam__scale) NE 0) then  cam_set_scale, cds, cam__scale[*,w]
-   if(n_elements(cam__oaxis) NE 0) then  cam_set_oaxis, cds, cam__oaxis[*,w]
-   if(n_elements(cam__fn_psf) NE 0) then  cam_set_fn_psf, cds, cam__fn_psf[w]
-   if(n_elements(cam__size) NE 0) then  cam_set_size, cds, cam__size[*,w]
-   if(n_elements(cam__opaque) NE 0) then  bod_set_opaque, cds, cam__opaque[w]
-   if(n_elements(cam__exposure) NE 0) then $
-                                   cam_set_exposure, cds, cam__exposure[w]
+   if(n_elements(orient) NE 0) then bod_set_orient, cds, orient[*,*,w]
+   if(n_elements(avel) NE 0) then bod_set_avel, cds, avel[*,*,w]
+   if(n_elements(pos) NE 0) then bod_set_pos, cds, pos[*,*,w]
+   if(n_elements(vel) NE 0) then bod_set_vel, cds, vel[*,*,w]
+;   if(n_elements(time) NE 0) then bod_set_time, cds, time[w]
+   if(n_elements(fn_focal_to_image) NE 0) then $
+                 cam_set_fn_focal_to_image, cds, fn_focal_to_image[w]
+   if(n_elements(fn_image_to_focal) NE 0) then $
+                 cam_set_fn_image_to_focal, cds, fn_image_to_focal[w]
+   if(n_elements(fi_data) NE 0) then cam_set_fi_data, cds, fi_data[w]
+   if(n_elements(filters) NE 0) then cam_set_filters, cds, filters[*,w]
+   if(n_elements(scale) NE 0) then  cam_set_scale, cds, scale[*,w]
+   if(n_elements(oaxis) NE 0) then  cam_set_oaxis, cds, oaxis[*,w]
+   if(n_elements(fn_psf) NE 0) then  cam_set_fn_psf, cds, fn_psf[w]
+   if(n_elements(size) NE 0) then  cam_set_size, cds, size[*,w]
+   if(n_elements(opaque) NE 0) then  bod_set_opaque, cds, opaque[w]
+   if(n_elements(exposure) NE 0) then cam_set_exposure, cds, exposure[w]
   end
 
 

@@ -88,7 +88,7 @@
 ;-
 ;=============================================================================
 function dat_create_descriptors, n, crd=crd0, dd=dd0, silent=silent, $
-@data__keywords.include
+@dat__keywords.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -98,7 +98,7 @@ end_keywords
   begin
 
    dd[i] = ominas_data(i, crd=crd0, dd=dd0, $
-@data__keywords.include
+@dat__keywords.include
 end_keywords)
 
   end

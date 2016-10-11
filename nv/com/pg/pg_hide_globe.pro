@@ -145,20 +145,25 @@ point_ptd = _point_ptd
 
      w = glb_hide_points(xd, Rs, object_pts)
 
-     if(hide) then $
-      begin
-       pnt_get, point_ptd[j], desc=desc, inp=inp
-       hide_ptd[j,i] = $
-          pnt_create_descriptors(desc=desc+'-hide_globe', $
-                  input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]))
-      end
-
      if(w[0] NE -1) then $
       begin
-       if(hide) then $
-           pnt_set, hide_ptd[j,i], p=p[*,w], flags=flags[w], vectors=vectors[w,*]
-       flags[w] = flags[w] OR PTD_MASK_INVISIBLE
-       pnt_set_flags, point_ptd[j], flags
+       _flags = flags
+       _flags[w] = _flags[w] OR PTD_MASK_INVISIBLE
+       pnt_set_flags, point_ptd[j], _flags
+      end
+
+     if(hide) then $
+      begin
+       hide_ptd[j,i] = nv_clone(point_ptd[j])
+
+       pnt_get, point_ptd[j], desc=desc, inp=inp
+
+       ww = complement(flags, w)
+       _flags = flags
+       if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
+
+       pnt_set, hide_ptd[j,i], desc=desc+'-hide_globe', $
+            input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), flags=_flags
       end
     end
 

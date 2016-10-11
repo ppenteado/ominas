@@ -219,6 +219,16 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
    ; read orbit catalog
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    catpath = getenv('NV_ORBIT_DATA')
+   if(NOT keyword_set(catpath)) then $
+    begin
+      nv_message, name='orb_input', /con, $
+       'NV_ORBIT_DATA environment variable is undefined.', $
+         exp=['NV_ORBIT_DATA specifies directory under which this translator', $
+              'searches for data files.']
+     status = -1
+     return, 0
+    end
+
    catfile = 'orbcat_' + strlowcase(planet) + '.txt'
    dat = oi_load(catpath, catfile, reload=reload)
 

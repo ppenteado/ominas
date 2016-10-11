@@ -54,7 +54,8 @@
 ;=============================================================================
 function map_get_grid_points, lat=lat, lon=lon, nt=nt, $
                                  scan_lat=scan_lat, scan_lon=scan_lon
-           
+     
+ if(NOT keyword_set(nt)) then nt = 1      
  Mt = make_array(nt, val=1)
 
  nplat = n_elements(scan_lat)
@@ -68,11 +69,11 @@ function map_get_grid_points, lat=lat, lon=lon, nt=nt, $
  np = nplon*nlat
  if(nlat GT 0) then $
   begin
-   lats = reform([lat] # $
+   lats = reform([lat] ## $
                      make_array(nplon, val=1), np, /overwrite)#Mt
-   lons = reform([scan_lon]##make_array(nlat, val=1), np, /overwrite)#Mt
+   lons = reform([scan_lon]#make_array(nlat, val=1), np, /overwrite)#Mt
 
-   rlat_surface = [tr(lats), tr(lons)]
+   rlat_map = [tr(lats), tr(lons)]
   end
 
 
@@ -83,19 +84,19 @@ function map_get_grid_points, lat=lat, lon=lon, nt=nt, $
  np = nplat*nlon
  if(nlon GT 0) then $
   begin
-   lons = reform([lon] # $
+   lons = reform([lon] ## $
                       make_array(nplat, val=1), np, /overwrite)#Mt
-   lats = reform([scan_lat]##make_array(nlon, val=1), np, /overwrite)#Mt
+   lats = reform([scan_lat]#make_array(nlon, val=1), np, /overwrite)#Mt
 
-   rlon_surface = [tr(lats), tr(lons)]
+   rlon_map = [tr(lats), tr(lons)]
   end
 
 
  ;==================================
  ; Combine the results and return.
  ;==================================
- rgrid_surface = tr(append_array(tr(rlat_surface) , tr(rlon_surface)))
+ rgrid_map = tr(append_array(tr(rlat_map) , tr(rlon_map)))
 
- return, rgrid_surface
+ return, rgrid_map
 end
 ;============================================================================
