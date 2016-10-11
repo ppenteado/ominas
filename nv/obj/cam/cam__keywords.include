@@ -3,5 +3,3 @@ fn_focal_to_image=fn_focal_to_image, $
 fn_image_to_focal=fn_image_to_focal, $
 fi_data=fi_data, scale=scale, oaxis=oaxis, exposure=exposure, $
 size=size, fn_psf=fn_psf, filters=filters, $
-fn_body_to_image=fn_body_to_image,$
-fn_body_to_inertial=fn_body_to_inertial,$
