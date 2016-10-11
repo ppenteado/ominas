@@ -188,7 +188,7 @@ function vims_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		cam_fn_image_to_focal = 'vims_image_to_focal_linear', $
 		cam_fn_body_to_image='vims_body_to_image',$
                 cam_fn_body_to_inertial='vims_body_to_inertial',$
-		cam_fn_data = fn_data,$;[nv_ptr_new()], $
+		cam_fi_data = fn_data,$;[nv_ptr_new()], $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
                   orient_fn )
                   
@@ -285,14 +285,14 @@ end
 ;
 ;=============================================================================
 function vims_spice_lsk_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
- return, eph_spice_lsk_detect(dd, kpath, time=time, reject=reject, strict=strict, all=all)
+ return, eph_spice_lsk_detect(dd, kpath, time=time, strict=strict, all=all)
 end
 ;=============================================================================
 
 function vims_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
   all=all, reject=reject, strict=strict
 return,cas_spice_ck_detect(dd, ckpath, djd=djd, time=time, $
-  all=all, reject=reject, strict=strict)
+  all=all, strict=strict)
 end
 
 ;=============================================================================
@@ -301,25 +301,25 @@ end
 ;
 ;=============================================================================
 function vims_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
-  return, eph_spice_pck_detect(dd, kpath, time=time, reject=reject, strict=strict, all=all)
+  return, eph_spice_pck_detect(dd, kpath, time=time, strict=strict, all=all)
 end
 ;=============================================================================
 
 function vims_spice_ik_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
-return,cas_spice_ik_detect(dd, kpath, time=time, reject=reject, strict=strict, all=all)
+return,cas_spice_ik_detect(dd, kpath, time=time, strict=strict, all=all)
 end
 
 function vims_spice_fk_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
-return,cas_spice_fk_detect(dd, kpath, time=time, reject=reject, strict=strict, all=all)
+return,cas_spice_fk_detect(dd, kpath, time=time, strict=strict, all=all)
 end
 
 function vims_spice_sck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
-return,cas_spice_sck_detect(dd, kpath, time=time, reject=reject, strict=strict, all=all)
+return,cas_spice_sck_detect(dd, kpath, time=time, strict=strict, all=all)
 end
 
-function vims_spice_spk_detect, dd, kpath, reject=spk_reject_files, $
+function vims_spice_spk_detect, dd, kpath, $
   strict=strict, all=all, time=_time
-return, cas_spice_spk_detect(dd, kpath, reject=spk_reject_files, $
+return, cas_spice_spk_detect(dd, kpath, $
   strict=strict, all=all, time=_time)
 end
 
@@ -334,7 +334,7 @@ function vims_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, sta
 	end_keywords
 ;key7=vims_spice_time(nv_header(dd))
 key7=vims_spice_time(dat_header(dd))
- return, spice_input(dd, keyword, 'vims', n_obj=n_obj, dim=dim, values=values, status=status, $
+ return, spice_input(dd, keyword, 'vims', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)

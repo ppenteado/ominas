@@ -2,8 +2,8 @@
 ; pp_read_isis.pro
 ;
 ;=============================================================================
-function pp_read_isis, filename, label, udata, dim, type, $
-                          silent=silent, sample=sample, nodata=nodata
+function pp_read_isis, filename, label, udata, dim, type, _min, _max,$
+                          silent=silent, sample=sample, nodata=nodata, gff=gff
  ;tag_list_set, udata, 'DETACHED_HEADER', $
  ;              dh_read(dh_fname(filename), silent=silent)
 
@@ -17,6 +17,7 @@ function pp_read_isis, filename, label, udata, dim, type, $
  nb=cube.bands
  type=size(cube.core,/type)
  dim = degen_array([ns, nl, nb])
+ _min=min(data,max=_max)
 
  return, data
 end
