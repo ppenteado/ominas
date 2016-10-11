@@ -11,9 +11,7 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
 		cam_fi_data=cam_fi_data, tol=tol, constants=constants, $
 		n_obj=n_obj, dim=dim, status=status, orient=orient, $
                 spice_fn = spice_fn, pos=pos, cam_fn_psf=cam_fn_psf, $
-                cam_filters=cam_filters, obs=obs,$
-                cam_fn_body_to_image=cam_fn_body_to_image,$
-                cam_fn_body_to_inertial=cam_fn_body_to_inertial
+                cam_filters=cam_filters, obs=obs
 
  ndd = n_elements(dd)
  if(NOT keyword_set(tol)) then tol = 1d
@@ -109,9 +107,7 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
 		fn_psf=cam_fn_psf, $
 		filters=cam_filters, $
 		size=cam_size, $
-		oaxis=cam_oaxis,$
-		fn_body_to_image=cam_fn_body_to_image,$
-		fn_body_to_inertial=cam_fn_body_to_inertial)
+		oaxis=cam_oaxis)
 
   return, cd
 end
