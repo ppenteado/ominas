@@ -1,6 +1,6 @@
 ;=============================================================================
 ;+
-; points:
+; NAME:
 ;	pnt_points
 ;
 ;
@@ -9,7 +9,7 @@
 ;
 ;
 ; CATEGORY:
-;	NV/SYS/PS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:
@@ -45,7 +45,10 @@
 ;
 ;	noevent:	If set, no event is generated.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	segments:	Subscripts in the output array denoting segments in the 
+;			(assumed) contiuous curve due to the point selection 
+;			conditions.
 ;
 ;
 ; RETURN:
@@ -66,7 +69,7 @@
 ;	
 ;-
 ;=============================================================================
-function pnt_points, ptd0, $
+function pnt_points, ptd0, segments=segments, $
     sample=sample, cat=cat, condition=condition, noevent=noevent, $
 @pnt_condition_keywords.include
 end_keywords
@@ -102,11 +105,21 @@ end_keywords)
 
  if(keyword_set(cat)) then nv_free, ptd
 
+
+ if(arg_present(segments)) then $
+  begin
+   if(NOT keyword_set(result)) then segments = -1 $
+   else segments = compute_segments(*_ptd.points_p, ii)
+  end
+
  if(keyword_set(sample)) then $
   begin
+stop
    ii = lindgen(_ptd.nv/sample)*sample
    result = result[*,ii]
+;   segments = 
   end
+
 
  return, result
 end

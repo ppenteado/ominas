@@ -75,7 +75,7 @@
 ;-
 ;=============================================================================
 pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
-@map_keywords.include
+@map__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -94,18 +94,18 @@ pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
  ;-------------------------------------------------------------------
  ; override the specified values 
  ;-------------------------------------------------------------------
- if(n_elements(map__fn_map_to_image) NE 0) then $
-                 map_set_fn_map_to_image, mds, map__fn_map_to_image
- if(n_elements(map__fn_image_to_map) NE 0) then $
-                 map_set_fn_image_to_map, mds, map__fn_image_to_map
- if(n_elements(map__fn_data) NE 0) then map_set_fn_data, mds, map__fn_data
- if(n_elements(map__scale) NE 0) then map_set_scale, mds, map__scale
- ;if(n_elements(map__ecc) NE 0) then map_set_ecc, mds, map__ecc ;no such function
+ if(n_elements(fn_map_to_image) NE 0) then $
+                 map_set_fn_map_to_image, mds, fn_map_to_image
+ if(n_elements(fn_image_to_map) NE 0) then $
+                 map_set_fn_image_to_map, mds, fn_image_to_map
+ if(n_elements(fn_data) NE 0) then map_set_fn_data, mds, fn_data
+ if(n_elements(scale) NE 0) then map_set_scale, mds, scale
+ ;if(n_elements(ecc) NE 0) then map_set_ecc, mds, ecc ;no such function
  if(n_elements(map__radii) NE 0) then map_set_radii, mds, map__radii
- if(n_elements(map__origin) NE 0) then map_set_origin, mds, map__origin
- if(n_elements(map__center) NE 0) then map_set_center, mds, map__center
+ if(n_elements(origin) NE 0) then map_set_origin, mds, origin
+ if(n_elements(center) NE 0) then map_set_center, mds, center
  if(n_elements(map__size) NE 0) then map_set_size, mds, map__size
- if(n_elements(map__type) NE 0) then map_set_type, mds, map__type
+ if(n_elements(type) NE 0) then map_set_type, mds, type
 
 
 

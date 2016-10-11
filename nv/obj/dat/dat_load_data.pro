@@ -49,17 +49,63 @@ pro dat_load_data, dd, sample=sample, data=data
 @core.include
  _dd = cor_dereference(dd)
 
+ sample0 = data_archive_get(_dd.sample_dap, _dd.dap_index)
+ if(data_archive_defined(_dd.data_dap, _dd.dap_index)) then $
+                                             if(sample0[0] EQ -1) then return
+
  ;----------------------------------
  ; manage loaded data
  ;----------------------------------
  if(_dd.maintain EQ 1) then dat_manage_dd, dd
  if(NOT keyword_set(_dd.input_fn)) then return
 
+ ;--------------------------------------------------------
+ ; determine samples such that no new data are loaded
+ ;--------------------------------------------------------
+ if(keyword_set(sample)) then $
+  begin
+   ss = sort(sample)
+   uu = uniq(sample[ss])
+   _sample = sample[uu[ss]]
+
+   samples_to_load = _sample
+
+   if(sample0[0] NE -1) then $
+    begin
+     loaded_samples = set_intersection(sample0, _sample)
+     if(loaded_samples[0] NE -1) then $
+                  samples_to_load = set_difference(loaded_samples, _sample)
+    end
+   if(samples_to_load[0] EQ -1) then return
+  end
+
+ ;----------------------------------
+ ; unload older samples if necessary
+ ;----------------------------------
+; if(_dd.cache NE -1) then $
+;  begin
+;   overflow = $
+;         _dat_compute_size(_dd, [loaded_samples, samples_to_load) - _dd.cache
+;   if(overflow GT 0) then $
+;    begin
+;     _dat_unload_samples, _dd, overflow
+;    end
+;  end
+
+
  ;----------------------------------
  ; read data
  ;----------------------------------
- data = call_function(_dd.input_fn, _dd.filename, /silent, $
-                          header, udata, abscissa=abscissa, sample=sample)
+;_dd.cache = 0
+ if((_dd.cache NE -1) AND ptr_valid(_dd.gffp)) then $
+               data = gff_read(*_dd.gffp, subscripts=samples_to_load) $
+ else data = call_function(_dd.input_fn, _dd.filename, /silent, $
+                       header, udata, abscissa=abscissa, sample=samples_to_load)
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; test whether input fn actually samples the data as requested
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(n_elements(data) NE n_elements(samples_to_load)) then samples_to_load = -1
 
  ;----------------------------------
  ; transform data
@@ -72,7 +118,8 @@ pro dat_load_data, dd, sample=sample, data=data
  if(_dd.maintain LT 2) then $
   begin
    nv_suspend_events
-   dat_set_data, dd, data, abscissa=abscissa, /silent
+   dat_set_data, dd, data, abscissa=abscissa, $
+                                /silent, sample=samples_to_load
    if(keyword_set(udata)) then cor_set_udata, dd, '', udata;, /silent
    if(keyword_set(header)) then dat_set_header, dd, header, /silent
    nv_resume_events

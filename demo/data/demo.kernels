@@ -1,0 +1,39 @@
+###############################################################################
+# cassini.kernels
+#
+###############################################################################
+
+# generic kernels (should always be loaded first)
+$DEMO_SPICE_LSK/naif0007.tls
+
+# used for jupiter_example.pro
+$DEMO_SPICE_CK/001011_001014ra.bc
+
+# used for mosaic_example.pro
+$DEMO_SPICE_CK/001103_001105ra.bc
+$DEMO_SPICE_CK/001105_001108.bc
+$DEMO_SPICE_CK/001026_001029ra.bc
+$DEMO_SPICE_CK/001029_001031ra.bc
+
+# used for processing Jupiter imagery
+>>>>>>> origin/demo
+$DEMO_SPICE_PCK/cpck14Dec2001.tpc
+$DEMO_SPICE_SPK/010420R_SCPSE_EP1_JP83.bsp
+
+# generic kernels for cas/cas iss
+$DEMO_SPICE_FK/cas_v37.tf
+$DEMO_SPICE_IK/cas_iss_v08.ti
+$DEMO_SPICE_SCK/cas00083.tsc
+
+
+
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/lsk/naif0007.tls
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/ck/001011_001014ra.bc
+
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/pck/cpck14Dec2001.tpc
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/spk/010420R_SCPSE_EP1_JP83.bsp
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/fk/cas_v39.tf
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/ik/cas_iss_v10.ti
+#/raid/httpd/html/iss_internal/downloads/naif_kernels/sclk/cas00106.tsc
+
+

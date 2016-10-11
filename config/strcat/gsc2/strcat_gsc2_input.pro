@@ -1,125 +1,88 @@
-;==================================================================
+; docformat = 'rst'
 ;+
-; NAME:
-;       strcat_gsc2_input
+;
+; Input translator for GSC2 star catalog. See also: `gsc_catalog_inputs`
+;
+; Usage
+; =====
+; This routine is called via `dat_get_value`, which is used to read the
+; translator table. In particular, the specific translator for the scene
+; to be processed should contain the following line::
+;
+;      -   strcat_gsc2_input     -       /j2000    # or /b1950 if desired
+;
+; For the star catalog translator system to work properly, only one type
+; of catalog may be used at a time for a particular instrument.
+;
+; The version of the GSC2 catalog that this translator expects can be
+; obtained from the catalog compilation function outlined in 
+; `gsc2_catalog_inputs`. The catalog data is grouped into 
+; approx 10,000 separate regions in numbered files in 24 separate 
+; subdirectories. Each star has a data record of 16 bytes.
+;
+; Record description: GSC_ID, CLASS, RA_DEG (degrees), DEC_DEG
+; (degrees), and MAG (Visual Magnitude). The real values (RA_DEG, 
+; DEC_DEG and MAG) are in XDR, the GSC_ID and CLASS are network-order
+; short integers.
+;
+; Restrictions
+; ============
+;
+; IMPORTANT: This translator may not be used until the appropriate data
+; have been obtained from the Space Telescope Science Institute website. 
+; See Procedure below.
+;
+; Since the distance to stars are not given in the GSC catalog, the
+; position vector magnitude is set as 10 parsec and the luminosity
+; is calculated from the visual magnitude and the 10 parsec distance.
 ;
 ;
-; PURPOSE:
-;        Input translator for GSC2 star catalog.
+; Procedure
+; =========
 ;
+; The gsc2 catalog can be accessed via the Space Telescope Science
+; Institute website, but cannot be downloaded in its entirety.  Therefore,
+; before using this translator, the catalog must be searched on the stsci
+; site::
 ;
-; CATEGORY:
-;	NV/CONFIG
+;  `<http://www-gsss.stsci.edu/support/data_access.htm>`
 ;
+; and the results stored in a form readable by this translator.
+; Until the complete catalog is available locally, the procedure
+; gsc2_catalog_inputs (see the documentation for that procedure) 
+; may be used tpo guide the user through the process.
+; 
+; Stars are found in a square area in RA and DEC around a given
+; or calculated center.  The star descriptor is filled with stars
+; that fit in this area.  If B1950 is selected, input RA, DEC and/or
+; ods orient matrix is assumed to be B1950 also, if not, input is
+; assumed to be J2000, like the catalog.  The velocity of the observer 
+; is used to correct for stellar aberration.
 ;
-; CALLING SEQUENCE:
-;       result = strcat_gsc2_input(dd, keyword)
+; :Private:
 ;
+; :Categories:
+;    nv, config
 ;
-; ARGUMENTS:
-;  INPUT:
-;	dd:		Data descriptor.
+; :History:
+;    Written by:     Vance Haemmerle, 3/2000 (pg_get_stars_gsc.pro)
 ;
-;	keyword:	String giving the name of the translator quantity.
+;    Modified:       Tiscareno, 8/2000 (pg_get_stars_tycho.pro)
 ;
-;  OUTPUT:
-;       NONE
+;    Modified:       Haemmerle, 12/2000 (pg_get_stars_tycho.pro)
 ;
-; KEYWORDS:
-;  INPUT:
-;	key1:		Observer descriptor, must be of subclass CAMERA.
+;    Modified:       Tiscareno, 9/2001
 ;
-;  OUTPUT:
-;	status:		Zero if valid data is returned.
-;
-;
-;  TRANSLATOR KEYWORDS:
-; 	jtime:		Years since 1950 (the epoch of catalog) for precession
-;			and proper motion correction.  If not given, it is taken
-;			from the object descriptor bod_time, which is assumed to
-;			be seconds past 1950 unless keyword /j2000 is set.
-;
-;	j2000:		If set, coordinates are output wrt j2000.
-;
-;	b1950:		If set, coordinates are output wrt b1950.
-;
-;	path_gsc2:	The directory of the star catalog.   If not given, the
-;			routine uses the environment variable 'NV_GSC2_DATA'.  
-;			The catalog data is grouped into approx 10,000 separate
-;			regions in numbered files in 24 separate subdirectories.
-;			Each star has a data record of 16 bytes.
-;			GSC_ID, CLASS, RA_DEG (degrees), DEC_DEG (degrees), and
-;			MAG (Visual Magnitude). The real values (RA_DEG, DEC_DEG
-;			and MAG) are in XDR, the GSC_ID and CLASS are 
-;			network-order short integers.
-;
-;	faint:		Stars with magnitudes fainter than this will not be
-;			returned.
-;
-;	bright:		Stars with magnitudes brighter than this will not be
-;			returned.
-;
-;
-;  ENVIRONMENT VARIABLES:
-;	NV_GSC2_DATA:	Directory containing the GSC2 catalog data unless
-;			overridden using the path_gsc2 translator keyword.
-;
-;
-; RETURN:
-;       Star descriptor containing all the stars found.  The Sp part of
-;       the star descriptor contains neither the Spectral type nor the 
-;       GSC class. 
-;
-;
-; RESTRICTIONS:
-;	IMPORTANT: This translator may not be used until the appropriate data
-;	have been obtained from the Space Telescope Science Institute website. 
-;	See PROCEDURE below.
-;
-;       Since the distance to stars are not given in the GSC catalog, the
-;       position vector magnitude is set as 10 parsec and the luminosity
-;       is calculated from the visual magnitude and the 10 parsec distance.
-;
-;
-; PROCEDURE:
-;	The gsc2 catalog can be accessed via the Space Telescope Science
-;	Institute website, but cannot be downloaded in its entirety.  Therefore,
-;	before using this translator, the catalog must be searched on the stsci
-;	site:
-;
-;		http://www-gsss.stsci.edu/support/data_access.htm
-;
-;	and the results stored in a form readable by this translator.
-;	Until the complete catalog is available locally, the procedure
-;	gsc2_catalog_inputs (see the documentation for that procedure) 
-;	may be used tpo guide the user through the process.
-;	
-;       Stars are found in a square area in RA and DEC around a given
-;       or calculated center.  The star descriptor is filled with stars
-;       that fit in this area.  If B1950 is selected, input RA, DEC and/or
-;	ods orient matrix is assumed to be B1950 also, if not, input is
-;	assumed to be J2000, like the catalog.  The velocity of the observer 
-;	is used to correct for stellar aberration.
-;
-;
-; SEE ALSO:
-;	gsc2_catalog_inputs
-;
-;
-; MODIFICATION HISTORY:
-;       Written by:     Vance Haemmerle, 3/2000 (pg_get_stars_gsc.pro)
-;       Modified:       Tiscareno, 8/2000 (pg_get_stars_tycho.pro)
-;	Modified:	Haemmerle, 12/2000 (pg_get_stars_tycho.pro)
-;	Modified:	Tiscareno, 9/2001
-;	Modified:	Spitale; 9/2001 -- changed to strcat_gsc2_input.pro
+;    Modified:       Spitale; 9/2001 -- changed to strcat_gsc2_input.pro
 ;
 ;-
-;=============================================================================
 
-;====================================================================
+;==============================================================================
+;+
 ; gsc2_fzone:  Determine the Declination zone of a GSC/Tycho region
-;
-;====================================================================
+; :Hidden:
+;-
+;==============================================================================
 function gsc2_fzone, declow, dechi
 
   dec = (declow + dechi) / 2.0
@@ -131,10 +94,13 @@ function gsc2_fzone, declow, dechi
   return, zone
 end
 
-;====================================================================
+;==============================================================================
+;+
 ; gsc2_initzd: Initialize GSC/Tycho directory names
-;
-;====================================================================
+; :Hidden:
+; :Private:
+;-
+;==============================================================================
 pro gsc2_initzd, zdir
 
   zdir(0)  = 'N0000'
@@ -167,8 +133,10 @@ end
 
 
 ;==========================================================================
+;+
 ;  gsc2_get_regions
-;
+; :Hidden:
+;-
 ;==========================================================================
 function gsc2_get_regions, ra1, ra2, dec1, dec2, path_gsc2=path_gsc2
  return, path_gsc2 + 'gsc2.str'
@@ -178,9 +146,11 @@ end
 
 
 ;========================================================================
+;+
 ; gsc2_get_stars -  Load the stars that fit within region (ra1 - ra2) 
 ;                    and (dec1 - dec2) into a star descriptor.
-;
+; :Hidden:
+;-
 ;========================================================================
 function gsc2_get_stars, filename, b1950=b1950, cam_vel=cam_vel, $
          jtime=jtime, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
@@ -378,7 +348,6 @@ function gsc2_get_stars, filename, b1950=b1950, cam_vel=cam_vel, $
  lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d ) 
 
  _sd = str_create_descriptors( n, $
-	assoc_xd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
         avel=avel, $
@@ -399,16 +368,18 @@ end
 
 
 ;=============================================================================
+;+
 ; strcat_gsc2_input
-;
+; :Hidden:
+;-
 ;=============================================================================
-function strcat_gsc2_input, dd, keyword, status=status, $
+function strcat_gsc2_input, dd, keyword, n_obj=n_obj, dim=dim, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
 
- return, strcat_input('gsc2', dd, keyword, status=status, $
+ return, strcat_input('gsc2', dd, keyword, n_obj=n_obj, dim=dim, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )

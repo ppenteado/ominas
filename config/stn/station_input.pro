@@ -133,8 +133,14 @@ function station_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------------------
  catpath = getenv('NV_STATION_DATA')
  if(NOT keyword_set(catpath)) then $
-   nv_message, name='station_input', $
+  begin
+   nv_message, name='station_input', /con, $
      'NV_STATION_DATA environment variable is undefined.'
+       exp=['NV_STATION_DATA specifies the directory under which this translator', $
+            'searches for data files.']
+   status = -1
+   return, 0
+  end
 
 
  status = 0

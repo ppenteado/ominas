@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_globe::init, ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, $
-@globe__keywords.include
+@glb__keywords.include
 end_keywords
 @core.include
  
  void = self->ominas_solid::init(ii, crd=crd0, bd=bd0, sld=sld0, $
-@solid__keywords.include
+@sld__keywords.include
 end_keywords)
  if(keyword_set(gbd0)) then struct_assign, gbd0, self
 

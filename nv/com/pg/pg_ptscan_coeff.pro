@@ -28,7 +28,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;       axis_ptd:        POINT containing a single image point
+;       axis_ptd:       POINT containing a single image point
 ;                       to be used as the axis of rotation in the fit for
 ;                       every point.
 ;
@@ -70,11 +70,11 @@
 ;	
 ;-
 ;=============================================================================
-function pg_ptscan_coeff, pts_ptd, axis_ptd=axis_ptd, fix=fix, model_ptd=model_ptd
+function pg_ptscan_coeff, pts_ptd, axis_ptd=_axis_ptd, fix=fix, model_ptd=model_ptd
                  
  if(keyword_set(_axis_ptd)) then $
   begin     
-   if(size(_axis_ptd, /type) NE 7) then axis_ptd = pnt_create_descriptors(points=_axis_ptd) $ 
+   if(size(_axis_ptd, /type) NE 11) then axis_ptd = pnt_create_descriptors(points=_axis_ptd) $ 
    else axis_ptd = _axis_ptd
   end
 

@@ -111,13 +111,9 @@ function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd, $
  ; combine results
  ;----------------------------------
  if(keyword_set(globe_shadow_ptd)) then $
-   _shadow_ptd = append_array(_shadow_ptd, transpose_struct(globe_shadow_ptd))
+                      shadow_ptd = append_array(shadow_ptd, globe_shadow_ptd)
  if(keyword_set(disk_shadow_ptd)) then $
-   _shadow_ptd = append_array(_shadow_ptd, transpose_struct(disk_shadow_ptd))
-
- n = n_elements(object_ptd)
- shadow_ptd = objarr(n)
- for i=0, n-1 do shadow_ptd[i] = pnt_compress(_shadow_ptd[*,i])
+                      shadow_ptd = append_array(shadow_ptd, disk_shadow_ptd)
   
  if(NOT keyword_set(nocull)) then shadow_ptd = pnt_cull(shadow_ptd)
 

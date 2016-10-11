@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 function cor_create_descriptors, n, crd=crd0, $
-@core__keywords.include
+@cor__keywords.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -62,7 +62,7 @@ end_keywords
   begin
 
    crd[i] = ominas_core(i, crd=crd0, $
-@core__keywords.include
+@cor__keywords.include
 end_keywords)
 
   end

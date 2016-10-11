@@ -11,7 +11,7 @@
 ;
 ;
 ; CATEGORY:
-;	NV/SYS/PS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:
@@ -53,7 +53,7 @@ function pnt_compress, ptd0, nt=nt, pptd=pptd
  ;--------------------------------
  ; set up compressed arrays
  ;--------------------------------
- ptd = pnt_cull(ptd0, /nofree)			; remove null objects
+ ptd = pnt_cull(ptd0, /nofree)				; remove null objects
  if(NOT keyword_set(ptd)) then return, obj_new()
 
  tags = pnt_tags(ptd[0])				; assume all data arrays identical

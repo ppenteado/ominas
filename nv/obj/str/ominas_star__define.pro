@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_star::init, ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, sd=sd0, $
-@star__keywords.include
+@str__keywords.include
 end_keywords
 @core.include
  
  void = self->ominas_globe::init(ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, $
-@globe__keywords.include
+@glb__keywords.include
 end_keywords)
  if(keyword_set(sd0)) then struct_assign, sd0, self
 

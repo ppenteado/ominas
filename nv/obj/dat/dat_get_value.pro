@@ -101,8 +101,9 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
     end
    translators = *_dd[0].input_translators_p
   end $
- else translators = $
-	   nv_match(*_dd[0].input_translators_p, str_nsplit(tr_override, ','))
+ else translators = str_nsplit(tr_override, ',')
+; else translators = $
+;	   nv_match(*_dd[0].input_translators_p, str_nsplit(tr_override, ','))
  n = n_elements(translators)
 
 

@@ -8,7 +8,7 @@ end_keywords
 @core.include
  
  void = self->ominas_core::init(ii, crd=crd0,  $
-@core__keywords.include
+@cor__keywords.include
 end_keywords)
  if(keyword_set(md0)) then struct_assign, md0, self
 
@@ -157,7 +157,7 @@ end
 ;=============================================================================
 pro ominas_map__define
 
-  pole={ominas_map_pole,lon:0d0,lat:0d0,rot:0d0}
+ pole = {ominas_map_pole, lon:0d0, lat:0d0, rot:0d0}
 
  struct = $
     { ominas_map, inherits ominas_core, $
@@ -168,6 +168,7 @@ pro ominas_map__define
 	scale:		  0d, $			; map 'scale'; Actually zoom.
 	origin:		  dblarr(2), $		; image coords of map center
 	center:		  dblarr(2), $		; lat,lon of map center
+	pole:		  pole, $		; location of the map projection's pole
 	range:		  dblarr(2,2), $	; lat,lon map ranges
 	radii:		  dblarr(3), $		; ref. radii of triaxial ellipsoid
 
@@ -177,7 +178,7 @@ pro ominas_map__define
 	rotate:		  0b, $			; Rotate value as in idl 'rotate'
 
 	fn_data_p:	   nv_ptr_new(), $	; data for user functions
-  pole:           pole }		; location of the map projection's pole
+        pole:              pole }		; location of the map projection's pole
 
 end
 ;===========================================================================

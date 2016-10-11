@@ -107,16 +107,7 @@ pro vgr_spice_parse_labels, dd, _time, $
      ;-----------------------------------
      ; time
      ;-----------------------------------
-     if(NOT keyword_set(_time)) then $
-      begin
-       t = vgr_spice_time(label, dt=dt, status=status)
-       if(status NE 0) then time[i] = -1d100 $
-       else if(keyword_set(t)) then $
-        begin
-         time[i] = spice_str2et(t)
-         time[i] = time[i] + dt
-        end
-      end 
+     if(NOT keyword_set(_time)) then time[i] = vgr_spice_time(label)
 
      ;-----------------------------------
      ; exposure time

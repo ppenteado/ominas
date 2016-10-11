@@ -1,6 +1,6 @@
 ;=============================================================================
 ;+
-; points:
+; NAME:
 ;	pnt_set_vectors
 ;
 ;
@@ -9,7 +9,7 @@
 ;
 ;
 ; CATEGORY:
-;	NV/SYS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:

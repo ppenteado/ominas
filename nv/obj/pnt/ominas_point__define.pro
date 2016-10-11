@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_point::init, ii, crd=crd0, ptd=ptd0, $
-@point__keywords.include
+@pnt__keywords.include
 end_keywords
 @core.include
  
  void = self->ominas_core::init(ii, crd=crd0, $
-@core__keywords.include
+@cor__keywords.include
 end_keywords)
  if(keyword_set(ptd0)) then struct_assign, ptd0, self
 
@@ -139,6 +139,8 @@ end_keywords)
  if(keyword_set(nv)) then self.nv = nv[ii]
  if(keyword_set(nt)) then self.nt = nt[ii]
 
+
+
  return, 1
 end
 ;=============================================================================
@@ -156,7 +158,7 @@ end
 ;
 ;
 ; CATEGORY:
-;	NV/SYS/PS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:

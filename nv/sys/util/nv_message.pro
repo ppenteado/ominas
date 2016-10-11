@@ -73,7 +73,8 @@
 ;-
 ;=============================================================================
 pro nv_message, string, name=name, continue=continue, $
-             clear=clear, get_message=get_message, message=_string, $
+             clear=clear, get_message=get_message, $
+             message=_string, explanation=explanation, $
              callback=callback, cb_data_p=cb_data_p, disconnect=disconnect, $
              cb_tag=cb_tag, silent=_silent, stop=stop
 common nv_message_block, last_message, cb_tlp, silent
@@ -128,7 +129,12 @@ common nv_message_block, last_message, cb_tlp, silent
  if(NOT keyword_set(string)) then return
  last_message = string
  if(keyword_set(name)) then string = strupcase(name)+': ' + string
- if((NOT silent) AND (NOT ptr_valid(cb_tlp))) then message, string, /continue, /noname
+
+ if((NOT silent) AND (NOT ptr_valid(cb_tlp))) then $
+  begin
+   message, string, /continue, /noname
+   if(keyword_set(explanation)) then print, '	' + explanation
+  end
  if(keyword_set(stop)) then stop
  if(NOT keyword_set(continue)) then retall
 

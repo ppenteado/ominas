@@ -1,0 +1,7 @@
+@cor__keywords.include
+   desc=desc, $
+   input=input, $
+   points=points, $
+   vectors=vectors, $
+   flags=flags, $
+   tags=tags, data=data, $

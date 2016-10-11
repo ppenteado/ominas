@@ -46,8 +46,10 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_read_config, env, table_p, filenames_p, continue=continue
+pro dat_read_config, env, table_p, filenames_p, continue=continue, status=status
 @core.include
+
+ status = 0
 
  ;----------------------------------
  ; separate files list
@@ -60,8 +62,11 @@ pro dat_read_config, env, table_p, filenames_p, continue=continue
 
  if(NOT keyword_set(filenames[0])) then $
   begin
-;   nv_message, 'Unable to obtain ' + env +' from the environment.', $
-;                                      name='dat_read_config', continue=continue
+   nv_message, name='dat_read_config', /con, $
+     'Unable to obtain ' + env +' from the environment.', $                         
+       exp=[env + ' is a colon-separated list of files that are concatenated', $
+            'into a single master table.']
+   status = -1
    return
   end
 

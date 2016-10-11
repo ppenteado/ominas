@@ -9,7 +9,7 @@
 ;
 ;
 ; CATEGORY:
-;	NV/SYS/PS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:
@@ -56,7 +56,6 @@
 ;=============================================================================
 function _pnt_apply_condition, _ps, condition
 @pnt_include.pro
-
  flags = *_ps.flags_p
  compare = flags AND condition.mask
  return, where(compare EQ condition.state)

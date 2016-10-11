@@ -25,7 +25,8 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	bx:	Body descriptors indicating which maps to load.
 ;
 ;
 ;  OUTPUT: 
@@ -52,7 +53,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_load_maps, dir, md=md, dd=dd
+function pg_load_maps, dir, md=md, bx=bx, dd=dd
 
  ;--------------------------------------------------------------
  ; get map directory
@@ -60,7 +61,9 @@ function pg_load_maps, dir, md=md, dd=dd
  if(NOT keyword_set(dir)) then dir = getenv('PG_MAPS')
  if(NOT keyword_set(dir)) then $
   begin
-   nv_message, /con, name='pg_load_maps', 'Map directory not defined.'
+   nv_message, /con, name='pg_load_maps', 'Map directory not specified.', $
+       exp=['The map directory may be specified as te argument to this program', $
+            'or via the PG_MAPS environment variable.']
    return, 0
   end 
 
@@ -68,7 +71,16 @@ function pg_load_maps, dir, md=md, dd=dd
  ;--------------------------------------------------------------
  ; get map files
  ;--------------------------------------------------------------
- files = file_search(dir + '/*/*.*')
+ dirs = file_search(dir + '/*')
+ split_filename, dirs, dir, name
+
+ names = cor_name(bx)
+
+ w = nwhere(strupcase(names), strupcase(name))
+ if(w[0] EQ -1) then return, 0
+
+ dirs = dirs[w]
+ files = file_search(dirs + '/*.*')
 
 
  ;------------------------------------------------------------------

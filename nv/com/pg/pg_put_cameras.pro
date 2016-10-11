@@ -75,7 +75,7 @@
 ;-
 ;=============================================================================
 pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
-@camera_keywords.include
+@cam__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -91,23 +91,22 @@ pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
                                 name='pg_put_cameras', 'No camera descriptor.'
 
  ;-------------------------------------------------------------------
- ; override the specified values (cam__name cannot be overridden)
+ ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
- if(n_elements(cam__orient) NE 0) then bod_set_orient, cds, cam__orient
- if(n_elements(cam__avel) NE 0) then bod_set_avel, cds, cam__avel
- if(n_elements(cam__pos) NE 0) then bod_set_pos, cds, cam__pos
- if(n_elements(cam__vel) NE 0) then bod_set_vel, cds, cam__vel
- if(n_elements(cam__time) NE 0) then bod_set_time, cds, cam__time
- if(n_elements(cam__fn_focal_to_image) NE 0) then $
-                cam_set_fn_focal_to_image, cds, cam__fn_focal_to_image
- if(n_elements(cam__fn_image_to_focal) NE 0) then $
-                cam_set_fn_image_to_focal, cds, cam__fn_image_to_focal
- if(n_elements(cam__fi_data) NE 0) then cam_set_fi_data, cds, cam__fi_data
- if(n_elements(cam__scale) NE 0) then cam_set_scale, cds, cam__scale
- if(n_elements(cam__oaxis) NE 0) then cam_set_oaxis, cds, cam__oaxis
- if(n_elements(cam__size) NE 0) then cam_set_size, cds, cam__size
- if(n_elements(cam__exposure) NE 0) then $
-                                  cam_set_exposure, cds, cam__exposure
+ if(n_elements(orient) NE 0) then bod_set_orient, cds, orient
+ if(n_elements(avel) NE 0) then bod_set_avel, cds, avel
+ if(n_elements(pos) NE 0) then bod_set_pos, cds, pos
+ if(n_elements(vel) NE 0) then bod_set_vel, cds, vel
+ if(n_elements(time) NE 0) then bod_set_time, cds, time
+ if(n_elements(fn_focal_to_image) NE 0) then $
+                cam_set_fn_focal_to_image, cds, fn_focal_to_image
+ if(n_elements(fn_image_to_focal) NE 0) then $
+                cam_set_fn_image_to_focal, cds, fn_image_to_focal
+ if(n_elements(fi_data) NE 0) then cam_set_fi_data, cds, fi_data
+ if(n_elements(scale) NE 0) then cam_set_scale, cds, scale
+ if(n_elements(oaxis) NE 0) then cam_set_oaxis, cds, oaxis
+ if(n_elements(size) NE 0) then cam_set_size, cds, size
+ if(n_elements(exposure) NE 0) then cam_set_exposure, cds, exposure
 
 
  ;-------------------------------

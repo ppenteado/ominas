@@ -88,7 +88,6 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
        end
      end
 
-
    ;- - - - - - - - - - - - - - - - - - - - - - - -
    ; get rid of redundant dependencies
    ;- - - - - - - - - - - - - - - - - - - - - - - -
@@ -197,7 +196,7 @@ pro grim_descriptor_notify, events, refresh=refresh, new=new
    ; handle the event
    ;- - - - - - - - - - - - - - - - - - - -
    if(keyword_set(grim_data)) then $
-                grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
+          grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
 
    ;- - - - - - - - - - - - - - - - - - - -
    ; open a new grim window if necessary
@@ -225,12 +224,9 @@ help, events[i].xd
       grim_set_plane, grim_data, plane
      end 
 
+   if(keyword_set(refresh)) then grim_refresh, grim_data, use_pixmap=use_pixmap
   end
 
- ;-------------------------------------------
- ; refresh grim if necessary
- ;-------------------------------------------
- if(keyword_set(refresh)) then grim_refresh, grim_data, use_pixmap=use_pixmap
 
 end
 ;=============================================================================
@@ -351,6 +347,7 @@ pro grim_add_descriptor, grim_data, xdp, _xd, one=one, replace=replace, $
                          noregister=noregister, assoc_xd=assoc_xd
 @grim_constants.common
 
+
  if(NOT keyword_set(_xd)) then return
  plane = grim_get_plane(grim_data)
 
@@ -365,6 +362,8 @@ pro grim_add_descriptor, grim_data, xdp, _xd, one=one, replace=replace, $
    if(w[0] EQ -1) then return
    xd = xd[w]
   end
+
+ if(keyword_set(one)) then xd = xd[0]
 
  grim_mark_descriptor, xd, MARK_FRESH
 
@@ -382,6 +381,14 @@ pro grim_add_descriptor, grim_data, xdp, _xd, one=one, replace=replace, $
                                                    scalar_data=grim_data.base
    return
   end
+stop
+
+
+
+
+
+
+
 
  ;-----------------------------------------------
  ; when only one descriptor is allowed   
@@ -696,9 +703,11 @@ function grim_get_stars, grim_data, replace=replace, silent=silent, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; get stars from translators if no similar set exists
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   trs = '/tr_nosort'
+   if(keyword_set(plane.trs_sd)) then trs = trs + ', ' + plane.trs_sd
    if(copy NE -1) then sd = nv_clone(*planes[copy].sd_p) $
    else sd = pg_get_stars(plane.dd, od=*plane.cd_p, $
-                     '/tr_nosort', name=names, plane.trs_sd, corners=corners)
+                                      trs, name=names, corners=corners)
    if(NOT keyword_set(sd)) then $
     begin
      grim_rm_descriptor, grim_data, plane=plane, plane.sd_p

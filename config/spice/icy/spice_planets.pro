@@ -104,7 +104,7 @@ function spice_planets, dd, ref, $
      ;-----------------------------------------------------
      ; move target to front of list
      ;-----------------------------------------------------
-     w = where(cor_name(pd) EQ target)
+     w = where(cor_name(pd) EQ target[i])
      target_unknown = 0
      if(w[0] EQ -1) then target_unknown = 1 $
      else $
@@ -117,11 +117,11 @@ function spice_planets, dd, ref, $
      ;--------------------------------------------------------------------
      ; if target unknown, put empty planet descriptor at beginning of list
      ;--------------------------------------------------------------------
-     if(target_unknown) then $
-      begin
-       pd = [plt_create_descriptors(1, name='UNKNOWN', assoc_xd=dd), pd]
-       n_obj = n_obj + 1
-      end
+;     if(target_unknown) then $
+;      begin
+;       pd = [plt_create_descriptors(1, name='UNKNOWN', assoc_xd=dd), pd]
+;       n_obj = n_obj + 1
+;      end
 
      pds = append_array(pds, pd)
     end

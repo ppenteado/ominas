@@ -115,7 +115,8 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
     if(keyword_set(body_pts)) then $
      inertial_pts = bod_body_to_inertial_pos(xd, body_pts)
 
-   name = cor_name(xd) + ':' + cor_name(std[i])
+;   name = cor_name(xd) + ':' + cor_name(std[i])
+   name = cor_name(std[i])
 
    ;-----------------------------------
    ; store grid

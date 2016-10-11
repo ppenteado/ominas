@@ -51,7 +51,7 @@
 ;-
 ;=============================================================================
 function stn_create_descriptors, n, crd=crd0, bd=bd0, std=std0, $
-@station__keywords.include
+@stn__keywords.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -62,7 +62,7 @@ end_keywords
   begin
 
    std[i] = ominas_station(i, crd=crd0, bd=bd0, std=std0, $
-@station__keywords.include
+@stn__keywords.include
 end_keywords)
 
   end

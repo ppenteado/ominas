@@ -48,7 +48,6 @@ pro stellab, obs_bx, targ_bx, c=c, fast=fast
 
  obs_pos = bod_pos(obs_bx) ## make_array(nt, val=1d)
 
-
  pos = - (obs_pos - transpose(bod_pos(targ_bx)))
  vel = (bod_vel(obs_bx))[0,*] ## make_array(nt, val=1d) 
 

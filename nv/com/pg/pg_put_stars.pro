@@ -75,7 +75,7 @@
 ;-
 ;=============================================================================
 pro pg_put_stars, dd, trs, sds=sds, ods=ods, gd=gd, $
-@star_keywords.include
+@str__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -95,17 +95,17 @@ pro pg_put_stars, dd, trs, sds=sds, ods=ods, gd=gd, $
 
 
  ;-------------------------------------------------------------------
- ; override the specified values (strt__name cannot be overridden)
+ ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
- if(n_elements(str__lum) NE 0) then str_set_lum, sds, str__lum
- if(n_elements(str__sp) NE 0) then str_set_sp, sds, str__sp
- if(n_elements(str__orient) NE 0) then bod_set_orient, sds, str__orient
- if(n_elements(str__avel) NE 0) then bod_set_avel, sds, str__avel
- if(n_elements(str__pos) NE 0) then bod_set_pos, sds, str__pos
+ if(n_elements(lum) NE 0) then str_set_lum, sds, lum
+ if(n_elements(sp) NE 0) then str_set_sp, sds, sp
+ if(n_elements(orient) NE 0) then bod_set_orient, sds, orient
+ if(n_elements(avel) NE 0) then bod_set_avel, sds, avel
+ if(n_elements(pos) NE 0) then bod_set_pos, sds, pos
  if(n_elements(str__vel) NE 0) then bod_set_vel, sds, str__vel
- if(n_elements(str__time) NE 0) then bod_set_time, sds, str__time
- if(n_elements(str__radii) NE 0) then glb_set_radii, sds, str__radii
- if(n_elements(str__lora) NE 0) then glb_set_lora, sds, str__lora
+ if(n_elements(time) NE 0) then bod_set_time, sds, time
+ if(n_elements(radii) NE 0) then glb_set_radii, sds, radii
+ if(n_elements(lora) NE 0) then glb_set_lora, sds, lora
 
 
  ;-------------------------------

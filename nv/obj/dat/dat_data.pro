@@ -88,7 +88,7 @@ function dat_data, dd, samples=_samples, offset=offset, $
 
 
  ;-------------------------------------------------------------------------
- ; sampling
+ ; Compute array sampling
  ;-------------------------------------------------------------------------
  if(keyword_set(_samples)) then $
   begin
@@ -112,45 +112,36 @@ function dat_data, dd, samples=_samples, offset=offset, $
 
 
  ;-------------------------------------------------------------------------
- ; Load data array if necessary. 
- ;  Need to add sampling to this call to allow sampling portions of huge
- ;  files.  The problem is that we need to know whether to reload a data 
- ;  array that has previously been subsampled.
+ ; Load data array
  ;-------------------------------------------------------------------------
- if(NOT data_archive_defined(_dd.data_dap, _dd.dap_index)) then $
-                                      dat_load_data, dd, sample=samples
+;_dat_load_data, _dd, sample=samples
+ dat_load_data, dd, sample=samples
  _dd = cor_dereference(dd)
 
+
  ;-------------------------------------------------------------------------
- ; Compression
+ ; Uncompress
  ;-------------------------------------------------------------------------
- if(NOT keyword_set(_dd.compress)) then $
-  begin
-   data = data_archive_get(_dd.data_dap, _dd.dap_index, samples=samples)
-   abscissa = data_archive_get(_dd.abscissa_dap, _dd.dap_index, samples=samples)
-   if(keyword_set(data)) then sampled = 1
-  end $
- else $
-  begin
-   data = data_archive_get(_dd.data_dap, _dd.dap_index)
-   data = call_function('dat_uncompress_data_' + _dd.compress, _dd, data, abscissa=abscissa)
-  end
+ _dat_uncompress_data, _dd, cdata=cdata, cabscissa=cabscissa
 
 
  ;-------------------------------------------------------------------------
- ; Sample if not already sampled
+ ; Subsample
+ ;  if some samples are already loaded, determine subscripts into 
+ ;  loaded array
  ;-------------------------------------------------------------------------
- if(defined(samples)) then $
+ if(keyword_set(samples)) then $
   begin
-   if(NOT sampled) then $
+   sample0 = data_archive_get(_dd.sample_dap, _dd.dap_index)
+   if(sample0[0] NE -1) then $
     begin
-     data = data[samples]
-     if(keyword_set(abscissa)) then abscissa = abscissa[samples]
+     int = set_intersection(long(sample0), long(samples), ii, jj, kk)
+     if(defined(kk)) then samples = kk
     end
-
-   w = where(samples EQ -1)
-   if(w[0] NE -1) then samples[w] = 0
   end
+
+ data = data_archive_get(_dd.data_dap, _dd.dap_index, samples=samples)
+ abscissa = data_archive_get(_dd.abscissa_dap, _dd.dap_index, samples=samples)
 
 
  ;-------------------------------------------------------------------------
@@ -175,6 +166,7 @@ function dat_data, dd, samples=_samples, offset=offset, $
 
  cor_rereference, dd, _dd
 
+
  ;-------------------------------------------------------------------------
  ; get abscissa
  ;-------------------------------------------------------------------------
@@ -183,7 +175,15 @@ function dat_data, dd, samples=_samples, offset=offset, $
   begin
    if(keyword_set(samples)) then _abscissa = samples $
    else _abscissa = lindgen(*_dd.dim_p)
+;;;; _abscissa = w_to_nd(*_dd.dim_p, _abscissa)
   end
+
+
+ ;-------------------------------------------------------------------------
+ ; restore compression
+ ;-------------------------------------------------------------------------
+ _dat_compress_data, _dd, cdata=cdata, cabscissa=cabscissa
+
 
  return, data
 end

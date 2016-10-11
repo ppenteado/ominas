@@ -273,8 +273,9 @@ end
 ; This is a crappy implementation
 ;
 ;=============================================================================
-function grim_clone_plane, grim_data, plane=plane
+function grim_clone_plane, grim_data, plane=plane, spawn=spawn
 
+; if(keyword_set(spawn)) then 
  grim_add_planes, grim_data, plane.dd, pn=pn
 
  new_plane = nv_clone(plane)
@@ -282,7 +283,7 @@ function grim_clone_plane, grim_data, plane=plane
  new_plane.pn = pn
  (*grim_data.planes_p)[pn] = new_plane
 
-  new_plane.cmd = colormap_descriptor(data=new_plane.pn, $
+ new_plane.cmd = colormap_descriptor(data=new_plane.pn, $
                                 n_colors=grim_n_colors(dat_type(new_plane.dd)))
 
  grim_set_plane, grim_data, new_plane
@@ -316,7 +317,6 @@ function grim_channel_to_rgb, channel
  ;----------------------------------
  ; byte -- channel is bit mask
  ;----------------------------------
-;stop
  rgb[0] = (channel AND 1b) NE 0
  rgb[1] = (channel AND 2b) NE 0
  rgb[2] = (channel AND 4b) NE 0
@@ -445,6 +445,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 		render_show	:	1b, $
 		visible		:	0, $			; overlays always visible?
 		image_visible	:	0, $
+		tvd_save_p	:	ptr_new(0), $
 		cradec		:	dblarr(1,3), $
 		dradec		:	dblarr(1,3), $
 		max		:	double(max), $

@@ -57,7 +57,7 @@ function dsk_get_inner_disk_points, dkd, n_points, ta=ta, $
  ;----------------------------------------
  ; true anomaly of each point
  ;----------------------------------------
- if(NOT keyword__set(ta)) then ta = dindgen(n_points)*2.*!dpi/n_points $
+ if(NOT keyword__set(ta)) then ta = dindgen(n_points)*2.*!dpi/(n_points-1) $
  else n_points = n_elements(ta)
 
  ;-------------------------------------

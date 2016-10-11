@@ -27,7 +27,11 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	epsilon:	Convergence criterion for angular deviation from normal.
+;			Default is 1d-8.
+;
+;	niter:		Maximum number of iterations.  Default is 5000.
 ;
 ;  OUTPUT: NONE
 ;
@@ -43,17 +47,19 @@
 ;
 ;
 ; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 1/1998
-; 	Adapted by:	Spitale, 5/2016
+; 	Written by:		Spitale, 1/1998
+; 	Adapted by:		Spitale, 5/2016
+;	Added iteration count:	Moretto, 8/2016
 ;	
 ;-
 ;===========================================================================
-function glb_sub_point_graphic, gbd, v, noevent=noevent
+function glb_sub_point_graphic, gbd, v, noevent=noevent, epsilon=epsilon, niter=niter
 @core.include
  
  nv_notify, gbd, type = 1, noevent=noevent
 
- epsilon = 1d-8
+ if(NOT keyword_set(niter)) then niter = 1000
+ if(NOT keyword_set(epsilon)) then epsilon = 1d-8
 
  result = glb_sub_point(gbd, v)				; 1st guess
 
@@ -61,7 +67,8 @@ function glb_sub_point_graphic, gbd, v, noevent=noevent
  ; iterate to find point where normal points at v
  ;------------------------------------------------
  done = 0
- while(NOT done) do $
+ c=0
+ while(NOT done AND (c le niter)) do $
   begin
    vv = v_unit(v - result)
    normal = glb_get_surface_normal(/body, gbd, result)
@@ -75,6 +82,7 @@ function glb_sub_point_graphic, gbd, v, noevent=noevent
      axis = v_unit(v_cross(normal, vv))
      result = v_rotate_11(result, axis, sin(theta), cos(theta))
      result = glb_sub_point(gbd, result)
+     c=c+1
     end
 
   end

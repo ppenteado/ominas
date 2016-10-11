@@ -6,11 +6,11 @@
 ;
 ; PURPOSE:
 ;	Cleans out an array of POINT object by removing invisible points
-;	and/or empty POINT object.
+;	and/or empty POINT objects.
 ;
 ;
 ; CATEGORY:
-;	NV/SYS/PS
+;	NV/OBJ/PNT
 ;
 ;
 ; CALLING SEQUENCE:

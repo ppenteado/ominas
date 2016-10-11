@@ -88,7 +88,7 @@
 ;=============================================================================
 function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
                              override=override, verbatim=verbatim, raw=raw, $
-@planet_keywords.include
+@plt__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -110,25 +110,25 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
  ;-------------------------------------------------------------------s
  if(keyword_set(override)) then $
   begin
-   n = n_elements(plt__name)
+   n = n_elements(name)
 
    pd = plt_create_descriptors(n, $
-		name=plt__name, $
-		orient=plt__orient, $
-		avel=plt__avel, $
-		pos=plt__pos, $
-		vel=plt__vel, $
-		time=plt__time, $
-		radii=plt__radii, $
-		mass=plt__mass, $
-		albedo=plt__albedo, $
-		refl_fn=plt__refl_fn, $
-		refl_parm=plt__refl_parm, $
-		phase_fn=plt__phase_fn, $
-		phase_parm=plt__phase_parm, $
-		opaque=plt__opaque, $
-		opacity=plt__opacity, $
-		lora=plt__lora)
+		name=name, $
+		orient=orient, $
+		avel=avel, $
+		pos=pos, $
+		vel=vel, $
+		time=time, $
+		radii=radii, $
+		mass=mass, $
+		albedo=albedo, $
+		refl_fn=refl_fn, $
+		refl_parm=refl_parm, $
+		phase_fn=phase_fn, $
+		phase_parm=phase_parm, $
+		opaque=opaque, $
+		opacity=opacity, $
+		lora=lora)
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get planet descriptors from the translators
@@ -138,10 +138,10 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(plt__name)) then tr_first = 1
+   if(keyword_set(name)) then tr_first = 1
 
    pd = dat_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
-                                key7=plt__time, key8=plt__name, trs=trs, $
+                                key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
@@ -149,19 +149,19 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
    n = n_elements(pd)
 
    ;---------------------------------------------------
-   ; If plt__name given, determine subscripts such that
+   ; If name given, determine subscripts such that
    ; only values of the named objects are returned.
    ;
    ; Note that each translator has this opportunity,
    ; but this code guarantees that it is done.
    ;
-   ; If plt__name is not given, then all descriptors
+   ; If name is not given, then all descriptors
    ; will be returned.
    ;---------------------------------------------------
-   if(keyword_set(plt__name)) then $
+   if(keyword_set(name)) then $
     begin
      tr_names = cor_name(pd)
-     sub = nwhere(strupcase(tr_names), strupcase(plt__name))
+     sub = nwhere(strupcase(tr_names), strupcase(name))
      if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
@@ -181,24 +181,24 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
      end
 
    ;-------------------------------------------------------------------
-   ; override the specified values (plt__name cannot be overridden)
+   ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
    w = nwhere(dd, cor_assoc_xd(pd))
-   if(n_elements(plt__time) NE 0) then bod_set_time, pd, plt__time[w]
-   if(n_elements(plt__orient) NE 0) then bod_set_orient, pd, plt__orient[*,*,w]
-   if(n_elements(plt__avel) NE 0) then bod_set_avel, pd, plt__avel[*,*,w]
-   if(n_elements(plt__pos) NE 0) then bod_set_pos, pd, plt__pos[*,*,w]
-   if(n_elements(plt__vel) NE 0) then bod_set_vel, pd, plt__vel[*,*,w]
-   if(n_elements(plt__radii) NE 0) then glb_set_radii, pd, plt__radii[*,w]
-   if(n_elements(plt__mass) NE 0) then sld_set_mass, pd, plt__mass[w]
-   if(n_elements(plt__lora) NE 0) then glb_set_lora, pd, plt__lora[w]
-   if(n_elements(plt__albedo) NE 0) then sld_set_albedo, pd, plt__albedo[w]
-   if(n_elements(plt__refl_fn) NE 0) then sld_set_refl_fn, pd, plt__refl_fn[w]
-   ;if(n_elements(plt__refl_parm) NE 0) then sld_set__refl_parm, pd, plt__refl_parm[w] ; no such function
-   if(n_elements(plt__phase_fn) NE 0) then sld_set_phase_fn, pd, plt__phase_fn[w]
-   ;if(n_elements(plt__phase_parm) NE 0) then sld_set__phase_parm, pd, plt__phase_parm[w] ;no such function
-   if(n_elements(plt__opaque) NE 0) then bod_set_opaque, pd, plt__opaque[w]
-   if(n_elements(plt__opacity) NE 0) then sld_set_opacity, pd, plt__opacity[w]
+   if(n_elements(time) NE 0) then bod_set_time, pd, time[w]
+   if(n_elements(orient) NE 0) then bod_set_orient, pd, orient[*,*,w]
+   if(n_elements(avel) NE 0) then bod_set_avel, pd, avel[*,*,w]
+   if(n_elements(pos) NE 0) then bod_set_pos, pd, pos[*,*,w]
+   if(n_elements(vel) NE 0) then bod_set_vel, pd, vel[*,*,w]
+   if(n_elements(radii) NE 0) then glb_set_radii, pd, radii[*,w]
+   if(n_elements(mass) NE 0) then sld_set_mass, pd, mass[w]
+   if(n_elements(lora) NE 0) then glb_set_lora, pd, lora[w]
+   if(n_elements(albedo) NE 0) then sld_set_albedo, pd, albedo[w]
+   if(n_elements(refl_fn) NE 0) then sld_set_refl_fn, pd, refl_fn[w]
+   ;if(n_elements(refl_parm) NE 0) then sld_set__refl_parm, pd, refl_parm[w] ;no such function
+   if(n_elements(phase_fn) NE 0) then sld_set_phase_fn, pd, phase_fn[w]
+   ;if(n_elements(phase_parm) NE 0) then sld_set__phase_parm, pd, phase_parm[w] ;no such function
+   if(n_elements(opaque) NE 0) then bod_set_opaque, pd, opaque[w]
+   if(n_elements(opacity) NE 0) then sld_set_opacity, pd, opacity[w]
   end
 
 

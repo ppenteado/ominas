@@ -111,8 +111,7 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
  ; compute reflections for each object on each globe
  ;------------------------------------------------
  n_objects = n_elements(object_ptd)
- _reflection_ptd = objarr(n_globes, n_objects)
- reflection_ptd = objarr(n_objects)
+ reflection_ptd = objarr(n_globes, n_objects)
 
  obs_pos = bod_pos(od)
  for j=0, n_objects-1 do if(obj_valid(object_ptd[j])) then  $
@@ -157,8 +156,10 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
           ;---------------------------------
           ; store points
           ;---------------------------------
-          _reflection_ptd[i,j] = $
+          reflection_ptd[i,j] = $
               pnt_create_descriptors(points = points, $
+                 name = 'reflection-' + cor_name(object_ptd[j]), $
+                 assoc_xd = object_ptd[j], $
 	         desc = 'globe_reflection', $
 	         input = pgs_desc_suffix(gbx=gbx[i,0], od=od[0], srcd=object_ptd[j], cd[0]), $
 	         vectors = inertial_pts)
@@ -166,7 +167,7 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
           ;-----------------------------------------------
           ; flag points that miss the globe as invisible
           ;-----------------------------------------------
-          flags = pnt_flags(_reflection_ptd[i,j])
+          flags = pnt_flags(reflection_ptd[i,j])
           flags[*] = flags[*] OR PTD_MASK_INVISIBLE
           flags[w] = 0
 
@@ -185,31 +186,17 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
             ;---------------------------------
             ; store flags
             ;---------------------------------
-            pnt_set_flags, _reflection_ptd[i,j], flags
+            pnt_set_flags, reflection_ptd[i,j], flags
          end
        end
      end
-
-   ;-----------------------------------------------------
-   ; take only nearest reflection points for this object
-   ;-----------------------------------------------------
-   reflection_ptd[j] = pnt_compress(_reflection_ptd[*,j])
-
-;   if(NOT keyword__set(all)) then $
-;    begin
-;     sp = pnt_cull(_reflection_ptd[*,j])
-;     if(keyword__set(sp)) then $
-;      begin
-;       if(n_elements(sp) EQ 1) then reflection_ptd[j] = sp $
-;       else reflection_ptd[j] = pg_nearest_points(object_ptd[j], sp) 
-;      end
-;    end
    end
 
 
  ;-------------------------------------------------------------------------
  ; by default, remove empty POINT objects and reform to one dimension 
  ;-------------------------------------------------------------------------
+ reflection_ptd = reform(reflection_ptd, n_elements(reflection_ptd), /over)
  if(NOT keyword__set(nocull)) then reflection_ptd = pnt_cull(reflection_ptd)
 
 
