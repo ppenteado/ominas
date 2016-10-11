@@ -31,25 +31,88 @@
 
 compile_opt idl2,logical_predicate
 
-;Cassini RADAR SAR image to read must be set in the variable img, otherwise
-;this default location is used. 
+
+;+
+; Read SAR file 
+; ----------------------
+; 
+; Cassini RADAR SAR image to read must be set in the variable img, otherwise
+; this default location is used::
+;
+;  img=n_elements(img) ? img : '~/radar/BIFQI22N068_D045_T003S01_V02.IMG'
+;  ;Read the file
+;  dd=dat_read(img)
+;
+;-
 img=n_elements(img) ? img : '~/radar/BIFQI22N068_D045_T003S01_V02.IMG'
 
 ;Read the file 
 dd=dat_read(img)
 
-;Saturate the data to make the image better looking
+
+;+
+; Display SAR file
+; ----------------------
+;
+; Saturate the data to make the image better looking, since this is just for display
+; purposes::
+;  
+;  da=dat_data(dd)
+;  dat_set_data,dd,da<4.5d0
+;  
+; Show it a 1/20 resolution::
+; 
+;  tvim,da<4.5,zoom=0.05,/order,/new
+;  
+; .. image:: sar_ex1.png
+;
+;-
+
+
 da=dat_data(dd)
 dat_set_data,dd,da<4.5d0
+tvim,da<4.5,zoom=0.05,/order,/new
 
-;SAR data is translated into a map on the target. Obtain the proper map descriptor:
+;+
+; Map SAR file
+; ----------------------
+;
+; SAR data is provided in PDS as a map on the target, in an oblique rectangular projection, shown above. 
+; To use it, first we need to obtain the proper map descriptor from the data object::
+;
+;  mdr=pg_get_maps(dd)
+;  
+; Now we will display it in an orthogonal projection. First we define it::
+; 
+;  map_xsize = 4000
+;  map_ysize = 4000
+;
+; Create the new map descriptor::
+;  mdp= pg_get_maps(/over,  $
+;    name='TITAN',$
+;    type='ORTHOGRAPHIC', $
+;    size=[map_xsize,map_ysize], $
+;    origin=[map_xsize,map_ysize]/2, $
+;    center=[0d0,-0.4d0*!dpi])
+;
+; Now, do the projection::
+; 
+;  dd_map=pg_map(dd,md=mdp,cd=mdr,pc_xsize=800,pc_ysize=800)
+;
+; Visualize the result, now with grim::
+; 
+;   grim,dd_map,cd=mdp,overlays=['planet_grid']
+;   
+; .. image:: sar_ex2.png
+;   
+;-
+
+
 mdr=pg_get_maps(dd)
 
-;Project into an orthogonal map
 map_xsize = 4000
 map_ysize = 4000
-
-;Create the new map descriptor  
+  
 mdp= pg_get_maps(/over,  $
   name='TITAN',$
   type='ORTHOGRAPHIC', $
@@ -57,10 +120,8 @@ mdp= pg_get_maps(/over,  $
   origin=[map_xsize,map_ysize]/2, $
   center=[0d0,-0.4d0*!dpi])
 
-;Do the projection
 dd_map=pg_map(dd,md=mdp,cd=mdr,pc_xsize=800,pc_ysize=800)
 
-;Visualize the result
 grim,dd_map,cd=mdp,overlays=['planet_grid']
 
 end
