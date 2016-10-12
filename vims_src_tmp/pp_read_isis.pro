@@ -3,7 +3,8 @@
 ;
 ;=============================================================================
 function pp_read_isis, filename, label, udata, dim, type, _min, _max,$
-                          silent=silent, sample=sample, nodata=nodata, gff=gff
+                          silent=silent, sample=sample, nodata=nodata, gff=gff,$
+                          abscissa=abscissa
  ;tag_list_set, udata, 'DETACHED_HEADER', $
  ;              dh_read(dh_fname(filename), silent=silent)
 
