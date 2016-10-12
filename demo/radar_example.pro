@@ -4,7 +4,7 @@
 ; RADAR EXAMPLE
 ; -------------
 ; 
-;   This script demonstrated reading a Cassini RADAR SAR image and projecting it
+;   This script demonstrates reading a Cassini RADAR SAR image and projecting it
 ;   onto an orthographical map for display.
 ;   
 ;   The data file, `BIFQI22N068_D045_T003S01_V02.IMG`, must first be
