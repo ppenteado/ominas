@@ -45,7 +45,7 @@
 ;	
 ;-
 ;=============================================================================
-function bod_body_to_inertial_default, bd, v, _sub=sub
+function bod_body_to_inertial_default, bd, v,p, _sub=sub
 @core.include
  _bd = cor_dereference(bd)
 
