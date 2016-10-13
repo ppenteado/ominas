@@ -121,8 +121,8 @@ pro vims_spice_parse_labels, dd, _time, $
       ;-----------------------------------
       ; image size
       ;-----------------------------------
-      size[0,i] = fix(pp_get_label_value(label,'SWATH_LENGTH'))
-      size[1,i] = fix(pp_get_label_value(label,'SWATH_WIDTH'))
+      size[1,i] = fix(pp_get_label_value(label,'SWATH_LENGTH'))
+      size[0,i] = fix(pp_get_label_value(label,'SWATH_WIDTH'))
 
       ;-----------------------------------
       ; optic axis
