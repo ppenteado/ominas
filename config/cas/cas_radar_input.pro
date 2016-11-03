@@ -85,11 +85,11 @@ ret=map_create_descriptors(name='CAS_RADAR',$
     units=units,$
     assoc_xd=dd)
     
- ddd=dat_data(dd)
- dddr=congrid(ddd,lines/10,samples/10)
- szd=size(dddr,/dim)
- mps=map_res/10
- lonlat=cas_radar_linesampletolonlat(0,0,line_off=line_proj_off,sample_off=sample_proj_off,mapres=map_res)
+ ;ddd=dat_data(dd)
+ ;dddr=congrid(ddd,lines/10,samples/10)
+ ;szd=size(dddr,/dim)
+ ;mps=map_res/10
+ ;lonlat=cas_radar_linesampletolonlat(0,0,line_off=line_proj_off,sample_off=sample_proj_off,mapres=map_res)
  ;im=image(0>dddr<2.8,grid_units=2,map_projection='orthographic',image_dimensions=szd/mps,image_location=lonlat,limit=[-90d0,-180d0,90d0,180d0],margin=0.2)
  ;im=image(0>dddr<2.8,grid_units=2,map_projection='equirectangular',image_dimensions=szd/mps,image_location=lonlat,limit=[-90d0,-180d0,90d0,180d0],margin=0.2)
  ;mg=mapgrid(grid_lon=15,grid_lat=15)   
