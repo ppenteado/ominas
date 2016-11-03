@@ -441,13 +441,14 @@ if [ "$IDL_DIR" = "" ]; then
         idl=`which idl`
         if [ "$idl" = "" ]; then
           read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
-	  IDL_DIR=$idldir
-	  export IDL_DIR
+          IDL_DIR="$idldir"
+          export IDL_DIR
           printf "Using IDL from $IDL_DIR\n"
           $IDL_DIR/bin/idl paths.pro
+        else
+          printf "Using IDL at $idl\n"
+          $idl paths.pro
         fi
-        printf "Using IDL at $idl\n"
-        $idl paths.pro
 else
         printf "IDL_DIR found, $IDL_DIR, using it\n"
         $IDL_DIR/bin/idl paths.pro
