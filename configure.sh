@@ -449,7 +449,7 @@ if [ "$IDL_DIR" = "" ]; then
         printf "Using IDL at $idl\n"
         $idl paths.pro
 else
-        printf "Using IDL from $IDL_DIR\n"
+        printf "IDL_DIR found, $IDL_DIR, using it\n"
         $IDL_DIR/bin/idl paths.pro
 fi
 rm paths.pro
