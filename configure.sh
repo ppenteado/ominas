@@ -438,10 +438,17 @@ EXIT
 IDLCMD
 
 if [ "$IDL_DIR" = "" ]; then
-	IDL_DIR=/usr/local/exelis/idl85
-	export IDL_DIR
+        idl=`which idl`
+        if [ "$idl" = "" ]; then
+          read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
+	  IDL_DIR=idldir
+	  export IDL_DIR
+          printf "Using IDL from $IDL_DIR"
+          $IDL_DIR/bin/idl paths.pro
+        fi
+        printf "Using IDL at $idl"
+        $idl paths.pro
 fi
-$IDL_DIR/bin/idl paths.pro
 rm paths.pro
 . $setting
 
