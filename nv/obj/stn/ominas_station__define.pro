@@ -54,7 +54,7 @@ end
 ;
 ;	surface_pt:	Vector giving the surface coordinates of the 
 ;			stations location on the primary.  This 
-;			is redeundant with the location of bd, but it 
+;			is redundant with the location of bd, but it 
 ;			allows one to compute map coordinates without
 ;			a body descriptor present.
 ;
