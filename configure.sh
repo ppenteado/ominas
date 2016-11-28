@@ -120,9 +120,11 @@ if [ -z ${IDL_PATH+x} ]; then
     if grep --quiet IDL_PATH ~/.bashrc; then
       idlpathfile=$HOME/.bashrc
     fi
-  else if [ -f ~/.bash_profile ]; then
-    if grep --quiet IDL_PATH ~/.bashrc; then
-      idlpathfile=$HOME/.bash_profile
+  else
+    if [ -f ~/.bash_profile ]; then
+      if grep --quiet IDL_PATH ~/.bashrc; then
+        idlpathfile=$HOME/.bash_profile
+      fi
     fi
   else
     idlpathfile=$HOME/.profile
