@@ -490,6 +490,8 @@ fi
 . $setting
 if [ -z ${IDL_PATH+x} ]; then
   . $idlpathfile
+  printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile"
 fi
 
+printf "OMINAS configuration was written to $setting"
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
