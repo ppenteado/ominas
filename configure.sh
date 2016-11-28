@@ -443,7 +443,11 @@ if getenv('IDL_PATH') then begin &\$
 endif else PREF_SET, 'IDL_PATH', path, /COMMIT
 dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PATH')
 IF STRPOS(dlm_path, '$icypath') EQ -1 AND flag EQ 'true' THEN dlm_path=dlm_path+':+$icypath/lib/'
-if getenv('IDL_DLM_PATH') then setenv,'IDL_DLM_PATH='+path else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
+if getenv('IDL_DLM_PATH') then begin &\$
+  openw,lun,'idlpath.sh',/get_lun,/append &\$ 
+  printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"' &\$ 
+  free_lun,lun &\$ 
+endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
 PRINT, '$OMINAS_DIR added to IDL_PATH'
 EXIT
 IDLCMD
