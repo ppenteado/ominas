@@ -115,17 +115,18 @@ else
 		setting="$HOME/.bash_profile"
 	fi
 fi
-if [ -z ${IDL_PATH+x} ]; then
+if [ -v IDL_PATH ]; then
   if [ -f ~/.bashrc ]; then
     if grep --quiet IDL_PATH ~/.bashrc; then
-      idlpathfile=$HOME/.bashrc
+      idlpathfile="$HOME/.bashrc"
     fi
-  else
+  fi
+  if [ ! -v idlpathfile ]; then
     if [ -f ~/.bash_profile ]; then
-      if grep --quiet IDL_PATH ~/.bashrc; then
-        idlpathfile=$HOME/.bash_profile
+      if grep --quiet IDL_PATH ~/.bash_profile; then
+        idlpathfile="$HOME/.bash_profile"
       else
-        idlpathfile=$HOME/.profile
+        idlpathfile="$HOME/.profile"
       fi
     fi
   fi
@@ -492,8 +493,8 @@ fi
 . $setting
 if [ -z ${IDL_PATH+x} ]; then
   . $idlpathfile
-  printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile"
+  printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
 fi
 
-printf "OMINAS configuration was written to $setting"
+printf "OMINAS configuration was written to $setting.\n"
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
