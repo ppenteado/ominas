@@ -421,7 +421,7 @@ done
 # Create directory for OMINAS configuration files                        #
 #------------------------------------------------------------------------#
 if [ ! -d "$HOME/.ominas" ]; then
-  mkdir $HOME/ominas
+  mkdir $HOME/.ominas
 fi
 
 #------------------------------------------------------------------------#
@@ -438,7 +438,7 @@ IF STRPOS(path, '$OMINAS_DIR') EQ -1 THEN path=path+':+$OMINAS_DIR'
 IF STRPOS(path, '$XIDL_DIR') EQ -1 THEN path=path+':+$XIDL_DIR'
 if getenv('IDL_PATH') then begin &\$ 
   openw,lun,'idlpath.sh',/get_lun &\$ 
-  printf,lun,"export IDL_PATH="+path &\$ 
+  printf,lun,'export IDL_PATH="'+path+'"' &\$ 
   free_lun,lun &\$ 
 endif else PREF_SET, 'IDL_PATH', path, /COMMIT
 dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PATH')
@@ -466,7 +466,7 @@ else
 fi
 rm paths.pro
 if [ -e idlpath.sh ]; then
-  echo idlpath.sh >> $setting
+  cat idlpath.sh >> $setting
   rm idlpath.sh
 fi
 
