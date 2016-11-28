@@ -418,6 +418,13 @@ do
 done
 
 #------------------------------------------------------------------------#
+# Create directory for OMINAS configuration files                        #
+#------------------------------------------------------------------------#
+if [ ! -d "$HOME/.ominas" ]; then
+  mkdir $HOME/ominas
+fi
+
+#------------------------------------------------------------------------#
 # Writes an IDL script to check if the IDL path has been written. If     #
 # it has not, the path to the OMINAS directory will be written in the    #
 # IDL_PATH, inside of IDL.                                               #
@@ -425,14 +432,18 @@ done
 
 cat <<IDLCMD >paths.pro
 flag='$icyflag'
-path=PREF_GET('IDL_PATH')
+path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
 IF STRPOS(path, '$icypath') EQ -1 AND flag EQ 'true' THEN path=path+':+$icypath'
 IF STRPOS(path, '$OMINAS_DIR') EQ -1 THEN path=path+':+$OMINAS_DIR'
 IF STRPOS(path, '$XIDL_DIR') EQ -1 THEN path=path+':+$XIDL_DIR'
-PREF_SET, 'IDL_PATH', path, /COMMIT
-dlm_path=PREF_GET('IDL_DLM_PATH')
-IF STRPOS(dlm_path, '$icypath') EQ -1 AND flag EQ 'true' THEN dlm_path=dlm_path+':+$icypath'
-PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
+if getenv('IDL_PATH') then begin &\$ 
+  openw,lun,'idlpath.pro',/get_lun &\$ 
+  printf,lun,"export IDL_PATH="+path &\$ 
+  free_lun,lun &\$ 
+endif else PREF_SET, 'IDL_PATH', path, /COMMIT
+dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PATH')
+IF STRPOS(dlm_path, '$icypath') EQ -1 AND flag EQ 'true' THEN dlm_path=dlm_path+':+$icypath/lib/'
+if getenv('IDL_DLM_PATH') then setenv,'IDL_DLM_PATH='+path else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
 PRINT, '$OMINAS_DIR added to IDL_PATH'
 EXIT
 IDLCMD
@@ -454,6 +465,16 @@ else
         $IDL_DIR/bin/idl paths.pro
 fi
 rm paths.pro
+
+if [ -z ${IDL_PATH+x} ]; then 
+  echo "export IDL_PATH=$IDL_PATH">>$setting
+fi
+
+if [ -z ${IDL_DLM_PATH+x} ]; then
+  echo "export IDL_DLM_PATH=$IDL_DLM_PATH">>$setting
+fi
+
 . $setting
+
 
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
