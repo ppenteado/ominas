@@ -437,7 +437,7 @@ IF STRPOS(path, '$icypath') EQ -1 AND flag EQ 'true' THEN path=path+':+$icypath'
 IF STRPOS(path, '$OMINAS_DIR') EQ -1 THEN path=path+':+$OMINAS_DIR'
 IF STRPOS(path, '$XIDL_DIR') EQ -1 THEN path=path+':+$XIDL_DIR'
 if getenv('IDL_PATH') then begin &\$ 
-  openw,lun,'idlpath.pro',/get_lun &\$ 
+  openw,lun,'idlpath.sh',/get_lun &\$ 
   printf,lun,"export IDL_PATH="+path &\$ 
   free_lun,lun &\$ 
 endif else PREF_SET, 'IDL_PATH', path, /COMMIT
@@ -465,6 +465,10 @@ else
         $IDL_DIR/bin/idl paths.pro
 fi
 rm paths.pro
+if [ -e idlpath.sh ]; then
+  echo idlpath.sh >> $setting
+  rm idlpath.sh
+fi
 
 if [ -z ${IDL_PATH+x} ]; then 
   echo "export IDL_PATH=$IDL_PATH">>$setting
