@@ -115,6 +115,19 @@ else
 		setting="$HOME/.bash_profile"
 	fi
 fi
+if [ -z ${IDL_PATH+x} ]; then
+  if [ -f ~/.bashrc ]; then
+    if grep --quiet IDL_PATH ~/.bashrc; then
+      idlpathfile=$HOME/.bashrc
+    fi
+  else if [ -f ~/.bash_profile ]; then
+    if grep --quiet IDL_PATH ~/.bashrc; then
+      idlpathfile=$HOME/.bash_profile
+    fi
+  else
+    idlpathfile=$HOME/.profile
+  fi
+fi
 
 function ext()
 {
@@ -470,19 +483,13 @@ else
 fi
 rm paths.pro
 if [ -e idlpath.sh ]; then
-  cat idlpath.sh >> $setting
+  cat idlpath.sh >> $idlpathfile
   rm idlpath.sh
 fi
 
-if [ -z ${IDL_PATH+x} ]; then 
-  echo "export IDL_PATH=$IDL_PATH">>$setting
-fi
-
-if [ -z ${IDL_DLM_PATH+x} ]; then
-  echo "export IDL_DLM_PATH=$IDL_DLM_PATH">>$setting
-fi
-
 . $setting
-
+if [ -z ${IDL_PATH+x} ]; then
+  . $idlpathfile
+fi
 
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
