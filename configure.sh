@@ -139,7 +139,7 @@ function ext()
 	#    Arg 1 -> File to be extracted                                   #
 	#    Issues: Files such as icy.tar.Z, the archive for the NAIF       #
 	#    Icy toolkit will not break this function, but will require      #
-	#	 two passes.                                                     #
+	#    two passes.                                                     #
 	#    Note: No longer used. OMINAS is generally packaged as a git     #
 	#    repository, which extracts itself. Also, this script is con-    #
 	#    tained within the ominas directory...                           #
@@ -437,7 +437,10 @@ done
 # Create directory for OMINAS configuration files                        #
 #------------------------------------------------------------------------#
 if [ ! -d "$HOME/.ominas" ]; then
+  printf "Creating ~/.ominas directory\n"
   mkdir $HOME/.ominas
+else
+  printf "~/.ominas directory already exists\n"
 fi
 
 #------------------------------------------------------------------------#
@@ -491,7 +494,7 @@ if [ -e idlpath.sh ]; then
 fi
 
 . $setting
-if [ -z ${IDL_PATH+x} ]; then
+if [ -v IDL_PATH ]; then
   . $idlpathfile
   printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
 fi
