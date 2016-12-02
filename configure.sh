@@ -265,7 +265,7 @@ function pkins()
                         case $ansk in
                           [Yy]*)
                             read -rp "Please enter the location where the donwloaded $2 kernel pool will be placed: " datapath
-                            source ./download_$2.sh $datapath
+                            source ./download_$2.sh $datapath ;;
                           *)
 			    read -rp "Please enter the location of your existing $2 kernel pool: " datapath
 			    if ! [[ -d $datapath ]]; then
