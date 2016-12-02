@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 #script to download a copy of the Cassini kernels from PDS
 
+echo "This script will download a subset of kernels from the PDS Cassini archive ("\
+"http://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/. As of November/2016, this adds to 16GB."
+
+read -rp "Continue? " ans
+case $ans in
+  [Nn]*)
+    exit
+esac
+
 baseurl="http://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/"
 #standard download (full, nonrecursive) directories
 dirs=( fk ik lsk pck sclk )
