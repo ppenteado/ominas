@@ -261,11 +261,18 @@ function pkins()
 	read -rp "Would you like to add the $2 kernels to the environment? " ans
 	case $ans in
 		[Yy]*)
-			read -rp "Please enter the location of your $2 kernel pool: " datapath
-			if ! [[ -d $datapath ]]; then
-				setdir $2
-			fi
-			pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}"	;;
+                        read -rp "Do you need to download the $2 kernels from PDS? " ansk
+                        case $ansk in
+                          [Yy]*)
+                            read -rp "Please enter the location where the donwloaded $2 kernel pool will be placed: " datapath
+                            source ./download_$2.sh $datapath
+                          *)
+			    read -rp "Please enter the location of your existing $2 kernel pool: " datapath
+			    if ! [[ -d $datapath ]]; then
+			    	setdir $2
+			    fi
+			    pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}"	
+                        esac ;;
 		*)
 			pstr="${dstr}source ${OMINAS_DIR}/config/$1"
 	esac
