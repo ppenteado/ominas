@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo $@
+idl -e pp_wgetcl -args $@
