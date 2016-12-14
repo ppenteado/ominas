@@ -248,6 +248,8 @@ function pkins()
 	#    Checks if the named package is already written to the bash      #
 	#    settings file before writing a new line.                        #
 	#--------------------------------------------------------------------#
+        echo $1 $2 $3
+        echo "ominas_env_def.$shtype"
 	if [[ $1 == "ominas_env_def.$shtype" ]] && [[ $2 == $no ]]; then
 		read -rp "Would you like to install the demo package? " ans
 		case $ans in
@@ -259,7 +261,8 @@ function pkins()
 				dstr="DFLAG=false; "
 				printf "Demo package will not be installed...\n"
 		esac
-	else
+	fi
+        if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
         dstr=""
 	  read -rp "Would you like to add the $2 kernels to the environment? " ans
 	  case $ans in
@@ -393,7 +396,7 @@ do
 		exit)
 				return 0 	;;
 		[1])
-		i		pkins ominas_env_def.sh $corest
+				pkins ominas_env_def.sh $corest
 							;;
                 [2])
                                 pkins ominas_env_def.sh $corest
