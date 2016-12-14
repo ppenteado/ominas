@@ -173,6 +173,8 @@ function pkst()
 	#    mines if the named package is contained in the list of          #
 	#    directories. Returns an "INSTALLED" or "NOT INSTALLED" status.  #
 	#--------------------------------------------------------------------#
+        #echo $1
+        #echo $NV_TRANSLATORS
 	if [ -z ${NV_TRANSLATORS+x} ]; then
 		echo "$no"
 	else
@@ -190,8 +192,8 @@ function ppkg()
 	#    Parses a numerical argument specifying the mission package.     #
 	#    Arg 1 -> Numerical value to be parsed                           #
 	#--------------------------------------------------------------------#
-	script="ominas_env_${mis[$1-1]}.$shtype"
-	case ${mis[$1-1]} in 
+	script="ominas_env_${mis[$1]}.$shtype"
+	case ${mis[$1]} in 
 		"cas")
 			kername="CASSINI"	;;
 		"gll")
@@ -215,7 +217,7 @@ function dins()
 	#    like to overwrite before prompting you for the directory.       #
 	#    if you don't know, it will attempt to find it for you.          #
 	#--------------------------------------------------------------------#
-	mnum=$(($1 - ${#mis[@]} - 1))
+	mnum=$1
 	dat=${Data[$mnum]}
 	if grep -q "NV_${dat}_DATA" ${setting}; then
 		printf "Warning: $dat data files appear to already be set at this location:\n"
@@ -246,7 +248,7 @@ function pkins()
 	#    Checks if the named package is already written to the bash      #
 	#    settings file before writing a new line.                        #
 	#--------------------------------------------------------------------#
-	if [[ $1 == "ominas_env_def.$shtype" ]]; then
+	if [[ $1 == "ominas_env_def.$shtype" ]] && [[ $2 == $no ]]; then
 		read -rp "Would you like to install the demo package? " ans
 		case $ans in
 			[Yy]*)
@@ -257,9 +259,10 @@ function pkins()
 				dstr="DFLAG=false; "
 				printf "Demo package will not be installed...\n"
 		esac
-	fi
-	read -rp "Would you like to add the $2 kernels to the environment? " ans
-	case $ans in
+	else
+        dstr=""
+	  read -rp "Would you like to add the $2 kernels to the environment? " ans
+	  case $ans in
 		[Yy]*)
                         read -rp "Do you need to download the $2 kernels from PDS? " ansk
                         case $ansk in
@@ -275,10 +278,16 @@ function pkins()
                         esac ;;
 		*)
 			pstr="${dstr}source ${OMINAS_DIR}/config/$1"
-	esac
+	  esac
+        fi
 	dstr=""
 	grep -v ".*$1.*" $setting >$HOME/temp
 	mv $HOME/temp $setting
+        echo $setting
+        echo $pstr
+        echo "arg"
+        echo $1
+        echo $2
 	echo $pstr >> $setting
 	printf "Installed package: $1\n"
 }
@@ -330,10 +339,17 @@ fi
 printf "OMINAS files located in $OMINAS_DIR\n"
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
-demost=`pkst ${OMINAS_DIR}/config/tab/`
+corest=`pkst ${OMINAS_DIR}/config/tab/`
+demost="NOT SET"
+DFLAG="false"
+if [ -z $OMINAS_DEMO ]; then
+ demost="SET"
+ DFLAG="true"
+fi
+    
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
-declare -a Data=("SEDR" "TYCHO2" "SAO" "GSC" "UCAC4" "UCACT")
+declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4" "UCACT")
 for ((d=0; d<${#mis[@]}; d++));
 do
 	mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
@@ -350,45 +366,46 @@ done
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
 	Current OMINAS configuration settings
-Required:
-	Default  . . . . . . . . . . . . . . . . . $demost
-Mission Packages:
-	1) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
-	2) Galileo . . . . . . . . . . . . . . . . ${mstatus[1]}
-	3) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
-	4) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
+Required: (if you select only one of the other packages, this will be included)
+	1) OMINAS Core  . . . . . . . . . . . . .  $corest
+Optional packages:
+        2) Demo package . . . . . . . . . . . . .  $demost
+Mission Packages: (they do not require the Generic Kernels)
+	3) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
+	4) Galileo . . . . . . . . . . . . . . . . ${mstatus[1]}
+	5) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
+	6) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
 Data:
-	5) SEDR image data . . . . . . . . . . . . ${dstatus[0]}
-	6) TYCHO2 star catalog . . . . . . . . . . ${dstatus[1]}
-	7) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
-	8) GSC star catalog  . . . . . . . . . . . ${dstatus[3]}
-	9) UCAC4 star catalog  . . . . . . . . . . ${dstatus[4]}
-	10) UCACT star catalog . . . . . . . . . . ${dstatus[5]}
+        7) NAIF Generic Kernels . . . . . . . . .  $genst
+	8) SEDR image data . . . . . . . . . . . . ${dstatus[0]}
+	9) TYCHO2 star catalog . . . . . . . . . . ${dstatus[1]}
+	10) SAO star catalog . . . . . . . . . . . ${dstatus[2]}
+	11) GSC star catalog . . . . . . . . . . . ${dstatus[3]}
+	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[4]}
+	13) UCACT star catalog . . . . . . . . . . ${dstatus[5]}
 PKGS
 
-read -rp "Modify Current OMINAS configuration (exit/no/{yes=all} 1 2 ...)?  " ans
+read -rp "Modify Current OMINAS configuration (exit/no/ 1 2 ...)?  " ans
 
 for num in $ans
 do
 	case $num in
 		exit)
 				return 0 	;;
-		[Dd]*)
-				pkins ominas_env_def.sh "generic_kernels"	
+		[1])
+		i		pkins ominas_env_def.sh $corest
 							;;
-		[Yy]*)
-				pkins ominas_env_def.sh "generic_kernels"
-				ppkg 1
-				ppkg 2
-				ppkg 3
-				ppkg 4 		;;
+                [2])
+                                pkins ominas_env_def.sh $corest
+                                                        ;;
 		[Nn]*)
 				break 		;;
-		[1234])
-				pkins ominas_env_def.sh "generic_kernels"
-				ppkg $num 	;;
-		[56789]|10)
-				dins $num 	;;
+		[3456])
+				pkins ominas_env_def.sh $corest
+				ppkg $(($num-3)) 	;;
+		[789]|10|11|12|13)
+                                pkins ominas_env_def.sh $corest
+				dins $(($num-7)) 	;;
 		*)
 				printf "Error: Invalid package or catalog specified\n" 1>&2
     esac
