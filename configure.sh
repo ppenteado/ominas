@@ -260,10 +260,14 @@ function pkins()
 		#		printf "Demo package will not be installed...\n"
 		#esac
         if [[ $1 == "ominas_env_def.$shtype" ]]; then
+                if [[ "$2" == "$no" ]]; then
+                  printf "Installing OMINAS Core...\n"
+                fi
                 pstr="DFLAG=${DFLAG}; source ${OMINAS_DIR}/config/$1"
 	fi
         if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
-        dstr=""
+          printf "Installing package $1...\n"
+          dstr=""
 	  read -rp "Would you like to add the $2 kernels to the environment? " ans
 	  case $ans in
 		[Yy]*)
@@ -287,7 +291,6 @@ function pkins()
 	grep -v ".*$1.*" $setting >$HOME/temp
 	mv $HOME/temp $setting
 	echo $pstr >> $setting
-	printf "Installed package: $1\n"
 }
 
 function setdir() {
@@ -396,23 +399,26 @@ done
 
 for num in $ans
 do
-        corest=`pkst ${OMINAS_DIR}/config/tab/`
 	case $num in
 		exit)
 				return 0 	;;
 		[1])
-				pkins ominas_env_def.sh $corest
+				pkins ominas_env_def.sh "${corest}"
+                                corest=${yes}
 							;;
                 [2])
-                                pkins ominas_env_def.sh $corest
+                                pkins ominas_env_def.sh "${corest}"
+                                corest=${yes}
                                                         ;;
 		[Nn]*)
 				break 		;;
 		[3456])
-				pkins ominas_env_def.sh $corest
+				pkins ominas_env_def.sh "${corest}"
+                                corest=${yes}
 				ppkg $(($num-3)) 	;;
 		[789]|10|11|12|13)
-                                pkins ominas_env_def.sh $corest
+                                pkins ominas_env_def.sh "${corest}"
+                                corest=${yes}
 				dins $(($num-7)) 	;;
 		*)
 				printf "Error: Invalid package or catalog specified\n" 1>&2
