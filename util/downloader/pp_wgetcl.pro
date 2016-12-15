@@ -60,7 +60,7 @@ if n_elements(tsf) then begin
   print,'Saving timestamps to ',tsf  
   openw,lun,tsf,/get_lun
   ;printf,lun,ts,/impl
-  tsout=strsplit(json_serialize(ts),',')
+  tsout=strsplit(json_serialize(ts),',',/extract)
   tsout=n_elements(tsout) gt 1 ? [tsout[0:-2]+',',tsout[-1]] : tsout
   printf,lun,tsout
   free_lun,lun
