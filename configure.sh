@@ -248,19 +248,19 @@ function pkins()
 	#    Checks if the named package is already written to the bash      #
 	#    settings file before writing a new line.                        #
 	#--------------------------------------------------------------------#
-        echo $1 $2 $3
-        echo "ominas_env_def.$shtype"
-	if [[ $1 == "ominas_env_def.$shtype" ]] && [[ $2 == $no ]]; then
-		read -rp "Would you like to install the demo package? " ans
-		case $ans in
-			[Yy]*)
-				# DFLAG sets the condition for the demo package environment
-				# variables to be set in ominas_env_def.sh
-				dstr="DFLAG=true; "		;;
-			*)
-				dstr="DFLAG=false; "
-				printf "Demo package will not be installed...\n"
-		esac
+	#if [[ $1 == "ominas_env_def.$shtype" ]] && [[ $2 == $no ]]; then
+		#read -rp "Would you like to install the demo package? " ans
+		#case $ans in
+		#	[Yy]*)
+		#		# DFLAG sets the condition for the demo package environment
+		#		# variables to be set in ominas_env_def.sh
+		#		dstr="DFLAG=true; "		;;
+		#	*)
+		#		dstr="DFLAG=false; "
+		#		printf "Demo package will not be installed...\n"
+		#esac
+        if [[ $1 == "ominas_env_def.$shtype" ]]; then
+                pstr="DFLAG=${DFLAG}; source ${OMINAS_DIR}/config/$1"
 	fi
         if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
         dstr=""
@@ -286,11 +286,6 @@ function pkins()
 	dstr=""
 	grep -v ".*$1.*" $setting >$HOME/temp
 	mv $HOME/temp $setting
-        echo $setting
-        echo $pstr
-        echo "arg"
-        echo $1
-        echo $2
 	echo $pstr >> $setting
 	printf "Installed package: $1\n"
 }
@@ -345,7 +340,7 @@ printf "OMINAS files located in $OMINAS_DIR\n"
 corest=`pkst ${OMINAS_DIR}/config/tab/`
 demost="NOT SET"
 DFLAG="false"
-if [ -z $OMINAS_DEMO ]; then
+if [ ! -z $OMINAS_DEMO ]; then
  demost="SET"
  DFLAG="true"
 fi
@@ -392,6 +387,15 @@ read -rp "Modify Current OMINAS configuration (exit/no/ 1 2 ...)?  " ans
 
 for num in $ans
 do
+  if [ $num == "2" ]; then
+    DFLAG="true"
+    demost="SET"
+  fi
+done
+
+for num in $ans
+do
+        corest=`pkst ${OMINAS_DIR}/config/tab/`
 	case $num in
 		exit)
 				return 0 	;;
