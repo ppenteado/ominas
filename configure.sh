@@ -367,12 +367,22 @@ done
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
 	Current OMINAS configuration settings
-Required: (if you select only one of the other packages, this will be included)
+Required:
 	1) OMINAS Core  . . . . . . . . . . . . .  $corest
+           Contains the OMINAS code. If you select only one of the other packages, this will be included.
 Optional packages:
         2) Demo package . . . . . . . . . . . . .  $demost
-Mission Packages: (they do not require the Generic Kernels)
+           Contains the demo scripts and the data required to run then.
+           These files are always present (in ominas/demo), this option is to set up the
+           environment so that the demos can be run.
+Mission Packages:
+           Kernels used for each mission's position and pointing data. If you do not already have them,
+           an option to download them from PDS will be provided. If you already have them,
+           you will need to provide the path to your kernel files.
+           Note: the NAIF Generic Kernels (one of the optional data packages) are not required for the
+           missions, they already contain a copy the subset of the generic kernel files they need.
 	3) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
+           About 16GB as of Dec/2016
 	4) Galileo . . . . . . . . . . . . . . . . ${mstatus[1]}
 	5) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
 	6) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
