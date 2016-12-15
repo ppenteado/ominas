@@ -59,7 +59,8 @@ if n_elements(tsf) then begin
   endif
   print,'Saving timestamps to ',tsf  
   openw,lun,tsf,/get_lun
-  printf,lun,ts,/impl
+  ;printf,lun,ts,/impl
+  printf,lun,json_serialize(ts)
   free_lun,lun
 endif
 end
