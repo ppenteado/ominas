@@ -12,11 +12,11 @@
 ;
 ;  	 This example file can be executed from the UNIX command line using::
 ;
-;  	  idl ominas saturn.example
+;  	  idl ominas saturn_example
 ;
 ;  	 or from within IDL using::
 ;
-;  	  @saturn.example
+;  	  @saturn_example
 ;
 ;  	 After the example stops, later code samples in this file may be executed by
 ;  	 pasting them onto the IDL command line.

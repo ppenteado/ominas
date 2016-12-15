@@ -17,11 +17,11 @@
 ;
 ; This example file can be executed from the UNIX command line using::
 ;
-;  idl stars.example
+;  idl stars_example
 ;
 ; or from within IDL using::
 ;
-;  @stars.example
+;  @stars_example
 ;
 ; After the example stops, later code samples in this file may be executed by
 ; pasting them onto the IDL command line.
