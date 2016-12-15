@@ -381,6 +381,7 @@ Data:
 	11) GSC star catalog . . . . . . . . . . . ${dstatus[3]}
 	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[4]}
 	13) UCACT star catalog . . . . . . . . . . ${dstatus[5]}
+For more information, see https://ppenteado.github.io/ominas_doc/demo/install_guide.html
 PKGS
 
 read -rp "Modify Current OMINAS configuration (exit/no/ 1 2 ...)?  " ans
@@ -532,3 +533,4 @@ fi
 
 printf "OMINAS configuration was written to $setting.\n"
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
+printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas_doc/demo/\n"
