@@ -41,7 +41,7 @@
 ;	tr_first:	If set, dat_get_value returns after the first
 ;			successful translator.
 ;
-;	tr_nosort:	By default, outpur descriptors are sorted to remove
+;	tr_nosort:	By default, output descriptors are sorted to remove
 ;			those with duplicate names, retaining only the first
 ;			descriptor of a given name for each input data 
 ;			descriptor.  /tr_nosort disables this action.
@@ -116,12 +116,16 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
 
  for i=0, n-1 do $
   begin
+   nv_message, /verbose, 'Calling translator ' + translators[i]
+
    _dd.last_translator = [i,0]#make_array(ndd, val=1)
    cor_rereference, dd, _dd
+
    xd = call_function(translators[i], dd, keyword, values=xds, stat=stat, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 		    end_keywords)
+
 
    ;--------------------------------------
    ; add values to list
@@ -135,7 +139,8 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  nxds = n_elements(xds)
 
  ;----------------------------------------------------------------
- ; sort xds
+ ; sort xds: remove descriptors with duplicate names, keeping
+ ; the earliest returned versions
  ;----------------------------------------------------------------
  result = 0
  if(keyword_set(xds)) then $
@@ -148,6 +153,8 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
       nw = n_elements(w)
       if(w[0] NE -1) then $
        begin
+        w = rotate(w,2)		; uniq chooses highest index, so this assures
+				; that earliest xd gets selected
         names = cor_name(xds[w])
         ss = sort(names)
         uu = uniq(names[ss])

@@ -107,10 +107,8 @@ function pg_select_region, dd, color=color, $
   begin
    if(NOT keyword_set(noverbose)) then $
     begin
-      nv_message, 'Use cursor and mouse buttons to select points -', $
-                   name='pg_select_region', /continue
-      nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', $
-                   name='pg_select_region', /continue
+      nv_message, 'Use cursor and mouse buttons to select points -', /continue
+      nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', /continue
      end
    points = tvpath(close=close, /copy, color=color, autoclose=autoclose, $
                 select_button=select_button, end_button=end_button, $
@@ -124,10 +122,8 @@ function pg_select_region, dd, color=color, $
   begin
    if(NOT keyword_set(noverbose)) then $
     begin
-      nv_message, 'Use cursor and mouse buttons to select points -', $
-                   name='pg_select_region', /continue
-      nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', $
-                   name='pg_select_region', /continue
+      nv_message, 'Use cursor and mouse buttons to select points -', /continue
+      nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', /continue
      end
    points = tvrec(color=color, p0=p0, /all_corners)
   end 

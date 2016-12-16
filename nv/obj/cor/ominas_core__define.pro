@@ -28,7 +28,7 @@ end
 
 
 ;=============================================================================
-; core::init
+; ominas_core::init
 ;
 ;=============================================================================
 function ominas_core::init, ii, crd=crd0, $
@@ -39,7 +39,7 @@ end_keywords
  if(keyword_set(crd0)) then struct_assign, crd0, self
 
 
- if(keyword_set(tasks)) then self.tasks_p = nv_ptr_new(tasks[*,i]) $
+ if(keyword_set(tasks)) then self.tasks_p = nv_ptr_new(tasks[*,ii]) $
  else self.tasks_p=nv_ptr_new([''])
 
  self.abbrev = 'COR'

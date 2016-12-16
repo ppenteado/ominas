@@ -79,7 +79,7 @@ function sedr_read, sctime, planet=planet, source=source
       _source NE 'FARE' AND _source NE 'NAV2' AND _source NE 'NEAR' AND $
       _source NE 'AMOS') then $
     begin
-     nv_message, name='sedr_read', 'Invalid source specified', /continue
+     nv_message, 'Invalid source specified', /continue
      return, 0
     end
   end $

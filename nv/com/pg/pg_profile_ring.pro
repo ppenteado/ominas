@@ -120,10 +120,10 @@ function pg_profile_ring, dd, cd=cd, dkx=dkx, gd=gd, outline_ptd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(dkx) GT 1) then nv_message, /continue, name='pg_profile_ring', $
-                          'Using first disk descriptor.'
- if(n_elements(cd) GT 1) then nv_message, /continue, name='pg_profile_ring', $
-                        'Using first camera descriptor.'
+ if(n_elements(dkx) GT 1) then $
+                   nv_message, /continue, 'Using first disk descriptor.'
+ if(n_elements(cd) GT 1) then $
+                   nv_message, /continue, 'Using first camera descriptor.'
  dkd = dkx[0]
 
  ;-----------------------------------

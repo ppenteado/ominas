@@ -936,6 +936,27 @@ end
 
 
 ;=============================================================================
+; grim_shift
+;
+;=============================================================================
+pro grim_shift, grim_data, dd, cd=cd, shift
+
+ pg_shift, dd, cd=cd, shift
+ shift_total = grim_get_user_data(grim_data, 'SHIFT_TOTAL')
+ if(NOT keyword_set(shift_total)) then shift_total = [0d,0d]
+
+ shift_total = shift_total + shift
+ grim_set_user_data, grim_data, 'SHIFT_TOTAL', shift_total
+
+ grim_print, grim_data, $
+      'Total shift: [' + str_comma_list(str_compress(shift_total)) + ']'
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ;+
 ; NAME:
 ;	grim_menu_shift_enter_step_event
@@ -1020,24 +1041,20 @@ pro grim_menu_shift_enter_offset_event, event
  done = 0
  repeat $
   begin
-   offs = dialog_input('New offset:')
-   if(NOT keyword_set(offs)) then return
-   w = str_isfloat(steps)
-   if(w[0] NE -1) then done = 1
+   offs = dialog_input('New offset [dx,dy]:')
+   if(keyword_set(offs)) then $
+    begin
+     s = parse_numeric_list(offs)
+     if(keyword_set(s)) then $
+      begin
+       w = str_isfloat(s)
+       if(n_elements(w) EQ 2) then done = 1
+      end
+    end
   endrep until(done)
 
- step = double(steps)
-
-
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
- step = grim_get_shift_step(grim_data)
- pg_shift, plane.dd, cd=*plane.cd_p, [step,0]
-
-
- grim_set_user_data, grim_data, 'SHIFT_STEP', step
+ shift = double(s)
+ grim_shift, grim_data, plane.dd, cd=*plane.cd_p, shift
 
 end
 ;=============================================================================
@@ -1078,7 +1095,7 @@ pro grim_menu_shift_left_event, event
  plane = grim_get_plane(grim_data)
 
  step = grim_get_shift_step(grim_data)
- pg_shift, plane.dd, cd=*plane.cd_p, [step,0]
+ grim_shift, grim_data, plane.dd, cd=*plane.cd_p, [step,0]
 
 end
 ;=============================================================================
@@ -1119,7 +1136,7 @@ pro grim_menu_shift_right_event, event
  plane = grim_get_plane(grim_data)
 
  step = grim_get_shift_step(grim_data)
- pg_shift, plane.dd, cd=*plane.cd_p, [-step,0]
+ grim_shift, grim_data, plane.dd, cd=*plane.cd_p, [-step,0]
 
 end
 ;=============================================================================
@@ -1164,7 +1181,7 @@ pro grim_menu_shift_up_event, event
  grim_wset, grim_data, grim_data.wnum, get=tvd
  if(tvd.order) then dy = step
 
- pg_shift, plane.dd, cd=*plane.cd_p, [0,dy]
+ grim_shift, grim_data, plane.dd, cd=*plane.cd_p, [0,dy]
 
 end
 ;=============================================================================
@@ -1209,7 +1226,7 @@ pro grim_menu_shift_down_event, event
  grim_wset, grim_data, grim_data.wnum, get=tvd
  if(tvd.order) then dy = -step
 
- pg_shift, plane.dd, cd=*plane.cd_p, [0,dy]
+ grim_shift, grim_data, plane.dd, cd=*plane.cd_p, [0,dy]
 
 end
 ;=============================================================================

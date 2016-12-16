@@ -96,7 +96,7 @@ function pg_disk, cd=cd, dkx=dkx, gd=gd, fov=fov, cull=cull, $
  ;-----------------------------------
  nt = n_elements(cd)
  pgs_count_descriptors, dkx, nd=n_disks, nt=nt1
- if(nt NE nt1) then nv_message, name='pg_disk', 'Inconsistent timesteps.'
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
  hide_flags = make_array(npoints, val=PTD_MASK_INVISIBLE)

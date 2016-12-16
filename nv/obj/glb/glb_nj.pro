@@ -32,6 +32,10 @@
 ;  OUTPUT: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	GLB_NJ:		Sets the nj value.
+;
+;
 ; RETURN:
 ;	Current nj value.
 ;

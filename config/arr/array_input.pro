@@ -36,7 +36,11 @@
 ;	status:  Zero if valid data is returned
 ;
 ;
-;  TRANSLATOR KEYWORDS:
+; ENVIRONMENT VARIABLES:
+;	NV_ARRAY_DATA:	Sets directory in which to look for data files.
+;
+;
+; TRANSLATOR KEYWORDS:
 ;	NONE
 ;
 ;
@@ -136,7 +140,7 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
  catpath = getenv('NV_ARRAY_DATA')
  if(NOT keyword_set(catpath)) then $
   begin
-   nv_message, name='array_input', /con, $
+   nv_message, /con, $
      'NV_ARRAY_DATA environment variable is undefined.', $
        exp=['NV_ARRAY_DATA specifies the directory under which this translator', $
             'searches for data files.']
@@ -163,7 +167,7 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
  ; observer descriptor passed as key1
  ;-----------------------------------------------
  if(keyword_set(key1)) then od = key1
- if(NOT keyword_set(od)) then nv_message, name='array_input', 'No observer.'
+ if(NOT keyword_set(od)) then nv_message, 'No observer.'
 
  ;-----------------------------------------------
  ; primary descriptor passed as key2
@@ -181,7 +185,7 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
  ;-----------------------------------------------
  if(keyword_set(bx)) then xd = bx $
  else if(keyword_set(od)) then xd = od $
- else nv_message, name='array_input', 'No primary descriptor.'
+ else nv_message, 'No primary descriptor.'
 
  n = n_elements(xd)
  for i=0, n-1 do $

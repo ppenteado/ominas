@@ -68,7 +68,7 @@ function image_interp_cam, cd=cd, image, grid_x, grid_y, args, valid=valid, $
   'bilinear' : bilinear = 1
   'cubic'    : cubic = 1
   'sinc'     : sinc = 1
-  else 	     : nv_message, name='image_interp_cam', 'Invalid interpolation flag.'
+  else 	     : nv_message, 'Invalid interpolation flag.'
  endcase
 
 

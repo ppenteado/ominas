@@ -4,8 +4,7 @@
 ;=======================================================================================
 function spice_sct2et, times, sc
 
- if(NOT keyword_set(sc)) then nv_message, name='spice_sct2et', $
-                                          'Spacecraft must be specified.'
+ if(NOT keyword_set(sc)) then nv_message, 'Spacecraft must be specified.'
 
 
   cspice_scencd, sc, times, sclkdp

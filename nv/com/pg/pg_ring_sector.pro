@@ -103,8 +103,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gd=gd, $
  ; Otherwise, wait for a click and call the appropriate routine
  ;----------------------------------------------------------------
  if(NOT keyword_set(noverbose)) then $
-              nv_message, /con, name='pg_ring_sector', $
-                 'Left:radial, Middle:oblique, Right:perpendicular'
+            nv_message, /con, 'Left:radial, Middle:oblique, Right:perpendicular'
 
  if(keyword_set(p0)) then $
   begin

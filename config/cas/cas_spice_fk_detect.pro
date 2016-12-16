@@ -8,8 +8,8 @@ function cas_spice_fk_detect, dd, kpath, time=time, strict=strict, all=all
  ; new naming convention
  ;--------------------------------
  all_files = file_search(kpath + 'cas_v??.tf')
-; if(NOT keyword__set(all_files)) then nv_message, $
-;   name='cas_spice_fk_detect', 'No kernel files found in ' + kpath + '.'
+; if(NOT keyword__set(all_files)) then $
+;              nv_message, 'No kernel files found in ' + kpath + '.'
 
  if(keyword__set(all)) then return, all_files
 

@@ -36,7 +36,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  w = where(kpath NE '')
  if(w[0] EQ -1) then $
   begin
-   nv_message, name='spice_kernel_parse', $
+   nv_message, $
      env + ' environment variable is undefined.', /con, $
        exp=[env + ' specifies the directory in which the NAIF/SPICE translator', $
             'searches for ' + strupcase(type) + ' kernel files.']

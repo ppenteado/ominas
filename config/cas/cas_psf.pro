@@ -46,8 +46,8 @@ function cas_psf, cd, x, y
 
  if(NOT keyword_set(ff)) then $
   begin
-;   nv_message, /con, name='cas_psf', $
-;                'PSF file not found for ' + filters[0] + '/' + filters[1] + '.'
+;   nv_message, /con, $
+;               'PSF file not found for ' + filters[0] + '/' + filters[1] + '.'
    return, 0
   end
 

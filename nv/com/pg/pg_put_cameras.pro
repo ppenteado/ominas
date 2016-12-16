@@ -87,8 +87,7 @@ pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
   begin
    if(NOT keyword__set(cds)) then cds=gd.cd
   end
- if(NOT keyword__set(cds)) then nv_message, $
-                                name='pg_put_cameras', 'No camera descriptor.'
+ if(NOT keyword__set(cds)) then nv_message, 'No camera descriptor.'
 
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)

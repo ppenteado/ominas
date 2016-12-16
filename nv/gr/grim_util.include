@@ -279,7 +279,7 @@ pro grim_add_callback, callbacks, data_ps, callbacks_list, data_ps_list
  if(NOT keyword__set(callbacks_list)) then callbacks_list = 0
 
  if(n_elements(callbacks) NE n_elements(data_ps)) then $
-                       nv_message, 'Inconsistent callback registration.'
+                       nv_message, /anonymous, 'Inconsistent callback registration.'
 
  if(NOT keyword__set(callbacks_list[0])) then $
   begin

@@ -109,7 +109,7 @@ pro spice_output, dd, keyword, value, prefix, status=status, $
  ck_file = tr_keyword_value(dd, 'ck_out')
  if(NOT keyword__set(ck_file)) then $
   begin
-   nv_message, /continue, name='spice_output', $
+   nv_message, /continue, $
          'No C-kernel file generated because ck_file not specified.'
    status = -1
    return
@@ -123,7 +123,7 @@ pro spice_output, dd, keyword, value, prefix, status=status, $
  ; observer descriptor passed as key1
  ;-----------------------------------------------
 ; if(keyword__set(key1)) then ods = key1 $
-; else nv_message, name='spice_input', 'No observer descriptor.'
+; else nv_message, 'No observer descriptor.'
 
 
  ;--------------------------

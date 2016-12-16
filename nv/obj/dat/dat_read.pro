@@ -182,8 +182,7 @@ function dat_read, filespec, data, header, $
 
    if(read) then $
     begin
-     if(filetype EQ '') then $
-            nv_message, 'Unable to detect filetype.', name='dat_read', /con $
+     if(filetype EQ '') then nv_message, 'Unable to detect filetype.', /con $
      else $
       begin
       ;------------------------
@@ -197,10 +196,8 @@ function dat_read, filespec, data, header, $
        if(keyword_set(_keyword_fn)) then keyword_fn = _keyword_fnfn
 
        if(output_fn EQ '') then $
-         if(NOT silent) then $
-           nv_message, /continue, 'No output function available.', name='dat_read'
-       if(input_fn EQ '') then $
-                     nv_message, 'No input function available.', name='dat_read'
+         if(NOT silent) then nv_message, /continue, 'No output function available.'
+       if(input_fn EQ '') then nv_message, 'No input function available.'
 
        ;-----------------------------------------
        ; read the header, and data parameters
@@ -212,8 +209,7 @@ function dat_read, filespec, data, header, $
                                          /nodata, /silent, sample=sample, gff=gff)
        if(NOT defined(_type)) then $
         begin
-         nv_message, /con, name='dat_read', $
-                   'WARNING: Type code not determined, converting to byte.'
+         nv_message, /con, 'WARNING: Type code not determined, converting to byte.'
          _type = 1
         end
 
@@ -262,7 +258,7 @@ function dat_read, filespec, data, header, $
             begin
              instrument = dat_detect_instrument(header, udata, filetype, silent=silent)
              if(instrument EQ '') then $
-               nv_message, /continue,'Unable to detect instrument.', name='dat_read'
+                          nv_message, /continue,'Unable to detect instrument.'
             end 
           end $
          else instrument = _instrument

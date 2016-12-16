@@ -63,7 +63,7 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent, $
  if(update EQ -1) then return
 
  if((NOT keyword_set(silent)) and (_dd.maintain GT 0)) then $
-  nv_message, /con, name='dat_set_data', $
+  nv_message, /con, $
    'WARNING: Changes to data array may be lost due to the maintainance level.'
 
  if(keyword_set(_abscissa)) then abscissa = _abscissa

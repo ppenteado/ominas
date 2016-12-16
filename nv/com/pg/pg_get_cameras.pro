@@ -95,8 +95,7 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
 
  if(keyword_set(od)) then $
    if(n_elements(od) NE n_elements(dd)) then $
-               nv_message, name='pg_get_cameras', $
-                    'One observer descriptor required for each data descriptor'
+           nv_message, 'One observer descriptor required for each data descriptor'
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators

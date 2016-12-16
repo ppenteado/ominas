@@ -88,10 +88,8 @@ pro pg_put_planets, dd, trs, pds=pds, ods=ods, gd=gd, $
    if(NOT keyword_set(pds)) then pds=gd.pds
    if(NOT keyword_set(ods)) then ods=gd.ods
   end
- if(NOT keyword_set(pds)) then nv_message, $
-                                name='pg_put_planets', 'No planet descriptor.'
- if(NOT keyword_set(ods)) then nv_message, $
-                               name='pg_put_planets', 'No observer descriptor.'
+ if(NOT keyword_set(pds)) then nv_message, 'No planet descriptor.'
+ if(NOT keyword_set(ods)) then nv_message, 'No observer descriptor.'
 
 
  ;-------------------------------------------------------------------

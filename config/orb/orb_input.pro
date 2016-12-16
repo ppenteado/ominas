@@ -34,6 +34,10 @@
 ;	status:		Zero if valid data is returned
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	NV_ORBIT_DATA:	Sets the directory in which to look for data files.
+;
+;
 ; RETURN:
 ;	Data associated with the requested keyword.
 ;
@@ -177,7 +181,7 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
 ; if(keyword_set(key1)) then cd = key1 $
 ; else $
 ;  begin
-;   nv_message, /con, name='orb_input', 'Camera descriptor required.'
+;   nv_message, /con, 'Camera descriptor required.'
 ;   status = -1
 ;   return, 0
 ;  end
@@ -221,7 +225,7 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
    catpath = getenv('NV_ORBIT_DATA')
    if(NOT keyword_set(catpath)) then $
     begin
-      nv_message, name='orb_input', /con, $
+      nv_message, /con, $
        'NV_ORBIT_DATA environment variable is undefined.', $
          exp=['NV_ORBIT_DATA specifies directory under which this translator', $
               'searches for data files.']

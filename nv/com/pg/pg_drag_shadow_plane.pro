@@ -132,8 +132,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xo
  ; initial point
  ;-----------------------------------
  if(NOT keyword_set(noverbose)) then $
-              nv_message, /con, name='pg_drag_shadow_plane', $
-                           'Left:rotate about pole, Right:rotate about equator'
+         nv_message, /con, 'Left:rotate about pole, Right:rotate about equator'
 
  if(NOT keyword_set(p0)) then $
   begin
@@ -181,8 +180,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xo
  ;----------------------------------------------------------
  if(NOT keyword_set(noverbose)) then $
   begin
-   nv_message, 'Drag to rotate shadow plane.', $
-                                     name='pg_drag_shadow_plane', /continue
+   nv_message, 'Drag to rotate shadow plane.', /continue
   end
 
 

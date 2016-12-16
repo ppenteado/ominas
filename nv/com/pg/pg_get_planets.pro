@@ -101,8 +101,7 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
 
  if(keyword_set(od)) then $
    if(n_elements(od) NE n_elements(dd)) then $
-               nv_message, name='pg_get_planets', $
-                    'One observer descriptor required for each data descriptor'
+          nv_message, 'One observer descriptor required for each data descriptor'
 
 
  ;-------------------------------------------------------------------

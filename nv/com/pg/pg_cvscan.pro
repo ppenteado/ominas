@@ -259,7 +259,7 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ptd, $
          ;-------------------
          if((keyword_set(model_p)) AND (algorithm[0] EQ 'MODEL')) then $
            if((size(strip))[2] LE (size(model))[2]) then $
-               nv_message, name='pg_cvscan', 'Model width must be less than scan width.' 
+                     nv_message, 'Model width must be less than scan width.' 
 
 
          scan_offsets = $

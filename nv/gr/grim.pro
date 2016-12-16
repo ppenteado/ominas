@@ -9019,7 +9019,7 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
      grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
      grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
      if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
-    end
+   end
   end
 
 
@@ -9253,7 +9253,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    menu_extensions[0] = strmid(menu_extensions[0], 1, strlen(menu_extensions[0])-1)
    menu_extensions = ['grim_default_menus', menu_extensions]
   end
-
 
  ;=========================================================
  ; cursor modes
@@ -9522,8 +9521,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 ; begin
 ;  planes = grim_get_plane(grim_data, /all)
 ;  if(n_elements(planes) NE ncd) then $
-;               nv_message, name='grim', $
-;                    'There must be one camera descriptor for each plane.'
+;              nv_message,'There must be one camera descriptor for each plane.'
 ; end $
 ;;----------------------------------------------------------------------
 ;; if no camera descriptors given, then you can still give other

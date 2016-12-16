@@ -110,7 +110,7 @@ pro pg_rm_globe, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
  ;-----------------------------------
  nt = n_elements(od)
  pgs_count_descriptors, gbx, nd=n_objects, nt=nt1
- if(nt NE nt1) then nv_message, name='pg_rm_globe', 'Inconsistent timesteps.'
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
  ;------------------------------------

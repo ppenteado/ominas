@@ -102,8 +102,7 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
    if(NOT keyword__set(_gbx)) then _gbx=gd.gbx
   end
 
- if(NOT keyword__set(_gbx)) then $
-            nv_message, name='pg_limb_sector', 'Globe descriptor required.'
+ if(NOT keyword__set(_gbx)) then nv_message, 'Globe descriptor required.'
  __gbx = get_primary(cd, _gbx)
  if(keyword__set(__gbx[0])) then gbx = __gbx $
  else  gbx = _gbx[0,*]
@@ -111,8 +110,8 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(cds) GT 1) then nv_message, name='pg_limb_sector', $
-                        'No more than one camera descriptor may be specified.'
+ if(n_elements(cds) GT 1) then $
+           nv_message, 'No more than one camera descriptor may be specified.'
 
  ;-----------------------------------
  ; setup pixmap
@@ -130,10 +129,7 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
 
 
  if(NOT keyword__set(noverbose)) then $
-  begin
-   nv_message, 'Drag and release to define radial extent of limb sector', $
-                                         name='pg_limb_sector_oblique', /continue
-  end
+   nv_message, 'Drag and release to define radial extent of limb sector', /con
 
 
  ;-----------------------------------
@@ -158,10 +154,7 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
  ; select azimuthal extent of sector
  ;----------------------------------------------------------
  if(NOT keyword__set(noverbose)) then $
-  begin
-   nv_message, 'Drag and click to define azimuthal extent of limb sector', $
-                                           name='pg_limb_sector_oblique', /continue
-  end
+   nv_message, 'Drag and click to define azimuthal extent of limb sector', /con
 
 
 

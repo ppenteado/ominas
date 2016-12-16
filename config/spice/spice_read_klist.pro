@@ -96,8 +96,7 @@ common spice_klist_block, klist_last, _inlines
    wstop = where(strpos(inlines, 'STOP_TIME') EQ 0)
    if((wstop[0] EQ -1) OR $
        (n_elements(wstop) NE n_elements(wstart))) then $
-                        nv_message, name='spice_read_klist', $
-                      klist + ': One STOP_TIME required for each START_TIME.'
+         nv_message, klist + ': One STOP_TIME required for each START_TIME.'
 
    junk = str_nnsplit(inlines(wstart), '=', rem=start_times)
    junk = str_nnsplit(inlines(wstop), '=', rem=stop_times)
@@ -136,7 +135,7 @@ common spice_klist_block, klist_last, _inlines
         end
        j = j + n
       end $
-     else nv_message, /con, name='spice_read_klist', 'Not found: ' + line
+     else nv_message, /con, 'Not found: ' + line
     end
   end
  if(j EQ 0) then return, ''

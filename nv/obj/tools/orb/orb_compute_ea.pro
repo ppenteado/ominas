@@ -14,14 +14,19 @@ end
 ; orb_compute_ea
 ;
 ;==============================================================================
-function orb_compute_ea, rx
+function orb_compute_ea, rx, ecc=ecc
 common _osk_block, e, ma
 
- e = orb_get_ecc(rx) & _e = e
+ if(defined(ecc)) then e = ecc $ 
+ else e = orb_get_ecc(rx)
+ _e = e
  n = n_elements(e)
 
  ea = dblarr(n)
- ma = orb_get_ma(rx) & _ma = ma
+
+ if(size(rx, /type) NE 11) then ma = rx $ 
+ else ma = orb_get_ma(rx)
+ _ma = ma
 
  ;------------------------------------------------------------------------
  ; We loop here because newton is actually slower when all the equations

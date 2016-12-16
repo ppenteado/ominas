@@ -27,6 +27,11 @@
 ;  OUTPUT: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	GR_PHT_DIR:	Sets the directory in which to find the photometric 
+;			functions.
+;
+;
 ; LAYOUT:
 ;	The gr_phttool layout consists of the following items:
 ;

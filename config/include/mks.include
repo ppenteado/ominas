@@ -2,7 +2,7 @@
 ; mks.include
 ;
 ;==============================================================================
-nv_message, /con, $
+nv_message, /anonymous, /con, $
   "WARNING: mks.include is obsolete.  " + $
       "You should obtain constants using pgc_const('mks') instead."
 

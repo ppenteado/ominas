@@ -57,8 +57,7 @@ end_keywords)
      nt = ntv
     end $
    else if((nvv NE nv) OR (ntv NE nt)) then $
-                 nv_message, name='ominas_point::init', $
-                                       'Incompatible vector array dimensions.'
+                     nv_message, 'Incompatible vector array dimensions.'
   end
 
  ;-----------------------
@@ -84,8 +83,7 @@ end_keywords)
      nt = ntf
     end $
    else if((nvf NE nv) OR (ntf NE nt)) then $
-                nv_message, name='ominas_point::init', $
-                                          'Incompatible flag array dimensions.'
+                         nv_message, 'Incompatible flag array dimensions.'
   end
 
 
@@ -109,8 +107,7 @@ end_keywords)
      nt = ntd
     end $
    else if((nvd NE nv) OR (ntd NE nt)) then $
-              nv_message, name='ominas_point::init', $
-                            'Incompatible point-by-point data array dimensions.'
+              nv_message, 'Incompatible point-by-point data array dimensions.'
   end
 
 
@@ -126,9 +123,7 @@ end_keywords)
    nvt = dim[0]
 
    if(keyword_set(ndat)) then $
-       if(nvt NE ndat) then nv_message, $
-                     name='ominas_point::init', $
-                                       'Incompatible tags array dimensions.'
+       if(nvt NE ndat) then nv_message, 'Incompatible tags array dimensions.'
   end
 
 

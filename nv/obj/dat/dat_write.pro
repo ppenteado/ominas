@@ -109,8 +109,7 @@ pro dat_write, filespec, dd, nodata=nodata, $
    ;------------------------------
    if(keyword_set(_filetype)) then filetype = _filetype $
    else filetype = _dd[i].filetype
-   if(filetype EQ '') then nv_message, $
-                                    'Filetype unavailable.', name='dat_write'
+   if(filetype EQ '') then nv_message, 'Filetype unavailable.'
 
    ;------------------------------
    ; get name of output routine
@@ -119,8 +118,7 @@ pro dat_write, filespec, dd, nodata=nodata, $
    else dat_lookup_io, filetype, input_fn, output_fn
    if(NOT keyword_set(output_fn)) then output_fn = _dd[i].output_fn
 
-   if(output_fn EQ '') then $
-        nv_message, 'No output function available.', name='dat_write'
+   if(output_fn EQ '') then nv_message, 'No output function available.'
 
    ;---------------------
    ; write the file

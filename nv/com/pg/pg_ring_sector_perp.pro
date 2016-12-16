@@ -104,10 +104,10 @@ function pg_ring_sector_perp, p, cd=cd, dkx=dkx, gd=gd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(dkx) GT 1) then nv_message, name='pg_ring_sector_perp', $
-                          'No more than one ring descriptor may be specified.'
- if(n_elements(cds) GT 1) then nv_message, name='pg_ring_sector_perp', $
-                        'No more than one camera descriptor may be specified.'
+ if(n_elements(dkx) GT 1) then $
+               nv_message, 'No more than one ring descriptor may be specified.'
+ if(n_elements(cds) GT 1) then $
+               nv_message, 'No more than one camera descriptor may be specified.'
  rd = dkx[0]
 
  nrad = 3 & nlon = 5
@@ -137,10 +137,7 @@ function pg_ring_sector_perp, p, cd=cd, dkx=dkx, gd=gd, $
 
 
    if(NOT keyword_set(noverbose)) then $
-    begin
-     nv_message, 'Drag and release to define ring sector', $
-                                   name='pg_ring_sector_perp', /continue
-    end
+           nv_message, 'Drag and release to define ring sector', /continue
 
    ;-----------------------------------
    ; initial point

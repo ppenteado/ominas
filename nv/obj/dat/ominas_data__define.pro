@@ -61,8 +61,7 @@ end_keywords)
   begin
    self.instrument = dat_detect_instrument(header, udata, filetype, silent=silent)
    if(self.instrument EQ '') then $
-              nv_message, /continue, $
-                     'Unable to detect instrument.', name='data_descriptor::init'
+                   nv_message, /continue, 'Unable to detect instrument.'
   end
 
 
@@ -76,13 +75,11 @@ end_keywords)
            silent=silent
 
    if(input_translators[0] EQ '') then $
-        nv_message, /continue, 'No input translators available.', $
-                                                    name='nv_init_descriptor' $
+                nv_message, /continue, 'No input translators available.' $
    else self.input_translators_p=nv_ptr_new(input_translators)
 
    if(output_translators[0] EQ '') then $
-       nv_message, /continue, 'No output translators available.', $
-                                                    name='nv_init_descriptor' $
+               nv_message, /continue, 'No output translators available.' $
    else self.output_translators_p=nv_ptr_new(output_translators)
 
    if(keyword_set(input_keyvals)) then $

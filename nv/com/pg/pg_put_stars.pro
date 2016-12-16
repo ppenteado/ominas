@@ -88,10 +88,8 @@ pro pg_put_stars, dd, trs, sds=sds, ods=ods, gd=gd, $
    if(NOT keyword__set(sds)) then sds=gd.sds
    if(NOT keyword__set(ods)) then ods=gd.ods
   end
- if(NOT keyword__set(sds)) then nv_message, $
-                                name='pg_put_stars', 'No star descriptor.'
- if(NOT keyword__set(ods)) then nv_message, $
-                               name='pg_put_stars', 'No observer descriptor.'
+ if(NOT keyword__set(sds)) then nv_message, 'No star descriptor.'
+ if(NOT keyword__set(ods)) then nv_message, 'No observer descriptor.'
 
 
  ;-------------------------------------------------------------------

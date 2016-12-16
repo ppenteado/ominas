@@ -49,8 +49,7 @@
 function dsk_get_node, dkd, frame_bd
 @core.include
 
- if(NOT keyword_set(frame_bd)) then $
-             nv_message, name='dsk_get_node', 'frame_bd required.'
+ if(NOT keyword_set(frame_bd)) then nv_message, 'frame_bd required.'
 
  node = orb_get_ascending_node(dkd, frame_bd)
 

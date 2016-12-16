@@ -88,10 +88,8 @@ pro pg_put_rings, dd, trs, rds=rds, ods=ods, gd=gd, $
    if(NOT keyword_set(rds)) then rds=gd.rds
    if(NOT keyword_set(ods)) then ods=gd.ods
   end
- if(NOT keyword_set(rds)) then nv_message, $
-                                     name='pg_put_rings', 'No ring descriptor.'
- if(NOT keyword_set(ods)) then nv_message, $
-                                 name='pg_put_rings', 'No observer descriptor.'
+ if(NOT keyword_set(rds)) then nv_message, 'No ring descriptor.'
+ if(NOT keyword_set(ods)) then nv_message, 'No observer descriptor.'
 
 
    ;-------------------------------------------------------------------

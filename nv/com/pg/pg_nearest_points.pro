@@ -113,8 +113,7 @@ function pg_nearest_points, object_ptd, _ptd
  for i=0, n-1 do $
   begin
    pnt_get, ptd[i], v=v, p=p, flag=flag
-   if(n_elements(v) NE 3*nv) then $
-     nv_message, name='pg_nearest_points', 'WARNING: Incompatible arrays.'
+   if(n_elements(v) NE 3*nv) then nv_message, 'WARNING: Incompatible arrays.'
    vec[*,*,i] = v
    pts[*,*,i] = p
    flags[*,i] = flag

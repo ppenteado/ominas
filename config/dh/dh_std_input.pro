@@ -78,7 +78,7 @@ end
 ; dhsi_get_core
 ;
 ;=============================================================================
-function dhsi_get_core, dh, prefix
+function dhsi_get_core, dd, dh, prefix
 
 
  name = dh_get_string(dh, prefix + '_name', n_obj=n_obj, dim=dim, $
@@ -91,6 +91,7 @@ function dhsi_get_core, dh, prefix
 			                                hi=hi, status=status)
 
  crds = cor_create_descriptors(n_obj, $
+	assoc_xd=dd, $
 	name=name, $
  	user=user, $
 	tasks=tasks)
@@ -165,12 +166,6 @@ function dhsi_get_solid, dh, prefix, crds=crds, bds=bds
 
  slds = sld_create_descriptors(n_obj, crd=crds, bd=bds, $
 	mass=mass, $
-	lora=lora, $
-	j=j, $
-	radii=radii, $
-	type=type, $
-	lref=lref, $
-	rref=rref, $
 	gm=gm)
 
  return, slds
@@ -208,7 +203,7 @@ function dhsi_get_globe, dh, prefix, crds=crds, bds=bds, slds=slds
 
 
 
- gbds = glb_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, $
+ gbds = glb_create_descriptors(n_obj, crd=crds, bd=bds, sld=slds, $
 	lora=lora, $
 	j=j, $
 	radii=radii, $
@@ -251,7 +246,7 @@ function dhsi_get_disk, dh, prefix, crds=crds, bds=bds, slds=slds
 
 
 
- dkds = dsk_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, $
+ dkds = dsk_create_descriptors(n_obj, crd=crds, bd=bds, sld=slds, $
 	sma=sma, $
 	ecc=ecc, $
 	scale=scale, $
@@ -318,7 +313,7 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 
 	'CAM_DESCRIPTORS'   : $
 	  begin
-	   crds = dhsi_get_core(dh, 'cam')
+	   crds = dhsi_get_core(dd, dh, 'cam')
 	   if(NOT keyword_set(crds)) then return, 0
 	   bds = dhsi_get_body(dh, 'cam', crds=crds)
 
@@ -360,7 +355,6 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 
 	   n_obj = n_elements(crds)
 	   cds = cam_create_descriptors(n_obj, crd=crds, bd=bds, $
-		assoc_xd=dd, $
 		exposure=cam_exposure, $
 		fn_focal_to_image=cam_fn_focal_to_image, $
 		fn_image_to_focal=cam_fn_image_to_focal, $
@@ -386,14 +380,14 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 
 	'PLT_DESCRIPTORS'   : $
 	  begin
-	   crds = dhsi_get_core(dh, 'plt')
+	   crds = dhsi_get_core(dd, dh, 'plt')
 	   if(NOT keyword_set(crds)) then return, 0
 	   bds = dhsi_get_body(dh, 'plt', crds=crds)
 	   slds = dhsi_get_solid(dh, 'plt', bds=bds)
 	   gbds = dhsi_get_globe(dh, 'plt', crds=crds, bds=bds, slds=slds)
 
 	   n_obj = n_elements(crds)
-	   pds = plt_create_descriptors(n_obj, crd=crds, bd=bds, gbd=gbds, slds=slds, assoc_xd=dd)
+	   pds = plt_create_descriptors(n_obj, crd=crds, bd=bds, gbd=gbds, sld=slds)
 
 	   format = dh_get_string(dh, 'plt_format', hi=hi)
 	   if(keyword_set(format)) then pds = dh_to_ominas(format[0], pds)
@@ -410,7 +404,7 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 	'RNG_DESCRIPTORS'   : $
 	  begin
 	   if(keyword_set(key1)) then pd = key1
-	   crds = dhsi_get_core(dh, 'rng')
+	   crds = dhsi_get_core(dd, dh, 'rng')
 	   if(NOT keyword_set(crds)) then return, 0
 	   bds = dhsi_get_body(dh, 'rng', crds=crds)
 	   slds = dhsi_get_solid(dh, 'rng', bds=bds)
@@ -421,8 +415,8 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 			                                hi=hi, status=status) )
 
 	   n_obj = n_elements(crds)
-	   rds = rng_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, dkd=dkds, $
-		primary=rng_primary, assoc_xd=dd)
+	   rds = rng_create_descriptors(n_obj, crd=crds, bd=bds, sld=slds, dkd=dkds, $
+		primary=rng_primary)
 
 	   format = dh_get_string(dh, 'rng_format', hi=hi)
 	   if(keyword_set(format)) then rds = dh_to_ominas(format[0], rds)
@@ -438,7 +432,7 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 
 	'STR_DESCRIPTORS'   : $
 	  begin
-	   crds = dhsi_get_core(dh, 'str')
+	   crds = dhsi_get_core(dd, dh, 'str')
 	   if(NOT keyword_set(crds)) then return, 0
 	   bds = dhsi_get_body(dh, 'str', crds=crds)
 	   slds = dhsi_get_solid(dh, 'str', bds=bds)
@@ -451,7 +445,7 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 			                                hi=hi, status=status)
 
 	   n_obj = n_elements(crds)
-	   sds = str_create_descriptors(n_obj, crd=crds, bd=bds, slds=slds, gbd=gbds, assoc_xd=dd, $
+	   sds = str_create_descriptors(n_obj, crd=crds, bd=bds, sld=slds, gbd=gbds, $
 		lum=str_lum, $
 		sp=str_sp)
 
@@ -470,7 +464,7 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 
 	'MAP_DESCRIPTORS'   : $
 	  begin
-	   crds = dhsi_get_core(dh, 'map')
+	   crds = dhsi_get_core(dd, dh, 'map')
 	   if(NOT keyword_set(crds)) then return, 0
 
 	   map_fn_data = dh_get_array(dh, 'map_fn_data', n_obj=n_obj, $
@@ -516,7 +510,6 @@ function dh_std_input, dd, keyword, values=values, status=status, $
 
 	   n_obj = n_elements(crds)
 	   mds = map_create_descriptors(n_obj, $
-		assoc_xd=dd, $
 		crd=crds, $
 		type=map_type, $
 		fn_data=map_fn_data, $

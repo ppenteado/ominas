@@ -88,8 +88,7 @@ function pg_image_sector, sample=sample, $
  ; initial point
  ;-----------------------------------
  if(NOT keyword_set(noverbose)) then $
-              nv_message, /con, name='pg_image_sector', $
-                              'Left:box scan, Right:line scan'
+                      nv_message, /con, 'Left:box scan, Right:line scan'
 
  if(NOT keyword_set(_p0)) then $
   begin
@@ -103,10 +102,7 @@ function pg_image_sector, sample=sample, $
  else $
   begin
    if(NOT keyword_set(noverbose)) then $
-    begin
-     nv_message, 'Drag and release to define length of image sector', $
-                                       name='pg_image_sector', /continue
-    end
+     nv_message, 'Drag and release to define length of image sector', /continue
 
 
    ;----------------------------------------------------------
@@ -123,10 +119,7 @@ function pg_image_sector, sample=sample, $
    if(NOT keyword_set(width)) then $
     begin
      if(NOT keyword_set(noverbose)) then $
-      begin
-       nv_message, 'Drag and click to define width of image sector', $
-                                         name='pg_image_sector', /continue
-      end
+       nv_message, 'Drag and click to define width of image sector', /continue
 
      ;-----------------------------------
      ; setup pixmap

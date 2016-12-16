@@ -63,13 +63,11 @@ function dh_read, filename, buflen=buflen, silent=silent
  openr, unit, filename, /get_lun, error=error
  if(error NE 0) then $
   begin
-   if(NOT silent) then $
-     nv_message, 'Blank detached header created.', name='dh_read', /continue
+   if(NOT silent) then nv_message, 'Blank detached header created.', /continue
    return, dh_create()
   end
 
- if(NOT silent) then $
-   nv_message, 'Reading ' + filename + '.', name='dh_read', /continue
+ if(NOT silent) then nv_message, 'Reading ' + filename + '.', /continue
 
 
  ;----------------------------

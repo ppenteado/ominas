@@ -75,9 +75,7 @@ function pg_ring_sector_box, p, $
  ;----------------------------------------------------------------
  ; Wait for a click and call the appropriate routine
  ;----------------------------------------------------------------
- if(NOT keyword_set(noverbose)) then $
-              nv_message, /con, name='pg_ring_sector', $
-                 'Left:ortho, Right:oblique'
+ if(NOT keyword_set(noverbose)) then nv_message, /con, 'Left:ortho, Right:oblique'
 
  if(keyword_set(p0)) then $
   begin

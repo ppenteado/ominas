@@ -53,8 +53,7 @@ pro dsk_set_dlibdt_lan, dkd, dlibdt_lan, frame_bd
 @core.include
  
 
- if(NOT keyword_set(frame_bd)) then $
-             nv_message, name='dsk_set_dlibdt_lan', 'frame_bd required.'
+ if(NOT keyword_set(frame_bd)) then nv_message, 'frame_bd required.'
 
  orb_set_dlibdt_lan, dkd, frame_bd, dlibdt_lan
 

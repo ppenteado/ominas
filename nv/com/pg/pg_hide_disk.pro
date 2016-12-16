@@ -107,8 +107,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
 
  if(NOT keyword_set(dkx)) then return
 
- if(NOT keyword_set(_gbx)) then $
-            nv_message, name='pg_hide_disk', 'Globe descriptor required.'
+ if(NOT keyword_set(_gbx)) then nv_message, 'Globe descriptor required.'
  __gbx = get_primary(cd, _gbx, rx=dkx)
  if(keyword_set(__gbx[0])) then gbx = __gbx $
  else gbx = _gbx[0,*]
@@ -123,7 +122,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
  ;-----------------------------------
  nt = n_elements(od)
  pgs_count_descriptors, dkx, nd=n_disks, nt=nt1
- if(nt NE nt1) then nv_message, name='pg_hide_disk', 'Inconsistent timesteps.'
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
  ;------------------------------------
  ; hide object points for each ring

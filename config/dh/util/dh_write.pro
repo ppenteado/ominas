@@ -60,13 +60,13 @@ pro dh_write, filename, dh, silent=silent
  if(error NE 0) then $
   if(NOT silent) then $
    begin
-    nv_message, !err_string, name='dh_write', /continue
-    nv_message, 'Detached header not written.', name='dh_write', /continue
+    nv_message, !err_string, /continue
+    nv_message, 'Detached header not written.', /continue
     return
    end
 
  if(NOT silent) then $
-   nv_message, 'Writing ' + filename + '.', name='dh_write', /continue
+   nv_message, 'Writing ' + filename + '.', /continue
 
  ;----------------------------
  ; write the file

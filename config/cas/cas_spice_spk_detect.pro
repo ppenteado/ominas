@@ -179,8 +179,8 @@ common cas_spice_spk_block, data
  ; determine coverage dates, targets, version order
  ;--------------------------------------------------------------
  all_files = file_search(kpath + '*.bsp')
-; if(NOT keyword__set(all_files)) then nv_message, $
-;   name='cas_spice_spk_detect', 'No kernel files found in ' + kpath + '.'
+; if(NOT keyword__set(all_files)) then $
+;                        nv_message, 'No kernel files found in ' + kpath + '.'
 
  ;--------------------------------------------------------------
  ; if data not already stored, go get it

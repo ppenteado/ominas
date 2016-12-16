@@ -89,14 +89,14 @@ function sedr_get_bcons, target_id
 
  if((record.sat_number*10 + record.planet_number) NE target_id) then $
   begin
-   nv_message, name='sedr_get_bcons', 'BCONS file/index inconsistant', /continue
+   nv_message, 'BCONS file/index inconsistant', /continue
    return, 0
   end
 
  return, record
 
 eod:
- nv_message, name='sedr_get_bcons', 'File not found or I/O error', /continue
+ nv_message, 'File not found or I/O error', /continue
  return, 0
 end
 ;=============================================================================

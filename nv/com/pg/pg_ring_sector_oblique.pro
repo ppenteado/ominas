@@ -95,10 +95,10 @@ function pg_ring_sector_oblique, cd=cd, dkx=dkx, gd=gd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(dkx) GT 1) then nv_message, name='pg_ring_sector_oblique', $
-                          'No more than one ring descriptor may be specified.'
- if(n_elements(cds) GT 1) then nv_message, name='pg_ring_sector_oblique', $
-                        'No more than one camera descriptor may be specified.'
+ if(n_elements(dkx) GT 1) then $
+              nv_message, 'No more than one ring descriptor may be specified.'
+ if(n_elements(cds) GT 1) then $
+              nv_message, 'No more than one camera descriptor may be specified.'
  rd = dkx[0]
 
  ;-----------------------------------
@@ -117,10 +117,7 @@ function pg_ring_sector_oblique, cd=cd, dkx=dkx, gd=gd, $
 
 
  if(NOT keyword__set(noverbose)) then $
-  begin
-   nv_message, 'Drag and release to define radial extent of ring sector', $
-                                   name='pg_ring_sector_oblique', /continue
-  end
+   nv_message, 'Drag and release to define radial extent of ring sector', /continue
 
 
  ;-----------------------------------

@@ -80,7 +80,7 @@ function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
  ;-----------------------------------
  nt = n_elements(cd)
  pgs_count_descriptors, bx, nd=n_objects, nt=nt1
- if(nt NE nt1) then nv_message, name='pg_center', 'Inconsistent timesteps.'
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
  ;-----------------------------------

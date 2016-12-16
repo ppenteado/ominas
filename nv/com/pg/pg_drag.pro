@@ -122,8 +122,7 @@ function pg_drag, object_ptd, draw=draw, xor_graphics=xor_graphics, $
  ; concatenate points into one array
  ;------------------------------------------
  object_pts = pnt_points(object_ptd, /vis)
- if(NOT keyword_set(object_pts)) then nv_message, name='pg_drag', $
-                                                   'No visible object points.'
+ if(NOT keyword_set(object_pts)) then nv_message, 'No visible object points.'
 ; xpoints=tr(object_pts[0,*])
 ; ypoints=tr(object_pts[1,*])
 
@@ -181,10 +180,8 @@ function pg_drag, object_ptd, draw=draw, xor_graphics=xor_graphics, $
  tvcursor, /set
  if(NOT keyword_set(noverbose)) then $
    begin
-    nv_message, 'Drag pointing using cursor and mouse buttons-', $
-                 name='pg_drag', /continue
-    nv_message, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept', $
-                 name='pg_drag', /continue
+    nv_message, 'Drag pointing using cursor and mouse buttons-', /continue
+    nv_message, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept', /continue
    end
  cursor_move, ax, ay, xpoints, ypoints, sub_xpoints, sub_ypoints, $
              dx=dx, dy=dy, dtheta=dtheta, symbol=symtouse, star_sub=star_sub, $

@@ -88,8 +88,7 @@ function pg_limb_sector_linear, cd=cd, gbx=_gbx, gd=gd, $
    if(NOT keyword__set(_gbx)) then _gbx=gd.gbx
   end
 
- if(NOT keyword__set(_gbx)) then $
-            nv_message, name='pg_limb_sector_linear', 'Globe descriptor required.'
+ if(NOT keyword__set(_gbx)) then nv_message, 'Globe descriptor required.'
  __gbx = get_primary(cd, _gbx)
  if(keyword_set(__gbx[0])) then gbx = __gbx $
  else  gbx = _gbx[0,*]
@@ -97,8 +96,8 @@ function pg_limb_sector_linear, cd=cd, gbx=_gbx, gd=gd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(cds) GT 1) then nv_message, name='pg_limb_sector_linear', $
-                        'No more than one camera descriptor may be specified.'
+ if(n_elements(cds) GT 1) then $
+            nv_message, 'No more than one camera descriptor may be specified.'
 
 
  ;--------------------------

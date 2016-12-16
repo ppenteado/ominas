@@ -120,12 +120,12 @@ pro gr_draw, pp, gd=gd, cd=_cd, pd=_pd, rd=_rd, sd=_sd, ard=_ard, std=_std, sund
  nobj = dim[0]
 
  if(n_elements(dim) EQ 1) then $
-   if(nplanes GT 1) then nv_message, name='GR_DRAW', $
-                            'Number of planes must match number of objects.'
+   if(nplanes GT 1) then $
+               nv_message, 'Number of planes must match number of objects.'
 
  if(n_elements(dim) EQ 2) then $
-    if(dim[1] NE nplanes) then nv_message, name='GR_DRAW', $
-                            'Number of planes must match number of objects.'
+    if(dim[1] NE nplanes) then $ 
+      nv_message, name='GR_DRAW', 'Number of planes must match number of objects.'
 
  if(keyword__set(_color)) then $
     if(size(_color, /type) NE 7) then __color = ctlookup(_color)

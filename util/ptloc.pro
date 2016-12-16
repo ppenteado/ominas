@@ -118,7 +118,7 @@ function ptloc, image, model, width, ccp=ccp, sigma=sigma, chisq=chisq, $
  else $
   begin
    status = 1
-;   nv_message, /cont, name='ptloc', 'Cannot obtain sub-pixel precision.'
+;   nv_message, /cont, 'Cannot obtain sub-pixel precision.'
 
    max_sub_cc = max(sub_cc)
    ww = where(sub_cc EQ max_sub_cc)

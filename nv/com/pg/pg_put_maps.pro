@@ -87,8 +87,7 @@ pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
   begin
    if(NOT keyword_set(mds)) then mds = gd.md
   end
- if(NOT keyword_set(mds)) then nv_message, $
-                                name='pg_put_maps', 'No map descriptor.'
+ if(NOT keyword_set(mds)) then nv_message, 'No map descriptor.'
 
 
  ;-------------------------------------------------------------------
