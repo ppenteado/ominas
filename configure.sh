@@ -387,7 +387,7 @@ Mission Packages:
 	5) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
 	6) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
 Data:
-        7) NAIF Generic Kernels . . . . . . . . .  $genst
+        7) NAIF Generic Kernels  . . . . . . . . . $genst
 	8) SEDR image data . . . . . . . . . . . . ${dstatus[0]}
 	9) TYCHO2 star catalog . . . . . . . . . . ${dstatus[1]}
 	10) SAO star catalog . . . . . . . . . . . ${dstatus[2]}
