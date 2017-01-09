@@ -4,7 +4,7 @@
 #./download_DAWN.sh /directory/to/place/kernels
 
 
-echo "This script wiill download all kernels from the PDS Dawn archive ("\
+echo "This script wiill download a subset of kernels from the PDS Dawn archive ("\
 "http://naif.jpl.nasa.gov/pub/naif/DAWN/kernels/. As of December/2016, this adds to  GB."
 
 read -rp "Continue? " ans
@@ -27,10 +27,10 @@ done
 
 #special treatment directories (spk and ck, which are large)
 echo "Downloading spks"
-./pp_wget "${baseurl}spk/ --localdir=$1/spk/ $@ --absolute --timestamps=~/.ominas/timestamps/" # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
+./pp_wget "${baseurl}spk/ --localdir=$1/spk/ $@ --absolute --timestamps=~/.ominas/timestamps/ --pattern=dawn_rec_(1(1|2|5|6|7))[[:digit:]]{4}-[[:digit:]]{6}_[[:digit:]]{6}_.+((\.bsp$)|(bsp\.lbl$))"
 
 echo "Downloading cks"
-./pp_wget "${baseurl}ck/ --localdir=$1/ck/ $@ --absolute --timestamps=~/.ominas/timestamps/"
+./pp_wget "${baseurl}ck/ --localdir=$1/ck/ $@ --absolute --timestamps=~/.ominas/timestamps/ --pattern=dawn_sc_[[:digit:]]{6}_[[:digit:]]{6}((\.bc$)|(bc\.lbl$))"
 #./pp_wget "${baseurl}ck/ --localdir=$1/ck/ $@ --absolute --timestamps=~/.ominas/timestamps/ --xpattern="\
 #"(\.tar\.gz$)|([[:digit:]]{5}_[[:digit:]]{5}[[:alnum:]]{2}(_(S|C)[[:digit:]]{2})?\.((pdf)|(txt))$)|(_bc_err\.txt$)" #--xpattern=(\.bc$)|(bc\.lbl$)|"
 
