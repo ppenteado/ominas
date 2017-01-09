@@ -382,13 +382,13 @@ Mission Packages:
            Note: the NAIF Generic Kernels (one of the optional data packages) are not required for the
            missions, they already contain a copy the subset of the generic kernel files they need.
 	3) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
-           About 16 GB as of Dec/2016
+           Subsetted, about 16 GB as of Dec/2016
 	4) Galileo . . . . . . . . . . . . . . . . ${mstatus[1]}
            About 833 MB as of Dec/2016
 	5) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
 	6) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
-           About  GB as of Dec/2016
+           Subsetted, about  GB as of Jan/2017
 Data:
         7) NAIF Generic Kernels . . . . . . . . .  $genst
 	8) SEDR image data . . . . . . . . . . . . ${dstatus[0]}
