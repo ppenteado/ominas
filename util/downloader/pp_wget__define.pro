@@ -207,7 +207,7 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
   catch,err
   if err then begin
     catch,/cancel
-    if (err ne -1005) && (err ne -1006) then begin
+    if (err ne -1005) && (err ne -1006) && ~strmatch (!error_state.msg,'Cancel request detected',/fold_case) then begin
       print,'error downloading file ',link,': ',err,' ',!error_state.msg
       return
     endif else setts=0 
