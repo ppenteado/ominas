@@ -383,7 +383,7 @@ Mission Packages:
            missions, they already contain a copy the subset of the generic kernel files they need.
 	3) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
            Subsetted, about 16 GB as of Dec/2016
-	4) Galileo . . . . . . . . . . . . . . . . ${mstatus[1]}
+	4) Galileo (GLL) . . . . . . . . . . . . . ${mstatus[1]}
            About 833 MB as of Dec/2016
 	5) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
