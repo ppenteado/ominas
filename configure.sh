@@ -391,6 +391,7 @@ Mission Packages:
            Subsetted, about  GB as of Jan/2017
 Data:
         7) NAIF Generic Kernels . . . . . . . . .  $genst
+           About 22 GB as of Dec/2016
 	8) SEDR image data . . . . . . . . . . . . ${dstatus[0]}
 	9) TYCHO2 star catalog . . . . . . . . . . ${dstatus[1]}
 	10) SAO star catalog . . . . . . . . . . . ${dstatus[2]}
