@@ -43,7 +43,7 @@
 ;
 ;	axis:	 Rotation axis; default is the planet pole.
 ;
-;	noverbose:	If set, turns off notifications.
+;	silent:	 If set, turns off notifications.
 ;
 ;	xor_graphics:	If set, grahics are drawn using the XOR function.
 ;
@@ -110,7 +110,7 @@ end
 ;
 ;=============================================================================
 function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xor_graphics, $
-                  p0=p0, n0=n0, noverbose=noverbose, color=color, gain=gain, $
+                  p0=p0, n0=n0, silent=silent, color=color, gain=gain, $
                   axis=axis, shadow_ptd=shadow_ptd
 
  ;-----------------------------------------------
@@ -131,7 +131,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xo
  ;-----------------------------------
  ; initial point
  ;-----------------------------------
- if(NOT keyword_set(noverbose)) then $
+ if(NOT keyword_set(silent)) then $
          nv_message, /con, 'Left:rotate about pole, Right:rotate about equator'
 
  if(NOT keyword_set(p0)) then $
@@ -178,7 +178,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xo
  ;----------------------------------------------------------
  ; select shadow plane
  ;----------------------------------------------------------
- if(NOT keyword_set(noverbose)) then $
+ if(NOT keyword_set(silent)) then $
   begin
    nv_message, 'Drag to rotate shadow plane.', /continue
   end

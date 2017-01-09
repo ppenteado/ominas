@@ -4,7 +4,7 @@
 ;=============================================================================
 function dhh_extract, dh, section, dh_history=dh_history
 
- dh_history=''
+ dh_history = ''
 
  ;----------------------------------
  ; search for section

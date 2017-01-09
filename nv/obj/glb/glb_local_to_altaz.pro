@@ -20,7 +20,7 @@
 ;  INPUT: 
 ;	gbd:	        Array (nt) of any subclass of GLOBE descriptors.
 ;
-;	surf_pts:	Array (nv,3,nt) of column vectors in the body
+;	body_pts:	Array (nv,3,nt) of column vectors in the body
 ;                       frame (representing points on the surface of 
 ;                       the globe).
 ;

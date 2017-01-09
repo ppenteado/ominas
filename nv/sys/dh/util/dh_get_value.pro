@@ -54,7 +54,7 @@
 ;  OUTPUT:
 ;	count:		Integer giving the numebr of keywords matched.
 ;
-;	match_keys:	String array giving the names of the keywords which were
+;	match_keys:	String array giving the names of the keywords that were
 ;			matched.
 ;
 ;	match_objects:	Array giving the object index for each keyword returned
@@ -196,8 +196,6 @@ function dh_get_value, _dh, keyword, n_match=n_match, $
    i=i+1
   end
 
-;help, keyword
-;stop
 
  if(count EQ 0) then return, ''
 

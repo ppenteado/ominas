@@ -55,7 +55,7 @@
 ;        nodsk:     If set, image points will not be included in the output 
 ;                   POINT.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;      rad,lon:     If set, these values are used as bounds for the ring 
 ;                   the ring sector instead of pronpting the user. 
@@ -90,7 +90,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=p0, button=button, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk
+                         color=color, silent=silent, nodsk=nodsk
 
  ;--------------------------------------------------------
  ; if rad/lon bounds given, just build outline and return
@@ -102,7 +102,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gd=gd, $
  ;----------------------------------------------------------------
  ; Otherwise, wait for a click and call the appropriate routine
  ;----------------------------------------------------------------
- if(NOT keyword_set(noverbose)) then $
+ if(NOT keyword_set(silent)) then $
             nv_message, /con, 'Left:radial, Middle:oblique, Right:perpendicular'
 
  if(keyword_set(p0)) then $
@@ -126,7 +126,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=[px,py], xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk)
+                         color=color, silent=silent, nodsk=nodsk)
 
 	;----------------------------------------
 	; middle:
@@ -136,7 +136,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=[px,py], xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk)
+                         color=color, silent=silent, nodsk=nodsk)
 
 	;----------------------------------------
 	; right: perpendicular sector
@@ -146,7 +146,7 @@ function pg_ring_sector, cd=cd, dkx=dkx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=[px,py], xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk)
+                         color=color, silent=silent, nodsk=nodsk)
 	else:
  endcase
 end

@@ -31,10 +31,12 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	NONE
+;	def:		If set, new items simply ust be defined instead of "set".
 ;
-;  OUTPUT:
-;	NONE
+;	positive:	If set, a single value of -1 is taken as an indefined
+;			array.e
+;
+;  OUTPUT: NONE
 ;
 ;
 ; RETURN:

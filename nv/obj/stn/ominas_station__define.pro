@@ -14,7 +14,7 @@ end_keywords)
 
  self.abbrev = 'STN'
 
- if(keyword__set(primary)) then self.__PROTECT__primary = decrapify(primary[ii])
+ if(keyword__set(primary)) then self.__PROTECT__primary_xd = decrapify(primary[ii])
  if(keyword__set(surface_pt)) then self.surface_pt = decrapify(surface_pts[*,*,ii])
 
 
@@ -77,7 +77,7 @@ pro ominas_station__define
  struct = $
     { ominas_station, inherits ominas_body, $
 	surface_pt:	 dblarr(1,3), $		; Surface coords of location.
-        __PROTECT__primary:     obj_new() $	; primary pd
+        __PROTECT__primary_xd:     obj_new() $	; primary pd
     }
 
 end

@@ -4,6 +4,7 @@
 ;===============================================================================
 function _map_apply_pole, _md, map_pts, inverse=inverse
 
+stop
  nt = n_elements(_md)
  nv = n_elements(map_pts)/2/nt
 

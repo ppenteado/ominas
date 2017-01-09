@@ -1,10 +1,10 @@
 ;===========================================================================
-; dh_get_matrix
+; dh_get_string
 ;
 ;
 ;===========================================================================
-function dh_get_matrix, dh, keyword, history_index=history_index, $
-                        n_obj=n_obj, dim=dim, status=status, section=section
+function dh_get_string, dh, keyword, history_index=history_index, $
+                         n_obj=n_obj, dim=dim, status=status, section=section
 
  status=-1
 
@@ -13,7 +13,7 @@ function dh_get_matrix, dh, keyword, history_index=history_index, $
  ;------------------------------------------
  val = dh_get_value(dh, keyword, history_index=history_index, $
                     /all_match, /all_obj, match_obj=match_obj, section=section)
- if(NOT keyword__set(val)) then return, 0
+ if(NOT keyword__set(val)) then return, ''
  status=0
 
  ;------------------------------------------
@@ -22,18 +22,13 @@ function dh_get_matrix, dh, keyword, history_index=history_index, $
  n_obj = max(match_obj)+1
 
  ;------------------------------------------
- ; create array of matrices
+ ; create array of scalars
  ;------------------------------------------
- result = dblarr(3,3,n_obj)
- dim=[3,3]
-
- for i=0, n_obj-1 do $
-  begin
-   w = where(match_obj EQ i)
-   if(w[0] NE -1) then result[*,*,i] = val[w]
-  end
+ result = strarr(n_obj)
+ dim = [1]
+ result[match_obj]=val
 
 
- return, reform(result, 3,3,n_obj, /overwrite)
+ return, reform(result, n_obj, /overwrite)
 end
 ;===========================================================================

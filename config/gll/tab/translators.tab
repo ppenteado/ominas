@@ -1,10 +1,7 @@
-# instrument	input			output		keyword arguments
+# Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  GLL_SSI	dh_std_input		dh_std_output
-	-       station_input			-
-	-       array_input			-
-	-       gll_spice_input		gll_spice_output \
+  GLL_SSI	gll_spice_input		gll_spice_output \
 							ck_in=auto \
 							spk_in=auto \
 							pck_in=auto \
@@ -13,7 +10,4 @@
 							ik_in=auto \
 							sck_in=auto \
 							xk_in=extra.tpc 
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		#/b1950
 

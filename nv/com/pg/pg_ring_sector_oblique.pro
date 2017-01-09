@@ -50,7 +50,7 @@
 ; xor_graphics:     If set, the sector outline is drawn and erased using xor
 ;                   graphics instead of a pixmap.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;       sample:     Grid sampling, default is 1.
 ;
@@ -77,7 +77,7 @@ function pg_ring_sector_oblique, cd=cd, dkx=dkx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=_p0, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk
+                         color=color, silent=silent, nodsk=nodsk
 
  if(NOT keyword__set(win_num)) then win_num=!window
  if(NOT keyword__set(color)) then color=!p.color
@@ -116,7 +116,7 @@ function pg_ring_sector_oblique, cd=cd, dkx=dkx, gd=gd, $
 
 
 
- if(NOT keyword__set(noverbose)) then $
+ if(NOT keyword__set(silent)) then $
    nv_message, 'Drag and release to define radial extent of ring sector', /continue
 
 
@@ -141,7 +141,7 @@ function pg_ring_sector_oblique, cd=cd, dkx=dkx, gd=gd, $
  ;----------------------------------------------------------
  ; select longitudinal extent of sector
  ;----------------------------------------------------------
- if(NOT keyword__set(noverbose)) then $
+ if(NOT keyword__set(silent)) then $
   begin
    nv_message, 'Drag and click to define longitudinal extent of ring sector', $
                                             name='pg_ring_sector_oblique', /continue

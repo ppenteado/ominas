@@ -26,7 +26,8 @@ common spice_klist_block, klist_last, _inlines
    inlines = strip_comment(read_txt_file(klist))
    klist_last = klist
    _inlines = inlines
-   if(NOT keyword_set(silent)) then print, 'Read kernel list file ' + klist + '.'
+   if(NOT keyword_set(silent)) then $
+           nv_message, /con, verb=0.2, 'Read kernel list file ' + klist + '.'
   end $
  else inlines = _inlines
 

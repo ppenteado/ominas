@@ -30,7 +30,10 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	nodv:	 If set, derivatives will not be evolved.
+;	nodv:	If set, derivatives will not be evolved.
+;
+;	copy:	If set, the evolved descriptor is copied into the input
+;		descriptor and it is freed.  The input descriptor is returned.
 ;
 ;
 ;  OUTPUT: NONE
@@ -51,7 +54,7 @@
 ;	
 ;-
 ;=============================================================================
-function bod_evolve, bd, dt, nodv=nodv
+function bod_evolve, bd, dt, nodv=nodv, copy=copy
 @core.include
 
  nbd = n_elements(bd)
@@ -151,7 +154,6 @@ function bod_evolve, bd, dt, nodv=nodv
  xx[2,*,*,*] = transpose(reform(vt[ii2,*,*],nbd,3,ndt, /over), [1,0,2])
 
  _tbd.orient = xx
- _tbd.orientT = transpose(reform(xx, 3,3,nbd,ndt, /over), [1,0,2,3])
 
 
 
@@ -218,7 +220,6 @@ function bod_evolve, bd, dt, nodv=nodv
                  transpose(reform(orient[ii2,*,*],nbd,3,ndt, /over), [1,0,2])
 
            _tbd.orient = xx
-           _tbd.orientT = transpose(reform(xx, 3,3,nbd,ndt, /over), [1,0,2,3])
           end
 
 
@@ -232,6 +233,14 @@ function bod_evolve, bd, dt, nodv=nodv
 
 
 cor_rereference, tbd, _tbd
+
+if(keyword_set(copy)) then $
+ begin
+  nv_copy, bd, tbd
+  nv_free, tbd
+  return, bd
+ end
+
 return, tbd
 ; The following code is circumvented because it resets the body orientation 
 ; after already having been precessed above.  That will need to be fixed before
@@ -292,7 +301,6 @@ return, tbd
  xx[2,*,*,*] = transpose(reform(vt[ii2,*,*],nbd,3,ndt, /over), [1,0,2])
 
  _tbd.orient = xx
- _tbd.orientT = transpose(reform(xx, 3,3,nbd,ndt, /over), [1,0,2,3])
 
 
 
@@ -360,7 +368,6 @@ return, tbd
                  transpose(reform(orient[ii2,*,*],nbd,3,ndt, /over), [1,0,2])
 
            _tbd.orient = xx
-           _tbd.orientT = transpose(reform(xx, 3,3,nbd,ndt, /over), [1,0,2,3])
           end
 
 

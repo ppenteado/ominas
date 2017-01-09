@@ -85,7 +85,7 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, $
                          p0=_p0, p1=p1, width=width, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk, $
+                         color=color, silent=silent, nodsk=nodsk, $
                          dkd=dkd, altitudes=altitudes, azimuths=azimuths, $
                          limb_pts_body=limb_pts_body, cw=cw
 
@@ -128,7 +128,7 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
 
 
 
- if(NOT keyword__set(noverbose)) then $
+ if(NOT keyword__set(silent)) then $
    nv_message, 'Drag and release to define radial extent of limb sector', /con
 
 
@@ -153,7 +153,7 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
  ;----------------------------------------------------------
  ; select azimuthal extent of sector
  ;----------------------------------------------------------
- if(NOT keyword__set(noverbose)) then $
+ if(NOT keyword__set(silent)) then $
    nv_message, 'Drag and click to define azimuthal extent of limb sector', /con
 
 

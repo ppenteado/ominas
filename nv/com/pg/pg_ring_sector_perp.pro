@@ -56,7 +56,7 @@
 ;        nodsk:     If set, image points will not be included in the output 
 ;                   POINT.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;
 ;  OUTPUT:
@@ -86,7 +86,7 @@ function pg_ring_sector_perp, p, cd=cd, dkx=dkx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=p0, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk
+                         color=color, silent=silent, nodsk=nodsk
 
  if(NOT keyword__set(win_num)) then win_num=!window
  if(NOT keyword__set(color)) then color=!p.color
@@ -136,7 +136,7 @@ function pg_ring_sector_perp, p, cd=cd, dkx=dkx, gd=gd, $
 
 
 
-   if(NOT keyword_set(noverbose)) then $
+   if(NOT keyword_set(silent)) then $
            nv_message, 'Drag and release to define ring sector', /continue
 
    ;-----------------------------------

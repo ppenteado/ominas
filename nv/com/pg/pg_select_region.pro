@@ -25,7 +25,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	noverbose: 	If set, turns off the notification that cursor
+;	silent: 	If set, turns off the notification that cursor
 ;			movement is required.
 ;
 ;	color:		Color to use for graphics overlays.
@@ -76,7 +76,7 @@
 ;=============================================================================
 function pg_select_region, dd, color=color, $
       select_button=select_button, cancel_button=cancel_button, $
-      end_button=end_button, noverbose=noverbose, p0=p0, autoclose=autoclose, $
+      end_button=end_button, silent=silent, p0=p0, autoclose=autoclose, $
       points=_points, noclose=noclose, data=data, box=box, image_pts=points
 
  xsize = !d.x_size
@@ -105,7 +105,7 @@ function pg_select_region, dd, color=color, $
  ;- - - - - - - - - - - - - - - - -
  if(NOT keyword_set(box)) then $
   begin
-   if(NOT keyword_set(noverbose)) then $
+   if(NOT keyword_set(silent)) then $
     begin
       nv_message, 'Use cursor and mouse buttons to select points -', /continue
       nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', /continue
@@ -120,7 +120,7 @@ function pg_select_region, dd, color=color, $
  ;- - - - - - - - - - - - - - - - -
  else $
   begin
-   if(NOT keyword_set(noverbose)) then $
+   if(NOT keyword_set(silent)) then $
     begin
       nv_message, 'Use cursor and mouse buttons to select points -', /continue
       nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', /continue

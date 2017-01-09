@@ -29,7 +29,9 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	c:	Speed of light.
+;	c:		Speed of light.
+;
+;	invert:		If set, the inverse correction is performed.
 ;
 ;  OUTPUT: NONE
 ;
@@ -42,13 +44,28 @@
 ;
 ;-
 ;=============================================================================
-pro stellab, obs_bx, targ_bx, c=c, fast=fast
+pro stellab, obs_bx, targ_bx, c=c, fast=fast, invert=invert
 
  nt = n_elements(targ_bx)
 
- obs_pos = bod_pos(obs_bx) ## make_array(nt, val=1d)
+ ;----------------------------------------------------------------
+ ; inverse correction -- restore saved positions
+ ;----------------------------------------------------------------
+ if(keyword_set(invert)) then $
+  begin
+   for i=0, nt-1 do bod_set_pos, targ_bx[i], $
+                                    cor_udata(targ_bx[i], 'STELLAB_POS_0')
+   return
+  end
 
- pos = - (obs_pos - transpose(bod_pos(targ_bx)))
+ ;----------------------------------------------------------------
+ ; forwawrd correction
+ ;----------------------------------------------------------------
+ obs_pos = bod_pos(obs_bx) ## make_array(nt, val=1d)
+ targ_pos = bod_pos(targ_bx)
+ for i=0, nt-1 do cor_set_udata, targ_bx[i], 'STELLAB_POS_0', targ_pos[*,*,i]
+
+ pos = - (obs_pos - transpose(targ_pos))
  vel = (bod_vel(obs_bx))[0,*] ## make_array(nt, val=1d) 
 
  pos_cor = stellab_pos(pos, vel, c=c, fast=fast)

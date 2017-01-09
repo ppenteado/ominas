@@ -49,8 +49,8 @@ pro bod_set_orient, bd, orient, noevent=noevent
  _bd = cor_dereference(bd)
 
  _bd.orient=orient
- if(n_elements(_bd) GT 1) then _bd.orientT=transpose(orient, [1,0,2]) $
- else _bd.orientT=transpose(orient)
+;;; if(n_elements(_bd) GT 1) then _bd.orientT=transpose(orient, [1,0,2]) $
+;;; else _bd.orientT=transpose(orient)
 
  cor_rereference, bd, _bd
  nv_notify, bd, type = 0, noevent=noevent

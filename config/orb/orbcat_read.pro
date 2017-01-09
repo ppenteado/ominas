@@ -28,7 +28,8 @@ function orbcat_read, filename, silent=silent
  ;----------------------------
  ; read file
  ;----------------------------
- if(NOT keyword_set(silent)) then print, 'Reading orbit catalog ' + filename + '...'
+ if(NOT keyword_set(silent)) then $
+       nv_message, /con, verb=0.2, 'Reading orbit catalog ' + filename + '...'
  cat = read_txt_file(filename)
 
 

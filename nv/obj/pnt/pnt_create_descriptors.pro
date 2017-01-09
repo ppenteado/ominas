@@ -60,7 +60,7 @@
 ;	
 ;-
 ;=============================================================================
-function pnt_create_descriptors, n, crd=crd0, ptd=ptd0, $
+function pnt_create_descriptors, n, crd=_crd0, ptd=_ptd0, $
 @pnt__keywords.include
 end_keywords
  if(NOT keyword_set(n)) then n = 1
@@ -68,6 +68,8 @@ end_keywords
  ptd = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
+   if(keyword_set(_ptd0)) then ptd0 = _ptd0[i]
 
    ptd[i] = ominas_point(i, crd=crd0, ptd=ptd0, $
 @pnt__keywords.include

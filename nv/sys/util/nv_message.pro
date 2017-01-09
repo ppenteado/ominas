@@ -35,7 +35,7 @@
 ;
 ;	continue:	If set, execution is not halted.
 ;
-;	stop:		If set execution is halted in nv_message.
+;	stop:		If set, execution is halted in nv_message.
 ;
 ;	get_message:	If set, the last message sent through nv_message
 ;			is returned in the _string keyword and no other
@@ -67,11 +67,11 @@
 ;			value is greater than or equal to current verbosity 
 ;			level.  Setting this keyword implies /continue.
 ;
+;	silent:		Setting this keyword is equivalent to verbose=0.
+;
 ;  OUTPUT: 
 ;	message:	If /get_message, this keyword will return the last
 ;			message sent through nv_message.
-;
-;	silent:		Setting this keyword is equivalent to verbose=0.
 ;
 ;
 ; ENVIRONMENT VARIABLES:
@@ -127,6 +127,11 @@ common nv_message_block, last_message, cb_tlp, verbosity
    if(NOT defined(verbose)) then silence = 0 $
    else if(verbose LE verbosity) then silence = 0
   end
+
+ ;---------------------------------------------------------------
+ ; always print message if execution is stopped
+ ;---------------------------------------------------------------
+ if(keyword_set(stop) OR (NOT keyword_set(continue))) then silence = 0
 
 
  ;------------------------------------------------

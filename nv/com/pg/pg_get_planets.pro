@@ -176,7 +176,7 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
     for i=0, ndd-1 do $
      begin
       w = where(cor_assoc_xd(pd) EQ dd[i])
-      if(w[0] NE -1) then pd[w] = abcorr(od[i], pd[w], c=pgc_const('c'));, /iterate)
+      if(w[0] NE -1) then abcorr, od[i], pd[w], c=pgc_const('c')
      end
 
    ;-------------------------------------------------------------------
@@ -199,7 +199,6 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
    if(n_elements(opaque) NE 0) then bod_set_opaque, pd, opaque[w]
    if(n_elements(opacity) NE 0) then sld_set_opacity, pd, opacity[w]
   end
-
 
 
 return, pd

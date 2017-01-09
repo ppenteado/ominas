@@ -85,7 +85,7 @@ pro dh_rm_value, dh, keyword, n_match=n_match, $
  all_match = keyword__set(all_match) OR $
                          all_object OR all_history OR NOT keyword__set(n_match)
 
- if(history_index LT 0) then all_history=1
+ if(history_index LT 0) then all_history = 1
 
 
  ;-----------------------------------------------------
@@ -135,6 +135,7 @@ pro dh_rm_value, dh, keyword, n_match=n_match, $
 
 
  if(count EQ 0) then return
+;print, 'removed'
 
  match_histories = match_histories[0:count-1]
  match_indices = match_indices[0:count-1]
@@ -153,7 +154,7 @@ pro dh_rm_value, dh, keyword, n_match=n_match, $
  ; mark and remove lines
  ;------------------------------
  dh[ln[match_indices]] = '*'
- dh=dh[where(dh NE '*')]
+ dh = dh[where(dh NE '*')]
 
 end
 ;=============================================================================

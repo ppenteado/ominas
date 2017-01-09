@@ -1,11 +1,11 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	dh_create
+;	dh_create_section
 ;
 ;
 ; PURPOSE:
-;	Creates a minimal detached header.
+;	Creates a minimal detached header section.
 ;
 ;
 ; CATEGORY:
@@ -13,11 +13,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = dh_create()
+;	result = dh_create_section(section)
 ;
 ;
 ; ARGUMENTS:
-;  INPUT: NONE
+;  INPUT: 
+;	section:	Name of section to create.
 ;
 ;  OUTPUT: NONE
 ;
@@ -29,12 +30,8 @@
 ;
 ;
 ; RETURN:
-;	String array in which each element is a line of the detached header.
+;	String array in which each element is a line of the new section.
 ;
-;
-; PROCEDURE:
-;	dh_create creates a detached header containing a history line and 
-;	the '<updates>' separator.
 ;
 ;
 ; STATUS:
@@ -42,16 +39,15 @@
 ;
 ;
 ; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/1998
+; 	Written by:	Spitale, 12/2016
 ;	
 ;-
 ;=============================================================================
-function dh_create
+function dh_create_section, section
 
- dh = ['history = -1 / Current history value', $
-       '<updates>' , ''] 
+ time = get_juliandate(stime=stime, format=jdformat)
 
-
- return, dh
+ dh_section = ['<'+ section +'>', '']
+ return, dh_section
 end
 ;=============================================================================

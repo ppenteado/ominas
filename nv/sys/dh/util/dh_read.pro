@@ -67,7 +67,7 @@ function dh_read, filename, buflen=buflen, silent=silent
    return, dh_create()
   end
 
- if(NOT silent) then nv_message, 'Reading ' + filename + '.', /continue
+ if(NOT silent) then nv_message, verb=0.1, 'Reading ' + filename + '.', /continue
 
 
  ;----------------------------

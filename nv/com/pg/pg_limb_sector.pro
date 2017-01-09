@@ -53,7 +53,7 @@
 ;           cw:     If set, azimuths are assumed to increase in the clockwise
 ;                   direction.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;
 ;  OUTPUT:
@@ -86,7 +86,7 @@ function pg_limb_sector, cd=cd, gbx=_gbx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, $
                          p0=p0, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk, $
+                         color=color, silent=silent, nodsk=nodsk, $
                          dkd=dkd, altitudes=altitudes, azimuths=azimuths, $
                          limb_pts_body=limb_pts_body, cw=cw
 
@@ -129,7 +129,7 @@ function pg_limb_sector, cd=cd, gbx=_gbx, gd=gd, $
 
 
 
- if(NOT keyword__set(noverbose)) then $
+ if(NOT keyword__set(silent)) then $
    nv_message, 'Drag and release to define limb sector', , /continue
 
 

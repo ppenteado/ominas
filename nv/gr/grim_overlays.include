@@ -1639,6 +1639,7 @@ pro grim_read_indexed_arrays, grim_data, plane, name, fname=fname
 
  w = where(pnt_valid(ptd))
  if(w[0] EQ -1) then return
+stop
 
  for i=0, n-1 do $
   begin

@@ -43,7 +43,7 @@
 ;			so something other than a period can be used to mark
 ;			points.
 ;
-;	noverbose:	If set, turns off the notification that cursor
+;	silent:		If set, turns off the notification that cursor
 ;                       movement is required.
 ;
 ;	xor_graphics:	If set, grahics are drawn using the XOR function.
@@ -79,7 +79,7 @@
 ;=============================================================================
 function pg_drag, object_ptd, draw=draw, xor_graphics=xor_graphics, $
                   dtheta=dtheta, axis_ptd=axis_ptd, sample=_sample, move=move, $
-		  symbol=symbol, noverbose=noverbose, color=color, fn=fn, data=data
+		  symbol=symbol, silent=silent, color=color, fn=fn, data=data
 
  if(NOT keyword_set(_sample)) then sample=5 $
  else sample=_sample
@@ -178,7 +178,7 @@ function pg_drag, object_ptd, draw=draw, xor_graphics=xor_graphics, $
  ax = axis[0] & ay = axis[1]
 
  tvcursor, /set
- if(NOT keyword_set(noverbose)) then $
+ if(NOT keyword_set(silent)) then $
    begin
     nv_message, 'Drag pointing using cursor and mouse buttons-', /continue
     nv_message, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept', /continue

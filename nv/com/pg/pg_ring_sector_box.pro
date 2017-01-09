@@ -39,7 +39,7 @@
 ; xor_graphics:     If set, the sector outline is drawn and erased using xor
 ;                   graphics instead of a pixmap.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;       sample:     Grid sampling, default is 1.
 ;
@@ -69,13 +69,13 @@ function pg_ring_sector_box, p, $
                          win_num=win_num, $
                          restore=restore, button=button, $
                          p0=p0, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose
+                         color=color, silent=silent
 
 
  ;----------------------------------------------------------------
  ; Wait for a click and call the appropriate routine
  ;----------------------------------------------------------------
- if(NOT keyword_set(noverbose)) then nv_message, /con, 'Left:ortho, Right:oblique'
+ if(NOT keyword_set(silent)) then nv_message, /con, 'Left:ortho, Right:oblique'
 
  if(keyword_set(p0)) then $
   begin
@@ -99,7 +99,7 @@ function pg_ring_sector_box, p, $
                          win_num=win_num, $
                          restore=restore, $
                          p0=[px,py], xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose)
+                         color=color, silent=silent)
 
 	;----------------------------------------
 	; right: oblique
@@ -109,7 +109,7 @@ function pg_ring_sector_box, p, $
                          win_num=win_num, $
                          restore=restore, $
                          p0=[px,py], xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose)
+                         color=color, silent=silent)
 	else:
  endcase
 

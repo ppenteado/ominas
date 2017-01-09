@@ -50,7 +50,7 @@
 ;
 ;-
 ;=============================================================================
-function arr_create_descriptors, n, crd=crd0, ard=ard0, $
+function arr_create_descriptors, n, crd=_crd0, ard=_ard0, $
 @arr__keywords.include
 end_keywords
 @core.include
@@ -59,6 +59,8 @@ end_keywords
  ard = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
+   if(keyword_set(_ard0)) then ard0 = _ard0[i]
 
    ard[i] = ominas_array(i, crd=crd0, ard=ard0, $
 @arr__keywords.include

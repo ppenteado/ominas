@@ -311,6 +311,7 @@ pro ominas_data__define
 	transient_keyvals_p:	nv_ptr_new(), $	; Keyvals parsed per-command
 	last_translator:	lonarr(2), $	; Description of last translator
 						; called
+
 	sampling_fn:		'', $		; Optional sampling function.
 	dim_fn:			'', $		; Optional dimension function.
 
