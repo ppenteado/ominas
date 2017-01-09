@@ -388,7 +388,7 @@ Mission Packages:
 	5) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
 	6) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
-           Subsetted, about  GB as of Jan/2017
+           Subsetted, about 8 GB as of Jan/2017
 Data:
         7) NAIF Generic Kernels . . . . . . . . .  $genst
            About 22 GB as of Dec/2016
