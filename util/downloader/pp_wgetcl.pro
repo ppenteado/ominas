@@ -36,8 +36,8 @@
 pro pp_wgetcl
 compile_opt idl2,logical_predicate
 a=pp_command_line_args_parse()
-print,a.keywords.tostruct(),/impl
-print,a.arguments,/impl
+;print,a.keywords.tostruct(),/impl
+;print,a.arguments,/impl
 if a.argcount lt 1 then return
 if a.keycount then begin
   if a.keywords.haskey('timestamps') then begin
