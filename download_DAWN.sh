@@ -5,7 +5,7 @@
 
 
 echo "This script wiill download a subset of kernels from the PDS Dawn archive ("\
-"http://naif.jpl.nasa.gov/pub/naif/DAWN/kernels/. As of December/2016, this adds to  GB."
+"http://naif.jpl.nasa.gov/pub/naif/DAWN/kernels/. As of December/2016, this adds to 8 GB."
 
 read -rp "Continue? " ans
 case $ans in
