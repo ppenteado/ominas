@@ -72,10 +72,10 @@
 
 shtype="sh"
 
-yes="INSTALLED"
-no="NOT INSTALLED"
-st="SET"
-ns="NOT SET"
+yes="CONFIGURED"
+no="NOT CONFIGURED"
+st="CONFIGURED"
+ns="NOT CONFIGURED"
 cwd=$PWD
 
 #------------------------------------------------------------------------#
@@ -345,7 +345,7 @@ printf "OMINAS files located in $OMINAS_DIR\n"
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
 corest=`pkst ${OMINAS_DIR}/config/tab/`
-demost="NOT SET"
+demost=$no
 DFLAG="false"
 if [ ! -z $OMINAS_DEMO ]; then
  demost="SET"
