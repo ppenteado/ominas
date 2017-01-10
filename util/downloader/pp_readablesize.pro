@@ -39,7 +39,7 @@ ret=dblarr(n_elements(sizes))
 units=strarr(n_elements(sizes))
 strs=units
 foreach sz,sizes,isz do begin
-  tmp=alog2(double(sz))
+  tmp=alog(double(sz))/alog(2d0)
   case 1 of
     tmp lt 10d0: begin
       szf=1d0
