@@ -195,16 +195,20 @@ function ppkg()
 	script="ominas_env_${mis[$1]}.$shtype"
 	case ${mis[$1]} in 
 		"cas")
-			kername="CASSINI"	;;
+			kername="CASSINI"
+                        longname="Cassini"	;;
 		"gll")
-			kername="GLL"	;;
+			kername="GLL"
+                        longname="Galileo"	;;
 		"vgr")
-			kername="VOYAGER"	;;
+			kername="VOYAGER"
+                        longname="Voyager"	;;
 		"dawn")
-			kername="DAWN"	;;
+			kername="DAWN"
+                        longname="Dawn"	;;
 		*)
 	esac
-	pkins $script $kername
+	pkins $script $kername $longname
 }
 
 function dins()
@@ -268,16 +272,16 @@ function pkins()
         if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
           printf "Installing package $1...\n"
           dstr=""
-	  read -rp "Would you like to add the $2 kernels to the environment? " ans
+	  read -rp "Would you like to add the $3 kernels to the environment? " ans
 	  case $ans in
 		[Yy]*)
-                        read -rp "Do you need to download the $2 kernels from PDS? " ansk
+                        read -rp "Do you need to download the $3 kernels from PDS? " ansk
                         case $ansk in
                           [Yy]*)
-                            read -rp "Please enter the location where the donwloaded $2 kernel pool will be placed: " datapath
+                            read -rp "Please enter the location where the donwloaded $3 kernel pool will be placed: " datapath
                             source ./download_$2.sh $datapath ;;
                           *)
-			    read -rp "Please enter the location of your existing $2 kernel pool: " datapath
+			    read -rp "Please enter the location of your existing $3 kernel pool: " datapath
 			    if ! [[ -d $datapath ]]; then
 			    	setdir $2
 			    fi
