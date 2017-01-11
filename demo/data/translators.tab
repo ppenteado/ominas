@@ -1,8 +1,7 @@
 # instrument	input			output		keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  CAS_ISSNA	dh_std_input		dh_std_output		format=cas
-	-	cas_spice_input		cas_spice_output \
+  CAS_ISSNA	cas_spice_input		cas_spice_output \
 							klist=demo.kernels \
 #							ck_in=auto \
 #							spk_in=auto \
@@ -13,12 +12,8 @@
 #							sck_in=auto \
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
-	-       station_input                   -
-	-       ring_input			-
-	-  	strcat_tycho2_input		-		/j2000
 
-  CAS_ISSWA	dh_std_input		dh_std_output		format=cas
-	-	cas_spice_input		cas_spice_output \
+  CAS_ISSWA	cas_spice_input		cas_spice_output \
 							klist=demo.kernels \
 #							ck_in=auto \
 #							spk_in=auto \
@@ -29,9 +24,6 @@
 #							sck_in=auto \
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
-        -       station_input                   -
-	-       ring_input			-
-	-  	strcat_tycho2_input		-		/j2000
 
 
 

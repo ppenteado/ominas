@@ -1,1 +1,0 @@
-.rnew tvgr.pro

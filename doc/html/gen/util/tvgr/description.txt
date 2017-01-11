@@ -1,4 +1,0 @@
-TVGR Graph Display System
-=========================
-
- The TVGR system manages display windows for plotting graphs.  

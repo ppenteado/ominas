@@ -187,7 +187,8 @@ im = im - smooth(im, 15)
   begin
    catch, err
    if(keyword__set(err)) then return, 0
-   yy = gauss2d_fit(smooth(im,2), coeff, /tilt)
+;   yy = gauss2d_fit(smooth(im,2), coeff, /tilt)
+   yy = gauss2dfit(smooth(im,2), coeff, /tilt)
    catch, /cancel
 
    wx = coeff[2]

@@ -1,9 +1,0 @@
-.rnew exd_create_header.pro
-.rnew exd_create_summary.pro
-.rnew exd_create_topic_summary.pro
-.rnew exd_get_description.pro
-.rnew exd_get_doc.pro
-.rnew exd_identity.pro
-.rnew exd_template.pro
-.rnew exd_write_summary.pro
-.rnew extract_doc.pro

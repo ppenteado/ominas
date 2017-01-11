@@ -3620,7 +3620,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Displays all planes in sequence using xinteranimate1.  This option is
+;	Displays all planes in sequence using xinteranimate.  This option is
 ;	useful or blinking as well.
 ;
 ;
@@ -3656,7 +3656,7 @@ pro grim_menu_plane_sequence_event, event
  widget_control, /hourglass
 
  geom = widget_info(grim_data.draw, /geom)
- xinteranimate1, set=[geom.xsize, geom.ysize, n]
+ xinteranimate, set=[geom.xsize, geom.ysize, n]
  tvim, /noplot, /silent, $
            /new, /inherit, xsize=geom.xsize, ysize=geom.ysize, /pixmap
  pixmap = !d.window
@@ -3679,7 +3679,7 @@ pro grim_menu_plane_sequence_event, event
 
    grim_refresh, grim_data, plane=planes[i], wnum=pixmap, /no_title
 
-   xinteranimate1, frame=i, window=pixmap, /show
+   xinteranimate, frame=i, window=pixmap, /show
   end
 
  grim_print, grim_data, ''
@@ -3690,7 +3690,7 @@ pro grim_menu_plane_sequence_event, event
  wdelete, pixmap
  grim_wset, grim_data, grim_data.wnum
 
- xinteranimate1
+ xinteranimate
 end
 ;=============================================================================
 
@@ -3738,7 +3738,7 @@ pro grim_menu_plane_dump_event, event
  widget_control, /hourglass
 
  geom = widget_info(grim_data.draw, /geom)
- xinteranimate1, set=[geom.xsize, geom.ysize, n]
+ xinteranimate, set=[geom.xsize, geom.ysize, n]
  tvim, /noplot, /silent, $
            /new, /inherit, xsize=geom.xsize, ysize=geom.ysize, /pixmap
  pixmap = !d.window

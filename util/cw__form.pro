@@ -384,13 +384,12 @@ pro CW__FORM_BUILD, parent, desc, cur, ids, tags, lasttag   ; Spitale, 7/2002
             endif else result = execute('sval=fix('+temp+')')
 
 
-
-          new = cw__bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
+          new = cw_bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
 		        EXCLUSIVE = exclusive, NONEXCLUSIVE = 1-exclusive, $
 		        FRAME=frame, NO_RELEASE = no_release, $
                         SET_VALUE = sval, _EXTRA=extra)
         endif else begin
-           new = cw__bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
+           new = cw_bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
 		        EXCLUSIVE = exclusive, NONEXCLUSIVE = 1-exclusive, $
 		        FRAME=frame, NO_RELEASE = no_release, _EXTRA=extra)
         endelse
