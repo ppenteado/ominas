@@ -373,18 +373,25 @@ cat <<PKGS
 	Current OMINAS configuration settings
 Required:
 	1) OMINAS Core  . . . . . . . . . . . . .  $corest
-           Contains the OMINAS code. If you select only one of the other packages, this will be included.
+           Contains the OMINAS code. If you select only one 
+           of the other packages, this will be included.
 Optional packages:
         2) Demo package . . . . . . . . . . . . .  $demost
-           Contains the demo scripts and the data required to run then.
-           These files are always present (in ominas/demo), this option is to set up the
-           environment so that the demos can be run.
+           Contains the demo scripts and the data required 
+           to run then.
+           These files are always present (in ominas/demo), 
+           this option is to set up the environment so that
+           the demos can be run.
 Mission Packages:
-           Kernels used for each mission's position and pointing data. If you do not already have them,
-           an option to download them from PDS will be provided. If you already have them,
-           you will need to provide the path to your kernel files.
-           Note: the NAIF Generic Kernels (one of the optional data packages) are not required for the
-           missions, they already contain a copy the subset of the generic kernel files they need.
+           Kernels used for each mission's position and 
+           pointing data. If you do not already have them,
+           an option to download them from PDS will be provided.
+           If you already have them, you will need to provide
+           the path to your kernel files.
+           Note: the NAIF Generic Kernels (one of the optional 
+           data packages) are not required for the missions, they
+           already contain a copy the subset of the generic kernel
+           files they need.
 	3) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
            Subsetted, about 16 GB as of Dec/2016
 	4) Galileo (GLL) . . . . . . . . . . . . . ${mstatus[1]}
@@ -402,7 +409,8 @@ Data:
 	11) GSC star catalog . . . . . . . . . . . ${dstatus[3]}
 	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[4]}
 	13) UCACT star catalog . . . . . . . . . . ${dstatus[5]}
-For more information, see https://ppenteado.github.io/ominas_doc/demo/install_guide.html
+For more information, see
+https://ppenteado.github.io/ominas_doc/demo/install_guide.html
 PKGS
 
 read -rp "Modify Current OMINAS configuration (exit/no/ 1 2 ...)?  " ans
