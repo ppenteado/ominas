@@ -234,8 +234,15 @@ function dins()
 		*)
 			return 1
 		esac
-	fi		
-	read -rp "Please enter the path to $dat (if not known, press enter): " datapath
+	fi
+        read -rp "Do you need to download the $dat data from CDS? " ansk
+          case $ansk in
+           [Yy]*)
+             read -rp "Please enter the location where the donwloaded $dat data will be placed: " datapath
+             source ./download_$dat.sh $datapath ;;		
+           *)
+	     read -rp "Please enter the path to $dat (if not known, press enter): " datapath
+          esac 
 	if ! [[ -d $datapath ]]; then
 		setdir $dat
 	fi
