@@ -146,19 +146,27 @@ if ~file_test(self.ldir,/directory) then file_mkdir,self.ldir
 pu=parse_url(self.baseurl)
 
 self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
-  url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self)
+  url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,ftp_connection_mode=0)
 
 if strmatch(self.baseurl,'*/') then begin ;if url is a directory
-  ind=self.iu.get(/string_array)
-  indj=strjoin(ind,' ')
-  tmp=strtrim(((stregex(indj,'<title>(.+)</title>',/extract,/subexpr))[1]),2)
-  if stregex(tmp,'^index of ',/fold_case,/bool) then begin
-    w=where(stregex(ind,'<a[[:blank:]]+href[[:blank:]]*="[^"]+"[^>]*>',/bool))
-    indl=ind[w];lines with links
-    links=reform((stregex(indl,'<a[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))[1,*])
-    links=links[where(~stregex(links,'^(\/|\?)',/bool),/null)]
-    foreach link,links do self.retrieve,link
-  endif
+  if strlowcase(pu.scheme) eq 'ftp' then begin
+    ind=self.iu.getftpdirlist()
+    inds=(strsplit(ind,/extract)).toarray()
+    links=inds[*,-1]
+    lm=inds[*,-4]+' '+inds[*,-3]+' '+inds[*,-2]
+    foreach link,links,il do self.retrieve,link,lm=lm[il]
+  endif else begin
+    ind=self.iu.get(/string_array)
+    indj=strjoin(ind,' ')
+    tmp=strtrim(((stregex(indj,'<title>(.+)</title>',/extract,/subexpr))[1]),2)
+    if stregex(tmp,'^index of ',/fold_case,/bool) then begin
+      w=where(stregex(ind,'<a[[:blank:]]+href[[:blank:]]*="[^"]+"[^>]*>',/bool))
+      indl=ind[w];lines with links
+      links=reform((stregex(indl,'<a[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))[1,*])
+      links=links[where(~stregex(links,'^(\/|\?)',/bool),/null)]
+      foreach link,links do self.retrieve,link
+    endif
+  endelse
 endif else begin
   link=file_basename(pu.path)
   self.iu.setproperty,url_path=(stregex(pu.path,'(.*)'+link+'$',/extract,/subexpr))[1]
@@ -173,7 +181,7 @@ end
 ;
 ; :Author: Paulo Penteado (`http://www.ppenteado.net <http://www.ppenteado.net>`)
 ;-
-pro pp_wget::retrieve,link
+pro pp_wget::retrieve,link,lm=lm
 compile_opt idl2,logical_predicate,hidden
 if ~strmatch(link,'*/') then begin ;if entry is not a directory
   pu=parse_url(self.baseurl)
@@ -187,7 +195,7 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
     return
   endif
   print,'downloading '+(self.bdir ? (self.bdir+'/') : '')+link
-  self.last_modified=''
+  self.last_modified=n_elements(lm) ? lm : ''
   self.content_length=0LL
   fi=file_info(self.ldir+link)
   if (fi.exists && self.clobber eq 2) then begin
@@ -204,43 +212,64 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
     endelse
   endif
   setts=1
-  catch,err
-  if err then begin
-    catch,/cancel
-    if (err ne -1005) && (err ne -1006) && (~strmatch(!error_state.msg,'*Cancel request detected*',/fold_case)) then begin
-      print,'error downloading file ',link,': ',err,' ',!error_state.msg
-      return
-    endif else setts=0 
-  endif else begin
-    g=self.iu.get(filename=self.ldir+link)
-  endelse
+  
+    catch,err
+    if err then begin
+      catch,/cancel
+      if (err ne -1005) && (err ne -1006) && (~strmatch(!error_state.msg,'*Cancel request detected*',/fold_case)) then begin
+        print,'error downloading file ',link,': ',err,' ',!error_state.msg
+        return
+      endif else setts=0
+    endif else begin
+      ng=0B
+      if self.last_modified then begin
+        if (~self.clobber) && self.local_file_exists then begin
+          tml=self.local_file_tm
+          tmrj=pp_parse_date(self.last_modified)
+          tmlj=julday(1,1,1970)-0.5d0+tml/86400d0
+          if (abs(tmrj-tmlj) lt 1d0/86400d0) then begin
+            print,'This file is already present locally with same timestamp. Skipping'
+            ng=1B
+          endif
+        endif
+      endif
+      if ~ng then g=self.iu.get(filename=self.ldir+link)
+    endelse
+  
   ;Set the timestamp
   if self.last_modified then begin
-    tm=stregex(self.last_modified,'Last-Modified:[[:blank:]]+(.*)',/subexpr,/extract)
-    tm=tm[1]
+    if n_elements(lm) then tm=self.last_modified else begin
+      tm=stregex(self.last_modified,'Last-Modified:[[:blank:]]+(.*)',/subexpr,/extract)
+      tm=tm[1]
+    endelse
     if tm then begin
+      tmrj=pp_parse_date(tm)
       if setts then begin
         if ~strmatch(!version.os_family,'*win*',/fold) then begin ;linux-like systems
-          spawn,'touch -d "'+tm+'" '+self.ldir+link
+          caldat,tmrj,mon,day,yr,h,m,s
+          tmstr=string(yr,mon,day,h,m,s,format='(I04,I02,I02,I02,I02,".",I02)')
+          mon=(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])[mon-1]
+          tmstr=string(day,mon,yr,h,m,s,format='(I02," ",A3," ",I04," ",I02,":",I02,":",I02," GMT")')
+          spawn,'touch -d "'+tmstr+'" '+self.ldir+link
         endif else begin ;Windows systems
           spawn,'powershell -WindowStyle Hidden "$(Get-Item '+self.ldir+link+').lastwritetime=$(Get-Date '+"'"+tm+"'"+')"',/noshell
         endelse
       endif
-      tmrj=pp_parse_date(tm)
       tsf=self.absolute ? file_expand_path(self.ldir+link) : self.bdir+link
       (self.timestamps)[tsf]=tmrj
     endif
   endif
-endif else if self.recursive then begin ; if entry is a directory
-  print,'Entering directory ',link
-  iw=pp_wget(self.baseurl+'/'+link,$
-    timestamps=self.timestamps,clobber=self.clobber,pattern=self.pattern,$
-    recursive=self.recursive,localdir=self.localdir+path_sep()+link+path_sep(),$
-    bdir=self.bdir ? self.bdir+'/'+link : link,xpattern=self.xpattern,absolute=self.absolute)
-  iw.geturl
-  print,'Done with directory ',link
-endif else print,'Recursive mode not set, skipping directory ',link
-
+endif else begin
+  if self.recursive then begin ; if entry is a directory
+    print,'Entering directory ',link
+    iw=pp_wget(self.baseurl+'/'+link,$
+      timestamps=self.timestamps,clobber=self.clobber,pattern=self.pattern,$
+      recursive=self.recursive,localdir=self.localdir+path_sep()+link+path_sep(),$
+      bdir=self.bdir ? self.bdir+'/'+link : link,xpattern=self.xpattern,absolute=self.absolute)
+    iw.geturl
+    print,'Done with directory ',link
+  endif else print,'Recursive mode not set, skipping directory ',link
+endelse
 end
 
 ;+
