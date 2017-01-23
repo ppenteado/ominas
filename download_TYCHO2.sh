@@ -21,4 +21,4 @@ mkdir -p ~/.ominas/timestamps/TYCHO2
 ./pp_wget "${baseurl}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
 
 #unpack the catalog files
-./unpack_tycho2 "$@"
+idl -e '!path+=":./util/downloader"& unpack_tycho2' -args $@
