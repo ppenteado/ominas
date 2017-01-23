@@ -1,30 +1,19 @@
-# instrument	input			output		keyword arguments
+# Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  TIMER_NA	dh_std_input		dh_std_output
-	-       station_input			-
-	-       array_input			-
-	-	timer_spice_input	timer_spice_output \
+  TIMER_NA	timer_spice_input	timer_spice_output \
 			                          klist=timer.kernels \
 							pck_in=auto \
 							lsk_in=auto \
 							xk_in=extra.tpc  \
 							/spk_strict
 
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		/j2000
-  TIMER_WA	dh_std_input		dh_std_output
-	-       station_input			-
-	-       array_input			-
-	-	timer_spice_input	timer_spice_output \
+
+  TIMER_WA	timer_spice_input	timer_spice_output \
 			                          klist=timer.kernels \
 							pck_in=auto \
 							lsk_in=auto \
 							xk_in=extra.tpc  \
 							/spk_strict
 
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		/j2000
 

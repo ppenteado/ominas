@@ -1,10 +1,7 @@
-# instrument	input			output		keyword arguments
+# Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  CAS_ISSNA	dh_std_input		dh_std_output
-	-       station_input			-
-	-       array_input			-
-	-	cas_spice_input		cas_spice_output \
+  CAS_ISSNA	cas_spice_input		cas_spice_output \
 			                          klist=cassini.kernels \
 							ck_in=auto \
 							pck_in=auto \
@@ -15,15 +12,8 @@
 							xk_in=extra.tpc  \
 							/spk_strict
 
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		/j2000
-#	-  	strcat_tycho2_input		-		/j2000
 
-  CAS_ISSWA	dh_std_input		dh_std_output
-	-       station_input			-
-	-       array_input			-
-	-	cas_spice_input		cas_spice_output \
+  CAS_ISSWA	cas_spice_input		cas_spice_output \
 			                          klist=cassini.kernels \
 							ck_in=auto \
 							pck_in=auto \
@@ -33,10 +23,20 @@
 							sck_in=auto \
 							xk_in=extra.tpc  \
 							/spk_strict
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		/j2000
-#	-  	strcat_tycho2_input		-		/j2000
 
- CAS_RADAR     dh_std_input            dh_std_output
-       -       cas_radar_input			-
+  VIMS_IR       vims_spice_input         vims_spice_output \
+                                                  klist=cassini.kernels \
+                                                        ck_in=auto \
+                                                        pck_in=auto \
+                                                        lsk_in=auto \
+                                                        fk_in=auto \
+                                                        ik_in=auto \
+                                                        sck_in=auto \
+                                                        xk_in=extra.tpc  \
+                                                        /spk_strict \
+                                                        spk_in=auto
+
+
+
+
+ CAS_RADAR     cas_radar_input			-

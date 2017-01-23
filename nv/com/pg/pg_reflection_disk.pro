@@ -88,18 +88,16 @@ function pg_reflection_disk, cd=cd, od=od, dkx=dkx, gd=gd, object_ptd, $
 
  if(NOT keyword_set(od)) then $
   if(keyword_set(cd)) then od = cd $
-  else nv_message, name='pg_reflection_disk', 'No observer descriptor.'
+  else nv_message, 'No observer descriptor.'
 
 
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
  pgs_count_descriptors, od, nd=n_observers, nt=nt
- if(n_observers GT 1) then $
-    nv_message, name='pg_reflection_disk', 'Only one observer descriptor allowed.'
+ if(n_observers GT 1) then nv_message, 'Only one observer descriptor allowed.'
  pgs_count_descriptors, dkx, nd=n_disks, nt=nt1
- if(nt NE nt1) then $
-                 nv_message, name='pg_reflection_disk', 'Inconsistent timesteps.'
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
  ;---------------------------------------------------

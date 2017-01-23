@@ -132,7 +132,7 @@ function dat_data, dd, samples=_samples, offset=offset, $
  ;-------------------------------------------------------------------------
  if(keyword_set(samples)) then $
   begin
-   sample0 = data_archive_get(_dd.sample_dap, _dd.dap_index)
+   sample0 = *_dd.sample_p
    if(sample0[0] NE -1) then $
     begin
      int = set_intersection(long(sample0), long(samples), ii, jj, kk)
@@ -156,7 +156,7 @@ function dat_data, dd, samples=_samples, offset=offset, $
 
 
  ;-------------------------------------------------------------------------
- ; compute data ranges -- not accurate if data array is being subsampled
+ ; compute data ranges -- not reliable if data array is being subsampled
  ;-------------------------------------------------------------------------
  max = max(data)
  min = min(data)

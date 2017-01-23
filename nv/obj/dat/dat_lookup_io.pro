@@ -59,7 +59,7 @@ pro dat_lookup_io, filetype, input_fn, output_fn, keyword_fn, silent=silent
    dat_read_config, 'NV_IO', stat=stat, $
               nv_state.io_table_p, nv_state.io_filenames_p
  if(stat NE 0) then $
-   nv_message, name='dat_lookup_io', /con, $
+   nv_message, /con, $
      'No I/O table.', $
        exp=['The I/O table specifies the names of data I/O programs.', $
             'Without this table, OMINAS cannot read or write data files.']

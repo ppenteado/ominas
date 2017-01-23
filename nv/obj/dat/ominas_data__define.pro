@@ -61,8 +61,7 @@ end_keywords)
   begin
    self.instrument = dat_detect_instrument(header, udata, filetype, silent=silent)
    if(self.instrument EQ '') then $
-              nv_message, /continue, $
-                     'Unable to detect instrument.', name='data_descriptor::init'
+                   nv_message, /continue, 'Unable to detect instrument.'
   end
 
 
@@ -76,13 +75,11 @@ end_keywords)
            silent=silent
 
    if(input_translators[0] EQ '') then $
-        nv_message, /continue, 'No input translators available.', $
-                                                    name='nv_init_descriptor' $
+                nv_message, /continue, 'No input translators available.' $
    else self.input_translators_p=nv_ptr_new(input_translators)
 
    if(output_translators[0] EQ '') then $
-       nv_message, /continue, 'No output translators available.', $
-                                                    name='nv_init_descriptor' $
+               nv_message, /continue, 'No output translators available.' $
    else self.output_translators_p=nv_ptr_new(output_translators)
 
    if(keyword_set(input_keyvals)) then $
@@ -140,13 +137,8 @@ end_keywords)
  ;-----------------------
  ; data and header
  ;-----------------------
- dap = self.sample_dap
- data_archive_set, dap, -1, nhist=nhist
- self.sample_dap = dap
-
- dap = self.order_dap
- data_archive_set, dap, -1, nhist=nhist
- self.order_dap = dap
+ self.sample_p = nv_ptr_new(-1)
+ self.order_p = nv_ptr_new(-1)
 
  if(defined(data)) then dat_set_data, self, data, abscissa=abscissa, /silent
 
@@ -290,10 +282,11 @@ pro ominas_data__define
     { ominas_data, inherits ominas_core, $
 	data_dap:		nv_ptr_new(), $	; Pointer to the data archive
 	abscissa_dap:		nv_ptr_new(), $	; Pointer to the abscissa archive
-	sample_dap:		nv_ptr_new(), $	; Pointer to the sample archive
-	order_dap:		nv_ptr_new(), $	; Pointer to the sample load order
 	header_dap:		nv_ptr_new(), $	; Pointer to the generic header archive
         dap_index:		0, $		; data archive index
+
+	sample_p:		nv_ptr_new(), $	; Pointer to the sample array
+	order_p:		nv_ptr_new(), $	; Pointer to the sample load order array
 
 	cache:			0l, $		; Max. cache size for data array (Mb)
 						;  Doesn't apply to maintenance 0
@@ -318,6 +311,7 @@ pro ominas_data__define
 	transient_keyvals_p:	nv_ptr_new(), $	; Keyvals parsed per-command
 	last_translator:	lonarr(2), $	; Description of last translator
 						; called
+
 	sampling_fn:		'', $		; Optional sampling function.
 	dim_fn:			'', $		; Optional dimension function.
 

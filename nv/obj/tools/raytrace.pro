@@ -189,7 +189,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
 
    src_hit_indices = hit_indices
   end $
- else nv_message, name='raytrace', 'Either cd or sbx must be specified. '
+ else nv_message, 'Either cd or sbx must be specified. '
 
 
  ;---------------------------------------------

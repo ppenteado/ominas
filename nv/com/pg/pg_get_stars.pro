@@ -136,8 +136,7 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(name)) then tr_first = 1
 
-;   if(NOT keyword__set(od)) then nv_message, $
-;                               name='pg_get_stars', 'No observer descriptor.'
+;   if(NOT keyword__set(od)) then nv_message,'No observer descriptor.'
 
    sd=dat_get_value(dd, 'STR_DESCRIPTORS', key1=od, key2=sund, key4=_sd, $
                  key5=corners, key6=radec, key7=time, key8=name, trs=trs, $

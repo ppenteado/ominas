@@ -32,6 +32,10 @@
 ;  OUTPUT: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	CAM_NFILTERS:	Sets the maximum number of filters.
+;
+;
 ; RETURN:
 ;	Current nfilters value.
 ;

@@ -103,7 +103,7 @@ function sedr_vgr_input, dd, keyword, values=values, status=status, $
  _size = size(sedr)
  if(_size[2] NE 8) then $
   begin
-   nv_message, name='sedr_vgr_input', 'No SEDR/SEDRUPD match', /con
+   nv_message, 'No SEDR/SEDRUPD match', /con
    status = -1
    return, 0
   end
@@ -115,7 +115,7 @@ function sedr_vgr_input, dd, keyword, values=values, status=status, $
  _size = size(bconst)
  if(_size[2] NE 8) then $
   begin
-   nv_message, name='sedr_vgr_input', 'No Body Constant data for Target', /con
+   nv_message, 'No Body Constant data for Target', /con
    status = -1
    return, 0
   end

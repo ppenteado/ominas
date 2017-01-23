@@ -13,21 +13,21 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       targ_bx = (ltcorr, obs_bx, targ_bx0, c=c)
+;       ltcorr, obs_bx, targ_bx0, c=c
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	obs_bx:  Any subclass of BODY describing the observer.
 ;
-;	targ_bx0: Array(nt) of any subclass of BODY describing the targets.
+;	targ_bx: Array(nt) of any subclass of BODY describing the targets.
 ;
 ;  OUTPUT:  NONE
 ;
 ;
 ; KEYOWRDS:
 ;  INPUT: 
-;	c:	Speed of light.
+;	c:		Speed of light.
 ;
 ;	iterate:	If set, then the routine will iterate to refine
 ;			the solution.
@@ -35,11 +35,12 @@
 ;	epsilon:	Stopping criterion: maximum allowable timing error.
 ;			Default is 1d-7.
 ;
+;	invert:		If set, the inverse correction is performed.
+;
 ;  OUTPUT: NONE
 ;
 ;
-; RETURN: 
-;	New target descriptors.  
+; RETURN: NONE 
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -47,7 +48,49 @@
 ;
 ;-
 ;=============================================================================
-function ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate
+pro ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate, invert=invert
+
+ if(NOT keyword_set(epsilon)) then epsilon = 1d-7
+ if(NOT keyword_set(iterate)) then epsilon = 1d100
+
+ nt = n_elements(targ_bx)
+
+ t = make_array(nt, val=bod_time(obs_bx))
+ pos = bod_pos(obs_bx) ## make_array(nt, val=1d)
+
+ ltime = 0d
+
+ done = 0
+ w = lindgen(nt)
+ while(NOT done) do $
+  begin
+   ;-------------------------------------------------------------------
+   ; compare current center-to-center light time to actual time offset
+   ; require time offset of zero for inverse correction
+   ;-------------------------------------------------------------------
+   range = v_mag(pos - transpose(bod_pos(targ_bx)))
+   if(NOT keyword_set(invert)) then ltime = range/c
+   dt = (t - bod_time(targ_bx)) - ltime
+
+   ;------------------
+   ; adjust targets 
+   ;------------------
+   if(w[0] NE -1) then $
+    begin
+     nw = n_elements(w)
+     for i=0, nw-1 do targ_bx[w[i]] = cor_evolve(targ_bx[w[i]], dt[w[i]], /copy)
+    end $
+   else done = 1
+
+   w = where(abs(dt) GT epsilon)
+  end
+
+end
+;=============================================================================
+
+
+;=============================================================================
+function ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate, copy=copy
 
  if(NOT keyword_set(epsilon)) then epsilon = 1d-7
  if(NOT keyword_set(iterate)) then epsilon = 1d100
@@ -76,7 +119,7 @@ function ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate
    if(w[0] NE -1) then $
     begin
      nw = n_elements(w)
-     for i=0, nw-1 do targ_bxt[w[i]] = cor_evolve(targ_bx[w[i]], dt[w[i]])
+     for i=0, nw-1 do targ_bxt[w[i]] = cor_evolve(targ_bx[w[i]], dt[w[i]], copy=copy)
      nv_free, targ_bx[w]
      targ_bx[w] = targ_bxt[w]
     end $

@@ -49,7 +49,7 @@
 ; xor_graphics:     If set, the sector outline is drawn and erased using xor
 ;                   graphics instead of a pixmap.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;        nodsk:     If set, image points will not be included in the output 
 ;                   POINT.
@@ -84,7 +84,7 @@ function pg_ring_sector_rad, cd=cd, dkx=dkx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=p0, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk
+                         color=color, silent=silent, nodsk=nodsk
 
  if(NOT keyword_set(win_num)) then win_num=!window
  if(NOT keyword_set(color)) then color=!p.color
@@ -102,10 +102,10 @@ function pg_ring_sector_rad, cd=cd, dkx=dkx, gd=gd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(dkx) GT 1) then nv_message, name='pg_ring_sector_rad', $
-                          'No more than one ring descriptor may be specified.'
- if(n_elements(cds) GT 1) then nv_message, name='pg_ring_sector_rad', $
-                        'No more than one camera descriptor may be specified.'
+ if(n_elements(dkx) GT 1) then $
+                nv_message, 'No more than one ring descriptor may be specified.'
+ if(n_elements(cds) GT 1) then $
+                nv_message, 'No more than one camera descriptor may be specified.'
  rd = dkx[0]
 
  ;-----------------------------------
@@ -123,11 +123,8 @@ function pg_ring_sector_rad, cd=cd, dkx=dkx, gd=gd, $
 
 
 
- if(NOT keyword_set(noverbose)) then $
-  begin
-   nv_message, 'Drag and release to define ring sector', $
-                           name='pg_ring_sector_rad', /continue
-  end
+ if(NOT keyword_set(silent)) then $
+   nv_message, 'Drag and release to define ring sector', /continue
 
 
  ;-----------------------------------

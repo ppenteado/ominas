@@ -25,6 +25,10 @@
 ; KEYWORDS: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	XIDL_ARGS:	Stores the arguments to be passed into idl.
+;
+;
 ; SIDE EFFECTS:
 ;       The xidl_block common block is modified.
 ;

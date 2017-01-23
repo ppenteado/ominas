@@ -53,9 +53,9 @@ pro dat_undo, dd, noevent=noevent
 
  data = data_archive_get(_dd.data_dap, ii+1)
  if(NOT keyword_set(data)) then return
+;if(NOT data_archive_test(_dd.data_dap, ii+1) then, return
 
  _dd.dap_index = _dd.dap_index + 1
- *_dd.dim_p = size(data, /dim)
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

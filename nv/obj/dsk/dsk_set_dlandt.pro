@@ -48,8 +48,7 @@ pro dsk_set_dlandt, dkd, dlandt, frame_bd
 @core.include
  
 
- if(NOT keyword_set(frame_bd)) then $
-             nv_message, name='dsk_set_dlandt', 'frame_bd required.'
+ if(NOT keyword_set(frame_bd)) then nv_message, 'frame_bd required.'
 
  orb_set_dlandt, dkd, frame_bd, dlandt
 

@@ -1,6 +1,0 @@
-GRIM Command-Line Interface
-===========================
-
-The grim command-line interface allows the sets to manipulate data sets
-alongside GRIM.  INGRID may be used to obtain and replace GRIM's descriptors,
-and gr_draw applies new GRIM overlays.

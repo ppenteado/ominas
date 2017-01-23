@@ -53,7 +53,7 @@
 ;      corners:     If set, then p0 and p1 are taken as the corners of
 ;                   the box, and the user is not prompted to select one.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;
 ;  OUTPUT:
@@ -72,7 +72,7 @@ function pg_image_sector, sample=sample, $
                          win_num=win_num, width=width, $
                          restore=restore, $
                          p0=_p0, p1=p1, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, corners=corners
+                         color=color, silent=silent, corners=corners
 
  device, cursor_standard=30
 
@@ -87,9 +87,8 @@ function pg_image_sector, sample=sample, $
  ;-----------------------------------
  ; initial point
  ;-----------------------------------
- if(NOT keyword_set(noverbose)) then $
-              nv_message, /con, name='pg_image_sector', $
-                              'Left:box scan, Right:line scan'
+ if(NOT keyword_set(silent)) then $
+                      nv_message, /con, 'Left:box scan, Right:line scan'
 
  if(NOT keyword_set(_p0)) then $
   begin
@@ -102,11 +101,8 @@ function pg_image_sector, sample=sample, $
  if(keyword_set(p1)) then points = transpose([transpose(_p0),transpose(p1)]) $
  else $
   begin
-   if(NOT keyword_set(noverbose)) then $
-    begin
-     nv_message, 'Drag and release to define length of image sector', $
-                                       name='pg_image_sector', /continue
-    end
+   if(NOT keyword_set(silent)) then $
+     nv_message, 'Drag and release to define length of image sector', /continue
 
 
    ;----------------------------------------------------------
@@ -122,11 +118,8 @@ function pg_image_sector, sample=sample, $
    ;----------------------------------------------------------
    if(NOT keyword_set(width)) then $
     begin
-     if(NOT keyword_set(noverbose)) then $
-      begin
-       nv_message, 'Drag and click to define width of image sector', $
-                                         name='pg_image_sector', /continue
-      end
+     if(NOT keyword_set(silent)) then $
+       nv_message, 'Drag and click to define width of image sector', /continue
 
      ;-----------------------------------
      ; setup pixmap

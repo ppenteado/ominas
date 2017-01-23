@@ -213,7 +213,6 @@ pro ominas_disk__define
  ndv = bod_ndv()
  nm = dsk_get_nm()
  nl = dsk_get_nl()
- npht = dsk_npht()
 
  struct = $
     { ominas_disk, inherits ominas_solid, $

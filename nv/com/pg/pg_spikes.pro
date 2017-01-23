@@ -107,7 +107,7 @@ function pg_spikes, dd, nsig=nsig, grad=grad, mask=mask, umask=umask, extend=ext
  ;---------------------------------------
 ; pp = sky_points(im, grad, scale, mask=mask, extend=extend, edge=edge)
  pp = sky_points(im, nsig, scale, mask=mask, umask=umask, extend=extend, $
-             edge=edge, all=allpix)
+                                                        edge=edge, all=allpix)
 
 
  ;----------------------------------------------

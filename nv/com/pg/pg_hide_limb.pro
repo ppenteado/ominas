@@ -117,9 +117,8 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
  nt = n_elements(od)
  n_objects = n_elements(point_ptd)
  pgs_count_descriptors, gbx, nd=n_globes, nt=nt1
- if(nt NE nt1) then nv_message, name='pg_hide_limb', 'Inconsistent timesteps.'
- if(n_globes NE n_objects) then nv_message, name='pg_hide_limb', $
-                                                        'Inconsistent inputs.'
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
+ if(n_globes NE n_objects) then nv_message, 'Inconsistent inputs.'
 
  if(hide) then hide_ptd = objarr(n_objects)
 
@@ -160,7 +159,6 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
            input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), flags=_flags
      end
    end
-
 
 
 end

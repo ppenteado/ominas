@@ -52,8 +52,7 @@ function dsk_get_dapdt, dkd, frame_bd
 @core.include
  
 
- if(NOT keyword_set(frame_bd)) then $
-             nv_message, name='dsk_get_dapdt', 'frame_bd required.'
+ if(NOT keyword_set(frame_bd)) then nv_message, 'frame_bd required.'
 
  dapdt = orb_get_dapdt(dkd, frame_bd)
 

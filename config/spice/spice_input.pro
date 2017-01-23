@@ -184,12 +184,15 @@
 ;			potentially very slow.
 ;
 ;
-;  ENVIRONMENT VARIABLES:
+; ENVIRONMENT VARIABLES:
 ;	NV_SPICE_KER:		Directory containing the kernel list file.
 ;
 ;	NV_SPICE_<type>:	Directory containing the kernel files specified
 ;				using <type>_in.  Multiple directories can be
 ;				delimited using the ':' character.
+;
+;	[prefix]_SPICE_TARGETS:	Name of optional targets file; see targets
+;				keyword.
 ;
 ;
 ; RETURN:
@@ -228,7 +231,7 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
 
  if(NOT spice_test()) then $
   begin
-   nv_message, name='spice_input', /con, $
+   nv_message, /con, $
      'Aborting because the NAIF/SPICE interface not installed.'
    status = -1
    return, 0
@@ -422,24 +425,45 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------
  if(NOT keyword_set(nokernels)) then $
   begin
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; Handle LS kernels now so that times can be compared in the kernel
-   ; list file.
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(NOT keyword_set(constants)) then $
     begin
-     lsk_in = spice_kernel_parse(dd, prefix, 'lsk', $
-                exp=lsk_exp, strict=lsk_strict, all=lsk_all, time=time)
-     if(NOT keyword_set(lsk_in)) then $
-            nv_message, name='spice_input', 'No leap-second kernels.'
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Handle LS kernels now so that times can be compared in 
+     ; the kernel list file.
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     klist = tr_keyword_value(dd, 'klist')
+     if(keyword_set(klist)) then $
+      if(strpos(klist, '/') EQ -1) then $
+       begin
+        kpath = spice_get_kpath('NV_SPICE_KER', klist)
+        klist = kpath + '/' + klist
+       end
 
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; first, look for lsk files in the klist
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     lsk_in = spice_read_klist(dd, klist, $
+                         silent=silent, prefix=prefix, /notime, ext='lsk')
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; otherwise, check for lsk keyword
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     if(NOT keyword_set(lsk_in)) then $
+       lsk_in = spice_kernel_parse(dd, prefix, 'lsk', $
+                exp=lsk_exp, strict=lsk_strict, all=lsk_all, time=time)
+
+
+     if(NOT keyword_set(lsk_in)) then nv_message, 'No leap-second kernels.'
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; load lsk if found
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      spice_sort_kernels, lsk_in, $
        reload=reload, reverse=reverse, protect=protect, $
        lsk_in=lsk_in, lsk_exp=lsk_exp, $
        kernels_to_load=lsk_to_load, kernels_to_unload=lsk_to_unload, $
        lsk_reverse=lsk_reverse
      spice_load, lsk_to_load
-
 
      if(defined(time)) then $
          if(size(time, /type) EQ 7) then time = spice_str2et(time)
@@ -449,16 +473,7 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
      ;  Kernels are read from this file and inserted into the kernel list
      ;  in front of the kernels input using translator keywords.  
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     klist = tr_keyword_value(dd, 'klist')
-     if(keyword_set(klist)) then $
-      begin
-       if(strpos(klist, '/') EQ -1) then $
-        begin
-         kpath = spice_get_kpath('NV_SPICE_KER', klist)
-         klist = kpath + '/' + klist
-        end
-       k_in = spice_read_klist(dd, klist, silent=silent, time=time, prefix=prefix)
-      end
+     k_in = spice_read_klist(dd, klist, silent=silent, time=time, prefix=prefix)
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

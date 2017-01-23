@@ -102,10 +102,7 @@ function pg_ring_sector_box_oblique, p, $
 
 
    if(NOT keyword__set(noverbose)) then $
-    begin
-     nv_message, 'Drag and release to define length od box', $
-                                   name='pg_ring_sector_box_oblique', /continue
-    end
+     nv_message, 'Drag and release to define length od box', /continue
 
 
    ;-----------------------------------
@@ -130,10 +127,7 @@ function pg_ring_sector_box_oblique, p, $
    ; select width of box
    ;----------------------------------------------------------
    if(NOT keyword__set(noverbose)) then $
-    begin
-     nv_message, 'Drag and click to define width of box', $
-                                          name='pg_ring_sector_box_oblique', /continue
-    end
+            nv_message, 'Drag and click to define width of box', /continue
 
 
    px = p0[0] & py = p0[1]

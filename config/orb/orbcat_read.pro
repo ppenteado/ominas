@@ -28,7 +28,8 @@ function orbcat_read, filename, silent=silent
  ;----------------------------
  ; read file
  ;----------------------------
- if(NOT keyword_set(silent)) then print, 'Reading orbit catalog ' + filename + '...'
+ if(NOT keyword_set(silent)) then $
+       nv_message, /con, verb=0.2, 'Reading orbit catalog ' + filename + '...'
  cat = read_txt_file(filename)
 
 
@@ -106,7 +107,7 @@ function orbcat_read, filename, silent=silent
   begin
    dat[w].epoch = jed_to_ret(dat[w].epoch_jed)
    dat[w].epoch_defined = 1
-   nv_message, /con, name='orbcat_read', $
+   nv_message, /con, $
       'WARNING: using raw ephemeris times for: ' + str_comma_list(dat[w].name)
   end
 
@@ -115,7 +116,7 @@ function orbcat_read, filename, silent=silent
   begin
    dat[w].ppt = jed_to_ret(dat[w].ppt_jed)
    dat[w].ppt_defined = 1
-   nv_message, /con, name='orbcat_read', $
+   nv_message, /con, $
       'WARNING: using raw periapse times for: ' + str_comma_list(dat[w].name)
   end
 

@@ -116,12 +116,11 @@ pro pnt_write, filename, ptd, bin=bin, noevent=noevent
      s = size(data)
      ndim = s[0]
 
-     if(ndim GT 2) then nv_message, name='pnt_write', $
-                           'Point data may have no more than 2 dimensions.'
+     if(ndim GT 2) then $
+             nv_message, 'Point data may have no more than 2 dimensions.'
      s = s[1:s[0]]
      w = where(s EQ n)
-     if(w[0] EQ -1) then nv_message, name='pnt_write', $
-                                                 'Inconsistent point data.'
+     if(w[0] EQ -1) then nv_message, 'Inconsistent point data.'
      nn = 1
      ww = where(s NE n)
      if(ww[0] NE -1) then nn = s[ww]

@@ -93,18 +93,16 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
 
  if(NOT keyword_set(od)) then $
   if(keyword_set(sund)) then od = sund $
-  else nv_message, name='pg_reflection_globe', 'No observer descriptor.'
+  else nv_message, 'No observer descriptor.'
 
 
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
  pgs_count_descriptors, od, nd=n_observers, nt=nt
- if(n_observers GT 1) then $
-    nv_message, name='pg_reflection_globe', 'Only one observer decsriptor allowed.'
+ if(n_observers GT 1) then nv_message, 'Only one observer decsriptor allowed.'
  pgs_count_descriptors, gbx, nd=n_globes, nt=nt1
- if(nt NE nt1) then $
-                 nv_message, name='pg_reflection_globe', 'Inconsistent timesteps.'
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
  ;------------------------------------------------

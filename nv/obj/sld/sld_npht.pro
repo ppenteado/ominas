@@ -32,6 +32,10 @@
 ;  OUTPUT: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	SLD_NPHT:	Sets the npht value.
+;
+;
 ; RETURN:
 ;	Current npht value.
 ;

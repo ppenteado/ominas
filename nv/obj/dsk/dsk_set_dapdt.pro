@@ -48,8 +48,7 @@ pro dsk_set_dapdt, dkd, dapdt, frame_bd
 @core.include
  
 
- if(NOT keyword_set(frame_bd)) then $
-             nv_message, name='dsk_sdet_dapdt', 'frame_bd required.'
+ if(NOT keyword_set(frame_bd)) then nv_message, 'frame_bd required.'
 
  orb_set_dapdt, dkd, frame_bd, dapdt
 

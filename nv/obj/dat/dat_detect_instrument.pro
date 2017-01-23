@@ -61,7 +61,7 @@ function dat_detect_instrument, label, udata, filetype, silent=silent
    dat_read_config, 'NV_INS_DETECT', stat=stat, $
               nv_state.ins_table_p, nv_state.ins_detectors_filenames_p
  if(stat NE 0) then $
-   nv_message, name='dat_detect_instrument', $
+   nv_message, $
      'No instrument table.', /con, $
        exp=['The instrument table specifies the names of instrument detector functions.', $
             'Without this table, OMINAS cannot determine which translators to use.']

@@ -921,6 +921,21 @@ end
 
 
 ;=============================================================================
+; grim_get_shift_reorigin_flag
+;
+;=============================================================================
+function grim_get_shift_reorigin_flag, grim_data
+
+ flag = grim_get_user_data(grim_data, 'SHIFT_REORIGIN')
+ if(NOT keyword_set(flag)) then flag = 0
+
+ return, flag
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_get_shift_step
 ;
 ;=============================================================================
@@ -930,6 +945,70 @@ function grim_get_shift_step, grim_data
  if(NOT keyword_set(step)) then step = 1
 
  return, step
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_reposition
+;
+;=============================================================================
+pro grim_reposition, grim_data, plane, cd=cd, shift
+
+ pos = cor_udata(plane.dd, 'IMAGE_POS')
+ if(NOT keyword_set(pos)) then pos = [0d,0d]
+ pos = pos + shift
+ cor_set_udata, plane.dd, 'IMAGE_POS', pos
+
+ flag = grim_get_shift_reorigin_flag(grim_data)
+ if(keyword_set(flag)) then set_image_origin, cd, image_origin(cd) + shift
+ nv_flush
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_toggle_reorigin_event
+;
+;
+; PURPOSE:
+;   This option allows the user to set whether geometry descriptors are
+;   updated whenever the data array is shifted.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 12/2016
+;	
+;-
+;=============================================================================
+pro grim_menu_toggle_reorigin_event_help_event, event
+ text = ''
+ nv_help, 'grim_menu_shift_enter_step_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_toggle_reorigin_event, event
+@grim_block.include
+ grim_set_primary, event.top
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ flag = grim_get_shift_reorigin_flag(grim_data)
+ flag = 1 - flag
+
+ grim_set_user_data, grim_data, 'SHIFT_REORIGIN', flag
+ update_reorigin_menu_label, grim_data
+
 end
 ;=============================================================================
 
@@ -1020,24 +1099,21 @@ pro grim_menu_shift_enter_offset_event, event
  done = 0
  repeat $
   begin
-   offs = dialog_input('New offset:')
-   if(NOT keyword_set(offs)) then return
-   w = str_isfloat(steps)
-   if(w[0] NE -1) then done = 1
+   offs = dialog_input('New offset [dx,dy]:', cancelled=cancelled)
+   if(cancelled) then return
+   if(keyword_set(offs)) then $
+    begin
+     s = parse_numeric_list(offs)
+     if(keyword_set(s)) then $
+      begin
+       w = str_isfloat(s)
+       if(n_elements(w) EQ 2) then done = 1
+      end
+    end
   endrep until(done)
 
- step = double(steps)
-
-
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
- step = grim_get_shift_step(grim_data)
- pg_shift, plane.dd, cd=*plane.cd_p, [step,0]
-
-
- grim_set_user_data, grim_data, 'SHIFT_STEP', step
+ shift = double(s)
+ grim_reposition, grim_data, plane, cd=*plane.cd_p, -shift
 
 end
 ;=============================================================================
@@ -1078,7 +1154,7 @@ pro grim_menu_shift_left_event, event
  plane = grim_get_plane(grim_data)
 
  step = grim_get_shift_step(grim_data)
- pg_shift, plane.dd, cd=*plane.cd_p, [step,0]
+ grim_reposition, grim_data, plane, cd=*plane.cd_p, -[step,0]
 
 end
 ;=============================================================================
@@ -1119,7 +1195,7 @@ pro grim_menu_shift_right_event, event
  plane = grim_get_plane(grim_data)
 
  step = grim_get_shift_step(grim_data)
- pg_shift, plane.dd, cd=*plane.cd_p, [-step,0]
+ grim_reposition, grim_data, plane, cd=*plane.cd_p, -[-step,0]
 
 end
 ;=============================================================================
@@ -1164,7 +1240,7 @@ pro grim_menu_shift_up_event, event
  grim_wset, grim_data, grim_data.wnum, get=tvd
  if(tvd.order) then dy = step
 
- pg_shift, plane.dd, cd=*plane.cd_p, [0,dy]
+ grim_reposition, grim_data, plane, cd=*plane.cd_p, -[0,dy]
 
 end
 ;=============================================================================
@@ -1209,7 +1285,7 @@ pro grim_menu_shift_down_event, event
  grim_wset, grim_data, grim_data.wnum, get=tvd
  if(tvd.order) then dy = -step
 
- pg_shift, plane.dd, cd=*plane.cd_p, [0,dy]
+ grim_reposition, grim_data, plane, cd=*plane.cd_p, -[0,dy]
 
 end
 ;=============================================================================
@@ -1402,6 +1478,49 @@ end
 
 
 ;=============================================================================
+; update_reorigin_menu_label
+;
+;=============================================================================
+pro update_reorigin_menu_label, grim_data
+
+ flag = grim_get_shift_reorigin_flag(grim_data)
+ id = grim_get_menu_id(grim_data, 'grim_menu_toggle_reorigin_event')
+
+ onoff = flag ? 'ON' : 'OFF'
+ widget_control, id, get_value=s
+
+ ss = str_ext(s, '[', ']')
+ sss = strep_s(s, ss, onoff)
+
+ widget_control, id, set_value=sss
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_toggle_reorigin_callback
+;
+;=============================================================================
+pro grim_toggle_reorigin_refresh_callback, id_p
+ update_reorigin_menu_label, grim_get_data()
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_default_menus_init
+;
+;=============================================================================
+pro grim_default_menus_init, grim_data
+ grim_add_refresh_callback, 'grim_toggle_reorigin_refresh_callback', ptr_new(0)
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_default_menus
 ;
 ;=============================================================================
@@ -1431,6 +1550,7 @@ function grim_default_menus
             '0\Least Squares\grim_menu_pointing_lsq_event', $
             '2\<null>               \+*grim_menu_delim_event', $
            '*1\Shift Image' , $
+            '0\Toggle Re-origin     [xxx]\*grim_menu_toggle_reorigin_event', $ 
             '0\Enter Step Size \*grim_menu_shift_enter_step_event', $ 
             '0\Enter Offset \*grim_menu_shift_enter_offset_event', $ 
             '0\Left \*grim_menu_shift_left_event', $ 

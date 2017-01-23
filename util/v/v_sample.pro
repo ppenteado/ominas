@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = v_sample(v, spacing=spacing)
+;       result = v_sample(v, dv)
 ;
 ;
 ; ARGUMENTS:
@@ -24,6 +24,8 @@
 ;			nt direction is that unifrom spacing would impose
 ;			differing numbers of elements in that direction, which
 ;			is not permissible.
+;
+;		dv:	Spacing for new array.
 ;
 ;  OUTPUT:
 ;       NONE
@@ -42,7 +44,22 @@
 ;
 ;-
 ;=============================================================================
-function v_sample, v, dd, spline=spline, lsquadratic=lsquadratic, quadratic=quadratic
+function v_sample, v, dv, $
+         spline=spline, lsquadratic=lsquadratic, quadratic=quadratic
+
+ return, v_interp(v, dv, /uniform, $
+             spline=spline, lsquadratic=lsquadratic, quadratic=quadratic)
+end
+;=============================================================================
+
+
+
+
+
+;=============================================================================
+function v_sample, v, dv, $
+         spline=spline, lsquadratic=lsquadratic, quadratic=quadratic
+
 
  ;------------------------
  ; get dimensions
@@ -51,7 +68,7 @@ function v_sample, v, dd, spline=spline, lsquadratic=lsquadratic, quadratic=quad
 
 
  ;------------------------------------------------------------
- ; compute input spacings, and total path offsets 
+ ; compute input spacings, and 1-D path offsets 
  ;------------------------------------------------------------
  d = [0, v_mag(v[0:nv-2,*] - v[1:*,*])]
  len = total(d)
@@ -61,8 +78,9 @@ function v_sample, v, dd, spline=spline, lsquadratic=lsquadratic, quadratic=quad
  ;------------------------------------------------------------
  ; compute output spacings, and total path offsets 
  ;------------------------------------------------------------
- nvv = round(len / dd)
- xx = dd * dindgen(nvv)
+ if(NOT keyword_set(dv)) then dv = min(d[1:*])
+ nvv = round(len / dv)
+ xx = dv * dindgen(nvv)
 
 
  ;------------------------------------------------------------

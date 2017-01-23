@@ -4,16 +4,13 @@
 ;
 ;===========================================================================
 function spice_read_klist, dd, klist, ck_out=ck_out, silent=silent, $
-                                                time=_time, prefix=prefix
+             time=_time, prefix=prefix, notime=notime, extension=extension
 common spice_klist_block, klist_last, _inlines
+
+ if(NOT keyword_set(klist)) then return,''
 
  fn_spice_time = prefix + '_spice_time'
  ndd = n_elements(dd)
-
-; if(NOT keyword_set(_time)) then $
-;   et = spice_str2et(call_function(fn_spice_time, label)) $
-; else et = _time
-; et = et[0]
 
  ;--------------------------------------------
  ; read input file
@@ -26,7 +23,8 @@ common spice_klist_block, klist_last, _inlines
    inlines = strip_comment(read_txt_file(klist))
    klist_last = klist
    _inlines = inlines
-   if(NOT keyword_set(silent)) then print, 'Read kernel list file ' + klist + '.'
+   if(NOT keyword_set(silent)) then $
+           nv_message, /con, verb=0.2, 'Read kernel list file ' + klist + '.'
   end $
  else inlines = _inlines
 
@@ -73,40 +71,41 @@ common spice_klist_block, klist_last, _inlines
    standard_lines = standard_lines[0:wdefault[0]-1]
   end
 
+
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; look for TIME_START, TIME_STOP keywords at beginnings of lines
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  wstart = where(strpos(inlines, 'START_TIME') EQ 0)
-
-
  if(wstart[0] NE -1) then $
   begin
-   if(NOT defined(_time)) then $
-    for i=0, ndd-1 do $
-      et = append_array(et, $
-                 call_function(fn_spice_time, dat_header(dd[i]))) $
-   else et = _time
-  _time = et
-
    standard_lines = standard_lines[0:wstart[0]-1]
 
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; look for stop times and include appropriate lines 
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-   wstop = where(strpos(inlines, 'STOP_TIME') EQ 0)
-   if((wstop[0] EQ -1) OR $
-       (n_elements(wstop) NE n_elements(wstart))) then $
-                        nv_message, name='spice_read_klist', $
-                      klist + ': One STOP_TIME required for each START_TIME.'
+   if(NOT keyword_set(notime)) then $
+    begin
+     if(NOT defined(_time)) then $
+      for i=0, ndd-1 do $
+        et = append_array(et, call_function(fn_spice_time, dat_header(dd[i]))) $
+     else et = _time
+    _time = et
 
-   junk = str_nnsplit(inlines(wstart), '=', rem=start_times)
-   junk = str_nnsplit(inlines(wstop), '=', rem=stop_times)
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; look for stop times and include appropriate lines 
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+     wstop = where(strpos(inlines, 'STOP_TIME') EQ 0)
+     if((wstop[0] EQ -1) OR $
+         (n_elements(wstop) NE n_elements(wstart))) then $
+           nv_message, klist + ': One STOP_TIME required for each START_TIME.'
 
-   et_start = spice_str2et(start_times)
-   et_stop = spice_str2et(stop_times)
+     junk = str_nnsplit(inlines(wstart), '=', rem=start_times)
+     junk = str_nnsplit(inlines(wstop), '=', rem=stop_times)
 
-   w = where((et_start LT min(et)) AND (et_stop GT max(et)))
-   if(w[0] NE -1) then time_lines = inlines[wstart[w[0]]+1:wstop[w[0]]-1]
+     et_start = spice_str2et(start_times)
+     et_stop = spice_str2et(stop_times)
+
+     w = where((et_start LT min(et)) AND (et_stop GT max(et)))
+     if(w[0] NE -1) then time_lines = inlines[wstart[w[0]]+1:wstop[w[0]]-1]
+    end
+
   end
 
  inlines = [standard_lines, time_lines]
@@ -136,7 +135,7 @@ common spice_klist_block, klist_last, _inlines
         end
        j = j + n
       end $
-     else nv_message, /con, name='spice_read_klist', 'Not found: ' + line
+     else nv_message, /con, 'Not found: ' + line
     end
   end
  if(j EQ 0) then return, ''
@@ -161,6 +160,19 @@ common spice_klist_block, klist_last, _inlines
    else outfiles[i] = str_cat(ss[w], ins='/')
    if(slash) then outfiles[i] = '/' + outfiles[i]
   end
+
+
+ ;--------------------------------------------
+ ; select outfiles with specified extensions
+ ;--------------------------------------------
+ if(keyword_set(extension)) then $
+  if(keyword_set(outfiles)) then $
+   begin
+    split_filename, outfiles, dir, name, ext
+    w = nwhere(ext, extension)
+    if(w[0] EQ -1) then outfiles = '' $
+    else outfiles = outfiles[w]
+   end
 
 
  return, outfiles

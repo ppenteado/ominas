@@ -77,8 +77,7 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
    status = -1
    return
   end
-;        nv_message, 'No output translator available for '+keyword+'.', $
-;                                                           name='dat_put_value'
+;        nv_message, 'No output translator available for '+keyword+'.'
 
 
  ;--------------------------------------------
@@ -101,8 +100,11 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
 
  for i=0, n-1 do $
   begin
+   nv_message, /verbose, 'Calling translator ' + translators[i]
+
    _dd.last_translator = [i,1]
    cor_rereference, dd, _dd
+
    call_procedure, translators[i], dd, keyword, value, stat=stat, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro

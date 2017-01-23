@@ -25,7 +25,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	noverbose: 	If set, turns off the notification that cursor
+;	silent: 	If set, turns off the notification that cursor
 ;			movement is required.
 ;
 ;	psym: 		Plotting symbol to use for plotting points.
@@ -61,12 +61,12 @@
 ;	
 ;-
 ;=============================================================================
-function pg_select, dd, noverbose=noverbose, region=region, points=points
+function pg_select, dd, silent=silent, region=region, points=points
 
  if(keyword__set(points)) then $
-        return, pg_select_points(dd, psym=psym, noverbose=noverbose, $
+        return, pg_select_points(dd, psym=psym, silent=silent, $
                                one=one, number=number, cancelled=cancelled) $
- else return, pg_select_region(dd, noverbose=noverbose)
+ else return, pg_select_region(dd, silent=silent)
 
 end
 ;=============================================================================

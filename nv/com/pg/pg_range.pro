@@ -48,7 +48,7 @@ function pg_range, bx1, bx2
  pgs_count_descriptors, bx1, nd=n_objects1, nt=nt1
  pgs_count_descriptors, bx2, nd=n_objects2, nt=nt2
  if((nt1 NE nt2) OR (n_objects1 NE n_objects2)) then $
-                 nv_message, name='pg_range', 'Inconsistent descriptors.'
+                                       nv_message, 'Inconsistent descriptors.'
 
  nt = nt1
  n_objects = n_objects1

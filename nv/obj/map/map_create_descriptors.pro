@@ -69,7 +69,7 @@
 ;	
 ;-
 ;=============================================================================
-function map_create_descriptors, n, crd=crd0, md=md0, $
+function map_create_descriptors, n, crd=_crd0, md=_md0, $
 @map__keywords.include
 end_keywords
  if(NOT keyword_set(n)) then n = 1
@@ -77,6 +77,8 @@ end_keywords
  md = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
+   if(keyword_set(_md0)) then md0 = _md0[i]
 
    md[i] = ominas_map(i, crd=crd0, md=md0, $
 @map__keywords.include

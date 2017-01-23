@@ -126,10 +126,8 @@ function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull, $
  ntv = 1
  if(n_elements(vdim) GT 2) then ntv = vdim[2]
 
- if((nt NE ntr) OR (nt NE ntv)) then nv_message, name='pg_ray', $
-                                                      'Inconsistent timesteps.'
-
- if(nvr NE nvv) then nv_message, name='pg_ray', 'Inconsistent dimensions.'
+ if((nt NE ntr) OR (nt NE ntv)) then nv_message, 'Inconsistent timesteps.'
+ if(nvr NE nvv) then nv_message, 'Inconsistent dimensions.'
 
  nv = nvr
 

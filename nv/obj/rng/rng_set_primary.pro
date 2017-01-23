@@ -49,7 +49,7 @@ pro rng_set_primary, rd, xd, noevent=noevent
 
  _rd = cor_dereference(rd)
 
- _rd.__PROTECT__primary=xd
+ _rd.__PROTECT__primary_xd=xd
 
  cor_rereference, rd, _rd
  nv_notify, rd, type = 0, noevent=noevent

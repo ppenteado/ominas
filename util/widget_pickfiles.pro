@@ -149,6 +149,14 @@ pro wpf_get_dirs, data
   widget_control, data.dir_list, set_value=dirs
  *data.dirs_p = dirs
 
+
+ ;-------------------------------
+ ; set file widget
+ ;-------------------------------
+ widget_control, data.sel_list, get_value=file
+ if(keyword_set(file[0])) then $
+      widget_control, data.sel_list, set_value=dir_rep(file, data.path + '/')
+
 end
 ;=============================================================================
 
@@ -165,7 +173,7 @@ pro wpf_get_files, data
  ; get filter
  ;-------------------------------
  widget_control, data.filter_text, get_value=filter
-
+ if(strmid(filter, strlen(filter)-1, 1) EQ '/') then filter = filter + '*'
 
  ;-------------------------------
  ; get files
@@ -185,6 +193,7 @@ pro wpf_get_files, data
 
  split_filename, files, dirs, names
  files = names
+
 
  ;-------------------------------
  ; set list widget
@@ -215,6 +224,7 @@ pro wpf_filter_event, event
 
  wpf_get_dirs, data
  wpf_get_files, data
+
 
 
 end
@@ -323,7 +333,8 @@ pro wpf_file_list_event, event
  ;----------------------------------
  ; set selections list
  ;----------------------------------
- widget_control, data.sel_list, set_value=files
+ if(keyword_set(data.sel_list)) then $
+                   widget_control, data.sel_list, set_value=files
  *data.sel_p = files
 
 end
@@ -416,16 +427,21 @@ end
 ; widget_pickfiles
 ;
 ;=============================================================================
-function widget_pickfiles, parent, path=path, one=one, filter=filter, $
+function widget_pickfiles, parent, path=_path, one=one, filter=filter, $
         cancel_callback=cancel_callback, ok_callback=ok_callback, $
-        must_exist=must_exist, button_base=button_base, default=default, ok_button=ok_button
+        must_exist=must_exist, button_base=button_base, default=_default, $
+        ok_button=ok_button
 
  if(NOT keyword__set(cancel_callback)) then cancel_callback = 'wpf_cancel_event'
  if(NOT keyword__set(ok_callback)) then ok_callback = ''
- if(NOT keyword__set(path)) then cd, current = path
+ if(NOT keyword__set(_path)) then cd, current = _path
  if(NOT keyword__set(filter)) then filter = '*'
 
- sel= path
+ if(keyword_set(_path)) then path = (file_search(_path, /fully_qualify_path))[0]
+ if(keyword_set(_default)) then $
+                  default = (file_search(_default, /fully_qualify_path))[0]
+
+ sel= path + '/'
  if(keyword_set(default)) then sel = default
 
  one = keyword__set(one)
@@ -452,22 +468,26 @@ function widget_pickfiles, parent, path=path, one=one, filter=filter, $
 
  dir_base = widget_base(list_base, /col)
  dir_label = widget_label(dir_base, value='Directories:', /align_left)
- dir_list = widget_list(dir_base, xsize=25, ysize=10, $
+ dir_list = widget_list(dir_base, xsize=35, ysize=10, $
                                              event_pro='wpf_dir_list_event')
 
  file_base = widget_base(list_base, /col)
  file_label = widget_label(file_base, value='Files:', /align_left)
- file_list = widget_list(file_base, xsize=25, ysize=10, multi=multi, $
+ file_list = widget_list(file_base, xsize=35, ysize=10, multi=multi, $
                                              event_pro='wpf_file_list_event')
 
 
- sel_label = widget_label(base, value='Selections:', /align_left)
- if(keyword__set(one)) then $
+ sel_list = 0
+ if(one) then $
+  begin
+ sel_label = widget_label(base, value='File Name:', /align_left)
+; if(keyword__set(one)) then $
     sel_list = widget_text(base, ysize=1, /editable, $
-                                          event_pro='wpf_sel_text_event') $
- else $
-    sel_list = widget_list(base, ysize=5, multi=multi, $
-                                           event_pro='wpf_sel_list_event')
+                                          event_pro='wpf_sel_text_event'); $
+; else $
+;    sel_list = widget_list(base, ysize=5, multi=multi, $
+;                                           event_pro='wpf_sel_list_event')
+  end
 
 
  button_base = widget_base(base, /row)
@@ -515,7 +535,7 @@ function widget_pickfiles, parent, path=path, one=one, filter=filter, $
  wpf_get_dirs, data
  wpf_get_files, data
 
- if(one) then widget_control, sel_list, set_value=sel
+ if(keyword_set(sel_list)) then widget_control, sel_list, set_value=sel
 
 
 

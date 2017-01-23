@@ -61,7 +61,7 @@ pro dat_set_header, dd, header, silent=silent, update=update, noevent=noevent
 
 
  if((NOT keyword_set(silent)) and (_dd.maintain GT 0)) then $
-  nv_message, /con, name='dat_set_header', $
+  nv_message, /con, $
    'WARNING: Changes to header array may be lost due to the maintainance level.'
 
 

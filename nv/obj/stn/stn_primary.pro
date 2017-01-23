@@ -48,7 +48,7 @@ function stn_primary, std, noevent=noevent
 
  nv_notify, std, type = 1, noevent=noevent
  _std = cor_dereference(std)
- return, _std.__PROTECT__primary
+ return, _std.__PROTECT__primary_xd
 end
 ;===========================================================================
 

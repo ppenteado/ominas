@@ -5,7 +5,7 @@
 function rvgrcd_pdslab, filename
 
  openr, unit, filename, /get_lun, error=error
- if(error NE 0) then nv_message, !err_string
+ if(error NE 0) then nv_message, /anonymous, !err_string
 
  record = assoc(unit, bytarr(4096,/nozero), 2)
  b = record[0]

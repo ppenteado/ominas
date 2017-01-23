@@ -28,7 +28,7 @@
 ;		 Ptr or struct	Descend recursively, printing info on all
 ;				fields.
 ;		 String		Assumes p is the name of an OMINAS routine
-;				and prints the docuentation page if
+;				and prints the documentation page if
 ;				available.
 ;
 ;
@@ -43,6 +43,10 @@
 ;  OUTPUT: 
 ;	capture:	If present, the output in returned in this
 ;			keyword instead of being printed.
+;
+;
+; ENVIRONMENT VARIABLES:
+;	OMINAS_DIR:	OMINAS top directory; used to find documentation files.
 ;
 ;
 ; RETURN: NONE
@@ -372,7 +376,7 @@ pro nv_help_doc, name, capture=capture
   end
 
  
- nv_message, name='nv_help', 'No documentation available for ' + name + '.'
+ nv_message, 'No documentation available for ' + name + '.'
 
 end
 ;===========================================================================

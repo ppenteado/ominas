@@ -27,7 +27,8 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	data 	Data to be sent to the sampling function.
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,8 +50,10 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_set_sampling_fn, dd, sampling_fn, noevent=noevent
+pro dat_set_sampling_fn, dd, sampling_fn, data=data, noevent=noevent
 @core.include
+ if(keyword_set(data)) then dat_set_sampling_data, dd, data, /noevent
+
  _dd = cor_dereference(dd)
 
  _dd.sampling_fn = sampling_fn

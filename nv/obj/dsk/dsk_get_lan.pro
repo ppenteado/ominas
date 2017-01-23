@@ -52,8 +52,7 @@ function dsk_get_lan, dkd, frame_bd
 @core.include
  
 
- if(NOT keyword_set(frame_bd)) then $
-             nv_message, name='dsk_get_lan', 'frame_bd required.'
+ if(NOT keyword_set(frame_bd)) then nv_message, 'frame_bd required.'
 
 
  ref0 = orb_get_ascending_node(frame_bd, bod_inertial())

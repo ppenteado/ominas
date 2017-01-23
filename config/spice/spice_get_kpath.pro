@@ -7,7 +7,7 @@ function spice_get_kpath, env, klist
  kpaths = str_nsplit(getenv(env), ':')
  if(NOT keyword_set(kpaths)) then $
   begin
-   nv_message, name='spice_get_kpath', /con, $
+   nv_message, /con, $
      'Unable to obtain ' + env +' from the environment.', $                         
        exp=[env + ' is a colon-separated list of directories in which to search', $
             'for kernel list files.']

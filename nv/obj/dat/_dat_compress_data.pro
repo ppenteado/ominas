@@ -6,9 +6,9 @@ pro _dat_compress_data, _dd, cdata=cdata, cabscissa=cabscissa
 
  if(defined(cdata)) then $
   begin
-   data_archive_set, _dd.data_dap, cdata, index=_dd.dap_index
+   data_archive_set, _dd.data_dap, cdata, index=_dd.dap_index, /noarchive
    if(keyword_set(cabscissa)) then $
-        data_archive_set, _dd.abscissa_dap, cabscissa, index=_dd.dap_index
+        data_archive_set, _dd.abscissa_dap, cabscissa, index=_dd.dap_index, /noarchive
    return
   end
 

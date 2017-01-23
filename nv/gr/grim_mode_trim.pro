@@ -51,7 +51,7 @@ pro grim_mode_trim_mouse_event, event, data
   begin
    region = pg_select_region(0, $
 		p0=[event.x,event.y], $
-		/autoclose, /noverbose, color=ctred(), $
+		/autoclose, /silent, color=ctred(), $
 		cancel_button=2, end_button=-1, select_button=1) 
    grim_trim_overlays, grim_data, plane=plane, region
   end $
@@ -59,7 +59,7 @@ pro grim_mode_trim_mouse_event, event, data
   begin
    region = pg_select_region(0, $
 		p0=[event.x,event.y], $
-		/autoclose, /noverbose, color=ctpurple(), $
+		/autoclose, /silent, color=ctpurple(), $
 		cancel_button=2, end_button=-1, select_button=4)
    grim_trim_user_overlays, grim_data, plane=plane, region
   end $

@@ -27,8 +27,6 @@ end_keywords)
  if(NOT keyword_set(orient)) then self.orient = idgen(3) $
  else self.orient = orient[*,*,ii]
 
- self.orientT = transpose(self.orient) 
-
  if(keyword_set(fn_body_to_inertial)) then $
                         self.fn_body_to_inertial=decrapify(fn_body_to_inertial[ii]) $
  else self.fn_body_to_inertial = decrapify('bod_body_to_inertial_default')
@@ -150,7 +148,6 @@ pro ominas_body__define
 	time:		 double(0), $		; time at which this descriptor
 						; is valid at body position
 	orient:		 dblarr(3,3), $		; transforms body->inertial
-	orientT:	 dblarr(3,3), $		; transpose of orient matrix
 
 	avel:		 dblarr(ndv,3), $	; angular velocites -- each
 						;  higher-order avel is the

@@ -31,6 +31,10 @@
 ;  OUTPUT: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	DAT_CACHE:	Sets the size of the cache.
+;
+;
 ; RETURN:
 ;	Current cache value.
 ;

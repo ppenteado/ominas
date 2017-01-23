@@ -60,8 +60,7 @@ function pg_sub_body, gbx=gbx, bx=bx, gd=gd
  ;-----------------------------------
  pgs_count_descriptors, gbx, nd=n_globe, nt=nt1
  pgs_count_descriptors, bx, nd=n_body, nt=nt2
- if((nt1 NE nt2) OR (n_globe NE n_body)) then $
-                   nv_message, name='pg_sub_body', 'Inconsistent descriptors.'
+ if((nt1 NE nt2) OR (n_globe NE n_body)) then nv_message, 'Inconsistent descriptors.'
 
  nt = nt1
  n = n_body

@@ -105,7 +105,7 @@ function pg_chisq, dxy, dtheta, scan_ptd, axis_ptd=axis_ptd, fix=fix
 
        chisq = chisq + ipt_chisq(dxy, dtheta, fix, dx, dy, scan_pts, axis)
       end $
-     else nv_message, name='pg_chisq', 'Invalid data set.'
+     else nv_message, 'Invalid data set.'
 
     end
   end

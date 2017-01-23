@@ -106,13 +106,13 @@ function sedr_get_sedr2, sctime, planet
 
  if(record.sctime NE sctime) then $
   begin
-   nv_message, name='sedr_get_sedr2', 'SEDR2 file/index inconsistant', /continue
+   nv_message, 'SEDR2 file/index inconsistant', /continue
    return, 0
   end
 
  return, record
 eod:
- nv_message, name='sedr_get_sedr2', 'File not found or I/O error', /continue
+ nv_message, 'File not found or I/O error', /continue
  return, 0
 end
 ;=============================================================================

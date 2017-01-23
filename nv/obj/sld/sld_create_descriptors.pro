@@ -66,7 +66,7 @@
 ;	
 ;-
 ;=============================================================================
-function sld_create_descriptors, n, crd=crd0, bd=bd0, sld=sld0, $
+function sld_create_descriptors, n, crd=_crd0, bd=_bd0, sld=_sld0, $
 @sld__keywords.include
 end_keywords
 @core.include
@@ -76,6 +76,9 @@ end_keywords
  sld = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
+   if(keyword_set(_bd0)) then bd0 = _bd0[i]
+   if(keyword_set(_sld0)) then sld0 = _sld0[i]
 
    sld[i] = ominas_solid(i, crd=crd0, bd=bd0, sld=sld0, $
 @sld__keywords.include

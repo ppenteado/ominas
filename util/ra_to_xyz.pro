@@ -46,10 +46,7 @@ pro ra_to_xyz, ra, dec, pos
 
  n = n_elements(ra)
  if(n_elements(dec) ne n) then $
-  begin
-   nv_message, name='ra_to_xyz', $
-               'ra and dec do not have same number of elements'
-  end
+                   nv_message, 'RA and DEC do not have same number of elements'
 
  ra_rad = ra*!dpi/180d
  dec_rad = dec*!dpi/180d

@@ -51,7 +51,7 @@
 ;
 ;-
 ;=============================================================================
-function plt_create_descriptors, n, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, pd=pd0, $
+function plt_create_descriptors, n, crd=_crd0, bd=_bd0, sld=_sld0, gbd=_gbd0, pd=_pd0, $
 @plt__keywords.include
 end_keywords
 @core.include
@@ -61,6 +61,11 @@ end_keywords
  pd = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
+   if(keyword_set(_bd0)) then bd0 = _bd0[i]
+   if(keyword_set(_sld0)) then sld0 = _sld0[i]
+   if(keyword_set(_gbd0)) then gbd0 = _gbd0[i]
+   if(keyword_set(_pd0)) then pd0 = _pd0[i]
 
    pd[i] = ominas_planet(i, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, pd=pd0, $
 @plt__keywords.include

@@ -909,10 +909,7 @@ function grim_title, plane, primary=primary
    plane = grim_get_plane(grim_data)
   end
 
- if(NOT keyword_set(plane.filename)) then name = cor_name(plane.dd) $
- else split_filename, plane.filename, dir, name
-
- return, name[0]
+ return, cor_name(plane.dd)
 end
 ;=============================================================================
 
@@ -935,6 +932,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  dx=dx, dy=dy, update=update, current=current, no_copy=no_copy, no_main=no_main, $
  no_user=no_user
 @grim_block.include
+
 
 
  if(NOT keyword_set(grim_data)) then grim_data = grim_get_data(plane=plane) 

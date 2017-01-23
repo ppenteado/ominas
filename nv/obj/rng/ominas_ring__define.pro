@@ -14,7 +14,7 @@ end_keywords)
 
  self.abbrev = 'RNG'
 
- if(keyword__set(primary)) then self.__PROTECT__primary = decrapify(primary[ii])
+ if(keyword__set(primary)) then self.__PROTECT__primary_xd = decrapify(primary[ii])
  if(keyword__set(desc)) then self.desc = decrapify(desc[ii])
 
  return, 1
@@ -72,7 +72,7 @@ pro ominas_ring__define
  struct = $
     { ominas_ring, inherits ominas_disk, $
 	desc:			'', $		; 'EDGE', 'PEAK', 'TROUGH'
-        __PROTECT__primary:     obj_new() $	; primary pd
+        __PROTECT__primary_xd:     obj_new() $	; primary pd
     }
 
 end
