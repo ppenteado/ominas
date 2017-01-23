@@ -28,6 +28,10 @@
 ;  OUTPUT: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	DSK_NM:		Sets the nm value.
+;
+;
 ; RETURN:
 ;	Value for nm obtained from the DSK_NM environmet variable.  Default
 ;	is 4.

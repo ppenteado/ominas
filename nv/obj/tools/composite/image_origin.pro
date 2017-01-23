@@ -49,7 +49,7 @@ function image_origin, cd
  case class of 
   'MAP' : return, map_origin(cd)
   'CAMERA' : return, cam_oaxis(cd)
-  default :
+  else :
  endcase
 
 

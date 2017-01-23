@@ -118,7 +118,7 @@ function ptloc, image, model, width, ccp=ccp, sigma=sigma, chisq=chisq, $
  else $
   begin
    status = 1
-;   nv_message, /cont, name='ptloc', 'Cannot obtain sub-pixel precision.'
+;   nv_message, /cont, 'Cannot obtain sub-pixel precision.'
 
    max_sub_cc = max(sub_cc)
    ww = where(sub_cc EQ max_sub_cc)
@@ -187,7 +187,8 @@ im = im - smooth(im, 15)
   begin
    catch, err
    if(keyword__set(err)) then return, 0
-   yy = gauss2d_fit(smooth(im,2), coeff, /tilt)
+;   yy = gauss2d_fit(smooth(im,2), coeff, /tilt)
+   yy = gauss2dfit(smooth(im,2), coeff, /tilt)
    catch, /cancel
 
    wx = coeff[2]

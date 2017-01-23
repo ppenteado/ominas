@@ -50,7 +50,7 @@ pro grim_mode_curves_mouse_event, event, data
   begin
    p = pg_select_region(0, /points, /data, $
 		p0=[event.x,event.y], $
-		/autoclose, /noclose, /noverbose, color=ctgreen(), $
+		/autoclose, /noclose, /silent, color=ctgreen(), $
 		cancel_button=2, select_button=1)
    if(n_elements(p) GT 1) then $
     begin

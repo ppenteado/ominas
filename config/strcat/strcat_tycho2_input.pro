@@ -114,7 +114,7 @@ function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
  ndx_f = file_search(filename)
  if(ndx_f[0] eq '') then $
   begin
-   nv_message, name='tycho2_get_stars', 'File does not exist - ' + filename
+   nv_message, 'File does not exist - ' + filename
    return, ''
   end
  
@@ -143,7 +143,7 @@ function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
  f = file_search(cat_fname)
  if(f[0] eq '') then $
   begin
-   nv_message, name='tycho2_get_stars', 'File does not exist - ' + cat_fname
+   nv_message, 'File does not exist - ' + cat_fname
   end
  
  ;---------------------------------------------------------

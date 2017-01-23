@@ -51,6 +51,10 @@ pro dat_redo, dd, noevent=noevent
  ii = _dd.dap_index
  if(ii EQ 0) then return
 
+ data = data_archive_get(_dd.data_dap, ii-1)
+ if(NOT keyword_set(data)) then return
+;if(NOT data_archive_test(_dd.data_dap, ii-1) then, return
+
  _dd.dap_index = _dd.dap_index - 1
 
  cor_rereference, dd, _dd

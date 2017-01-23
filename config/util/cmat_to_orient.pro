@@ -71,8 +71,7 @@ function cmat_to_orient, dd, cmat
   'CAS' : return, cas_cmat_to_orient(cmat)
 ;  'GLL' : return, gll_cmat_to_orient(cmat)
 ;  'VGR' : return, vgr_cmat_to_orient(cmat)
-   default : nv_message, name='cmat_to_orient', $
-                               'Instrument  ' + cam_name + ' not supported.'
+   default : nv_message, 'Instrument  ' + cam_name + ' not supported.'
  endcase
 
 

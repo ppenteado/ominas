@@ -138,11 +138,10 @@ end
 pro nv_copy, dst_xd, src_xd, noevent=noevent
 
  w = where(cor_class(dst_xd) NE cor_class(src_xd))
- if(w[0] NE -1) then $
-    nv_message, name='nv_copy', 'Source and destination must have the same class'
+ if(w[0] NE -1) then nv_message, 'Source and destination must have the same class'
 
 ; if(cor_class(dst_xd) NE cor_class(src_xd)) then $
-;    nv_message, name='nv_copy', 'Source and destination must have the same class'
+;    nv_message, 'Source and destination must have the same class'
 
  nv_notify, src_xd, type = 1, noevent=noevent
 

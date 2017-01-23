@@ -52,8 +52,7 @@ function dsk_get_dlandt, dkd, frame_bd
 @core.include
  
 
- if(NOT keyword_set(frame_bd)) then $
-             nv_message, name='dsk_get_dlandt', 'frame_bd required.'
+ if(NOT keyword_set(frame_bd)) then nv_message, 'frame_bd required.'
 
 
  dlandt = orb_get_dlandt(dkd, frame_bd)

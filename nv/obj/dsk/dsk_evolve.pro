@@ -32,6 +32,9 @@
 ;  INPUT: 
 ;	nodv:	 If set, derivatives will not be evolved.
 ;
+;	copy:	If set, the evolved descriptor is copied into the input
+;		descriptor and it is freed.  The input descriptor is returned.
+;
 ;
 ;  OUTPUT: NONE
 ;
@@ -52,7 +55,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_evolve, dkd, dt, nodv=nodv
+function dsk_evolve, dkd, dt, nodv=nodv, copy=copy
 @core.include
 
  ndt = n_elements(dt)
@@ -97,6 +100,14 @@ function dsk_evolve, dkd, dt, nodv=nodv
 
 
  cor_rereference, tdkd, _tdkd
+
+ if(keyword_set(copy)) then $
+  begin
+   nv_copy, dkd, tdkd
+   nv_free, tdkd
+   return, dkd
+  end
+
  return, tdkd
 end
 ;===========================================================================

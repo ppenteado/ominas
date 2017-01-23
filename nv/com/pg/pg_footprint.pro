@@ -77,8 +77,7 @@ function pg_footprint, cd=cd, bx=bx, gd=gd, fov=fov, $
  nt = n_elements(cd)
  nt1 = n_elements(od)
  pgs_count_descriptors, bx, nd=n_objects, nt=nt2
- if(nt NE nt1 OR nt1 NE nt2) then nv_message, $
-                          name='pg_footprint', 'Inconsistent timesteps.'
+ if(nt NE nt1 OR nt1 NE nt2) then nv_message, 'Inconsistent timesteps.'
 
  ;-----------------------------------------------
  ; determine points description

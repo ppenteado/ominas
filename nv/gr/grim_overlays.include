@@ -671,17 +671,12 @@ pro grim_draw_user_points, grim_data, plane, tags, xmap=xmap
        if(keyword_set(user_shade_fn) AND defined(user_shade_threshold)) then $
                p = grim_shade_threshold(user_ptd[j], shade, user_shade_threshold) $
        else p = pnt_points(user_ptd[j], /visible)
-;print, '---------'
-;print, cor_name(user_ptd[j])
-;;if(cor_name(user_ptd[j]) EQ 'CURTAIN_CAIRO-8') then stop
-;print, min(pnt_flags(user_ptd[j]))
 
        ;- - - - - - - - - - - - - - - - - - - -
        ; proceed with visible points
        ;- - - - - - - - - - - - - - - - - - - -
        if(keyword_set(p)) then $
         begin
-;print, cor_name(user_ptd[j])
          ;- - - - - - - - - - - - - - - - - - - -
          ; parse user color
          ;- - - - - - - - - - - - - - - - - - - -
@@ -693,7 +688,6 @@ pro grim_draw_user_points, grim_data, plane, tags, xmap=xmap
          else $
           ucol = (uxcol = long(user_color))
 
-;;;;; p and shade have diff # elem 
          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
          ; draw points using standard plotting or add to xgraphics map
          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1645,6 +1639,7 @@ pro grim_read_indexed_arrays, grim_data, plane, name, fname=fname
 
  w = where(pnt_valid(ptd))
  if(w[0] EQ -1) then return
+stop
 
  for i=0, n-1 do $
   begin
@@ -3544,6 +3539,7 @@ end
 pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=source_ptd, $
                                    obj_name=obj_name, replace=replace, temp=temp
 
+
  if(grim_data.slave_overlays) then plane = grim_get_plane(grim_data, pn=0)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
@@ -3594,7 +3590,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
        cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
        replace=replace, gd=gd
  if(NOT keyword_set(cd)) then return
- 
+
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; compute overlay arrays
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -

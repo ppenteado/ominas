@@ -154,8 +154,7 @@ scan_sigma = 1d
  ; error if no points exist
  ;---------------------------
  if(n_points EQ 0) then return, 0
-; if(n_points EQ 0) then nv_message, name='pg_ptscan_coeff', $
-;                                      'No point data available - use pg_ptscan.'
+; if(n_points EQ 0) then nv_message, 'No point data available - use pg_ptscan.'
 
  return, pts_cf
 end

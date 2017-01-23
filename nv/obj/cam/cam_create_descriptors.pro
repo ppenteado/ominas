@@ -69,7 +69,7 @@
 ;	
 ;-
 ;=============================================================================
-function cam_create_descriptors, n, crd=crd0, bd=bd0, cd=cd0, $
+function cam_create_descriptors, n, crd=_crd0, bd=_bd0, cd=_cd0, $
 @cam__keywords.include
 end_keywords
 @core.include
@@ -79,6 +79,9 @@ end_keywords
  cd = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
+   if(keyword_set(_bd0)) then bd0 = _bd0[i]
+   if(keyword_set(_cd0)) then cd0 = _cd0[i]
 
    cd[i] = ominas_camera(i, crd=crd0, bd=bd0, cd=cd0, $
 @cam__keywords.include

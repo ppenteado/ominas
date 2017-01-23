@@ -76,7 +76,7 @@ function sedr_list, dd=dd, sctime=sctime, planet=planet, silent=silent
  else $
   if(NOT keyword__set(sctime)) then $
    begin
-    nv_message, name='sedr_list', 'Must have dd or sctime', /continue
+    nv_message, 'Must have dd or sctime', /continue
     return, 0 
    end
 

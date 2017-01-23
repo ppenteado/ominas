@@ -22,9 +22,9 @@ pro dat_uncompress_data_mask, _dd
    if(keyword_set(abscissa)) then abscissa[dat.mask] = cabscissa
   end
 
- data_archive_set, _dd.data_dap, data, index=_dd.dap_index
+ data_archive_set, _dd.data_dap, data, index=_dd.dap_index, /noarchive
  if(keyword_set(abscissa)) then $
-        data_archive_set, _dd.abscissa_dap, abscissa, index=_dd.dap_index
+     data_archive_set, _dd.abscissa_dap, abscissa, index=_dd.dap_index, /noarchive
 end
 ;=============================================================================
 

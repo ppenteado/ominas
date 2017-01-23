@@ -49,7 +49,7 @@ pro stn_set_primary, std, primary, noevent=noevent
 
  _std = cor_dereference(std)
 
- _std.__PROTECT__primary=primary
+ _std.__PROTECT__primary_xd=primary
 
  cor_rereference, std, _std
  nv_notify, std, type = 0, noevent=noevent

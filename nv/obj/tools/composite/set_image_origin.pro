@@ -51,7 +51,7 @@ pro set_image_origin, cd, origin
  case class of 
   'MAP' : map_set_origin, cd, origin
   'CAMERA' : cam_set_oaxis, cd, origin
-  default :
+  else :
  endcase
 end
 ;=============================================================================

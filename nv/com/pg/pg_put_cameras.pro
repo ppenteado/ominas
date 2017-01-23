@@ -74,7 +74,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
+pro pg_put_cameras, dd, trs, gd=gd, cds=_cds, $
 @cam__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
@@ -85,10 +85,11 @@ pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
  ;-----------------------------------------------
  if(keyword__set(gd)) then $
   begin
-   if(NOT keyword__set(cds)) then cds=gd.cd
+   if(NOT keyword__set(_cds)) then _cds = gd.cd
   end
- if(NOT keyword__set(cds)) then nv_message, $
-                                name='pg_put_cameras', 'No camera descriptor.'
+ if(NOT keyword__set(_cds)) then nv_message, 'No camera descriptor.'
+
+ cds = nv_clone(_cds)
 
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
@@ -116,7 +117,7 @@ pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
-
+ nv_free, cds
 end
 ;===========================================================================
 

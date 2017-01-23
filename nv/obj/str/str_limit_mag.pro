@@ -55,8 +55,8 @@ function str_limit_mag, sd, min=min, max=max
 @core.include
 
 
- if(NOT keyword__set(min) AND NOT keyword__set(max)) THEN $
-         nv_message, name='str_limit_mag', 'No range or limits specified'
+ if(NOT keyword__set(min) AND NOT keyword__set(max)) then $
+                                nv_message, 'No range or limits specified'
  if(NOT keyword__set(min)) then  $
    _min = -999. $
  else $
@@ -68,8 +68,7 @@ function str_limit_mag, sd, min=min, max=max
  mag = str_get_mag(sd)
  sub = where( mag GE _min AND mag LE _max , count )
 
- if(count EQ 0) then $
-        nv_message, name='str_limit_mag', 'No stars fit this criteria'
+ if(count EQ 0) then nv_message, 'No stars fit this criteria'
 
  return, sub
 end

@@ -129,8 +129,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
  if(keyword_set(dkx)) then $
   begin
-   if(NOT keyword_set(_gbx)) then $
-            nv_message, name='pg_map', 'Globe descriptor required.'
+   if(NOT keyword_set(_gbx)) then nv_message, 'Globe descriptor required.'
    gbx = _gbx[0,*]
    __gbx = get_primary(cd, _gbx, rx=dkx)
    if(keyword_set(__gbx)) then gbx = __gbx  

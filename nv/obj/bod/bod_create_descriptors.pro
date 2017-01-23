@@ -68,7 +68,7 @@
 ; 	Adapted by:	Spitale, 5/2016
 ;-
 ;=============================================================================
-function bod_create_descriptors, n, crd=crd0, bd=bd0, $
+function bod_create_descriptors, n, crd=_crd0, bd=_bd0, $
 @bod__keywords.include
 end_keywords
 @core.include
@@ -77,6 +77,8 @@ end_keywords
  bd = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
+   if(keyword_set(_bd0)) then bd0 = _bd0[i]
 
    bd[i] = ominas_body(i, crd=crd0, bd=bd0, $
 @bod__keywords.include

@@ -1,1 +1,0 @@
-.rnew spkbug.pro

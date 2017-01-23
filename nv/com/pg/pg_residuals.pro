@@ -84,7 +84,7 @@ function pg_residuals, scan_ptd
        resx = [resx, dx]
        resy = [resy, dy]
       end $
-     else nv_message, name='pg_residuals', 'Invalid data set.'
+     else nv_message, 'Invalid data set.'
 
     end
   end

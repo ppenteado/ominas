@@ -77,10 +77,8 @@ function pg_select_points, dd, psym=psym, noverbose=noverbose, color=color, $
  tvcursor, /set
  if(NOT keyword_set(noverbose)) then $
    begin
-    nv_message, 'Use cursor and mouse buttons to select points -', $
-                 name='pg_select_points', /continue
-    nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', $
-                 name='pg_select_points', /continue
+    nv_message, 'Use cursor and mouse buttons to select points -', /continue
+    nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', /continue
    end
 
  vv=tvpath(psym=psym, /copy, p0=p0, one=one, number=number, $

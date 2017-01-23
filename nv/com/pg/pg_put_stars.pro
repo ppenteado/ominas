@@ -74,7 +74,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_stars, dd, trs, sds=sds, ods=ods, gd=gd, $
+pro pg_put_stars, dd, trs, sds=_sds, ods=ods, gd=gd, $
 @str__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
@@ -85,13 +85,13 @@ pro pg_put_stars, dd, trs, sds=sds, ods=ods, gd=gd, $
  ;-----------------------------------------------
  if(keyword__set(gd)) then $
   begin
-   if(NOT keyword__set(sds)) then sds=gd.sds
-   if(NOT keyword__set(ods)) then ods=gd.ods
+   if(NOT keyword__set(_sds)) then _sds = gd.sds
+   if(NOT keyword__set(ods)) then ods = gd.ods
   end
- if(NOT keyword__set(sds)) then nv_message, $
-                                name='pg_put_stars', 'No star descriptor.'
- if(NOT keyword__set(ods)) then nv_message, $
-                               name='pg_put_stars', 'No observer descriptor.'
+ if(NOT keyword__set(_sds)) then nv_message, 'No star descriptor.'
+ if(NOT keyword__set(ods)) then nv_message, 'No observer descriptor.'
+
+ sds = nv_clone(_sds)
 
 
  ;-------------------------------------------------------------------
@@ -116,7 +116,7 @@ pro pg_put_stars, dd, trs, sds=sds, ods=ods, gd=gd, $
                              end_keywords
 
 
-
+ nv_free, sds
 end
 ;===========================================================================
 

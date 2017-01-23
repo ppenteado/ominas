@@ -7,14 +7,18 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
 
  if(keyword_set(_time)) then time = _time
 
- ;---------------------------------------
+ ;----------------------------------------------------------
  ; Construct kernel input keyword and
  ; name of auto-detect function
- ;---------------------------------------
+ ; if auto-detect function does not exist, use th default 
+ ; eph detector
+ ;----------------------------------------------------------
  kw = strlowcase(type) + '_in'
  env = strupcase(prefix) + '_SPICE_' + strupcase(type)
- fn = prefix + '_spice_' + strlowcase(type) + '_detect'
-
+ def = 'spice_' + strlowcase(type) + '_detect'
+ fn = prefix + '_' + def
+ if(NOT routine_exists(fn)) then fn = 'eph_' + def
+ 
  ;---------------------------------------
  ; Get raw kernel keyword value
  ;---------------------------------------
@@ -32,7 +36,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  w = where(kpath NE '')
  if(w[0] EQ -1) then $
   begin
-   nv_message, name='spice_kernel_parse', $
+   nv_message, /verb, $
      env + ' environment variable is undefined.', /con, $
        exp=[env + ' specifies the directory in which the NAIF/SPICE translator', $
             'searches for ' + strupcase(type) + ' kernel files.']

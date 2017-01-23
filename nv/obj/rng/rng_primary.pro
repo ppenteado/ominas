@@ -48,7 +48,7 @@ function rng_primary, rd, noevent=noevent
 
  nv_notify, rd, type = 1, noevent=noevent
  _rd = cor_dereference(rd)
- return, _rd.__PROTECT__primary
+ return, _rd.__PROTECT__primary_xd
 end
 ;===========================================================================
 

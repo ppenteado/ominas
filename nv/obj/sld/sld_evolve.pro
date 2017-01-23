@@ -32,6 +32,9 @@
 ;  INPUT: 
 ;	nodv:	 If set, velocities will not be evolved.
 ;
+;	copy:	If set, the evolved descriptor is copied into the input
+;		descriptor and it is freed.  The input descriptor is returned.
+;
 ;
 ;  OUTPUT: NONE
 ;
@@ -52,8 +55,8 @@
 ;	
 ;-
 ;===========================================================================
-function sld_evolve, sld, dt, nodv=nodv
+function sld_evolve, sld, dt, nodv=nodv, copy=copy
 @core.include
- return, bod_evolve(sld, dt, nodv=nodv)
+ return, bod_evolve(sld, dt, nodv=nodv, copy=copy)
 end
 ;===========================================================================

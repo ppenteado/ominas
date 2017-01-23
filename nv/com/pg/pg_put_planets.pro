@@ -41,6 +41,8 @@
 ;
 ;	plt_*:		All planet override keywords are accepted.
 ;
+;	raw:		If set, no aberration corrections are performed.
+;
 ;	tr_override:	String giving a comma-separated list of translators
 ;			to use instead of those in the translators table.  If
 ;			this keyword is specified, no translators from the 
@@ -74,25 +76,25 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_planets, dd, trs, pds=pds, ods=ods, gd=gd, $
+pro pg_put_planets, dd, trs, pds=_pds, ods=ods, gd=gd, raw=raw, $
 @plt__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
+ ndd = n_elements(dd)
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
  if(keyword_set(gd)) then $
   begin
-   if(NOT keyword_set(pds)) then pds=gd.pds
-   if(NOT keyword_set(ods)) then ods=gd.ods
+   if(NOT keyword_set(_pds)) then _pds = gd.pds
+   if(NOT keyword_set(ods)) then ods = gd.ods
   end
- if(NOT keyword_set(pds)) then nv_message, $
-                                name='pg_put_planets', 'No planet descriptor.'
- if(NOT keyword_set(ods)) then nv_message, $
-                               name='pg_put_planets', 'No observer descriptor.'
+ if(NOT keyword_set(_pds)) then nv_message, 'No planet descriptor.'
+ if(NOT keyword_set(ods)) then nv_message, 'No observer descriptor.'
 
+ pds = nv_clone(_pds)
 
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
@@ -106,6 +108,17 @@ pro pg_put_planets, dd, trs, pds=pds, ods=ods, gd=gd, $
  if(n_elements(lora) NE 0) then glb_set_lora, pds, lora
 
 
+ ;-------------------------------------------------------------------
+ ; invert aberration corrections
+ ;-------------------------------------------------------------------
+ if(keyword_set(ods) AND (NOT keyword_set(raw))) then $
+  for i=0, ndd-1 do $
+   begin
+    w = where(cor_assoc_xd(pds) EQ dd[i])
+    if(w[0] NE -1) then abcorr, ods[i], pds[w], c=pgc_const('c'), /invert
+   end
+
+
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
@@ -113,7 +126,7 @@ pro pg_put_planets, dd, trs, pds=pds, ods=ods, gd=gd, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
-
+ nv_free, pds
 end
 ;===========================================================================
 

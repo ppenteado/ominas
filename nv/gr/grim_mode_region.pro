@@ -52,13 +52,13 @@ pro grim_mode_region_mouse_event, event, data
   begin
    roi = pg_select_region(/box, 0, $
   	      p0=[event.x,event.y], $
-  	      /noverbose, color=ctblue(), image_pts=p)
+  	      /silent, color=ctblue(), image_pts=p)
   end $
  else if(event.press EQ 4) then $
   begin
    roi = pg_select_region(0, $
   	      p0=[event.x,event.y], $
-  	      /autoclose, /noverbose, color=ctblue(), $
+  	      /autoclose, /silent, color=ctblue(), $
   	      cancel_button=2, end_button=-1, select_button=4, $
   	      image_pts=p)
   end $

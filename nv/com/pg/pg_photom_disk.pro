@@ -102,12 +102,9 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  ;-----------------------------------------------
  ; validate descriptors
  ;-----------------------------------------------
- if(n_elements(cd) GT 1) then $
-         nv_message, name='pg_photom_disk', 'Only one camera descriptor allowed.'
- if(n_elements(dkx) GT 1) then $
-         nv_message, name='pg_photom_disk', 'Only one disk descriptor allowed.'
- if(n_elements(sund) GT 1) then $
-         nv_message, name='pg_photom_disk', 'Only one sun descriptor allowed.'
+ if(n_elements(cd) GT 1) then nv_message, 'Only one camera descriptor allowed.'
+ if(n_elements(dkx) GT 1) then nv_message, 'Only one disk descriptor allowed.'
+ if(n_elements(sund) GT 1) then nv_message, 'Only one sun descriptor allowed.'
 
 
  ;---------------------------------------
@@ -157,9 +154,8 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  ; compute photometric angles
  ;---------------------------------------
 ;;; should be pht_angle, I think...
- ;pht_angles_disk, image_pts, cd, dkx, sund, emm=mu, inc=mu0, g=g, valid=valid ;no such function
- if(valid[0] EQ -1) then $
-         nv_message, name='pg_photom_disk', 'No valid points in image region.'
+ ;pht_angles_disk, image_pts, cd, dkx, sund, emm=mu, inc=mu0, g=g, valid=valid ;no such procedure
+ ;if(valid[0] EQ -1) then nv_message, 'No valid points in image region.'
 
  mu0 = mu0[valid] 
  mu = mu[valid] 

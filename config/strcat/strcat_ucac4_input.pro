@@ -112,7 +112,7 @@ function ucac4_get_stars, dd, filename, cam_vel=cam_vel, $
  f = file_search(filename)
  if(f[0] eq '') then $
   begin
-   nv_message, name='ucac4_get_stars', 'File does not exist - ' + filename
+   nv_message, 'File does not exist - ' + filename
    return, ''
   end
  

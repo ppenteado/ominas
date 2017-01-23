@@ -46,8 +46,7 @@ pro strcat_get_inputs, dd, env, key, $
  if(NOT keyword_set(path)) then path = getenv(env);
  if(NOT keyword_set(path)) then $
   begin
-   nv_message, /cont, name='strcat_get_inputs', $
-                   'Warning: ' + env + ' not defined.  No star catalog.'
+   nv_message, /cont, 'Warning: ' + env + ' not defined.  No star catalog.'
    return
   end
    
@@ -137,7 +136,7 @@ pro strcat_get_inputs, dd, env, key, $
 ;   sun_vel = (bod_vel(sund))[0,*]
 ;   cam_vel = vel - sun_vel
 ;  end $
-; else nv_message, name='strcat_get_inputs', /continue, $
+; else nv_message, /continue, $
 ;        'Observer velocity unknown.  Will not correct for stellar aberration.'
 
 

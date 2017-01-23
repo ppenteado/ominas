@@ -73,8 +73,7 @@ pro grim_mode_drag_mouse_event, event, data
 
    xy = (convert_coord(double(pp[0,*]), double(pp[1,*]), /device, /to_data))[0:1,*]
    dxy = xy[*,0] - xy[*,1]
-;   pg_shift, plane.dd, cd=*plane.cd_p, round(dxy)
-   pg_shift, plane.dd, round(dxy)
+   grim_reposition, grim_data, plane, cd=*plane.cd_p, -dxy
   end
 
 

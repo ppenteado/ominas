@@ -95,8 +95,7 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
  nt = n_elements(cd)
  nt1 = n_elements(od)
  pgs_count_descriptors, gbx, nd=n_objects, nt=nt2
- if(nt NE nt1 OR nt1 NE nt2) then nv_message, name='pg_cusps', $
-                                                      'Inconsistent timesteps.'
+ if(nt NE nt1 OR nt1 NE nt2) then nv_message, 'Inconsistent timesteps.'
 
 
  ;-----------------------------------------------

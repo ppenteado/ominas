@@ -60,8 +60,7 @@ pro dat_parse_keyval, _keyval, keyword, value
    keyword = strmid(keyword, 1, strlen(keyword)-1)
    value = '1'
   end $
- else nv_message, name = 'dat_parse_keyval', $
-                                  'Keyword/value parse error: ' + keyval
+ else nv_message, 'Keyword/value parse error: ' + keyval
  
 
 end

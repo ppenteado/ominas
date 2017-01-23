@@ -49,7 +49,7 @@ pro arr_set_primary, ard, primary, noevent=noevent
 
  _ard = cor_dereference(ard)
 
- _ard.__PROTECT__primary=primary
+ _ard.__PROTECT__primary_xd=primary
 
  cor_rereference, ard, _ard
  nv_notify, ard, type = 0, noevent=noevent

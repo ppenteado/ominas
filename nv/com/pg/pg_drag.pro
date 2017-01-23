@@ -43,7 +43,7 @@
 ;			so something other than a period can be used to mark
 ;			points.
 ;
-;	noverbose:	If set, turns off the notification that cursor
+;	silent:		If set, turns off the notification that cursor
 ;                       movement is required.
 ;
 ;	xor_graphics:	If set, grahics are drawn using the XOR function.
@@ -79,7 +79,7 @@
 ;=============================================================================
 function pg_drag, object_ptd, draw=draw, xor_graphics=xor_graphics, $
                   dtheta=dtheta, axis_ptd=axis_ptd, sample=_sample, move=move, $
-		  symbol=symbol, noverbose=noverbose, color=color, fn=fn, data=data
+		  symbol=symbol, silent=silent, color=color, fn=fn, data=data
 
  if(NOT keyword_set(_sample)) then sample=5 $
  else sample=_sample
@@ -122,8 +122,7 @@ function pg_drag, object_ptd, draw=draw, xor_graphics=xor_graphics, $
  ; concatenate points into one array
  ;------------------------------------------
  object_pts = pnt_points(object_ptd, /vis)
- if(NOT keyword_set(object_pts)) then nv_message, name='pg_drag', $
-                                                   'No visible object points.'
+ if(NOT keyword_set(object_pts)) then nv_message, 'No visible object points.'
 ; xpoints=tr(object_pts[0,*])
 ; ypoints=tr(object_pts[1,*])
 
@@ -179,12 +178,10 @@ function pg_drag, object_ptd, draw=draw, xor_graphics=xor_graphics, $
  ax = axis[0] & ay = axis[1]
 
  tvcursor, /set
- if(NOT keyword_set(noverbose)) then $
+ if(NOT keyword_set(silent)) then $
    begin
-    nv_message, 'Drag pointing using cursor and mouse buttons-', $
-                 name='pg_drag', /continue
-    nv_message, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept', $
-                 name='pg_drag', /continue
+    nv_message, 'Drag pointing using cursor and mouse buttons-', /continue
+    nv_message, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept', /continue
    end
  cursor_move, ax, ay, xpoints, ypoints, sub_xpoints, sub_ypoints, $
              dx=dx, dy=dy, dtheta=dtheta, symbol=symtouse, star_sub=star_sub, $

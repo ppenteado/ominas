@@ -29,6 +29,9 @@
 ;  INPUT: 
 ;	nodv:	 If set, velocities will not be evolved.
 ;
+;	copy:	If set, the evolved descriptor is copied into the input
+;		descriptor and it is freed.  The input descriptor is returned.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -47,12 +50,12 @@
 ;	
 ;-
 ;=============================================================================
-function cor_evolve, xd, dt, nodv=nodv
+function cor_evolve, xd, dt, nodv=nodv, copy=copy
 
  abbrev = cor_abbrev(xd[0])
  fn = abbrev + '_EVOLVE'
 
- return, call_function(fn, xd, dt, nodv=nodv)
+ return, call_function(fn, xd, dt, nodv=nodv, copy=copy)
 end
 ;===========================================================================
 

@@ -77,7 +77,6 @@ function stellab_pos, pos, $	; Target positions relative to observer,
    sub = colgen(nv,3,nt, w)
    result[sub] = v_rotate_11(pos[sub], axis[sub], sin(theta[w]), cos(theta[w]))
   end
-
  
  return, result
 end

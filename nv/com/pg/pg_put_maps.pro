@@ -74,7 +74,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
+pro pg_put_maps, dd, trs, gd=gd, mds=_mds, $
 @map__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
@@ -85,11 +85,11 @@ pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
  ;-----------------------------------------------
  if(keyword_set(gd)) then $
   begin
-   if(NOT keyword_set(mds)) then mds = gd.md
+   if(NOT keyword_set(_mds)) then _mds = gd.md
   end
- if(NOT keyword_set(mds)) then nv_message, $
-                                name='pg_put_maps', 'No map descriptor.'
+ if(NOT keyword_set(_mds)) then nv_message, 'No map descriptor.'
 
+ mds = nv_clone(_mds)
 
  ;-------------------------------------------------------------------
  ; override the specified values 
@@ -116,7 +116,7 @@ pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
-
+ nv_free, mds
 end
 ;===========================================================================
 

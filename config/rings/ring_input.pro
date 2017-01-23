@@ -36,6 +36,10 @@
 ;	status:		Zero if valid data is returned
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	NV_RING_DATA:	Sets the directory in which to look for data files.
+;
+;
 ;  TRANSLATOR KEYWORDS:
 ;	system:		Asks translator to return a single ring descriptor
 ;			encompassing the entire ring system.  If not specified,
@@ -145,7 +149,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------------------
  catpath = getenv('NV_RING_DATA')
  if(NOT keyword_set(catpath)) then $
-   nv_message, /con, name='ring_input', $
+   nv_message, /con, $
      'NV_RING_DATA environment variable is undefined.', $
        exp=['NV_RING_DATA specifies directory in which this translator', $
             'searches for ring catalog files.']
@@ -171,7 +175,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  ; planet descriptor passed as key1
  ;-----------------------------------------------
  if(keyword_set(key1)) then pds = key1 $
-; else nv_message, name='ring_input', 'Planet descriptor required.'
+; else nv_message, 'Planet descriptor required.'
  else $
   begin
    status = -1
@@ -262,7 +266,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
          name = ring
 
          nw = n_elements(w)
-         if(nw GT 2) then nv_message, name='ringcat_read', $
+         if(nw GT 2) then nv_message, $
                     'Too many features with ring name ' + dat[j].ring + '.'
          w0 = where(dat[w].type EQ 'INNER') 
          w1 = where(dat[w].type EQ 'OUTER') 

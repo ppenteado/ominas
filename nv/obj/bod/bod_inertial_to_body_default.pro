@@ -56,9 +56,9 @@ function bod_inertial_to_body_default, bd, v, _sub=sub
 
  if(NOT keyword_set(sub)) then sub = linegen3x(nv,3,nt)
 
- M0 = (_bd.orientT[*,0,*])[sub]
- M1 = (_bd.orientT[*,1,*])[sub]
- M2 = (_bd.orientT[*,2,*])[sub]
+ M0 = (_bd.orient[0,*,*])[sub]
+ M1 = (_bd.orient[1,*,*])[sub]
+ M2 = (_bd.orient[2,*,*])[sub]
 
  r = dblarr(nv,3,nt,/nozero)
  r[*,0,*] = total(M0*v,2)

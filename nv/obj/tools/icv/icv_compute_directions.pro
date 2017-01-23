@@ -59,8 +59,7 @@
 pro icv_compute_directions, curve_pts, center=center, $
                            cos_alpha=cos_alpha, sin_alpha=sin_alpha
 
-; if(NOT keyword_set(center)) then $
-;             nv_message, /con, name='icv_strip_curve', ...
+; if(NOT keyword_set(center)) then nv_message, /con, ...
 
  ;--------------------------------------
  ; distances between i+1 and i-1 points

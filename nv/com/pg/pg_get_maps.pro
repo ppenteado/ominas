@@ -131,26 +131,26 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
     end
 
 
-   mds=map_create_descriptors(n, $
-	name=name, $
-	graphic=graphic, $
-	rotate=rotate, $
-	type=type, $
-	units=units, $
-	fn_data=fn_data, $
-	size=size, $
-	origin=origin, $
-	center=center, $
-	range=range, $
-	scale=scale, $
-	radii=radii)
+   mds = map_create_descriptors(n, $
+	  name=name, $
+	  graphic=graphic, $
+	  rotate=rotate, $
+	  type=type, $
+	  units=units, $
+	  fn_data=fn_data, $
+	  size=size, $
+	  origin=origin, $
+	  center=center, $
+	  range=range, $
+	  scale=scale, $
+	  radii=radii)
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get map descriptors from the translators
  ;-------------------------------------------------------------------
  else $
   begin
-   mds=dat_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_mds, key8=name, trs=trs, $
+   mds = dat_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_mds, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 

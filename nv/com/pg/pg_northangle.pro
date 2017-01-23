@@ -64,7 +64,7 @@ function pg_northangle, cd=cd, bx=bx, gd=gd
  ;-----------------------------------
  nt = n_elements(cd)
  pgs_count_descriptors, bx, nd=n_objects, nt=nt1
- if(nt NE nt1) then nv_message, name='pg_center', 'Inconsistent timesteps.'
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
  ;-----------------------------------

@@ -51,7 +51,7 @@
 ;	
 ;-
 ;=============================================================================
-function cor_create_descriptors, n, crd=crd0, $
+function cor_create_descriptors, n, crd=_crd0, $
 @cor__keywords.include
 end_keywords
 @core.include
@@ -60,6 +60,7 @@ end_keywords
  crd = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
 
    crd[i] = ominas_core(i, crd=crd0, $
 @cor__keywords.include

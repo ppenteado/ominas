@@ -743,10 +743,23 @@ end
 ; grim_write
 ;
 ;=============================================================================
-pro grim_write, grim_data
+pro grim_write, grim_data, filename, filetype=filetype
 
  widget_control, /hourglass
  plane = grim_get_plane(grim_data)
+
+
+ ;---------------------------------------------
+ ; prompt before overwriting existing file
+ ;---------------------------------------------
+ ff = file_search(filename)
+ if(keyword_set(ff)) then $
+  begin
+   ans = dialog_message('Overwrite ' + filename + '?', /question)
+   if(ans NE 'Yes') then return
+  end
+
+
  grim_suspend_events
 
  ;---------------------------------------------
@@ -789,7 +802,7 @@ pro grim_write, grim_data
  ;---------------------------------------------
  ; write data
  ;---------------------------------------------
- dat_write, plane.filename, plane.dd, filetype=plane.filetype
+ dat_write, filename, plane.dd, filetype=filetype
 
 end
 ;=============================================================================
@@ -800,32 +813,26 @@ end
 ; grim_get_save_filename
 ;
 ;=============================================================================
-function grim_get_save_filename, grim_data
+function grim_get_save_filename, grim_data, filetype=filetype
 
  plane = grim_get_plane(grim_data)
+ name = dat_filename(plane.dd)
+ split_filename, name, dir, _name
 
- if(keyword_set(plane.save_path)) then path = plane.save_path $
- else if(keyword_set(plane.load_path)) then path = plane.load_path
+ if(keyword_set(plane.save_path)) then path = plane.save_path
+ if(NOT keyword_set(path)) then path = dir
 
  types = strupcase(dat_detect_filetype(/all))
- w = where(strupcase(plane.filetype) EQ types)
+ w = where(strupcase(dat_filetype(plane.dd)) EQ types)
 
  if(w[0] NE -1) then $
    types = [types[w[0]], rm_list_item(types, w[0], only='')]
 
- filename = pickfiles(get_path=get_path, $
-                   title='Select filename for saving', path=path, /one, $
-       options=['Filetype:',types], sel=filetype)
+ filename = pickfiles(/one, get_path=get_path, $
+               title='Select filename for saving', path=path, default=name, $
+               options=['Filetype:',types], sel=filetype)
 
- if(NOT keyword_set(filename)) then return, -1
-
- plane.filename = filename
- plane.save_path = get_path
- plane.filetype = filetype
-
- grim_set_plane, grim_data, plane
-
- return, 0
+ return, filename
 end
 ;=============================================================================
 
@@ -917,7 +924,6 @@ pro grim_load_files, grim_data, filenames, load_path=load_path
       end
 
      plane = grim_get_plane(grim_data, pn=pn)
-     plane.filename = filenames[i]
      plane.load_path = load_path
 
      grim_set_plane, grim_data, plane, pn=pn
@@ -1505,7 +1511,7 @@ pro grim_render, grim_data, plane=plane
    new_plane.rendering = 1
    new_plane.dd = nv_clone(plane.dd)
 
-   dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn'
+   dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn', /noevent
 
    dat_set_dim_fn, new_plane.dd, 'grim_render_dim_fn'
    dat_set_dim_data, new_plane.dd, dat_dim(plane.dd)
@@ -1632,9 +1638,7 @@ end
 ;
 ;=============================================================================
 pro grim_undo, grim_data, plane
-
  dat_undo, plane.dd
-
 end
 ;=============================================================================
 
@@ -1645,9 +1649,7 @@ end
 ;
 ;=============================================================================
 pro grim_redo, grim_data, plane
-
  dat_redo, plane.dd
-
 end
 ;=============================================================================
 
@@ -1665,6 +1667,35 @@ pro grim_interrupt_callback, data
  ;------------------------------------------
 ;...
 
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_sampling_fn
+;
+;
+;=============================================================================
+function grim_sampling_fn, dd, source_image_pts_sample, data
+
+ grim_data = grim_get_data()
+ plane = grim_get_plane(grim_data)
+ pos = cor_udata(plane.dd, 'IMAGE_POS')
+ if(NOT keyword_set(pos)) then return, source_image_pts_sample
+
+ w = where(pos NE 0)
+ if(w[0] EQ -1) then return, source_image_pts_sample
+
+ xdim = dat_dim(dd)
+ dim = size(source_image_pts_sample, /dim)
+ n = n_elements(source_image_pts_sample)
+
+ if(dim[0] NE 2) then $
+         source_image_pts_sample = w_to_xy(xdim, source_image_pts_sample)
+ n = n_elements(source_image_pts_sample)/2
+
+ return, source_image_pts_sample - pos[0:1]#make_array(n, val=1d)
 end
 ;=============================================================================
 
@@ -2146,16 +2177,16 @@ pro grim_menu_file_save_event, event
  ;------------------------------------------------------
  ; prompt for filename if necessary
  ;------------------------------------------------------
- if(NOT keyword__set(plane.filename)) then $
-  begin
-   status = grim_get_save_filename(grim_data)
-   if(keyword__set(status)) then return
-  end
+ filename = dat_filename(plane.dd)
+ if(NOT keyword_set(filename)) then $
+        filename = grim_get_save_filename(grim_data, filetype=filetype)
+ if(NOT keyword_set(filename)) then return
+
 
  ;------------------------------------------------------
  ; write data
  ;------------------------------------------------------
- grim_write, grim_data
+ grim_write, grim_data, filename, filetype=filetype
 
 end
 ;=============================================================================
@@ -2197,13 +2228,13 @@ pro grim_menu_file_save_as_event, event
  ;------------------------------------------------------
  ; prompt for filename 
  ;------------------------------------------------------
- status = grim_get_save_filename(grim_data)
- if(keyword__set(status)) then return
+ filename = grim_get_save_filename(grim_data, filetype=filetype)
+ if(NOT keyword_set(filename)) then return
 
  ;------------------------------------------------------
  ; write data
  ;------------------------------------------------------
- grim_write, grim_data
+ grim_write, grim_data, filename, filetype=filetype
 
 end
 ;=============================================================================
@@ -2431,8 +2462,8 @@ pro grim_menu_file_save_tie_ptd_event, event
  ;------------------------------------------------------
  ; get filename
  ;------------------------------------------------------
- fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIE'), $
-                                       title='Select filename for saving', /one)
+ fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIEPIONT'), $
+                                            title='Select filename for saving', /one)
 
  ;------------------------------------------------------
  ; write data
@@ -2482,7 +2513,7 @@ pro grim_menu_file_save_all_tie_ptd_event, event
  ; write data
  ;------------------------------------------------------
  for i=0, n_elements(planes)-1 do $
-                          grim_write_indexed_arrays, grim_data, planes[i], 'TIE'
+                          grim_write_indexed_arrays, grim_data, planes[i], 'TIEPIONT'
  grim_print, grim_data, 'All tie points saved.'
 
 end
@@ -2526,13 +2557,13 @@ pro grim_menu_file_load_tie_ptd_event, event
  ;------------------------------------------------------
  ; get filename
  ;------------------------------------------------------
- fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIE'), $
+ fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIEPIONT'), $
                                          title='Select filename to load', /one)
 
  ;------------------------------------------------------
  ; write data
  ;------------------------------------------------------
- grim_read_indexed_arrays, grim_data, plane, 'TIE', fname=fname
+ grim_read_indexed_arrays, grim_data, plane, 'TIEPOINT', fname=fname
  grim_refresh, grim_data
 
 end
@@ -2577,7 +2608,7 @@ pro grim_menu_file_load_all_tie_ptd_event, event
  ; read data
  ;------------------------------------------------------
  for i=0, n_elements(planes)-1 do $
-                          grim_read_indexed_arrays, grim_data, planes[i], 'TIE'
+                          grim_read_indexed_arrays, grim_data, planes[i], 'TIEPIONT'
  grim_refresh, grim_data
 
 end
@@ -3589,7 +3620,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Displays all planes in sequence using xinteranimate1.  This option is
+;	Displays all planes in sequence using xinteranimate.  This option is
 ;	useful or blinking as well.
 ;
 ;
@@ -3625,7 +3656,7 @@ pro grim_menu_plane_sequence_event, event
  widget_control, /hourglass
 
  geom = widget_info(grim_data.draw, /geom)
- xinteranimate1, set=[geom.xsize, geom.ysize, n]
+ xinteranimate, set=[geom.xsize, geom.ysize, n]
  tvim, /noplot, /silent, $
            /new, /inherit, xsize=geom.xsize, ysize=geom.ysize, /pixmap
  pixmap = !d.window
@@ -3648,7 +3679,7 @@ pro grim_menu_plane_sequence_event, event
 
    grim_refresh, grim_data, plane=planes[i], wnum=pixmap, /no_title
 
-   xinteranimate1, frame=i, window=pixmap, /show
+   xinteranimate, frame=i, window=pixmap, /show
   end
 
  grim_print, grim_data, ''
@@ -3659,7 +3690,7 @@ pro grim_menu_plane_sequence_event, event
  wdelete, pixmap
  grim_wset, grim_data, grim_data.wnum
 
- xinteranimate1
+ xinteranimate
 end
 ;=============================================================================
 
@@ -3707,7 +3738,7 @@ pro grim_menu_plane_dump_event, event
  widget_control, /hourglass
 
  geom = widget_info(grim_data.draw, /geom)
- xinteranimate1, set=[geom.xsize, geom.ysize, n]
+ xinteranimate, set=[geom.xsize, geom.ysize, n]
  tvim, /noplot, /silent, $
            /new, /inherit, xsize=geom.xsize, ysize=geom.ysize, /pixmap
  pixmap = !d.window
@@ -7607,7 +7638,7 @@ pro grim_redo_event, event
 
 
  ;---------------------------------------------------------
- ; undo last edit
+ ; redo last edit
  ;---------------------------------------------------------
  grim_set_primary, grim_data.base
  widget_control, grim_data.draw, /hourglass
@@ -9023,7 +9054,7 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
      grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
      grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
      if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
-    end
+   end
   end
 
 
@@ -9217,6 +9248,7 @@ pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=
         readout_fns=readout_fns, plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
+	position=position, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
         xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
@@ -9257,7 +9289,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    menu_extensions[0] = strmid(menu_extensions[0], 1, strlen(menu_extensions[0])-1)
    menu_extensions = ['grim_default_menus', menu_extensions]
   end
-
 
  ;=========================================================
  ; cursor modes
@@ -9383,7 +9414,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        user_psym=user_psym, path=path, save_path=save_path, load_path=load_path, $
        faint=faint, cursor_swap=cursor_swap, fov=fov, hide=hide, filetype=filetype, $
        trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_sund=trs_sund, trs_ard=trs_ard, $
-       color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, $
+       color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        readout_fns=readout_fns, symsize=symsize, nhist=nhist, maintain=maintain, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
@@ -9442,16 +9473,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    xmanager, 'grim', grim_data.base, $
                  /no_block, modal=modal, cleanup='grim_kill_notify'
    if(keyword_set(modal)) then return
-
-
-   ;----------------------------------------------
-   ; initialize extensions
-   ;----------------------------------------------
-;   if(keyword_set(button_extensions)) then $
-;    begin
-;     for i=0, n_elements(button_extensions)-1 do $
-;                    call_procedure, button_extensions[i]+'_init', grim_data, cursor_modes[i].data_p
-;    end
 
   end
 
@@ -9515,81 +9536,19 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
 
 
-;;----------------------------------------------------------------------
-;; if one cd, just use current plane
-;;----------------------------------------------------------------------
-;if(ncd EQ 1) then planes = grim_get_plane(grim_data) $
-;;----------------------------------------------------------------------
-;; if more than one cd, then one for each plane
-;;----------------------------------------------------------------------
-;else if(ncd GT 1) then $
-; begin
-;  planes = grim_get_plane(grim_data, /all)
-;  if(n_elements(planes) NE ncd) then $
-;               nv_message, name='grim', $
-;                    'There must be one camera descriptor for each plane.'
-; end $
-;;----------------------------------------------------------------------
-;; if no camera descriptors given, then you can still give other
-;; descriptors to use for the current plane
-;;----------------------------------------------------------------------
-;else $
-; begin
-;  plane = grim_get_plane(grim_data, pn=pn)
-;  if(keyword_set(pd)) then grim_add_descriptor, grim_data, plane.pd_p, pd
-;  if(keyword_set(rd)) then grim_add_descriptor, grim_data, plane.rd_p, rd
-;  if(keyword_set(sd)) then grim_add_descriptor, grim_data, plane.sd_p, sd
-;  if(keyword_set(std)) then grim_add_descriptor, grim_data, plane.std_p, std
-;  if(keyword_set(ard)) then grim_add_descriptor, grim_data, plane.ard_p, std
-;  if(keyword_set(sund)) then $
-;            grim_add_descriptor, grim_data, plane.sund_p, sund, /one
-;  if(keyword_set(od)) then $
-;            grim_add_descriptor, grim_data, plane.od_p, od, /one, /noregister
-; end
-
-;;----------------------------------------------------------------------
-;; if descriptors given, then the descriptors must be arrays 
-;; with the following dimensions:
-;;
-;;  cd -- nplanes
-;;  pd -- [npd, nplanes]
-;;  rd -- [nrd, nplanes]
-;;  sd -- [nsd, nplanes]
-;;  std -- [nstd, nplanes]
-;;  ard -- [nstd, nplanes]
-;;  ard -- [nard, nplanes]
-;;  sund -- nplanes
-;;  od -- nplanes
-;;
-;;----------------------------------------------------------------------
-;for i=0, ncd-1 do $
-; begin
-;  grim_add_descriptor, grim_data, planes[i].cd_p, cd[i], /one
-;  if(keyword_set(pd)) then $
-;               grim_add_descriptor, grim_data, planes[i].pd_p, pd[*,i]
-;  if(keyword_set(rd)) then $
-;               grim_add_descriptor, grim_data, planes[i].rd_p, rd[*,i]
-;  if(keyword_set(std)) then $
-;               grim_add_descriptor, grim_data, planes[i].std_p, std[*,i]
-;  if(keyword_set(ard)) then $
-;               grim_add_descriptor, grim_data, planes[i].ard_p, ard[*,i]
-;  if(keyword_set(sd)) then $
-;               grim_add_descriptor, grim_data, planes[i].sd_p, sd[*,i]
-;  if(keyword_set(sund)) then $
-;               grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one
-;  if(keyword_set(od)) then $
-;      grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister
-; end
-
-
-
-
 
  ;=========================================================
  ; if new instance, setup initial view
  ;=========================================================
  if(new) then $
   begin
+   ;----------------------------------------------
+   ; sampling
+   ;----------------------------------------------
+   if(type NE 'plot') then $
+      for i=0, nplanes-1 do $
+         dat_set_sampling_fn, planes[i].dd, 'grim_sampling_fn', /noevent
+
    ;----------------------------------------------
    ; initial settings
    ;----------------------------------------------
@@ -9666,27 +9625,31 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   end
 
 
- ;=========================================================
- ; if new instance, initialize cursor modes
- ;=========================================================
-; if(new) then $
-;  begin
-;   if(keyword_set(button_extensions)) then $
-;    begin
-;     for i=0, n_elements(button_extensions)-1 do $
-;        call_procedure, button_extensions[i]+'_init', grim_data, cursor_modes[i].data_p
-;    end
-;  end
+ ;----------------------------------------------
+ ; if new instance, initialize enu extensions
+ ;----------------------------------------------
+ if(new) then $
+  begin
+   if(keyword_set(menu_extensions)) then $
+    begin
+     for i=0, n_elements(menu_extensions)-1 do $
+         if(routine_exists(menu_extensions[i]+'_init')) then $
+                  call_procedure, menu_extensions[i]+'_init', grim_data
+    end
+  end
 
+ ;----------------------------------------------
+ ; if new instance, initialize cursor modes
+ ;----------------------------------------------
  if(new) then $
      for i=0, n_elements(cursor_modes)-1 do $
-        call_procedure, cursor_modes[i].name+'_init', grim_data, cursor_modes[i].data_p
+        if(routine_exists(cursor_modes[i].name+'_init')) then $
+            call_procedure, cursor_modes[i].name+'_init', grim_data, cursor_modes[i].data_p
 
 
  ;-------------------------
  ; draw initial image
  ;-------------------------
- grim_refresh, grim_data, no_erase=no_erase;, /no_image
-
+ grim_refresh, grim_data, no_erase=no_erase
 end
 ;=============================================================================

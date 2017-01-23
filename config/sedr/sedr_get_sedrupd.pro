@@ -106,7 +106,7 @@ function sedr_get_sedrupd, sctime, planet, source
 
 eod:
  free_lun, unit_sedrupd
- nv_message, name='sedr_get_sedrupd', 'File not found or I/O error', /continue
+ nv_message, 'File not found or I/O error', /continue
  return, 0
 end
 ;=============================================================================

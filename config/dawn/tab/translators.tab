@@ -1,11 +1,7 @@
-# instrument	input			output		keyword arguments
+# Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  DEFAULT	dh_std_input		dh_std_output
-  DAWN_FC1	dh_std_input		dh_std_output
-	-       station_input			-
-	-       array_input			-
-	-	dawn_spice_input		dawn_spice_output \
+  DAWN_FC1	dawn_spice_input		dawn_spice_output \
 			                          klist=~/projects/dawn_review/dawn.kernels \
 							ck_in=auto \
 							spk_in=auto \
@@ -17,13 +13,7 @@
 							xk_in=extra.tpc  \
 							/spk_strict
 
-#	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		/j2000
-
-  DAWN_FC2	dh_std_input		dh_std_output
-	-       station_input			-
-	-       array_input			-
-	-	dawn_spice_input		dawn_spice_output \
+  DAWN_FC2	dawn_spice_input		dawn_spice_output \
 			                          klist=~/projects/dawn_review/dawn.kernels \
 							ck_in=auto \
 							spk_in=auto \
@@ -34,7 +24,5 @@
 							sck_in=auto \
 							xk_in=extra.tpc  \
 							/spk_strict
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		/j2000
 
 

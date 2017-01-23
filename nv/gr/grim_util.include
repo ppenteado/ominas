@@ -279,7 +279,7 @@ pro grim_add_callback, callbacks, data_ps, callbacks_list, data_ps_list
  if(NOT keyword__set(callbacks_list)) then callbacks_list = 0
 
  if(n_elements(callbacks) NE n_elements(data_ps)) then $
-                       nv_message, 'Inconsistent callback registration.'
+                       nv_message, /anonymous, 'Inconsistent callback registration.'
 
  if(NOT keyword__set(callbacks_list[0])) then $
   begin
@@ -351,3 +351,22 @@ pro grim_call_callbacks, _callbacks_list, _data_ps_list, event
 
 end
 ;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_menu_id
+;
+;=============================================================================
+function grim_get_menu_id, grim_data, desc
+
+ menu_ids = *grim_data.menu_ids_p
+ menu_desc = *grim_data.menu_desc_p
+
+ w = where(strpos(menu_desc, desc) NE -1)
+ return, menu_ids[w[0]]
+end
+;=============================================================================
+
+
+

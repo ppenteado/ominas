@@ -10,7 +10,7 @@ function detect_dh, filename, udata
  ; open the file
  ;==============================
  openr, unit, filename, /get_lun, error=error
- if(error NE 0) then nv_message, !err_string
+ if(error NE 0) then nv_message, /anonymous, !err_string
 
  ;=================================
  ; read the first thiry characters

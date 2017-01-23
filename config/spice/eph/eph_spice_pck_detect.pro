@@ -49,8 +49,7 @@ function eph_spice_pck_detect, dd, kpath, time=time, strict=strict, all=all
 
  
 ; if(NOT keyword_set(kernels)) then $
-;    nv_message, name='eph_spice_pck_detect', $
-;                                'No kernel files found in ' + kpath + '.'
+;                  nv_message,'No kernel files found in ' + kpath + '.'
 
 
  return, kernels

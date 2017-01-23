@@ -32,6 +32,10 @@
 ;  OUTPUT: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	BOD_NDV:	Sets the ndv value.
+;
+;
 ; RETURN:
 ;	Current ndv value.
 ;

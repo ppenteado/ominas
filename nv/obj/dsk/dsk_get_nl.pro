@@ -28,6 +28,10 @@
 ;  OUTPUT: NONE
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	DSK_NL:		Sets the nl value.
+;
+;
 ; RETURN:
 ;	Value for nl obtained from the DSK_NL environmet variable.  Default
 ;	is 4.

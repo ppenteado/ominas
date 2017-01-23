@@ -87,7 +87,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_create_descriptors, n, crd=crd0, dd=dd0, silent=silent, $
+function dat_create_descriptors, n, crd=_crd0, dd=_dd0, silent=silent, $
 @dat__keywords.include
 end_keywords
 @core.include
@@ -96,6 +96,8 @@ end_keywords
  dd = objarr(n)
  for i=0, n-1 do $
   begin
+   if(keyword_set(_crd0)) then crd0 = _crd0[i]
+   if(keyword_set(_dd0)) then dd0 = _dd0[i]
 
    dd[i] = ominas_data(i, crd=crd0, dd=dd0, $
 @dat__keywords.include

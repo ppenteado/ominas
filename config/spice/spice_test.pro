@@ -10,7 +10,7 @@ function spice_test
  help, 'icy', /dlm, output=s
  if(n_elements(s) EQ 1) then $
   begin
-   nv_message, name='spice_test', $
+   nv_message, $
      'ICY DLM not installed properly.', /con, $
        exp=['Attempt to verify ICY DLM status returned the following message:', $
             s]
@@ -24,7 +24,7 @@ function spice_test
  ver = cspice_tkvrsn('TOOLKIT')
  if(NOT keyword_set(ver)) then $
   begin
-   nv_message, name='spice_test', $
+   nv_message, $
      'ICY DLM not installed properly.', /con, $
        exp=['Attempt to verify ICY toolkit version returned a null string.']
    return, 0

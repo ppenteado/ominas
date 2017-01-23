@@ -32,6 +32,9 @@
 ;  INPUT: 
 ;	nodv:	 If set, derivatives will not be evolved.
 ;
+;	copy:	If set, the evolved descriptor is copied into the input
+;		descriptor and it is freed.  The input descriptor is returned.
+;
 ;
 ;  OUTPUT: NONE
 ;
@@ -52,9 +55,9 @@
 ;	
 ;-
 ;=============================================================================
-function rng_evolve, rd, dt, nodv=nodv
+function rng_evolve, rd, dt, nodv=nodv, copy=copy
 @core.include
- return, dsk_evolve(rd, dt, nodv=nodv)
+ return, dsk_evolve(rd, dt, nodv=nodv, copy=copy)
 end
 ;===========================================================================
 

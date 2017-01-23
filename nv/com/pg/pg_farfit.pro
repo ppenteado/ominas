@@ -101,8 +101,7 @@ function pg_farfit, dd, base_ptd, model_ptd, nsamples=nsamples, show=show, $
  ;------------------------------------------------------------
  base_pts = pnt_points(/vis, base_ptd, /cat)
  model_pts = pnt_points(/vis, model_ptd, /cat)
- if(NOT keyword__set(model_pts)) then nv_message, name='pg_farfit', $
-                                                   'No visible model points.'
+ if(NOT keyword__set(model_pts)) then nv_message, 'No visible model points.'
 
  nbase = n_elements(base_pts)/2
  nmodel = n_elements(model_pts)/2

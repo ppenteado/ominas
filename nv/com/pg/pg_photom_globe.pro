@@ -113,12 +113,9 @@ function pg_photom_globe, dd, outline_ptd=outline_ptd, $
  ;-----------------------------------------------
  ; validate descriptors
  ;-----------------------------------------------
- if(n_elements(cd) GT 1) then $
-         nv_message, name='pg_photom_globe', 'Only one camera descriptor allowed.'
- if(n_elements(gbx) GT 1) then $
-         nv_message, name='pg_photom_globe', 'Only one globe descriptor allowed.'
- if(n_elements(sund) GT 1) then $
-         nv_message, name='pg_photom_globe', 'Only one sun descriptor allowed.'
+ if(n_elements(cd) GT 1) then nv_message, 'Only one camera descriptor allowed.'
+ if(n_elements(gbx) GT 1) then nv_message, 'Only one globe descriptor allowed.'
+ if(n_elements(sund) GT 1) then nv_message, 'Only one sun descriptor allowed.'
 
 
  ;---------------------------------------
@@ -160,8 +157,7 @@ function pg_photom_globe, dd, outline_ptd=outline_ptd, $
  ;---------------------------------------
  pht_angles, image_pts, cd, gbx, sund, emm=mu, inc=mu0, g=g
  valid = where(mu0 NE 0)
- if(valid[0] EQ -1) then $
-       nv_message, name='pg_photom_globe', 'No valid points in image region.'
+ if(valid[0] EQ -1) then nv_message, 'No valid points in image region.'
 
  mu0 = mu0[valid] 
  mu = mu[valid] 

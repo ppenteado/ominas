@@ -410,11 +410,9 @@ function pnt_read, filename, bin=bin, $
  s = str_sep(line, ' ')
  if(keyword_set(s[0])) then $
   begin
-   if(s[0] NE 'protocol') then nv_message, name='pnt_read', $
-                                 'Syntax error in file ' + filename+ '.'
+   if(s[0] NE 'protocol') then nv_message, 'Syntax error in file ' + filename+ '.'
    w = str_isalpha(s[1])
-   if(w[0] NE -1) then nv_message, name='pnt_read', $
-                                 'Syntax error in file ' + filename+ '.'
+   if(w[0] NE -1) then nv_message, 'Syntax error in file ' + filename+ '.'
    protocol = fix(s[1])
    version = fix((float(s[1]) - protocol) * 10)
   end
@@ -432,7 +430,7 @@ function pnt_read, filename, bin=bin, $
   1: ptd = pnt_read_1(filename, visible=visible, $
          name=name, desc=desc, flags=flags, points=points, vectors=vectors, $
          comment=comment, version=version, input=input, data=data, tags=tags)
-  else: nv_message, name='pnt_read', 'Invalid protocol.'
+  else: nv_message, 'Invalid protocol.'
  endcase
 
 

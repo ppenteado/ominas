@@ -186,6 +186,9 @@ end
 ;
 ;=============================================================================
 pro grim_set_plane, grim_data, plane, pn=pn
+;help, dat_data(plane.dd)
+;help, /tr
+;stop
 
  if(NOT ptr_valid(grim_data.planes_p)) then return
 
@@ -334,7 +337,8 @@ end
 pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, $
                       path=path, save_path=save_path, load_path=load_path, $
                       trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, $
-                      trs_sund=trs_sund, color=color, xrange=_xrange, yrange=_yrange, $
+                      trs_sund=trs_sund, color=color, position=_position, $
+                      xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
                       render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
@@ -386,6 +390,14 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
   if(n_elements(yrange)/2 NE n_planes) then $
                                     yrange = yrange#make_array(n_planes,val=1d)
 
+  position = [0.,0.,0.,0.]
+  if(keyword_set(_position)) then position = _position
+  dim = size(position, /dim)
+  if(n_elements(dim) EQ 1) then dim = [dim,1]
+  if(dim[1] NE n_planes) then position = position#make_array(n_planes,val=1d)
+  if(dim[0] EQ 2) then position = [position, dblarr(2,n_planes)]
+
+
   ;--------------------------
   ; plot parms data structure
   ;--------------------------
@@ -434,9 +446,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	;---------------
 		pn		:	-1, $
 		grnum		:	grim_data.grnum, $
-		filename	:	'', $
 		filter		:	filter, $
-		filetype	:	filetype, $
 		load_path	:	load_path, $
 		save_path	:	save_path, $
 		rendering	:	0, $
@@ -457,7 +467,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	;---------------
 		xrange		:	xrange[*,i], $
 		yrange		:	yrange[*,i], $
-		position	:	[0.,0.,0.,0.], $
+		position	:	position[*,i], $
 		title		:	title[i], $
 		xtitle		:	xtitle[i], $
 		ytitle		:	ytitle[i], $

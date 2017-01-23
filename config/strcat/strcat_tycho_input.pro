@@ -571,9 +571,9 @@ function strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, s
 
  regions = tycho_get_regions(ra1, ra2, dec1, dec2, path_tycho=path_tycho)
  nregions = n_elements(regions)
- if(nregions eq 1 AND regions[0] eq '') then nv_message, $
-                 name='pg_get_stars_tycho', 'No Tycho/GSC regions found.'
-print, 'Number of Tycho/GSC regions found ',nregions
+ if(nregions eq 1 AND regions[0] eq '') then $
+                                nv_message, 'No Tycho/GSC regions found.'
+ nv_message, /con, verb=0.1, 'Number of Tycho/GSC regions found: ', nregions
 
  ;--------------------------
  ; Loop on Tycho/GSC regions

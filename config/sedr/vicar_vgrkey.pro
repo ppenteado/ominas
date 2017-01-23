@@ -85,7 +85,7 @@ function vicar_vgrkey, label, keyword
  s = size(lab02)
  if(s[1] EQ 2) then $
   begin
-   nv_message, name='vicar_vgrkey', 'No Voyager VICAR label found.', /continue
+   nv_message, 'No Voyager VICAR label found.', /continue
    return, replicate('',n_keys)
   end
 

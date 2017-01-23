@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	ingrid, gd=gd
+;	ingrid, grnum, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -287,10 +287,10 @@ pro ingrid, grnum, gd=_gd, $
  if(keyword_set(object_ptd)) then _object_ptd = object_ptd
 
  w = where(pnt_valid(tie_ptd))
- if(w[0] NE -1) then _tie_ptd = tie_ptd
+ if(w[0] NE -1) then _tie_ptd = tie_ptd[w]
 
  w = where(pnt_valid(curve_ptd))
- if(w[0] NE -1) then _curve_ptd = curve_ptd
+ if(w[0] NE -1) then _curve_ptd = curve_ptd[w]
 
  if(keyword_set(shadow_ptd)) then _shadow_ptd = shadow_ptd
  if(keyword_set(reflection_ptd)) then _reflection_ptd = reflection_ptd

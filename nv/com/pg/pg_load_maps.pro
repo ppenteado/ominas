@@ -33,6 +33,10 @@
 ;	md:	Map descriptor for each map.
 ;
 ;
+; ENVIRONMENT VARIABLES:
+;	PG_MAPS:	Sets the map directory; overrides the dir keyword.
+;
+;
 ; RETURN: 
 ;	Data descriptor containing the rendered image.
 ;
@@ -61,8 +65,8 @@ function pg_load_maps, dir, md=md, bx=bx, dd=dd
  if(NOT keyword_set(dir)) then dir = getenv('PG_MAPS')
  if(NOT keyword_set(dir)) then $
   begin
-   nv_message, /con, name='pg_load_maps', 'Map directory not specified.', $
-       exp=['The map directory may be specified as te argument to this program', $
+   nv_message, /con, 'Map directory not specified.', $
+       exp=['The map directory may be specified as the argument to this program', $
             'or via the PG_MAPS environment variable.']
    return, 0
   end 

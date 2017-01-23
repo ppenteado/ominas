@@ -20,9 +20,9 @@ pro dat_compress_data_mask, _dd
   end
  *_dd.compress_data_p = {size:s, mask:mask}
 
- data_archive_set, _dd.data_dap, cdata, index=_dd.dap_index
+ data_archive_set, _dd.data_dap, cdata, index=_dd.dap_index, /noarchive
  if(keyword_set(cabscissa)) then $
-      data_archive_set, _dd.abscissa_dap, cabscissa, index=_dd.dap_index
+      data_archive_set, _dd.abscissa_dap, cabscissa, index=_dd.dap_index, /noarchive
 end
 ;=============================================================================
 
