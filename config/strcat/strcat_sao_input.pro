@@ -54,7 +54,7 @@
 ; :Hidden:
 ;-
 function sao_get_regions, ra1, ra2, dec1, dec2, path_sao=path_sao
- return, path_sao + 'sao_idl.str'	; there's only one sao "region"
+ return, file_test(path_sao + 'sao_idl.str') ? path_sao + 'sao_idl.str' : path_sao + 'sao.dat'	; there's only one sao "region"
 end
 
 ;+
