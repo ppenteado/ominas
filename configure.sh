@@ -405,6 +405,7 @@ Data:
            About 22 GB as of Dec/2016
 	8) SEDR image data . . . . . . . . . . . . ${dstatus[0]}
 	9) TYCHO2 star catalog . . . . . . . . . . ${dstatus[1]}
+           About 161 MB download, 665 MB unpacked
 	10) SAO star catalog . . . . . . . . . . . ${dstatus[2]}
 	11) GSC star catalog . . . . . . . . . . . ${dstatus[3]}
 	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[4]}
