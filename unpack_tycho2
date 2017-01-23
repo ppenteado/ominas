@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-echo $@
-idl -e '!path+=":./util/downloader"& unpack_tycho2' -args $@
