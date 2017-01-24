@@ -4,7 +4,7 @@
 #./download_UCAC4.sh /directory/to/place/catalog
 
 
-echo "This script wiill download the UCAC4 catalog from CDS (ftp://cdsarc.u-strasbg.fr/pub/cats/more/UCAC4/u4b/) and prepare its files for use. As of January/2017, this adds to 161 MB of download, and 665 MB of disk space after unpacking."
+echo "This script wiill download the UCAC4 catalog from CDS (ftp://cdsarc.u-strasbg.fr/pub/cats/more/UCAC4/u4b/) and prepare its files for use. As of January/2017, this adds to 2.8 GB"
 
 read -rp "Continue? " ans
 case $ans in
