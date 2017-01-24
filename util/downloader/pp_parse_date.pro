@@ -36,10 +36,13 @@ wkds='(sun)|(mon)|(tue)|(wed)|(thu)|(fri)|(sat)'
 mona=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
 mons='('+strjoin(mona,')|(')+')'
 f1s='('+wkds+'),? +([[:digit:]]{1,2}) +('+mons+') +([[:digit:]]+) +([[:digit:]]{1,2}):([[:digit:]]{1,2}):([[:digit:]]{1,2})'
+f2s='('+mons+') +([[:digit:]]{1,2}) +([[:digit:]]{4})'
 f1=stregex(dstr,f1s,/bool,/fold_case)
+f2=stregex(dstr,f2s,/bool,/fold_case)
 
 foreach ds,dstr,ids do begin
-  if f1[ids] then begin
+  case 1 of
+    f1[ids]: begin
     dss=stregex(ds,f1s,/extract,/subexpr,/fold_case)
     yr=fix(dss[23])
     mon=(where(dss[11:22]))[0]+1
@@ -48,7 +51,19 @@ foreach ds,dstr,ids do begin
     m=fix(dss[25])
     s=fix(dss[26])
     ret[ids]=julday(mon,day,yr,h,m,s)
-  endif
+  end
+  f2[ids]: begin
+    dss=stregex(ds,f2s,/extract,/subexpr,/fold_case)
+    yr=fix(dss[15])
+    day=fix(dss[14])
+    mon=(where(dss[2:13]))[0]+1
+    h=0
+    m=0
+    s=0d0
+    ret[ids]=julday(mon,day,yr,h,m,s)
+  end
+  else:
+  endcase
 endforeach
 
 return,ret
