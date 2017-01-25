@@ -52,7 +52,9 @@ if a.keycount then begin
 endif else begin
   pg=pp_wget(a.arguments[0])
 endelse
+if a.keywords.haskey('debug') && a.keywords['debug'] then print,'pp_wget object created'
 pg.geturl
+if a.keywords.haskey('debug') && a.keywords['debug'] then print,'all files retrieved'
 if n_elements(tsf) then begin
   ts=pg.timestamps
   if strmatch(tsf,'*/') then begin

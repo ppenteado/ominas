@@ -147,7 +147,7 @@ pu=parse_url(self.baseurl)
 
 self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
   url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,ftp_connection_mode=0)
-
+if self.debug then print,'iurl object created for ',self.baseurl
 if strmatch(self.baseurl,'*/') then begin ;if url is a directory
   if strlowcase(pu.scheme) eq 'ftp' then begin
     ind=self.iu.getftpdirlist()
