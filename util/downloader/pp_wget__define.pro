@@ -170,6 +170,7 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
 endif else begin
   link=file_basename(pu.path)
   self.iu.setproperty,url_path=(stregex(pu.path,'(.*)'+link+'$',/extract,/subexpr))[1]
+  if self.debug then print,'retrieving ',link
   self.retrieve,link
 endelse
 
