@@ -37,8 +37,10 @@ pro pp_wgetcl
 compile_opt idl2,logical_predicate
 a=pp_command_line_args_parse()
 if a.keywords.haskey('verbose') && a.keywords['verbose'] then begin
-  print,a.keywords.tostruct(),/impl
-  print,a.arguments,/impl
+  ;print,a.keywords.tostruct(),/impl
+  print,json_serialize(a.keywords.tostruct())
+  ;print,a.arguments,/impl
+  print,json_serialize(a.arguments)
 endif
 if a.argcount lt 1 then return
 if a.keycount then begin
