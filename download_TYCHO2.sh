@@ -13,12 +13,13 @@ case $ans in
 esac
 
 baseurl="ftp://cdsarc.u-strasbg.fr/pub/cats/I/259"
+baseurl=""
 #standard download (full, nonrecursive) directories
 
 #location for timestamps files
 mkdir -p ~/.ominas/timestamps/TYCHO2
 
-./pp_wget "${baseurl}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ --verbose --debug" $@
+./pp_wget "${baseurl}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ " $@
 
 #unpack the catalog files
 idl -e '!path+=":./util/downloader"& unpack_tycho2' -args $@
