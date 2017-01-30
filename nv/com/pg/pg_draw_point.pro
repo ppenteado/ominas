@@ -289,11 +289,9 @@ pro pg_draw_point, _pp, literal=literal, $
  line = pgdp_fill(_line, n_objects, def=0, all=all)
  plabels = pgdp_fill(_plabels, n_objects, def='', all=all)
  colors = pgdp_fill(_colors, n_objects, def=!p.color, all=all)
- label_colors = pgdp_fill(label_colors*label_shade, n_objects, def=!p.color, all=all)
-
+ label_colors = pgdp_fill(label_colors, n_objects, def=!p.color, all=all)
 
  if(keyword_set(xormode)) then device, set_graphics=6
-;psyms = -psyms
 
  ;- - - - - - - - - - - - - - - - -
  ; plot arrays
@@ -345,7 +343,7 @@ pro pg_draw_point, _pp, literal=literal, $
   end
 
 
- if(nval GT 1) then nv_free, pp
+;;; if(nval GT 1) then nv_free, pp
  if(keyword_set(xormode)) then device, set_graphics=3
 end
 ;=============================================================================

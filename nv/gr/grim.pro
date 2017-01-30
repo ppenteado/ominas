@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Graphical interface for oMINAS. 
+;	General-purpose Graphical interface for oMINAS. 
 ;
 ;
 ; CATEGORY:
@@ -279,15 +279,10 @@
 ;
 ;
 ; OPERATION:
-;	Grim maintains any number of image planes as well as associated
-;	geometric data (camera, planet, ring, star descriptors) for each of
-;	those planes.  Image planes are completely independent unless the 
-;	user chooses to display them simultaneously in separate red, green,
-;	and blue display channels.
-;
-;	Each image plane also contains numerous overlay arrays for displaying
-;	various geometric objects -- limbs, rings, stars, etc.  An array of 
-;	user overlay points is maintained to be used for application-specific
+;	Each GRIM window may contain any number of image planes as well as 
+;	associated geometric data (i.e. object descriptors) and overlay arrays 
+;	for displaying various geometric objects -- limbs, rings, stars, etc.  
+;	An array of user overlay points is maintained to be used for application-specific
 ;	purposes.  Generally, a set of overlay points or a descriptor must be
 ;	activated in order to be used as input to a menu item; see activate 
 ;	mode above.  
@@ -295,10 +290,23 @@
 ;	There are exclusive and non-exclusive mechanisms for selecting grim
 ;	windows.  Grim windows may be non-exclusively selected using the select
 ;	mode button mentioned above (upper-left corner).  The exclusive
-;	selection mechanism consists of a 'primary' grim window, indicated by 
+;	selection mechanism consists of a 'primary' GRIM window, indicated by 
 ;	a red outline in the graphics window.  The primary selection is 
 ;	changed by pressing any mode or shortcut button, or by clicking in 
-;	the graphics area of the desired grim window.
+;	the graphics area of the desired grim window.  The meaning of the
+;	various selections depends on the application.
+;
+;	Objects maintained by GRIM are accessible via the INGRID interface,
+;	for example:
+;
+;		IDL> ingrid, dd=dd, cd=cd, pd=pd
+;
+;	returns the data desciptor, camera descriptor, and planet descriptors
+;	associtaed with the current plane.  
+;
+;	GRIM registers event handlers for all of its objects, so the window
+;	is updated any time anobjet is modifed, whther by GRIM or by some
+;	other program.
 ;
 ;
 ; EXAMPLES:
@@ -312,7 +320,11 @@
 ;		IDL> dd = dat_read(filename)
 ;		IDL> grim, dd
 ;
-;	(3) To give a grim instance a new camera descriptor:
+;		   or
+;
+;		IDL> grim, filename
+;
+;	(3) To give an existing grim instance a new camera descriptor:
 ;
 ;		IDL> grim, cd=cd
 ;
@@ -1680,8 +1692,7 @@ end
 function grim_sampling_fn, dd, source_image_pts_sample, data
 
  grim_data = grim_get_data()
- plane = grim_get_plane(grim_data)
- pos = cor_udata(plane.dd, 'IMAGE_POS')
+ pos = cor_udata(dd, 'IMAGE_POS')
  if(NOT keyword_set(pos)) then return, source_image_pts_sample
 
  w = where(pos NE 0)

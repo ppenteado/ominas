@@ -1,3 +1,4 @@
+;===============================================================================
 ; docformat = 'rst'
 ;+
 ;
@@ -53,11 +54,14 @@
 ;       Modified:       Spitale 9/2001
 ;
 ;-
+;===============================================================================
 
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
 ;-
+;===============================================================================
 function tycho_fzone, declow, dechi
 
   dec = (declow + dechi) / 2.0
@@ -102,7 +106,12 @@ pro tycho_initzd, zdir
   zdir(22) = 'S7500'
   zdir(23) = 'S8230'
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
@@ -248,7 +257,12 @@ next: a = 1
  free_lun, lun
  return, region_list
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
@@ -296,6 +310,7 @@ end
 ;      from the object descriptor bod_time, which is assumed to
 ;      be seconds past 2000, unless keyword /b1950 is set
 ;-
+;===============================================================================
 function tycho_get_stars, filename, b1950=b1950, cam_vel=cam_vel, $
          jtime=jtime, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, noaberr=noaberr, names=names, mag=mag
@@ -512,11 +527,17 @@ function tycho_get_stars, filename, b1950=b1950, cam_vel=cam_vel, $
 
  return, _sd
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
 ;-
+;===============================================================================
 function _strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
@@ -529,11 +550,17 @@ function _strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, status=status, 
 	end_keywords )
 
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
 ;-
+;===============================================================================
 function strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
@@ -604,5 +631,4 @@ print, 'Total Tycho-2 stars found: ',n_obj
  status = 0
  return, sd
 end
-
-;==========================================================================
+;===============================================================================

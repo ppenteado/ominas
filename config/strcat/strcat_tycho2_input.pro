@@ -1,3 +1,4 @@
+;===============================================================================
 ; docformat = 'rst'
 ;+
 ;
@@ -50,15 +51,23 @@
 ;   Jacqueline Ryan, 8/2016
 ;
 ;-
+;===============================================================================
 
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
 ;-
+;===============================================================================
 function tycho2_get_regions, ra1, ra2, dec1, dec2, path_tycho2=path_tycho2
-  return, path_tycho2 + 'index.dat'
+  return, path_tycho2 + '/index.dat'
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
@@ -106,6 +115,7 @@ end
 ;      from the object descriptor bod_time, which is assumed to
 ;      be seconds past 2000, unless keyword /b1950 is set
 ;-
+;===============================================================================
 function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
@@ -131,7 +141,7 @@ function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
  close, ndx_lun
  free_lun, ndx_lun
  ;---------------------------------------------------------
- ; Find the tycho regions which the scene occupies
+ ; Find the tycho regions that the scene occupies
  ;---------------------------------------------------------
  reg = where(index.DEmax ge dec1 and index.DEmin le dec2 and index.RAmax ge ra1 and index.RAmin le ra2)
 
@@ -248,43 +258,9 @@ function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
    stars = stars[w]
   end
 
- ;---------------------------------------------------------
- ; Input common names. Star names are found via an 
- ; internal document which is cross indexed with several 
- ; catalogs. TYCHO-2 occupies the third column of that
- ; document.
- ;---------------------------------------------------------
- file = file_search(getenv('OMINAS_DIR')+'/config/strcat/stars.txt')
- openr, names_lun, file, /get_lun
- line = ''
- linarr = strarr(file_lines(file), 7)
- i = 0
- while not eof(names_lun) do $
-  begin
-   readf, names_lun, line
-   fields = strtrim(strsplit(line, '|', /extract), 2)
-   linarr[i, *] = fields
-   i = i + 1
-  endwhile
- close, names_lun
- free_lun, names_lun
- 
- n = n_elements(stars)
- matches = intarr(n)
- ;---------------------------------------------------------
- ; Match names with the third column (TYCHO-2)
- ;---------------------------------------------------------
- for i=0, n - 1 do matches[i] = where(strpos(linarr[*,2], stars[i].num) ne -1)
  name = 'TYC ' + stars.num
- ndx = where(matches ne -1)
- matches = matches[ndx]
- for i = 0, n_elements(matches) - 1 do $
-  begin
-    lin_ndx = matches[i]
-    if strtrim(linarr[lin_ndx, 1], 2) ne '-1' then name[ndx[i]] = linarr[lin_ndx, 1]
-    if strtrim(linarr[lin_ndx, 0], 2) ne '-1' then name[ndx[i]] = linarr[lin_ndx, 0]
-  endfor
- 
+
+
  ;---------------------------------------------------------
  ; Select explicitly named stars
  ;---------------------------------------------------------
@@ -379,11 +355,17 @@ function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
 
  return, _sd
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
 ;-
+;===============================================================================
 function strcat_tycho2_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
@@ -396,3 +378,4 @@ function strcat_tycho2_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, 
 	end_keywords )
 
 end
+;===============================================================================

@@ -105,6 +105,7 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
    n = n_elements(name)
 
    cds=cam_create_descriptors(n, $
+	assoc_xd=dd, $
 	name=name, $
 	orient=orient, $
 	avel=avel, $

@@ -100,6 +100,8 @@ common nv_message_block, last_message, cb_tlp, verbosity
 @core.include
 @nv_block.common
 
+ if(NOT keyword_set(verbosity)) then verbosity = 0
+
  ;------------------------------------------------
  ; check environment for verbosity override
  ;------------------------------------------------

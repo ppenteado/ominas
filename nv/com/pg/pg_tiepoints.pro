@@ -94,7 +94,7 @@ function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, ptd, body_pts=body_pts, d
  ; get body points if necessary
  ;-----------------------------------------------
  p = pnt_points(ptd, /cat)
- if(NOT keyword_set(body_pts)) then body_pts = image_to_body(cd, bx, p)
+ if(NOT keyword_set(body_pts)) then body_pts = image_to_body(cd, bx, p, hit=hit)
 
  ;-----------------------------------------------
  ; compute offsets

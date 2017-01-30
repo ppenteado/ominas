@@ -86,6 +86,7 @@ function grim_compute_limb, map=map, fov=fov, hide=hide, $
  ptd = limb_ptd
  if(keyword_set(hide_ptd_term)) then ptd = [ptd, hide_ptd_term]
  if(keyword_set(hide_ptd_disk)) then if(NOT hide) then ptd = [ptd, hide_ptd_disk]
+;stop
 
  return, ptd
 end
@@ -558,8 +559,16 @@ end
 ;
 ;===============================================================================
 function grim_symsize_star, data
- max = max(*data.mag_p) + 2
- return, (max - *data.mag_p) / max
+ mmax = 16d & mmin = 1d
+ smax = 1d & smin = 0.1d
+
+ mags = *data.mag_p < mmax > mmin
+ norm = (mmax - mags)/(mmax-mmin)
+
+ return, norm*(smax-smin) + smin
+
+ max = max(mags) + 2
+ return, (max - mags) / max
 end
 ;===============================================================================
 
@@ -570,8 +579,16 @@ end
 ;
 ;===============================================================================
 function grim_shade_star, data, ptd
- max = max(*data.mag_p) + 2
- return, (max - *data.mag_p) / max
+ mmax = 16d & mmin = 1d
+ smax = 1d & smin = 0.25
+
+ mags = *data.mag_p < mmax > mmin
+ norm = (mmax - mags)/(mmax-mmin)
+
+ return, norm*(smax-smin) + smin
+
+ max = max(mags) + 2
+ return, (max - mags) / max
 end
 ;===============================================================================
 

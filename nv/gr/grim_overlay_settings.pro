@@ -58,7 +58,7 @@ pro gros_update_form, grim_data, plane, base
    ; if no user overlays, unmap that section
    ;-----------------------------------------------------
    user_ptd = grim_get_user_ptd(plane=plane, $
-                            utags, color=user_colors, psym=user_psyms, symsize=user_psizes)
+                 utags, color=user_colors, psym=user_psyms, symsize=user_psizes)
 
    if(NOT keyword_set(user_ptd)) then $
     begin 
@@ -290,7 +290,7 @@ pro gros_apply_settings, data
    ;-----------------------
    symsizes = *planes[i].overlay_symsize_p
    for j=0, n_elements(symsizes)-1 do $
-     symsizes[j] = float(grim_parse_form_entry(data.ids, data.tags, $
+     symsizes[j] = float(grim_parse_form_entry(data.ids, data.tags, /num, $
                                                   gros_overlay_tag(j,'symsize')))
    *planes[i].overlay_symsize_p = symsizes
 

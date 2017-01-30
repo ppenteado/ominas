@@ -111,6 +111,7 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    if(NOT keyword__set(time)) then time = bod_time(pd)
 
    rd=rng_create_descriptors(n, $
+	assoc_xd=dd, $
 	name=name, $
 	primary=primary, $
 	orient=orient, $

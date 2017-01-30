@@ -51,7 +51,7 @@
 function pnt_desc, ptd, noevent=noevent
  nv_notify, ptd, type = 1, noevent=noevent
  _ptd = cor_dereference(ptd)
- return, _ptd.desc
+ return, _pnt_desc(_ptd)
 end
 ;===========================================================================
 

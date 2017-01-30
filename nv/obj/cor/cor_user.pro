@@ -47,7 +47,8 @@ function cor_user, crd, noevent=noevent
 @core.include
  nv_notify, crd, type = 1, noevent=noevent
  _crd = cor_dereference(crd)
- return, _crd.user
+; return, _crd.user
+ return, _cor_user(_crd)
 end
 ;===========================================================================
 

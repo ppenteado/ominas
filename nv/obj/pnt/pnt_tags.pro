@@ -51,8 +51,7 @@
 function pnt_tags, ptd, noevent=noevent
  nv_notify, ptd, type = 1, noevent=noevent
  _ptd = cor_dereference(ptd)
- if(NOT ptr_valid(_ptd.tags_p)) then return, 0
- return, *_ptd.tags_p
+ return, _pnt_tags(_ptd)
 end
 ;===========================================================================
 

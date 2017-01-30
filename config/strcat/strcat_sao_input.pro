@@ -1,3 +1,4 @@
+;===============================================================================
 ; docformat = 'rst'
 ;+
 ;
@@ -48,15 +49,23 @@
 ;       Modified:       Spitale,          9/2001
 ;
 ;-
+;===============================================================================
 
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
 ;-
+;===============================================================================
 function sao_get_regions, ra1, ra2, dec1, dec2, path_sao=path_sao
- return, path_sao + 'sao_idl.str'	; there's only one sao "region"
+ return, path_sao + '/sao_idl.str'	; there's only one sao "region"
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
@@ -104,6 +113,7 @@ end
 ;      from the object descriptor bod_time, which is assumed to
 ;      be seconds past 2000, unless keyword /b1950 is set
 ;-
+;===============================================================================
 function sao_get_stars, filename, cam_vel=cam_vel, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
@@ -286,42 +296,8 @@ function sao_get_stars, filename, cam_vel=cam_vel, $
 
    end ;segment end
 
- ;---------------------------------------------------------
- ; Input common names. Star names are found via an 
- ; internal document which is cross indexed with several 
- ; catalogs. SAO occupies the fifth column of that
- ; document.
- ;---------------------------------------------------------
- file = file_search(getenv('OMINAS_DIR')+'/config/strcat/stars.txt')
- openr, names_lun, file, /get_lun
- line = ''
- linarr = strarr(file_lines(file), 7)
- i = 0
- while not eof(names_lun) do $
-  begin
-   readf, names_lun, line
-   fields = strtrim(strsplit(line, '|', /extract), 2)
-   linarr[i, *] = fields
-   i = i + 1
-  endwhile
- close, names_lun
- free_lun, names_lun
- 
- n = n_elements(stars)
- matches = intarr(n)
- ;---------------------------------------------------------
- ; Match names with the fifth column (SAO)
- ;---------------------------------------------------------
- for i=0, n - 1 do matches[i] = where(strpos(linarr[*,4], Name[i]) ne -1)
  Name = 'SAO ' + Name
- ndx = where(matches ne -1)
- matches = matches[ndx]
- for i = 0, n_elements(matches) - 1 do $
-  begin
-    lin_ndx = matches[i]
-    if strtrim(linarr[lin_ndx, 1], 2) ne '-1' then Name[ndx[i]] = linarr[lin_ndx, 1]
-    if strtrim(linarr[lin_ndx, 0], 2) ne '-1' then Name[ndx[i]] = linarr[lin_ndx, 0]
-  endfor
+
 
  ;---------------------------------------------------------
  ; Select named stars
@@ -408,11 +384,17 @@ function sao_get_stars, filename, cam_vel=cam_vel, $
 
  return, _sd
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
 ;-
+;===============================================================================
 function strcat_sao_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro

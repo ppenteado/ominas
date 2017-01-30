@@ -51,7 +51,7 @@
 function cor_assoc_xd, crd, noevent=noevent
  nv_notify, crd, type = 1, noevent=noevent
  _crd = cor_dereference(crd)
- return, _crd.__protect__assoc_xd
+ return, _cor_assoc_xd(_crd)
 end
 ;===========================================================================
 

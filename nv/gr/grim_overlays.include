@@ -513,7 +513,7 @@ pro grim_draw_standard_points, grim_data, plane, _ptd, name, data, color, tshade
  else shade = call_function('grim_shade_'+ name, data, ptd)
  col = make_array(n_elements(shade), val=color)
  
- pg_draw, ptd, col=col, shades=shade, label_color='white', label_shade=label_shade, $
+ pg_draw, ptd, col=col, shades=shade, label_color='yellow', label_shade=label_shade, $
                                     psym=psym, psize=symsize, plabels=plabels
 
 
@@ -550,10 +550,10 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
         plabels = make_array(n_elements(*ptdp), val='')
         if(keyword_set(mlab) AND tlab) then plabels = labels
 
-        if(symsize EQ 0) then $
+        if(symsize LE 0) then $
          begin
           _symsize = call_function('grim_symsize_'+ name, data)
-          if(_symsize[0] NE -1) then symsize = _symsize $
+          if(_symsize[0] NE -1) then symsize = abs(symsize)*_symsize $
           else symsize = 1
          end
 
@@ -605,7 +605,7 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
           if(keyword_set(inactive_ptd)) then $
               grim_draw_standard_points, grim_data, plane, $
                  inactive_ptd, name, data, inactive_color, tshade, shade, $
-                 psym=psym, psize=symsize, plabels=inactive_plabels, label_shade=0.1
+                 psym=psym, psize=symsize, plabels=inactive_plabels, label_shade=0.5
  
           ;- - - - - - - - - - - - - - -
           ; active points
@@ -613,7 +613,7 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
           if(keyword_set(active_ptd)) then $
               grim_draw_standard_points, grim_data, plane, $
                  active_ptd, name, data, color, tshade, shade, $
-                 psym=psym, psize=symsize, plabels=active_plabels, label_shade=0.5
+                 psym=psym, psize=symsize, plabels=active_plabels, label_shade=1.0
          end
        end
    end
@@ -3489,7 +3489,7 @@ pro grim_create_overlays, grim_data, plane
 		class='star', $
 		dep_classes=['planet', 'ring'], $
 		genre='point', $
-		col='blue',  psym=6, tlab=0, tfill=0, symsize=1, tshade=0
+		col='white',  psym=6, tlab=0, tfill=0, symsize=1, tshade=0
 
    grim_create_overlay, grim_data, plane, $
 	'shadow', $
@@ -3565,9 +3565,9 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
    if(keyword_set(gd.md)) then gd.cd = gd.md
 
    _ptd = call_function(fn, gd=gd, $
-          map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
-          active_ptd=source_ptd, data=data, $
-          npoints=grim_data.npoints)
+           map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
+           active_ptd=source_ptd, data=data, $
+           npoints=grim_data.npoints)
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; update the existing overlay array

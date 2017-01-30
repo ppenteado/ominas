@@ -294,6 +294,14 @@ pg_draw, edge_ptd
 dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])	; Try to correlate scanned
 					 	; edges with the computed limb.
 pg_repoint, dxy, 0d, axis=center_ptd[0], gd=gd	; Change the pointing.
+
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
+       pg_hide, limb_ptd, /limb, gd=gd, od=sund
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /globe
+center_ptd = pg_center(gd=gd, bx=pd)
+term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, /limb
+object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
+
 tvim, im
 pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 

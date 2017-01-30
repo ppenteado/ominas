@@ -112,7 +112,8 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
   begin
    n = n_elements(name)
 
- sd=str_create_descriptors(n, $
+   sd=str_create_descriptors(n, $
+	assoc_xd=dd, $
 	name=name, $
 	orient=orient, $
 	avel=avel, $

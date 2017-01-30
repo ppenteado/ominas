@@ -74,6 +74,7 @@ pro nv_notify, xd, type=type, desc=desc, flush=flush, noevent=noevent
 @core.include
 
  if(keyword_set(noevent)) then return
+ if(size(xd, /type) EQ 8) then return
  if(keyword_set(suspended)) then return
  if(NOT keyword_set(desc)) then desc = ''
 

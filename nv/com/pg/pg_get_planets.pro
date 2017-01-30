@@ -112,6 +112,7 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
    n = n_elements(name)
 
    pd = plt_create_descriptors(n, $
+		assoc_xd=dd, $
 		name=name, $
 		orient=orient, $
 		avel=avel, $

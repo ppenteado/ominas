@@ -76,7 +76,6 @@ pro pnt_set_data, ptd, new_data, tags=select_tags, noevent=noevent
    if(NOT keyword_set(select_tags)) then *_ptd.data_p = new_data $
    else $
     begin
-;stop
      data = *_ptd.data_p
      tags = ''
      if(ptr_valid(_ptd.tags_p)) then tags = *_ptd.tags_p

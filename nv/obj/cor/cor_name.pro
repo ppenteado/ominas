@@ -55,8 +55,9 @@ function cor_name, crd, noevent=noevent
  crd = crd[w]
  
  nv_notify, crd, type = 1, noevent=noevent
+
  _crd = cor_dereference(crd)
- names[w] = _crd.name
+ names[w] = _cor_name(_crd)
 
  if(n EQ 1) then return, names[0]
  return, names

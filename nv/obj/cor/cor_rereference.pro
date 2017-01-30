@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Copies an array of descriptors into an array of pointers to descriptors.
+;	Copies an array of structures into an array of objects.
 ;
 ;
 ; CATEGORY:
@@ -18,9 +18,9 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	xd:	Array of pointers to the appropriate type of descriptor.
+;	xd:	Array of objects.
 ;
-;	_xd:	Array of descriptors.
+;	_xd:	Array of structures.
 ;
 ;  OUTPUT:
 ;	NONE
@@ -53,6 +53,9 @@
 ;=============================================================================
 pro cor_rereference, xd, _xd, new=new
 @core.include
+
+ if(size(xd, /type) NE 11) then return
+ if(size(_xd, /type) NE 8) then return
 
  s = size(xd)
  n1 = (n2 = 1)

@@ -58,7 +58,28 @@
 ;	
 ;-
 ;=============================================================================
-pro pnt_get, ptd, cat=cat, condition=condition, nv=nv, nt=nt, $
+pro pnt_get, xd, condition=condition, noevent=noevent, $
+@pnt__keywords.include
+@pnt_condition_keywords.include
+end_keywords
+
+ condition = pnt_condition(condition=condition, $
+@pnt_condition_keywords.include 
+end_keywords)
+
+ nv_notify, xd, type = 1, noevent=noevent
+; _xd = cor_dereference(xd)
+_xd=xd
+
+@pnt_get.include
+
+end
+;===========================================================================
+
+
+
+;=============================================================================
+pro _pnt_get, ptd, cat=cat, condition=condition, nv=nv, nt=nt, $
               points=points, vectors=vectors, flags=flags, $
               name=name, desc=desc, input=input, data=data, tags=tags, $
               udata=udata, uname=uname, assoc_xd=assoc_xd, noevent=noevent, $
@@ -86,6 +107,3 @@ end_keywords)
 
 end
 ;===========================================================================
-
-
-

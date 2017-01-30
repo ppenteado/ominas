@@ -48,7 +48,7 @@ function cor_tasks, crd, noevent=noevent
 @core.include
  nv_notify, crd, type = 1, noevent=noevent
  _crd = cor_dereference(crd)
- return, *_crd.tasks_p
+ return, _cor_tasks(_crd)
 end
 ;===========================================================================
 

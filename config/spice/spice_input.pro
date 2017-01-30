@@ -443,7 +443,7 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
      ; first, look for lsk files in the klist
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      lsk_in = spice_read_klist(dd, klist, $
-                         silent=silent, prefix=prefix, /notime, ext='lsk')
+                         silent=silent, prefix=prefix, /notime, ext='tls')
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; otherwise, check for lsk keyword

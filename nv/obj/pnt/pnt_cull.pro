@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Cleans out an array of POINT object by removing invisible points
+;	Cleans out an array of POINT objects by removing invisible points
 ;	and/or empty POINT objects.
 ;
 ;

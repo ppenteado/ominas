@@ -47,7 +47,7 @@
 ;
 ;  OUTPUT: 
 ;	segments:	Subscripts in the output array denoting segments in the 
-;			(assumed) contiuous curve due to the point selection 
+;			(assumed) continuous curve due to the point selection 
 ;			conditions.
 ;
 ;
@@ -78,30 +78,13 @@ end_keywords
 @pnt_condition_keywords.include 
 end_keywords)
 
-
  ptd = ptd0
  if(keyword_set(cat)) then ptd = pnt_compress(ptd)
 
  nv_notify, ptd, type = 1, noevent=noevent
  _ptd = cor_dereference(ptd)
 
- if(n_elements(_ptd) GT 1) then result = _ptd.points_p $
- else $
-  begin
-   result = 0
-   if(ptr_valid(_ptd.points_p)) then $
-    begin
-     result = *_ptd.points_p
-     result = reform(result, 2,n_elements(result)/2)
-
-     if((keyword_set(condition)) AND (ptr_valid(_ptd.flags_p))) then $
-      begin
-       ii = _pnt_apply_condition(_ptd, condition)
-       if(ii[0] NE -1) then result = result[*,ii] $
-       else result = 0
-      end
-    end
-  end
+ result = _pnt_points(_ptd, condition=condition, ii=ii)
 
  if(keyword_set(cat)) then nv_free, ptd
 

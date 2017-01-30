@@ -51,7 +51,25 @@
 ;	
 ;-
 ;=============================================================================
-pro pnt_set, ptd, points=points, vectors=vectors, flags=flags, $
+pro pnt_set, xd, noevent=noevent, $
+@pnt__keywords.include
+end_keywords
+
+_xd=xd
+; _xd = cor_dereference(xd)
+@pnt_set.include
+ cor_rereference, xd, _xd
+
+ nv_notify, xd, type = 0, noevent=noevent
+ nv_notify, /flush, noevent=noevent
+end
+;===========================================================================
+
+
+
+
+;=============================================================================
+pro _pnt_set, ptd, points=points, vectors=vectors, flags=flags, $
                  name=name, desc=desc, input=input, data=data, tags=tags, $
                  udata=udata, uname=uname, assoc_xd=assoc_xd, noevent=noevent
 
