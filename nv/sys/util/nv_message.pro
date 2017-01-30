@@ -114,6 +114,7 @@ common nv_message_block, last_message, cb_tlp, verbosity
  ;------------------------------------------------
  ; set verbosity if no string
  ;------------------------------------------------
+ verbosity=(n_elements(verbosity) gt 0) ? verbosity : 0
  silence = 1
  if(NOT defined(string)) then $
   begin
