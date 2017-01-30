@@ -27,7 +27,7 @@ endif else begin
       openw,lun,'idlpath.sh',/get_lun,/append
       printf,lun,'export IDL_PATH="'+path+'"'
       free_lun,lun
-    endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
+    endif else PREF_SET, 'IDL_PATH', path, /COMMIT
   endif
 endelse
 
