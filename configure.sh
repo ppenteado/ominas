@@ -417,7 +417,7 @@ Data:
            About 19 MB download, 70 MB unpacked
 	11) GSC star catalog . . . . . . . . . . . ${dstatus[3]}
 	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[4]}
-           About 8.5 GB
+           About 8.5 GB download
 	13) UCACT star catalog . . . . . . . . . . ${dstatus[5]}
 For more information, see
 https://ppenteado.github.io/ominas_doc/demo/install_guide.html
@@ -542,6 +542,8 @@ if getenv('IDL_DLM_PATH') then begin &\$
   free_lun,lun &\$ 
 endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
 PRINT, '$OMINAS_DIR added to IDL_PATH'
+path+=':+./util/'
+idla
 EXIT
 IDLCMD
 
