@@ -19,6 +19,7 @@ endif else begin
     read,loc
     comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
     print,comm
+    spawn,comm
     path=getenv('IDL_PATH') ? getenv('IDL_PATH') : pref_get('IDL_PATH')
     if ~strmatch(path,'*loc*') then begin
       path+=':+'+loc+'/pro'
