@@ -1,7 +1,7 @@
 pro idla
 compile_opt idl2,logical_predicate
 routs=['cntrd']
-ex=intarr(n_elements(routs)
+ex=intarr(n_elements(routs))
 foreach rout,routs,ir do begin
   ex[ir]=routine_exists(rout)
 endforeach
