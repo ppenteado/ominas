@@ -418,12 +418,16 @@ Data:
 	11) GSC star catalog . . . . . . . . . . . ${dstatus[3]}
 	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[4]}
            About 8.5 GB download
-	13) UCACT star catalog . . . . . . . . . . ${dstatus[5]}
 For more information, see
 https://ppenteado.github.io/ominas_doc/demo/install_guide.html
 PKGS
 
-read -rp "Modify Current OMINAS configuration (exit/no/ 1 2 ...)?  " ans
+read -rp "Modify Current OMINAS configuration (exit/no/all 1 2 ...)?  " ans
+
+if [ $ans == "all" ]; then
+  ans="1 2 3 4 5 6 7 9 10 11 12"
+fi
+echo $ans
 
 for num in $ans
 do
