@@ -147,7 +147,7 @@ pu=parse_url(self.baseurl)
 
 self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
   url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,ftp_connection_mode=0)
-if self.debug then print,'iurl object created for ',self.baseurl
+
 if strmatch(self.baseurl,'*/') then begin ;if url is a directory
   if strlowcase(pu.scheme) eq 'ftp' then begin
     ind=self.iu.getftpdirlist()
@@ -170,7 +170,6 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
 endif else begin
   link=file_basename(pu.path)
   self.iu.setproperty,url_path=(stregex(pu.path,'(.*)'+link+'$',/extract,/subexpr))[1]
-  if self.debug then print,'retrieving ',link
   self.retrieve,link
 endelse
 
@@ -185,8 +184,12 @@ end
 pro pp_wget::retrieve,link,lm=lm
 compile_opt idl2,logical_predicate,hidden
 if ~strmatch(link,'*/') then begin ;if entry is not a directory
-  pu=parse_url(self.baseurl)
-  self.iu.setproperty,url_path=pu.path+link
+  self.iu.getproperty,url_scheme=us,url_port=po,url_path=up
+  ;pu=parse_url(self.baseurl)
+  if (us eq 'https') && ~(stregex(self.baseurl,'https://[^/]+:[[:digit:]]+',/bool)) then po='443'
+  ;if (pu.scheme eq 'https') && ~(stregex(self.baseurl,'https://[^/]+:[[:digit:]]+',/bool)) then pu.port='443'
+  self.iu.setproperty,url_path=up+link,url_port=po
+  ;self.iu.setproperty,url_path=pu.path+link
   if self.pattern && ~stregex(link,self.pattern,/bool) then begin
     print,'skipping '+link+' because it does not match the specified pattern: '+self.pattern
     return
