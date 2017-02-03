@@ -150,7 +150,7 @@ self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_pat
 
 if strmatch(self.baseurl,'*/') then begin ;if url is a directory
   if strlowcase(pu.scheme) eq 'ftp' then begin
-    ind=self.iu.getftpdirlist()
+    ind=!version.release gt '8.3' ? self.iu.getftpdirlist() : pp_jget(self.baseurl)
     inds=(strsplit(ind,/extract)).toarray()
     links=inds[*,-1]
     lm=inds[*,-4]+' '+inds[*,-3]+' '+inds[*,-2]
