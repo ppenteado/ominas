@@ -9,6 +9,7 @@
 
   detect_cas                    VICAR
   detect_cas_uvis               VICAR
+  pp_detect_vims                ISIS
   detect_radar                  PDS
 
 # detect_station
