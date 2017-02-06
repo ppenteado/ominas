@@ -751,9 +751,9 @@ common tvim_block, tvd, tvim_top
  ; get min/max values
  ;======================
  if(NOT keyword_set(max)) then $
-        for i=0, image_zsize-1 do max = append_array(max, max(image[*,*,i]))
+        for i=0, image_zsize-1 do max = append_array(max, max(image[*,*,i],/nan))
  if(NOT keyword_set(min)) then $
-        for i=0, image_zsize-1 do min = append_array(min, min(image[*,*,i]))
+        for i=0, image_zsize-1 do min = append_array(min, min(image[*,*,i],/nan))
 
  maxx = max(max)
  minn = min(min)
