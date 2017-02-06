@@ -3,4 +3,4 @@ fn_body_to_inertial=fn_body_to_inertial, $
 fn_inertial_to_body=fn_inertial_to_body, $
 ib_data_=ib_data, $
 time=time, orient=orient, avel=avel, pos=pos, vel=vel, opaque=opaque, $
-libv=libv, __lib=lib, dlibdt=dlibdt, array=array, $
+libv=libv, __lib=lib, dlibdt=dlibdt, $

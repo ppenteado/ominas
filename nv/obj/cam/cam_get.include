@@ -1,0 +1,16 @@
+; cam_get.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(arg_present(fn_focal_to_image)) then fn_focal_to_image = cam_fn_focal_to_image(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(fn_image_to_focal)) then fn_image_to_focal = cam_fn_image_to_focal(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(fi_data)) then fi_data = cam_fi_data(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(scale)) then scale = cam_scale(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(oaxis)) then oaxis = cam_oaxis(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(exposure)) then exposure = cam_exposure(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(size)) then size = cam_size(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(fn_psf)) then fn_psf = cam_fn_psf(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(filters)) then filters = cam_filters(_xd, cat=cat, condition=condition, /noevent)
+
+@bod_get.include
+
