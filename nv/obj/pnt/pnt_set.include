@@ -1,0 +1,13 @@
+; _pnt_set.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(defined(points)) then pnt_set_points, _xd, points, /noevent
+ if(defined(vectors)) then pnt_set_vectors, _xd, vectors, /noevent
+ if(defined(flags)) then pnt_set_flags, _xd, flags, /noevent
+ if(defined(desc)) then pnt_set_desc, _xd, desc, /noevent
+ if(defined(input)) then pnt_set_input, _xd, input, /noevent
+ if(defined(data)) then pnt_set_data, _xd, data, /noevent
+ if(defined(tags)) then pnt_set_tags, _xd, tags, /noevent
+
+@cor_set.include

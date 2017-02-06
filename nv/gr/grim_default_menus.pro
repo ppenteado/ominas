@@ -956,6 +956,7 @@ end
 ;=============================================================================
 pro grim_reposition, grim_data, plane, cd=cd, shift
 
+print, plane.dd
  pos = cor_udata(plane.dd, 'IMAGE_POS')
  if(NOT keyword_set(pos)) then pos = [0d,0d]
  pos = pos + shift

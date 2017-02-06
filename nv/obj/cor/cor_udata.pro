@@ -57,12 +57,12 @@ function cor_udata, crd, name, noevent=noevent
  n = n_elements(_crd)
 
  ;----------------------------
- ; if only one crd
+ ; if only one _crd
  ;----------------------------
  if(n EQ 1) then return, tag_list_get(_crd.udata_tlp, name)
 
  ;----------------------------
- ; if more than one crd
+ ; if more than one _crd
  ;----------------------------
  xx = tag_list_get(_crd[0].udata_tlp, name, index=index)
  dim = size([xx], /dim)

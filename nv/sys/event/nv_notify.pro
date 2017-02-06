@@ -74,6 +74,7 @@ pro nv_notify, xd, type=type, desc=desc, flush=flush, noevent=noevent
 @core.include
 
  if(keyword_set(noevent)) then return
+ if(size(xd, /type) EQ 8) then return
  if(keyword_set(suspended)) then return
  if(NOT keyword_set(desc)) then desc = ''
 
@@ -139,6 +140,13 @@ pro nv_notify, xd, type=type, desc=desc, flush=flush, noevent=noevent
     end
 
   end
+
+ ;--------------------------------------------------------------------------
+ ; if the caller was called from the command line, then automatically flush
+ ;--------------------------------------------------------------------------
+ help, /tr, out=s
+ w = where(strmid(s,0,1) EQ '%')
+ if(n_elements(w) EQ 3) then nv_notify, /flush
 
 
 end

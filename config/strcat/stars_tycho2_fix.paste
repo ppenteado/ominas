@@ -1,0 +1,72 @@
+;===============================================================================
+; stars_tycho2_fix.pate
+;
+;  Fixes up TYC names in the stars.txt file s they can be copared to the 
+;  catalog names.
+;
+;===============================================================================
+
+
+;---------------------------------------------------------------
+; first back up the original file
+;---------------------------------------------------------------
+spawn, 'cp stars.txt stars-pre-tyc-fix.txt'
+
+
+;---------------------------------------------------------------
+; read the file and get the tycho-2 column
+;---------------------------------------------------------------
+tab = read_txt_table('./stars.txt', delim='|', /raw, /all)
+cat = strtrim(tab[0,*], 2)
+bayer = tab[1:*,1]
+
+col = where(cat EQ 'TYC')
+num = strtrim(tab[1:*,col],2)
+n = n_elements(num)
+
+;---------------------------------------------------------------
+; insert dashes where needed
+;---------------------------------------------------------------
+num = strep_char(num, ' ', '-')
+
+;---------------------------------------------------------------
+; prepend '1' to all second fields with only 3 or fewer digits.
+; This s probably not entirely correct.
+; Also append '-1' where there is no third field
+;--------------------------------------------------------------
+field1 = str_nnsplit(num, '-', rem=rem)
+w = where((rem NE '') AND (strpos(rem, '-') EQ -1))
+rem[w] = rem[w] + '-1'
+
+field2 = str_nnsplit(rem, '-', rem=field3)
+w = where((field2 NE '') AND (strlen(field2) LE 3))
+field2[w] = '1' + field2[w]
+
+w = where(num NE '')
+num[w] = field1[w] + '-' + field2[w] + '-' + field3[w]
+
+
+;---------------------------------------------------------------
+; insert new TYC numbers into formatted table and write file
+;---------------------------------------------------------------
+lines = read_txt_file('./stars.txt', /raw)
+
+for i=0, n-1 do $
+ begin &$
+  w = where(strpos(lines, bayer[i]) NE -1) &$
+  if(n_elements(w) EQ 1) then $
+   begin &$
+    s = str_nnsplit(lines[w], '|', rem=rem) &$ 
+    s = str_nnsplit(rem, '|', rem=rem) &$ 
+    s = str_nnsplit(rem, '|', rem=rem) &$ 
+    ds = strlen(s) - strlen(num[i]) &$
+
+    lines[w] = strep_s(lines[w], s, str_pad(num[i], strlen(s))) &$
+   end &$
+ end
+
+
+;---------------------------------------------------------------
+; write file
+;---------------------------------------------------------------
+write_txt_file, 'stars.txt', lines

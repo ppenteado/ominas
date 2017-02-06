@@ -77,7 +77,12 @@ pro strcat_get_inputs, dd, env, key, $
  ;---------------------------------------------------------
  ; Names passed as key8
  ;---------------------------------------------------------
- if(keyword_set(key8)) then names = key8
+ if(keyword_set(key8)) then $
+  begin
+   names = key8
+   if(n_elements(names) EQ 1) then $
+        if(strupcase(names[0]) EQ 'SUN') then return
+  end
 
  ;---------------------------------------------------------
  ; Get jtime 

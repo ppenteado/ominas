@@ -112,7 +112,8 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
   begin
    n = n_elements(name)
 
- sd=str_create_descriptors(n, $
+   sd=str_create_descriptors(n, $
+	assoc_xd=dd, $
 	name=name, $
 	orient=orient, $
 	avel=avel, $
@@ -131,10 +132,14 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
  ;-------------------------------------------------------------------
  else $
   begin
+   ;-----------------------------------------------
+   ; call translators
+   ;-----------------------------------------------
+
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(name)) then tr_first = 1
+;;   if(keyword_set(name)) then tr_first = 1
 
 ;   if(NOT keyword__set(od)) then nv_message,'No observer descriptor.'
 
