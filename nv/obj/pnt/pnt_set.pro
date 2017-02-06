@@ -55,36 +55,11 @@ pro pnt_set, xd, noevent=noevent, $
 @pnt__keywords.include
 end_keywords
 
-_xd=xd
-; _xd = cor_dereference(xd)
+ _xd = cor_dereference(xd)
 @pnt_set.include
  cor_rereference, xd, _xd
 
  nv_notify, xd, type = 0, noevent=noevent
- nv_notify, /flush, noevent=noevent
-end
-;===========================================================================
-
-
-
-
-;=============================================================================
-pro _pnt_set, ptd, points=points, vectors=vectors, flags=flags, $
-                 name=name, desc=desc, input=input, data=data, tags=tags, $
-                 udata=udata, uname=uname, assoc_xd=assoc_xd, noevent=noevent
-
- if(defined(points)) then pnt_set_points, ptd, points, /noevent
- if(defined(vectors)) then pnt_set_vectors, ptd, vectors, /noevent
- if(defined(flags)) then pnt_set_flags, ptd, flags, /noevent
- if(defined(name)) then cor_set_name, ptd, name, /noevent
- if(defined(desc)) then pnt_set_desc, ptd, desc, /noevent
- if(defined(input)) then pnt_set_input, ptd, input, /noevent
- if(defined(data)) then pnt_set_data, ptd, data, /noevent
- if(defined(tags)) then pnt_set_tags, ptd, tags, /noevent
- if(defined(assoc_xd)) then cor_set_assoc_xd, ptd, assoc_xd, /noevent
- if(defined(udata)) then cor_set_udata, ptd, udata, uname, /noevent
-
- nv_notify, ptd, type = 0, noevent=noevent
  nv_notify, /flush, noevent=noevent
 end
 ;===========================================================================

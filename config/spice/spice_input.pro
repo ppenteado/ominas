@@ -591,9 +591,22 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
   ;  returned by NAIFLIB is the sun.
   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   'STR_DESCRIPTORS': $
-	result = call_function(prefix + '_spice_sun', dd, ref, $
+	begin
+         if(keyword_set(key8)) then $
+          begin
+           w = where(strpos(strupcase(key8), 'SUN') NE -1)
+           if(w[0] EQ -1) then $
+            begin
+	     status = -1
+	     result = 0
+            end
+          end 
+
+	 if(status NE -1) then $
+                result = call_function(prefix + '_spice_sun', dd, ref, $
 	                       time=time, constants=constants, $
 	                       n_obj=n_obj, dim=dim, status=status, obs=obs)
+	end
 
   else: $
 	begin

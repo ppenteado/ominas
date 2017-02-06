@@ -265,6 +265,10 @@ plabels=[cor_name(pd), $
 ;-
 ;-------------------------------------------------------------------------
 pg_draw, object_ptd, col=colors, psy=psyms, psi=psizes, csi=csizes, pl=plabels
+stop
+
+
+
 
 
 ;-------------------------------------------------------------------------
@@ -309,7 +313,6 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 center_ptd = pg_center(gd=gd, bx=pd)
 print, 'after automatic repointing, the center was shifted by:', pnt_points(center_ptd[0])-center_o, 'pixels' 
 print, dxy
-stop
 
 
 

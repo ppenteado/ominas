@@ -135,10 +135,14 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
  ;-------------------------------------------------------------------
  else $
   begin
+   ;-----------------------------------------------
+   ; call translators
+   ;-----------------------------------------------
+
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(name)) then tr_first = 1
+;;   if(keyword_set(name)) then tr_first = 1	; is this really necessary?
 
    pd = dat_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
                                 key7=time, key8=name, trs=trs, $

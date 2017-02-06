@@ -86,10 +86,14 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, $
  pgs_gd, gd, dd=dd, bx=bx
 
 
+ ;-----------------------------------------------
+ ; call translators
+ ;-----------------------------------------------
+
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if names requested, the force tr_first
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(keyword_set(name)) then tr_first = 1
+;; if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
  ards = dat_get_value(dd, 'ARR_DESCRIPTORS', key1=od, key2=bx, key4=_ard, key6=primary, $$

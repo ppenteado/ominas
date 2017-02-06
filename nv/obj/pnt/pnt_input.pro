@@ -51,7 +51,7 @@
 function pnt_input, ptd, noevent=noevent
  nv_notify, ptd, type = 1, noevent=noevent
  _ptd = cor_dereference(ptd)
- return, _pnt_input(_ptd)
+ return, _ptd.input
 end
 ;===========================================================================
 

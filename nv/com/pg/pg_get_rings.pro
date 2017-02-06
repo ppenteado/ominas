@@ -135,10 +135,14 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
  ;-------------------------------------------------------------------
  else $
   begin
+   ;-----------------------------------------------
+   ; call translators
+   ;-----------------------------------------------
+
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(name)) then tr_first = 1
+;;   if(keyword_set(name)) then tr_first = 1
 
    rd = dat_get_value(dd, 'RNG_DESCRIPTORS', key1=pd, key2=od, key4=_rd, $
                             key7=time, key8=name, trs=trs, $

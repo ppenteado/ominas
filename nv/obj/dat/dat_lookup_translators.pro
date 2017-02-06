@@ -177,6 +177,16 @@ pro dat_lookup_translators, instrument, $
  input_translators = ''
  output_translators = ''
 
+
+ ;---------------------------------------------------------------------
+ ; Add COMMON translators first
+ ;---------------------------------------------------------------------
+ repeat begin
+  status = dltr_extract(table, 'COMMON', $
+		input_translators, output_translators, $
+		input_keyvals, output_keyvals)
+ endrep until status EQ -1
+
  ;---------------------------------------------------------------------
  ; Match instrument-specific translators
  ;---------------------------------------------------------------------
@@ -198,15 +208,6 @@ pro dat_lookup_translators, instrument, $
  else $
  repeat begin
   status = dltr_extract(table, instrument, $
-                input_translators, output_translators, $
-                input_keyvals, output_keyvals)
- endrep until status EQ -1
-
- ;---------------------------------------------------------------------
- ; Add COMMON translators last
- ;---------------------------------------------------------------------
- repeat begin
-  status = dltr_extract(table, 'COMMON', $
                 input_translators, output_translators, $
                 input_keyvals, output_keyvals)
  endrep until status EQ -1

@@ -134,8 +134,9 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
     begin
      xds = append_array(xds, xd)
      if(keyword_set(tr_first)) then i=n
-    end
-  end
+    end $
+   else nv_message, /verbose, 'No value.' 
+  end 
  nxds = n_elements(xds)
 
  ;----------------------------------------------------------------

@@ -2473,7 +2473,7 @@ pro grim_menu_file_save_tie_ptd_event, event
  ;------------------------------------------------------
  ; get filename
  ;------------------------------------------------------
- fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIEPIONT'), $
+ fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIEPOINT'), $
                                             title='Select filename for saving', /one)
 
  ;------------------------------------------------------
@@ -2524,7 +2524,7 @@ pro grim_menu_file_save_all_tie_ptd_event, event
  ; write data
  ;------------------------------------------------------
  for i=0, n_elements(planes)-1 do $
-                          grim_write_indexed_arrays, grim_data, planes[i], 'TIEPIONT'
+                          grim_write_indexed_arrays, grim_data, planes[i], 'TIEPOINT'
  grim_print, grim_data, 'All tie points saved.'
 
 end
@@ -2568,7 +2568,7 @@ pro grim_menu_file_load_tie_ptd_event, event
  ;------------------------------------------------------
  ; get filename
  ;------------------------------------------------------
- fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIEPIONT'), $
+ fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIEPOINT'), $
                                          title='Select filename to load', /one)
 
  ;------------------------------------------------------
@@ -2619,7 +2619,7 @@ pro grim_menu_file_load_all_tie_ptd_event, event
  ; read data
  ;------------------------------------------------------
  for i=0, n_elements(planes)-1 do $
-                          grim_read_indexed_arrays, grim_data, planes[i], 'TIEPIONT'
+                          grim_read_indexed_arrays, grim_data, planes[i], 'TIEPOINT'
  grim_refresh, grim_data
 
 end

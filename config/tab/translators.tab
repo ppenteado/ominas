@@ -1,5 +1,5 @@
 # Basic translators table.  
-#  COMMON translators are used for all instruments and appear last in 
+#  COMMON translators are used for all instruments and appear first in 
 #  the list.  DEFAULT translators are use when there are no instrument-
 #  specific translators.
 #

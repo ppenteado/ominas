@@ -84,7 +84,45 @@ end_keywords)
  nv_notify, ptd, type = 1, noevent=noevent
  _ptd = cor_dereference(ptd)
 
- result = _pnt_data(_ptd, condition=condition, tags=select_tags, ii=ii)
+
+ if(n_elements(_ptd) GT 1) then result = _ptd.data_p $
+ else $
+  begin
+   result = 0
+   if(ptr_valid(_ptd.data_p)) then $
+    begin
+     data = *_ptd.data_p
+     ntags = (size(data, /dim))[0]
+
+     if(keyword_set(select_tags)) then $
+      begin 
+       if(ptr_valid(_ptd.tags_p)) then $
+        begin
+         tags = *_ptd.tags_p
+         ntags = n_elements(tags)
+         w = nwhere(tags, select_tags)
+         if(w[0] NE -1) then ww = w
+        end
+      end $
+     else ww = lindgen(ntags)
+
+     if(defined(ww)) then $
+      begin
+       result = data[ww,*,*]
+       ntags = (size(result, /dim))[0]
+       result = reform(result, ntags,n_elements(result)/ntags)
+
+       if((keyword_set(condition)) AND (ptr_valid(_ptd.flags_p))) then $
+        begin
+         ii = pnt_apply_condition(_ptd, condition)
+         if(ii[0] NE -1) then result = result[*,ii] $
+         else result = 0
+        end
+      end
+    end
+  end
+
+
 
  if(keyword_set(cat)) then nv_free, ptd
 

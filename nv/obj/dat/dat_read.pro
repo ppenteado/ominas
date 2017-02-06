@@ -203,7 +203,8 @@ function dat_read, filespec, data, header, $
        ; read the header, and data parameters
        ;-----------------------------------------
        _udata = 0
-       if(NOT silent) then nv_message, /con, verb=0.1, 'Reading ' + filename
+       if((NOT silent) AND (NOT keyword_set(nodata))) then $
+                       nv_message, /con, verb=0.1, 'Reading ' + filename
        _data = call_function(input_fn, filename, $
                        _header, _udata, _dim, _type, _min, _max, $
                                          /nodata, /silent, sample=sample, gff=gff)

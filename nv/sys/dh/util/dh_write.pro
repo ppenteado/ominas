@@ -65,7 +65,7 @@ pro dh_write, filename, dh, silent=silent
     return
    end
 
- if(NOT silent) then $
+; if(NOT silent) then $
    nv_message, verb=0.1, 'Writing ' + filename + '.', /continue
 
  ;----------------------------

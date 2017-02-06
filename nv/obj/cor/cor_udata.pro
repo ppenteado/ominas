@@ -51,6 +51,30 @@ function cor_udata, crd, name, noevent=noevent
  nv_notify, crd, type = 1, noevent=noevent
  _crd = cor_dereference(crd)
 
- return, _cor_udata(_crd, name)
+ if(NOT keyword_set(name)) then return, _crd.udata_tlp
+
+
+ n = n_elements(_crd)
+
+ ;----------------------------
+ ; if only one _crd
+ ;----------------------------
+ if(n EQ 1) then return, tag_list_get(_crd.udata_tlp, name)
+
+ ;----------------------------
+ ; if more than one _crd
+ ;----------------------------
+ xx = tag_list_get(_crd[0].udata_tlp, name, index=index)
+ dim = size([xx], /dim)
+ xdim = product(dim)
+ type = size(xx, /type)
+
+ result = tr(reform([xx], xdim, /over))
+ for i=1, n-1 do $
+      result = [result, $
+        tr(reform([tag_list_get(_crd[i].udata_tlp, index=index)], xdim, /over))]
+ result = reform(tr(result), [dim, n], /over)
+
+ return, result
 end
 ;=============================================================================

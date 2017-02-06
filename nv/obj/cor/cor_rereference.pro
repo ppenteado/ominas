@@ -54,8 +54,12 @@
 pro cor_rereference, xd, _xd, new=new
 @core.include
 
- if(size(xd, /type) NE 11) then return
  if(size(_xd, /type) NE 8) then return
+ if(size(xd, /type) EQ 8) then $
+  begin
+   xd = _xd
+   return
+  end
 
  s = size(xd)
  n1 = (n2 = 1)

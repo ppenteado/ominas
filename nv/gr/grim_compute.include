@@ -738,11 +738,11 @@ function grim_compute_ring, map=map, fov=fov, hide=hide, $
  ;--------------------------------------------------------
  ; if no active planet, then try to determine primary
  ;--------------------------------------------------------
- pds = cor_select(active_xds, 'PLANET', /class)
+; pds = cor_select(active_xds, 'PLANET', /class)
 ; if(NOT keyword_set(pds)) then pd = get_primary(gd.cd, gd.pd) $
 ; else pd = (get_primary(gd.cd, pds))[0]
- if(NOT keyword_set(pds)) then pd = gd.pd $
- else pd = pds
+; if(NOT keyword_set(pds)) then pd = gd.pd $
+; else pd = pds
 
  rds = gd.rd
  nrd = n_elements(rds)
@@ -768,6 +768,7 @@ function grim_compute_ring, map=map, fov=fov, hide=hide, $
  ptd = ring_ptd
  if(keyword_set(hide_ptd_shad)) then ptd = [ptd, hide_ptd_shad]
  if(keyword_set(hide_ptd_globe)) then if(NOT hide) then ptd = [ptd, hide_ptd_globe]
+
 
  return, ptd
 end
