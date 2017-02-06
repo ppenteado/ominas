@@ -51,7 +51,7 @@
 ;		 /reveal suppresses this behavior.
 ;
 ;	cat:	If set, the hide_ptd points are concatentated into a single
-;		POINT.
+;		POINT object.
 ;
 ;  OUTPUT: NONE
 ;
@@ -165,7 +165,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
         if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
         pnt_set, hide_ptd[j,i], desc=desc+'-hide_disk', $
-             input=inp+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]), flags=_flags
+             input=inp+'-'+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]), flags=_flags
        end
       end
     end
@@ -176,7 +176,8 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
  ;---------------------------------------------------------
  if(hide AND keyword_set(cat)) then $
   begin
-   for j=0, n_objects-1 do hide_ptd[j,0] = pnt_compress(hide_ptd[j,*])
+   for j=0, n_objects-1 do $
+      hide_ptd[j,0] = pnt_compress(pnt_cull(hide_ptd[j,*], /nofree, /vis))
    if(n_disks GT 1) then $
     begin
      nv_free, hide_ptd[*,1:*]

@@ -132,6 +132,7 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
 
 
    mds = map_create_descriptors(n, $
+	  assoc_xd=dd, $
 	  name=name, $
 	  graphic=graphic, $
 	  rotate=rotate, $

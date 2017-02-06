@@ -90,7 +90,7 @@ function pnt_compress, ptd0, nt=nt, pptd=pptd
     end
   jj = jj + nv
   end
- name = str_comma_list(names)
+ name = str_comma_list(unique(names))
 
  if(keyword_set(nt)) then $
   begin

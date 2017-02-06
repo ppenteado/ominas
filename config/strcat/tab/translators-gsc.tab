@@ -1,0 +1,4 @@
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  COMMON	strcat_gsc_input		-	

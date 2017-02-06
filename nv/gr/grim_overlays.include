@@ -512,8 +512,8 @@ pro grim_draw_standard_points, grim_data, plane, _ptd, name, data, color, tshade
  if(NOT tshade) then shade = 1.0 $
  else shade = call_function('grim_shade_'+ name, data, ptd)
  col = make_array(n_elements(shade), val=color)
- 
- pg_draw, ptd, col=col, shades=shade, label_color='white', label_shade=label_shade, $
+
+ pg_draw, ptd, col=col, shades=shade, label_color='yellow', label_shade=label_shade, $
                                     psym=psym, psize=symsize, plabels=plabels
 
 
@@ -550,10 +550,10 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
         plabels = make_array(n_elements(*ptdp), val='')
         if(keyword_set(mlab) AND tlab) then plabels = labels
 
-        if(symsize EQ 0) then $
+        if(symsize LE 0) then $
          begin
           _symsize = call_function('grim_symsize_'+ name, data)
-          if(_symsize[0] NE -1) then symsize = _symsize $
+          if(_symsize[0] NE -1) then symsize = abs(symsize)*_symsize $
           else symsize = 1
          end
 
@@ -605,7 +605,7 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
           if(keyword_set(inactive_ptd)) then $
               grim_draw_standard_points, grim_data, plane, $
                  inactive_ptd, name, data, inactive_color, tshade, shade, $
-                 psym=psym, psize=symsize, plabels=inactive_plabels, label_shade=0.1
+                 psym=psym, psize=symsize, plabels=inactive_plabels, label_shade=0.5
  
           ;- - - - - - - - - - - - - - -
           ; active points
@@ -613,7 +613,7 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
           if(keyword_set(active_ptd)) then $
               grim_draw_standard_points, grim_data, plane, $
                  active_ptd, name, data, color, tshade, shade, $
-                 psym=psym, psize=symsize, plabels=active_plabels, label_shade=0.5
+                 psym=psym, psize=symsize, plabels=active_plabels, label_shade=1.0
          end
        end
    end
@@ -777,6 +777,7 @@ pro grim_draw_indexed_arrays, ptdp, psym=psym
      begin
       pnt_get, (*ptdp)[i], /visible, p=p, nv=n, $
                          uname='GRIM_INDEXED_ARRAY_LABEL', udata=label
+      label = strtrim(label,2)
 
       if(n GT 0) then $
        begin
@@ -1186,7 +1187,6 @@ end
 ;
 ;=============================================================================
 function grim_match_overlays, ptd, ptd0
-
  return, where( (pnt_input(ptd) EQ pnt_input(ptd0)) $
                    AND (pnt_desc(ptd) EQ pnt_desc(ptd0)) $
                      AND (cor_name(ptd) EQ cor_name(ptd0)) )
@@ -1197,10 +1197,49 @@ end
 
 
 ;=============================================================================
+; grim_add_new_points
+;
+;=============================================================================
+pro grim_add_new_points, grim_data, ptdp, ptd, name, cd, plane=plane
+
+ ptd0 = *ptdp
+
+ for i=0, n_elements(ptd)-1 do if(pnt_valid(ptd[i])) then $
+  begin
+   w = grim_match_overlays(ptd[i], ptd0)
+   if(w[0] EQ -1) then $
+      grim_add_points, grim_data, plane=plane, ptd, name=name, cd=cd, data=data
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_rm_matched_points
+;
+;=============================================================================
+pro grim_rm_matched_points, grim_data, ptdp, ptd, plane=plane
+
+ ptd0 = *ptdp
+
+ for i=0, n_elements(ptd)-1 do if(pnt_valid(ptd[i])) then $
+  begin
+   w = grim_match_overlays(ptd[i], ptd0)
+   if(w[0] NE -1) then grim_rm_points, plane, ptdp, w
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_update_points
 ;
 ;=============================================================================
-pro grim_update_points, grim_data, ptd0, ptd, xds, plane=plane
+pro grim_update_points, grim_data, ptd0, ptd, plane=plane
 
  for i=0, n_elements(ptd)-1 do if(pnt_valid(ptd[i])) then $
   begin
@@ -1639,7 +1678,7 @@ pro grim_read_indexed_arrays, grim_data, plane, name, fname=fname
 
  w = where(pnt_valid(ptd))
  if(w[0] EQ -1) then return
-stop
+ n = n_elements(w)
 
  for i=0, n-1 do $
   begin
@@ -1658,15 +1697,20 @@ end
 ; grim_unique_array_label
 ;
 ;=============================================================================
-function grim_unique_array_label, ptdp, prefix=prefix
+function grim_unique_array_label, ptdp
 
  ptd = *ptdp
+ if(NOT keyword_set(ptd)) then return, 0
  nptd = n_elements(ptd)
 
- n = 0
- for i=0, nptd-1 do if(keyword_set(ptd[i])) then n = n + 1
+ ii = make_array(nptd, val=-1)
+ for i=0, nptd-1 do if(keyword_set(ptd[i])) then $
+                ii[i] = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL')
 
- return, strtrim(n, 2)
+ diff = set_difference(ii, lindgen(max(ii)+1))
+ if(diff[0] EQ -1) then return, nptd
+
+ return, min(diff)
 end
 ;=============================================================================
 
@@ -1701,8 +1745,7 @@ pro grim_add_indexed_array, ptdp, p, ptd=ptd, $
  ;-----------------------------------------
  ; set up array pointer
  ;-----------------------------------------
- if(NOT keyword_set(label)) then $
-                        label = grim_unique_array_label(ptdp, prefix=prefix)
+ if(NOT keyword_set(label)) then label = grim_unique_array_label(ptdp)
 
  ptd = pnt_create_descriptors(points=pp, $
         uname='GRIM_INDEXED_ARRAY_LABEL', $
@@ -1710,9 +1753,10 @@ pro grim_add_indexed_array, ptdp, p, ptd=ptd, $
 
 
  ;------------------------------------------------------------------------
- ; add the array; empty slots are left to keep numbering consistent
+ ; add the array
  ;------------------------------------------------------------------------
- *ptdp = [*ptdp, ptd]
+; *ptdp = [*ptdp, ptd]
+ *ptdp = append_array(*ptdp, ptd)
 
  if(defined(flags)) then pnt_set_flags, ptd, flags
 
@@ -1867,7 +1911,12 @@ pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all
  else $
   begin
    ii = grim_select_array(grim_data, plane=plane, *ptdp, p)
-   if(ii[0] NE -1) then nv_free, (*ptdp)[ii]
+   if(ii[0] NE -1) then $
+    begin
+     nv_free, (*ptdp)[ii]
+*ptdp = rm_list_item(*ptdp, ii, only=obj_new())
+;     (*ptdp)[ii] = obj_new()
+    end
   end
 
 
@@ -3489,7 +3538,7 @@ pro grim_create_overlays, grim_data, plane
 		class='star', $
 		dep_classes=['planet', 'ring'], $
 		genre='point', $
-		col='blue',  psym=6, tlab=0, tfill=0, symsize=1, tshade=0
+		col='white',  psym=6, tlab=0, tfill=0, symsize=1, tshade=0
 
    grim_create_overlay, grim_data, plane, $
 	'shadow', $
@@ -3543,10 +3592,6 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  if(grim_data.slave_overlays) then plane = grim_get_plane(grim_data, pn=0)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
-
- ;------------------------------------------------
- ; get points array
- ;------------------------------------------------
  ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, data=data) 
  fn = 'grim_compute_' + name
 
@@ -3565,15 +3610,19 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
    if(keyword_set(gd.md)) then gd.cd = gd.md
 
    _ptd = call_function(fn, gd=gd, $
-          map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
-          active_ptd=source_ptd, data=data, $
-          npoints=grim_data.npoints)
+           map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
+           active_ptd=source_ptd, data=data, $
+           npoints=grim_data.npoints)
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; update the existing overlay array
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    grim_update_points, grim_data, plane=plane, ptd, _ptd
 
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; add any new arrays
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   grim_add_new_points, grim_data, plane=plane, ptdp, _ptd, name, gd.cd
    return
   end
 

@@ -93,7 +93,7 @@ end_keywords)
 
      if((keyword_set(condition)) AND (ptr_valid(_ptd.flags_p))) then $
       begin
-       ii = _pnt_apply_condition(_ptd, condition)
+       ii = pnt_apply_condition(_ptd, condition)
        if(ii[0] NE -1) then result = result[ii,*] $
        else result = 0
       end

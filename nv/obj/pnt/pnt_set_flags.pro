@@ -69,7 +69,6 @@ pro pnt_set_flags, ptd, flags, noevent=noevent
  else $
   begin
    if((nv NE _ptd.nv) OR (nt NE _ptd.nt)) then _pnt_resize, _ptd, nv=nv, nt=nt
-
    *_ptd.flags_p = flags
   end
 

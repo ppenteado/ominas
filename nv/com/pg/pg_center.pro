@@ -25,9 +25,9 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	cd:	Array (n_timesteps) of camera descriptors.
+;	cd:	Array (nt) of camera descriptors.
 ;
-;	bx:	Array (n_objects, n_timesteps) of descriptors of objects 
+;	bx:	Array (n_objects, nt) of descriptors of objects 
 ;		which must be a subclass of BODY.
 ;
 ;	gd:	Generic descriptor.  If given, the cd and bx inputs 
@@ -86,10 +86,36 @@ function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
  ;-----------------------------------
  ; get center for each object
  ;-----------------------------------
- center_ptd = objarr(n_objects)
- im_pts = dblarr(1, 2, n_objects)
- inertial_pts = bod_pos(bx)
+; center_ptd = objarr(n_objects, nt) 
+; for i=0, nt-1 do $
+;  begin
+;   xd = bx[*,i]
+;   inertial_pts = transpose(bod_pos(xd))
 
+;   _ptd = pnt_create_descriptors( $ 
+;		points = inertial_to_image_pos(cd[i], inertial_pts), $
+;		vectors = inertial_pts)
+
+;   ptd = pnt_explode(_ptd)
+
+;; pnt_set, ptd, $
+;;       name=cor_name(xd), $
+;;       desc=desc[*,i], $
+;;       input=pgs_desc_suffix(bx=bx[i,0], cd[0]), $
+;;       assoc_xd=xd
+;   cor_set_name, ptd, cor_name(xd)
+;   pnt_set_desc, ptd, desc[*,i]
+;   pnt_set_input, ptd, pgs_desc_suffix(bx=bx[i,0], cd[0])
+;   cor_set_assoc_xd, ptd, xd
+
+;   center_ptd[*,i] = ptd
+;  end
+
+
+
+
+
+ center_ptd = objarr(n_objects) 
  for i=0, n_objects-1 do $
   begin
    xd = reform(bx[i,*], nt)
@@ -103,6 +129,7 @@ function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
 		points = inertial_to_image_pos(cd, inertial_pts), $
 		vectors = inertial_pts)
   end
+
 
 
  ;------------------------------------------------------

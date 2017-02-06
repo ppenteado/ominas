@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Cleans out an array of POINT object by removing invisible points
+;	Cleans out an array of POINT objects by removing invisible points
 ;	and/or empty POINT objects.
 ;
 ;
@@ -26,7 +26,10 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	visible:	If set, invisible points are removed.
+;	<condition>:	All of the predefined conditions (e.g. /visible) are 
+;			accepted; see pnt_condition_keywords.include.  If this 
+;			case, pnt_cull removes objects for which the specified
+;			conditions return no points.  
 ;
 ;	nofree:		If set, invalid POINT object are not freed.
 ;
@@ -34,7 +37,7 @@
 ;
 ;
 ; RETURN:
-;	Array POINT object, or 0 if all were empty.
+;	Array POINT objects, or 0 if all were empty.
 ;
 ;
 ;
@@ -43,10 +46,13 @@
 ;	
 ;-
 ;=============================================================================
-function pnt_cull, ptd, visible=visible, nofree=nofree
+function pnt_cull, _ptd, nofree=nofree, condition=condition, $
+@pnt_condition_keywords.include
+end_keywords
 @pnt_include.pro
 
- if(NOT keyword__set(ptd)) then return, 0
+ if(NOT keyword__set(_ptd)) then return, 0
+ ptd = _ptd
 
  ;------------------------
  ; reform to 1D
@@ -54,34 +60,18 @@ function pnt_cull, ptd, visible=visible, nofree=nofree
  n = n_elements(ptd)
  ptd = reform(ptd, n, /over)
 
- ;------------------------------------
- ; get rid of invisible points
- ;------------------------------------
- if(keyword_set(visible)) then $
-  for i=0, n-1 do $
-   begin
-    points = pnt_points(ptd[i], /visible)
-    if(NOT keyword__set(points)) then ptd[i] = obj_new() $
-    else $
-     begin
-      vectors = pnt_vectors(ptd[i], /visible)
-      flags = pnt_flags(ptd[i], /visible)
-      data = pnt_data(ptd[i], /visible)
-      name = cor_name(ptd[i], /visible)
-      desc = pnt_desc(ptd[i], /visible)
-      input = pnt_input(ptd[i], /visible)
 
-;;; this won't work because can't change numer of points...
-;;; need to update nv, nt
-      pnt_set_points, ptd[i], points
-      pnt_set_vectors, ptd[i], vectors
-      pnt_set_flags, ptd[i], flags
-      pnt_set_data, ptd[i], data
-      cor_set_name, ptd[i], name
-      pnt_set_desc, ptd[i], desc
-      pnt_set_input, ptd[i], input
-     end
-   end
+ ;------------------------------------
+ ; apply conditions
+ ;------------------------------------
+ for i=0, n-1 do if(obj_valid(ptd[i])) then $
+  begin
+   w = pnt_apply_condition(ptd[i], pnt_condition(condition=condition, $
+@pnt_condition_keywords.include
+end_keywords))
+   if(w[0] EQ -1) then ptd[i] = obj_new()
+  end
+
 
  ;-----------------------------
  ; mark empty POINT objects

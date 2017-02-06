@@ -156,7 +156,7 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
       if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
       pnt_set, hide_ptd[i], desc=desc+'-hide_limb', $
-           input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), flags=_flags
+           input=inp+'-'+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), flags=_flags
      end
    end
 

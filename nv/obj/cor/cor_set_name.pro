@@ -52,6 +52,3 @@ pro cor_set_name, crd, name, noevent=noevent
  nv_notify, crd, type = 0, noevent=noevent
 end
 ;===========================================================================
-
-
-

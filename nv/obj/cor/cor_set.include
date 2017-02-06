@@ -1,0 +1,9 @@
+; _cor_set.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(defined(name)) then cor_set_name, _xd, name, /noevent
+ if(defined(abbrev)) then cor_set_abbrev, _xd, abbrev, /noevent
+ if(defined(user)) then cor_set_user, _xd, user, /noevent
+ if(defined(assoc_xd)) then cor_set_assoc_xd, _xd, assoc_xd, /noevent
+ if(defined(udata)) then cor_set_udata, _xd, udata, uname, /noevent

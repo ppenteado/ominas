@@ -51,7 +51,6 @@ function cor_test_udata, crd, name, noevent=noevent
  nv_notify, crd, type = 1, noevent=noevent
  _crd = cor_dereference(crd)
 
- if(NOT ptr_valid(_crd.udata_tlp)) then return, 0
- return, (tag_list_match(_crd.udata_tlp, name) NE -1)[0]
+ return, _cor_test_udata, _crd, name
 end
 ;=============================================================================

@@ -105,6 +105,7 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
    n = n_elements(name)
 
    cds=cam_create_descriptors(n, $
+	assoc_xd=dd, $
 	name=name, $
 	orient=orient, $
 	avel=avel, $
@@ -131,10 +132,14 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
    if(NOT keyword_set(default_orient)) then default_orient = idgen(3)
 
 
+   ;-----------------------------------------------
+   ; call translators
+   ;-----------------------------------------------
+
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(name)) then tr_first = 1
+;;   if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
    cds = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cds, key3=default_orient, $

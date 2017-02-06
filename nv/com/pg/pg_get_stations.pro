@@ -86,10 +86,14 @@ function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, gd=gd, $
  pgs_gd, gd, od=od, bx=bx, dd=dd
 
 
+ ;-----------------------------------------------
+ ; call translators
+ ;-----------------------------------------------
+
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if names requested, the force tr_first
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(keyword_set(name)) then tr_first = 1
+;; if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
  stds = dat_get_value(dd, 'STN_DESCRIPTORS', key1=od, key2=bx, key4=_std, key6=primary, $

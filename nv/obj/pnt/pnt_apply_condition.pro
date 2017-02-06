@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	_pnt_apply_condition
+;	pnt_apply_condition
 ;
 ;
 ; PURPOSE:
@@ -54,9 +54,14 @@
 ;	
 ;-
 ;=============================================================================
-function _pnt_apply_condition, _ps, condition
+function pnt_apply_condition, ptd, condition
 @pnt_include.pro
- flags = *_ps.flags_p
+ 
+ _ptd = cor_dereference(ptd)
+
+ flags = *_ptd.flags_p
+ if(NOT keyword_set(condition)) then return, lindgen(n_elements(flags))
+
  compare = flags AND condition.mask
  return, where(compare EQ condition.state)
 end

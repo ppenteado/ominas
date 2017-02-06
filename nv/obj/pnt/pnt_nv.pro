@@ -58,16 +58,16 @@ end_keywords)
  if(NOT keyword_set(condition)) then return, _ptd.nv
  if(NOT ptr_valid(_ptd.flags_p)) then return, _ptd.nv
 
- nptd = n_elements(_ptd)
- nv = lonarr(nptd)
+ n_ptd = n_elements(_ptd)
+ nv = lonarr(n_ptd)
 
- for i=0, nptd-1 do $
+ for i=0, n_ptd-1 do $
   begin
-   ii = _pnt_apply_condition(_ptd[i], condition)
+   ii = pnt_apply_condition(_ptd[i], condition)
    if(ii[0] NE -1) then nv[i] = (size(ii, /dim))[0]
   end
 
- if(nptd EQ 1) then nv = nv[0]
+ if(n_ptd EQ 1) then nv = nv[0]
  return, nv
 end
 ;===========================================================================

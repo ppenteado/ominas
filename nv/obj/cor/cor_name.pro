@@ -55,6 +55,7 @@ function cor_name, crd, noevent=noevent
  crd = crd[w]
  
  nv_notify, crd, type = 1, noevent=noevent
+
  _crd = cor_dereference(crd)
  names[w] = _crd.name
 

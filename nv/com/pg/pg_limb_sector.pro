@@ -130,7 +130,7 @@ function pg_limb_sector, cd=cd, gbx=_gbx, gd=gd, $
 
 
  if(NOT keyword__set(silent)) then $
-   nv_message, 'Drag and release to define limb sector', , /continue
+   nv_message, 'Drag and release to define limb sector', /continue
 
 
  ;-----------------------------------

@@ -1,3 +1,4 @@
+;===============================================================================
 ; docformat = 'rst'
 ;+
 ;
@@ -52,10 +53,16 @@
 ; :Private:
 ; :Hidden:
 ;-
+;===============================================================================
 function ucac4_get_regions, ra1, ra2, dec1, dec2, path_ucac4=path_ucac4
  return, path_ucac4 + 'u4index.asc'	; there's only one "region" file
 end
+;===============================================================================
 
+
+
+
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
@@ -103,6 +110,7 @@ end
 ;      from the object descriptor bod_time, which is assumed to
 ;      be seconds past 2000, unless keyword /b1950 is set
 ;-
+;===============================================================================
 function ucac4_get_stars, dd, filename, cam_vel=cam_vel, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
@@ -530,3 +538,4 @@ function strcat_ucac4_input, dd, keyword, values=values, status=status, $
 
  return, sd
 end
+;===============================================================================
