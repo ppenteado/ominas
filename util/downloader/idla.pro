@@ -6,7 +6,7 @@ foreach rout,routs,ir do begin
   ex[ir]=routine_exists(rout)
 endforeach
 nex=total(ex,/int)
-if nex eq n_elements(rout) then begin
+if nex eq n_elements(routs) then begin
   print,'All needed IDLAstro routines are already present'
 endif else begin
   print,'There are missing IDLAstro routines.'
