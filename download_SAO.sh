@@ -18,7 +18,7 @@ baseurl="ftp://cdsarc.u-strasbg.fr/pub/cats/I/131A"
 #location for timestamps files
 mkdir -p ~/.ominas/timestamps/SAO
 
-./pp_wget "${baseurl}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
+./pp_wget "${baseurl}/ --localdir=$1/ --absolute --timestamps=~/.ominas/timestamps/ $@"
 
 #unpack the catalog files
 idl -e "file_gunzip,'$1'+path_sep()+'sao.dat.gz',/verbose"
