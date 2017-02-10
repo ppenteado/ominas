@@ -168,9 +168,9 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
     endif
   endelse
 endif else begin
-  link=file_basename(pu.path)
-  self.iu.setproperty,url_path=(stregex(pu.path,'(.*)'+link+'$',/extract,/subexpr))[1]
-  self.retrieve,link
+  ;link=file_basename(pu.path)
+  ;self.iu.setproperty,url_path=(stregex(pu.path,'(.*)'+link+'$',/extract,/subexpr))[1]
+  self.retrieve,''
 endelse
 
 end
@@ -185,11 +185,11 @@ pro pp_wget::retrieve,link,lm=lm
 compile_opt idl2,logical_predicate,hidden
 if ~strmatch(link,'*/') then begin ;if entry is not a directory
   self.iu.getproperty,url_scheme=us,url_port=po,url_path=up
-  ;pu=parse_url(self.baseurl)
+  pu=parse_url(self.baseurl)
   if (us eq 'https') && ~(stregex(self.baseurl,'https://[^/]+:[[:digit:]]+',/bool)) then po='443'
   ;if (pu.scheme eq 'https') && ~(stregex(self.baseurl,'https://[^/]+:[[:digit:]]+',/bool)) then pu.port='443'
-  self.iu.setproperty,url_path=up+link,url_port=po
-  ;self.iu.setproperty,url_path=pu.path+link
+  ;self.iu.setproperty,url_path=up+link,url_port=po
+  self.iu.setproperty,url_path=pu.path+link,url_port=po
   if self.pattern && ~stregex(link,self.pattern,/bool) then begin
     print,'skipping '+link+' because it does not match the specified pattern: '+self.pattern
     return
@@ -198,7 +198,9 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
     print,'skipping '+link+' because it matches the specified xpattern: '+self.xpattern
     return
   endif
-  print,'downloading '+(self.bdir ? (self.bdir+'/') : '')+link
+  ds=((self.bdir ? (self.bdir+'/') : '')+link)
+  if ~ds then ds=self.baseurl
+  print,'downloading '+ds
   self.last_modified=n_elements(lm) ? lm : ''
   self.content_length=0LL
   fi=file_info(self.ldir+link)
@@ -237,7 +239,10 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
           endif
         endif
       endif
-      if ~ng then g=self.iu.get(filename=self.ldir+link)
+      if ~ng then begin
+        fn=link ? link : file_basename(pu.path)
+        g=self.iu.get(filename=self.ldir+fn)
+      endif
     endelse
   
   ;Set the timestamp
