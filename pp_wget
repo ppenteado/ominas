@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+IDLC=LD_PRELOAD ./util/downloader/libcurl.so.4 
 echo $@
 if [ "$IDL_DIR" = "" ]; then
         idl=`which idl`
@@ -7,13 +8,13 @@ if [ "$IDL_DIR" = "" ]; then
           IDL_DIR="$idldir"
           export IDL_DIR
           printf "Using IDL from $IDL_DIR\n"
-          $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
+          $IDLC $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
         else
           printf "Using IDL at $idl\n"
-          $idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
+          $IDLC $idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
         fi
 else
         printf "IDL_DIR found, $IDL_DIR, using it\n"
-        $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
+        $IDLC $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
 fi
 #idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
