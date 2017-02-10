@@ -152,6 +152,7 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
   if strlowcase(pu.scheme) eq 'ftp' then begin
     ;ind=!version.release gt '8.3' ? self.iu.getftpdirlist() : pp_jget(self.baseurl)
     ind=self.iu.getftpdirlist()
+    print,'ftpdirlist:',ind
     inds=(strsplit(ind,/extract)).toarray()
     links=inds[*,-1]
     lm=inds[*,-4]+' '+inds[*,-3]+' '+inds[*,-2]
