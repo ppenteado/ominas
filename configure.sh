@@ -412,13 +412,13 @@ Mission Packages:
 Data:
         7) NAIF Generic Kernels . . . . . . . . .  $genst
            About 22 GB as of Dec/2016
-	8) SEDR image data . . . . . . . . . . . . ${dstatus[0]}
-	9) TYCHO2 star catalog . . . . . . . . . . ${dstatus[1]}
+	8) SEDR image data . . . . . . . . . . . . ${dstatus[1]}
+	9) TYCHO2 star catalog . . . . . . . . . . ${dstatus[2]}
            About 161 MB download, 665 MB unpacked
-	10) SAO star catalog . . . . . . . . . . . ${dstatus[2]}
+	10) SAO star catalog . . . . . . . . . . . ${dstatus[3]}
            About 19 MB download, 70 MB unpacked
-	11) GSC star catalog . . . . . . . . . . . ${dstatus[3]}
-	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[4]}
+	11) GSC star catalog . . . . . . . . . . . ${dstatus[4]}
+	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[5]}
            About 8.5 GB download
 For more information, see
 https://ppenteado.github.io/ominas_doc/demo/install_guide.html
