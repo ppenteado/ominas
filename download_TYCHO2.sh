@@ -17,7 +17,7 @@ baseurl="ftp://vizier.nao.ac.jp/pub/cats/I/259"
 #standard download (full, nonrecursive) directories
 
 #location for timestamps files
-#mkdir -p ~/.ominas/timestamps/TYCHO2
+mkdir -p ~/.ominas/timestamps/
 ts=`eval echo "~/.ominas/timestamps/"`
 
 ./pp_wget "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
