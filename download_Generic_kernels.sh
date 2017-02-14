@@ -19,13 +19,15 @@ dirs=( dsk fk lsk pck stars)
 
 #location for timestamps files
 mkdir -p ~/.ominas/timestamps/GENERIC
+ts=`eval echo "~/.ominas/timestamps/"`
+
 
 for dir in "${dirs[@]}"
 do
- ./pp_wget "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=~/.ominas/timestamps/ --recursive$@"
+ ./pp_wget "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts --recursive$@"
 done
 
 #special treatment directories (spk and ck, which are large)
 echo "Downloading spks"
-./pp_wget "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=~/.ominas/timestamps/ --recursive" # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
+./pp_wget "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts --recursive" # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
 
