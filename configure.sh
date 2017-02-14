@@ -363,7 +363,7 @@ fi
     
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
-declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4" "UCACT")
+declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
 for ((d=0; d<${#mis[@]}; d++));
 do
 	mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
