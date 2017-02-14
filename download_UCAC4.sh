@@ -22,7 +22,7 @@ baseurli="ftp://cdsarc.u-strasbg.fr/pub/cats/more/UCAC4/u4i/" #index and text fi
 #location for timestamps files
 mkdir -p ~/.ominas/timestamps/UCAC4
 
-./pp_wget "${baseurli}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
-./pp_wget "${baseurlb}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
+./pp_wget "${baseurli}/ --localdir=${1}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
+./pp_wget "${baseurlb}/ --localdir=${1}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
 
 

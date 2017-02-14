@@ -56,7 +56,7 @@
     ;-
 function pp_wget::init,baseurl,clobber=clobber,pattern=pattern,$
 recursive=recursive,localdir=localdir,debug=debug,timestamps=timestamps,$
-bdir=bdir,xpattern=xpattern,absolute_paths=absolute
+bdir=bdir,xpattern=xpattern,absolute_paths=absolute,_ref_extra=e
 compile_opt idl2,logical_predicate,hidden
 
 self.clobber=keyword_set(clobber)
@@ -71,6 +71,7 @@ self.ldir=ldir+path_sep()
 self.pattern=n_elements(pattern) ? pattern : ''
 self.xpattern=n_elements(xpattern) ? xpattern : ''
 self.absolute=keyword_set(absolute)
+if n_elements(e) then self.extra=ptr_new(e)
 
 return,1
 end
@@ -141,18 +142,27 @@ end
 pro pp_wget::geturl
 compile_opt idl2,logical_predicate
 
-if ~file_test(self.ldir,/directory) then file_mkdir,self.ldir
+if ~file_test(self.ldir,/directory) then begin
+  print,'Creating directory ',self.ldir
+  file_mkdir,self.ldir
+endif
+
 
 pu=parse_url(self.baseurl)
-
-self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
-  url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,ftp_connection_mode=0)
+if ptr_valid(self.extra) then begin
+  self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
+    url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,$
+    ftp_connection_mode=0,_strict_extra=*self.extra)
+endif else begin
+  self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
+    url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,$
+    ftp_connection_mode=0)    
+endelse
 
 if strmatch(self.baseurl,'*/') then begin ;if url is a directory
   if strlowcase(pu.scheme) eq 'ftp' then begin
     ;ind=!version.release gt '8.3' ? self.iu.getftpdirlist() : pp_jget(self.baseurl)
     ind=self.iu.getftpdirlist()
-    print,'ftpdirlist:',ind
     inds=(strsplit(ind,/extract)).toarray()
     links=inds[*,-1]
     lm=inds[*,-4]+' '+inds[*,-3]+' '+inds[*,-2]
@@ -294,5 +304,5 @@ compile_opt idl2,logical_predicate
 !null={pp_wget, inherits idl_object, clobber:0,recursive:0,$
   ldir:'',pattern:'',localdir:'',last_modified:'',local_file_exists:0,local_file_tm:0LL,$
   baseurl:'',iu:obj_new(),timestamps:obj_new(),debug:0,content_length:0LL,bdir:'',$
-  xpattern:'',absolute:0}
+  xpattern:'',absolute:0,extra:ptr_new()}
 end
