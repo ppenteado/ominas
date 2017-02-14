@@ -22,17 +22,17 @@ mkdir -p ~/.ominas/timestamps/DAWN
 
 for dir in "${dirs[@]}"
 do
- ./pp_wget "${baseurl}${dir}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
+ ./pp_wget "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=~/.ominas/timestamps/ $@"
 done
 
 #special treatment directories (spk and ck, which are large)
 echo "Downloading spks"
-./pp_wget "${baseurl}spk/ --localdir=$1/spk/ $@ --absolute --timestamps=~/.ominas/timestamps/ --pattern="\
+./pp_wget "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=~/.ominas/timestamps/ --pattern="\
 "dawn_rec_(1(1|2|5|6|7))[[:digit:]]{4}-[[:digit:]]{6}_[[:digit:]]{6}_.+((\.bsp$)|(bsp\.lbl$)) --xpattern="\
 "dawn_rec_120913-[[:digit:]]{6}_[[:digit:]]{6}_.+((\.bsp$)|(bsp\.lbl$))"
 
 echo "Downloading cks"
-./pp_wget "${baseurl}ck/ --localdir=$1/ck/ $@ --absolute --timestamps=~/.ominas/timestamps/ --pattern="\
+./pp_wget "${baseurl}ck/ --localdir=${1}/ck/ $@ --absolute --timestamps=~/.ominas/timestamps/ --pattern="\
 "dawn_sc_(1(1|2|5|6|7))[[:digit:]]{4}_[[:digit:]]{6}((\.bc$)|(bc\.lbl$)) --xpattern="\
 "dawn_sc_((110(1|2|3|4|5|6))[[:digit:]]{2})|(121[[:digit:]]{3})_[[:digit:]]{6}((\.bc$)|(bc\.lbl$))"
 #./pp_wget "${baseurl}ck/ --localdir=$1/ck/ $@ --absolute --timestamps=~/.ominas/timestamps/ --xpattern="\

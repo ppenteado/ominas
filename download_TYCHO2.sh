@@ -19,7 +19,7 @@ baseurl="ftp://vizier.nao.ac.jp/pub/cats/I/259"
 #location for timestamps files
 mkdir -p ~/.ominas/timestamps/TYCHO2
 
-./pp_wget "${baseurl}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ " $@
+./pp_wget ${baseurl}/ --localdir=${1}/$dir/ --absolute --timestamps=~/.ominas/timestamps/ $@
 
 #unpack the catalog files
 idl -e '!path+=":./util/downloader"& unpack_tycho2' -args $@

@@ -7,13 +7,13 @@ if [ "$IDL_DIR" = "" ]; then
           IDL_DIR="$idldir"
           export IDL_DIR
           printf "Using IDL from $IDL_DIR\n"
-          LD_PRELOAD=./util/downloader/libcurl.so.4  $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
+          LD_PRELOAD=./util/downloader/libcurl.so.4  $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@ --ssl_verify_peer=./util/downloads/ca-bundle.crt
         else
           printf "Using IDL at $idl\n"
-          LD_PRELOAD=./util/downloader/libcurl.so.4  $idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
+          LD_PRELOAD=./util/downloader/libcurl.so.4  $idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@ --ssl_verify_peer=./util/downloads/ca-bundle.crt
         fi
 else
         printf "IDL_DIR found, $IDL_DIR, using it\n"
-        LD_PRELOAD=./util/downloader/libcurl.so.4  $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@
+        LD_PRELOAD=./util/downloader/libcurl.so.4  $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@ --ssl_verify_peer=./util/downloads/ca-bundle.crt
 fi
 #idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@

@@ -57,6 +57,7 @@ pg.geturl
 if a.keywords.haskey('debug') && a.keywords['debug'] then print,'all files retrieved'
 if n_elements(tsf) then begin
   ts=pg.timestamps
+  tsf=file_expand_path(tsf)
   if strmatch(tsf,'*/') then begin
     ld=a.keywords['localdir']
     fs=file_expand_path(ld)
