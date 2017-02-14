@@ -239,7 +239,7 @@ function dins()
           case $ansk in
            [Yy]*)
              read -rp "Please enter the location where the downloaded $dat data will be placed: " datapath
-             datapath=eval ${datapath}
+             datapath=`eval echo ${datapath}`
              source ./download_$dat.sh ${datapath} ;;		
            *)
 	     read -rp "Please enter the path to $dat (if not known, press enter): " datapath
@@ -287,7 +287,7 @@ function pkins()
                         case $ansk in
                           [Yy]*)
                             read -rp "Please enter the location where the donwloaded $3 kernel pool will be placed: " datapath
-                            datapath=eval ${datapath}
+                            datapath=`eval echo ${datapath}`
                             source ./download_$2.sh ${datapath} ;;
                           *)
 			    read -rp "Please enter the location of your existing $3 kernel pool: " datapath
