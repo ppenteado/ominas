@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 echo $@
+cf='./util/downloader/ca-bundle.crt'
 if [ "$IDL_DIR" = "" ]; then
         idl=`which idl`
         if [ "$idl" = "" ]; then
