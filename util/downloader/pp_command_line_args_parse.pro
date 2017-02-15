@@ -49,8 +49,8 @@ if c then begin
     case 1 of
       strmatch(args[i],'--*'): begin ;if is a -- keyword
         keycount++
-        if stregex(args[i],'--[[:alnum:]]+=.+',/bool) then begin
-          tmp=stregex(args[i],'--([[:alnum:]]+)=(.+)',/extract,/subexpr)
+        if stregex(args[i],'--[[:alnum:]_]+=.+',/bool) then begin
+          tmp=stregex(args[i],'--([[:alnum:]_]+)=(.+)',/extract,/subexpr)
           keywords[tmp[1]]=tmp[2]
         endif else begin
           keywords[strmid(args[i],2)]=1
