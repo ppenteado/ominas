@@ -56,7 +56,8 @@
     ;-
 function pp_wget::init,baseurl,clobber=clobber,pattern=pattern,$
 recursive=recursive,localdir=localdir,debug=debug,timestamps=timestamps,$
-bdir=bdir,xpattern=xpattern,absolute_paths=absolute,_ref_extra=e
+bdir=bdir,xpattern=xpattern,absolute_paths=absolute,_ref_extra=e,$
+ssl_certificate_file=sslf
 compile_opt idl2,logical_predicate,hidden
 
 self.clobber=keyword_set(clobber)
@@ -71,7 +72,9 @@ self.ldir=ldir+path_sep()
 self.pattern=n_elements(pattern) ? pattern : ''
 self.xpattern=n_elements(xpattern) ? xpattern : ''
 self.absolute=keyword_set(absolute)
-if n_elements(e) then self.extra=ptr_new(e)
+self.sslf=n_elements(sslf) ? file_search(sslf) : filepath('ca-bundle.crt')
+print,self.sslf
+;if n_elements(e) then self.extra=ptr_new(e)
 
 return,1
 end
@@ -152,11 +155,11 @@ pu=parse_url(self.baseurl)
 if ptr_valid(self.extra) then begin
   self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
     url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,$
-    ftp_connection_mode=0,_strict_extra=*self.extra)
+    ftp_connection_mode=0,_strict_extra=*self.extra,ssl_certificate_file=self.sslf)
 endif else begin
   self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
     url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,$
-    ftp_connection_mode=0)    
+    ftp_connection_mode=0,ssl_certificate_file=self.sslf)    
 endelse
 
 if strmatch(self.baseurl,'*/') then begin ;if url is a directory
@@ -304,5 +307,5 @@ compile_opt idl2,logical_predicate
 !null={pp_wget, inherits idl_object, clobber:0,recursive:0,$
   ldir:'',pattern:'',localdir:'',last_modified:'',local_file_exists:0,local_file_tm:0LL,$
   baseurl:'',iu:obj_new(),timestamps:obj_new(),debug:0,content_length:0LL,bdir:'',$
-  xpattern:'',absolute:0,extra:ptr_new()}
+  xpattern:'',absolute:0,extra:ptr_new(),sslf:''}
 end
