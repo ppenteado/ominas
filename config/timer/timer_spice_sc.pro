@@ -1,13 +1,11 @@
 ;===========================================================================
-; vgr_get_sc
+; cas_spice_sc
 ;
 ;===========================================================================
-function vgr_get_sc, dd
-
- sc_name = vgr_parse_inst(dat_instrument(dd), cam=cam_name)
- sc = -31l
- if(sc_name EQ 'vg2') then sc = -32l
-
- return, sc
+function cas_spice_sc, dd
+ return, -650l
 end
 ;===========================================================================
+
+
+

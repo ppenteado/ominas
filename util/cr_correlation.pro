@@ -13,7 +13,7 @@
 ;
 ; of f and g as a funtion of t.
 ;
-;'
+;
 ; f and g may be 1, 2, 3, or 4 dimensional, but they must 
 ; be of the same size and dimension.  g is shifted and wrapped 
 ; by t pixels and then the integration is performed.

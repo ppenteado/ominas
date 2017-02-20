@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	map_wrap_points
+;	_map_wrap_points
 ;
 ;
 ; PURPOSE:
@@ -45,7 +45,7 @@
 ;	
 ;-
 ;=============================================================================
-function map_wrap_points, _md, _image_pts, _map_pts
+function _map_wrap_points, _md, _image_pts, _map_pts
 
  nt = n_elements(_md)
  np = n_elements(_image_pts)/2/nt

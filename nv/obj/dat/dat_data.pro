@@ -25,9 +25,6 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	abscissa: If set, the abscissa array is returned instead of the data 
-;		  array.
-;
 ;	samples:  Sampling indices.  If set, only these data elements are
 ;		  returned.  May be 1D or the same number of dimensions as
 ;		  the data array.   
@@ -42,7 +39,8 @@
 ;	true:     If set, the actual data array is returned, even if there is
 ;	          a sampling function.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	abscissa: The abscissa is returned in this array.
 ;
 ;
 ; RETURN:
@@ -71,6 +69,7 @@ function dat_data, dd, samples=_samples, offset=offset, $
 
  sampled = 0
  if(NOT keyword_set(offset)) then offset = 0
+ 
 
  ;-------------------------------------------------------------------------
  ; If there is a sampling function, but no samples are given, then 
@@ -81,10 +80,10 @@ function dat_data, dd, samples=_samples, offset=offset, $
  if(keyword_set(_dd.sampling_fn) $
         AND (NOT keyword_set(_samples)) $
                AND NOT keyword_set(true)) then $
-   begin
-    _samples = gridgen(*_dd.dim_p) 
-    full_array = 1
-   end
+  begin
+   _samples = gridgen(*_dd.dim_p) 
+   full_array = 1
+  end
 
 
  ;-------------------------------------------------------------------------
@@ -114,7 +113,7 @@ function dat_data, dd, samples=_samples, offset=offset, $
  ;-------------------------------------------------------------------------
  ; Load data array
  ;-------------------------------------------------------------------------
-;_dat_load_data, _dd, sample=samples
+; dat_load_data, _dd, sample=samples
  dat_load_data, dd, sample=samples
  _dd = cor_dereference(dd)
 

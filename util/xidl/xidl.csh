@@ -21,7 +21,7 @@
 #  xidl_argv, which may be used by <idl_batch> to set up a call to the 
 #  desired IDL program via EXECUTE, using xidl_command.
 #
-#  XIDL was developed by Dr. Joseph Spitale as a shell interface for the
+#  XIDL was developed by Joseph Spitale as a shell interface for the
 #  OMINAS system.
 #
 ##############################################################################

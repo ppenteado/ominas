@@ -2,7 +2,7 @@
 ; gll_spice_spk_detect
 ;
 ;=============================================================================
-function gll_spice_spk_detect, dd, kpath, strict=strict, all=all, time=_time
+function gll_spice_spk_detect, dd, kpath, sc=sc, strict=strict, all=all, time=_time
 
 
 

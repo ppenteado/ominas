@@ -864,6 +864,70 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_pointing_renderfit_event
+;
+;
+; PURPOSE:
+;   This option uses pg_renderfit to produce a pointing correction by comparing 
+;   the image with a simulated image.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_pointing_renderfit_help_event, event
+ text = ''
+ nv_help, 'grim_menu_pointing_renderfit_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_pointing_renderfit_event, event
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+ widget_control, grim_data.draw, /hourglass
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ cd = grim_get_cameras(grim_data)
+ if(NOT keyword__set(cd[0])) then return
+ sund = grim_get_sun(grim_data)
+ if(NOT keyword__set(sund[0])) then return
+ pd = grim_get_planets(grim_data)
+ if(keyword__set(pd[0])) then bx = append_array(bx, pd)
+ rd = grim_get_rings(grim_data)
+ if(keyword__set(rd[0])) then bx = append_array(bx, rd)
+
+ ;------------------------------------------------
+ ; find the offset
+ ;------------------------------------------------
+ grim_message, /clear
+ dxy = pg_renderfit(plane.dd, cd=cd, sund=sund, bx=bx, /show)
+ grim_message
+
+ ;------------------------------------------------------------
+ ; repoint the camera
+ ;  NOTE: this will result in a data event and the handler
+ ;        for that event will take it from here. 
+ ;------------------------------------------------------------
+ pg_repoint, dxy, 0d, cd=cd
+ 
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_pointing_lsq_event
 ;
 ;
@@ -921,21 +985,6 @@ end
 
 
 ;=============================================================================
-; grim_get_shift_reorigin_flag
-;
-;=============================================================================
-function grim_get_shift_reorigin_flag, grim_data
-
- flag = grim_get_user_data(grim_data, 'SHIFT_REORIGIN')
- if(NOT keyword_set(flag)) then flag = 0
-
- return, flag
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_get_shift_step
 ;
 ;=============================================================================
@@ -962,7 +1011,7 @@ print, plane.dd
  pos = pos + shift
  cor_set_udata, plane.dd, 'IMAGE_POS', pos
 
- flag = grim_get_shift_reorigin_flag(grim_data)
+ flag = grim_get_toggle_flag(grim_data, 'SHIFT_REORIGIN')
  if(keyword_set(flag)) then set_image_origin, cd, image_origin(cd) + shift
  nv_flush
 
@@ -1004,11 +1053,12 @@ pro grim_menu_toggle_reorigin_event, event
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
 
- flag = grim_get_shift_reorigin_flag(grim_data)
+ flag = grim_get_toggle_flag(grim_data, 'SHIFT_REORIGIN')
  flag = 1 - flag
 
- grim_set_user_data, grim_data, 'SHIFT_REORIGIN', flag
- update_reorigin_menu_label, grim_data
+ grim_set_toggle_flag, grim_data, 'SHIFT_REORIGIN', flag
+ grim_update_menu_toggle, grim_data, $
+         'grim_menu_toggle_reorigin_event', flag
 
 end
 ;=============================================================================
@@ -1479,43 +1529,13 @@ end
 
 
 ;=============================================================================
-; update_reorigin_menu_label
-;
-;=============================================================================
-pro update_reorigin_menu_label, grim_data
-
- flag = grim_get_shift_reorigin_flag(grim_data)
- id = grim_get_menu_id(grim_data, 'grim_menu_toggle_reorigin_event')
-
- onoff = flag ? 'ON' : 'OFF'
- widget_control, id, get_value=s
-
- ss = str_ext(s, '[', ']')
- sss = strep_s(s, ss, onoff)
-
- widget_control, id, set_value=sss
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_toggle_reorigin_callback
-;
-;=============================================================================
-pro grim_toggle_reorigin_refresh_callback, id_p
- update_reorigin_menu_label, grim_get_data()
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_default_menus_init
 ;
 ;=============================================================================
 pro grim_default_menus_init, grim_data
- grim_add_refresh_callback, 'grim_toggle_reorigin_refresh_callback', ptr_new(0)
+ grim_update_menu_toggle, grim_data, $
+         'grim_menu_toggle_reorigin_event', $
+          grim_get_toggle_flag(grim_data, 'SHIFT_REORIGIN')
 end
 ;=============================================================================
 
@@ -1548,6 +1568,7 @@ function grim_default_menus
 	  '*1\Corrections', $
            '1\Pointing' , $
             '0\Farfit\grim_menu_pointing_farfit_event', $
+            '0\Renderfit\grim_menu_pointing_renderfit_event', $
             '0\Least Squares\grim_menu_pointing_lsq_event', $
             '2\<null>               \+*grim_menu_delim_event', $
            '*1\Shift Image' , $

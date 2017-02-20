@@ -2322,8 +2322,8 @@ pro grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _plane, _ptdp
  ; add points
  ;------------------------------------------
  label = strtrim(grim_data.grnum,2) + '.' + $
-                             strtrim(plane.pn,2) + '.' + $
-                                       cor_udata(ptd, 'GRIM_INDEXED_ARRAY_LABEL')
+                     strtrim(plane.pn,2) + '.' + $
+                            strtrim(cor_udata(ptd, 'GRIM_INDEXED_ARRAY_LABEL'),2)
  if(keyword_set(_pts)) then $
   begin
    grim_add_indexed_array, _ptdp, _pts, label=label
@@ -3494,14 +3494,14 @@ pro grim_create_overlays, grim_data, plane
    grim_create_overlay, grim_data, plane, $
 	'station', $
 		class='station', $
-		dep_classes=['planet', 'sun', 'ring'], $
+		dep_classes=['station', 'planet', 'sun', 'ring'], $
 		genre='point', $
 		col='yellow', psym=1, tlab=1, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'array', $
 		class='array', $
-		dep_classes=['planet', 'sun', 'ring'], $
+		dep_classes=['array', 'planet', 'sun', 'ring'], $
 		genre='curve', $
 		col='blue', psym=-3, tlab=1, tfill=0, tshade=1
 

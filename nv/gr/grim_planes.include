@@ -358,8 +358,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
   if(NOT defined(render_pht_min)) then render_pht_min = 0.02
   if(NOT keyword_set(render_sample)) then render_sample = 1
 
-  if(NOT keyword_set(filetype)) then filetype = grim_data.def_filetype
-
   if(NOT keyword_set(load_path)) then load_path = grim_data.def_load_path
   if(NOT keyword_set(save_path)) then save_path = grim_data.def_save_path
 

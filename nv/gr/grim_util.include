@@ -370,3 +370,23 @@ end
 
 
 
+;=============================================================================
+; grim_update_menu_toggle
+;
+;=============================================================================
+pro grim_update_menu_toggle, grim_data, name, flag
+
+ id = grim_get_menu_id(grim_data, name)
+
+ onoff = flag ? 'ON' : 'OFF'
+ widget_control, id, get_value=s
+
+ ss = str_ext(s, '[', ']')
+ sss = strep_s(s, ss, onoff)
+
+ widget_control, id, set_value=sss
+end
+;=============================================================================
+
+
+

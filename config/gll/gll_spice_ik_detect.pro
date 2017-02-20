@@ -2,7 +2,7 @@
 ; gll_spice_ik_detect
 ;
 ;=============================================================================
-function gll_spice_ik_detect, dd, kpath, time=time, $
+function gll_spice_ik_detect, dd, kpath, sc=sc, time=time, $
                                                   strict=strict, all=all
 
  sc = 'gll'

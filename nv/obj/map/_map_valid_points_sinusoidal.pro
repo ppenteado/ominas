@@ -1,8 +1,8 @@
 ;=============================================================================
-; map_valid_points_sinusoidal
+; _map_valid_points_sinusoidal
 ;
 ;=============================================================================
-function map_valid_points_sinusoidal, _md, map_pts, image_pts
+function _map_valid_points_sinusoidal, _md, map_pts, image_pts
 
  nt = n_elements(_md)
  sv = size(image_pts)

@@ -85,7 +85,7 @@ function subimage_centroid, _im, _corners, nsig=nsig, nit=nit, show=show
    ccy = ccy + cy
   end
 
- if(show) then wait, 0.005
+ if(keyword_set(show)) then wait, 0.005
 
  return, [ccx, ccy]/nit
 end

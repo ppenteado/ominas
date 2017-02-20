@@ -128,9 +128,8 @@ end
 ; 12/2006: kernels whose names contain the image name are also matched.
 ;
 ;=============================================================================
-function cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
+function cas_spice_ck_detect, dd, ckpath, sc=sc, djd=djd, time=time, $
                                                all=all, strict=strict
-
  if(NOT keyword_set(djd)) then djd = 1d			; days, +/-
 
 

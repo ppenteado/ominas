@@ -1,9 +1,9 @@
 ;===========================================================================
-; map_lookup_transformations
+; _map_lookup_transformations
 ;
 ;
 ;===========================================================================
-pro map_lookup_transformations, _md, fn_map_to_image, fn_image_to_map
+pro _map_lookup_transformations, _md, fn_map_to_image, fn_image_to_map
 
  n = n_elements(_md)
  fn_map_to_image = strarr(n)

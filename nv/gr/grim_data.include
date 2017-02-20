@@ -15,13 +15,14 @@ end
 ;=============================================================================
 function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
            retain=retain, user_callbacks=user_callbacks, $
-           user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, faint=faint, cursor_swap=cursor_swap, $
+           user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, $
+           cursor_swap=cursor_swap, $
            path=path, save_path=save_path, load_path=load_path, fov=fov, $
            trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, $
-           trs_sund=trs_sund, filetype=filetype, hide=hide, type=type, $
+           trs_sund=trs_sund, hide=hide, type=type, $
            color=color, xrange=xrange, yrange=yrange, position=position, npoints=npoints, $
            thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
-           psym=psym, cursor_modes=cursor_modes, readout_fns=readout_fns, $
+           psym=psym, cursor_modes=cursor_modes, $
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
            plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
@@ -38,14 +39,11 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   tiepoint_syncing = keyword_set(tiepoint_syncing)
   curve_syncing = keyword_set(curve_syncing)
 
-  if(NOT keyword_set(readout_fns)) then readout_fns = ''
-
   if(NOT keyword_set(user_psym)) then user_psym = 3
   if(NOT keyword_set(user_graphics_fn)) then user_graphics_fn = 3
   if(NOT keyword_set(user_thick)) then user_thick = 1
   if(NOT keyword_set(user_line)) then user_line = 0
   if(NOT keyword_set(slave_overlays)) then slave_overlays = 0
-  if(NOT keyword_set(faint)) then faint = 12
   if(NOT defined(cursor_swap)) then cursor_swap = -1
 
   if(NOT keyword_set(cursor_modes)) then cursor_modes_p = ptr_new(0) $
@@ -57,8 +55,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(npoints)) then npoints = 0
   if(NOT keyword_set(fov)) then fov = 0.
   if(NOT keyword_set(filter)) then filter = ''
-
-  if(NOT keyword_set(filetype)) then filetype = ''
 
   if(keyword_set(path)) then load_path = (save_path = path)
   if(NOT keyword_set(load_path)) then load_path = ''
@@ -169,7 +165,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		beta			: beta, $
 		npoints			: npoints, $
 		nhist			: nhist, $
-		readout_fns_p		: ptr_new(readout_fns), $
 		ref_comb		: 'Average', $
 		type			: type, $	; 'image', 'plot', 'map'
 		user_tlp		: ptr_new(), $
@@ -258,7 +253,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		def_trs_ard	: trs_ard, $
 		def_trs_sund	: trs_sund, $
 
-		def_filetype	: filetype, $
 		def_load_path	: load_path, $
 		def_save_path	: save_path, $
 		def_filter	: filter, $

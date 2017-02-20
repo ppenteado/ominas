@@ -19,10 +19,11 @@
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	argv:    xidl argument list.
+;	argv:	xidl argument list.
 ;
-;	keyword:  String array giving the name of the keyword for which
-;		  a value is desired.
+;	keyword:  
+;		String array giving the name of the keyword for which a value 
+;		is desired.  Keyword names may be abreviated as in IDL.
 ;
 ;
 ; RETURN:

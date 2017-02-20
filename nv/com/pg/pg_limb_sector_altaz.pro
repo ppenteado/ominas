@@ -154,7 +154,6 @@ function pg_limb_sector_altaz, cd=cd, gbx=_gbx, gd=gd, dkd=dkd, $
                       data = transpose(dsk_outline_pts))
  cor_set_udata, outline_ptd, 'nrad', [nalt]
  cor_set_udata, outline_ptd, 'nlon', [naz]
-		udata = [naz])
 
  return, outline_ptd
 end

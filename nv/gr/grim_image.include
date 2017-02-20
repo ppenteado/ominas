@@ -258,8 +258,9 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
  ;---------------------------------------
  planes = grim_visible_planes(grim_data, current=current, plane=plane)
  rgb = planes.rgb
- max = max(dat_max(planes.dd))
 
+ max = plane.max[0]
+ if(NOT keyword_set(max)) then max = max(dat_max(planes.dd))
 
  ;---------------------------------------
  ; get appropriate channel if specified
@@ -332,7 +333,9 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
  image = make_array(type=size(im, /type), dim=device_size)
  image[vpi] = im
 
- image = bytscl(image, max=plane.cmd.n_colors)
+; image = bytscl(image, max=plane.cmd.n_colors)
+;image = bytscl(image, top=plane.cmd.n_colors)
+;;image = bytscl(image, max=max, top=plane.cmd.n_colors)
 
  return, image
 end
@@ -417,7 +420,7 @@ pro grim_display_image, grim_data, plane=plane, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, offset=offset, top=top, noplot=no_plot, $
        no_scale=no_scale, no_wset=no_wset, no_coord=no_coord, tvimage=tvimage, $
-       min=min, max=max, home=home, draw_pixmap=draw_pixmap, current=current, no_copy=no_copy
+       home=home, draw_pixmap=draw_pixmap, current=current, no_copy=no_copy
 
 
  dim = dat_dim(plane.dd)
@@ -442,7 +445,7 @@ pro grim_display_image, grim_data, plane=plane, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, offset=offset, top=top, noplot=no_plot, $
        no_scale=no_scale, no_wset=no_wset, no_coord=no_coord, tvimage=tvimage, $
-       min=min, max=max, home=home, draw_pixmap=draw_pixmap, no_copy=no_copy;, erase=erase
+       home=home, draw_pixmap=draw_pixmap, no_copy=no_copy;, erase=erase
 
  if(NOT plane.image_visible) then return
 
@@ -484,9 +487,8 @@ pro grim_display_image, grim_data, plane=plane, $
  ;---------------------
  if(wnum EQ grim_data.wnum) then draw_pixmap = grim_data.redraw_pixmap
 
-;no_scale=0
  tvim, tvimage, /tvimage, /silent, wnum, noplot=no_plot, $
-     min=min, max=max, draw_pixmap=draw_pixmap, no_copy=no_copy, $
+     draw_pixmap=draw_pixmap, no_copy=no_copy, $
      no_scale=no_scale
 
  min = (max = 0)
@@ -696,7 +698,7 @@ pro grim_display, grim_data, plane=plane, wnum=wnum, home=home, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, offset=offset, top=top, noplot=no_plot, $
        no_scale=no_scale, no_wset=no_wset, no_coord=no_coord, tvimage=tvimage, $
-       min=min, max=max, home=home, draw_pixmap=draw_pixmap, current=current $
+       home=home, draw_pixmap=draw_pixmap, current=current $
 
    else grim_display_plot, grim_data, plane=plane, doffset=doffset, $
        wnum=wnum, xrange=xrange, yrange=yrange, no_wset=no_wset, $

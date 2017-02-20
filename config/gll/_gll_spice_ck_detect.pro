@@ -1,10 +1,12 @@
 ;=============================================================================
-; map_valid_points
+; gll_spice_ck_detect
 ;
 ;=============================================================================
-function map_valid_points, _md, map_pts, image_pts
+function gll_spice_ck_detect, dd, ckpath, sc=sc, djd=djd, time=time, $
+                             all=all, strict=strict
 
- fn = map_fn_valid(_md[0])
- return, call_function(fn, _md, map_pts, image_pts)
+ all_files = file_search(ckpath + '*.plt')
+
+ return, all_files
 end
 ;=============================================================================

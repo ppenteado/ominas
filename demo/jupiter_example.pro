@@ -15,11 +15,11 @@
 ;
 ;    This example file can be executed from the UNIX command line using::
 ;
-;     idl jupiter.example
+;     idl jupiter_example.pro
 ;
 ;    or from within IDL using::
 ;
-;     @jupiter.example
+;     @jupiter_example.pro
 ;
 ;    After the example stops, later code samples in this file may be executed by
 ;    pasting them onto the IDL command line.

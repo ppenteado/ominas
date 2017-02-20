@@ -5,20 +5,22 @@
 function spice_kernel_parse, dd, prefix, type, time=_time, $
                        explicit=explicit, strict=strict, all=all
 
- if(keyword_set(_time)) then time = _time
+ if(keyword_set(_time)) then time = _time[0]
 
- ;----------------------------------------------------------
- ; Construct kernel input keyword and
- ; name of auto-detect function
- ; if auto-detect function does not exist, use th default 
+ ;-------------------------------------------------------------------
+ ; Construct kernel input keyword and name of auto-detect function
+ ; if specific auto-detect function does not exist, use the default 
  ; eph detector
- ;----------------------------------------------------------
+ ;-------------------------------------------------------------------
  kw = strlowcase(type) + '_in'
  env = strupcase(prefix) + '_SPICE_' + strupcase(type)
  def = 'spice_' + strlowcase(type) + '_detect'
+
  fn = prefix + '_' + def
  if(NOT routine_exists(fn)) then fn = 'eph_' + def
  
+ sc = call_function(prefix + '_spice_sc', dd)
+
  ;---------------------------------------
  ; Get raw kernel keyword value
  ;---------------------------------------
@@ -64,7 +66,9 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
       begin
        path = kpath[j]
        if(keyword_set(dir)) then path = dir 
-       _ff = call_function(fn, dd, path, all=all, strict=strict, time=time)
+
+       nv_message, /verbose, 'Calling kernel auto-detect ' + fn
+       _ff = call_function(fn, dd, path, sc=sc, all=all, strict=strict, time=time)
       if(keyword_set(_ff)) then ff = _ff
       end
     end $

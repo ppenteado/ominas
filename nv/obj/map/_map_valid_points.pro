@@ -1,16 +1,10 @@
 ;=============================================================================
-; map_valid_points_orthographic_disk
+; _map_valid_points
 ;
 ;=============================================================================
-function map_valid_points_orthographic_disk, _md, map_pts, image_pts
+function _map_valid_points, _md, map_pts, image_pts
 
- nt = n_elements(_md)
- sv = size(image_pts)
- nv = 1
- if(sv[0] GT 1) then nv = sv[2]
-
- valid = lindgen(nv*nt)
-
- return, valid
+ fn = map_fn_valid(_md[0])
+ return, call_function(fn, _md, map_pts, image_pts)
 end
 ;=============================================================================

@@ -111,6 +111,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ; scale image
  ;--------------------------------------
  n = n_elements(map)
+
  scale_image = bytescl(image, top=n-1, max=max, min=min, /double)
 
  ;--------------------------------------
