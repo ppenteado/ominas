@@ -25,7 +25,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
            psym=psym, cursor_modes=cursor_modes, $
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
-           plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
            render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
 @grim_block.include
@@ -35,9 +34,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(nhist)) then nhist = 1
 
   beta = keyword_set(beta)
-  plane_syncing = keyword_set(plane_syncing)
-  tiepoint_syncing = keyword_set(tiepoint_syncing)
-  curve_syncing = keyword_set(curve_syncing)
 
   if(NOT keyword_set(user_psym)) then user_psym = 3
   if(NOT keyword_set(user_graphics_fn)) then user_graphics_fn = 3
@@ -75,7 +71,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(psym)) then psym = -3l
   if(NOT keyword_set(symsize)) then symsize = 1.
  
-  if(NOT keyword_set(title)) then title = 'Untitled'
+  if(NOT keyword_set(title)) then title = ''
   if(NOT keyword_set(xtitle)) then xtitle = ''
   if(NOT keyword_set(ytitle)) then ytitle = ''
 
@@ -221,10 +217,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		cursor_modes_p		: cursor_modes_p, $
 		workdir			: workdir, $
 		tvd_init_p		: ptr_new(0), $
-		highlight		: 0, $		
-		plane_syncing		: plane_syncing, $		
-		tiepoint_syncing	: tiepoint_syncing, $		
-		curve_syncing		: curve_syncing, $		
 		dd_map_p		: ptr_new(0), $
 		md_map_p		: ptr_new(0), $
 		dd0			: dd0, $
@@ -270,7 +262,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		def_xtitle	: xtitle[0], $
 		def_ytitle	: ytitle[0] $
 	     }
-
 
   ;---------------------
   ; planes
@@ -712,7 +703,7 @@ pro grim_sync_planes, grim_data, norefresh=norefresh
    _grim_data = grim_get_data(tops[i])
 
    if(grim_data.type NE 'plot') then $
-    if(_grim_data.plane_syncing) then $
+    if(grim_get_toggle_flag(_grim_data, 'PLANE_SYNCING')) then $
      if(_grim_data.n_planes NE 1) then $
       begin
        grim_jump_to_plane, _grim_data, pn, /nosync 

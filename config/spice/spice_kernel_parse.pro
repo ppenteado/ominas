@@ -38,7 +38,7 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  w = where(kpath NE '')
  if(w[0] EQ -1) then $
   begin
-   nv_message, /verb, $
+   nv_message, verb=0.5, $
      env + ' environment variable is undefined.', /con, $
        exp=[env + ' specifies the directory in which the NAIF/SPICE translator', $
             'searches for ' + strupcase(type) + ' kernel files.']
@@ -67,9 +67,10 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
        path = kpath[j]
        if(keyword_set(dir)) then path = dir 
 
-       nv_message, /verbose, 'Calling kernel auto-detect ' + fn
+       nv_message, verb=0.9, 'Calling kernel auto-detect ' + fn
        _ff = call_function(fn, dd, path, sc=sc, all=all, strict=strict, time=time)
-      if(keyword_set(_ff)) then ff = _ff
+      if(keyword_set(_ff)) then ff = _ff $
+      else nv_message, verb=0.9, 'No kernels found.'
       end
     end $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

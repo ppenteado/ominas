@@ -58,7 +58,7 @@
 ;-
 ;=============================================================================
 function image_interp_cam, cd=cd, image, grid_x, grid_y, args, valid=valid, $
-                                     k=k, interp=interp, kmax=kmax, mask=mask, zmask=zmask
+                        k=k, interp=interp, kmax=kmax, mask=mask, zmask=zmask
 
  if(NOT keyword_set(interp)) then interp = 'sinc'
 

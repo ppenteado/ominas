@@ -38,8 +38,14 @@ pro grim_rc_settings, rcfile=rcfile, $
  ;----------------------------------------------------
  ; return if no resource file
  ;----------------------------------------------------
- fname = file_search('$HOME/' + rcfile)
- if(NOT keyword_set(fname)) then return
+ rcname = getenv('HOME') + '/' + rcfile
+ fname = file_search(rcname)
+ if(NOT keyword_set(fname)) then $
+  begin
+   nv_message, verb=0.5, $
+    'Resource file not found: ' + rcname +'.  Proceeding without it.'
+   return
+  end
 
  ;----------------------------------------------------
  ; read file and strip comments

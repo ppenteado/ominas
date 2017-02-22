@@ -184,7 +184,7 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    if(write) then $
     begin
      if((NOT silent) AND (NOT keyword_set(nodata))) then $
-                             nv_message, /con, verb=0.1, 'Writing ' + filename
+                                nv_message, verb=0.1, 'Writing ' + filename
      call_procedure, output_fn, filename, nodata=nodata, $
                                        data_out, header_out, udata_out
     end

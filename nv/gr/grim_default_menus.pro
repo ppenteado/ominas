@@ -1051,7 +1051,6 @@ pro grim_menu_toggle_reorigin_event, event
  grim_set_primary, event.top
 
  grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
 
  flag = grim_get_toggle_flag(grim_data, 'SHIFT_REORIGIN')
  flag = 1 - flag
@@ -1521,7 +1520,7 @@ end
 ;=============================================================================
 pro grim_menu_read_mind_event, event
 
- grim_message, 'Not implemented.'
+ grim_message, 'Not implemented!'
 
 end
 ;=============================================================================

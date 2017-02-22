@@ -20,17 +20,16 @@
 ;  INPUT:
 ;       filename:	Path of the SPK files
 ;
-;       unit:		IDL file unit to use
-;
-;  OUTPUT:
-;	creation:	File creation date (string)
+;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
-;  INPUT:
-;	debug:		Outputs debug information
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
+;
+;
+; RETURN:		File creation date (string)
 ;
 ;
 ; PROCEDURE:		Adds '.lbl' to input filename
@@ -47,40 +46,34 @@
 ;
 ; MODIFICATION HISTORY:
 ;       Written by:     V. Haemmerle,  Feb. 2017
+;	Adapted by:	J. Spitale     Feb. 2017
 ;
 ;-
 ;=============================================================================
-pro eph_spice_read_label, filename, unit, creation, debug=debug
+function eph_spice_read_label, filename, unit, creation
 
- ;------------------------
- ; Local parameters
- ;------------------------
- debug_set = keyword_set(debug)
  creation = ''
 
  ;-----------------------
- ; open file
+ ; read file
  ;-----------------------
  lbl_file = filename + '.lbl'
+ lines = read_txt_file(lbl_file)
  
- on_ioerror, close_lbl
- openr, unit, lbl_file
- if debug_set then print, 'Label file ', lbl_file, ' detected'
+ ;------------------------------
+ ; search for creation time
+ ;------------------------------
+ keywords = str_nnsplit(lines, '=', rem=values)
+ w = where(keywords EQ 'PRODUCT_CREATION_TIME')
+ if(w[0] NE -1) then $
+  begin
+   creation = values[w[0]]
+   bc = byte(creation)
+   w = where(bc EQ 13)
+   if(w[0] NE -1) then bc[w] = 32
+   creation = strtrim(bc,2)
+  end
 
- temporary = make_array(200,value=32b)
- stemp = string(temporary)
-
- while ~EOF(unit) do begin
-   readf, unit, format='(a)', stemp
-   line = strsplit(stemp,'=',/extract)
-   keyword = strtrim(line[0],2)
-   if keyword EQ 'PRODUCT_CREATION_TIME' then begin
-     creation = line[1]
-     goto, close_lbl
-   endif
- endwhile
-
- close_lbl:
- close, unit
-
+ return, creation
 end
+;=============================================================================

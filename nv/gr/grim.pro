@@ -269,7 +269,7 @@
 ;
 ;	*maintain: 
 ;		If given, this maintainance setting is applied to the data
-;		descriptor.
+;		descriptor (see ominas_data__define).
 ;
 ;	*compress: 
 ;		Compression setting to be applied to data decriptor (see 
@@ -329,7 +329,8 @@
 ;
 ;	 thick:	Sets the line thickness for plots.  One element per plane.
 ;
-;	 title:	Sets the title for plots.  One element per plane.
+;	 title:	For plots, sets the plot title for plots; one element per plane.
+;		For images, sets the base title.
 ;
 ;	 xtitle: 
 ;		Sets the X-axis label for plots.  One element per plane.
@@ -389,7 +390,7 @@
 ;
 ; RESOURCE FILE:
 ;	The keywords marked above with an asterisk may be overridden using 
-;	the file $HOME/.grimrc.  Keyword=value pairs may be entered, one per
+;	the file $HOME/.ominas/grimrc.  Keyword=value pairs may be entered, one per
 ;	line, using the same syntax as if the keyword were entered on the IDL 
 ;	command line to invoke grim.  Lines beginning with '#' are ignored.
 ;	Keywords entered in the resource file override the default values, and
@@ -670,9 +671,11 @@
 ;
 ;	Overlays on rendered planes do not respond to events
 ;
-;	Menu toggles incorrect when producing a map.  The map toggles them on,
-;	but they still show as off.  Thats because they only update
-;	when the toggle menu items are selected.
+;	Menu toggles don't update propoerly in some circumsumstances.
+;
+;	grim_message sometimes pops up messages from nv_message, which can
+;	be pretty obnxious.  This probably has to do with the calls to
+;	grim_message in grim_compute.include
 ;
 ;
 ; STATUS:
@@ -4378,12 +4381,13 @@ pro grim_menu_plane_toggle_plane_syncing_event, event
 
 
  grim_data = grim_get_data(event.top)
- grim_data.plane_syncing = 1 - grim_data.plane_syncing
- grim_set_data, grim_data, event.top
+
+ flag = grim_get_toggle_flag(grim_data, 'PLANE_SYNCING')
+ flag = 1 - flag
  
- grim_set_toggle_flag, grim_data, 'PLANE_SYNCING', grim_data.plane_syncing
+ grim_set_toggle_flag, grim_data, 'PLANE_SYNCING', flag
  grim_update_menu_toggle, grim_data, $
-         'grim_menu_plane_toggle_plane_syncing_event', grim_data.plane_syncing
+                       'grim_menu_plane_toggle_plane_syncing_event', flag
 
 
 ; grim_sync_planes, grim_data
@@ -4423,13 +4427,12 @@ end
 pro grim_menu_plane_highlight_event, event
 
  grim_data = grim_get_data(event.top)
- grim_data.highlight = 1 - grim_data.highlight
- grim_set_data, grim_data, event.top
 
+ flag = grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
+ flag = 1 - flag
 
- grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', grim_data.highlight
- grim_update_menu_toggle, grim_data, $
-         'grim_menu_plane_highlight_event', grim_data.highlight
+ grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', flag
+ grim_update_menu_toggle, grim_data, 'grim_menu_plane_highlight_event', flag
 
 
 ; widget_control, grim_data.draw, /hourglass
@@ -4631,12 +4634,13 @@ pro grim_menu_plane_toggle_tiepoint_syncing_event, event
 
 
  grim_data = grim_get_data(event.top)
- grim_data.tiepoint_syncing = 1 - grim_data.tiepoint_syncing
- grim_set_data, grim_data, event.top
- 
- grim_set_toggle_flag, grim_data, 'TIEPOINT_SYNCING', grim_data.tiepoint_syncing
+
+ flag = grim_get_toggle_flag(grim_data, 'TIEPOINT_SYNCING')
+ flag = 1 - flag
+
+ grim_set_toggle_flag, grim_data, 'TIEPOINT_SYNCING', flag
  grim_update_menu_toggle, grim_data, $
-         'grim_menu_plane_toggle_tiepoint_syncing_event', grim_data.tiepoint_syncing
+               'grim_menu_plane_toggle_tiepoint_syncing_event', flag
 
 
 ; grim_sync_tiepoints, grim_data
@@ -4764,12 +4768,13 @@ pro grim_menu_plane_toggle_curve_syncing_event, event
 
 
  grim_data = grim_get_data(event.top)
- grim_data.curve_syncing = 1 - grim_data.curve_syncing
- grim_set_data, grim_data, event.top
  
- grim_set_toggle_flag, grim_data, 'CURVE_SYNCING', grim_data.curve_syncing
+ flag = grim_get_toggle_flag(grim_data, 'CURVE_SYNCING')
+ flag = 1 - flag
+
+ grim_set_toggle_flag, grim_data, 'CURVE_SYNCING', flag
  grim_update_menu_toggle, grim_data, $
-         'grim_menu_plane_toggle_curve_syncing_event', grim_data.curve_syncing
+                      'grim_menu_plane_toggle_curve_syncing_event', flag
 
 ; grim_sync_curves, grim_data
 ; grim_refresh, grim_data, /use_pixmap
@@ -9722,7 +9727,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  grim_constants
 
- grim_rc_settings, rcfile='.grimrc', $
+ grim_rc_settings, rcfile='.ominas/grimrc', $
 	silent=silent, new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
@@ -9875,7 +9880,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        symsize=symsize, nhist=nhist, maintain=maintain, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
-       plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
        visibility=visibility, channel=channel, data_offsets=data_offsets, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
        render_pht_min=render_pht_min)
@@ -10083,6 +10087,19 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
 
  ;----------------------------------------------
+ ; initial toggles
+ ;----------------------------------------------
+ if(keyword_set(plane_syncing)) then $
+                   grim_set_toggle_flag, grim_data, 'PLANE_SYNCING', 1
+ if(keyword_set(tiepoint_syncing)) then $
+                   grim_set_toggle_flag, grim_data, 'TIEPOINT_SYNCING', 1
+ if(keyword_set(curve_syncing)) then $
+                   grim_set_toggle_flag, grim_data, 'CURVE_SYNCING', 1
+ if(keyword_set(highlght)) then $
+                   grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', 1
+
+
+ ;----------------------------------------------
  ; if new instance, initialize menu extensions
  ;----------------------------------------------
  if(new) then $
@@ -10121,7 +10138,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
           grim_get_toggle_flag(grim_data, 'CURVE_SYNCING')
    grim_update_menu_toggle, grim_data, $
          'grim_menu_plane_highlight_event', $
-          grim_get_toggle_flag(grim_data, 'HIGHLIGHT')
+          grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
   end
 
 

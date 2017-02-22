@@ -139,7 +139,9 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ;---------------------------------------
  ; create map data descriptor
  ;---------------------------------------
- dd_map = dat_create_descriptors(1, instrument='MAP', filetype=dat_filetype(dd))
+ dd_map = dat_create_descriptors(1, $
+       instrument='MAP', filetype=dat_filetype(dd), $
+       name=cor_name(bx))
 
 
  ;------------------------------------------------------------------

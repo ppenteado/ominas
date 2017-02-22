@@ -1022,10 +1022,10 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
    ;----------------------------
    ; current plane outline
    ;----------------------------
-   if(grim_data.highlight) then $
+   if(grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')) then $
     begin
-     image = dat_data(plane.dd)		; shouldn't do this
-
+     image = dat_data(plane.dd)		; this is very bad: forces loading of
+					; full image.
      outline_pts = image_outline(image)
      plots, outline_pts, psym=3, col=ctyellow()
 
@@ -2352,6 +2352,8 @@ pro grim_push_indexed_array, grim_data, ptd, name, rm=rm
  tops = _all_tops
  ntops = n_elements(tops)
 
+ full_name = name+'_SYNCING'
+
  ;-------------------------------------------------
  ; project arrays in other planes and windows
  ;-------------------------------------------------
@@ -2363,11 +2365,8 @@ pro grim_push_indexed_array, grim_data, ptd, name, rm=rm
    for ii=0, n_elements(_planes)-1 do $
     if((tops[i] NE top) OR (_planes[ii].pn NE plane.pn)) then $
      begin
-      fields = tag_names(_grim_data)
-      ii_syncing = where(fields EQ name+'_SYNCING')
-
-      if(_grim_data.type NE 'plot') then $
-       if(_grim_data.(ii_syncing) OR grim_data.(ii_syncing)) then $
+       if(grim_get_toggle_flag(_grim_data, full_name) $
+                   OR grim_get_toggle_flag(grim_data, full_name)) then $
         begin
          _ptdp = grim_get_indexed_array(_planes[ii], name)
          if(NOT keyword_set(rm)) then $

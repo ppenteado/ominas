@@ -100,7 +100,7 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
 
  for i=0, n-1 do $
   begin
-   nv_message, /verbose, 'Calling translator ' + translators[i]
+   nv_message, verb=0.9, 'Calling translator ' + translators[i]
 
    _dd.last_translator = [i,1]
    cor_rereference, dd, _dd

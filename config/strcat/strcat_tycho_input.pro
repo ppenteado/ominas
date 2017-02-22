@@ -600,7 +600,7 @@ function strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, s
  nregions = n_elements(regions)
  if(nregions eq 1 AND regions[0] eq '') then $
                                 nv_message, 'No Tycho/GSC regions found.'
- nv_message, /con, verb=0.1, 'Number of Tycho/GSC regions found: ', nregions
+ nv_message, verb=0.2, 'Number of Tycho/GSC regions found: ', nregions
 
  ;--------------------------
  ; Loop on Tycho/GSC regions

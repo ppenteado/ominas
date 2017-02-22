@@ -509,7 +509,8 @@ common spice_input_block, last_prefix
        ck_in = spice_kernel_parse(dd, prefix, 'ck', $
                  exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
 
-   if(NOT keyword_set(constants)) then spk_in = spice_kernel_parse(dd, prefix, 'spk', $
+   if(NOT keyword_set(constants)) then $
+            spk_in = spice_kernel_parse(dd, prefix, 'spk', $
                     exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
 
    pck_in = spice_kernel_parse(dd, prefix, 'pck', $
