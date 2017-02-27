@@ -4,7 +4,10 @@
 ;       xidl_argv
 ;
 ; PURPOSE:
-;       Returns an argument from the xidl argument list.
+;       Returns an argument from the xidl argument list. Arguments are expanded
+;	according to standard shell rules.  "-" is used instead of "/" to set
+;	a keyword to one.  Arrays are specified as comma-dilineated lists
+;	with no white space.
 ;
 ;
 ; CATEGORY:
@@ -30,8 +33,9 @@
 ; RETURN:
 ;       The requested argument.  Note all arguments are returned as strings.
 ;
+;
 ; STATUS:
-;       Completed.
+;       Complete.
 ;
 ;
 ; MODIFICATION HISTORY:

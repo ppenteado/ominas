@@ -55,8 +55,8 @@
 ;		intersects a planet or ring.  (Ring photometry is not yet
 ;		implememented)
 ;
-;	fn:	Name of a function to be called whenever a point is selected. 
-;		The function is called as follows:
+;	fn:	Names of functions to be called whenever a point is selected. 
+;		Each function is called as follows:
 ;
 ;		value = call_function(fn, p, image, gd=gd, $
 ;                                               format=_format, label=label)
@@ -64,7 +64,8 @@
 ;		p is the image coords of the selected point, image is the 
 ;		input image and gd is a generic descriptor containing the 
 ;		object descriptors.  format and label are outputs used to label
-;		the returned value.
+;		the returned value.  These functions are apended to the set of
+;		default functions.
 ;
 ;	silent:	If set, no string is printed, although the 'string' output
 ;		keyword remains valid.

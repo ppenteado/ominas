@@ -57,7 +57,7 @@ pro grim_mode_plane_mouse_event, event, data
  if(NOT keyword_set(jplane)) then return
 
  grim_jump_to_plane, grim_data, jplane.pn
- grim_refresh, grim_data, /use_pixmap;, /noglass
+ grim_refresh, grim_data, /use_pixmap, /noglass
 end
 ;=============================================================================
 

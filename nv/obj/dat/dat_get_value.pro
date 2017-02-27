@@ -116,7 +116,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
 
  for i=0, n-1 do $
   begin
-   nv_message, /verbose, 'Calling translator ' + translators[i]
+   nv_message, verb=0.9, 'Calling translator ' + translators[i]
 
    _dd.last_translator = [i,0]#make_array(ndd, val=1)
    cor_rereference, dd, _dd
@@ -135,7 +135,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
      xds = append_array(xds, xd)
      if(keyword_set(tr_first)) then i=n
     end $
-   else nv_message, /verbose, 'No value.' 
+   else nv_message, verb=0.9, 'No value.' 
   end 
  nxds = n_elements(xds)
 

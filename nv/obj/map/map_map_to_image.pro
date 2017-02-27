@@ -74,9 +74,9 @@ function map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
  image_pts = call_function(fn, md, nmap_pts)
  image_pts = rotate_coord(image_pts, rotate, size=size)
 
- if(NOT keyword_set(nowrap)) then image_pts = map_wrap_points(_md, image_pts, map_pts)
+ if(NOT keyword_set(nowrap)) then image_pts = _map_wrap_points(_md, image_pts, map_pts)
 
- if(NOT keyword_set(all)) then valid = map_valid_points(_md, map_pts, image_pts) $
+ if(NOT keyword_set(all)) then valid = _map_valid_points(_md, map_pts, image_pts) $
  else valid = lindgen(nv*nt)
 
 

@@ -5,7 +5,11 @@
 ;
 ;
 ; PURPOSE:
-;	INterface to GRIm Data -- command-line access to grim data.
+;	INterface to GRIm Data -- command-line access to GRIM data.
+;	The returned descriptors allow direct access to the memory images of
+;	GRIM's descriptor set.  Therefore changes made from the command line
+;	affect the descriptors that GRIM is using.  Moreover, GRIM monitors
+;	those descriptors and updates itself whenever a change occurs.  
 ;
 ;
 ; CATEGORY:
@@ -18,8 +22,8 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	grnum:	Grim window number.  If not given, the most recently accessed
-;	        grim instance is used.
+;	grnum:	GRIM window number.  If not given, the most recently accessed
+;		grim instance is used.
 ;
 ;  OUTPUT: NONE
 ;
@@ -32,64 +36,87 @@
 ;	all:	If set, all planes are used.
 ;
 ;  OUTPUT:
-;	dd:	Grim's data descriptor.
+;	dd:	GRIM's data descriptor.
 ;
-;	cd:	Grim's camera descriptor.
+;	cd:	GRIM's camera descriptor.
 ;
-;	pd:	Grim's planet descriptors.
+;	od:	GRIM's observer descriptor.
 ;
-;	rd:	Grim's ring descriptors.
+;	sund:	GRIM's sun descriptor.
 ;
-;	sd:	Grim's star descriptors.
+;	pd:	GRIM's planet descriptors.
 ;
-;	sund:	Grim's sun descriptor.
+;	rd:	GRIM's ring descriptors.
 ;
-;	od:	Grim's observer descriptor.
+;	sd:	GRIM's star descriptors.
 ;
-;	cd:	Grim's camera descriptor.
+;	std:	GRIM's station descriptors.
+;
+;	ard:	GRIM's array descriptors.
 ;
 ;	gd:	Generic descriptor containing all of the above descriptors. 
 ;
-;	limb_ptd:	POINT giving the limb points.
+;	center_ptd:
+;		POINT object giving the planet centers.
 ;
-;	ring_ptd:	POINT giving the ring points.
+;	limb_ptd:
+;		POINT object giving the limb points.
 ;
-;	star_ptd:	POINT giving the star points.
+;	ring_ptd:
+;		POINT object giving the ring points.
 ;
-;	term_ptd:	POINT giving the terminator points.
+;	star_ptd:
+;		POINT object giving the star points.
 ;
-;	plgrid_ptd:	POINT giving the planet grid points.
+;	term_ptd:
+;		POINT object giving the terminator points.
 ;
-;	center_ptd:	POINT giving the planet centers.
+;	station_ptd:
+;		POINT object giving the station points.
 ;
-;	object_ptd:	POINT giving all overlay points.
+;	array_ptd:
+;		POINT object giving the array points.
 ;
-;	tie_ptd:		POINT giving the tie points.
+;	plgrid_ptd:
+;		POINT object giving the planet grid points.
 ;
-;	curve_ptd:	POINT giving the curve points.
+;	shadow_ptd:
+;		POINT object giving the shadow points.
 ;
+;	object_ptd:
+;		POINT object giving all overlay points.
 ;
-; PROCEDURE:
-;	The returned descriptors allow direct access to the memory images of
-;	grim's descriptor set.  Therefore changes made from the command line
-;	affect the descriptors that grim is using.  Moreover, grim monitors
-;	those descriptors and updates itself whenever a change occurs.  
+;	tie_ptd:
+;		POINT object giving the tie points.
+;
+;	curve_ptd:
+;		POINT object giving the curve points.
+;
+;	active_*_ptd:
+;		Returns same as above ptd outputs, except ony active arrays
+;		are returned.
 ;
 ;
 ; EXAMPLE:
-;	(1) Open a grim window, load an image, and compute limb points.
+;	(1) Open a GRIM window, load an image, and compute limb points.
 ;
-;	(2) At the command line:
+;	(2) At the command line, type:
 ;
 ;		IDL> ingrid, cd=cd
 ;		IDL> pg_repoint, [50,50], 0d, cd=cd
 ;
-;	Grim should detect the change to the camera descriptor and update
-;	itself by recomputing the limb points.
+;	GRIM should detect the change to the camera descriptor and update
+;	itself by recomputing the limb points and refreshing the display.
+;
+;
+; KNOWN ISSUES:
+;	This procedure (though brilliant) has unresolved issues, is unreliable, 
+;	behaves irrationally, is overly complicated, and has periodic breakdowns 
+;	for no externally apparent reason.
 ;
 ;
 ; STATUS:
-;	Complete
+;	Has unresolved issues that need to be confronted and addressed.
 ;
 ;
 ; SEE ALSO:
@@ -115,7 +142,10 @@ pro ingrid, grnum, gd=_gd, $
          active_array_ptd=_active_array_ptd
 
 
- active = keyword_set(active)
+ active = keyword_set(active)	; Looks like I was going to simplify this by 
+				; having a /active keyword instead of a million
+				; repeated keywords with "active_" in front
+				; of their names.  That would be simpler.
 
  if(defined(grnum)) then $
                      grim_data = grim_get_data(grim_grnum_to_top(grnum)) $
@@ -139,7 +169,6 @@ pro ingrid, grnum, gd=_gd, $
    plane = grim_get_plane(grim_data, pn=pn[i])
    if(plane.pn NE -1) then $
     begin
-
      if(arg_present(_dd)) then dd = append_array(dd, plane.dd)
 
      if(arg_present(_cd)) then cd = append_array(cd, *plane.cd_p)

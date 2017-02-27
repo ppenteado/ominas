@@ -216,9 +216,10 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
+common spice_input_block, last_prefix
 
- status=0
- n_obj=0
+ status = 0
+ n_obj = 0
  dim = [1]
 
  if((keyword NE ('CAM_DESCRIPTORS')) AND $
@@ -315,10 +316,13 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
  ;- - - - - - - - - - - - - - - - - - -
  silent = fix(tr_keyword_value(dd, 'silent'))
 
- ;- - - - - - - - - - - - - - - - - - -
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; reload
- ;- - - - - - - - - - - - - - - - - - -
+ ;  Force /reload if this call has a different prefix than the last one.
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  reload = fix(tr_keyword_value(dd, 'reload'))
+ if(keyword_set(last_prefix)) then if(prefix NE last_prefix) then reload = 1
+ last_prefix = prefix
 
  ;- - - - - - - - - - - - - - - - - - -
  ; constants
@@ -428,8 +432,14 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
    if(NOT keyword_set(constants)) then $
     begin
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; Handle LS kernels now so that times can be compared in 
-     ; the kernel list file.
+     ; Handle LS and SC kernels first.
+     ;  LS kernels are needed so that times can be compared in the kernel 
+     ;   list file.
+     ;  SC kernels are needed for the ck and spk auto detect functions
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; load the kernel list file
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      klist = tr_keyword_value(dd, 'klist')
      if(keyword_set(klist)) then $
@@ -440,33 +450,43 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
        end
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; first, look for lsk files in the klist
+     ; first, look for lsk and sck files in the klist
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      lsk_in = spice_read_klist(dd, klist, $
                          silent=silent, prefix=prefix, /notime, ext='tls')
+     sck_in = spice_read_klist(dd, klist, $
+                         silent=silent, prefix=prefix, /notime, ext='tsc')
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; otherwise, check for lsk keyword
+     ; otherwise, check for lsk and sck keywords
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      if(NOT keyword_set(lsk_in)) then $
        lsk_in = spice_kernel_parse(dd, prefix, 'lsk', $
                 exp=lsk_exp, strict=lsk_strict, all=lsk_all, time=time)
-
+     if(NOT keyword_set(sck_in)) then $
+       sck_in = spice_kernel_parse(dd, prefix, 'sck', $
+                exp=sck_exp, strict=sck_strict, all=sck_all, time=time)
 
      if(NOT keyword_set(lsk_in)) then nv_message, 'No leap-second kernels.'
+     if(NOT keyword_set(constants)) then $
+         if(NOT keyword_set(sck_in)) then nv_message, 'No spacecraft clock kernels.'
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; load lsk if found
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     spice_sort_kernels, lsk_in, $
+     k_in = lsk_in
+     if(keyword_set(sck_in)) then k_in = [k_in, sck_in]
+
+     spice_sort_kernels, k_in, $
        reload=reload, reverse=reverse, protect=protect, $
        lsk_in=lsk_in, lsk_exp=lsk_exp, $
-       kernels_to_load=lsk_to_load, kernels_to_unload=lsk_to_unload, $
-       lsk_reverse=lsk_reverse
-     spice_load, lsk_to_load
+       sck_in=sck_in, sck_exp=sck_exp, $
+       kernels_to_load=k_to_load, kernels_to_unload=k_to_unload, $
+       lsk_reverse=lsk_reverse, sck_reverse=sck_reverse
+     spice_load, k_to_load
 
      if(defined(time)) then $
-         if(size(time, /type) EQ 7) then time = spice_str2et(time)
+         if(size(time, /type) EQ 7) then time = spice_str2et(time) 
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      ; kernel list file
@@ -475,6 +495,7 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      k_in = spice_read_klist(dd, klist, silent=silent, time=time, prefix=prefix)
     end
+
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; kernel input keywords
@@ -488,16 +509,16 @@ function spice_input, dd, keyword, prefix, values=values, status=status, $
        ck_in = spice_kernel_parse(dd, prefix, 'ck', $
                  exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
 
-   if(NOT keyword_set(constants)) then spk_in = spice_kernel_parse(dd, prefix, 'spk', $
+   if(NOT keyword_set(constants)) then $
+            spk_in = spice_kernel_parse(dd, prefix, 'spk', $
                     exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
+
    pck_in = spice_kernel_parse(dd, prefix, 'pck', $
                     exp=pck_exp, strict=pck_strict, all=pck_all, time=time)
    fk_in = spice_kernel_parse(dd, prefix, 'fk', $
                     exp=fk_exp, strict=fk_strict, all=fk_all, time=time)
    ik_in = spice_kernel_parse(dd, prefix, 'ik', $
                     exp=ik_exp, strict=ik_strict, all=ik_all, time=time)
-   if(NOT keyword_set(constants)) then sck_in = spice_kernel_parse(dd, prefix, 'sck', $
-                    exp=sck_exp, strict=sck_strict, all=sck_all, time=time)
    xk_in = spice_kernel_parse(dd, prefix, 'xk', $
                     exp=xk_exp, strict=xk_strict, all=xk_all, time=time)
 

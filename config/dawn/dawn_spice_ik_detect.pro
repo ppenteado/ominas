@@ -2,7 +2,7 @@
 ; dawn_spice_ik_detect
 ;
 ;=============================================================================
-function dawn_spice_ik_detect, dd, kpath, time=time, strict=strict, all=all
+function dawn_spice_ik_detect, dd, kpath, sc=sc, time=time, strict=strict, all=all
 
  ;--------------------------------
  ; new naming convention

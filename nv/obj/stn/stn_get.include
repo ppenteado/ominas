@@ -1,0 +1,9 @@
+; stn_get.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(arg_present(primary)) then primary = stn_primary(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(surface_pt)) then surface_pt = stn_surface_pt(_xd, cat=cat, condition=condition, /noevent)
+
+@bod_get.include
+

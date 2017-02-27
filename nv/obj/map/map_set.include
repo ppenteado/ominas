@@ -1,0 +1,18 @@
+; _map_set.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(defined(type)) then map_set_type, _xd, type, /noevent
+ if(defined(fn_data)) then map_set_fn_data, _xd, fn_data, /noevent
+ if(defined(size)) then map_set_size, _xd, size, /noevent
+ if(defined(origin)) then map_set_origin, _xd, origin, /noevent
+ if(defined(center)) then map_set_center, _xd, center, /noevent
+ if(defined(range)) then map_set_range, _xd, range, /noevent
+ if(defined(scale)) then map_set_scale, _xd, scale, /noevent
+ if(defined(units)) then map_set_units, _xd, units, /noevent
+ if(defined(graphic)) then map_set_graphic, _xd, graphic, /noevent
+ if(defined(rotate)) then map_set_rotate, _xd, rotate, /noevent
+ if(defined(radii)) then map_set_radii, _xd, radii, /noevent
+ if(defined(pole)) then map_set_pole, _xd, pole, /noevent
+
+@cor_set.include

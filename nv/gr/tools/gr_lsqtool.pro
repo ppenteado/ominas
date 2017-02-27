@@ -589,6 +589,8 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
  pmzero = 0
  ptag = ''
 
+ cam_psf_attrib, cd, fwhm=fwhm
+
  ;-------------------------------------
  ; loop over objects
  ;-------------------------------------
@@ -613,9 +615,7 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
    if(keyword_set(ptd)) then $
     begin
      nptd = n_elements(ptd)
-;     desc = pnt_desc(ptd[0])
-     desc = pnt_desc(ptd)
-     desc = strupcase(desc)
+     desc = strupcase(pnt_desc(ptd))
 
      ;--------------------------------------------------------------
      ; point scan -- include planet centers as well as stars, but
@@ -634,7 +634,7 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
        ptd = 0
        for k=0, nptd-1 do $
         begin
-         name = cor_name(ptd)
+         name = cor_name(_ptd[k])
          w = where(names EQ name)
          if(w[0] NE -1) then $
           begin
@@ -642,9 +642,8 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
            dist = v_mag(bod_pos(pd[w]) - bod_pos(cd))
            rad = (glb_radii(pd[w]))[0]
            npix = rad/dist[0] / (cam_scale(cd))[0]
-           cam_psf_attrib, cd, fwhm=fwhm
            if(NOT keyword_set(fwhm)) then fwhm = 1d 
-           if(npix LE fwhm*2.) then ptd = append_array(ptd, _ptd[k])
+           if(npix LE fwhm*4.) then ptd = append_array(ptd, _ptd[k])
           end
         end
        nptd = 0
@@ -677,7 +676,7 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
          for k=0, nptd-1 do $
           begin
            rd = 0
-           if(keyword_set(rds)) then rd = rds[k]
+           if(keyword_set(rds)) then rd = cor_assoc_xd(ptd[k])
            model = grlsq_get_model(lsqd, desc[k], lzero, cd=cd, rd=rd)
 
            model_p[k] = nv_ptr_new(model)
@@ -693,14 +692,14 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
        for k=0, nptd-1 do $
         begin
          rd = 0
-         if(keyword_set(rds)) then rd = rds[k]
-         inner[k] = grlsq_get_inner(cd, rd, desc[k])
+         if(keyword_set(rds)) then rd = cor_assoc_xd(ptd[k])
+        inner[k] = grlsq_get_inner(cd, rd, desc[k])
          if(lsqd.invert) then inner[k] = (NOT inner[k]) < 1 > 0
         end
 
        if(NOT keyword_set(noscan)) then $
         scan_ptd = $
-          pg_cvscan(dd, cd=cd, bx=rds, [ptd], edge=lsqd.edge, width=lsqd.width, $
+          pg_cvscan(dd, cd=cd, bx=cor_assoc_xd(ptd), [ptd], edge=lsqd.edge, width=lsqd.width, $
                                   model=model_p, mzero=mzero, $
                                   algorithm=lsqd.algorithm, arg=inner)
 
@@ -745,14 +744,14 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
     end
   end
 
-   ;-------------------------------------------------
-   ; draw edge models
-   ;-------------------------------------------------
-   if(keyword_set(ptag)) then $
-    begin
-     grlsq_draw_models, data, pmodel_p, pmzero, ptag
-     nv_ptr_free, pmodel_p
-    end
+ ;-------------------------------------------------
+ ; draw edge models
+ ;-------------------------------------------------
+ if(keyword_set(ptag)) then $
+  begin
+   grlsq_draw_models, data, pmodel_p, pmzero, ptag
+   nv_ptr_free, pmodel_p
+  end
 
  status = 0
 end

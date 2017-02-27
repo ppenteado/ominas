@@ -234,7 +234,6 @@ pro gros_apply_settings, data
 
  grim_data = data.grim_data
  if(NOT grim_exists(grim_data)) then return
- use_pixmap = 1
 
  ;--------------------
  ; all
@@ -259,7 +258,6 @@ pro gros_apply_settings, data
    ; max
    ;-----------------------
    newmax = float(grim_parse_form_entry(data.ids, data.tags, 'MAX', /string))
-   if(newmax - planes[i].max GT 1d-3) then use_pixmap = 0
    planes[i].max = newmax
 
    ;-----------------------
@@ -381,7 +379,7 @@ pro gros_apply_settings, data
 
   end
 
- grim_refresh, grim_data, use_pixmap=use_pixmap
+ grim_refresh, grim_data
 end
 ;=============================================================================
 

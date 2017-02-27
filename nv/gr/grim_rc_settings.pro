@@ -21,13 +21,13 @@ end
 ;
 ;=============================================================================
 pro grim_rc_settings, rcfile=rcfile, $
-	silent=silent, new=new, xsize=xsize, ysize=ysize, mode=mode, npoints=npoints, $
+	silent=silent, new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, npoints=npoints, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
 	fov=fov, menu_extensions=menu_extensions, button_extensions=button_extensions, $
 	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, trs_sund=trs_sund, $
-	filetype=filetype, hide=hide, readout_fns=readout_fns, xzero=xzero, rgb=rgb, $
+	filetype=filetype, hide=hide, mode_args=mode_args, xzero=xzero, rgb=rgb, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
@@ -38,8 +38,14 @@ pro grim_rc_settings, rcfile=rcfile, $
  ;----------------------------------------------------
  ; return if no resource file
  ;----------------------------------------------------
- fname = file_search('$HOME/' + rcfile)
- if(NOT keyword_set(fname)) then return
+ rcname = getenv('HOME') + '/' + rcfile
+ fname = file_search(rcname)
+ if(NOT keyword_set(fname)) then $
+  begin
+   nv_message, verb=0.5, $
+    'Resource file not found: ' + rcname +'.  Proceeding without it.'
+   return
+  end
 
  ;----------------------------------------------------
  ; read file and strip comments
@@ -140,9 +146,9 @@ pro grim_rc_settings, rcfile=rcfile, $
                         _filter = grim_rc_value(keywords, value_ps, 'FILTER')
  if(keyword_set(_filter)) then filter = _filter
 
- if(n_elements(mode) EQ 0) then $
-                        _mode = grim_rc_value(keywords, value_ps, 'MODE')
- if(keyword_set(_mode)) then mode = _mode
+ if(n_elements(mode_init) EQ 0) then $
+                        _mode_init = grim_rc_value(keywords, value_ps, 'MODE_INIT')
+ if(keyword_set(_mode_init)) then mode_init = _mode_init
 
  if(n_elements(retain) EQ 0) then $
                         _retain = grim_rc_value(keywords, value_ps, 'RETAIN')
@@ -200,9 +206,9 @@ pro grim_rc_settings, rcfile=rcfile, $
                         _filetype = grim_rc_value(keywords, value_ps, 'FILETYPE')
  if(keyword_set(_filetype)) then filetype = _filetype
 
- if(n_elements(readout_fns) EQ 0) then $
-                        _readout_fns = grim_rc_value(keywords, value_ps, 'READOUT_FNS')
- if(keyword_set(_readout_fns)) then readout_fns = _readout_fns
+ if(n_elements(mode_args) EQ 0) then $
+                        _mode_args = grim_rc_value(keywords, value_ps, 'MODE_ARGS')
+ if(keyword_set(_mode_args)) then mode_args = _mode_args
 
  if(n_elements(psym) EQ 0) then $
                         _psym = grim_rc_value(keywords, value_ps, 'PSYM')

@@ -78,6 +78,8 @@
 ;
 ;	no_maps:      If set, maps are not loaded.
 ;
+;	pht_min:      Minimum value to assign to photometric output.
+;
 ;
 ;  OUTPUT: 
 ;	map:	       2-D array containing the rendered scene.
@@ -131,7 +133,8 @@ function pg_render, cd=cd, sund=sund, $
  ;----------------------------------------
  ; set up grid if necessary
  ;----------------------------------------
- if(NOT keyword_set(image_ptd)) then image_pts = gridgen(cam_size(cd), /rectangular) $
+ if(NOT keyword_set(image_ptd)) then $
+                      image_pts = gridgen(cam_size(cd), /rectangular) $
  else if(size(image_ptd, /type) EQ 10) then image_pts = pnt_points(image_ptd) $
  else image_pts = image_ptd
 

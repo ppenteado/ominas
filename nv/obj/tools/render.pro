@@ -182,9 +182,19 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
 map_smoothing_width=1
 
      map = dat_data(ddmap[jj])
+
      dat = image_interp_cam(cd=md[jj], map, interp='sinc', $
                im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:map_smoothing_width})
 
+     ;- - - - - - - - - - - - - - - - - - - - - - - - -
+     ; replace unmapped samples with map average
+     ;- - - - - - - - - - - - - - - - - - - - - - - - -
+     w = where(dat EQ 0)
+     if(w[0] NE -1) then dat[w] = mean(map)
+
+     ;- - - - - - - - - - - - - - - -
+     ; apply photometry
+     ;- - - - - - - - - - - - - - - -
      piece[www] = dat * phot
     end
   end

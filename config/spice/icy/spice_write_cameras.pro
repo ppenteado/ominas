@@ -37,7 +37,7 @@ pro spice_write_cameras, dd, ref, ck_file, cd, $
  ;-------------------------------
  ; write the kernel
  ;-------------------------------
- nv_message, /verb, 'Writing ' + ck_file
+ nv_message, verb=0.9, 'Writing ' + ck_file
  status = spice_put_cameras(sc, inst, plat, ref, ck_file, comment, $
                         cam_time, cam_exposure, cam_pos, cam_vel, $
                         cam_orient, cam_avel)

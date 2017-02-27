@@ -34,8 +34,17 @@
 ;	Loaded data array.
 ;
 ;
+; KNOWN BUGS:
+;	Subsampling (ie. caching) is unreliable.  Lines or other anomalies
+;	often appear in subsampled images.  This does not seem to happen
+;	with integer sampling (e.g. integer zooms in tvim or grim), so it
+;	may be related to rounding or truncating of indices.  It may also be
+;	a problem with the set arithmetic.  Caching is currently disabled
+;	(see _dd.cache = -1 below) until it can be fixed.
+;
+;
 ; STATUS:
-;	Complete
+;	Some bugs.
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -47,8 +56,9 @@
 pro dat_load_data, dd, sample=sample, data=data
 @nv_block.common
 @core.include
- _dd = cor_dereference(dd)
 
+ _dd = cor_dereference(dd)
+_dd.cache = -1				; caching disabled until fully debugged
 
  sample0 = *_dd.sample_p
  if(data_archive_defined(_dd.data_dap, _dd.dap_index)) then $
@@ -63,52 +73,63 @@ pro dat_load_data, dd, sample=sample, data=data
  ;-------------------------------------------------------------
  ; determine samples such that no loaded samples are reloaded
  ;-------------------------------------------------------------
- if(keyword_set(sample)) then $
+ if(_dd.cache NE -1) then $
   begin
-   ss = sort(sample)
-   uu = uniq(sample[ss])
-   requested_samples = sample[uu[ss]]
-
-   samples_to_load = requested_samples
-
-   if(sample0[0] NE -1) then $
+   if(keyword_set(sample)) then $
     begin
-;stop
-     loaded_samples = set_intersection(sample0, requested_samples)
-     if(loaded_samples[0] NE -1) then $
-                  samples_to_load = set_difference(loaded_samples, requested_samples)
+     ss = sort(sample)
+     uu = uniq(sample[ss])
+     requested_samples = sample[uu[ss]]
+
+     samples_to_load = requested_samples
+     if(sample0[0] NE -1) then $
+      begin
+       loaded_samples = set_intersection(sample0, requested_samples)
+       if(loaded_samples[0] NE -1) then $
+                   samples_to_load = set_difference(loaded_samples, requested_samples)
+      end
+     if(samples_to_load[0] EQ -1) then return
     end
-   if(samples_to_load[0] EQ -1) then return
-samples_to_load = sample
-  end
 
  ;----------------------------------
  ; unload older samples if necessary
  ;----------------------------------
-; if(_dd.cache NE -1) then $
-;  begin
 ;   overflow = $
 ;         _dat_compute_size(_dd, [loaded_samples, samples_to_load) - _dd.cache
-;   if(overflow GT 0) then $
-;    begin
-;     _dat_unload_samples, _dd, overflow
-;    end
-;  end
+;   if(overflow GT 0) then _dat_unload_samples, _dd, overflow
+
+  end
 
 
  ;----------------------------------
  ; read data
  ;----------------------------------
-_dd.cache = -1
- if((_dd.cache NE -1) AND ptr_valid(_dd.gffp)) then $
-               data = gff_read(*_dd.gffp, subscripts=samples_to_load) $
- else data = call_function(_dd.input_fn, _dd.filename, /silent, $
-                       header, udata, abscissa=abscissa, sample=samples_to_load)
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; First attempt to read using input function (usually the fastest)
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ data = call_function(_dd.input_fn, _dd.filename, /silent, $
+                       header, udata, abscissa=abscissa, $
+                       sample=samples_to_load, returned_samples=returned_samples)
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; If the input function fails (probably because it cannot subsample),
+ ; then try the generic file reader
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(NOT keyword_set(data)) then $
+  begin
+   if(ptr_valid(_dd.gffp)) then $
+                 data = gff_read(*_dd.gffp, subscripts=samples_to_load) $
+   else nv_message, 'Cannot load data array.'
+  end
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; test whether input fn actually samples the data as requested
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(n_elements(data) NE n_elements(samples_to_load)) then samples_to_load = -1
+ if(keyword_set(returned_samples)) then samples_to_load = returned_samples
+ if(keyword_set(samples_to_load)) then $
+   if(n_elements(data) NE n_elements(samples_to_load)) then samples_to_load = -1
+
 
  ;----------------------------------
  ; transform data

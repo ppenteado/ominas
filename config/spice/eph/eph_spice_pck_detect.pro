@@ -3,7 +3,7 @@
 ;
 ;
 ;=============================================================================
-function eph_spice_pck_detect, dd, kpath, time=time, strict=strict, all=all
+function eph_spice_pck_detect, dd, kpath, sc=sc, time=time, strict=strict, all=all
 
  kernels = ''
 
