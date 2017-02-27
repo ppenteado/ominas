@@ -70,17 +70,6 @@ end
 ;		Methods: bod_opaque, bod_set_opaque
 ;
 ;
-;	arrays_tlp: Pointer to a arrays of body-frame points, maintained in the 
-;		   file given by array_fname. 
-;
-;			Methods: bod_array, bod_set_array
-;
-;
-;	array_fnames: String giving the names for the each points file. 
-;
-;			Methods: bod_array_fname, bod_set_array_fname
-;
-;
 ;	time:	Time, at body position, at which this descriptor is valid.
 ;
 ;		Methods: bod_time, bod_set_time
@@ -143,8 +132,6 @@ pro ominas_body__define
     { ominas_body, inherits ominas_core, $
 	opaque:		 0b, $			; If set, then this body is
 						;  "easily visible".
-	arrays_tlp:	 nv_ptr_new(), $	; Pointer to body-frame points 
-						; arrays
 	time:		 double(0), $		; time at which this descriptor
 						; is valid at body position
 	orient:		 dblarr(3,3), $		; transforms body->inertial

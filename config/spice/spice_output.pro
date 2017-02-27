@@ -109,8 +109,8 @@ pro spice_output, dd, keyword, value, prefix, status=status, $
  ck_file = tr_keyword_value(dd, 'ck_out')
  if(NOT keyword__set(ck_file)) then $
   begin
-   nv_message, /continue, /verb, $
-         'No C-kernel file generated because ck_file not specified.'
+   nv_message, verb=0.9, $
+              'No C-kernel file generated because ck_file not specified.'
    status = -1
    return
   end

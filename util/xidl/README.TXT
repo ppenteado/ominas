@@ -1,5 +1,5 @@
-XIDL is a simple shell interface to IDL, which allows arguments to
-be passed to IDL programs from the shell command prompt.  
+XIDL is a simple shell interface to IDL that allows arguments to be passed to 
+IDL programs from the shell command prompt.  
 
 Configure your (csh) environment as follows:
 

@@ -77,7 +77,7 @@ function pg_profile_image, dd, cd=cd, gd=gd, outline_ptd, distance=distance, $
  outline_pts = pnt_points(outline_ptd)
  nl = cor_udata(outline_ptd, 'nl')
  nw = cor_udata(outline_ptd, 'nw')
- sample= cor_udata(outline_ptd, 'sample')
+ sample = cor_udata(outline_ptd, 'sample')
  nl = nl[0] & nw = nw[0] & sample = sample[0]
 
 

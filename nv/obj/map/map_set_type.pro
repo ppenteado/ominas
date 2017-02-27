@@ -49,7 +49,7 @@ pro map_set_type, md, type, noevent=noevent
  _md = cor_dereference(md)
 
  _md.type=type
- map_lookup_transformations, _md, fn_map_to_image, fn_image_to_map
+ _map_lookup_transformations, _md, fn_map_to_image, fn_image_to_map
  _md.fn_map_to_image = decrapify(fn_map_to_image)
  _md.fn_image_to_map = decrapify(fn_image_to_map)
 

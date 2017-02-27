@@ -17,7 +17,8 @@
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	basic_command:	Basic command string.
+;	basic_command:	
+;		Basic command string.
 ;
 ;	keys:	String array giving the names of keywords aruments.
 ;

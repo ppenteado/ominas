@@ -1,0 +1,15 @@
+; sld_get.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(arg_present(opacity)) then opacity = sld_opacity(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(mass)) then mass = sld_mass(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(GM)) then gm = sld_gm(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(refl_fn)) then refl_fn = sld_refl_fn(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(refl_parm)) then refl_parm = sld_refl_parm(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(phase_fn)) then phase_fn = sld_phase_fn(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(phase_parm)) then phase_parm = sld_phase_parm(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(albedo)) then albedo = sld_albedo(_xd, cat=cat, condition=condition, /noevent)
+
+@bod_get.include
+

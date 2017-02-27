@@ -102,7 +102,6 @@ function spice_get_planets, names, ref, et, $
      if(keyword_set(_phase_parm)) then phase_parm[0:n_elements(_phase_parm)-1,i] = _phase_parm
      if(keyword_set(_albedo)) then albedo[i] = _albedo
 
-
      ;- - - - - - - - - - - - - - - - - - - - - -
      ; get body state w.r.t. SS barycenter
      ;- - - - - - - - - - - - - - - - - - - - - -
@@ -127,6 +126,7 @@ function spice_get_planets, names, ref, et, $
          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
          orient[*,*,i] = idgen(3)
 
+;;if(names[i] EQ 'JUPITER') then stop
          catch, failed
          if(failed EQ 0) then cspice_tisbod, ref, id, et[0], tsipm
          catch, /cancel

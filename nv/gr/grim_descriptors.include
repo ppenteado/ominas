@@ -119,7 +119,8 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; Call each source function
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   for i=0, nn-1 do grim_overlay, grim_data, plane=plane, $
+   for i=0, nn-1 do $
+         grim_overlay, grim_data, plane=plane, $
                name_list[i], dep=*dep_list[i], $
                ptd=*points_ptd_list[i], source_ptd=*source_points_ptd_list[i]
 

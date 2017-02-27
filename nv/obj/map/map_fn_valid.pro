@@ -49,6 +49,6 @@ function map_fn_valid, md, noevent=noevent
 @core.include
  nv_notify, md, type = 1, noevent=noevent
  _md = cor_dereference(md)
- return, 'map_valid_points_' + _md.type
+ return, '_map_valid_points_' + _md.type
 end
 ;===========================================================================

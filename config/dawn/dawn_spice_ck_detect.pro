@@ -2,7 +2,7 @@
 ; dawn_spice_ck_components
 ;
 ;=============================================================================
-pro dawn_spice_ck_components, all_names, jd_start=jd_start, jd_stop=jd_stop
+pro dawn_spice_ck_components, all_names, sc=sc, jd_start=jd_start, jd_stop=jd_stop
 
 
  ;-------------------------------------

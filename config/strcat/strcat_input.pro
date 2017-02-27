@@ -83,7 +83,7 @@ function strcat_input, cat, dd, keyword, n_obj=n_obj, dim=dim, values=values, st
  nregions = n_elements(regions)
  if(nregions eq 1 AND regions[0] eq '') then $
                               nv_message, 'No ' + upcat + ' regions found.'
- nv_message, /con, verb=0.1, 'Number of ' + upcat + ' regions found ' + strtrim(nregions,2)
+ nv_message, verb=0.2, 'Number of ' + upcat + ' regions found ' + strtrim(nregions,2)
 
  ;---------------------------------------------------------
  ; Get star descriptors for all stars in regions

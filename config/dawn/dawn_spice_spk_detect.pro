@@ -35,7 +35,7 @@ end
 ; coverage dates are within djd days of the given image are returned.
 ;
 ;=============================================================================
-function dawn_spice_spk_detect, dd, spkpath, djd=djd, time=time, $
+function dawn_spice_spk_detect, dd, spkpath, sc=sc, djd=djd, time=time, $
                              all=all, strict=strict
 common dawn_spice_spk_block, all_files, all_names_block, spkpath_block, $
       jd_start_block, jd_stop_block, jd_release_block

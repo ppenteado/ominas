@@ -176,7 +176,8 @@ pro grmt_create_map, data, md
  ;-----------------------------------
  if(cor_class(cd) NE 'MAP') then od = cd
  grim, /new, dd_map, cd=md, od=od, sund=sund, pd=map_pd, rd=map_rd, $
-              /tiepoint_sync, /curve_sync, order=1-data.order
+              /tiepoint_sync, /curve_sync, order=1-data.order, $
+              title=map_type(md) + ' ' + cor_name(dd)
 
 
 end

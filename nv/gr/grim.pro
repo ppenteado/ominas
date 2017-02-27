@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	General-purpose Graphical interface for oMINAS. 
+;	General-purpose GRaphical Interface for oMinas.
 ;
 ;
 ; CATEGORY:
@@ -14,129 +14,406 @@
 ;
 ; CALLING SEQUENCE:
 ;	
-;	grim, arg
+;	grim, arg1, arg2
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	arg:	The argument, if present, can be either a data descriptor or 
-;		a grim image number.  If a data descriptor, then a new grim
-;		instance will be created using that data descriptor and all
-;		keyword arguments apply to the new instance.  If a grim image
-;		number, then all keyword arguments apply to the grim instance
-;		identified by that number.  If the argument is not present, 
-;		then all keyword arguments apply to the most recently accessed
-;		grim instance; a new grim instance is created if none exist.
+;	arg1, arg2:	
+;		Grim accepts up to two arguments, which can appear in either 
+;		order.  Possible arguments are:
+;
+; 			data descriptors (object)
+;			file specification (string)
+; 			grnum (scalar)
+; 			image (2d array)
+; 			plot (1d array)
+; 			cube (3d array)
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	cd:	Replaces grim's current camera descriptor.  This may also be 
-;		a map descriptor, in which case, certain of grim's functions 
+;	Descriptor Keywords
+;	-------------------
+;	The following keywords replace those already maintained by GRIM.  In the 
+;	case of a single plane, all given descriptors are placed in that plane.
+;	In that case, only one cd, od, or sun are allowed.  For multiple
+;	planes, descriptors are assigned to planes by matching their assoc_xd
+;	fields to the data descriptor for each plane.
+;
+;	 cd:	Replaces the current camera descriptor.  This may also be 
+;		a map descriptor, in which case certain of GRIM's functions 
 ;		will not be available.  When using a map descriptor instead 
 ;		of a camera descriptor, you can specify a camera descriptor 
 ;		as the observer descriptor (see the 'od' keyword below) and 
 ;		some additional geometry functions will be available.
 ;
-;	od:	Replaces grim's current observer descriptor.  The observer
+;	 od:	Replaces the current observer descriptor.  The observer
 ;		descriptor is used to allow some geometry objects (limb,
-;		terminator) to be computed when usign a map descriptor instead
+;		terminator) to be computed when using a map descriptor instead
 ;		of a camera descriptor.
 ;
-;	pd:	Adds a new planet descriptor.
+;	 sund:	Replaces the current sun descriptor.
 ;
-;	rd:	Adds a new ring descriptor.
+;	 pd:	Adds/replaces planet descriptors.
 ;
-;	sd:	Adds a new star descriptor.
+;	 rd:	Adds/replaces ring descriptors.
 ;
-;	sund:	Replaces grim's current sun descriptor.
+;	 sd:	Adds/replaces star descriptors.
 ;
-;	gd:	Generic descriptor giving some or all of the above descriptors.
+;	 std:	Adds/replaces station descriptors
 ;
-;     *	new:	If set, a new grim instance is created and all keywords apply
-;		to that instance.
+;	 ard:	Adds/replaces array descriptors
 ;
-;     *	silent:	If set, many message are suppressed.
+;	 gd:	Generic descriptor containing some or all of the above 
+;		descriptors.
 ;
-;     *	xsize:	Size of the graphics window in the x direction.  Defaults to
+;	 assoc_xd: 
+;		If given, use these xds to assign descriptors to planes
+;		instead of matching the data descriptors.
+;
+;
+;	Translator Keywords
+;	-------------------
+;	The following keywords are passed directly to the translators, which
+;	are responsible for interpreting their meanings.
+;
+;	*trs_cd:
+;		String giving translator keywords for the camera descriptors.
+;
+;	*trs_sd: 
+;		String giving translator keywords for the sun descriptors.
+;
+;	*trs_pd: 
+;		String giving translator keywords for the planet descriptors.
+;
+; 	*trs_rd: 
+;		String giving translator keywords for the ring descriptors.
+;
+; 	*trs_sd: 
+;		String giving translator keywords for the star descriptors.
+;
+; 	*trs_std: 
+;		String giving translator keywords for the stations descriptors.
+;
+; 	*trs_ard: 
+;		String giving translator keywords for the array descriptors.
+;
+;
+;	TVIM Keywords
+;	-------------
+;	The following keywords set the initial viewing parameters and are
+;	simply passed to TVIM.  
+;
+;	*xsize:	Size of the graphics window in the x direction.  Defaults to
 ;		400 pixels.
 ;
-;     *	ysize:	Size of the graphics window in the y direction.  Defaults to
+;	*ysize:	Size of the graphics window in the y direction.  Defaults to
 ;		400 pixels.
 ;
-;     *	zoom:	Initial zoom to be applied to the image.  If not given, grim
+;	*zoom:	Initial zoom to be applied to the image.  If not given, grim
 ;		computes an initial zoom such that the entire image fits on the
 ;		screen.
 ;
-;     *	rotate:	Initial rotate value to be applied to the image (as in the IDL
+;	*rotate:	
+;		Initial rotate value to be applied to the image (as in the IDL
 ;		ROTATE routine).  If not given, 0 is assumed.
 ;
-;     *	order:	Initial display order to be applied to the image.
+;	*order:	Initial display order to be applied to the image.
 ;
-;     *	offset:	Initial offset (dx,dy) to be applied to the image.
+;	*offset:	
+;		Initial offset (dx,dy) to be applied to the image.
+;	
+;	 doffset: 
+;		Change the offset viewing parameter by this amount.
 ;
-;	erase:	If set, erase the current image before doing anything else.
+;	 default: 
+;		If set, use default tvim properties (zoom=[1,1], offset=[0,0]
+;               order=0 [bottom-up])
 ;
-;     *	filter:	Initial filter to use when loading or browsing files.
+;	 previous: 
+;		If set, restore last-used tvim viewing parameters.
 ;
-;     *	mode:	Initial cursor mode.  Choices are 'zoom', 'pan', 'tiepoint',
-;		'activate', and 'readout'.  Defaults to 'activate'.
+;	 restore: 
+;		If set, use saved tvim viewing paramters.
 ;
-;     *	retain:	Retain settings for backing store (see "backing store" in 
+;
+;	Customization Keywords
+;	----------------------
+;	*menu_extensions:
+;		Array of strings giving the names of functions that return
+;		menu definitions, as defined by cw_pdmenu.  These menus are 
+;		added to the built-in GRIM menus between the Overlays menu
+;		and the Help menu.  The default is 'grim_default_menus'.  If
+;		the first character in the first menu function is '+', then
+;		grim_default_menus is retained an the new menu are appended
+;		after that menu.  Otherwise, 'grim_default_menus' is replaced.
+;
+;	*button_extensions:
+;		Array of strings giving the names of definition functions
+;		for custom cursor modes to be added after the built-in
+;		cursor modes.  The definition function takes one argument 
+;		(see arg_extensions below) and returns a grim_user_mode_struct.
+;
+;	*arg_extensions:
+;		Argument to be provided to the button extension definition
+;		function above. 
+;
+;	*menu_fname:	
+;		Name of a file containing additional menus to add to
+;		the grim widget.  The file syntax follows that for cw_pdmenu.
+;
+;
+;	Other Keywords
+;	--------------
+;	*extensions:
+;		String array giving extensions to try for each input file.
+;		see dat_read.
+;
+;	*new:	If set, a new grim instance is created and all keywords apply
+;		to that instance.
+;
+;	*silent:	
+;		If set, many message are suppressed.
+;
+;	 erase:	If set, erase the current image before doing anything else.
+;
+;	*mode_init:
+;		Initial cursor mode.  See below.
+;
+;	*mode_args:
+;		Array giving arguments for the cursor modes initialization
+;		functions.  If a string, then syntax is NAME:ARG, where NAME 
+;		is the name of the cursor mode, and ARG is the argument for 
+;		that mode.  For example:
+;
+;			mode_args='READOUT:myreadout_fn'
+;
+;		would cause the function 'myreadout_fn' to be added to 
+;		the list of functions called by pg_cursor and pg_measure
+;		via the readout cursor mode.  If not a string, the argument 
+;		is passed to the initialization function with no processing.
+;
+;	*retain:	
+;		Retain settings for backing store (see "backing store" in 
 ;		the IDL reference guide).  Defaults to 2.
 ;
-;     * menu_fname:	Name of a file containing additional menus to add to
-;			the grim widget.  The syntax follows that for cw_pdmenu.
-;
-;     * fov:	Controls the number of camera fields of view to crop when
+;	*fov:	Controls the number of camera fields of view to crop when
 ;		the 'FOV' overlay settings is on.  If set, the FOV overlay
 ;		settings is turned on.
 ;
-;     * hide:	If set, overlays are hidden w.r.t shadoes and obstructions.
+;	*hide:	If set, overlays are hidden w.r.t shadows and obstructions.
 ; 		Default is on. 
 ;
-;     * overlays: List of overlays to compute on startup.  Each element
-;                 is of the form:
+;	 no_erase: 
+;		If set, GRIM does not erase the draw window.  When called.
+;
+;	*rgb: If set, grim interprets a 3-plane cube as a 3-channel image
+;               to be displayed on a single plane.
+;
+;	*channel: 
+;		Array of bitmasks specifying the color channel in which to 
+;		display each given image: 1b, 2b, or 4b.
+;
+;	*visibility: 
+;		Initial visibility setting for planes:
+;
+;                	0: Only the current plane is drawn.
+;                	1: All planes are drawn.
+;
+;                Default is 0.
+;
+;	*max:	Maximum data value to scale to when displaying images.  
+;		Values larger than this are set to the maximum color table 
+;		index.  If not set, the maximum value in the data set is used.  
+;		In cases where the data array is being subsampled, this value 
+;		may not be known, resulting in varying image scaling as more 
+;		and more data values are sampled.  That problem may be
+;		eliminated via this keyword.
+;
+;	 exit:	If set, GRIM immediately exits.  This can be used to kill an
+;		existing GRIM window.
+;
+;	 modal:	If set, grim is run as a modal widget, i.e., there is no command
+;		prompt.
+;
+;	*frame:	If set, the initial view is set such that all inital overlays
+;		are visible.
+;
+;	 refresh_callbacks: 
+;		Array of strings giving the names of procedures to be 
+;		called after each refresh.  See CALLBACK PROCEDURES
+;		below.  Refresh callbacks receive only the data argument.
+;
+;	 refresh_callback_data_ps: 
+;		Array of pointers (one per callback) to data for the refresh 
+;		callback procedures specified using the refresh_callbacks 
+;		keyword.  See CALLBACK PROCEDURES below.  
+;
+;	 plane_callbacks: 
+;		Array of strings giving the names of procedures to be 
+;		called after each plane change.  See CALLBACK PROCEDURES
+;		below.  Plane callbacks receive only the data argument.
+;
+;	 plane_callback_data_ps: 
+;		Array of pointers (one per callback) to data for the plane 
+;		callback procedures specified using the plane_callbacks 
+;		keyword.  See CALLBACK PROCEDURES below.  
+;
+;	*nhist:	History setting to be applied to data decriptor (see 
+;		ominas_data__define).  GRIM uses data descriptor history to 
+;		undo changes to the data array.  If nhist is not set, or is 
+;		equal to 1, the undo menu option will not function.
+;
+;	*maintain: 
+;		If given, this maintainance setting is applied to the data
+;		descriptor (see ominas_data__define).
+;
+;	*compress: 
+;		Compression setting to be applied to data decriptor (see 
+;		ominas_data__define).  
+;
+;	*filter:
+;		Initial filter to use when loading or browsing files.
+;
+;	*load_path: 
+;		Initial path for the file loading dialog.
+;
+;	*save_path: 
+;		Initial path for the file saving dialog.
+;
+;	*path:	Sets both load_path and save_path to this value.
+;
+;	*workdir: 
+;		Default directory for saving user points, masks, tie 
+;		points, curves
+;
+;	 user_psym: 
+;		Default plotting symbol for user overlays.  
+;
+;	 grnum:	Identifies a specific GRIM window by number.  Grim numbers are
+;		displayed in the status bar, e.g.: grim <grnum>.
+;
+;	 pn:	Directs GRIM to change to the plane correspondng to this plane 
+;		number.
+;
+;	*cursor_swap: 
+;		If set, cursor bitmaps are byte-order swapped.
+;
+;	*loadct: 
+;		Index of color table to load.
+;
+;	*beta:	If set beta features are enabled.
+;
+;	*npoints: 
+;		Number of point to compute for various overlays.  Default is 1000.
+;
+; 	*plane_syncing: Turns plane syncing on (1) or off(0).  Default is 0.
+;
+; 	*tiepoint_syncing: Turns tiepoint syncing on (1) or off(0).  Default is 0.
+;
+; 	*curve_syncing: Turns curve syncing on (1) or off(0).  Default is 0.
+;
+; 	 position: 
+;		Sets the plot position; see the POSITION grahics keyword.
+;
+; 	 color:	Sets the line color index for plots.  One element per plane.
+;
+; 	 xrange: 
+;		Sets the X-axis range for plots.
+;
+; 	 yrange: 
+;		Sets the Y-axis range for plots.
+;
+;	 thick:	Sets the line thickness for plots.  One element per plane.
+;
+;	 title:	For plots, sets the plot title for plots; one element per plane.
+;		For images, sets the base title.
+;
+;	 xtitle: 
+;		Sets the X-axis label for plots.  One element per plane.
+;
+;	 ytitle: 
+;		Sets the Y-axis label for plots.  One element per plane.
+;
+;	 psym:	Sets the plotting symbol for plots.  One element per plane.
+;
+;	 nsum:	See OPLOT.  One element per plane.
+;
+;
+;	*overlays: 
+;		List of initial overlays to compute on startup.  Each element
+;		is of the form:
 ;
 ;                          type[:name1,name2,...]
 ;
-;                 where 'type' is one of {limbs, terminators, planet_centers, 
-;                 stars, rings, planet_grids} and the names identify the
-;                 name of the desired object.  Note that grim will load 
-;                 more objects than named if required by another startup 
-;                 startup overlay.  For example:
+;		where 'type' is one of {limb, terminator, planet_center, 
+;		star, ring, planet_grid, array, station} and the names 
+;		identify the name of the desired object.  Note that grim 
+;		will load more objects than named if required by another 
+;		startup overlay.  For example:
 ;
-;                         overlays='rings:a_ring'
+;                         overlays='ring:a_ring'
 ;
-;                 will cause only one ring descriptor to load, whereas
+;		will cause only one ring descriptor to load, whereas
 ;
-;                         overlays=['limbs:saturn', 'rings:a_ring']
+;                         overlays=['limb:saturn', 'ring:a_ring']
 ;
-;                 will cause all of Saturn's rings to load because they are
-;                 required in computing the limb points (for hiding).
+;		will cause all of Saturn's rings to load because they are
+;		required in computing the limb points (for hiding).
+; 
+;	*activate: 
+;		If set, inital overlay are activated.
+;
+;	*ndd: 	Sets the global ndd value in the OMINAS sate structure, which
+;		controls the maximum number of data descriptors with maintain == 1 
+;		to keep in memory at any given time
+;
+;	*render_sample:
+;		Over-sampling value for rendering.  See pg_render.
+;
+;	*render_pht_min:
+;		Minimum value to assign to photometric output in renderings.
+;		See pg_render.
+;
+;
+;	Incomplete Keywords
+;	-------------------
+;	*rendering:
+;		If set, perform a rendering on the initial descriptor set.  
+;
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; RESOURCE FILE:
 ;	The keywords marked above with an asterisk may be overridden using 
-;	the file $HOME/.grimrc.  Keyword=value pairs may be entered, one per
+;	the file $HOME/.ominas/grimrc.  Keyword=value pairs may be entered, one per
 ;	line, using the same syntax as if the keyword were entered on the IDL 
 ;	command line to invoke grim.  Lines beginning with '#' are ignored.
 ;	Keywords entered in the resource file override the default values, and
 ;	are themselves overridden by keywords entered on the command line.
 ;
+; SHELL INTERFACE
+;	The 'grim' alias may be used to start grim from the shell prompt
+;	via the XIDL interface.  The shell interface accepts all keywords 
+;	marked above with an asterisk.  See grim.bat.
+;
+;	Example (assuming the grim alias described in grim.bat): 
+;
+;	 % grim -beta data/*.img overlay=planet_center,limb:JUPITER
+;
 ;
 ; ENVIRONMENT VARIABLES:
-;	Grim defines no environment variables of its own, but as it is an
-;	interface to OMINAS, all OMINAS variables are relevant.
+;	Grim currently defines no environment variables..
 ;
 ;
 ; COMMON BLOCKS:
-;	grim_block:	Keeps track of most recent grim instance and which 
-;			ones are selected.
+;	 grim_block:
+;		Keeps track of most recent grim instance and which ones are 
+;		selected.
 ;
 ;
 ; SIDE EFFECTS:
@@ -147,48 +424,27 @@
 ;
 ;
 ; LAYOUT:
-;	The grim layout consists of the following items:
+;	The philosphy that drives GRIM's layout is that the maximum possible 
+;	screen space should be devoted to displaying the data.  This policy 
+;	allows for many GRIM windows to be used simultaneously without being 
+;	obscured by crazy control panels full of buttons, gadgets, widgets, 
+;	doodads, whirly-gigs, and what-nots.  The grim layout consists of the 
+;	following items:
 ;
-;	 Menu bar: Most of grim's functionality is accessed through the 
-;	           system of pulldown menus at the top.  Individual menu
-;	           items are described in their own sections below.
+;	 Menu bar: 
+;		Most of grim's functionality is accessed through the 
+;		system of pulldown menus at the top.  Individual menu
+;		items are described in their own sections.
 ;
-;	 Shortcut buttons: Some common-used menu options are duplicated as
-;			   shortcut buttons, which are arranged horizontally 
-;			   just beneath the menu bar.  The following shortcuts 
-;			   are available, from left to right: 
+;	 Shortcut buttons: 
+;		Some commonly used menu options are duplicated as shortcut 
+;		buttons arranged horizontally just beneath the menu bar.  The
+;		function of each button is displayed in the status bar (see 
+;		below) when the mouse cursor is hovered ove the button.
 ;
-;		Previous plane: Changes to the previous plane.
-;
-;		Next plane: Changes to the next plane.
-;
-;		Refresh: Redisplays the image and overlays.
-;
-;		Entire Image: Resets display parameters so that the enitre
-;		              image is visible.
-;
-;		Previous view: Reverts to the previous view settings.
-;
-;		Hide/Unhide: Toggles overlays on/off.
-;
-;		Colors: Opens the color tool.
-;
-;		Tracking: Toggles cursor tracking on/off.
-;
-;		Grid: Toggles RA/DEC grid on/off.
-;
-;		Axes: Toggles axes on/off.
-;
-;		Activate all: Activates all overlays.
-;
-;		Deactivate all: Deactivates all overlays.
-;
-;		Header: Opens a window showing the image header.
-;
-;
-;	 Modes buttons: Modes buttons are arranged vertically along the 
-;	                left side.  The following modes are available, in order
-;	                of their appearance in the grim widget:
+;	 Cursor mode buttons: 
+;		Cursor mode shortcut buttons are arranged vertically along the 
+;		left side of the GRIM window.  The following modes are available:
 ;
 ;		Select: The top button toggles a given grim instance between
 ;		        selected and unselected states, for use with functions
@@ -196,72 +452,86 @@
 ;		        When a given instance is selected, this button
 ;		        displays an asterisk.
 ;
-;		Context: This button toggles the visibility of a small context
-;			 window superimposed over the top-left corner of the
-;			 main image.  The context window always displays the
-;			 entire image and all of these modes except activation
-;			 function in the same way in the context window as in
-;			 the main window.
+;		Context: 
+;			This button toggles the visibility of a small context
+;			window superimposed over the top-left corner of the
+;			main image.  The context window always displays the
+;			entire image and all of these modes except activation
+;			function in the same way in the context window as in
+;			the main window.
 ;
-;		Activate: In activate mode, overlay objects may be activated
-;			  or deactivated by clicking and/or dragging using the
-;			  left or right mouse buttons respectively.  This
-;			  activation mechanism allows the user to select which
-;			  among a certain type of objects should be used in a
-;			  given menu selection.  A left click on an overlay
-;			  activates that overlay and a right click deactivates
-;			  it.  A double click activates or deactivates all
-;			  overlays associated with a given descriptor, or all
-;			  stars.  Active overlays appear in the colors selected
-;			  in the 'Overlay Settings' menu selection.  Inactive
-;			  overlays appear in cyan.  A descriptor is active
-;			  whenever any of its overlays are active.
+;		Activate: 
+;			In activate mode, overlay objects may be activated
+;			or deactivated by clicking and/or dragging using the
+;			left or right mouse buttons respectively.  This
+;			activation mechanism allows the user to select which
+;			among a certain type of objects should be used in a
+;			given menu selection.  A left click on an overlay
+;			activates that overlay and a right click deactivates
+;			it.  A double click activates or deactivates all
+;			overlays associated with a given descriptor, or all
+;			stars.  Active overlays appear in the colors selected
+;			in the 'Overlay Settings' menu selection.  Inactive
+;			overlays appear in cyan.  A descriptor is active
+;			whenever any of its overlays are active.
 ;
-;		Zoom: The zoom button puts grim in a zoom cursor mode, wherein
-;		      the image zoom and offset are controlled by selecting
-;		      a box in the image.  When the box is created using the
-;		      left mouse button, zoom and offset are changed so that 
-;		      the contents of the box best fill the current graphics
-;		      window.  When the right button is used, the contents of
-;		      the current graphics window are shrunken so as to best
-;		      fill the box.  In other words, the left button zooms in
-;		      and the right button zooms out.
+;		Zoom:	The zoom button puts grim in a zoom cursor mode, wherein
+;			the image zoom and offset are controlled by selecting
+;			a box in the image.  When the box is created using the
+;			left mouse button, zoom and offset are changed so that 
+;			the contents of the box best fill the current graphics
+;			window.  When the right button is used, the contents of
+;			the current graphics window are shrunken so as to best
+;			fill the box.  In other words, the left button zooms in
+;			and the right button zooms out.
 ;
-;		Pan: The pan button puts grim in a pan cursor mode, wherein the 
-;		     image offset is controlled by selecting an offset vector
-;		     using the left mouse button.  The middle button may be
-;		     used to center the image on a selected point.
+;		Pan: 	The pan button puts grim in a pan cursor mode, wherein the 
+;			image offset is controlled by selecting an offset vector
+;			using the left mouse button.  The middle button may be
+;			used to center the image on a selected point.
 ;
-;		Pixel Readout:	In pixel readout mode, a text window appears 
-;				and displays data about the pixel selected 
-;				using the left mouse button.  
+;		Pixel Readout:	
+;			In pixel readout mode, a text window appears 
+;			and displays data about the pixel selected 
+;			using the left mouse button.  
 ;
-;		Tiepoint: In tiepoint mode, tiepoints are added using the
-;		          left mouse button and deleted using the right button.
-;		          Tiepoints appear as crosses identified by numbers.
-;			  The use of tiepoints is determined by the particular 
-;			  option selected by the user.
+;		Tiepoint: 
+;			In tiepoint mode, tiepoints are added using the
+;			left mouse button and deleted using the right button.
+;			Tiepoints appear as crosses identified by numbers.
+;			The use of tiepoints is determined by the particular 
+;			option selected by the user.
 ;
-;		Magnify: In magnify mode, image pixels in the graphics
-;		         window may be magnifed using either the right or left
-;		         mouse buttons.  The left button magnifies the displayed
-;		         pixels, directly from the graphics window.  The right
-;		         button magnifies the data itself, without the overlays.
+;		Magnify: 
+;			In magnify mode, image pixels in the graphics
+;			window may be magnifed using either the right or left
+;			mouse buttons.  The left button magnifies the displayed
+;			pixels, directly from the graphics window.  The right
+;			button magnifies the data itself, without the overlays.
 ;
-;		XY Zoom: Same as 'zoom' above, except the aspect ratio is
-;                        set by the proportions of the selected box.
+;		XY Zoom: 
+;			Same as 'zoom' above, except the aspect ratio is
+;			set by the proportions of the selected box.
 ;
-;	 Graphics window: The graphics window displays the image associated 
-;	                  with the given data descriptor using the current 
-;	                  zoom, offset, and display order.  The edges of the
-;	                  image are indicated by a dotted line.
+;	 Graphics window: 
+;		The graphics window displays the image associated with the 
+;		given data descriptor using the current zoom, offset, and 
+;		display order.  The edges of the image are indicated by a dotted line.
 ;
-;	 Pixel readout: The cursor position and corresponding data value are
-;	                are displayed beneath the graphics window, next to the
-;	                message line.
+;	 Pixel readout: 
+;		The cursor position and corresponding data value are are 
+;		displayed beneath the graphics window, next to the message line.
 ;
-;	 Message line: The message line displays short messages pertaining
-;	               grim's current state.
+;	 Message line: 
+;		The message line displays short messages pertaining GRIM's
+;		 current state, or displayng button functions.
+;
+; CALLBACK PROCEDURES:
+;	GRIM callback procedures are called with one or two arguments:
+;       the first argument is a pointer to data that was provided
+;	when the callback was added.  The second argument, if present, depends 
+;	on the applicatation.  
+;
 ;
 ; RESOURCE NAMES
 ;	The following X-windows resource names apply to grim:
@@ -279,34 +549,59 @@
 ;
 ;
 ; OPERATION:
-;	Each GRIM window may contain any number of image planes as well as 
+;	GRIM displays 1-, 2-, and 3-dimensional data sets.  1-dimensional 
+;	data arrays are displayed as plots.  In that case, the abscissa is 
+;	the sample number unless the data descriptor contains an abscissa.  
+;	2- and 3-dimensional arrays are displaye as image planes.  The only 
+;	difference between images and cubes in GRIM is that images planes 
+;	each have their own data descriptor, while cubes are represented by 
+;	multiple image planes that share a common data descriptor; each plane 
+;	in a cube corresponds to a unique offset in the data array stored in 
+;	the common data descriptor.  Some functionality is not available when
+;	working with plots.  In that case, those options do not appear in the 
+;	menus.
+;
+;	GRIM requests only the data samples needed for the current viewing 
+;	parameters.  Therefore, GRIM can display data sets of arbitrary size
+;	when used with a file reader that supports subsampling.  However, note 
+;	that specific menu options may request the entire data array, depending 
+;	on the application.  
+;
+;	Each GRIM window may contain any number of planes as well as 
 ;	associated geometric data (i.e. object descriptors) and overlay arrays 
 ;	for displaying various geometric objects -- limbs, rings, stars, etc.  
-;	An array of user overlay points is maintained to be used for application-specific
-;	purposes.  Generally, a set of overlay points or a descriptor must be
-;	activated in order to be used as input to a menu item; see activate 
-;	mode above.  
+;	An array of user overlay points is maintained to be used for application-
+;	specific purposes.  Generally, a set of overlay points or a descriptor 
+;	must be activated in order to be used as input to a menu item; see 
+;	activate mode above.  
 ;
 ;	There are exclusive and non-exclusive mechanisms for selecting grim
 ;	windows.  Grim windows may be non-exclusively selected using the select
 ;	mode button mentioned above (upper-left corner).  The exclusive
-;	selection mechanism consists of a 'primary' GRIM window, indicated by 
+;	selection mechanism consists of a "primary" GRIM window, indicated by 
 ;	a red outline in the graphics window.  The primary selection is 
 ;	changed by pressing any mode or shortcut button, or by clicking in 
 ;	the graphics area of the desired grim window.  The meaning of the
 ;	various selections depends on the application.
 ;
+;	The functions of the left and right mouse buttons are determined by the
+;	cursor mode; some cursor modes define modifier keys to broaden the number
+;	of functions available in that mode.  The middle mouse button toggles
+;	the activation state of overlay arrays, or pans the image if no overlay
+;	appears beneath the cursor.  The mouse wheel cycles among cursor modes, 
+;	or zooms about the cursor position if the control key is held down.
+;
 ;	Objects maintained by GRIM are accessible via the INGRID interface,
 ;	for example:
 ;
-;		IDL> ingrid, dd=dd, cd=cd, pd=pd
+;		IDL> ingrid, dd=dd, cd=cd, pd=pd, limb_ptd=limb_ptd
 ;
-;	returns the data desciptor, camera descriptor, and planet descriptors
-;	associtaed with the current plane.  
+;	returns the data desciptor, camera descriptor, planet descriptors,
+;	and limb points associated with the current plane.  
 ;
 ;	GRIM registers event handlers for all of its objects, so the window
-;	is updated any time anobjet is modifed, whther by GRIM or by some
-;	other program.
+;	is updated any time an object is modifed, whether by GRIM or by some
+;	other program, or from the command line.
 ;
 ;
 ; EXAMPLES:
@@ -327,6 +622,60 @@
 ;	(3) To give an existing grim instance a new camera descriptor:
 ;
 ;		IDL> grim, cd=cd
+;
+;
+; KNOWN BUGS:
+;	Window resizing is not precise.  GRIM tries to resize to the selected
+;	size, but typically overshoots.  This is probably platform-dependent.
+;
+;	Objects inherited by rendering planes do not respond to events.
+;
+;	Image shifting:
+;	 -  Descriptors not updated if shift performed form another window
+;	    because the there's no way for the irst window to know to
+;	    update its descriptors
+;        - fix wrap-around; clip instead
+;
+;	Plane->Coregister does not update descriptors
+;
+;	Navigate mode gets weird when you do certain modifer key presses
+;	   --> maybe a conflict with <ctrl> wheel zoom action
+;
+;	Crashes occur with File->Close
+;
+;	/no_erase is not enabled for images, just plots.  Probably should fix 
+;	that.
+;
+;	Initial visibility setting does not seem to work until applied
+;	using plane settings window.
+;
+;	/frame causes a crash if there are no initial overlays.
+;
+;	It's not clear whether the symsize keyword is actually used.
+;
+;	pn keyword does not function.
+;
+;	Crash when tiepoint syncing is on and tiepoint selected with
+;	multiple planes.
+;
+;	Title keyword does not properly map multiple elements to multiple
+;	planes.
+;
+;	Nsum keyword does not properly map multiple elements to multiple
+;	planes.
+;
+;	Plane syncing appears to be incomplete and I don't remember what it
+;	was supposed to be.  I'm sure it was awesome, though.
+;
+;	Not sure what slave_overlays keyword does, or was supposed to do.
+;
+;	Overlays on rendered planes do not respond to events
+;
+;	Menu toggles don't update propoerly in some circumsumstances.
+;
+;	grim_message sometimes pops up messages from nv_message, which can
+;	be pretty obnxious.  This probably has to do with the calls to
+;	grim_message in grim_compute.include
 ;
 ;
 ; STATUS:
@@ -352,7 +701,6 @@
 @grim_overlays.include
 @grim_descriptors.include
 @grim_image.include
-
 
 ;=============================================================================
 ; grim_constants
@@ -2026,6 +2374,15 @@ end
 
 ;=============================================================================
 ;+
+; FILE MENU
+;	
+;-
+;=============================================================================
+
+
+
+;=============================================================================
+;+
 ; NAME:
 ;	grim_menu_file_load_event
 ;
@@ -2246,6 +2603,58 @@ pro grim_menu_file_save_as_event, event
  ; write data
  ;------------------------------------------------------
  grim_write, grim_data, filename, filetype=filetype
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_open_as_rgb_event
+;
+;
+; PURPOSE:
+;	Opens a new grim window with the current channal configuration 
+;	reduced to a 3-channel RGB cube.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2016
+;	
+;-
+;=============================================================================
+pro grim_menu_open_as_rgb_help_event, event
+ text = ''
+ nv_help, 'grim_menu_open_as_rgb_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_open_as_rgb_event, event
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ widget_control, /hourglass
+ grim_wset, grim_data, grim_data.wnum, get_info=tvd
+
+ dim = dat_dim(plane.dd)
+ cube = grim_scale_image(grim_data, r, g, b, plane=plane, $
+                                 xrange=[0,dim[0]-1], yrange=[0,dim[1]-1])
+
+; look at render event to transfer overlays, etc
+; dd = nv_clone(plane.dd)
+; dat_set_data, dd, cube
+; dat_set_data_offset, dd, 0
+ dd = dat_create_descriptors(1, data=cube)
+
+ grim, /new, /rgb, dd, order=tvd.order, zoom=tvd.zoom[0], offset=tvd.offset, $
+       xsize=!d.x_size, ysize=!d.y_size
 
 end
 ;=============================================================================
@@ -2627,10 +3036,6 @@ end
 
 
 
-
-
-
-
 ;=============================================================================
 ;+
 ; NAME:
@@ -2822,14 +3227,6 @@ end
 
 
 
-
-
-
-
-
-
-
-
 ;=============================================================================
 ;+
 ; NAME:
@@ -3010,14 +3407,6 @@ end
 
 
 
-
-
-
-
-
-
-
-
 ;=============================================================================
 ;+
 ; NAME:
@@ -3178,6 +3567,118 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_select_event
+;
+;
+; PURPOSE:
+;	Selects or unselects a grim window.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; OPERATION:
+;	This option toggles a given grim instance between selected 
+;	and unselected states, for use with functions that require 
+;	input from more than one grim instance.  When a given instance 
+;	is selected, this button displays an asterisk.
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2002
+;	
+;-
+;=============================================================================
+pro grim_select_help_event, event
+ text = ''
+ nv_help, 'grim_select_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_select_event, event
+
+ grim_data = grim_get_data(event.top)
+
+ ;---------------------------------------------------------
+ ; if tracking event, just print usage info
+ ;---------------------------------------------------------
+ struct = tag_names(event, /struct)
+ if(struct EQ 'WIDGET_TRACKING') then $
+  begin
+   if(event.enter) then $
+       grim_print, grim_data, 'Select/Deselect this grim window'
+   return
+  end $
+ else if(NOT grim_test_motion_event(event)) then $
+                                               grim_set_primary, grim_data.base
+
+ grim_select, grim_data
+ grim_set_data, grim_data, event.top
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_identify_event
+;
+;
+; PURPOSE:
+;	Causes grim to identify itself on the IDL command line.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; OPERATION:
+;	This option causes grim to print a message on the IDL command line.
+;	It is useful in cases where multiple grim instances are running in
+;	multiple IDL sessions.
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 3/2009
+;	
+;-
+;=============================================================================
+pro grim_identify_help_event, event
+ text = ''
+ nv_help, 'grim_identify_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_identify_event, event
+
+ grim_data = grim_get_data(event.top)
+
+ ;---------------------------------------------------------
+ ; if tracking event, just print usage info
+ ;---------------------------------------------------------
+ struct = tag_names(event, /struct)
+ if(struct EQ 'WIDGET_TRACKING') then $
+  begin
+   if(event.enter) then $
+       grim_print, grim_data, 'Identify this grim window'
+   return
+  end $
+ else if(NOT grim_test_motion_event(event)) then $
+                                               grim_set_primary, grim_data.base
+
+ grim_identify, grim_data
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_file_close_event
 ;
 ;
@@ -3207,6 +3708,15 @@ pro grim_menu_file_close_event, event
  grim_rm_plane, grim_data, grim_data.pn
 
 end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; PLANE MENU
+;	
+;-
 ;=============================================================================
 
 
@@ -3321,6 +3831,87 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_plane_browse_event
+;
+;
+; PURPOSE:
+;	Opens a brim browser showing all planes.  The left mouse button 
+;	may be used to jump among planes.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 10/2002
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_browse_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_browse_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_browse_plane_left_event, base, i, id, status=status
+
+ status = -1
+ grim_data = grim_get_data(base)
+ if(NOT grim_exists(grim_data)) then return
+
+ pn = id[0]
+
+ grim_jump_to_plane, grim_data, pn, valid=valid
+ if(valid) then $
+  begin
+   grim_refresh, grim_data, /no_erase
+   status = 1
+  end
+
+end
+;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pro grim_browse_refresh_event, data_p
+
+ base = *data_p
+ if(NOT widget_info(base, /valid_id)) then $
+  begin
+   grim_rm_refresh_callback, data_p
+   return
+  end
+
+ grim_data = grim_get_data()
+ plane = grim_get_plane(grim_data)
+
+ widget_control, base, get_uvalue=brim_data
+
+ planes = grim_get_plane(grim_data, /all)
+ brim_select, brim_data, plane.pn, dd=planes.dd, id=planes.pn
+
+
+end
+;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pro grim_menu_plane_browse_event, event
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+ planes = grim_get_plane(grim_data, /all, pn=pns)
+
+ grim_wset, grim_data, grim_data.wnum, get_info=tvd
+ brim, planes.dd, ids=pns, $
+      left_fn='grim_browse_plane_left_event', fn_data=event.top, $
+      select=grim_data.pn, /exclusive, order=tvd.order, /enable, base=base
+
+ grim_add_refresh_callback, 'grim_browse_refresh_event', nv_ptr_new(base)
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_plane_open_event
 ;
 ;
@@ -3351,58 +3942,6 @@ pro grim_menu_plane_open_event, event
  widget_control, /hourglass
  grim_wset, grim_data, grim_data.wnum, get_info=tvd
  grim, /new, plane.dd, order=tvd.order, zoom=tvd.zoom[0], offset=tvd.offset, $
-       xsize=!d.x_size, ysize=!d.y_size
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_open_as_rgb_event
-;
-;
-; PURPOSE:
-;	Opens a new grim window with the current channal configuration 
-;	reduced to a 3-channel RGB cube.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 8/2016
-;	
-;-
-;=============================================================================
-pro grim_menu_open_as_rgb_help_event, event
- text = ''
- nv_help, 'grim_menu_open_as_rgb_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_open_as_rgb_event, event
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
- widget_control, /hourglass
- grim_wset, grim_data, grim_data.wnum, get_info=tvd
-
- dim = dat_dim(plane.dd)
- cube = grim_scale_image(grim_data, r, g, b, plane=plane, $
-                                 xrange=[0,dim[0]-1], yrange=[0,dim[1]-1])
-
-; look at render event to transfer overlays, etc
-; dd = nv_clone(plane.dd)
-; dat_set_data, dd, cube
-; dat_set_data_offset, dd, 0
- dd = dat_create_descriptors(1, data=cube)
-
- grim, /new, /rgb, dd, order=tvd.order, zoom=tvd.zoom[0], offset=tvd.offset, $
        xsize=!d.x_size, ysize=!d.y_size
 
 end
@@ -3537,87 +4076,6 @@ pro grim_menu_plane_reorder_time_event, event
   end
 
  grim_refresh, grim_data
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_browse_event
-;
-;
-; PURPOSE:
-;	Opens a brim browser showing all planes.  The left mouse button 
-;	may be used to jump among planes.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 10/2002
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_browse_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_browse_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_browse_plane_left_event, base, i, id, status=status
-
- status = -1
- grim_data = grim_get_data(base)
- if(NOT grim_exists(grim_data)) then return
-
- pn = id[0]
-
- grim_jump_to_plane, grim_data, pn, valid=valid
- if(valid) then $
-  begin
-   grim_refresh, grim_data, /no_erase
-   status = 1
-  end
-
-end
-;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pro grim_browse_refresh_event, data_p
-
- base = *data_p
- if(NOT widget_info(base, /valid_id)) then $
-  begin
-   grim_rm_refresh_callback, data_p
-   return
-  end
-
- grim_data = grim_get_data()
- plane = grim_get_plane(grim_data)
-
- widget_control, base, get_uvalue=brim_data
-
- planes = grim_get_plane(grim_data, /all)
- brim_select, brim_data, plane.pn, dd=planes.dd, id=planes.pn
-
-
-end
-;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pro grim_menu_plane_browse_event, event
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
- planes = grim_get_plane(grim_data, /all, pn=pns)
-
- grim_wset, grim_data, grim_data.wnum, get_info=tvd
- brim, planes.dd, ids=pns, $
-      left_fn='grim_browse_plane_left_event', fn_data=event.top, $
-      select=grim_data.pn, /exclusive, order=tvd.order, /enable, base=base
-
- grim_add_refresh_callback, 'grim_browse_refresh_event', nv_ptr_new(base)
 
 end
 ;=============================================================================
@@ -3892,6 +4350,57 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_plane_toggle_plane_syncing_event
+;
+;
+; PURPOSE:
+;	Toggles plane syncing on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2016
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_toggle_plane_syncing_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_toggle_plane_syncing_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_toggle_plane_syncing_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+
+ flag = grim_get_toggle_flag(grim_data, 'PLANE_SYNCING')
+ flag = 1 - flag
+ 
+ grim_set_toggle_flag, grim_data, 'PLANE_SYNCING', flag
+ grim_update_menu_toggle, grim_data, $
+                       'grim_menu_plane_toggle_plane_syncing_event', flag
+
+
+; grim_sync_planes, grim_data
+; grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_plane_highlight_event 
 ;
 ;
@@ -3918,94 +4427,17 @@ end
 pro grim_menu_plane_highlight_event, event
 
  grim_data = grim_get_data(event.top)
- grim_data.highlight = 1 - grim_data.highlight
- grim_set_data, grim_data, event.top
+
+ flag = grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
+ flag = 1 - flag
+
+ grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', flag
+ grim_update_menu_toggle, grim_data, 'grim_menu_plane_highlight_event', flag
+
 
 ; widget_control, grim_data.draw, /hourglass
  
  grim_refresh, grim_data
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_settings_event
-;
-;
-; PURPOSE:
-;	Allows the user modify settings for the loaded image planes.  
-;	Each plane may displayed in any combination of the three color
-;	channels.  Also, a plane may be made visible even when it is not
-;	the current plane, instead of the default behavior, which is to 
-;	display the plane only whenit is current.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 8/2002
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_settings_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_settings_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_settings_event, event
-
- grim_data = grim_get_data(event.top)
- grim_plane_settings, grim_data
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_copy_curves_event
-;
-;
-; PURPOSE:
-;	Copies all curves from the current plane to all other planes.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 3/2004
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_copy_curves_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_copy_curves_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_copy_curves_event, event
-
- widget_control, /hourglass
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
- planes = grim_get_plane(grim_data, /all)
-
- n = n_elements(planes)
- pn = plane.pn
-
- for i=0, n-1 do if(i NE pn) then grim_copy_curve, grim_data, plane, planes[i]
-
 end
 ;=============================================================================
 
@@ -4049,305 +4481,6 @@ pro grim_menu_plane_copy_tiepoints_event, event
 
  for i=0, n-1 do if(i NE pn) then $
                         grim_copy_tiepoint, grim_data, plane, planes[i]
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_copy_mask_event
-;
-;
-; PURPOSE:
-;	Copies mask from the current plane to all other planes.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 8/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_copy_mask_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_copy_mask_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_copy_mask_event, event
-
- widget_control, /hourglass
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
- planes = grim_get_plane(grim_data, /all)
-
- n = n_elements(planes)
- pn = plane.pn
-
-; for i=0, n-1 do if(i NE pn) then $
-       ;grim_copy_mask, grim_data, plane, planes[i] ;no such function
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_clear_curves_event
-;
-;
-; PURPOSE:
-;	Clears all curves from the current plane.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 11/2004
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_clear_curves_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_clear_curves_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_clear_curves_event, event
-
- widget_control, /hourglass
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
- grim_rm_curve, grim_data, plane=plane, /all
- grim_refresh, grim_data, /use_pixmap
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_clear_tiepoints_event
-;
-;
-; PURPOSE:
-;	Clears all tiepoints from the current plane.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 11/2004
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_clear_tiepoints_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_clear_tiepoints_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_clear_tiepoints_event, event
-
- widget_control, /hourglass
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
- grim_rm_tiepoint, grim_data, plane=plane, /all
- grim_refresh, grim_data, /use_pixmap
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_clear_mask_event
-;
-;
-; PURPOSE:
-;	Clears the mask from the current plane.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 8/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_clear_mask_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_clear_mask_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_clear_mask_event, event
-
- widget_control, /hourglass
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
- grim_rm_mask, grim_data, plane=plane, /all
- grim_refresh, grim_data, /use_pixmap
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_toggle_curve_syncing_event
-;
-;
-; PURPOSE:
-;	Toggles curve syncing on/off.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 10/2012
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_toggle_curve_syncing_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_toggle_curve_syncing_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_toggle_curve_syncing_event, event
-
- widget_control, /hourglass
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
-
- grim_data = grim_get_data(event.top)
- grim_data.curve_syncing = 1 - grim_data.curve_syncing
- grim_set_data, grim_data, event.top
- 
-; grim_sync_curves, grim_data
-; grim_refresh, grim_data, /use_pixmap
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_toggle_tiepoint_syncing_event
-;
-;
-; PURPOSE:
-;	Toggles tiepoint syncing on/off.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 10/2012
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_toggle_tiepoint_syncing_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_toggle_tiepoint_syncing_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_toggle_tiepoint_syncing_event, event
-
- widget_control, /hourglass
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
-
- grim_data = grim_get_data(event.top)
- grim_data.tiepoint_syncing = 1 - grim_data.tiepoint_syncing
- grim_set_data, grim_data, event.top
- 
-; grim_sync_tiepoints, grim_data
-; grim_refresh, grim_data, /use_pixmap
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_plane_toggle_plane_syncing_event
-;
-;
-; PURPOSE:
-;	Toggles plane syncing on/off.  
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2016
-;	
-;-
-;=============================================================================
-pro grim_menu_plane_toggle_plane_syncing_help_event, event
- text = ''
- nv_help, 'grim_menu_plane_toggle_plane_syncing_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_plane_toggle_plane_syncing_event, event
-
- widget_control, /hourglass
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
-
- grim_data = grim_get_data(event.top)
- grim_data.plane_syncing = 1 - grim_data.plane_syncing
- grim_set_data, grim_data, event.top
- 
-; grim_sync_planes, grim_data
-; grim_refresh, grim_data, /use_pixmap
 
 end
 ;=============================================================================
@@ -4470,6 +4603,362 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_plane_toggle_tiepoint_syncing_event
+;
+;
+; PURPOSE:
+;	Toggles tiepoint syncing on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 10/2012
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_toggle_tiepoint_syncing_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_toggle_tiepoint_syncing_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_toggle_tiepoint_syncing_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+
+ flag = grim_get_toggle_flag(grim_data, 'TIEPOINT_SYNCING')
+ flag = 1 - flag
+
+ grim_set_toggle_flag, grim_data, 'TIEPOINT_SYNCING', flag
+ grim_update_menu_toggle, grim_data, $
+               'grim_menu_plane_toggle_tiepoint_syncing_event', flag
+
+
+; grim_sync_tiepoints, grim_data
+; grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_clear_tiepoints_event
+;
+;
+; PURPOSE:
+;	Clears all tiepoints from the current plane.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 11/2004
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_clear_tiepoints_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_clear_tiepoints_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_clear_tiepoints_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ grim_rm_tiepoint, grim_data, plane=plane, /all
+ grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_copy_curves_event
+;
+;
+; PURPOSE:
+;	Copies all curves from the current plane to all other planes.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 3/2004
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_copy_curves_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_copy_curves_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_copy_curves_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+ planes = grim_get_plane(grim_data, /all)
+
+ n = n_elements(planes)
+ pn = plane.pn
+
+ for i=0, n-1 do if(i NE pn) then grim_copy_curve, grim_data, plane, planes[i]
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_toggle_curve_syncing_event
+;
+;
+; PURPOSE:
+;	Toggles curve syncing on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 10/2012
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_toggle_curve_syncing_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_toggle_curve_syncing_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_toggle_curve_syncing_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+ 
+ flag = grim_get_toggle_flag(grim_data, 'CURVE_SYNCING')
+ flag = 1 - flag
+
+ grim_set_toggle_flag, grim_data, 'CURVE_SYNCING', flag
+ grim_update_menu_toggle, grim_data, $
+                      'grim_menu_plane_toggle_curve_syncing_event', flag
+
+; grim_sync_curves, grim_data
+; grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_clear_curves_event
+;
+;
+; PURPOSE:
+;	Clears all curves from the current plane.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 11/2004
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_clear_curves_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_clear_curves_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_clear_curves_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ grim_rm_curve, grim_data, plane=plane, /all
+ grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_copy_mask_event
+;
+;
+; PURPOSE:
+;	Copies mask from the current plane to all other planes.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_copy_mask_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_copy_mask_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_copy_mask_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+ planes = grim_get_plane(grim_data, /all)
+
+ n = n_elements(planes)
+ pn = plane.pn
+
+; for i=0, n-1 do if(i NE pn) then $
+;       grim_copy_mask, grim_data, plane, planes[i] ; no such function
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_clear_mask_event
+;
+;
+; PURPOSE:
+;	Clears the mask from the current plane.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_clear_mask_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_clear_mask_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_clear_mask_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ grim_rm_mask, grim_data, plane=plane, /all
+ grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_settings_event
+;
+;
+; PURPOSE:
+;	Allows the user modify settings for the loaded image planes.  
+;	Each plane may displayed in any combination of the three color
+;	channels.  Also, a plane may be made visible even when it is not
+;	the current plane, instead of the default behavior, which is to 
+;	display the plane only whenit is current.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2002
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_settings_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_settings_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_settings_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_plane_settings, grim_data
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; DATA MENU
+;	
+;-
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_data_adjust_event
 ;
 ;
@@ -4522,111 +5011,9 @@ end
 
 ;=============================================================================
 ;+
-; NAME:
-;	grim_menu_view_recenter_event
-;
-;
-; PURPOSE:
-;	Recenters the view at the cursor position. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 3/2008
+; VIEW MENU
 ;	
 ;-
-;=============================================================================
-pro grim_menu_view_recenter_help_event, event
- text = ''
- nv_help, 'grim_menu_view_home_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_recenter_event, event
-
- grim_data = grim_get_data(event.top)
-
- cursor, x, y, /device, /nowait
-
- p = convert_coord(double(x), double(y), /device, /to_data)
- grim_recenter, grim_data, p
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_home_event
-;
-;
-; PURPOSE:
-;	Sets the tvim home view settings. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 5/2005
-;	
-;-
-;=============================================================================
-pro grim_menu_view_home_help_event, event
- text = ''
- nv_help, 'grim_menu_view_home_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_home_event, event
-
- grim_data = grim_get_data(event.top)
- widget_control, grim_data.draw, /hourglass
- grim_refresh, grim_data, /home
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_previous_event
-;
-;
-; PURPOSE:
-;	Restores the previous view settings. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_menu_view_previous_help_event, event
- text = ''
- nv_help, 'grim_menu_view_previous_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_previous_event, event
-
- grim_data = grim_get_data(event.top)
- widget_control, grim_data.draw, /hourglass
- grim_refresh, grim_data, /previous
-
-end
 ;=============================================================================
 
 
@@ -4772,294 +5159,6 @@ pro grim_menu_view_zoom_half_event, event
 
 end
 ;=============================================================================
-
-
-
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_rotate_0_event
-;
-;
-; PURPOSE:
-;	Sets the current rotate to 0, centered at the mouse cursor. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_view_rotate_0_help_event, event
- text = ''
- nv_help, 'grim_menu_view_rotate_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_rotate_0_event, event
-
- grim_data = grim_get_data(event.top)
- grim_refresh, grim_data, rotate=0
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_rotate_1_event
-;
-;
-; PURPOSE:
-;	Sets the current rotate to 1, centered at the mouse cursor. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_view_rotate_1_help_event, event
- text = ''
- nv_help, 'grim_menu_view_rotate_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_rotate_1_event, event
-
- grim_data = grim_get_data(event.top)
- grim_refresh, grim_data, rotate=1
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_rotate_2_event
-;
-;
-; PURPOSE:
-;	Sets the current rotate to 2, centered at the mouse cursor. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_view_rotate_2_help_event, event
- text = ''
- nv_help, 'grim_menu_view_rotate_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_rotate_2_event, event
-
- grim_data = grim_get_data(event.top)
- grim_refresh, grim_data, rotate=2
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_rotate_3_event
-;
-;
-; PURPOSE:
-;	Sets the current rotate to 3, centered at the mouse cursor. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_view_rotate_3_help_event, event
- text = ''
- nv_help, 'grim_menu_view_rotate_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_rotate_3_event, event
-
- grim_data = grim_get_data(event.top)
- grim_refresh, grim_data, rotate=3
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_rotate_4_event
-;
-;
-; PURPOSE:
-;	Sets the current rotate to 4, centered at the mouse cursor. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_view_rotate_4_help_event, event
- text = ''
- nv_help, 'grim_menu_view_rotate_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_rotate_4_event, event
-
- grim_data = grim_get_data(event.top)
- grim_refresh, grim_data, rotate=4
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_rotate_5_event
-;
-;
-; PURPOSE:
-;	Sets the current rotate to 5, centered at the mouse cursor. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_view_rotate_5_help_event, event
- text = ''
- nv_help, 'grim_menu_view_rotate_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_rotate_5_event, event
-
- grim_data = grim_get_data(event.top)
- grim_refresh, grim_data, rotate=5
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_rotate_6_event
-;
-;
-; PURPOSE:
-;	Sets the current rotate to 6, centered at the mouse cursor. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_view_rotate_6_help_event, event
- text = ''
- nv_help, 'grim_menu_view_rotate_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_rotate_6_event, event
-
- grim_data = grim_get_data(event.top)
- grim_refresh, grim_data, rotate=6
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_view_rotate_7_event
-;
-;
-; PURPOSE:
-;	Sets the current rotate to 7, centered at the mouse cursor. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2013
-;	
-;-
-;=============================================================================
-pro grim_menu_view_rotate_7_help_event, event
- text = ''
- nv_help, 'grim_menu_view_rotate_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_view_rotate_7_event, event
-
- grim_data = grim_get_data(event.top)
- grim_refresh, grim_data, rotate=7
-
-end
-;=============================================================================
-
-
-
-
-
 
 
 
@@ -5786,6 +5885,411 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_view_rotate_0_event
+;
+;
+; PURPOSE:
+;	Sets the current rotate to 0, centered at the mouse cursor. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_view_rotate_0_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_rotate_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_rotate_0_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_refresh, grim_data, rotate=0
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_rotate_1_event
+;
+;
+; PURPOSE:
+;	Sets the current rotate to 1, centered at the mouse cursor. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_view_rotate_1_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_rotate_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_rotate_1_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_refresh, grim_data, rotate=1
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_rotate_2_event
+;
+;
+; PURPOSE:
+;	Sets the current rotate to 2, centered at the mouse cursor. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_view_rotate_2_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_rotate_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_rotate_2_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_refresh, grim_data, rotate=2
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_rotate_3_event
+;
+;
+; PURPOSE:
+;	Sets the current rotate to 3, centered at the mouse cursor. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_view_rotate_3_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_rotate_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_rotate_3_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_refresh, grim_data, rotate=3
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_rotate_4_event
+;
+;
+; PURPOSE:
+;	Sets the current rotate to 4, centered at the mouse cursor. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_view_rotate_4_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_rotate_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_rotate_4_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_refresh, grim_data, rotate=4
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_rotate_5_event
+;
+;
+; PURPOSE:
+;	Sets the current rotate to 5, centered at the mouse cursor. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_view_rotate_5_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_rotate_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_rotate_5_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_refresh, grim_data, rotate=5
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_rotate_6_event
+;
+;
+; PURPOSE:
+;	Sets the current rotate to 6, centered at the mouse cursor. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_view_rotate_6_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_rotate_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_rotate_6_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_refresh, grim_data, rotate=6
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_rotate_7_event
+;
+;
+; PURPOSE:
+;	Sets the current rotate to 7, centered at the mouse cursor. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2013
+;	
+;-
+;=============================================================================
+pro grim_menu_view_rotate_7_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_rotate_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_rotate_7_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_refresh, grim_data, rotate=7
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_recenter_event
+;
+;
+; PURPOSE:
+;	Recenters the view at the cursor position. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 3/2008
+;	
+;-
+;=============================================================================
+pro grim_menu_view_recenter_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_home_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_recenter_event, event
+
+ grim_data = grim_get_data(event.top)
+
+ cursor, x, y, /device, /nowait
+
+ p = convert_coord(double(x), double(y), /device, /to_data)
+ grim_recenter, grim_data, p
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_apply_event
+;
+;
+; PURPOSE:
+;	Applys the current view to all planes. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2/2016
+;	
+;-
+;=============================================================================
+pro grim_menu_view_apply_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_home_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_apply_event, event
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ planes = grim_get_plane(grim_data, /all)
+ nplanes = n_elements(planes)
+
+ for i=0, nplanes-1 do if(planes[i].pn NE plane.pn) then $
+  begin
+   planes[i].xrange = plane.xrange
+   planes[i].yrange = plane.yrange
+   planes[i].position = plane.position
+  end
+
+ grim_set_data, grim_data, event.top
+
+ widget_control, grim_data.draw, /hourglass
+ grim_refresh, grim_data, /home
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_home_event
+;
+;
+; PURPOSE:
+;	Sets the tvim home view settings. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 5/2005
+;	
+;-
+;=============================================================================
+pro grim_menu_view_home_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_home_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_home_event, event
+
+ grim_data = grim_get_data(event.top)
+ widget_control, grim_data.draw, /hourglass
+ grim_refresh, grim_data, /home
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_view_save_event
 ;
 ;
@@ -5849,6 +6353,42 @@ pro grim_menu_view_restore_event, event
  grim_data = grim_get_data(event.top)
  widget_control, grim_data.draw, /hourglass
  grim_refresh, grim_data, /restore
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_view_previous_event
+;
+;
+; PURPOSE:
+;	Restores the previous view settings. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2002
+;	
+;-
+;=============================================================================
+pro grim_menu_view_previous_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_previous_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_previous_event, event
+
+ grim_data = grim_get_data(event.top)
+ widget_control, grim_data.draw, /hourglass
+ grim_refresh, grim_data, /previous
 
 end
 ;=============================================================================
@@ -6088,41 +6628,6 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_context_event
-;
-;
-; PURPOSE:
-;	Toggles the ontext window On/Off. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 9/2005
-;	
-;-
-;=============================================================================
-pro grim_menu_context_help_event, event
- text = ''
- nv_help, 'grim_menu_context_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_context_event, event
-
- grim_data = grim_get_data(event.top)
- grim_toggle_context, grim_data
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
 ;	grim_menu_toggle_image_event
 ;
 ;
@@ -6195,12 +6700,11 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_render_event
+;	grim_menu_context_event
 ;
 ;
 ; PURPOSE:
-;	Renders the visible scene and places it in a new plane unless
-;	the current plane is already rendering. 
+;	Toggles the ontext window On/Off. 
 ;
 ;
 ; CATEGORY:
@@ -6208,21 +6712,21 @@ end
 ;
 ;
 ; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2015
+; 	Written by:	Spitale, 9/2005
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_render_help_event, event
+pro grim_menu_context_help_event, event
  text = ''
- nv_help, 'grim_menu_render_event', cap=text
+ nv_help, 'grim_menu_context_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_render_event, event
+pro grim_menu_context_event, event
 
  grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
- grim_render, grim_data, plane=plane
+ grim_toggle_context, grim_data
+
 end
 ;=============================================================================
 
@@ -6276,6 +6780,42 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_render_event
+;
+;
+; PURPOSE:
+;	Renders the visible scene and places it in a new plane unless
+;	the current plane is already rendering. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2015
+;	
+;-
+;=============================================================================
+pro grim_menu_render_help_event, event
+ text = ''
+ nv_help, 'grim_menu_render_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_render_event, event
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+ grim_render, grim_data, plane=plane
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_view_colors_event
 ;
 ;
@@ -6303,6 +6843,64 @@ pro grim_menu_view_colors_event, event
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
  grim_modify_colors, grim_data
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; OVERLAYS MENU
+;	
+;-
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_points_planet_centers_event
+;
+;
+; PURPOSE:
+;	Obtains the necessary descriptors through the translators and computes
+;	planet center positions using pg_center for all active objects.  If no
+;	active objects, then all centers are computed.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2002
+;	
+;-
+;=============================================================================
+pro grim_menu_points_planet_centers_help_event, event
+ text = ''
+ nv_help, 'grim_menu_points_planet_centers_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_points_planet_centers_event, event
+
+ grim_data = grim_get_data(event.top)
+ widget_control, grim_data.draw, /hourglass
+
+ ;------------------------------------------------
+ ; load descriptors and compute centers
+ ;------------------------------------------------
+ grim_overlay, grim_data, 'planet_center'
+; grim_planet_centers, grim_data
+
+ ;------------------------------------------------
+ ; draw centers
+ ;------------------------------------------------
+; grim_draw, grim_data, /center, /label
+ grim_refresh, grim_data, /use_pixmap
 
 end
 ;=============================================================================
@@ -6362,6 +6960,56 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_points_terminators_event
+;
+;
+; PURPOSE:
+;	Obtains the necessary descriptors through the translators and computes
+;	terminators using pg_limb with the sun as the observer for all active
+;	objects.  If no active objects, then all terminators are computed.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2002
+;	
+;-
+;=============================================================================
+pro grim_menu_points_terminators_help_event, event
+ text = ''
+ nv_help, 'grim_menu_points_terminators_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_points_terminators_event, event
+
+ grim_data = grim_get_data(event.top)
+ widget_control, grim_data.draw, /hourglass
+
+ ;------------------------------------------------
+ ; load descriptors and compute terminators
+ ;------------------------------------------------
+ grim_overlay, grim_data, 'terminator'
+; grim_terminators, grim_data
+
+ ;------------------------------------------------
+ ; draw terminators
+ ;------------------------------------------------
+; grim_draw, grim_data, /term
+ grim_refresh, grim_data, /use_pixmap
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_points_planet_grids_event
 ;
 ;
@@ -6403,6 +7051,106 @@ pro grim_menu_points_planet_grids_event, event
 ; grim_draw, grim_data, /plgrid
  grim_refresh, grim_data, /use_pixmap
 
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_points_rings_event
+;
+;
+; PURPOSE:
+;	Obtains the necessary descriptors through the translators and computes
+;	ring outlines using pg_disk. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2002
+;	
+;-
+;=============================================================================
+pro grim_menu_points_rings_help_event, event
+ text = ''
+ nv_help, 'grim_menu_points_rings_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_points_rings_event, event
+
+ grim_data = grim_get_data(event.top)
+ widget_control, grim_data.draw, /hourglass
+
+ ;------------------------------------------------
+ ; load descriptors and compute rings
+ ;------------------------------------------------
+ grim_overlay, grim_data, 'ring'
+;grim_rings, grim_data
+
+ ;------------------------------------------------
+ ; draw rings
+ ;------------------------------------------------
+; grim_draw, grim_data, /ring
+ grim_refresh, grim_data, /use_pixmap
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_points_ring_grids_event
+;
+;
+; PURPOSE:
+;	Obtains the necessary descriptors through the translators and computes
+;	ring grids using pg_grid for all active objects.  If no active
+;	objects, then all grids are computed.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 7/2004
+;	
+;-
+;=============================================================================
+pro grim_menu_points_ring_grids_help_event, event
+ text = ''
+ nv_help, 'grim_menu_points_ring_grids_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_points_ring_grids_event, event
+
+ grim_data = grim_get_data(event.top)
+ widget_control, grim_data.draw, /hourglass
+
+; grim_interrupt_begin, grim_data
+
+ ;------------------------------------------------
+ ; load descriptors and compute planet grids
+ ;------------------------------------------------
+ grim_overlay, grim_data, 'ring_grid'
+
+ ;------------------------------------------------
+ ; draw planet grids
+ ;------------------------------------------------
+ grim_refresh, grim_data, /use_pixmap
+
+; grim_interrupt_end, grim_data
 
 end
 ;=============================================================================
@@ -6508,156 +7256,6 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_points_ring_grids_event
-;
-;
-; PURPOSE:
-;	Obtains the necessary descriptors through the translators and computes
-;	ring grids using pg_grid for all active objects.  If no active
-;	objects, then all grids are computed.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2004
-;	
-;-
-;=============================================================================
-pro grim_menu_points_ring_grids_help_event, event
- text = ''
- nv_help, 'grim_menu_points_ring_grids_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_points_ring_grids_event, event
-
- grim_data = grim_get_data(event.top)
- widget_control, grim_data.draw, /hourglass
-
-; grim_interrupt_begin, grim_data
-
- ;------------------------------------------------
- ; load descriptors and compute planet grids
- ;------------------------------------------------
- grim_overlay, grim_data, 'ring_grid'
-
- ;------------------------------------------------
- ; draw planet grids
- ;------------------------------------------------
- grim_refresh, grim_data, /use_pixmap
-
-; grim_interrupt_end, grim_data
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_points_terminators_event
-;
-;
-; PURPOSE:
-;	Obtains the necessary descriptors through the translators and computes
-;	terminators using pg_limb with the sun as the observer for all active
-;	objects.  If no active objects, then all terminators are computed.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_menu_points_terminators_help_event, event
- text = ''
- nv_help, 'grim_menu_points_terminators_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_points_terminators_event, event
-
- grim_data = grim_get_data(event.top)
- widget_control, grim_data.draw, /hourglass
-
- ;------------------------------------------------
- ; load descriptors and compute terminators
- ;------------------------------------------------
- grim_overlay, grim_data, 'terminator'
-; grim_terminators, grim_data
-
- ;------------------------------------------------
- ; draw terminators
- ;------------------------------------------------
-; grim_draw, grim_data, /term
- grim_refresh, grim_data, /use_pixmap
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_points_rings_event
-;
-;
-; PURPOSE:
-;	Obtains the necessary descriptors through the translators and computes
-;	ring outlines using pg_disk. 
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_menu_points_rings_help_event, event
- text = ''
- nv_help, 'grim_menu_points_rings_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_points_rings_event, event
-
- grim_data = grim_get_data(event.top)
- widget_control, grim_data.draw, /hourglass
-
- ;------------------------------------------------
- ; load descriptors and compute rings
- ;------------------------------------------------
- grim_overlay, grim_data, 'ring'
-;grim_rings, grim_data
-
- ;------------------------------------------------
- ; draw rings
- ;------------------------------------------------
-; grim_draw, grim_data, /ring
- grim_refresh, grim_data, /use_pixmap
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
 ;	grim_menu_points_stars_event
 ;
 ;
@@ -6701,62 +7299,6 @@ pro grim_menu_points_stars_event, event
 
 end
 ;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_points_reflections_event
-;
-;
-; PURPOSE:
-;	Obtains the necessary descriptors through the translators and computes
-;	reflections of the currently active overlay points on all other objects. 
-;	Note that you may have to disable overlay hiding in order to compute
-;	and activate all of the appropriate source points for the reflections
-;	since many point that are not visible to the observer may still have
-;	a line of sight to the sun.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 1/2003
-;	
-;-
-;=============================================================================
-pro grim_menu_points_reflections_help_event, event
- text = ''
- nv_help, 'grim_menu_points_reflections_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_points_reflections_event, event
-
- grim_data = grim_get_data(event.top)
- widget_control, grim_data.draw, /hourglass
-
- ;------------------------------------------------
- ; load descriptors and compute reflections
- ;------------------------------------------------
- grim_overlay, grim_data, 'reflection'
-;grim_reflections, grim_data
-
- ;------------------------------------------------
- ; draw reflection
- ;------------------------------------------------
-; grim_draw, grim_data, /reflection
- grim_refresh, grim_data, /use_pixmap
-
-
-end
-;=============================================================================
-
-
-
 
 
 
@@ -6816,13 +7358,16 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_points_planet_centers_event
+;	grim_menu_points_reflections_event
 ;
 ;
 ; PURPOSE:
 ;	Obtains the necessary descriptors through the translators and computes
-;	planet center positions using pg_center for all active objects.  If no
-;	active objects, then all centers are computed.
+;	reflections of the currently active overlay points on all other objects. 
+;	Note that you may have to disable overlay hiding in order to compute
+;	and activate all of the appropriate source points for the reflections
+;	since many point that are not visible to the observer may still have
+;	a line of sight to the sun.
 ;
 ;
 ; CATEGORY:
@@ -6830,32 +7375,33 @@ end
 ;
 ;
 ; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
+; 	Written by:	Spitale, 1/2003
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_points_planet_centers_help_event, event
+pro grim_menu_points_reflections_help_event, event
  text = ''
- nv_help, 'grim_menu_points_planet_centers_event', cap=text
+ nv_help, 'grim_menu_points_reflections_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_points_planet_centers_event, event
+pro grim_menu_points_reflections_event, event
 
  grim_data = grim_get_data(event.top)
  widget_control, grim_data.draw, /hourglass
 
  ;------------------------------------------------
- ; load descriptors and compute centers
+ ; load descriptors and compute reflections
  ;------------------------------------------------
- grim_overlay, grim_data, 'planet_center'
-; grim_planet_centers, grim_data
+ grim_overlay, grim_data, 'reflection'
+;grim_reflections, grim_data
 
  ;------------------------------------------------
- ; draw centers
+ ; draw reflection
  ;------------------------------------------------
-; grim_draw, grim_data, /center, /label
+; grim_draw, grim_data, /reflection
  grim_refresh, grim_data, /use_pixmap
+
 
 end
 ;=============================================================================
@@ -7129,118 +7675,6 @@ pro grim_menu_points_settings_event, event
  plane = grim_get_plane(grim_data)
 
  grim_overlay_settings, grim_data, plane
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_select_event
-;
-;
-; PURPOSE:
-;	Selects or unselects a grim window.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	This option toggles a given grim instance between selected 
-;	and unselected states, for use with functions that require 
-;	input from more than one grim instance.  When a given instance 
-;	is selected, this button displays an asterisk.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_select_help_event, event
- text = ''
- nv_help, 'grim_select_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_select_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then $
-       grim_print, grim_data, 'Select/Deselect this grim window'
-   return
-  end $
- else if(NOT grim_test_motion_event(event)) then $
-                                               grim_set_primary, grim_data.base
-
- grim_select, grim_data
- grim_set_data, grim_data, event.top
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_identify_event
-;
-;
-; PURPOSE:
-;	Causes grim to identify itself on the IDL command line.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; OPERATION:
-;	This option causes grim to print a message on the IDL command line.
-;	It is useful in cases where multiple grim instances are running in
-;	multiple IDL sessions.
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 3/2009
-;	
-;-
-;=============================================================================
-pro grim_identify_help_event, event
- text = ''
- nv_help, 'grim_identify_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_identify_event, event
-
- grim_data = grim_get_data(event.top)
-
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then $
-  begin
-   if(event.enter) then $
-       grim_print, grim_data, 'Identify this grim window'
-   return
-  end $
- else if(NOT grim_test_motion_event(event)) then $
-                                               grim_set_primary, grim_data.base
-
- grim_identify, grim_data
 
 end
 ;=============================================================================
@@ -8348,17 +8782,17 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Dump               \*grim_menu_plane_dump_event', $
            '0\Coregister         \grim_menu_plane_coregister_event', $
            '0\Coadd              \grim_menu_plane_coadd_event', $
-           '0\Toggle Syncing   \*grim_menu_plane_toggle_plane_syncing_event', $
-           '0\Toggle Highlight   \*grim_menu_plane_highlight_event', $
+           '0\Toggle Syncing            [xxx]\*grim_menu_plane_toggle_plane_syncing_event', $
+           '0\Toggle Highlight          [xxx]\*grim_menu_plane_highlight_event', $
            '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy tie points     \*grim_menu_plane_copy_tiepoints_event', $
 ;           '0\Propagate tie points\*grim_menu_plane_propagate_tiepoints_event', $
-           '0\Toggle tie point syncing\*grim_menu_plane_toggle_tiepoint_syncing_event', $
+           '0\Toggle tie point syncing  [xxx]\*grim_menu_plane_toggle_tiepoint_syncing_event', $
            '0\Clear tie points    \*grim_menu_plane_clear_tiepoints_event', $
            '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy curves        \*grim_menu_plane_copy_curves_event', $
 ;           '0\Propagate curves    \*grim_menu_plane_propagate_curves_event', $
-           '0\Toggle curves syncing\*grim_menu_plane_toggle_curve_syncing_event', $
+           '0\Toggle curves syncing     [xxx]\*grim_menu_plane_toggle_curve_syncing_event', $
            '0\Clear curves        \*grim_menu_plane_clear_curves_event', $
            '0\-------------------\*grim_menu_delim_event', $ 
            '0\Copy mask          \*grim_menu_plane_copy_mask_event', $
@@ -8408,6 +8842,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
              '0\7                 \+*grim_menu_view_rotate_7_event' , $
              '2\<null>               \+*grim_menu_delim_event', $
            '0\Recenter             \+*grim_menu_view_recenter_event' , $
+           '%0\Apply to all Planes  \+*grim_menu_view_apply_event' , $
            '0\Home                 \+*grim_menu_view_home_event' , $
            '0\Save                 \+*grim_menu_view_save_event' , $
            '0\Restore              \+*grim_menu_view_restore_event', $
@@ -8437,11 +8872,11 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Compute planet grids   \*grim_menu_points_planet_grids_event', $ 
            '0\Compute rings          \grim_menu_points_rings_event', $
            '0\Compute ring grids     \grim_menu_points_ring_grids_event', $ 
+           '0\Compute stations       \*grim_menu_points_stations_event', $ 
+           '0\Compute arrays         \*grim_menu_points_arrays_event', $ 
            '0\Compute stars          \grim_menu_points_stars_event', $ 
            '0\Compute shadows        \grim_menu_points_shadows_event', $ 
            '0\Compute reflections    \?grim_menu_points_reflections_event', $ 
-           '0\Compute stations       \*grim_menu_points_stations_event', $ 
-           '0\Compute arrays         \*grim_menu_points_arrays_event', $ 
            '0\-------------------------\*grim_menu_delim_event', $ 
            '0\Hide/Unhide all        \+*grim_menu_hide_all_event', $ 
            '0\Clear all              \*grim_menu_clear_all_event', $ 
@@ -9227,8 +9662,24 @@ end
 ; grim_create_cursor_mode
 ;
 ;=============================================================================
-function grim_create_cursor_mode, name, arg, cursor_modes
- cursor_mode = call_function(name, arg)
+function grim_create_cursor_mode, name, mode_args, cursor_modes, no_prefix=no_prefix
+
+ prefix = ''
+ if(NOT keyword_set(no_prefix)) then prefix = 'grim_mode_'
+
+ arg = ''
+ if(keyword_set(mode_args)) then $
+  begin
+   if(size(mode_args, /type) EQ 7) then $
+    begin
+     names = str_nnsplit(mode_args, ':', rem=args)
+     w = where(strupcase(names) EQ strupcase(name))
+     if(w[0] NE -1) then arg = args[w]
+    end $
+   else arg = mode_args
+  end
+
+ cursor_mode = call_function(prefix + name, arg)
  return, append_array(cursor_modes, cursor_mode)
 end
 ;=============================================================================
@@ -9240,23 +9691,23 @@ end
 ;
 ;=============================================================================
 pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od, $
-	silent=silent, new=new, inherit=inherit, xsize=xsize, ysize=ysize, $
+	silent=silent, new=new, xsize=xsize, ysize=ysize, $
 	default=default, previous=previous, restore=restore, activate=activate, $
 	doffset=doffset, no_erase=no_erase, filter=filter, rgb=rgb, visibility=visibility, channel=channel, exit=exit, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, retain=retain, maintain=maintain, $
-	set_info=set_info, mode=mode, modal=modal, xzero=xzero, frame=frame, $
+	mode_init=mode_init, modal=modal, xzero=xzero, frame=frame, $
 	refresh_callbacks=refresh_callbacks, refresh_callback_data_ps=refresh_callback_data_ps, $
 	plane_callbacks=plane_callbacks, plane_callback_data_ps=plane_callback_data_ps, $
 	nhist=nhist, compress=compress, path=path, symsize=symsize, $
-	cursor_modes=cursor_modes, user_psym=user_psym, ups=ups, workdir=workdir, $
+	user_psym=user_psym, workdir=workdir, mode_args=mode_args, $
         save_path=save_path, load_path=load_path, overlays=overlays, pn=pn, $
-	faint=faint, menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, hide=hide, $
+	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, hide=hide, $
 	menu_extensions=menu_extensions, button_extensions=button_extensions, $
 	arg_extensions=arg_extensions, loadct=loadct, max=max, grnum=grnum, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
 	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, $
         trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, assoc_xd=assoc_xd, $
-        readout_fns=readout_fns, plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
+        plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
 	position=position, $
@@ -9276,14 +9727,14 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  grim_constants
 
- grim_rc_settings, rcfile='.grimrc', $
-	silent=silent, new=new, xsize=xsize, ysize=ysize, mode=mode, $
+ grim_rc_settings, rcfile='.ominas/grimrc', $
+	silent=silent, new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
 	fov=fov, menu_extensions=menu_extensions, button_extensions=button_extensions, arg_extensions=arg_extensions, $
 	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, $
-	filetype=filetype, hide=hide, readout_fns=readout_fns, xzero=xzero, $
+	hide=hide, mode_args=mode_args, xzero=xzero, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
@@ -9304,25 +9755,25 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  ; cursor modes
  ;=========================================================
- cursor_modes = grim_create_cursor_mode('grim_mode_activate', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_zoom_plot', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_zoom', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_pan_plot', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_pan', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_readout', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_tiepoints', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_curves', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_mask', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_magnify', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_xyzoom', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_remove', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_trim', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_select', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_region', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_smooth', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_plane', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_drag', 0, cursor_modes)
- cursor_modes = grim_create_cursor_mode('grim_mode_navigate', 0, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('activate', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('zoom_plot', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('zoom', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('pan_plot', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('pan', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('readout', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('tiepoints', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('curves', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('mask', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('magnify', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('xyzoom', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('remove', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('trim', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('select', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('region', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('smooth', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('plane', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('drag', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('navigate', mode_args, cursor_modes)
 
  ;-------------------------------------------
  ; cursor mode extensions
@@ -9337,7 +9788,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
      else arg_extension = arg_extensions[i]
     
      cursor_modes = append_array(cursor_modes, $
-                   grim_create_cursor_mode(button_extensions[i], arg_extension))
+        grim_create_cursor_mode(button_extensions[i], arg_extension, /no_prefix))
     end
   end
 
@@ -9376,10 +9827,10 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  if(NOT keyword_set(grim_get_data())) then new = 1
 
- if(NOT keyword_set(mode)) then $
+ if(NOT keyword_set(mode_init)) then $
   begin
-   if(type EQ 'plot') then mode = 'grim_mode_zoom_plot' $
-   else mode = 'grim_mode_activate'
+   if(type EQ 'plot') then mode_init = 'grim_mode_zoom_plot' $
+   else mode_init = 'grim_mode_activate'
   end
 
 
@@ -9423,13 +9874,12 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_data = grim_init(dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, type=type, $
        filter=filter, retain=retain, user_callbacks=user_callbacks, $
        user_psym=user_psym, path=path, save_path=save_path, load_path=load_path, $
-       faint=faint, cursor_swap=cursor_swap, fov=fov, hide=hide, filetype=filetype, $
+       cursor_swap=cursor_swap, fov=fov, hide=hide, $
        trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_sund=trs_sund, trs_ard=trs_ard, $
        color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
-       readout_fns=readout_fns, symsize=symsize, nhist=nhist, maintain=maintain, $
+       symsize=symsize, nhist=nhist, maintain=maintain, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
-       plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
        visibility=visibility, channel=channel, data_offsets=data_offsets, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
        render_pht_min=render_pht_min)
@@ -9456,7 +9906,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    for i=0, n_elements(planes)-1 do planes[i].grnum = grnum
    grim_set_plane, grim_data, planes
 
-   grim_set_mode, grim_data, mode, /init
+   grim_set_mode, grim_data, mode_init, /init
    grim_set_data, grim_data, grim_data.base
 
    grim_resize, grim_data, /init
@@ -9637,7 +10087,20 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
 
  ;----------------------------------------------
- ; if new instance, initialize enu extensions
+ ; initial toggles
+ ;----------------------------------------------
+ if(keyword_set(plane_syncing)) then $
+                   grim_set_toggle_flag, grim_data, 'PLANE_SYNCING', 1
+ if(keyword_set(tiepoint_syncing)) then $
+                   grim_set_toggle_flag, grim_data, 'TIEPOINT_SYNCING', 1
+ if(keyword_set(curve_syncing)) then $
+                   grim_set_toggle_flag, grim_data, 'CURVE_SYNCING', 1
+ if(keyword_set(highlght)) then $
+                   grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', 1
+
+
+ ;----------------------------------------------
+ ; if new instance, initialize menu extensions
  ;----------------------------------------------
  if(new) then $
   begin
@@ -9656,6 +10119,27 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
      for i=0, n_elements(cursor_modes)-1 do $
         if(routine_exists(cursor_modes[i].name+'_init')) then $
             call_procedure, cursor_modes[i].name+'_init', grim_data, cursor_modes[i].data_p
+
+
+
+ ;----------------------------------------------
+ ; if new instance, initialize menu toggles
+ ;----------------------------------------------
+ if(new) then $
+  begin
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_toggle_plane_syncing_event', $
+          grim_get_toggle_flag(grim_data, 'PLANE_SYNCING')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_toggle_tiepoint_syncing_event', $
+          grim_get_toggle_flag(grim_data, 'TIEPOINT_SYNCING')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_toggle_curve_syncing_event', $
+          grim_get_toggle_flag(grim_data, 'CURVE_SYNCING')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_highlight_event', $
+          grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
+  end
 
 
  ;-------------------------

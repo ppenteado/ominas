@@ -7,10 +7,19 @@ function spice_read_klist, dd, klist, ck_out=ck_out, silent=silent, $
              time=_time, prefix=prefix, notime=notime, extension=extension
 common spice_klist_block, klist_last, _inlines
 
- if(NOT keyword_set(klist)) then return,''
-
  fn_spice_time = prefix + '_spice_time'
  ndd = n_elements(dd)
+
+ if(NOT keyword_set(notime)) then $
+  begin
+   if(NOT defined(_time)) then $
+    for i=0, ndd-1 do $
+      et = append_array(et, call_function(fn_spice_time, dat_header(dd[i]))) $
+    else et = _time
+    _time = et
+  end
+
+ if(NOT keyword_set(klist)) then return,''
 
  ;--------------------------------------------
  ; read input file
@@ -82,12 +91,6 @@ common spice_klist_block, klist_last, _inlines
 
    if(NOT keyword_set(notime)) then $
     begin
-     if(NOT defined(_time)) then $
-      for i=0, ndd-1 do $
-        et = append_array(et, call_function(fn_spice_time, dat_header(dd[i]))) $
-     else et = _time
-    _time = et
-
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; look for stop times and include appropriate lines 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -

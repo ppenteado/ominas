@@ -285,7 +285,7 @@ pro ominas_data__define
 	header_dap:		nv_ptr_new(), $	; Pointer to the generic header archive
         dap_index:		0, $		; data archive index
 
-	sample_p:		nv_ptr_new(), $	; Pointer to the sample array
+	sample_p:		nv_ptr_new(), $	; Pointer to the array of loaded samples
 	order_p:		nv_ptr_new(), $	; Pointer to the sample load order array
 
 	cache:			0l, $		; Max. cache size for data array (Mb)

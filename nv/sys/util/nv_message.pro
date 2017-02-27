@@ -65,9 +65,25 @@
 ;			then the threshold is set to this value.  If a string
 ;			is given, then it will only be printed if this 
 ;			value is greater than or equal to current verbosity 
-;			level.  Setting this keyword implies /continue.
+;			level.  Setting this keyword implies /continue.  
+;			Verbosity threshold rules of thumb are as follows:
 ;
-;	silent:		Setting this keyword is equivalent to verbose=0.
+;			 0.1:	Useful messages that you don't always need to see;
+;				files being loaded, written, etc.
+;			 0.5:	Useful messages that you want to see even less;
+;				file-not-found warnings, etc.
+;			 0.9:	Debugging messages that don't produce huge
+;				outputs.
+;			 1.0:	Mega debugging messages that may create
+;				huge outputs.  Your short message will get lost
+;				in this output, so use 0.9 instead.
+;
+;
+;
+;	silent:		Suppressed printing of messages.
+;
+;	format:		Format string.
+;
 ;
 ;  OUTPUT: 
 ;	message:	If /get_message, this keyword will return the last
@@ -75,8 +91,7 @@
 ;
 ;
 ; ENVIRONMENT VARIABLES:
-;	NV_VERBOSITY:	If set, this value overrides the stored verbosity
-;			setting.
+;	NV_VERBOSITY:	Initial verbosity setting.
 ;
 ;
 ; RETURN: NONE
@@ -92,7 +107,7 @@
 ;-
 ;=============================================================================
 pro nv_message, string, name=name, anonymous=anonymous, continue=continue, $
-             clear=clear, get_message=get_message, $
+             clear=clear, get_message=get_message, format=format, $
              message=_string, explanation=explanation, $
              callback=callback, cb_data_p=cb_data_p, disconnect=disconnect, $
              cb_tag=cb_tag, verbose=verbose, silent=silent, stop=stop
@@ -100,18 +115,15 @@ common nv_message_block, last_message, cb_tlp, verbosity
 @core.include
 @nv_block.common
 
- if(NOT keyword_set(verbosity)) then verbosity = 0
-
  ;------------------------------------------------
  ; check environment for verbosity override
  ;------------------------------------------------
- nv_verbosity = getenv('NV_VERBOSITY')
- if(keyword_set(nv_verbosity)) then verbosity = double(nv_verbosity)
-
-
- if(keyword_set(silent)) then verbose = 0
- if(defined(verbose)) then continue = 1
-
+ if(NOT defined(verbosity)) then $
+  begin
+   nv_verbosity = getenv('NV_VERBOSITY')
+   if(keyword_set(nv_verbosity)) then verbosity = double(nv_verbosity)
+  end
+ if(NOT keyword_set(verbosity)) then verbosity = 0
 
  ;------------------------------------------------
  ; set verbosity if no string
@@ -120,7 +132,7 @@ common nv_message_block, last_message, cb_tlp, verbosity
  silence = 1
  if(NOT defined(string)) then $
   begin
-   if(defined(verbose)) then verbosity = verbose
+   if(defined(verbose)) then verbosity = double(verbose[0])
   end $
  ;---------------------------------------------------------------
  ; otherwise test verbosity state
@@ -129,7 +141,11 @@ common nv_message_block, last_message, cb_tlp, verbosity
   begin
    if(NOT defined(verbose)) then silence = 0 $
    else if(verbose LE verbosity) then silence = 0
-  end
+  end $
+ else if(NOT defined(verbose)) then silence = 0
+
+ if(keyword_set(silent)) then verbose = 0
+ if(defined(verbose)) then continue = 1
 
  ;---------------------------------------------------------------
  ; always print message if execution is stopped
@@ -198,7 +214,7 @@ common nv_message_block, last_message, cb_tlp, verbosity
  if((NOT silence) AND (NOT ptr_valid(cb_tlp))) then $
   begin
 ;   message, string, /continue, /noname
-   print, string
+   print, string, format=format
    if(keyword_set(explanation)) then print, '	' + explanation
    last_message = string
   end

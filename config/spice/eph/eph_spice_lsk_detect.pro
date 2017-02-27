@@ -2,7 +2,7 @@
 ; eph_spice_lsk_detect
 ;
 ;=============================================================================
-function eph_spice_lsk_detect, dd, kpath, time=time, strict=strict, all=all
+function eph_spice_lsk_detect, dd, kpath, sc=sc, time=time, strict=strict, all=all
 
  ;--------------------------------
  ; new naming convention
