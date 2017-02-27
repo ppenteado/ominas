@@ -175,7 +175,7 @@ for i=0,n-1 do begin
   pg_draw, plon_ps[0], psym=3, $
     plabel=strtrim(round(lon*180d/!dpi),2),$
     /label_p,wnum=ww[i]
-    write_png,'vims_ex_'+strtrim(imc++,2)+'.png',tvrd()
+;    write_png,'vims_ex_'+strtrim(imc++,2)+'.png',tvrd()
 endfor
 
 
@@ -277,7 +277,7 @@ foreach band,bands,iband do begin
   for i=0, n-1 do dd_map[i] = pg_map(dd_pht[i], md=md, gd=gd[i], aux=['EMM'])
   for i=0, n-1 do begin
     tvim, dat_data(dd_map[i])<max((dat_data(dd[i]))[*,*,band]), /new
-    write_png,'vims_ex_'+strtrim(imc++,2)+'.png',tvrd()
+;    write_png,'vims_ex_'+strtrim(imc++,2)+'.png',tvrd()
   endfor
   
   dd_mosaic = pg_mosaic(dd_map, mosaic=mosaic, $
@@ -292,7 +292,7 @@ foreach band,bands,iband do begin
   pg_draw, map_grid_ps, col=ctgreen()
   pg_draw, plat_ps, psym=7, plabel=strmid(strtrim(lat*180d/!dpi,2),0,3), /label_p
   pg_draw, plon_ps, psym=7, plabel=strmid(strtrim(lon*180d/!dpi,2),0,3), /label_p
-  write_png,'vims_ex_'+strtrim(imc++,2)+'.png',tvrd()
+;  write_png,'vims_ex_'+strtrim(imc++,2)+'.png',tvrd()
   mosaics.add,mosaic
 endforeach
 
