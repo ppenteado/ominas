@@ -27,7 +27,7 @@
 							/spk_strict
 
   VIMS_IR       vims_spice_input         vims_spice_output \
-                                                  klist=cassini.kernels \
+#                                                  klist=cassini.kernels \
                                                         ck_in=auto \
                                                         pck_in=auto \
                                                         lsk_in=auto \
