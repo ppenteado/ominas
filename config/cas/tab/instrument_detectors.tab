@@ -5,4 +5,4 @@
   detect_cas			VICAR
   detect_cas_uvis		VICAR
   detect_radar                  PDS
-
+  pp_detect_vims                ISIS
