@@ -90,6 +90,8 @@
 pro vims_spice_parse_labels, dd, _time, $
   exposure=exposure, size=size, filters=filters, oaxis=oaxis, target=target,$
   endjd=endjd,startjd=startjd
+  
+  compile_opt idl2
 
   ndd = n_elements(dd)
 
@@ -158,6 +160,7 @@ end
 function vims_spice_cameras, dd, ref, pos=pos, constants=constants, $
          n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
+compile_opt idl2
  ndd = n_elements(dd)
 
  sc = -82l
@@ -307,6 +310,7 @@ function vims_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
+compile_opt idl2
  ;label = nv_header(dd)
  label = dat_header(dd)
 
@@ -350,6 +354,7 @@ end
 function vims_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
                                    status=status, time=time, obs=obs
 
+compile_opt idl2
  ;label = nv_header(dd)
  label = dat_header(dd)
 
@@ -368,48 +373,13 @@ function vims_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
 end
 ;===========================================================================
 
-;=============================================================================
-; vims_spice_lsk_detect
-;
-;=============================================================================
-function vims_spice_lsk_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
- return, eph_spice_lsk_detect(dd, kpath, time=time, strict=strict, all=all)
-end
-;=============================================================================
 
-function vims_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
-  all=all, reject=reject, strict=strict
-return,cas_spice_ck_detect(dd, ckpath, djd=djd, time=time, $
-  all=all, strict=strict)
-end
 
-;=============================================================================
-; vims_spice_pck_detect
-;
-;
-;=============================================================================
-function vims_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
-  return, eph_spice_pck_detect(dd, kpath, time=time, strict=strict, all=all)
-end
-;=============================================================================
 
-function vims_spice_ik_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
-return,cas_spice_ik_detect(dd, kpath, time=time, strict=strict, all=all)
-end
 
-function vims_spice_fk_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
-return,cas_spice_fk_detect(dd, kpath, time=time, strict=strict, all=all)
-end
 
-function vims_spice_sck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
-return,cas_spice_sck_detect(dd, kpath, time=time, strict=strict, all=all)
-end
 
-function vims_spice_spk_detect, dd, kpath, $
-  strict=strict, all=all, time=_time
-return, cas_spice_spk_detect(dd, kpath, $
-  strict=strict, all=all, time=_time)
-end
+
 
 ;===========================================================================
 ; cas_spice_input.pro
@@ -420,6 +390,7 @@ function vims_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, sta
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
+compile_opt idl2
 ;key7=vims_spice_time(nv_header(dd))
 key7=vims_spice_time(dat_header(dd))
  return, spice_input(dd, keyword, 'vims', values=values, status=status, $
