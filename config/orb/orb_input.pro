@@ -73,52 +73,68 @@ end
 
 
 ;=============================================================================
+; oi_cache_put
+;
+;=============================================================================
+pro oi_cache_put, file, dat
+common oi_load_block, _catfile, _dat_p
+
+ _catfile = append_array(_catfile, file)
+ _dat_p = append_array(_dat_p, nv_ptr_new(dat))
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; oi_cache_get
+;
+;=============================================================================
+function oi_cache_get, file, reload=reload
+common oi_load_block, _catfile, _dat_p
+
+ if((NOT keyword_set(_catfile)) OR keyword_set(reload)) then return, ''
+
+ w = where(_catfile EQ file)
+ if(w[0] NE -1) then return, *(_dat_p[w[0]])
+ 
+ return, ''
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; oi_load
 ;
 ;=============================================================================
 function oi_load, catpath, catfile, reload=reload
-common oi_load_block, _catfile, _dat_p
-
- dat = ''
-
- ;--------------------------------------------------------------------
- ; if appropriate catalog is loaded, then just return descriptors
- ;--------------------------------------------------------------------
- load = 1
-
- if(keyword_set(_catfile) AND (NOT keyword_set(reload))) then $
-  begin
-   w = where(_catfile EQ catfile)
-   if(w[0] NE -1) then $
-    begin
-     load = 0
-     dat = *(_dat_p[w[0]])
-    end
-  end 
 
  ;--------------------------------------------------------------------
  ; parse catalog path
  ;--------------------------------------------------------------------
  catdirs = get_path(catpath, file=catfile)
- if(NOT keyword_set(catdirs[0])) then load = 0
+ if(NOT keyword_set(catdirs[0])) then return, ''
 
+ file = catdirs + '/' + catfile
+ 
+ ;--------------------------------------------------------------------
+ ; check the cache
+ ;--------------------------------------------------------------------
+ dat = oi_cache_get(file, reload=reload)
+ if(keyword_set(dat)) then return, dat
 
  ;--------------------------------------------------------------------
- ; otherwise read and parse the catalog
+ ; read the catalog
  ;--------------------------------------------------------------------
- if(load) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; read the catalog
-   ;- - - - - - - - - - - - - - - - - - - -
-   dat = orbcat_read(catdirs + '/' + catfile)
+ dat = orbcat_read(file)
 
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; save catalog data
-   ;- - - - - - - - - - - - - - - - - - - -
-   _catfile = append_array(_catfile, catfile)
-   _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-  end
+ ;--------------------------------------------------------------------
+ ; cache catalog data
+ ;--------------------------------------------------------------------
+ oi_cache_put, file, dat
+
 
  return, dat
 end
@@ -227,21 +243,18 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
     begin
       nv_message, /con, $
        'NV_ORBIT_DATA environment variable is undefined.', $
-         exp=['NV_ORBIT_DATA specifies directory under which this translator', $
+         exp=['NV_ORBIT_DATA specifies directories in which this translator', $
               'searches for data files.']
      status = -1
      return, 0
     end
+   catpath = parse_comma_list(catpath, delim=':')
 
    catfile = 'orbcat_' + strlowcase(planet) + '.txt'
    dat = oi_load(catpath, catfile, reload=reload)
 
-;   catfile = getenv('NV_ORBIT_DATA') + '/orbcat_' + strlowcase(planet) + '.txt'
-;   if(keyword_set(file_test(catfile))) then $
    if(keyword_set(dat)) then $
     begin
-;     dat = oi_load(catfile, reload=reload)
-
      ;- - - - - - - - - - - - - - - - - - - - - - - -
      ; if any requested names, select only those
      ;- - - - - - - - - - - - - - - - - - - - - - - -
@@ -310,7 +323,7 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
          pos = orb_to_cartesian(dkd, vel=vel)
          
          _pd = plt_create_descriptors(1, $
-		assoc_xd=dd, $
+		gd=dd, $
 		name=cor_name(dkd), $
 		pos=pos, $
 		vel=vel, $

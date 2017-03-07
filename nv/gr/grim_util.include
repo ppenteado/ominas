@@ -186,12 +186,12 @@ end
 ;
 ;=============================================================================
 pro grim_wset, grim_data, wnum, get_info=get_info, $
-    save=save, noplot=noplot, silent=silent
+    save=save, noplot=noplot
 
 
  if(grim_data.type EQ 'plot') then tvgr, wnum, get_info=get_info, $
-     save=save, noplot=noplot, silent=silent $
- else tvim, wnum, get_info=get_info, save=save, noplot=noplot, silent=silent 
+     save=save, noplot=noplot, /silent $
+ else tvim, wnum, get_info=get_info, save=save, noplot=noplot, /silent 
 
 end
 ;=============================================================================
@@ -445,6 +445,31 @@ pro grim_set_toggle_flag, grim_data, name, flag
 
  grim_set_user_data, grim_data, 'GRIM_TOGGLE_' + name, flag
 
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compare
+;
+;=============================================================================
+function grim_compare, x1, x2
+
+ if((NOT keyword_set(x1)) AND (NOT keyword_set(x1))) then return, 1
+
+ nx1 = n_elements(x1)
+ nx2 = n_elements(x2)
+ 
+ type1 = size(x1, /type)
+ type2 = size(x2, /type)
+
+ if((type1 EQ 7) XOR (type2 EQ 7)) then return, 0
+
+ if(nx1 NE nx2) then return, 0
+ if(total(x1 EQ x2) NE nx1) then return, 0
+
+ return, 1
 end
 ;=============================================================================
 

@@ -21,7 +21,7 @@ end
 ;
 ;=============================================================================
 pro grim_rc_settings, rcfile=rcfile, $
-	silent=silent, new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, npoints=npoints, $
+	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, npoints=npoints, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
@@ -81,10 +81,6 @@ pro grim_rc_settings, rcfile=rcfile, $
  if(n_elements(hide) EQ 0) then $
                         _hide = grim_rc_value(keywords, value_ps, 'HIDE')
  if(keyword_set(_hide)) then hide = byte(_hide)
-
- if(n_elements(silent) EQ 0) then $
-                        _silent = grim_rc_value(keywords, value_ps, 'SILENT')
- if(keyword_set(_silent)) then silent = fix(_silent)
 
  if(n_elements(xzero) EQ 0) then $
                         _xzero = grim_rc_value(keywords, value_ps, 'XZERO')

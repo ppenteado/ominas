@@ -52,7 +52,7 @@ function pnt_explode, ptd, n=n
  n = long(n)
 
  pnt_get, ptd, nv=nv, nt=nt, $
-        name=name, desc=desc, input=input, assoc_xd=assoc_xd, $
+        name=name, desc=desc, assoc_xd=assoc_xd, $
         flags=flags, points=points, vectors=vectors, data=data, tags=tags
 
  nvv = nv/n
@@ -93,7 +93,7 @@ function __pnt_explode, ptd, n=n
  n = long(n)
 
  pnt_get, ptd, nv=nv, nt=nt, $
-        name=name, desc=desc, input=input, assoc_xd=assoc_xd, $
+        name=name, desc=desc, assoc_xd=assoc_xd, $
         flags=flags, points=points, vectors=vectors, data=data, tags=tags
 
  nvv = nv/n

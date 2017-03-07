@@ -92,7 +92,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
+function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, $
                      override=override, verbatim=verbatim, raw=raw, $
                      radec=radec, corners=corners, $
 @str__keywords.include
@@ -103,7 +103,8 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, od=od, sund=sund, dd=dd
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators
@@ -113,7 +114,7 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
    n = n_elements(name)
 
    sd=str_create_descriptors(n, $
-	assoc_xd=dd, $
+	gd=dd, $
 	name=name, $
 	orient=orient, $
 	avel=avel, $
@@ -183,7 +184,7 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   w = nwhere(dd, cor_assoc_xd(sd))
+   w = nwhere(dd, cor_gd(sd, /dd))
    if(n_elements(time) NE 0) then bod_set_time, sd, time[w]
    if(n_elements(lum) NE 0) then str_set_lum, sd, lum[w]
    if(n_elements(sp) NE 0) then str_set_sp, sd, sp[w]
@@ -198,6 +199,11 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
   end
 
 
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, od=od
+ dat_set_gd, sd, gd, od=od
 
  return, sd
 end

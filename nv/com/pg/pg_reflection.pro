@@ -45,9 +45,11 @@
 ;		descriptor is given, then the sun descriptor in gd is used.
 ;		Only one observer is allowed.
 ;
-;	gd:	Generic descriptor.  If given, the cd, dkx, gbx, and bx inputs 
-;		are taken from the corresponding fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	  All other keywords are passed directly to pg_reflection_globe
 ;	  and pg_reflection_disk and are documented with those programs.
@@ -73,10 +75,10 @@
 ;	
 ;-
 ;=============================================================================
-function pg_reflection, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd, $
+function pg_reflection, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, object_ptd, $
               reveal=reveal, fov=fov, nocull=nocull, all=all
 
- pgs_gd, bx=bx
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
  ;----------------------------------
  ; extract objects from bx
@@ -92,7 +94,7 @@ function pg_reflection, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd
  ;----------------------------------
  if(keyword_set(gbx)) then $
    globe_reflection_ptd = $
-       pg_reflection_globe(object_ptd, cd=cd, od=od, gbx=gbx, gd=gd, $
+       pg_reflection_globe(object_ptd, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, $
                /nocull, reveal=reveal, fov=fov)
 
  ;----------------------------------
@@ -100,7 +102,7 @@ function pg_reflection, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd
  ;----------------------------------
 ;; if(keyword_set(dkx)) then $
 ;;   disk_reflection_ptd = $
-;;       pg_reflection_disk(object_ptd, cd=cd, od=od, dkx=dkx, gd=gd, $
+;;       pg_reflection_disk(object_ptd, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, $
 ;;               /nocull, reveal=reveal, fov=fov)
 
 

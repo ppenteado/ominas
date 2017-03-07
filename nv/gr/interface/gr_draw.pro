@@ -138,7 +138,18 @@ pro gr_draw, pp, gd=gd, cd=_cd, pd=_pd, rd=_rd, sd=_sd, ard=_ard, std=_std, sund
  ;---------------------------------
  ; dereference generic descriptor
  ;---------------------------------
- pgs_gd, gd, cd=_cd, pd=_pd, rd=_rd, sd=_sd, sund=_sund, od=_od, gbx=_gbx, dkx=_dkx, std=_std, ard=_ard
+ if(NOT keyword_set(_cd)) then _cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(_dkx)) then _dkx = dat_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(_sund)) then _sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(_sd)) then _sd = dat_gd(gd, dd=dd, /sd)
+ if(NOT keyword_set(_od)) then _od = dat_gd(gd, dd=dd, /od)
+ if(NOT keyword_set(_pd)) then _pd = dat_gd(gd, dd=dd, /pd)
+ if(NOT keyword_set(_rd)) then _rd = dat_gd(gd, dd=dd, /rd)
+ if(NOT keyword_set(_std)) then _std = dat_gd(gd, dd=dd, /std)
+ if(NOT keyword_set(_ard)) then _ard = dat_gd(gd, dd=dd, /ard)
+
+
  if(NOT keyword_set(_pd)) then if(keyword__set(_gbx)) then _pd = _gbx
  if(NOT keyword_set(_rd)) then if(keyword__set(_dkx)) then _rd = _dkx
 

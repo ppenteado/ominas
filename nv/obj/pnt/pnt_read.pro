@@ -89,11 +89,8 @@ function pnt_read_0, filename, visible=visible, $
    if(w[0] NE -1) then $ 
     begin
      comment = lines[w]
-     if(NOT keyword_set(silent)) then $
-      begin
-       print, filename + ':'
-       print, tr(comment)
-      end
+     nv_message, verb=0.9, filename + ':'
+     nv_message, verb=0.9, tr(comment)
     end
 
    ;- - - - - - - - - - - - - - - - - - -
@@ -213,7 +210,7 @@ end
 ;=============================================================================
 function pnt_read_1, filename, visible=visible, $
          name=name, desc=desc, flags=flags, points=p, vectors=v, $
-         comment=comment, input=input, version=version, data=data, tags=tags
+         comment=comment, version=version, data=data, tags=tags
 
  
  openr, unit, filename, /get_lun
@@ -246,7 +243,7 @@ function pnt_read_1, filename, visible=visible, $
     begin
      name = strtrim(strep_s(line, name_token, ''), 2)
      desc = strtrim(strep_s(psrpnt_get_next(unit), 'desc =', ''), 2)
-     if(version GT 0) then input = strtrim(strep_s(psrpnt_get_next(unit), 'input =', ''), 2)
+;;;     if(version GT 0) then input = strtrim(strep_s(psrpnt_get_next(unit), 'input =', ''), 2)
      n = fix(strtrim((str_sep(psrpnt_get_next(unit), ' '))[2], 2))
 
      ;- - - - - - - - - - - - - - - - - - -
@@ -429,7 +426,7 @@ function pnt_read, filename, bin=bin, $
      end
   1: ptd = pnt_read_1(filename, visible=visible, $
          name=name, desc=desc, flags=flags, points=points, vectors=vectors, $
-         comment=comment, version=version, input=input, data=data, tags=tags)
+         comment=comment, version=version, data=data, tags=tags)
   else: nv_message, 'Invalid protocol.'
  endcase
 

@@ -9,7 +9,7 @@
 ;
 ;
 ; CATEGORY:
-;	NV/SYS
+;	NV/OBJ/COR
 ;
 ;
 ; CALLING SEQUENCE:

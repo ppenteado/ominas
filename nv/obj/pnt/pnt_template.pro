@@ -46,8 +46,8 @@
 ;=============================================================================
 function pnt_template, ptd0
 
- pnt_get, ptd0, name=name, desc=desc, input=input, assoc_xd=assoc_xd, tags=tags
- ptd = pnt_create_descriptors(tags=tags, name=name, desc=desc, input=input, assoc_xd=assoc_xd)
+ pnt_get, ptd0, name=name, desc=desc, assoc_xd=assoc_xd, tags=tags
+ ptd = pnt_create_descriptors(tags=tags, name=name, desc=desc, assoc_xd=assoc_xd)
 
  return, ptd
 end

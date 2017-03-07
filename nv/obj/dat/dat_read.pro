@@ -55,9 +55,6 @@
 ;	instrument:	Use this instrument name instead of attempting to 
 ;			detect it.
 ;
-;	silent:		If set, dat_read suppresses superfluous printed output
-;			and passes the flag to the input function.
-;
 ;	sample:		Vector giving the sampling indices in the input data 
 ;			file.  This parameter is passed through to the input 
 ;			function, which may choose to ignore it.
@@ -112,12 +109,255 @@
 ;	
 ;-
 ;=============================================================================
-function dat_read, filespec, data, header, $
+
+
+
+;=============================================================================
+; drd_read
+;
+;=============================================================================
+function drd_read, _filename, data, header, $
 		  filetype=_filetype, $
 		  input_fn=_input_fn, $
 		  output_fn=_output_fn, $
 		  keyword_fn=_keyword_fn, $
 		  instrument=_instrument, $
+		  input_translators=_input_translators, $
+		  output_translators=_output_translators, $
+		  input_transforms=_input_transforms, $
+		  output_transforms=_output_transforms, $
+                  tab_translators=tab_translators, $
+;                  tab_transforms=tab_transforms, $
+                  maintain=maintain, compress=compress, $
+                  sample=sample, nodata=nodata, $
+		  name=_name, nhist=nhist, $
+		  extensions=extensions
+
+
+ ;---------------------------------------------
+ ; try filename extensions
+ ;---------------------------------------------
+ if(keyword_set(extensions)) then $
+  begin
+   ii = 0
+   while((ii LT n_elements(extensions)) AND (NOT keyword_set(filename))) do $
+    begin
+     dot = '.'
+     if(strmid(extensions[ii], 0, 1) EQ '.') then dot = ''
+     filename = file_search(_filename + dot + extensions[ii])
+     ii = ii + 1
+    end
+  end
+ if(NOT keyword_set(filename)) then filename = _filename
+
+ ;---------------------------------
+ ; read detached header
+ ;---------------------------------
+ dh = dh_read(dh_fname(filename))
+
+ ;---------------------------------
+ ; use base filename as id string
+ ;---------------------------------
+ if(keyword_set(_name)) then name = _name[i] $
+ else split_filename, _filename, dir, name
+  
+ ;-----------------------------------------
+ ; set up initial data descriptor
+ ;-----------------------------------------
+ dd = dat_create_descriptors(1, $
+         filename=filename, $
+         dh=dh, $
+         name=name, $
+         nhist=nhist, $
+         maintain=maintain, $
+         compress=compress, $
+         tab_translators=tab_translators)
+
+
+ ;------------------------------
+ ; get names of I/O routines
+ ;------------------------------
+ if(NOT keyword_set(_filetype)) then $
+	       filetype = dat_detect_filetype(dd, action=action) $
+ else filetype = _filetype
+
+ if(keyword_set(action)) then if(action EQ 'IGNORE') then return, 0
+
+ if(filetype EQ '') then $
+  begin
+   nv_message, 'Unable to detect filetype.', /con
+   return, 0
+  end
+
+ ;------------------------
+ ; look up I/O functions
+ ;------------------------
+ if(NOT keyword_set(_input_fn) OR NOT keyword__set(_output_fn)) then $
+		dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
+
+ if(keyword_set(_input_fn)) then input_fn = _input_fn
+ if(keyword_set(_output_fn)) then output_fn = _output_fn
+ if(keyword_set(_keyword_fn)) then keyword_fn = _keyword_fnfn
+
+ if(output_fn EQ '') then nv_message, verb=0.5, 'No output function available.'
+ if(input_fn EQ '') then nv_message, verb=0.5, 'No input function available.'
+
+
+ ;-----------------------------------------
+ ; add I/O functions to dd
+ ;-----------------------------------------
+ dat_set, dd, $
+          filetype=filetype, $
+          input_fn=input_fn, $
+          output_fn=output_fn, $
+          keyword_fn=keyword_fn
+
+
+ ;-----------------------------------------
+ ; read data parameters and header
+ ;-----------------------------------------
+ if(NOT keyword_set(nodata)) then $
+		 nv_message, verb=0.1, 'Reading ' + filename
+ _data = call_function(input_fn, dd, $
+        	  _header, _dim, _type, _min, _max, $
+        			   /nodata, sample=sample, gff=gff)
+ if(NOT defined(_type)) then $
+  begin
+   nv_message, /con, 'WARNING: Type code not determined, converting to byte.'
+   _type = 1
+  end
+
+ ;---------------------------------
+ ; check for multiple data arrays
+ ;---------------------------------
+ multi = 0
+ nn = 1
+ if(size(_dim, /type) EQ 10) then $
+  begin
+   multi = 1
+   nn = n_elements(_dim)
+  end
+
+ ;---------------------------------
+ ; loop over all data arrays 
+ ;---------------------------------
+ for j=0, nn-1 do $
+  begin
+   if(multi) then $
+    begin
+     if(keyword_set(_header)) then header = *_header[j]
+     dim = *_dim[j]
+     type = _type[j]
+     min = _min[j]
+     max = _max[j]
+    end $
+   else $
+    begin
+     if(keyword_set(_header)) then header = _header
+     dim = _dim
+     type = _type
+     min = _min
+     max = _max
+    end 
+
+
+   ;-----------------------------------------
+   ; add data parameters and header to dd
+   ;-----------------------------------------
+   dat_set, dd, $
+	 header=header, $
+         min=min, $
+         max=max, $
+         dim=dim, $
+         type=type
+
+   ;-----------------------
+   ; instrument
+   ;-----------------------
+   if(NOT keyword_set(_instrument)) then  $
+    begin
+     if(keyword_set(filetype) AND keyword_set(header)) then $
+      begin
+       instrument = dat_detect_instrument(dd)
+       if(instrument EQ '') then $
+		    nv_message, /continue,'Unable to detect instrument.'
+      end 
+    end $
+   else instrument = _instrument
+
+
+   ;---------------------------------
+   ; translators
+   ;--------------------------------- 
+   if(keyword_set(instrument)) then $
+    begin
+     dat_lookup_translators, instrument, tab_translators=tab_translators, $
+       input_translators, output_translators, $
+       input_keyvals, output_keyvals
+
+     if(keyword_set(_input_translators)) then $
+				   input_translators = _input_translators
+     if(keyword_set(_output_translators)) then $
+				   output_translators = _output_translators
+     if(keyword_set(_input_keyvals)) then input_keyvals = _input_keyvals
+     if(keyword_set(_output_keyvals)) then output_keyvals = _output_keyvals
+
+     input_keyvals = dat_parse_keyvals(input_keyvals)
+     output_keyvals = dat_parse_keyvals(output_keyvals)
+    end
+
+
+   ;---------------------------------
+   ; transforms
+   ;--------------------------------- 
+   if(keyword_set(instrument)) then $
+    begin
+     dat_lookup_transforms, instrument, tab_transforms=tab_transforms, $
+       input_transforms, output_transforms
+
+     if(keyword_set(_input_transforms)) then $
+				   input_transforms = _input_transforms
+     if(keyword_set(_output_transforms)) then $
+				   output_transforms = _output_transforms
+    end
+
+
+   ;--------------------------
+   ; complete data descriptor
+   ;--------------------------
+   dat_set, dd, $
+         gff=gff, $
+         instrument=instrument, $
+         input_transforms=input_transforms, $
+         output_transforms=output_transforms, $
+         input_translators=input_translators, $
+         output_translators=output_translators, $
+         input_keyvals=input_keyvals, $
+         output_keyvals=output_keyvals
+
+   ;------------------------
+   ; get data if requested
+   ;------------------------
+   if(arg_present(data)) then dat_load_data, dd, data=data
+  end
+
+
+ return, dd
+end
+;===========================================================================
+
+
+
+;=============================================================================
+; dat_read
+;
+;=============================================================================
+function dat_read, filespec, data, header, $
+		  filetype=filetype, $
+		  input_fn=input_fn, $
+		  output_fn=output_fn, $
+		  keyword_fn=keyword_fn, $
+		  instrument=instrument, $
 		  input_translators=input_translators, $
 		  output_translators=output_translators, $
 		  input_transforms=input_transforms, $
@@ -125,216 +365,37 @@ function dat_read, filespec, data, header, $
                   tab_translators=tab_translators, $
 ;                  tab_transforms=tab_transforms, $
                   maintain=maintain, compress=compress, $
-                  silent=silent, sample=sample, nodata=nodata, $
-		  name=_name, nhist=nhist, $
+                  sample=sample, nodata=nodata, $
+		  name=name, nhist=nhist, $
 		  extensions=extensions
 @core.include
 
-; on_error, 1
-
  if(NOT keyword_set(maintain)) then maintain = 0
  nodata = keyword_set(nodata)
- silent = keyword_set(silent)
- force = keyword_set(force)
 
- ;------------------------------
- ; expand filespec
- ;------------------------------
  filenames = file_search(filespec)
 
- ;========================================
- ; create data descriptors for each file
- ;========================================
- dds = 0
  for i=0, n_elements(filenames)-1 do $
-  begin
-   instrument = ''
-   _filename = filenames[i]
+   dd = append_array(dd, $
+          drd_read(filenames[i], data, header, $
+			filetype=filetype, $
+			input_fn=input_fn, $
+			output_fn=output_fn, $
+			keyword_fn=keyword_fn, $
+			instrument=instrument, $
+			input_translators=input_translators, $
+			output_translators=output_translators, $
+			input_transforms=input_transforms, $
+			output_transforms=output_transforms, $
+			tab_translators=tab_translators, $
+;			tab_transforms=tab_transforms, $
+			maintain=maintain, compress=compress, $
+			sample=sample, nodata=nodata, $
+			name=name, nhist=nhist, $
+			extensions=extensions))
 
-   ;---------------------------------------------
-   ; try extensions
-   ;---------------------------------------------
-   filename = ''
-   if(keyword_set(extensions)) then $
-    begin
-     ii = 0
-     while((ii LT n_elements(extensions)) AND (NOT keyword_set(filename))) do $
-      begin
-       dot = '.'
-       if(strmid(extensions[ii], 0, 1) EQ '.') then dot = ''
-       filename = file_search(_filename + dot + extensions[ii])
-       ii = ii + 1
-      end
-    end
-   if(NOT keyword_set(filename)) then filename = _filename
-
-
-   ;------------------------------
-   ; get names of io routines
-   ;------------------------------
-   if(NOT keyword_set(_filetype)) then $
-                 filetype = dat_detect_filetype(filename, silent=silent, action=action) $
-   else filetype = _filetype
-
-   read = 0
-   if(NOT keyword_set(action)) then read = 1 $
-   else if(action NE 'IGNORE') then read = 1
-
-   if(read) then $
-    begin
-     if(filetype EQ '') then nv_message, 'Unable to detect filetype.', /con $
-     else $
-      begin
-      ;------------------------
-      ; look up I/O functions
-      ;------------------------
-      if(NOT keyword_set(_input_fn) OR NOT keyword__set(_output_fn)) then $
-                   dat_lookup_io, filetype, input_fn, output_fn, keyword_fn, silent=silent
-
-       if(keyword_set(_input_fn)) then input_fn = _input_fn
-       if(keyword_set(_output_fn)) then output_fn = _output_fn
-       if(keyword_set(_keyword_fn)) then keyword_fn = _keyword_fnfn
-
-       if(output_fn EQ '') then $
-         if(NOT silent) then nv_message, /continue, 'No output function available.'
-       if(input_fn EQ '') then nv_message, 'No input function available.'
-
-       ;-----------------------------------------
-       ; read the header, and data parameters
-       ;-----------------------------------------
-       _udata = 0
-       if((NOT silent) AND (NOT keyword_set(nodata))) then $
-                       nv_message, verb=0.1, 'Reading ' + filename
-       _data = call_function(input_fn, filename, $
-                       _header, _udata, _dim, _type, _min, _max, $
-                                         /nodata, /silent, sample=sample, gff=gff)
-       if(NOT defined(_type)) then $
-        begin
-         nv_message, /con, 'WARNING: Type code not determined, converting to byte.'
-         _type = 1
-        end
-
-       ;---------------------------------
-       ; check for multiple data arrays
-       ;---------------------------------
-       multi = 0
-       nn = 1
-       if(size(_dim, /type) EQ 10) then $
-        begin
-         multi = 1
-         nn = n_elements(_dim)
-        end
-
-       ;---------------------------------
-       ; loop over all data arrays 
-       ;---------------------------------
-       for j=0, nn-1 do $
-        begin
-         if(multi) then $
-          begin
-           if(keyword_set(_header)) then header = *_header[j]
-           if(keyword_set(_udata)) then udata = *_udata[j]
-           dim = *_dim[j]
-           type = _type[j]
-           min = _min[j]
-           max = _max[j]
-          end $
-         else $
-          begin
-           if(keyword_set(_header)) then header = _header
-           if(keyword_set(_udata)) then udata = _udata
-           dim = _dim
-           type = _type
-           min = _min
-           max = _max
-          end 
-
-
-         ;-----------------------
-         ; instrument
-         ;-----------------------
-         if(NOT keyword_set(_instrument)) then  $
-          begin
-           if(keyword_set(filetype) AND keyword_set(header)) then $
-            begin
-             instrument = dat_detect_instrument(header, udata, filetype, silent=silent)
-             if(instrument EQ '') then $
-                          nv_message, /continue,'Unable to detect instrument.'
-            end 
-          end $
-         else instrument = _instrument
-
-
-         ;---------------------------------
-         ; transforms
-         ;--------------------------------- 
-         if(keyword_set(instrument)) then $
-          begin
-           dat_lookup_transforms, instrument, tab_transforms=tab_transforms, $
-             _input_transforms, _output_transforms, silent=silent
-
-           if(NOT defined(input_transforms)) then $
-                                         input_transforms = _input_transforms
-           if(NOT defined(output_transforms)) then $
-                                         output_transforms = _output_transforms
-          end
-
-
-         ;---------------------------------
-         ; use base filename as id string
-         ;---------------------------------
-         if(keyword_set(_name)) then name = _name[i] $
-         else split_filename, _filename, dir, name
-    
-         ;------------------------
-         ; create data descriptor
-         ;------------------------
-         dd = dat_create_descriptors(1, $
-		filename=filename, $
-		min=min, $
-		max=max, $
-		dim=dim, $
-		type=type, $
-		gff=gff, $
-		name=name, $
-		nhist=nhist, $
-		udata=udata, $
-		header=header, $
-		filetype=filetype, $
-		input_fn=input_fn, $
-		output_fn=output_fn, $
-		keyword_fn=keyword_fn, $
-		instrument=instrument, $
-		input_transforms=input_transforms, $
-		output_transforms=output_transforms, $
-		input_translators=input_translators, $
-		output_translators=output_translators, $
-		maintain=maintain, $
-		compress=compress, $
-                tab_translators=tab_translators, silent=silent $
-	      )
-
-
-         ;------------------------
-         ; get data if requested
-         ;------------------------
-         if(arg_present(data)) then dat_load_data, dd, data=data
-
-
-         ;------------------------
-         ; add descriptor to list
-         ;------------------------
-         dds = append_array(dds, dd)
-        end
-      end
-    end
-  end
-
-
- return, dds
+ return, dd
 end
 ;===========================================================================
-
-
 
 

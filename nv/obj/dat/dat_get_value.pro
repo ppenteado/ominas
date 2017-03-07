@@ -102,17 +102,13 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    translators = *_dd[0].input_translators_p
   end $
  else translators = str_nsplit(tr_override, ',')
-; else translators = $
-;	   nv_match(*_dd[0].input_translators_p, str_nsplit(tr_override, ','))
  n = n_elements(translators)
 
 
  ;----------------------------------------------------------------
  ; call all translators, building a list of returned values
  ;----------------------------------------------------------------
- n_total = 0
- nmax = 0
- chunk_n = 20
+ nv_message, verb=0.9, 'Data descriptor ' + cor_name(dd)
 
  for i=0, n-1 do $
   begin
@@ -132,6 +128,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    ;--------------------------------------
    if(stat EQ 0) then $
     begin
+     dat_set_gd, dd, xd=xd
      xds = append_array(xds, xd)
      if(keyword_set(tr_first)) then i=n
     end $
@@ -150,7 +147,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    if(NOT keyword_set(tr_nosort)) then $
     for i=0, ndd-1 do $
      begin
-      w = where(cor_assoc_xd(xds) EQ dd[i])
+      w = where(cor_gd(xds, /dd) EQ dd[i])
       nw = n_elements(w)
       if(w[0] NE -1) then $
        begin

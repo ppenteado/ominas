@@ -22,7 +22,7 @@ function eph_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
  ; convert to star descriptor
  ;------------------------------
  sd = str_create_descriptors(n_obj, $
-		assoc_xd=dd, $
+		gd=dd, $
 		name=cor_name(pd), $
 		orient=bod_orient(pd), $
 		avel=bod_avel(pd), $

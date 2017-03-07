@@ -248,13 +248,15 @@ function grmt_form_to_md, data, type=type
    type = strupcase(data.types[type_index])
   end
 
+ ingrid, dd=dd
  md = map_create_descriptors(1, $
 		type=type, $
 		size=size, $
 		scale=scale, $
 		origin=origin, $
 		units=units, $
-		center=center)
+		center=center, $
+		gd=dd)
 
  cor_set_udata, md, 'CLASS', class
 

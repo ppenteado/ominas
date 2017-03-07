@@ -119,6 +119,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; Call each source function
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;stop
    for i=0, nn-1 do $
          grim_overlay, grim_data, plane=plane, $
                name_list[i], dep=*dep_list[i], $
@@ -238,27 +239,25 @@ end
 ; grim_rm_descriptor
 ;
 ;=============================================================================
-pro grim_rm_descriptor, grim_data, plane=plane, _xd
+pro grim_rm_descriptor, grim_data, plane=plane, xdp, xd
 
- ;----------------------------------
- ; remove the descriptor
- ;----------------------------------
- ptr = 0
- if(size(_xd, /type) EQ 10) then ptr = 1
-
- if(ptr) then $
-  begin
-   if(NOT ptr_valid(_xd)) then return
-   xd = *_xd
-  end $
- else xd = _xd
-
+ ;--------------------------------------------------------
+ ; remove the descriptor, remove all if no xd given
+ ;--------------------------------------------------------
+ if(NOT ptr_valid(xdp)) then return
+ if(NOT keyword_set(*xdp)) then return
+ if(NOT keyword_set(xd)) then xd = *xdp
  if(NOT keyword_set(xd)) then return
 
+ w = nwhere((*xdp), xd)
+ if(w[0] EQ -1) then return
+ *xdp = rm_list_item(*xdp, w, only=obj_new(), /scalar)
 
+ ;--------------------------------------------------------
+ ; unregister event handler
+ ;--------------------------------------------------------
  nv_notify_unregister, xd, 'grim_descriptor_notify'
  grim_deactivate_xd, plane, xd
-
 
  ;----------------------------------
  ; remove its overlays
@@ -269,9 +268,15 @@ pro grim_rm_descriptor, grim_data, plane=plane, _xd
    if(keyword_set(ptd)) then nv_notify_unregister, ptd, 'grim_descriptor_notify'
   end
 
+ ;--------------------------------------------------------
+ ; free descriptors
+ ;--------------------------------------------------------
  nv_free, xd
 
- if(ptr) then *_xd = 0			;;;;;;
+ ;--------------------------------------------------------
+ ; cull dd generic descriptor
+ ;--------------------------------------------------------
+ cor_set_gd, plane.dd, cor_create_gd(cor_gd(plane.dd), /explicit), /noevent
 end
 ;=============================================================================
 
@@ -295,8 +300,9 @@ end
 ;
 ;=============================================================================
 function grim_demark_descriptor, xd
- if(NOT obj_valid(xd)) then return, 0
- return, cor_udata(xd, 'grim_status')
+ if(NOT keyword_set(xd)) then return, 0
+ if(NOT obj_valid(xd[0])) then return, 0
+ return, cor_udata(xd[0], 'grim_status')
 end
 ;=============================================================================
 
@@ -344,99 +350,49 @@ end
 ; grim_add_descriptor
 ;
 ;=============================================================================
-pro grim_add_descriptor, grim_data, xdp, _xd, one=one, replace=replace, $
-                         noregister=noregister, assoc_xd=assoc_xd
+pro grim_add_descriptor, grim_data, xdp, _xd, one=one, $
+                         noregister=noregister, assoc_dd=assoc_dd
 @grim_constants.common
-
 
  if(NOT keyword_set(_xd)) then return
  plane = grim_get_plane(grim_data)
 
  xd = _xd
 
- ;------------------------------------------------------
- ; add only asociated descriptors if assoc_xd given
- ;------------------------------------------------------
- if(keyword_set(assoc_xd)) then $
+ ;----------------------------------------------------------
+ ; if assoc_dd given, consider only associated descriptors 
+ ;----------------------------------------------------------
+ if(keyword_set(assoc_dd)) then $
   begin
-   w = where(cor_assoc_xd(xd) EQ assoc_xd)
+   _assoc_dd = cor_gd(xd, /dd)
+   w = where(_assoc_dd EQ assoc_dd)
    if(w[0] EQ -1) then return
    xd = xd[w]
   end
 
- if(keyword_set(one)) then xd = xd[0]
-
- grim_mark_descriptor, xd, MARK_FRESH
-
- ;------------------------------------------------------
- ; when the list contains no descriptors or /replace
- ;------------------------------------------------------
- if(NOT keyword_set(*xdp) OR keyword_set(replace)) then $
+ ;-----------------------------------------------------------------------
+ ; remove any descriptors to be replaced.
+ ; if only one descriptor allowed, force remove
+ ;-----------------------------------------------------------------------
+ if(keyword_set(one)) then xd = xd[0] $
+ else $
   begin
-   if(keyword_set(*xdp)) then $
-            grim_rm_descriptor, grim_data, plane=plane, xdp
+   w = where(cor_name(xd) EQ cor_name(*xdp))
+   if(w[0] NE -1) then rm_xd = xd[w]
+  end
+ grim_rm_descriptor, grim_data, plane=plane, xdp, rm_xd
 
-   *xdp = xd
-   if(NOT keyword_set(noregister)) then $
+ ;-----------------------------------------------------------------------
+ ; add descriptors and register
+ ;-----------------------------------------------------------------------
+ grim_mark_descriptor, xd, MARK_FRESH
+ *xdp = append_array(*xdp, xd)
+ if(NOT keyword_set(noregister)) then $
               nv_notify_register, xd, 'grim_descriptor_notify', $
                                                    scalar_data=grim_data.base
-   return
-  end
-stop
-
-
-
-
-
-
-
-
- ;-----------------------------------------------
- ; when only one descriptor is allowed   
- ;-----------------------------------------------
- if(keyword_set(one)) then $
-  begin
-   *xdp = xd
-   grim_descriptor_notify_handle, grim_data, xd
-   return
-  end
-stop
-
- ;-------------------------------------------------------------------
- ; multiple descriptors allowed --
- ;  replace or append depending on whether a descriptor with
- ;  this name already exists.
- ; If not homogenous, then find the highest common class.
- ;-------------------------------------------------------------------
- nxd = n_elements(xd)
- for i=0, nxd-1 do $
-  begin
-   w = where(cor_name(*xdp) EQ cor_name(xd[i]))
-   if(w[0] EQ -1) then $
-    begin
-;     *xdp = cor_homogenize([*xdp, xd[i]])	; this may not be needed after object conversion
-;;     if(cor_class(xd[i]) NE cor_class((*xdp)[0])) then $
-;;                                *xdp = cor_homogenize([xd, *xdp]) $
-;;     else *xdp = [*xdp, xd[i]]
-     *xdp = [*xdp, xd[i]]
-
-     if(NOT keyword_set(noregister)) then $
-           nv_notify_register, xd[i], 'grim_descriptor_notify', $
-                                                   scalar_data=grim_data.base
-    end $
-   else $
-    begin
-     (*xdp)[w[0]] = xd[i]
-     grim_descriptor_notify_handle, grim_data, xd[i]
-    end
-  end
-
 
 end
 ;=============================================================================
-
-
-
 
 
 
@@ -444,59 +400,67 @@ end
 ; grim_get_cameras
 ;
 ;=============================================================================
-function grim_get_cameras, grim_data, replace=replace, plane=plane
+function grim_get_cameras, grim_data, plane=plane
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- mark = grim_demark_descriptor((*plane.cd_p)[0])
- if(mark EQ MARK_FRESH) then cd = *plane.cd_p $
+ ;----------------------------------------------------------------------------
+ ; determine whether to reload or keep current descriptor set
+ ;----------------------------------------------------------------------------
+ load = 0
+ _trs = cor_udata(plane.dd, 'GRIM_CAM_TRS')
+ if(NOT grim_compare(_trs, plane.trs_cd)) then load = 1
+ mark = grim_demark_descriptor(*plane.cd_p)
+ if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+ if(NOT keyword_set(*plane.cd_p)) then load = 1
+
+ if(NOT load) then return, *plane.cd_p
+
+
+ ;------------------------------------------------
+ ; get camera and map descriptors
+ ;------------------------------------------------
+ cd0 = *plane.cd_p
+ t = ''
+ if(keyword_set(cd0)) then $
+  begin
+   if(cor_isa(cd0[0], 'BODY')) then t = bod_time(cd0)
+   orient = bod_orient(cd0)
+  end
+
+ grim_message, /clear
+ grim_print, grim_data, 'Getting camera descriptor...'
+ cd = pg_get_cameras(plane.dd, plane.trs_cd, time=t, default_orient=orient)
+ md = pg_get_maps(plane.dd)
+ grim_message
+
+ if(NOT keyword_set(cd)) then $
+  if(NOT keyword_set(md)) then return, 0
+
+ map = grim_test_map(grim_data)
+ if(keyword_set(md)) then map = 1
+
+ ;------------------------------------------------
+ ; if not a map, then cd is camera descriptor
+ ;------------------------------------------------
+ if(NOT map) then $
+  begin
+   grim_add_descriptor, grim_data, plane.cd_p, cd, /one 
+   plane.t0 = bod_time(cd)
+   grim_set_plane, grim_data, plane;, pn=plane.pn
+  end $
+
+ ;------------------------------------------------------------------
+ ; otherwise, cd is map descriptor and od is camera descriptor
+ ;------------------------------------------------------------------
  else $
   begin
-;   grim_clear_objects, grim_data, /cd, plane=plane
-
-   ;------------------------------------------------
-   ; get camera and map descriptors
-   ;------------------------------------------------
-   cd0 = *plane.cd_p
-   t = ''
-   if(keyword_set(cd0)) then $
-    begin
-     if(cor_isa(cd0[0], 'BODY')) then t = bod_time(cd0)
-     orient = bod_orient(cd0)
-    end
-
-   grim_message, /clear
-   cd = pg_get_cameras(plane.dd, plane.trs_cd, time=t, default_orient=orient)
-   md = pg_get_maps(plane.dd)
-   grim_message
-
-   if(NOT keyword_set(cd)) then $
-    if(NOT keyword_set(md)) then return, 0
-
-   map = grim_test_map(grim_data)
-   if(keyword_set(md)) then map = 1
-
-   ;------------------------------------------------
-   ; if not a map, then cd is camera descriptor
-   ;------------------------------------------------
-   if(NOT map) then $
-    begin
-     grim_add_descriptor, grim_data, plane.cd_p, cd, /one, replace=replace 
-     plane.t0 = bod_time(cd)
-     grim_set_plane, grim_data, plane;, pn=plane.pn
-    end $
-
-   ;------------------------------------------------------------------
-   ; otherwise, cd is map descriptor and od is camera descriptor
-   ;------------------------------------------------------------------
-   else $
-    begin
-     grim_add_descriptor, grim_data, plane.cd_p, md, /one
-     if(keyword_set(cd)) then $
-                 grim_add_descriptor, grim_data, plane.od_p, cd, /one
-    end
+   grim_add_descriptor, grim_data, plane.cd_p, md, /one
+   if(keyword_set(cd)) then $
+	       grim_add_descriptor, grim_data, plane.od_p, cd, /one
   end
+ cor_set_udata, plane.dd, 'GRIM_CAM_TRS', plane.trs_cd
 
  return, *plane.cd_p
 end
@@ -508,54 +472,54 @@ end
 ; grim_get_planets
 ;
 ;=============================================================================
-function grim_get_planets, grim_data, $
-                       replace=replace, plane=plane, names=names
+function grim_get_planets, grim_data, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- ;---------------------------------------------------------------------
- ; determine whether to load planet descriptors
- ;  since the sun is included as a planet, we may still need to load
- ;  planet descriptors, even if the array is already populated
- ;---------------------------------------------------------------------
+ ;----------------------------------------------------------------------------
+ ; determine whether to reload or keep current descriptor set
+ ;----------------------------------------------------------------------------
  load = 0
- _pd = *plane.pd_p
- mark = grim_demark_descriptor(_pd[0])
- if(mark NE MARK_FRESH) then $
+ _names = cor_udata(plane.dd, 'GRIM_PLT_NAMES')
+ if(NOT grim_compare(_names, names)) then load = 1
+ _trs = cor_udata(plane.dd, 'GRIM_PLT_TRS')
+ if(NOT grim_compare(_trs, plane.trs_pd)) then load = 1
+ mark = grim_demark_descriptor(*plane.pd_p)
+ if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+ if(NOT keyword_set(*plane.pd_p)) then load = 1
+
+ if(NOT load) then return, get_object_by_name(*plane.pd_p, names)
+
+
+ ;----------------------------------------------------------------------------
+ ; load descriptors
+ ;----------------------------------------------------------------------------
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; get main planets
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ grim_print, grim_data, 'Getting planet descriptors...'
+ pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, name=names, plane.trs_pd)
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; get planets that require primary descriptors
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(pd)) then $
   begin
-;   grim_clear_objects, grim_data, /pd, plane=plane
-   load = 1
-  end $
- else $
-   if((n_elements(_pd) EQ 1) AND (cor_name(_pd[0]) EQ 'SUN')) then load = 1
-
-
- ;---------------------------------------------------------------------
- ; get descriptors
- ;---------------------------------------------------------------------
-; if(keyword_set(*plane.pd_p)) then pd = get_object_by_name(*plane.pd_p, names) $
- if(NOT load) then pd = get_object_by_name(*plane.pd_p, names) $
- else $
-  begin
-   pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, name=names, plane.trs_pd)
-   if(NOT keyword_set(pd)) then return, 0
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   ; get planets that require primary descriptors
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
    pdd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, pd=pd, name=names, plane.trs_pd)
    if(keyword_set(pdd)) then pd = [pd, pdd]
 
-   names = cor_name(pd)
-   w = where(names NE 'UNKNOWN')
-   if(w[0] EQ -1) then return, 0
-   pd = pd[w]
-
-   grim_add_descriptor, grim_data, plane.pd_p, pd, replace=replace
+   _names = cor_name(pd)
+   w = where(_names NE 'UNKNOWN')
+   if(w[0] EQ -1) then pd = 0 $
+   else pd = pd[w]
   end
 
+ cor_set_udata, plane.dd, 'GRIM_PLT_NAMES', names
 
+ if(keyword_set(pd[0])) then grim_add_descriptor, grim_data, plane.pd_p, pd
+ 
  return, pd
 end
 ;=============================================================================
@@ -566,42 +530,56 @@ end
 ; grim_get_sun
 ;
 ;=============================================================================
-function grim_get_sun, grim_data, replace=replace, plane=plane
+function grim_get_sun, grim_data, plane=plane
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- mark = grim_demark_descriptor((*plane.sund_p)[0])
- if(mark EQ MARK_FRESH) then sund = get_object_by_name(*plane.sund_p, names) $
+ ;----------------------------------------------------------------------------
+ ; can use a planet instead of the sun if 'name' translator keyword is given
+ ;----------------------------------------------------------------------------
+ kv = dat_parse_keyvals(dat_parse_transient_keyvals(plane.trs_sund), keywords=keywords)
+ nv_free, kv  
+
+ star = 1
+ name = 'SUN'   
+ if(keyword_set(keywords)) then $
+  begin
+   w = where(keywords EQ 'name')
+   if(w[0] NE -1) then star = 0
+  end 
+
+
+ ;----------------------------------------------------------------------------
+ ; determine whether to reload or keep current descriptor set
+ ;----------------------------------------------------------------------------
+ load = 0
+ _name = cor_udata(plane.dd, 'GRIM_SUN_NAME')
+ if(NOT grim_compare(_name, name)) then load = 1
+ _trs = cor_udata(plane.dd, 'GRIM_SUN_TRS')
+ if(NOT grim_compare(_trs, plane.trs_sund)) then load = 1
+ mark = grim_demark_descriptor(*plane.sund_p)
+ if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+ if(NOT keyword_set(*plane.sund_p)) then load = 1
+
+ if(NOT load) then return, get_object_by_name(*plane.sund_p, names)
+
+
+ ;----------------------------------------------------------------------------
+ ; load descriptors
+ ;----------------------------------------------------------------------------
+ grim_print, grim_data, 'Getting Sun descriptor...'
+ if(star) then sund = pg_get_stars(plane.dd, od=*plane.cd_p, name=name, plane.trs_sund) $
  else $
   begin
-;   grim_clear_objects, grim_data, /sund, plane=plane
-
-   ; can use a planet instead of the sun if 'name' translator keyword is given
-   kv = dat_parse_keyvals(dat_parse_transient_keyvals(plane.trs_sund), keywords=keywords)
-   nv_free, kv  
-
-   star = 1
-   if(keyword_set(keywords)) then $
-    begin
-     w = where(keywords EQ 'name')
-     if(w[0] NE -1) then star = 0
-    end 
-
-   if(star) then sund = pg_get_stars(plane.dd, od=*plane.cd_p, name='SUN', plane.trs_sund) $
-   else $
-    begin
-     pd = (pg_get_planets(plane.dd, od=*plane.cd_p, plane.trs_sund))[1]
-     sund = str_create_descriptors(1, gbd=pd)
-    end
-   if(NOT keyword_set(sund)) then return, 0
-
-   grim_add_descriptor, grim_data, plane.sund_p, sund, /one, replace=replace
-
-   ; add sun as planet as well
-;   grim_add_descriptor, grim_data, plane.pd_p, sund, replace=replace
+   pd = (pg_get_planets(plane.dd, od=*plane.cd_p, name=name, plane.trs_sund))[1]
+   sund = str_create_descriptors(1, gbd=pd)
   end
 
+ cor_set_udata, plane.dd, 'GRIM_SUN_NAME', name
+ cor_set_udata, plane.dd, 'GRIM_SUN_TRS', plane.trs_sund
+
+ if(keyword_set(sund)) then grim_add_descriptor, grim_data, plane.sund_p, sund, /one
 
  return, sund
 end
@@ -613,112 +591,89 @@ end
 ; grim_get_stars
 ;
 ;=============================================================================
-function grim_get_stars, grim_data, replace=replace, silent=silent, $
-          plane=plane, names=names
+function grim_get_stars, grim_data, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- mark = grim_demark_descriptor((*plane.sd_p)[0])
- if((mark EQ MARK_FRESH) AND NOT keyword_set(replace)) then $
-                                  sd = get_object_by_name(*plane.sd_p, names) $
+ ;---------------------------------------------------
+ ; determine ra/dec bounds based on fov setting
+ ;---------------------------------------------------
+ cd = *plane.cd_p
+ slop = 1.1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; fov = 0: get bounds from current view
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(plane.fov EQ 0) then $
+  begin
+   p = convert_coord(/device, /to_data, 0, 0)
+   q = convert_coord(/device, /to_data, !d.x_size-1, !d.y_size-1)
+
+   x0 = min([p[0], q[0]])
+   x1 = max([p[0], q[0]])
+   y0 = min([p[1], q[1]])
+   y1 = max([p[1], q[1]])
+  end $
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; fov != 0: bounds are relative to camera fov
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - -
  else $
   begin
-;   grim_clear_objects, grim_data, /sd, plane=plane
-
-   ;---------------------------------------------------
-   ; determine ra/dec bounds based on fov setting
-   ;---------------------------------------------------
-   cd = *plane.cd_p
-   slop = 1.1
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; fov = 0: get bounds from current view
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(plane.fov EQ 0) then $
-    begin
-     p = convert_coord(/device, /to_data, 0, 0)
-     q = convert_coord(/device, /to_data, !d.x_size-1, !d.y_size-1)
-
-     x0 = min([p[0], q[0]])
-     x1 = max([p[0], q[0]])
-     y0 = min([p[1], q[1]])
-     y1 = max([p[1], q[1]])
-    end $
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; fov != 0: bounds are relative to camera fov
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-   else $
-    begin
-     size = cam_size(cd, nx=nx, ny=ny)
-     x0 = 0 & x1 = nx-1
-     y0 = 0 & y1 = ny-1
-     slop = plane.fov + 0.5
-    end
-
-   nx = x1-x0 & ny = y1-y0
-   xslop = (slop-1d) * nx
-   yslop = (slop-1d) * ny
-   x0 = x0 - xslop & x1 = x1 + xslop;
-   y0 = y0 - yslop & y1 = y1 + yslop
-
-   corners = [ [x0, y0],$
-               [x0, y1], $
-               [x1, y0], $
-               [x1, y1] ]
-
-   radec = image_to_radec(cd, corners)
-
-
-   ;---------------------------------------------------
-   ; get stars
-   ;---------------------------------------------------
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; first check other planes for a similar star descriptor set
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   plane.cradec = total(radec, 1)/4.
-   plane.dradec = transpose([maxdev(radec[*,0]), maxdev(radec[*,1]), 1d])
-   grim_set_plane, grim_data, plane, pn=plane.pn
-   f = 0.1
-
-   copy = -1
-
-   planes = grim_get_plane(grim_data, /all)
-   nplanes = n_elements(planes)
-   for i=0, nplanes-1 do if(plane.pn NE i) then $
-    begin
-     if(planes[i].cradec[2] EQ 1) then $ 
-      if(planes[i].trs_sd EQ plane.trs_sd) then $
-       if((planes[i].dradec[0]-plane.dradec[0] LT 0.1*plane.dradec[0]) $
-            AND (planes[i].dradec[1]-plane.dradec[1] LT f*plane.dradec[1])) then $
-        begin
-         angle = (radec_angle(plane.cradec, planes[i].cradec))[0]
-         if(angle LT f*plane.dradec[0]) then $
-          if(angle LT f*plane.dradec[1]) then $
-           if(keyword_set(*planes[i].sd_p)) then copy = i
-        end
-    end
-
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; get stars from translators if no similar set exists
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   trs = '/tr_nosort'
-   if(keyword_set(plane.trs_sd)) then trs = trs + ', ' + plane.trs_sd
-   if(copy NE -1) then sd = nv_clone(*planes[copy].sd_p) $
-   else sd = pg_get_stars(plane.dd, od=*plane.cd_p, $
-                                      trs, name=names, corners=corners)
-   if(NOT keyword_set(sd)) then $
-    begin
-     grim_rm_descriptor, grim_data, plane=plane, plane.sd_p
-     grim_set_plane, grim_data, plane
-     return, 0
-    end
-
-   if(keyword_set(sd[0])) then $
-              grim_add_descriptor, grim_data, plane.sd_p, sd, replace=replace
+   size = cam_size(cd, nx=nx, ny=ny)
+   x0 = 0 & x1 = nx-1
+   y0 = 0 & y1 = ny-1
+   slop = plane.fov + 0.5
   end
+
+ nx = x1-x0 & ny = y1-y0
+ xslop = (slop-1d) * nx
+ yslop = (slop-1d) * ny
+ x0 = x0 - xslop & x1 = x1 + xslop;
+ y0 = y0 - yslop & y1 = y1 + yslop
+
+ corners = [ [x0, y0],$
+	     [x0, y1], $
+	     [x1, y0], $
+	     [x1, y1] ]
+
+ radec = image_to_radec(cd, corners)
+
+ ;---------------------------------------------------
+ ; get stars
+ ;---------------------------------------------------
+ trs = '/tr_nosort'
+ if(keyword_set(plane.trs_sd)) then trs = trs + ', ' + plane.trs_sd
+
+
+ ;----------------------------------------------------------------------------
+ ; determine whether to reload or keep current descriptor set
+ ;----------------------------------------------------------------------------
+ load = 0
+ _corners = cor_udata(plane.dd, 'GRIM_STR_CORNERS')
+ if(NOT grim_compare(_corners, corners)) then load = 1
+ _names = cor_udata(plane.dd, 'GRIM_STR_NAMES')
+ if(NOT grim_compare(_names, names)) then load = 1
+ _trs = cor_udata(plane.dd, 'GRIM_STR_TRS')
+ if(NOT grim_compare(_trs, trs)) then load = 1
+ mark = grim_demark_descriptor(*plane.sd_p)
+ if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+ if(NOT keyword_set(*plane.sd_p)) then load = 1
+
+ if(NOT load) then return, get_object_by_name(*plane.sd_p, names)
+
+
+ ;----------------------------------------------------------------------------
+ ; load descriptors
+ ;----------------------------------------------------------------------------
+ grim_print, grim_data, 'Getting star descriptors...'
+ sd = pg_get_stars(plane.dd, od=*plane.cd_p, $
+				    trs, name=names, corners=corners)
+ cor_set_udata, plane.dd, 'GRIM_STR_CORNERS', corners
+ cor_set_udata, plane.dd, 'GRIM_STR_NAMES', names
+ cor_set_udata, plane.dd, 'GRIM_STR_TRS', trs
+
+ if(keyword_set(sd[0])) then grim_add_descriptor, grim_data, plane.sd_p, sd
 
  return, sd
 end
@@ -730,26 +685,36 @@ end
 ; grim_get_rings
 ;
 ;=============================================================================
-function grim_get_rings, grim_data, replace=replace, plane=plane, names=names
+function grim_get_rings, grim_data, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
+ ;----------------------------------------------------------------------------
+ ; determine whether to reload or keep current descriptor set
+ ;----------------------------------------------------------------------------
+ load = 0
+ _names = cor_udata(plane.dd, 'GRIM_RNG_NAMES')
+ if(NOT grim_compare(_names, names)) then load = 1
+ _trs = cor_udata(plane.dd, 'GRIM_RNG_TRS')
+ if(NOT grim_compare(_trs, plane.trs_rd)) then load = 1
+ mark = grim_demark_descriptor(*plane.rd_p)
+ if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+ if(NOT keyword_set(*plane.rd_p)) then load = 1
 
- mark = grim_demark_descriptor((*plane.rd_p)[0])
- if(mark EQ MARK_FRESH) then rd = get_object_by_name(*plane.rd_p, names) $
- else $
-  begin
-;   grim_clear_objects, grim_data, /rd, plane=plane
+ if(NOT load) then return, get_object_by_name(*plane.rd_p, names)
 
-   rd = pg_get_rings(plane.dd, $
-                  od=*plane.cd_p, pd=*plane.pd_p, name=names, plane.trs_rd)
 
-   if(NOT keyword_set(rd)) then return, 0
+ ;----------------------------------------------------------------------------
+ ; load descriptors
+ ;----------------------------------------------------------------------------
+ grim_print, grim_data, 'Getting ring descriptors...'
+ rd = pg_get_rings(plane.dd, $
+		od=*plane.cd_p, pd=*plane.pd_p, name=names, plane.trs_rd)
+ cor_set_udata, plane.dd, 'GRIM_RNG_NAMES', names
+ cor_set_udata, plane.dd, 'GRIM_RNG_TRS', plane.trs_rd
 
-   grim_add_descriptor, grim_data, plane.rd_p, rd, replace=replace
-  end
-
+ if(keyword_set(rd)) then grim_add_descriptor, grim_data, plane.rd_p, rd
 
  return, rd
 end
@@ -761,28 +726,38 @@ end
 ; grim_get_stations
 ;
 ;=============================================================================
-function grim_get_stations, grim_data, replace=replace, plane=plane, names=names
+function grim_get_stations, grim_data, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
  map = grim_test_map(grim_data)
 
- mark = grim_demark_descriptor((*plane.std_p)[0])
- if(mark EQ MARK_FRESH) then std = get_object_by_name(*plane.std_p, names) $
- else $
-  begin
-;   if(NOT map) then primaries = cor_name(*plane.pd_p) $
-;   else primaries = cor_name(*plane.cd_p)
-   if(NOT map) then bx = *plane.pd_p
+ ;----------------------------------------------------------------------------
+ ; determine whether to reload or keep current descriptor set
+ ;----------------------------------------------------------------------------
+ load = 0
+ _names = cor_udata(plane.dd, 'GRIM_STN_NAMES')
+ if(NOT grim_compare(_names, names)) then load = 1
+ _trs = cor_udata(plane.dd, 'GRIM_STN_TRS')
+ if(NOT grim_compare(_trs, plane.trs_std)) then load = 1
+ mark = grim_demark_descriptor(*plane.std_p)
+ if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+ if(NOT keyword_set(*plane.std_p)) then load = 1
 
-   std = pg_get_stations(plane.dd, $
-                  od=*plane.cd_p, bx=bx, name=names, plane.trs_std)
+ if(NOT load) then return, get_object_by_name(*plane.std_p, names)
 
-   if(NOT keyword_set(std)) then return, 0
 
-   grim_add_descriptor, grim_data, plane.std_p, std, replace=replace
-  end
+ ;----------------------------------------------------------------------------
+ ; load descriptors
+ ;----------------------------------------------------------------------------
+ grim_print, grim_data, 'Getting station descriptors...'
+ if(NOT map) then bx = *plane.pd_p
+ std = pg_get_stations(plane.dd, $
+		   od=*plane.cd_p, bx=bx, name=names, plane.trs_std)
+ cor_set_udata, plane.dd, 'GRIM_STN_NAMES', names
+ cor_set_udata, plane.dd, 'GRIM_STN_TRS', plane.trs_std
+
+ if(keyword_set(std)) then grim_add_descriptor, grim_data, plane.std_p, std
 
  return, std
 end
@@ -794,28 +769,38 @@ end
 ; grim_get_arrays
 ;
 ;=============================================================================
-function grim_get_arrays, grim_data, replace=replace, plane=plane, names=names
+function grim_get_arrays, grim_data, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
  map = grim_test_map(grim_data)
 
- mark = grim_demark_descriptor((*plane.ard_p)[0])
- if(mark EQ MARK_FRESH) then ard = get_object_by_name(*plane.ard_p, names) $
- else $
-  begin
-;   if(NOT map) then primaries = cor_name(*plane.pd_p) $
-;   else primaries = cor_name(*plane.cd_p)
-   if(NOT map) then bx = *plane.pd_p
+ ;----------------------------------------------------------------------------
+ ; determine whether to reload or keep current descriptor set
+ ;----------------------------------------------------------------------------
+ load = 0
+ _names = cor_udata(plane.dd, 'GRIM_ARR_NAMES')
+ if(NOT grim_compare(_names, names)) then load = 1
+ _trs = cor_udata(plane.dd, 'GRIM_ARR_TRS')
+ if(NOT grim_compare(_trs, plane.trs_ard)) then load = 1
+ mark = grim_demark_descriptor(*plane.ard_p)
+ if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+ if(NOT keyword_set(*plane.ard_p)) then load = 1
 
-   ard = pg_get_arrays(plane.dd, $
-                  od=*plane.cd_p, bx=bx, name=names, plane.trs_ard)
+ if(NOT load) then return, get_object_by_name(*plane.ard_p, names)
 
-   if(NOT keyword_set(ard)) then return, 0
 
-   grim_add_descriptor, grim_data, plane.ard_p, ard, replace=replace
-  end
+ ;----------------------------------------------------------------------------
+ ; load descriptors
+ ;----------------------------------------------------------------------------
+ grim_print, grim_data, 'Getting array descriptors...'
+ if(NOT map) then bx = *plane.pd_p
+ ard = pg_get_arrays(plane.dd, $
+		   od=*plane.cd_p, bx=bx, name=names, plane.trs_ard)
+ cor_set_udata, plane.dd, 'GRIM_ARR_NAMES', names
+ cor_set_udata, plane.dd, 'GRIM_ARR_TRS', plane.trs_ard
+
+ if(keyword_set(ard)) then grim_add_descriptor, grim_data, plane.ard_p, ard
 
  return, ard
 end
@@ -842,7 +827,7 @@ pro grim_clear_descriptors, grim_data, planes=planes
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].ard_p
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sund_p
 
-   if(keyword_set(all)) then *planes[i].active_xd_p = 0
+   *planes[i].active_xd_p = 0
   end
 
  grim_set_data, grim_data, grim_data.base
@@ -867,7 +852,7 @@ end
 ;=============================================================================
 pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
        cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
-       obj_name=obj_name, replace=replace, gd=gd
+       obj_name=obj_name, gd=gd
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
@@ -899,21 +884,21 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
     begin
      names = ''
      if(class EQ 'planet') then names = obj_name
-     pd = grim_get_planets(grim_data, plane=plane, names=names, replace=replace)
+     pd = grim_get_planets(grim_data, plane=plane, names=names)
     end
 
    if((where(dep EQ 'ring'))[0] NE -1) then $
     begin
      names = ''
      if(class EQ 'ring') then names = obj_name
-     rd = grim_get_rings(grim_data, plane=plane, names=names, replace=replace)
+     rd = grim_get_rings(grim_data, plane=plane, names=names)
     end
 
    if((where(dep EQ 'star'))[0] NE -1) then $
     begin
      names = ''
      if(class EQ 'star') then names = obj_name
-     sd = grim_get_stars(grim_data, plane=plane, names=names, replace=replace)
+     sd = grim_get_stars(grim_data, plane=plane, names=names)
     end
   end $
  else $
@@ -931,14 +916,14 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
   begin
    names = ''
    if(class EQ 'station') then names = obj_name
-   std = grim_get_stations(grim_data, plane=plane, names=names, replace=replace)
+   std = grim_get_stations(grim_data, plane=plane, names=names)
   end
 
  if((where(dep EQ 'array'))[0] NE -1) then $
   begin
    names = ''
    if(class EQ 'array') then names = obj_name
-   ard = grim_get_arrays(grim_data, plane=plane, names=names, replace=replace)
+   ard = grim_get_arrays(grim_data, plane=plane, names=names)
   end
 
 

@@ -53,7 +53,7 @@
 ;   coordinate as top-down::
 ;
 ;     file = 'data/N1350122987_2.IMG'
-;     dd = dat_read(file, im, label, /silent)
+;     dd = dat_read(file, im, label)
 ;     ctmod, top=top
 ;     tvim, im, zoom=0.75, /order, /new, top=top
 ;
@@ -62,7 +62,7 @@
 
  file = 'data/N1350122987_2.IMG'			; Cassini Image
 
- dd = dat_read(file, im, label, /silent)
+ dd = dat_read(file, im, label)
 
  ctmod, top=top
  tvim, im, zoom=0.75, /order, /new, top=top

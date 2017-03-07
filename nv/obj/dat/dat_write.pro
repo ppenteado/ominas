@@ -39,9 +39,6 @@
 ;	output_fn:	Overrides data descriptor output function.  Data 
 ;			descriptor output_fn is updated unless /override.
 ;
-;	silent:		If set, dat_write suppresses superfluous printed output
-;			and passes the flag to the input function.
-;
 ;	override:	If set, filespec, filetype, and output_fn inputs
 ;			are used for this call, but not updated in the data
 ;			descriptor.
@@ -77,7 +74,7 @@
 pro dat_write, arg1, arg2, nodata=nodata, $
 		  filetype=_filetype, $
 		  output_fn=_output_fn, $
-                  silent=silent, override=override
+                  override=override
 @core.include
 ; on_error, 1
 
@@ -91,9 +88,6 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    dd = arg2
    filespec = arg1
   end
-
- silent = keyword_set(silent)
-
 
  _dd = cor_dereference(dd)
 
@@ -130,6 +124,11 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    if(filename EQ '') then nv_message, 'Filename unavailable.'
 
    ;------------------------------
+   ; write detached header
+   ;------------------------------
+   dh_write, dh_fname(/write, filename), dat_dh(dd)
+
+   ;------------------------------
    ; get filetype
    ;------------------------------
    if(keyword_set(_filetype)) then filetype = _filetype $
@@ -157,7 +156,7 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; first transform the data if necessary
    ;- - - - - - - - - - - - - - - - - - - - - -
-   data = dat_transform_output(_dd[i], data, header, silent=silent)
+   data = dat_transform_output(_dd[i], data, header)
 
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; write data
@@ -183,10 +182,11 @@ pro dat_write, arg1, arg2, nodata=nodata, $
 
    if(write) then $
     begin
-     if((NOT silent) AND (NOT keyword_set(nodata))) then $
+     if(NOT keyword_set(nodata)) then $
                                 nv_message, verb=0.1, 'Writing ' + filename
-     call_procedure, output_fn, filename, nodata=nodata, $
-                                       data_out, header_out, udata_out
+;     call_procedure, output_fn, filename, nodata=nodata, $
+;                                       data_out, header_out, udata_out
+     call_procedure, output_fn, dd, nodata=nodata
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - -

@@ -39,9 +39,11 @@
 ;		as the observer from which points are hidden.  If no observer
 ;		descriptor is given, the camera descriptor is used.
 ;
-;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
-;		are taken from the cd and gbx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	reveal:	 Normally, objects whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
@@ -87,7 +89,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_hide_globe, cd=cd, od=od, gbx=gbx, gd=gd, _point_ptd, hide_ptd, $
+pro pg_hide_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, _point_ptd, hide_ptd, $
               reveal=reveal, compress=compress, cat=cat
 @pnt_include.pro
 
@@ -106,8 +108,9 @@ point_ptd = _point_ptd
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, od=od
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(NOT keyword_set(gbx)) then return
 
@@ -120,7 +123,7 @@ point_ptd = _point_ptd
  ; validate descriptors
  ;-----------------------------------
  nt = n_elements(od)
- pgs_count_descriptors, gbx, nd=n_globes, nt=nt1
+ cor_count_descriptors, gbx, nd=n_globes, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
@@ -156,14 +159,14 @@ point_ptd = _point_ptd
       begin
        hide_ptd[j,i] = nv_clone(point_ptd[j])
 
-       pnt_get, point_ptd[j], desc=desc, inp=inp
+       pnt_get, hide_ptd[j,i], desc=desc, gd=gd0
 
        ww = complement(flags, w)
        _flags = flags
        if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
-       pnt_set, hide_ptd[j,i], desc=desc+'-hide_globe', $
-            input=inp+'-'+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), flags=_flags
+       pnt_set, hide_ptd[j,i], desc=desc+'-hide_globe', flags=_flags, $
+                  gd=append_struct(gd0, {gbx:gbx[i,0], od:od[0], cd:cd[0]})
       end
     end
 

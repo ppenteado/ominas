@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_planets, dd, pd=pd
-;	pg_put_planets, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -35,9 +34,6 @@
 ; KEYWORDS:
 ;  INPUT:
 ;	pds:	Planet descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, planet descriptors are
-;		taken from the gd.pd field.
 ;
 ;	plt_*:		All planet override keywords are accepted.
 ;
@@ -76,24 +72,12 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_planets, dd, trs, pds=_pds, ods=ods, gd=gd, raw=raw, $
+pro pg_put_planets, dd, trs, pds=_pds, ods=ods, raw=raw, $
 @plt__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
  ndd = n_elements(dd)
-
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword_set(gd)) then $
-  begin
-   if(NOT keyword_set(_pds)) then _pds = gd.pds
-   if(NOT keyword_set(ods)) then ods = gd.ods
-  end
- if(NOT keyword_set(_pds)) then nv_message, 'No planet descriptor.'
- if(NOT keyword_set(ods)) then nv_message, 'No observer descriptor.'
-
  pds = nv_clone(_pds)
 
  ;-------------------------------------------------------------------
@@ -114,7 +98,7 @@ pro pg_put_planets, dd, trs, pds=_pds, ods=ods, gd=gd, raw=raw, $
  if(keyword_set(ods) AND (NOT keyword_set(raw))) then $
   for i=0, ndd-1 do $
    begin
-    w = where(cor_assoc_xd(pds) EQ dd[i])
+    w = where(cor_gd(pds, /dd) EQ dd[i])
     if(w[0] NE -1) then abcorr, ods[i], pds[w], c=pgc_const('c'), /invert
    end
 

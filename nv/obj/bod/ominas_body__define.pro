@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(bd0)) then struct_assign, bd0, self
 
  self.abbrev = 'BOD'
+ self.tag = 'BD'
 
  self.opaque = 1
  if(defined(opaque)) then self.opaque = decrapify(opaque[ii])

@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(dkd0)) then struct_assign, dkd0, self
 
  self.abbrev = 'DSK'
+ self.tag = 'DKD'
 
 
  self.m = -1

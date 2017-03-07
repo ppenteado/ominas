@@ -324,8 +324,9 @@ pro ingrid, grnum, gd=_gd, $
  if(keyword_set(shadow_ptd)) then _shadow_ptd = shadow_ptd
  if(keyword_set(reflection_ptd)) then _reflection_ptd = reflection_ptd
 
- gd = pgs_make_gd(dd=dd, crd=crd, bd=bd, md=md, dkd=dkd, $
-                  gbd=gbd, pd=pd, sd=sd, std=std, ard=ard, rd=rd, cd=cd, sund=sund, od=od)
+ gd = cor_create_gd(dd=dd, crd=crd, bd=bd, md=md, dkd=dkd, $
+                    gbd=gbd, pd=pd, sd=sd, std=std, ard=ard, $
+                    rd=rd, cd=cd, sund=sund, od=od)
 
  if(keyword_set(gd)) then _gd = gd
 

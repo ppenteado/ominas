@@ -86,7 +86,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
+function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, $
                              override=override, verbatim=verbatim, raw=raw, $
 @plt__keywords.include
 @nv_trs_keywords_include.pro
@@ -97,7 +97,8 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, od=od, sd=sd, dd=dd
+ if(NOT keyword_set(sd)) then sd = dat_gd(gd, dd=dd, /sd)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(keyword_set(od)) then $
    if(n_elements(od) NE n_elements(dd)) then $
@@ -112,7 +113,7 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
    n = n_elements(name)
 
    pd = plt_create_descriptors(n, $
-		assoc_xd=dd, $
+		gd=dd, $
 		name=name, $
 		orient=orient, $
 		avel=avel, $
@@ -180,14 +181,14 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
    if(keyword_set(od) AND (NOT keyword_set(raw))) then $
     for i=0, ndd-1 do $
      begin
-      w = where(cor_assoc_xd(pd) EQ dd[i])
+      w = where(cor_gd(pd,/ dd) EQ dd[i])
       if(w[0] NE -1) then abcorr, od[i], pd[w], c=pgc_const('c')
      end
 
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   w = nwhere(dd, cor_assoc_xd(pd))
+   w = nwhere(dd, cor_gd(pd, /dd))
    if(n_elements(time) NE 0) then bod_set_time, pd, time[w]
    if(n_elements(orient) NE 0) then bod_set_orient, pd, orient[*,*,w]
    if(n_elements(avel) NE 0) then bod_set_avel, pd, avel[*,*,w]
@@ -205,8 +206,13 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, $
    if(n_elements(opacity) NE 0) then sld_set_opacity, pd, opacity[w]
   end
 
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, od=od, sd=sd
+ dat_set_gd, pd, gd, od=od, sd=sd
 
-return, pd
+ return, pd
 end
 ;===========================================================================
 

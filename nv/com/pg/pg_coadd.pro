@@ -138,7 +138,8 @@ function pg_coadd, dd, bx0, cd=cd, bx=bx, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, bx=bx, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
 
  ;-----------------------------------------------

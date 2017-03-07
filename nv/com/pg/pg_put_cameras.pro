@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_cameras, dd, cd=cd
-;	pg_put_cameras, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -35,9 +34,6 @@
 ; KEYWORDS:
 ;  INPUT:
 ;	cds:	Camera descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, camera descriptors are
-;		taken from the gd.cd field.
 ;
 ;	cam_*:		All camera override keywords are accepted.
 ;
@@ -74,20 +70,11 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_cameras, dd, trs, gd=gd, cds=_cds, $
+pro pg_put_cameras, dd, trs, cds=_cds, $
 @cam__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
-
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword__set(gd)) then $
-  begin
-   if(NOT keyword__set(_cds)) then _cds = gd.cd
-  end
- if(NOT keyword__set(_cds)) then nv_message, 'No camera descriptor.'
 
  cds = nv_clone(_cds)
 

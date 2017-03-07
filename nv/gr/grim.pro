@@ -1,5 +1,5 @@
 ;=============================================================================
-;+-+
+;+
 ; NAME:
 ;	GRIM
 ;
@@ -40,8 +40,8 @@
 ;	The following keywords replace those already maintained by GRIM.  In the 
 ;	case of a single plane, all given descriptors are placed in that plane.
 ;	In that case, only one cd, od, or sun are allowed.  For multiple
-;	planes, descriptors are assigned to planes by matching their assoc_xd
-;	fields to the data descriptor for each plane.
+;	planes, descriptors are assigned to planes by matching their generic
+;	decsriptor dd fields to the data descriptor for each plane.
 ;
 ;	 cd:	Replaces the current camera descriptor.  This may also be 
 ;		a map descriptor, in which case certain of GRIM's functions 
@@ -70,9 +70,10 @@
 ;	 gd:	Generic descriptor containing some or all of the above 
 ;		descriptors.
 ;
-;	 assoc_xd: 
-;		If given, use these xds to assign descriptors to planes
-;		instead of matching the data descriptors.
+;	 assoc_dd: 
+;		If given, use these data descriptors to assign descriptors to 
+;		planes instead of matching the data descriptors from their
+;		generic descriptors.
 ;
 ;
 ;	Translator Keywords
@@ -174,9 +175,6 @@
 ;
 ;	*new:	If set, a new grim instance is created and all keywords apply
 ;		to that instance.
-;
-;	*silent:	
-;		If set, many message are suppressed.
 ;
 ;	 erase:	If set, erase the current image before doing anything else.
 ;
@@ -330,7 +328,7 @@
 ;	 thick:	Sets the line thickness for plots.  One element per plane.
 ;
 ;	 title:	For plots, sets the plot title for plots; one element per plane.
-;		For images, sets the base title.
+;		For images, sets the base default title.
 ;
 ;	 xtitle: 
 ;		Sets the X-axis label for plots.  One element per plane.
@@ -430,6 +428,14 @@
 ;	obscured by crazy control panels full of buttons, gadgets, widgets, 
 ;	doodads, whirly-gigs, and what-nots.  The grim layout consists of the 
 ;	following items:
+;
+;	 Title bar:
+;		The title bar displays the grim window number (grnum),
+;		the current plane number (pn), the total number of planes, the 
+;		name field of the data descriptor for the current plane, the
+;		default title (if given; see the title keyword above), and 
+;		a string indicating which RGB channels are associated with the
+;		current plane.
 ;
 ;	 Menu bar: 
 ;		Most of grim's functionality is accessed through the 
@@ -1271,7 +1277,7 @@ pro grim_load_files, grim_data, filenames, load_path=load_path
  first = 1
  for i=0, nfiles-1 do $
   begin
-   dd = dat_read(filenames[i], /silent, nhist=grim_data.nhist, $
+   dd = dat_read(filenames[i], nhist=grim_data.nhist, $
             maintain=grim_data.maintain, compress=grim_data.compress, extensions=grim_data.extensions)
    if(keyword_set(dd)) then $
     begin
@@ -1848,7 +1854,7 @@ pro grim_render, grim_data, plane=plane
  ;---------------------------------------------------------
 ; grim_load_descriptors, grim_data, name, plane=plane, $
 ;       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
-;       replace=replace, gd=gd
+;       gd=gd
  grim_load_descriptors, grim_data, 'limb', plane=plane
 
 
@@ -3995,7 +4001,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Crops the data to the current viewing parameters. 
+;	Crops the data to the current viewing parameters.
 ;
 ;
 ; CATEGORY:
@@ -4987,21 +4993,11 @@ pro grim_menu_data_adjust_event, event
  plane = grim_get_plane(grim_data)
 
  ;------------------------------------------------
- ; get data array
- ;------------------------------------------------
- data = dat_data(plane.dd)
-
- ;------------------------------------------------
  ; adjust the data
  ;------------------------------------------------
  grim_logging, grim_data, /start
  pg_data_adjust, plane.dd
  grim_logging, grim_data, /stop
-
- ;------------------------------------------------
- ; save modified data array
- ;------------------------------------------------
-; dat_set_data, plane.dd, data
 
  
 end
@@ -6316,7 +6312,7 @@ pro grim_menu_view_save_event, event
 
  grim_data = grim_get_data(event.top)
  widget_control, grim_data.draw, /hourglass
- grim_wset, grim_data, /noplot, /save, /silent
+ grim_wset, grim_data, /noplot, /save
 
 end
 ;=============================================================================
@@ -7287,8 +7283,7 @@ pro grim_menu_points_stars_event, event
  ;------------------------------------------------
  ; load descriptors and compute stars
  ;------------------------------------------------
- grim_overlay, grim_data, 'star', /replace
-; grim_stars, grim_data
+ grim_overlay, grim_data, 'star'
 
  ;------------------------------------------------
  ; draw stars
@@ -9691,7 +9686,7 @@ end
 ;
 ;=============================================================================
 pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od, $
-	silent=silent, new=new, xsize=xsize, ysize=ysize, $
+	new=new, xsize=xsize, ysize=ysize, $
 	default=default, previous=previous, restore=restore, activate=activate, $
 	doffset=doffset, no_erase=no_erase, filter=filter, rgb=rgb, visibility=visibility, channel=channel, exit=exit, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, retain=retain, maintain=maintain, $
@@ -9706,7 +9701,7 @@ pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=
 	arg_extensions=arg_extensions, loadct=loadct, max=max, grnum=grnum, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
 	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, $
-        trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, assoc_xd=assoc_xd, $
+        trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, assoc_dd=assoc_dd, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
@@ -9728,7 +9723,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  grim_constants
 
  grim_rc_settings, rcfile='.ominas/grimrc', $
-	silent=silent, new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
+	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
@@ -9944,7 +9939,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  if(defined(grnum)) then $
   begin
    grim_data = grim_get_data(grnum=grnum)
-   grim_wset, grim_data, /silent
+   grim_wset, grim_data
   end
 
 
@@ -9954,12 +9949,19 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ; update descriptors if any given
  ;  If one plane, then descriptors all go to that plane; in that case
  ;   only one cd, od, sund are allowed
- ;  If mutiple planes, descriptors are sorted using assoc_xd
- ;  If assoc_xd given as argument, use those instead.  
+ ;  If mutiple planes, descriptors are sorted using gd dd's
+ ;  If assoc_dd given as argument, use those instead.  
  ;   In that case, if a map descriptor given, associate cd with dd
- ;   instead of assoc_xd since dd will be the corresponding map.
+ ;   instead of assoc_dd since dd will be the corresponding map.
  ;======================================================================
- pgs_gd, gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(pd)) then pd = dat_gd(gd, dd=dd, /pd)
+ if(NOT keyword_set(rd)) then rd = dat_gd(gd, dd=dd, /rd)
+ if(NOT keyword_set(sd)) then sd = dat_gd(gd, dd=dd, /sd)
+ if(NOT keyword_set(std)) then std = dat_gd(gd, dd=dd, /std)
+ if(NOT keyword_set(ard)) then ard = dat_gd(gd, dd=dd, /ard)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  grim_data = grim_get_data()
  planes = grim_get_plane(grim_data, /all)
@@ -9968,30 +9970,30 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  for i=0, nplanes-1 do $
   begin
-   _assoc_xd = 0
-   if(nplanes NE 1) then _assoc_xd = planes[i].dd
-   if(keyword_set(assoc_xd)) then _assoc_xd = assoc_xd[i]
+   _assoc_dd = 0
+   if(nplanes NE 1) then _assoc_dd = planes[i].dd
+   if(keyword_set(assoc_dd)) then _assoc_dd = assoc_dd[i]
 
    if(keyword_set(pd)) then $
-	 grim_add_descriptor, grim_data, planes[i].pd_p, pd, assoc_xd=_assoc_xd
+	 grim_add_descriptor, grim_data, planes[i].pd_p, pd, assoc_dd=_assoc_dd
    if(keyword_set(rd)) then $
-	 grim_add_descriptor, grim_data, planes[i].rd_p, rd, assoc_xd=_assoc_xd
+	 grim_add_descriptor, grim_data, planes[i].rd_p, rd, assoc_dd=_assoc_dd
    if(keyword_set(std)) then $
-	 grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_xd=_assoc_xd
+	 grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_dd=_assoc_dd
    if(keyword_set(ard)) then $
-	 grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_xd=_assoc_xd
+	 grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_dd=_assoc_dd
    if(keyword_set(sd)) then $
-	 grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd
+	 grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_dd=_assoc_dd
    if(keyword_set(sund)) then $
-	 grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one, assoc_xd=_assoc_xd
+	 grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one, assoc_dd=_assoc_dd
    if(keyword_set(od)) then $
-     grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister, assoc_xd=_assoc_xd
+     grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister, assoc_dd=_assoc_dd
 
    if(keyword_set(cd)) then $
     begin
-     if(keyword_set(_assoc_xd)) then $
-       if(cor_class(cd[i]) EQ 'MAP') then _assoc_xd = planes[i].dd
-     grim_add_descriptor, grim_data, planes[i].cd_p, cd, /one, assoc_xd=_assoc_xd
+     if(keyword_set(_assoc_dd)) then $
+       if(cor_class(cd[i]) EQ 'MAP') then _assoc_dd = planes[i].dd
+     grim_add_descriptor, grim_data, planes[i].cd_p, cd, /one, assoc_dd=_assoc_dd
     end
   end
 
@@ -10010,11 +10012,17 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
       for i=0, nplanes-1 do $
          dat_set_sampling_fn, planes[i].dd, 'grim_sampling_fn', /noevent
 
+   entire = 1 & default = 0
+   if(type EQ 'plot') then $
+    begin
+     entire = 0 & default = 1
+    end
+
    ;----------------------------------------------
    ; initial settings
    ;----------------------------------------------
    widget_control, grim_data.draw, /hourglass
-   grim_refresh, grim_data, /default, $
+   grim_refresh, grim_data, default=default, entire=entire, $
 	xsize=xsize, ysize=ysize, $
 	xrange=planes[0].xrange, yrange=planes[0].yrange, $
 	zoom=zoom, $

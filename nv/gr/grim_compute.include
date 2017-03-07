@@ -10,12 +10,15 @@ function grim_compute_planet_center, map=map, fov=fov, hide=hide, $
  grim_message, /clear
 
  pds = cor_select(active_xds, 'PLANET', /class)
- if(NOT keyword_set(pds)) then pds = gd.pd
+ if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
+
+ cd = cor_dereference_gd(gd, /cd)
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
- center_ptd = pg_center(cd=gd.cd, bx=pds)
+ grim_print, 'Computing planet centers...'
+ center_ptd = pg_center(cd=cd, bx=pds)
  grim_message
 
  return, center_ptd
@@ -55,29 +58,35 @@ function grim_compute_limb, map=map, fov=fov, hide=hide, $
                              data=data, $
                              npoints=npoints
 
- if(keyword_set(gd.od)) then od = gd.od
+ od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
  pds = cor_select(active_xds, 'GLOBE', /class)
- if(NOT keyword_set(pds)) then pds = gd.pd
-
+ if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
  npd = n_elements(pds)
+
+ cd = cor_dereference_gd(gd, /cd)
+ rd = cor_dereference_gd(gd, /rd)
+ pd = cor_dereference_gd(gd, /pd)
+ sund = cor_dereference_gd(gd, name='SUN')
+
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
- limb_ptd = pg_limb(cd=gd.cd, gbx=pds, od=od, fov=fov, npoints=npoints)
+ grim_print, 'Computing limbs...'
+ limb_ptd = pg_limb(cd=cd, gbx=pds, od=od, fov=fov, npoints=npoints)
  grim_message
 
  ;--------------------------------
  ; hide points
  ;--------------------------------
- if(keyword_set(gd.rd)) then $
-   pg_hide, limb_ptd, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ptd_disk, /cat
+ if(keyword_set(rd)) then $
+   pg_hide, limb_ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd, hide_ptd_disk, /cat
  grim_message
 
- if(keyword_set(gd.sund)) then $
-     pg_hide, limb_ptd, cd=gd.cd, gbx=pds, od=gd.sund, /limb, hide_ptd_term, /cat
+ if(keyword_set(sund)) then $
+     pg_hide, limb_ptd, cd=cd, gbx=pds, od=sund, /limb, hide_ptd_term, /cat
  grim_message
 
  ;-------------------------------------
@@ -136,28 +145,34 @@ function grim_compute_terminator, map=map, fov=fov, hide=hide, $
                              data=data, $
                              npoints=npoints
 
- if(NOT keyword_set(gd.sund)) then return, 0
+ sund = cor_dereference_gd(gd, name='SUN')
+ if(NOT keyword_set(sund)) then return, 0
 
  grim_message, /clear
 
  pds = cor_select(active_xds, 'PLANET', /class)
- if(NOT keyword_set(pds)) then pds = gd.pd
-
+ if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
  npd = n_elements(pds)
+
+ cd = cor_dereference_gd(gd, /cd)
+ sund = cor_dereference_gd(gd, name='SUN')
+ rd = cor_dereference_gd(gd, /rd)
+
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
- term_ptd = pg_limb(cd=gd.cd, od=gd.sund, gbx=pds, fov=fov, npoints=npoints)
+ grim_print, 'Computing terminators...'
+ term_ptd = pg_limb(cd=cd, od=sund, gbx=pds, fov=fov, npoints=npoints)
  grim_message
 
  ;--------------------------------
  ; hide points
  ;--------------------------------
- if(NOT map) then pg_hide, term_ptd, cd=gd.cd, gbx=pds, /limb, hide_ptd_limb, /cat
+ if(NOT map) then pg_hide, term_ptd, cd=cd, gbx=pds, /limb, hide_ptd_limb, /cat
 
- if(keyword_set(gd.rd)) then $
-   pg_hide, term_ptd, cd=gd.cd, gbx=pds, dkx=gd.rd, /disk, hide_ptd_disk, /cat
+ if(keyword_set(rd)) then $
+   pg_hide, term_ptd, cd=cd, gbx=pds, dkx=rd, /disk, hide_ptd_disk, /cat
  grim_message
 
  ;-------------------------------------
@@ -215,18 +230,24 @@ function grim_compute_planet_grid, map=map, fov=fov, hide=hide, $
                              data=data, $
                              npoints=npoints
 
- if(keyword_set(gd.od)) then od = gd.od
+ od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
  pds = cor_select(active_xds, 'GLOBE', /class)
- if(NOT keyword_set(pds)) then pds = gd.pd
-
+ if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
  npd = n_elements(pds)
+
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ rd = cor_dereference_gd(gd, /rd)
+ sund = cor_dereference_gd(gd, name='SUN')
+
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
- grid_ptd = pg_grid(cd=gd.cd, bx=pds, fov=fov, npoints=npoints)
+ grim_print, 'Computing planet grids...'
+ grid_ptd = pg_grid(cd=cd, bx=pds, fov=fov, npoints=npoints)
  grim_message
 
  ;--------------------------------
@@ -234,16 +255,13 @@ function grim_compute_planet_grid, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, grid_ptd, cd=gd.cd, od=od, gbx=pds, /limb, hide_ptd_limb, /cat
+   pg_hide, grid_ptd, cd=cd, od=od, gbx=pds, /limb, hide_ptd_limb, /cat
 
-   if(keyword_set(gd.rd)) then $
-     pg_hide, grid_ptd, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ptd_disk, /cat
+   pg_hide, grid_ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd, hide_ptd_disk, /cat
    grim_message
 
-   if(keyword_set(gd.sund)) then $
-       pg_hide, grid_ptd, cd=gd.cd, gbx=pds, od=gd.sund, /limb, hide_ptd_term, /cat
+   pg_hide, grid_ptd, cd=cd, gbx=pds, od=sund, /limb, hide_ptd_term, /cat
    grim_message
-
   end
  grim_message
 
@@ -303,7 +321,7 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                              data=data, npoints=npoints
 
- if(keyword_set(gd.od)) then od = gd.od
+ od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
  ;--------------------------------------------------------
@@ -312,12 +330,12 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
  if(NOT map) then $
   begin
    pds = cor_select(active_xds, 'PLANET', /class)
-   if(NOT keyword_set(pds)) then bx = gd.pd $
+   if(NOT keyword_set(pds)) then bx = cor_dereference_gd(gd, /pd) $
    else bx = pds
   end
 
 
- stds = gd.std
+ stds = cor_dereference_gd(gd, /std)
  if(NOT keyword_set(stds)) then return, 0
 
  if(keyword_set(bx)) then $
@@ -326,13 +344,18 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
      if((where(cor_name(stn_primary(stds[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
    stds = stds[select]
   end
-
  nstd = n_elements(stds)
+
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ rd = cor_dereference_gd(gd, /rd)
+
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
- station_ptd = pg_station(cd=gd.cd, std=stds, bx=bx, fov=fov)
+ grim_print, 'Computing stations...'
+ station_ptd = pg_station(cd=cd, std=stds, bx=bx, fov=fov)
  grim_message
 
 
@@ -341,13 +364,13 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, station_ptd, cd=gd.cd, gbx=bx, /globe, hide_ptd_globe, /cat, /one
+   pg_hide, station_ptd, cd=cd, gbx=bx, /globe, hide_ptd_globe, /cat, /one
    grim_message
   end
  grim_message
 
-; if(keyword_set(gd.rd)) then $
-;   pg_hide, station_ptd, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ptd_disk, /cat, /one
+; if(cor_test_gd(gd, 'rd')) then $
+;   pg_hide, station_ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd, hide_ptd_disk, /cat, /one
 ; grim_message
 
 
@@ -406,7 +429,7 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
                              data=data, $
                              npoints=npoints
 
- if(keyword_set(gd.od)) then od = gd.od
+ od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
  ;--------------------------------------------------------
@@ -415,11 +438,11 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
  if(NOT map) then $
   begin
    pds = cor_select(active_xds, 'PLANET', /class)
-   if(NOT keyword_set(pds)) then bx = gd.pd $
+   if(NOT keyword_set(pds)) then bx = cor_dereference_gd(gd, /pd) $
    else bx = pds
   end
 
- ards = gd.ard
+ ards = cor_dereference_gd(gd, /ard)
  if(NOT keyword_set(ards)) then return, 0
 
  if(keyword_set(bx)) then $
@@ -428,13 +451,18 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
      if((where(cor_name(arr_primary(ards[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
    ards = ards[select]
   end
-
  nard = n_elements(ards)
+
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ rd = cor_dereference_gd(gd, /rd)
+
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
- array_ptd = pg_array(cd=gd.cd, ard=ards, bx=bx, fov=fov)
+ grim_print, 'Computing planet arrays...'
+ array_ptd = pg_array(cd=cd, ard=ards, bx=bx, fov=fov)
  grim_message
 
 
@@ -443,13 +471,13 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, array_ptd, cd=gd.cd, gbx=bx, /globe, hide_ptd_globe, /cat, /one
+   pg_hide, array_ptd, cd=cd, gbx=bx, /globe, hide_ptd_globe, /cat, /one
    grim_message
   end
  grim_message
 
-; if(keyword_set(gd.rd)) then $
-;   pg_hide, array_ptd, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd, hide_ptd_disk, /cat, /one
+; if(cor_test_gd(gd, 'rd')) then $
+;   pg_hide, array_ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd, hide_ptd_disk, /cat, /one
 ; grim_message
 
 
@@ -509,24 +537,30 @@ function grim_compute_star, map=map, fov=fov, hide=hide, $
 
  grim_message, /clear
 
- sds = gd.sd
+ sds = cor_dereference_gd(gd, /sd)
  nsd = n_elements(sds)
+
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ rd = cor_dereference_gd(gd, /rd)
+
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  if(NOT keyword_set(sds)) then return, 0
- star_ptd = pg_center(cd=gd.cd, bx=sds, fov=fov)
+ grim_print, 'Computing stars...'
+ star_ptd = pg_center(cd=cd, bx=sds, fov=fov)
  grim_message
 
  ;--------------------------------
  ; hide points
  ;--------------------------------
-;;;; if(keyword__set(gd.rd)) then $
-;;;;                  pg_hide, star_ptd, cd=gd.cd, dkx=gd.rd, gbx=gd.pd, /disk
+;;;; if(keyword__set(rd)) then $
+;;;;                  pg_hide, star_ptd, cd=cd, dkx=rd, gbx=pd, /disk
 ;;;; grim_message
 
- if(keyword_set(gd.pd)) then pg_hide, star_ptd, cd=gd.cd, gbx=gd.pd, /globe, hide_ptd_globe, /cat
+ if(cor_test_gd(gd, 'pd')) then pg_hide, star_ptd, cd=cd, gbx=pd, /globe, hide_ptd_globe, /cat
  grim_message
 
 
@@ -606,21 +640,27 @@ function grim_compute_shadow, map=map, fov=fov, hide=hide, $
  if(map) then return, 0
  if(NOT keyword__set(active_ptd)) then return, 0
 
-
  grim_message, /clear
+
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ rd = cor_dereference_gd(gd, /rd)
+ sund = cor_dereference_gd(gd, name='SUN')
+
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
+ grim_print, 'Computing shadows...'
  shadow_ptd = pg_shadow(active_ptd, epsilon=1d, /nocull, $
-                         cd=gd.cd, od=gd.sund, dkx=gd.rd, gbx=gd.pd, fov=fov)
+                                 cd=cd, od=sund, dkx=rd, gbx=pd, fov=fov)
  nshad = n_elements(shadow_ptd)
  grim_message
 
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg_hide, shadow_ptd, cd=gd.cd, gbx=gd.pd, dkx=gd.rd, /disk, /globe, hide_ptd, /cat
+ pg_hide, shadow_ptd, cd=cd, gbx=pd, dkx=rd, /disk, /globe, hide_ptd, /cat
  grim_message
 
  ;-------------------------------------------------------------------
@@ -671,21 +711,26 @@ function grim_compute_reflection, map=map, fov=fov, hide=hide, $
  if(map) then return, 0
  if(NOT keyword__set(active_ptd)) then return, 0
 
-
  grim_message, /clear
+
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ rd = cor_dereference_gd(gd, /rd)
+ sund = cor_dereference_gd(gd, name='SUN')
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
+ grim_print, 'Computing reflections...'
  reflection_ptd = pg_reflection(active_ptd, /nocull, $
-                         cd=gd.cd, od=gd.sund, dkx=gd.rd, gbx=gd.pd, fov=fov)
+                         cd=cd, od=sund, dkx=rd, gbx=pd, fov=fov)
  nref = n_elements(reflection_ptd)
  grim_message
 
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg_hide, reflection_ptd, cd=gd.cd, gbx=gd.pd, dkx=gd.rd, /disk, /globe, hide_ptd, /cat
+ pg_hide, reflection_ptd, cd=cd, gbx=pd, dkx=rd, /disk, /globe, hide_ptd, /cat
  grim_message
 
  ;-------------------------------------------------------------------
@@ -735,28 +780,35 @@ function grim_compute_ring, map=map, fov=fov, hide=hide, $
 
  grim_message, /clear
 
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ sund = cor_dereference_gd(gd, name='SUN')
+
+
  ;--------------------------------------------------------
  ; if no active planet, then try to determine primary
  ;--------------------------------------------------------
 ; pds = cor_select(active_xds, 'PLANET', /class)
-; if(NOT keyword_set(pds)) then pd = get_primary(gd.cd, gd.pd) $
-; else pd = (get_primary(gd.cd, pds))[0]
-; if(NOT keyword_set(pds)) then pd = gd.pd $
+; if(NOT keyword_set(pds)) then pd = get_primary(cd, pd) $
+; else pd = (get_primary(cd, pds))[0]
+; if(NOT keyword_set(pds)) then pd = cor_dereference_gd(gd, /pd) $
 ; else pd = pds
 
- rds = gd.rd
+ rds = cor_dereference_gd(gd, /rd)
  nrd = n_elements(rds)
+
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
- ring_ptd = pg_disk(cd=gd.cd, dkx=rds, fov=fov, npoints=npoints)
+ grim_print, 'Computing rings...'
+ ring_ptd = pg_disk(cd=cd, dkx=rds, fov=fov, npoints=npoints)
  grim_message
 
- pg_hide, ring_ptd, cd=gd.cd, gbx=gd.pd, /globe, hide_ptd_globe, /cat
+ pg_hide, ring_ptd, cd=cd, gbx=pd, /globe, hide_ptd_globe, /cat
  grim_message
 
- pg_hide, ring_ptd, cd=gd.cd, od=gd.sund, gbx=gd.pd, /globe, hide_ptd_shad, /cat
+ pg_hide, ring_ptd, cd=cd, od=sund, gbx=pd, /globe, hide_ptd_shad, /cat
  grim_message
 
 
@@ -822,22 +874,28 @@ function grim_compute_ring_grid, map=map, fov=fov, hide=hide, $
  ; if no active planet, then try to determine primary
  ;--------------------------------------------------------
  rds = cor_select(active_xds, 'RING', /class)
- if(NOT keyword_set(rds)) then rds = gd.rd
+ if(NOT keyword_set(rds)) then rds = cor_dereference_gd(gd, /rd)
  if(NOT keyword_set(rds)) then return, 0
 
  nrd = n_elements(rds)
 
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ sund = cor_dereference_gd(gd, name='SUN')
+
+
  ;--------------------------------
  ; compute points
  ;--------------------------------
- grid_ptd = pg_grid(cd=gd.cd, bx=rds, fov=fov, npoints=npoints)
+ grim_print, 'Computing ring grids...'
+ grid_ptd = pg_grid(cd=cd, bx=rds, fov=fov, npoints=npoints)
  grim_message
 
- pg_hide, grid_ptd, cd=gd.cd, gbx=gd.pd, /globe, hide_ptd_globe, /cat
+ pg_hide, grid_ptd, cd=cd, gbx=pd, /globe, hide_ptd_globe, /cat
  grim_message
  if(hide) then hide_ptd_globe = objarr(nrd)
 
- pg_hide, grid_ptd, cd=gd.cd, od=gd.sund, gbx=gd.pd, /globe, hide_ptd_shad, /cat
+ pg_hide, grid_ptd, cd=cd, od=sund, gbx=pd, /globe, hide_ptd_shad, /cat
  grim_message
 
 

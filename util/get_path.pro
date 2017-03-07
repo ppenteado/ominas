@@ -19,7 +19,7 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	path:	 String giving the path specification.
+;	path:	 Strings giving path specifications.
 ;
 ;  OUTPUT: NONE
 ;
@@ -54,7 +54,8 @@
 ;=============================================================================
 function get_path, path, extesion=extesion, file=file
 
- dirs = expand_path(path, /all, /array)
+ for i=0, n_elements(path)-1 do $
+        dirs = append_array(dirs, expand_path(path[i], /all, /array))
 
  match = ''
 

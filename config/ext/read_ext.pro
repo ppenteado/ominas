@@ -2,7 +2,7 @@
 ; read_ext
 ;
 ;=============================================================================
-function read_ext, filename, label, silent=silent, dim=dim, type=type
+function read_ext, filename, label, dim=dim, type=type
 
  label = ''
 

@@ -20,8 +20,8 @@
 file_nac = './data/n1354897340.1'
 file_wac = './data/w1354897340.1'
 
-dd_nac = dat_read(file_nac, im_nac, silent)
-dd_wac = dat_read(file_wac, im_wac, silent)
+dd_nac = dat_read(file_nac, im_nac)
+dd_wac = dat_read(file_wac, im_wac)
 
 ctmod, top=top
 tvim, im_nac, zoom=0.45, /order, /new

@@ -145,7 +145,7 @@ pro grim_menu_image_profile_event, event
  ;------------------------------------------------
  grim_message, /clear
  dd = pg_profile_image(plane.dd, sigma=sigma, $
-                    cd=*plane.cd_p, outline_ptd, distance=distance)
+                             cd=*plane.cd_p, outline_ptd, distance=distance)
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -1005,7 +1005,6 @@ end
 ;=============================================================================
 pro grim_reposition, grim_data, plane, cd=cd, shift
 
-print, plane.dd
  pos = cor_udata(plane.dd, 'IMAGE_POS')
  if(NOT keyword_set(pos)) then pos = [0d,0d]
  pos = pos + shift

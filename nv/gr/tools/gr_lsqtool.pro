@@ -379,10 +379,14 @@ end
 ;
 ;=============================================================================
 function grlsq_edge_model_psf_ring, zero=zero, gd=gd, desc=desc
- model = edge_model_psf_ring(zero=zero, cd=gd.cd)
- if(NOT keyword_set(gd.rd)) then return, model
 
-; f = v_inner(bod_pos(gd.cd)-bod_pos(gd.rd), (bod_orient(gd.rd))[2,*])
+ cd = cor_dereference_gd(gd, /cd)
+ rd = cor_dereference_gd(gd, /rd)
+
+ model = edge_model_psf_ring(zero=zero, cd=cd)
+ if(NOT keyword_set(rd)) then return, model
+
+; f = v_inner(bod_pos(cd)-bod_pos(rd), (bod_orient(rd))[2,*])
 
 ; case desc of
 ;  'DISK_INNER' :	if(f[0] LT 0) then $
@@ -402,7 +406,8 @@ end
 ;
 ;=============================================================================
 function grlsq_edge_model_nav_ring, zero=zero, gd=gd, desc=desc
- return, edge_model_nav_ring(zero=zero, cd=gd.cd)
+ cd = cor_dereference_gd(gd, /cd)
+ return, edge_model_nav_ring(zero=zero, cd=cd)
 end
 ;=============================================================================
 
@@ -413,7 +418,8 @@ end
 ;
 ;=============================================================================
 function grlsq_edge_model_nav_limb, zero=zero, gd=gd, desc=desc
- return, edge_model_nav_limb(zero=zero, cd=gd.cd)
+ cd = cor_dereference_gd(gd, /cd)
+ return, edge_model_nav_limb(zero=zero, cd=cd)
 end
 ;=============================================================================
 
@@ -424,7 +430,8 @@ end
 ;
 ;=============================================================================
 function grlsq_edge_model_atan, zero=zero, gd=gd, desc=desc
- return, edge_model_atan(zero=zero, 10, 5, cd=gd.cd)
+ cd = cor_dereference_gd(gd, /cd)
+ return, edge_model_atan(zero=zero, 10, 5, cd=cd)
 end
 ;=============================================================================
 
@@ -509,14 +516,17 @@ function  grlsq_get_model, lsqd, tag, lzero, cd=cd, rd=rd
 
  model_fn = grlsq_get_model_fn(lsqd, tag)
 
- gd = pgs_make_gd(cd=cd, rd=rd)
+ gd = cor_create_gd(cd=cd, rd=rd)
  model = call_function(model_fn, zero=lzero, gd=gd, desc=tag)
 
  type = grlsq_get_model_type(tag)
 
- if(keyword_set(gd.rd)) then $
+ cd = cor_dereference_gd(gd, /cd)
+ rd = cor_dereference_gd(gd, /rd)
+
+ if(keyword_set(rd)) then $
   begin
-   f = v_inner(bod_pos(gd.cd)-bod_pos(gd.rd), (bod_orient(gd.rd))[2,*])
+   f = v_inner(bod_pos(cd)-bod_pos(rd), (bod_orient(rd))[2,*])
 
    case type of
     'DISK_INNER' :	if(f[0] LT 0) then $
@@ -554,7 +564,7 @@ end
 ; grlsq_scan
 ;
 ;=============================================================================
-pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
+pro grlsq_scan, grim_data, data, nocreate=nocreate, $
                 status=status, noscan=noscan, lsqd=lsqd
 
  widget_control, /hourglass
@@ -676,7 +686,7 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
          for k=0, nptd-1 do $
           begin
            rd = 0
-           if(keyword_set(rds)) then rd = cor_assoc_xd(ptd[k])
+           if(keyword_set(rds)) then rd = pnt_assoc_xd(ptd[k])
            model = grlsq_get_model(lsqd, desc[k], lzero, cd=cd, rd=rd)
 
            model_p[k] = nv_ptr_new(model)
@@ -692,14 +702,14 @@ pro grlsq_scan, grim_data, data, silent=silent, nocreate=nocreate, $
        for k=0, nptd-1 do $
         begin
          rd = 0
-         if(keyword_set(rds)) then rd = cor_assoc_xd(ptd[k])
+         if(keyword_set(rds)) then rd = pnt_assoc_xd(ptd[k])
         inner[k] = grlsq_get_inner(cd, rd, desc[k])
          if(lsqd.invert) then inner[k] = (NOT inner[k]) < 1 > 0
         end
 
        if(NOT keyword_set(noscan)) then $
         scan_ptd = $
-          pg_cvscan(dd, cd=cd, bx=cor_assoc_xd(ptd), [ptd], edge=lsqd.edge, width=lsqd.width, $
+          pg_cvscan(dd, cd=cd, bx=pnt_assoc_xd(ptd), [ptd], edge=lsqd.edge, width=lsqd.width, $
                                   model=model_p, mzero=mzero, $
                                   algorithm=lsqd.algorithm, arg=inner)
 

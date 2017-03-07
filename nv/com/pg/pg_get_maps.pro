@@ -33,7 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	mds:		Input map descriptors; used by some translators.
+;	md:		Input map descriptors; used by some translators.
 ;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
@@ -78,7 +78,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
+function pg_get_maps, dd, trs, md=_md, gbx=gbx, dkx=dkx, bx=bx, $
                         override=override, verbatim=verbatim, $
 @map__keywords.include
 @nv_trs_keywords_include.pro
@@ -88,7 +88,9 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, gbx=gbx, dkx=dkx, bx=bx, dd=dd
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
 
 
  ;----------------------------------------------------------
@@ -131,8 +133,8 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
     end
 
 
-   mds = map_create_descriptors(n, $
-	  assoc_xd=dd, $
+   md = map_create_descriptors(n, $
+	  gd=dd, $
 	  name=name, $
 	  graphic=graphic, $
 	  rotate=rotate, $
@@ -151,14 +153,14 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;-------------------------------------------------------------------
  else $
   begin
-   mds = dat_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_mds, key8=name, trs=trs, $
+   md = dat_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_md, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-;   if(NOT keyword__set(mds)) then mds=map_create_descriptors(1)
-   if(NOT keyword__set(mds)) then return, obj_new()
+;   if(NOT keyword__set(md)) then md=map_create_descriptors(1)
+   if(NOT keyword__set(md)) then return, obj_new()
 
-   n = n_elements(mds)
+   n = n_elements(md)
 
    ;---------------------------------------------------
    ; If name given, determine subscripts such that
@@ -172,7 +174,7 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
    ;---------------------------------------------------
    if(keyword__set(name)) then $
     begin
-     tr_names = cor_name(mds)
+     tr_names = cor_name(md)
      sub = nwhere(strupcase(tr_names), strupcase(name))
      if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
@@ -180,25 +182,31 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
    else sub=lindgen(n)
 
    n = n_elements(sub)
-   mds = mds[sub]
+   md = md[sub]
 
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   if(n_elements(type) NE 0) then map_set_type, mds, type
-   if(n_elements(size) NE 0) then map_set_size, mds, size
-   if(n_elements(graphic) NE 0) then map_set_graphic, mds, graphic
-   if(n_elements(rotate) NE 0) then map_set_rotate, mds, rotate
-   if(n_elements(scale) NE 0) then map_set_scale, mds, scale
-   if(n_elements(radii) NE 0) then map_set_radii, mds, radii
-   if(n_elements(origin) NE 0) then map_set_origin, mds, origin
-   if(n_elements(center) NE 0) then map_set_center, mds, center
-   if(n_elements(range) NE 0) then map_set_range, mds, range
-   if(n_elements(fn_data) NE 0) then map_set_fn_data, mds, fn_data
+   if(n_elements(type) NE 0) then map_set_type, md, type
+   if(n_elements(size) NE 0) then map_set_size, md, size
+   if(n_elements(graphic) NE 0) then map_set_graphic, md, graphic
+   if(n_elements(rotate) NE 0) then map_set_rotate, md, rotate
+   if(n_elements(scale) NE 0) then map_set_scale, md, scale
+   if(n_elements(radii) NE 0) then map_set_radii, md, radii
+   if(n_elements(origin) NE 0) then map_set_origin, md, origin
+   if(n_elements(center) NE 0) then map_set_center, md, center
+   if(n_elements(range) NE 0) then map_set_range, md, range
+   if(n_elements(fn_data) NE 0) then map_set_fn_data, md, fn_data
   end
 
 
- return, mds
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, gbx=gbx, dkx=dkx, bx=bx
+ dat_set_gd, md, gd, gbx=gbx, dkx=dkx, bx=bx
+
+ return, md
 end
 ;===========================================================================
 

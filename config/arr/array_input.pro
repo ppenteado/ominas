@@ -61,53 +61,68 @@
 
 
 ;=============================================================================
+; ai_cache_put
+;
+;=============================================================================
+pro ai_cache_put, file, dat
+common ai_load_block, _catfile, _dat_p
+
+ _catfile = append_array(_catfile, file)
+ _dat_p = append_array(_dat_p, nv_ptr_new(dat))
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; ai_cache_get
+;
+;=============================================================================
+function ai_cache_get, file, reload=reload
+common ai_load_block, _catfile, _dat_p
+
+ if((NOT keyword_set(_catfile)) OR keyword_set(reload)) then return, ''
+
+ w = where(_catfile EQ file)
+ if(w[0] NE -1) then return, *(_dat_p[w[0]])
+ 
+ return, ''
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; ai_load
 ;
 ;=============================================================================
 function ai_load, catpath, catfile, reload=reload
-common ai_load_block, _catfile, _dat_p
-
- dat = ''
-
- ;--------------------------------------------------------------------
- ; if appropriate catalog is loaded, then just return descriptors
- ;--------------------------------------------------------------------
- load = 1
-
- if(keyword_set(_catfile) AND (NOT keyword_set(reload))) then $
-  begin
-   w = where(_catfile EQ catfile)
-   if(w[0] NE -1) then $
-    begin
-     load = 0
-     dat = *(_dat_p[w[0]])
-    end
-  end 
-
 
  ;--------------------------------------------------------------------
  ; parse catalog path
  ;--------------------------------------------------------------------
  catdirs = get_path(catpath, file=catfile)
- if(NOT keyword_set(catdirs[0])) then load = 0
+ if(NOT keyword_set(catdirs[0])) then return, ''
 
+ file = catdirs + '/' + catfile
+ 
+ ;--------------------------------------------------------------------
+ ; check the cache
+ ;--------------------------------------------------------------------
+ dat = ai_cache_get(file, reload=reload)
+ if(keyword_set(dat)) then return, dat
 
  ;--------------------------------------------------------------------
- ; otherwise read and parse the catalog
+ ; read the catalog
  ;--------------------------------------------------------------------
- if(load) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; read the catalog
-   ;- - - - - - - - - - - - - - - - - - - -
-   dat = arr_read(catdirs + '/' + catfile)
+ dat = arr_read(file)
 
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; save catalog data
-   ;- - - - - - - - - - - - - - - - - - - -
-   _catfile = append_array(_catfile, catfile)
-   _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-  end
+ ;--------------------------------------------------------------------
+ ; cache catalog data
+ ;--------------------------------------------------------------------
+ ai_cache_put, file, dat
+
 
  return, dat
 end
@@ -224,7 +239,7 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
          ;- - - - - - - - - - - - - - - - - - - - - - - -
          ; construct descriptors
          ;- - - - - - - - - - - - - - - - - - - - - - - -
-         _ards = arr_create_descriptors(1, assoc_xd=cor_assoc_xd(xd[i]))
+         _ards = arr_create_descriptors(gd=cor_gd(xd[i]))
 
          cor_set_name, _ards, name
          arr_set_primary, _ards, xd[i]

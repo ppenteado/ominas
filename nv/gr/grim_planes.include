@@ -1,61 +1,4 @@
 ;=============================================================================
-; grim_crop_plane
-;
-;=============================================================================
-pro grim_crop_plane, grim_data, plane
-
- 
- ;----------------------------------------------
- ; plot: crop to visible xrange
- ;----------------------------------------------
- if(grim_data.type EQ 'plot') then $
-  begin
-   tvgr, grim_data.wnum, get=tvd
-   xrange = tvd.xrange
-
-   dat = dat_data(plane.dd)
-   x = dat[0,*]
-   w = where((x GE xrange[0]) AND (x LE xrange[1]))
-
-   dat = dat[*,w]
-   dat_set_data, plane.dd, dat
-  end $
- ;----------------------------------------------
- ; image: crop to visible size
- ;----------------------------------------------
- else $
-  begin
-   p0 = [0,0] & p1 = [!d.x_size, !d.y_size]-1
-   pp0 = round((convert_coord(/device, /to_data, p0))[0:1])
-   pp1 = round((convert_coord(/device, /to_data, p1))[0:1])
-
-   im = dat_data(plane.dd)
-   dim = size(im, /dim)
-
-   xmin = min([pp0[0],pp1[0]])
-   xmax = max([pp0[0],pp1[0]])
-   ymin = min([pp0[1],pp1[1]])
-   ymax = max([pp0[1],pp1[1]])
-
-   xxmin = xmin>0
-   xxmax = xmax<dim[0]-1
-   yymin = ymin>0
-   yymax = ymax<dim[1]-1
-
-   im = im[xxmin:xxmax, yymin:yymax]
-
-   tvim, grim_data.wnum, offset=[0,0], zoom=!d.x_size/float(xmax-xmin)
-
-   dat_set_data, plane.dd, im
-  end
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_next_plane
 ;
 ;=============================================================================
@@ -142,6 +85,26 @@ end
 
 
 ;=============================================================================
+; grim_test_map
+;
+;=============================================================================
+function grim_test_map, grim_data, plane=plane
+
+ if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
+
+ if(dat_instrument(plane.dd) EQ 'MAP') then return, 1
+
+ if(NOT keyword_set(*plane.cd_p)) then return, 0
+
+ if(cor_class(*plane.cd_p) EQ 'MAP') then return, 1
+
+ return, 0
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_plane_set_visible
 ;
 ;=============================================================================
@@ -186,9 +149,6 @@ end
 ;
 ;=============================================================================
 pro grim_set_plane, grim_data, plane, pn=pn
-;help, dat_data(plane.dd)
-;help, /tr
-;stop
 
  if(NOT ptr_valid(grim_data.planes_p)) then return
 
@@ -233,6 +193,86 @@ pro grim_rm_plane, grim_data, pn
  ;---------------------------------------------------------------
  grim_previous_plane, grim_data
  grim_refresh, grim_data
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_crop_plane
+;
+;=============================================================================
+pro grim_crop_plane, grim_data, plane
+
+ 
+ ;----------------------------------------------
+ ; plot: crop to visible xrange
+ ;----------------------------------------------
+ if(grim_data.type EQ 'plot') then $
+  begin
+   tvgr, grim_data.wnum, get=tvd
+   xrange = tvd.xrange
+
+   dat = dat_data(plane.dd)
+   x = dat[0,*]
+   w = where((x GE xrange[0]) AND (x LE xrange[1]))
+
+   dat = dat[*,w]
+   dat_set_data, plane.dd, dat
+  end $
+ ;----------------------------------------------
+ ; image: crop to visible size
+ ;----------------------------------------------
+ else $
+  begin
+   ;- - - - - - - - - - - - - - - - - - - - - - 
+   ; sample cropped image
+   ;- - - - - - - - - - - - - - - - - - - - - - 
+   p0 = [0,0] & p1 = [!d.x_size, !d.y_size]-1
+   pp0 = round((convert_coord(/device, /to_data, p0))[0:1])
+   pp1 = round((convert_coord(/device, /to_data, p1))[0:1])
+
+   dim = dat_dim(plane.dd)
+   xmin = min([pp0[0],pp1[0]])
+   xmax = max([pp0[0],pp1[0]])
+   ymin = min([pp0[1],pp1[1]])
+   ymax = max([pp0[1],pp1[1]])
+
+   xxmin = xmin>0
+   xxmax = xmax<dim[0]-1
+   yymin = ymin>0
+   yymax = ymax<dim[1]-1
+
+   size = [xxmax-xxmin+1, yymax-yymin+1]
+   data_xy = gridgen(size, p0=[xxmin,yymin])
+
+   im = dat_data(plane.dd, sample=data_xy, /nd)
+   im = reform(im, size[0], size[1], /over)
+
+   ;- - - - - - - - - - - - - - - - - - - - - - 
+   ; update display parameters
+   ;- - - - - - - - - - - - - - - - - - - - - - 
+   tvim, grim_data.wnum, offset=[0,0], zoom=!d.x_size/float(xmax-xmin)
+
+   ;- - - - - - - - - - - - - - - - - - - - - - 
+   ; update data array
+   ;- - - - - - - - - - - - - - - - - - - - - - 
+   dat_set_data, plane.dd, im, /noevent
+
+   ;- - - - - - - - - - - - - - - - - - - - - - 
+   ; modify camera pointing
+   ; need to deal with maps as well
+   ;- - - - - - - - - - - - - - - - - - - - - - 
+   if(NOT grim_test_map(grim_data)) then $
+    begin
+     cd = *plane.cd_p
+     if(keyword_set(cd)) then cam_set_oaxis, cd, cam_oaxis(cd) - [xxmin,yymin]
+    end
+
+   nv_flush
+  end
 
 
 end
@@ -451,6 +491,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 		render_sample	:	render_sample, $
 		render_pht_min	:	render_pht_min, $
 		render_show	:	1b, $
+		prescaled	:	0, $			; overlays always visible?
 		visible		:	0, $			; overlays always visible?
 		image_visible	:	0, $
 		tvd_save_p	:	ptr_new(0), $

@@ -80,11 +80,8 @@ function pg_ring_sector_radlon, cd=cd, dkx=dkx, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- if(keyword__set(gd)) then $
-  begin
-   if(NOT keyword__set(cd)) then cd=gd.cd
-   if(NOT keyword__set(dkx)) then dkx=gd.dkx
-  end
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
 
  ;-----------------------------------
  ; validate descriptors

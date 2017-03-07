@@ -96,7 +96,10 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dkx=dkx, sund=sund, dd=dd
+ if(NOT keyword_set(dd)) then dd = pg_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = pg_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(dkx)) then dkx = pg_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(sund)) then sund = pg_gd(gd, dd=dd, /sund)
 
 
  ;-----------------------------------------------

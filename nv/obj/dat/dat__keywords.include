@@ -10,11 +10,14 @@
 	abscissa=abscissa, $
 	nhist=nhist, $
 	header=header, $
+	dh=dh, $
 	filetype=filetype, $
 	input_fn=input_fn, $
 	output_fn=output_fn, $
 	keyword_fn=keyword_fn, $
 	instrument=instrument, $
+	input_keyvals=input_keyvals, $
+	output_keyvals=output_keyvals, $
 	input_translators=input_translators, $
 	output_translators=output_translators, $
 	input_transforms=input_transforms, $

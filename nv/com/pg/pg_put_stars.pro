@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_stars, dd, sd=sd
-;	pg_put_stars, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -35,9 +34,6 @@
 ; KEYWORDS:
 ;  INPUT:
 ;	sds:	Star descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, star descriptors are
-;		taken from the gd.sd field.
 ;
 ;	str_*:		All star override keywords are accepted.
 ;
@@ -74,22 +70,11 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_stars, dd, trs, sds=_sds, ods=ods, gd=gd, $
+pro pg_put_stars, dd, trs, sds=_sds, ods=ods, $
 @str__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
-
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword__set(gd)) then $
-  begin
-   if(NOT keyword__set(_sds)) then _sds = gd.sds
-   if(NOT keyword__set(ods)) then ods = gd.ods
-  end
- if(NOT keyword__set(_sds)) then nv_message, 'No star descriptor.'
- if(NOT keyword__set(ods)) then nv_message, 'No observer descriptor.'
 
  sds = nv_clone(_sds)
 

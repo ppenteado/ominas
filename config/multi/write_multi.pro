@@ -3,7 +3,7 @@
 ;
 ;
 ;=============================================================================
-pro write_multi, filename, _data, silent=silent
+pro write_multi, filename, _data
 
  if(size(_data, /type) NE 10) then data = nv_ptr_new(_data) $
  else data = _data

@@ -2,7 +2,7 @@
 ; cas_relut
 ;
 ;==============================================================================
-function cas_relut, image, label, silent=silent, force=force
+function cas_relut, image, label, force=force
 
  if(NOT keyword_set(label)) then force = 1
 
@@ -21,7 +21,8 @@ function cas_relut, image, label, silent=silent, force=force
  ;--------------------------
  ; apply the lookup table
  ;--------------------------
- if(NOT keyword_set(silent)) then print, 'Re-LUT-ing...'
+ nv_message, verb=0.2, 'Re-LUT-ing...'
+
  return, byte(lut[image])
 end
 ;==============================================================================

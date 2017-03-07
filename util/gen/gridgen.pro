@@ -115,8 +115,6 @@ function gridgen, dim, $
  grid = dblarr([ndim,n])
  for i=0, ndim-1 do grid[i,*] = p0[i] + $
          transpose(dindgen(shift(dim,-i)) mod dim[i], shift(lindgen(ndim),i))
-; stop
-; print, grid[0,0:dim[0]-1]
 
 
  if(keyword_set(center)) then $ 

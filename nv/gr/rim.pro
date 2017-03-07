@@ -107,7 +107,7 @@ pro rim, files, keywords=keywords
  ; read files if necessary
  ;----------------------------------
  if(size(files, /type) NE 7) then dd = files $
- else dd = dat_read(files, /silent, maintain=2)
+ else dd = dat_read(files, maintain=2)
 
  ndd = n_elements(dd)
 

@@ -43,9 +43,11 @@
 ;		as the observer from which points are hidden.  If no observer
 ;		descriptor is given, the camera descriptor is used.
 ;
-;	gd:	Generic descriptor.  If given, the cd and dkx inputs 
-;		are taken from the cd and dkx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	reveal:	 Normally, objects whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
@@ -92,7 +94,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, $
+pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_ptd, hide_ptd, $
               reveal=reveal, cat=cat
 @pnt_include.pro
 
@@ -102,8 +104,10 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dkx=dkx, od=od, gbx=_gbx
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(NOT keyword_set(dkx)) then return
 
@@ -121,7 +125,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
  ; validate descriptors
  ;-----------------------------------
  nt = n_elements(od)
- pgs_count_descriptors, dkx, nd=n_disks, nt=nt1
+ cor_count_descriptors, dkx, nd=n_disks, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
  ;------------------------------------
@@ -158,14 +162,14 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
        begin
         hide_ptd[j,i] = nv_clone(object_ptd[j])
 
-        pnt_get, object_ptd[j], desc=desc, inp=inp
+        pnt_get, hide_ptd[j,i], desc=desc, gd=gd0
 
         ww = complement(flags, w)
         _flags = flags
         if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
-        pnt_set, hide_ptd[j,i], desc=desc+'-hide_disk', $
-             input=inp+'-'+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]), flags=_flags
+        pnt_set, hide_ptd[j,i], desc=desc+'-hide_disk', flags=_flags, $
+            gd=append_struct(gd0, {dkx:dkx[i,0], gbx:gbx[0], od:od[0], cd:cd[0]})
        end
       end
     end

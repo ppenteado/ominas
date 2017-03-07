@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_maps, dd, md=md
-;	pg_put_maps, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -35,9 +34,6 @@
 ; KEYWORDS:
 ;  INPUT:
 ;	mds:	Map descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, map descriptors are
-;		taken from the gd.md field.
 ;
 ;	map_*:		All map override keywords are accepted.
 ;
@@ -74,20 +70,10 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_maps, dd, trs, gd=gd, mds=_mds, $
+pro pg_put_maps, dd, trs, mds=_mds, $
 @map__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
-
-
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword_set(gd)) then $
-  begin
-   if(NOT keyword_set(_mds)) then _mds = gd.md
-  end
- if(NOT keyword_set(_mds)) then nv_message, 'No map descriptor.'
 
  mds = nv_clone(_mds)
 

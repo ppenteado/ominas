@@ -192,7 +192,7 @@ pro brim_load, brim_data, files, display=display
    if(size(files, /type) EQ 7) then $
     begin
      _im = 0
-     dd = dat_read(files[i], _im, /silent);, maintain=2)
+     dd = dat_read(files[i], _im);, maintain=2)
      if(obj_valid(dd[0])) then nv_free, dd
     end $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -491,8 +491,7 @@ pro brim_fn_grim, brim_data, i, label, status=status
 
  status = 0
 
- if(size(brim_data.files, /type) EQ 7) then $
-                            dd = dat_read(brim_data.files[i], /silent) $
+ if(size(brim_data.files, /type) EQ 7) then dd = dat_read(brim_data.files[i]) $
  else dd = brim_data.files[i]
 
  widget_control, /hourglass

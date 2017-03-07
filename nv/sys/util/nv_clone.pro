@@ -65,7 +65,7 @@ pro nv_clone_recurse, xd
    for i=0, n-1 do if(ptr_valid(xd[i])) then $
     begin
      xd[i] = nv_ptr_new(*xd[i]) 
-     nv_clone_recurse, *xd[i]
+     if(NOT nv_protected(*xd[i])) then nv_clone_recurse, *xd[i]
     end
   end $
  ;----------------------------------------------

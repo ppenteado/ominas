@@ -82,43 +82,68 @@ end
 
 
 ;=============================================================================
+; ri_cache_put
+;
+;=============================================================================
+pro ri_cache_put, file, dat
+common ri_load_block, _catfile, _dat_p
+
+ _catfile = append_array(_catfile, file)
+ _dat_p = append_array(_dat_p, nv_ptr_new(dat))
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; ri_cache_get
+;
+;=============================================================================
+function ri_cache_get, file, reload=reload
+common ri_load_block, _catfile, _dat_p
+
+ if((NOT keyword_set(_catfile)) OR keyword_set(reload)) then return, ''
+
+ w = where(_catfile EQ file)
+ if(w[0] NE -1) then return, *(_dat_p[w[0]])
+ 
+ return, ''
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; ri_load
 ;
 ;=============================================================================
-function ri_load, catfile, reload=reload
-common ri_load_block, _catfile, _dat_p
+function ri_load, catpath, catfile, reload=reload
 
  ;--------------------------------------------------------------------
- ; if appropriate catalog is loaded, then just return descriptors
+ ; parse catalog path
  ;--------------------------------------------------------------------
- load = 1
+ catdirs = get_path(catpath, file=catfile)
+ if(NOT keyword_set(catdirs[0])) then return, ''
 
- if(keyword_set(_catfile) AND (NOT keyword_set(reload))) then $
-  begin
-   w = where(_catfile EQ catfile)
-   if(w[0] NE -1) then $
-    begin
-     load = 0
-     dat = *(_dat_p[w[0]])
-    end
-  end 
+ file = catdirs + '/' + catfile
+ 
+ ;--------------------------------------------------------------------
+ ; check the cache
+ ;--------------------------------------------------------------------
+ dat = ri_cache_get(file, reload=reload)
+ if(keyword_set(dat)) then return, dat
 
  ;--------------------------------------------------------------------
- ; otherwise read and parse the catalog
+ ; read the catalog
  ;--------------------------------------------------------------------
- if(load) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; read the catalog
-   ;- - - - - - - - - - - - - - - - - - - -
-   dat = ringcat_read(catfile)
+ dat = ringcat_read(file)
 
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; save catalog data
-   ;- - - - - - - - - - - - - - - - - - - -
-   _catfile = append_array(_catfile, catfile)
-   _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-  end
+ ;--------------------------------------------------------------------
+ ; cache catalog data
+ ;--------------------------------------------------------------------
+ ri_cache_put, file, dat
+
 
  return, dat
 end
@@ -151,8 +176,9 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  if(NOT keyword_set(catpath)) then $
    nv_message, /con, $
      'NV_RING_DATA environment variable is undefined.', $
-       exp=['NV_RING_DATA specifies directory in which this translator', $
+       exp=['NV_RING_DATA specifies directories in which this translator', $
             'searches for ring catalog files.']
+ catpath = parse_comma_list(catpath, delim=':')
 
  status = 0
 
@@ -201,11 +227,11 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; read relevant ring catalog
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
-   catfile = catpath + '/ringcat_' + strlowcase(planet) + '.txt'
-   if(file_test(catfile)) then $
-    begin
-     dat = ri_load(catfile, reload=reload)
+   catfile = 'ringcat_' + strlowcase(planet) + '.txt'
+   dat = ri_load(catpath, catfile, reload=reload)
 
+   if(keyword_set(dat)) then $
+    begin
 
      ;- - - - - - - - - - - - - - - - - - - - - - - -
      ; select desired rings by classification
@@ -360,7 +386,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
 
            dkds = append_array(dkds, dkd_peak[j])
            primaries = append_array(primaries, pds[i])
-           assoc_xd = append_array(assoc_xd, cor_assoc_xd(pds[i]))
+           gd = append_array(gd, cor_gd(pds[i]))
            ppds = append_array(ppds, pds[i])
            end
 
@@ -393,7 +419,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
 
            dkds = append_array(dkds, dkd_trough[j])
            primaries = append_array(primaries, pds[i])
-           assoc_xd = append_array(assoc_xd, cor_assoc_xd(pds[i]))
+           gd = append_array(gd, cor_gd(pds[i]))
            ppds = append_array(ppds, pds[i])
           end
         end
@@ -451,7 +477,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
 
          dkds = append_array(dkds, dkd)
          primaries = append_array(primaries, make_array(ndkd, val=pds[i]))
-         assoc_xd = append_array(assoc_xd, make_array(ndkd, val=cor_assoc_xd(pds[i])))
+         gd = append_array(gd, make_array(ndkd, val=cor_gd(pds[i])))
          ppds = append_array(ppds, make_array(n_elements(dkd), val=pds[i]))
         end
       end
@@ -500,7 +526,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  ; make ring descriptors
  ;------------------------------------------------------------------
  rds = rng_create_descriptors(n_obj, $
-		assoc_xd=assoc_xd, $
+		gd=gd, $
 		primary=primaries, $
 		name=cor_name(dkdts), $
 		opaque=bod_opaque(dkdts), $

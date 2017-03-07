@@ -400,7 +400,7 @@ pro grim_update_activated, grim_data, plane=plane
    if(keyword_set(*ptdp)) then $
     begin
      active_ptd = grim_get_active_overlays(grim_data, plane=plane, name, active=active)
-     if(active[0] NE -1) then grim_activate_xd, plane, cor_assoc_xd(active_ptd) 
+     if(active[0] NE -1) then grim_activate_xd, plane, pnt_assoc_xd(active_ptd) 
     end
   end 
 
@@ -1024,8 +1024,7 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
    ;----------------------------
    if(grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')) then $
     begin
-     image = dat_data(plane.dd)		; this is very bad: forces loading of
-					; full image.
+     image = dat_data(plane.dd, /current)
      outline_pts = image_outline(image)
      plots, outline_pts, psym=3, col=ctyellow()
 
@@ -1187,7 +1186,9 @@ end
 ;
 ;=============================================================================
 function grim_match_overlays, ptd, ptd0
- return, where( (pnt_input(ptd) EQ pnt_input(ptd0)) $
+
+;stop
+ return, where(cor_match_gd(ptd, ptd0) $
                    AND (pnt_desc(ptd) EQ pnt_desc(ptd0)) $
                      AND (cor_name(ptd) EQ cor_name(ptd0)) )
 
@@ -1295,7 +1296,7 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
     end
   end $
  ;--------------------------------------------------------------------
- ; otherwise add new points
+ ; otherwise add all points
  ;-------------------------------------------------------------------- 
  else *ptdp = ptd
 
@@ -1323,7 +1324,7 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
   begin
    dep = cd
 
-   xd = cor_assoc_xd(ptd[i])
+   xd = pnt_assoc_xd(ptd[i])
    if(keyword_set(xd)) then dep = [dep, xd]
 
    xds_all = grim_get_xd(grim_data, plane=plane, dep_classes)
@@ -2067,7 +2068,7 @@ pro grim_add_mask, grim_data, p, plane=plane, replace=replace, subscript=subscri
  if((mask[0] EQ -1) OR keyword_set(replace)) then mask = sub $
  else mask = [mask, sub]
 
-; mask = mask[unique(mask, /sort)]
+; mask = mask[unique(mask)]
  *plane.mask_p = mask
  
 
@@ -2549,7 +2550,7 @@ function grim_get_object_overlays, plane, xd
     begin
      for j=0, n_elements(ptd0)-1 do $
       begin
-       assoc_xd = cor_assoc_xd(ptd0[j])
+       assoc_xd = pnt_assoc_xd(ptd0[j])
        if(obj_valid(assoc_xd)) then $
          if(assoc_xd EQ xd) then ptd = append_array(ptd, ptd0[j])
       end
@@ -3130,7 +3131,7 @@ d2min = 25
    active = (w[0] NE -1) ? 1 : 0
 
    xd = 0
-   if(clicks EQ 2) then xd = cor_assoc_xd(ptd)
+   if(clicks EQ 2) then xd = pnt_assoc_xd(ptd)
 
    fn_overlay = keyword_set(deactivate) ? $
                             'grim_deactivate_overlay' : 'grim_activate_overlay'
@@ -3565,13 +3566,18 @@ end
 ;=============================================================================
 pro grim_hide, grim_data, plane, ptd, gd=gd
 
- if(keyword__set(gd.rd)) then $
-        pg_hide, ptd, cd=gd.cd, dkx=gd.rd, od=od, /disk, gbx=gd.pd
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /pd)
+ rd = cor_dereference_gd(gd, /rd)
+ sund = cor_dereference_gd(gd, name='SUN')
+
+ if(keyword__set(rd)) then $
+        pg_hide, ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd
  grim_message
 
- if(keyword__set(gd.sund)) then $
-;     pg_hide, ptd, cd=gd.cd, gbx=pds, od=gd.sund, /limb
-     pg_hide, ptd, cd=gd.cd, gbx=gd.pd, od=gd.sund, /globe
+ if(keyword__set(sund)) then $
+;     pg_hide, ptd, cd=cd, gbx=pds, od=sund, /limb
+     pg_hide, ptd, cd=cd, gbx=pd, od=sund, /globe
  grim_message
 
 
@@ -3585,7 +3591,7 @@ end
 ;
 ;=============================================================================
 pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=source_ptd, $
-                                   obj_name=obj_name, replace=replace, temp=temp
+                                   obj_name=obj_name, temp=temp
 
 
  if(grim_data.slave_overlays) then plane = grim_get_plane(grim_data, pn=0)
@@ -3604,9 +3610,10 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; recompute the overlay points
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   gd = pgs_make_gd(dep)
-   if(keyword_set(gd.md)) then gd.od = *plane.od_p
-   if(keyword_set(gd.md)) then gd.cd = gd.md
+   gd = cor_create_gd(dep, /explicit)
+   if(cor_test_gd(gd, 'MD')) then $
+                       gd = cor_create_gd(gd=gd, cd=gd.md, od=*plane.od_p)
+
 
    _ptd = call_function(fn, gd=gd, $
            map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
@@ -3635,8 +3642,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  ; make sure relevant descriptors are loaded
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
  grim_load_descriptors, grim_data, name, plane=plane, $
-       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
-       replace=replace, gd=gd
+       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, gd=gd
  if(NOT keyword_set(cd)) then return
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -3645,7 +3651,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  active_xds = *plane.active_xd_p
  if(keyword_set(obj_name)) then $
   begin
-   xds = pgs_cat_gd(gd)
+   xds = cor_cat_gd(gd)
    w = nwhere(cor_name(xds), obj_name)
    if(w[0] EQ -1) then return
    active_xds = xds[w]

@@ -85,7 +85,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
+function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, $
                       override=override, verbatim=verbatim, $
 @rng__keywords.include
 @nv_trs_keywords_include.pro
@@ -95,7 +95,8 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, pd=pd, od=od, dd=dd
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
+ if(NOT keyword_set(pd)) then pd = dat_gd(gd, dd=dd, /pd)
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators
@@ -111,7 +112,7 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    if(NOT keyword__set(time)) then time = bod_time(pd)
 
    rd=rng_create_descriptors(n, $
-	assoc_xd=dd, $
+	gd=dd, $
 	name=name, $
 	primary=primary, $
 	orient=orient, $
@@ -178,7 +179,7 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   w = nwhere(dd, cor_assoc_xd(rd))
+   w = nwhere(dd, cor_gd(rd, /dd))
    if(n_elements(time) NE 0) then bod_set_time, rd, time[w]
    if(n_elements(primary) NE 0) then rng_set_primary, rd, primary[w]
    if(n_elements(orient) NE 0) then bod_set_orient, rd, orient[*,*,w]
@@ -197,6 +198,12 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    if(n_elements(rng__dtapmdt) NE 0) then dsk_set_dtapmdt, rd, rng__dtapmdt[*,*,w]
   end
 
+
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, pd=pd, od=od
+ dat_set_gd, rd, gd, pd=pd, od=od
 
  return, rd
 end

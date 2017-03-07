@@ -5,5 +5,5 @@
  if(defined(name)) then cor_set_name, _xd, name, /noevent
  if(defined(abbrev)) then cor_set_abbrev, _xd, abbrev, /noevent
  if(defined(user)) then cor_set_user, _xd, user, /noevent
- if(defined(assoc_xd)) then cor_set_assoc_xd, _xd, assoc_xd, /noevent
+ if(defined(gd)) then cor_set_gd, _xd, gd, /noevent
  if(defined(udata)) then cor_set_udata, _xd, udata, uname, /noevent

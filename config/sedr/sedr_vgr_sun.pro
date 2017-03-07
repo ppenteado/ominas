@@ -50,7 +50,7 @@ function sedr_vgr_sun, sedr, bconst, j2000=j2000, $
  str_time = reform(time, 1, n_obj, /overwrite)
 
  sd = str_create_descriptors(n_obj, $
-		assoc_xd=make_array(nobj, val=dd), $
+		gd=make_array(nobj, val=dd), $
 		name=str_name, $
 		pos=str_pos, $
 		time=strtime)

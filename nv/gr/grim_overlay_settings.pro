@@ -328,14 +328,6 @@ pro gros_apply_settings, data
    trs_sund = strtrim(grim_parse_form_entry($
                         data.ids, data.tags, 'TRS_SUND', /string), 2)
 
-   if(trs_cd NE planes[i].trs_cd) then grim_mark_descriptors, grim_data, /cd, plane=planes[i], MARK_STALE
-   if(trs_pd NE planes[i].trs_pd) then grim_mark_descriptors, grim_data, /pd, plane=planes[i], MARK_STALE
-   if(trs_rd NE planes[i].trs_rd) then grim_mark_descriptors, grim_data, /rd, plane=planes[i], MARK_STALE
-   if(trs_sd NE planes[i].trs_sd) then grim_mark_descriptors, grim_data, /sd, plane=planes[i], MARK_STALE
-   if(trs_std NE planes[i].trs_std) then grim_mark_descriptors, grim_data, /std, plane=planes[i], MARK_STALE
-   if(trs_ard NE planes[i].trs_ard) then grim_mark_descriptors, grim_data, /ard, plane=planes[i], MARK_STALE
-   if(trs_sund NE planes[i].trs_sund) then grim_mark_descriptors, grim_data, /sund, plane=planes[i], MARK_STALE
-
    planes[i].trs_cd = trs_cd
    planes[i].trs_pd = trs_pd
    planes[i].trs_rd = trs_rd

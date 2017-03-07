@@ -36,7 +36,11 @@
 ;
 ;	sund:	Star descriptor giving the sun.
 ;
-;	gd:	Generic descriptor containing the above descriptors.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	fgbx,fdkx,fbx:	Fractonal amount to increase the radii of each
 ;			descriptor type.
@@ -107,7 +111,7 @@ end
 ; pg_mask
 ;
 ;=============================================================================
-function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, $
+function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, $
                                     fgbx=fgbx, fdkx=fdkx, fbx=fbx, $
                                     dgbx=dgbx, ddkx=ddkx, dbx=dbx, $
                                     pgbx=pgbx, pdkx=pdkx, pbx=pbx, $
@@ -133,7 +137,11 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, dkx=dkx, bx=bx, sund=sund, dd=dd
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
 
  if(NOT keyword_set(gbx)) then gbx = cor_select(bx, 'GLOBE', /rm, /class)
  if(NOT keyword_set(dkx)) then dkx = cor_select(bx, 'DISK', /rm, /class)

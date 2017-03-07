@@ -31,7 +31,9 @@
 ;	
 ;-
 ;=============================================================================
-function tag_exists, struct, tag
- return, (where(tag_names(struct) EQ tag))[0] NE -1
+function tag_exists, struct, tag, index=index
+ if(size(struct, /type) NE 8) then return, 0
+ index = where(tag_names(struct) EQ strupcase(tag))
+ return, index[0] NE -1
 end
 ;=============================================================================

@@ -220,6 +220,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		dd_map_p		: ptr_new(0), $
 		md_map_p		: ptr_new(0), $
 		dd0			: dd0, $
+		data_xy_p		: ptr_new(0), $		; data coords of viewport indices
 
 	slave_overlays		: slave_overlays, $
 
@@ -623,26 +624,6 @@ function grim_top_to_grnum, top, new=new
 
  grim_data = grim_get_data(top)
  return, grim_data.grnum
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_test_map
-;
-;=============================================================================
-function grim_test_map, grim_data, plane=plane
-
- if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
- if(dat_instrument(plane.dd) EQ 'MAP') then return, 1
-
- if(NOT keyword_set(*plane.cd_p)) then return, 0
-
- if(cor_class(*plane.cd_p) EQ 'MAP') then return, 1
-
- return, 0
 end
 ;=============================================================================
 

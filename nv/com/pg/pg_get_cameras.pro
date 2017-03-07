@@ -33,9 +33,11 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	cds:		Input camera descriptors; used by some translators.
+;	cd:		Input camera descriptors; used by some translators.
 ;
 ;	gd:		Generic descriptor containing the above descriptors.
+;			Note this keyword is inherited from the CORE keywords 
+;			list.
 ;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
@@ -81,7 +83,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
+function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, $
                           override=override, verbatim=verbatim, default_orient=default_orient, $
                           no_default=no_default, $
 @cam__keywords.include
@@ -91,7 +93,7 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, od=od, pd=pd, dd=dd
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
  if(keyword_set(od)) then $
    if(n_elements(od) NE n_elements(dd)) then $
@@ -104,8 +106,8 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
   begin
    n = n_elements(name)
 
-   cds=cam_create_descriptors(n, $
-	assoc_xd=dd, $
+   cd=cam_create_descriptors(n, $
+	gd=dd, $
 	name=name, $
 	orient=orient, $
 	avel=avel, $
@@ -142,13 +144,13 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
 ;;   if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
-   cds = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cds, key3=default_orient, $
+   cd = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cd, key3=default_orient, $
                              key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-   if(NOT keyword_set(cds)) then return, obj_new()
-   n = n_elements(cds)
+   if(NOT keyword_set(cd)) then return, obj_new()
+   n = n_elements(cd)
 
    ;---------------------------------------------------
    ; If name given, determine subscripts such that
@@ -162,7 +164,7 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
    ;---------------------------------------------------
    if(keyword__set(name)) then $
     begin
-     tr_names = cor_name(cds)
+     tr_names = cor_name(cd)
      sub = nwhere(strupcase(tr_names), strupcase(name))
      if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
@@ -170,33 +172,39 @@ function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, $
    else sub=lindgen(n)
 
    n = n_elements(sub)
-   cds = cds[sub]
+   cd = cd[sub]
 
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   w = nwhere(dd, cor_assoc_xd(cds))
-   if(n_elements(orient) NE 0) then bod_set_orient, cds, orient[*,*,w]
-   if(n_elements(avel) NE 0) then bod_set_avel, cds, avel[*,*,w]
-   if(n_elements(pos) NE 0) then bod_set_pos, cds, pos[*,*,w]
-   if(n_elements(vel) NE 0) then bod_set_vel, cds, vel[*,*,w]
-;   if(n_elements(time) NE 0) then bod_set_time, cds, time[w]
+   w = nwhere(dd, cor_gd(cd, /dd))
+   if(n_elements(orient) NE 0) then bod_set_orient, cd, orient[*,*,w]
+   if(n_elements(avel) NE 0) then bod_set_avel, cd, avel[*,*,w]
+   if(n_elements(pos) NE 0) then bod_set_pos, cd, pos[*,*,w]
+   if(n_elements(vel) NE 0) then bod_set_vel, cd, vel[*,*,w]
+;   if(n_elements(time) NE 0) then bod_set_time, cd, time[w]
    if(n_elements(fn_focal_to_image) NE 0) then $
-                 cam_set_fn_focal_to_image, cds, fn_focal_to_image[w]
+                 cam_set_fn_focal_to_image, cd, fn_focal_to_image[w]
    if(n_elements(fn_image_to_focal) NE 0) then $
-                 cam_set_fn_image_to_focal, cds, fn_image_to_focal[w]
-   if(n_elements(fi_data) NE 0) then cam_set_fi_data, cds, fi_data[w]
-   if(n_elements(filters) NE 0) then cam_set_filters, cds, filters[*,w]
-   if(n_elements(scale) NE 0) then  cam_set_scale, cds, scale[*,w]
-   if(n_elements(oaxis) NE 0) then  cam_set_oaxis, cds, oaxis[*,w]
-   if(n_elements(fn_psf) NE 0) then  cam_set_fn_psf, cds, fn_psf[w]
-   if(n_elements(size) NE 0) then  cam_set_size, cds, size[*,w]
-   if(n_elements(opaque) NE 0) then  bod_set_opaque, cds, opaque[w]
-   if(n_elements(exposure) NE 0) then cam_set_exposure, cds, exposure[w]
+                 cam_set_fn_image_to_focal, cd, fn_image_to_focal[w]
+   if(n_elements(fi_data) NE 0) then cam_set_fi_data, cd, fi_data[w]
+   if(n_elements(filters) NE 0) then cam_set_filters, cd, filters[*,w]
+   if(n_elements(scale) NE 0) then  cam_set_scale, cd, scale[*,w]
+   if(n_elements(oaxis) NE 0) then  cam_set_oaxis, cd, oaxis[*,w]
+   if(n_elements(fn_psf) NE 0) then  cam_set_fn_psf, cd, fn_psf[w]
+   if(n_elements(size) NE 0) then  cam_set_size, cd, size[*,w]
+   if(n_elements(opaque) NE 0) then  bod_set_opaque, cd, opaque[w]
+   if(n_elements(exposure) NE 0) then cam_set_exposure, cd, exposure[w]
   end
 
 
- return, cds
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, bx=bx
+ dat_set_gd, cd, gd, bx=bx
+
+ return, cd
 end
 ;===========================================================================
 

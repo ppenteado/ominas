@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(md0)) then struct_assign, md0, self
 
  self.abbrev = 'MAP'
+ self.tag = 'MD'
 
  ;----------------------------------------------------------------------
  ; default size and type are [0,0] and 'NONE' respectively

@@ -34,8 +34,11 @@ G_ring/outer	  	  no	  	  no	  	  no		  176000000	  0	  	  0	  	  0	  	  0	  	  
 1.960_Rs_ringlet/inner	  no	  	  no	  	  yes		  118256500	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  
 1.960_Rs_ringlet/outer	  no	  	  no	  	  yes		  118229300	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  
 
-Huygens_ringlet/inner	  no	  	  no	  	  yes		  117833700	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  
-Huygens_ringlet/outer	  no	  	  no	  	  yes		  117814400	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  
+Huygens_ringlet/inner	  no	  	  no	  	  yes		  117803040	  0.0002404	  334.1	  	  5.02619 	  0	  	  0	  	  0	  	  0	  2.9296144e+08	  	Spitale and Hahn 2015 fit 744
+-			  no	  	  no	  	  yes		  117803040	  0.0000137	  33	  	  381.9842 	  0	  	  0	  	  0	  	  2	  2.9296144e+08	  	
+Huygens_ringlet/outer	  no	  	  no	  	  yes		  117824670	  0.0002421	  334.2	  	  5.02619	  0	  	  0	  	  0	  	  0	  2.9296144e+08	    	Spitale and Hahn 2015 fit 744
+-			  no	  	  no	  	  yes		  117824670	  0.0000102	  52	  	  381.9842	  0	  	  0	  	  0	  	  2	  2.9296144e+08	    	
+-			  no	  	  no	  	  yes		  117824670	  0.0000189	  166	  	  380.698	  0	  	  0	  	  0	  	  2	  2.9296144e+08	    	
 
 Maxwell_ringlet/inner	  no	  	  no	  	  yes		  87486300	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  
 Maxwell_ringlet/outer	  no	  	  no	  	  yes		  87557900	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  
@@ -124,20 +127,4 @@ FN63/inner	  	  no	  	  no	  	  yes		  77854900	  0	  	  0	  	  0	  	  0	  	  0	
 FN39/outer	  	  no	  	  yes	  	  yes		  77164400	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  	  
 FN40/outer	  	  no	  	  yes	  	  yes		  76262900	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  	  
 FN44/inner	  	  no	  	  yes	  	  yes		  74490000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  	  
-
-SP1/outer	  	  no	  	  no	  	  yes		  117100000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  feature	  1	  
-SP2/outer	  	  no	  	  no	  	  yes		  116600000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  feature	  2	  
-#SP3/trough	  	  no	  	  no	  	  yes		  115900000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  feature	  3	  
-#SP4/trough	  	  no	  	  no	  	  yes		  115350000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  feature	  4	  
-
-SP5/inner	  	  no	  	  no	  	  yes		  88686241	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  feature	  5	  inner	  edge	  of	  1.470	  gap	  
-
-SP6/inner	  	  no	  	  no	  	  yes		  117900000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  strange	  ringlet;	  inner	  edge
-SP7/outer	  	  no	  	  no	  	  yes		  117910000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  strange	  ringlet;	  outer	  edge
-#Strange_ringlet	  no	  	  no	  	  yes		  117910170	  0	  	  0	  	  0	  	  0.00043178513	  250.38713	  -4.9849391	  0	  0	  	  	  Spitale/Porco;	  strange	  ringlet;	  center
-Strange_ringlet	  	  no	  	  no	  	  yes		  117909310	  8.0775348d-5	  7.4155792	  0	  	  0.00045856110	  257.81178	  -4.9849391	  0	  0	  	  	  Spitale/Porco;	  strange	  ringlet;	  center
-
-SP8/outer	  	  no	  	  yes	  	  yes		  86756739	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  apparently	  circular	  feature	  near	  maxwell;	  might	  make	  a	  good	  fiducial
-SP9/outer	  	  no	  	  no	  	  yes		  87300000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  inner	  edge	  of	  Maxwell	  gap;	  radius	  estimated	  by	  eye	  in	  FN93
-SP10/inner	  	  no	  	  no	  	  yes		  87650000	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  	  0	  0	  	  	  Spitale/Porco;	  outer	  edge	  of	  Maxwell	  gap;	  radius	  estimated	  by	  eye	  in	  FN93
 

@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_rings, dd, rd=rd
-;	pg_put_rings, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -35,9 +34,6 @@
 ; KEYWORDS:
 ;  INPUT:
 ;	rds:	Ring descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, ring descriptors are
-;		taken from the gd.rd field.
 ;
 ;	rng_*:		All ring override keywords are accepted.
 ;
@@ -74,22 +70,11 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_rings, dd, trs, rds=_rds, ods=ods, gd=gd, $
+pro pg_put_rings, dd, trs, rds=_rds, ods=ods, $
 @rng__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
-
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword_set(gd)) then $
-  begin
-   if(NOT keyword_set(_rds)) then _rds = gd.rds
-   if(NOT keyword_set(ods)) then ods = gd.ods
-  end
- if(NOT keyword_set(_rds)) then nv_message, 'No ring descriptor.'
- if(NOT keyword_set(ods)) then nv_message, 'No observer descriptor.'
 
  rds = nv_clone(_rds)
 

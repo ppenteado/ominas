@@ -30,9 +30,11 @@
 ;	bx:	Array (n_objects, nt) of descriptors of objects 
 ;		which must be a subclass of BODY.
 ;
-;	gd:	Generic descriptor.  If given, the cd and bx inputs 
-;		are taken from the cd and bx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	fov:	 If set points are computed only within this many camera
 ;		 fields of view.
@@ -58,15 +60,15 @@
 ;	
 ;-
 ;=============================================================================
-function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
+function pg_center, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, cull=cull
 
  if(keyword_set(fov)) then slop = (cam_size(cd[0]))[0]*(fov-1) > 1
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, bx=bx, dd=dd
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
  if(NOT keyword_set(bx)) then return, obj_new()
 
@@ -79,7 +81,7 @@ function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
  ; validate descriptors
  ;-----------------------------------
  nt = n_elements(cd)
- pgs_count_descriptors, bx, nd=n_objects, nt=nt1
+ cor_count_descriptors, bx, nd=n_objects, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
@@ -101,12 +103,12 @@ function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
 ;; pnt_set, ptd, $
 ;;       name=cor_name(xd), $
 ;;       desc=desc[*,i], $
-;;       input=pgs_desc_suffix(bx=bx[i,0], cd[0]), $
+;;       gd={bx:bx[i,0], cd:cd[0]}, $
 ;;       assoc_xd=xd
 ;   cor_set_name, ptd, cor_name(xd)
 ;   pnt_set_desc, ptd, desc[*,i]
-;   pnt_set_input, ptd, pgs_desc_suffix(bx=bx[i,0], cd[0])
-;   cor_set_assoc_xd, ptd, xd
+;   dat_set_gd, ptd, {bx:bx[i,0], cd:cd[0]}
+;   pnt_set_assoc_xd, ptd, xd
 
 ;   center_ptd[*,i] = ptd
 ;  end
@@ -124,7 +126,7 @@ function pg_center, cd=cd, bx=bx, gd=gd, fov=fov, cull=cull
    center_ptd[i] = $
         pnt_create_descriptors(name = cor_name(xd), $
 		desc = desc[i], $
-		input = pgs_desc_suffix(bx=bx[i,0], cd[0]), $
+		gd = {bx:bx[i,0], cd:cd[0]}, $
 		assoc_xd = xd, $
 		points = inertial_to_image_pos(cd, inertial_pts), $
 		vectors = inertial_pts)

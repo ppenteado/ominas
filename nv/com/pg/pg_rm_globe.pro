@@ -41,9 +41,11 @@
 ;		as the observer from which points are hidden.  If no observer
 ;		descriptor is given, the camera descriptor is used.
 ;
-;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
-;		are taken from the cd and gbx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	reveal:	 Normally, objects whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
@@ -85,7 +87,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_rm_globe, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
+pro pg_rm_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, point_ptd, hide_ptd, $
               reveal=reveal, cat=cat
 @pnt_include.pro
 
@@ -95,8 +97,9 @@ pro pg_rm_globe, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, od=od
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(NOT keyword_set(gbx)) then return
 
@@ -109,7 +112,7 @@ pro pg_rm_globe, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
  ; validate descriptors
  ;-----------------------------------
  nt = n_elements(od)
- pgs_count_descriptors, gbx, nd=n_objects, nt=nt1
+ cor_count_descriptors, gbx, nd=n_objects, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
@@ -135,10 +138,10 @@ pro pg_rm_globe, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
 
      if(hide) then $
       begin
-       pnt_get, point_ptd[j], desc=desc, inp=inp
+       pnt_get, point_ptd[j], desc=desc, gd=gd0
        hide_ptd[j] = $
            pnt_create_descriptors(desc=desc+'-rm_globe', $
-                   input=inp+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]))
+                          gd={gbx:gbx[i,0], od:od[0], cd:cd[0]})
       end
 
      if(w[0] NE -1) then $
