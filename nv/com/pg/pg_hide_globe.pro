@@ -51,6 +51,9 @@
 ;	cat:	If set, the hide_ptd points are concatentated into a single
 ;		POINT object.
 ;
+;	rm:	If set, points are flagged for being in front of or behind
+;		the globe, rather then just behind it.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -90,7 +93,7 @@
 ;-
 ;=============================================================================
 pro pg_hide_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, _point_ptd, hide_ptd, $
-              reveal=reveal, compress=compress, cat=cat
+              reveal=reveal, compress=compress, cat=cat, rm=rm
 @pnt_include.pro
 
  hide = keyword_set(hide_ptd)
@@ -127,7 +130,6 @@ point_ptd = _point_ptd
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
-
  ;------------------------------------
  ; hide object points for each planet
  ;------------------------------------
@@ -146,7 +148,7 @@ point_ptd = _point_ptd
      pnt_get, point_ptd[j], p=p, vectors=vectors, flags=flags
      object_pts = bod_inertial_to_body_pos(xd, vectors)
 
-     w = glb_hide_points(xd, Rs, object_pts)
+     w = glb_hide_points(xd, Rs, object_pts, rm=rm)
 
      if(w[0] NE -1) then $
       begin

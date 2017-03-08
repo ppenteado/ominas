@@ -30,7 +30,9 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	rm:	If set, points are flagged for being in front of or behind
+;		the globe, rather then just behind it.
 ;
 ;  OUTPUT: NONE
 ;
@@ -61,7 +63,7 @@
 ; points, nv x 3 x nt
 ;
 ;===========================================================================
-function glb_hide_points, gbd, v, points
+function glb_hide_points, gbd, v, points, rm=rm
 @core.include
  
 
@@ -72,7 +74,9 @@ function glb_hide_points, gbd, v, points
  r = points - vv 
 
  discriminant = glb_intersect_discriminant(gbd, vv, r)
- sub = where((discriminant GE 0d) AND (v_mag(r) GE v_mag(vv)))
+
+ if(keyword_set(rm)) then sub = where(discriminant GE 0d) $
+ else sub = where((discriminant GE 0d) AND (v_mag(r) GE v_mag(vv)))
 
  return, sub
 end

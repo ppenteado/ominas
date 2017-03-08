@@ -51,7 +51,7 @@ pro pnt_write, filename, ptd, bin=bin, noevent=noevent
 
  openw, unit, filename, /get_lun
 
- printf, unit, 'protocol 1.1'
+ printf, unit, 'protocol 2'
  if(keyword_set(bin)) then printf, unit, 'binary'
 
  nptd = n_elements(_ptd)
@@ -68,7 +68,6 @@ pro pnt_write, filename, ptd, bin=bin, noevent=noevent
    printf, unit
    printf, unit, 'name = ' + _ptd[i].name
    printf, unit, ' desc = ' + _ptd[i].desc
-   printf, unit, ' input = ' + _ptd[i].input
 
 
    n = pnt_nv(_ptd[i])

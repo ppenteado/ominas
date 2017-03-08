@@ -1114,6 +1114,10 @@ pro grim_write, grim_data, filename, filetype=filetype
  widget_control, /hourglass
  plane = grim_get_plane(grim_data)
 
+ if(NOT keyword_set(filename)) then return
+
+ split_filename, filename, dir, name
+ if(NOT keyword_set(name)) then return
 
  ;---------------------------------------------
  ; prompt before overwriting existing file
@@ -1187,6 +1191,8 @@ function grim_get_save_filename, grim_data, filetype=filetype
 
  if(keyword_set(plane.save_path)) then path = plane.save_path
  if(NOT keyword_set(path)) then path = dir
+ if(NOT keyword_set(path)) then path = './'
+
 
  types = strupcase(dat_detect_filetype(/all))
  w = where(strupcase(dat_filetype(plane.dd)) EQ types)
@@ -2658,6 +2664,7 @@ pro grim_menu_open_as_rgb_event, event
 ; dat_set_data, dd, cube
 ; dat_set_data_offset, dd, 0
  dd = dat_create_descriptors(1, data=cube)
+ dat_set_filetype, dd, dat_filetype(plane.dd)
 
  grim, /new, /rgb, dd, order=tvd.order, zoom=tvd.zoom[0], offset=tvd.offset, $
        xsize=!d.x_size, ysize=!d.y_size
@@ -9845,8 +9852,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;-----------------------------
    if(NOT keyword_set(dd)) then $
     begin
-     if(NOT keyword_set(xsize)) then xsize = 512
-     if(NOT keyword_set(ysize)) then ysize = 512
+     if(NOT keyword_set(xsize)) then xsize = 768
+     if(NOT keyword_set(ysize)) then ysize = 768
      dd = dat_create_descriptors(1, data=grim_blank(xsize, ysize), $
           name='BLANK', nhist=nhist, maintain=maintain, compress=compress)
     end $

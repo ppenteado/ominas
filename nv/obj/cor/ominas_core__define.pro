@@ -80,9 +80,6 @@ end
 ;
 ;
 ; FIELDS:
-;	xdp:	Pointer to array of objects.  These are dereferenced using the
-;		overloaded RHS brackets.
-;	
 ;	name:	Name of the object.
 ;
 ;		Methods: cor_name, cor_set_name

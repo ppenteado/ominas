@@ -55,6 +55,9 @@
 ;	cat:	If set, the hide_ptd points are concatentated into a single
 ;		POINT object.
 ;
+;	rm:	If set, points are flagged for being in front of or behind
+;		the disk, rather then just behind it.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -95,7 +98,7 @@
 ;-
 ;=============================================================================
 pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_ptd, hide_ptd, $
-              reveal=reveal, cat=cat
+              reveal=reveal, cat=cat, rm=rm
 @pnt_include.pro
 
  hide = keyword_set(hide_ptd)
@@ -149,7 +152,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_ptd, hid
        pnt_get, object_ptd[j], p=p, vectors=vectors, flags=flags
        object_pts = bod_inertial_to_body_pos(xd, vectors)
 
-       w = dsk_hide_points(xd, Rs, object_pts)
+       w = dsk_hide_points(xd, Rs, object_pts, rm=rm)
 
       if(w[0] NE -1) then $
        begin

@@ -100,46 +100,24 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_hide, object_ptd, hide_ptd, cd=cd, $
-             od=od, gbx=gbx, dkx=dkx, gd=gd, one2one=one2one, $
+pro pg_hide, object_ptd, hide_ptd, cd=cd, one2one=one2one, $
+             od=od, gbx=gbx, dkx=dkx, gd=gd, $
 	     globe=globe, limb=limb, disk=disk, rm=rm, reveal=reveal, cat=cat
 
 
  if(arg_present(hide_ptd)) then hide_ptd = 1	; need this to allow called routines
 						; to detect presence of hide_ptd argument.
 
- ;--------------------------
- ; remove instead of hide
- ;--------------------------
- if(keyword_set(rm)) then $
-  begin
-   if(keyword_set(disk)) then $
-      pg_rm_disk, object_ptd, hide_ptd, cd=cd, dkx=dkx, gd=gd, reveal=reveal, cat=cat
-   if(keyword_set(globe)) then $
-      pg_rm_globe, object_ptd, hide_ptd, cd=cd, gbx=gbx, gd=gd, reveal=reveal, cat=cat
-  end $
- ;--------------------------
- ; hide
- ;--------------------------
- else $
-  begin
-   ptd = object_ptd
-;   if(keyword_set(one2one)) then ptd = pnt_compress(object_ptd)
-;if(keyword_set(one2one)) then stop
+ ptd = object_ptd
 
-   if(keyword_set(disk)) then $
-     pg_hide_disk, ptd, hide_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, gd=gd, reveal=reveal, cat=cat
-   if(keyword_set(globe)) then $
-     pg_hide_globe, ptd, hide_ptd, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal, cat=cat
+ if(keyword_set(disk)) then $
+   pg_hide_disk, rm=rm, ptd, hide_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, gd=gd, reveal=reveal, cat=cat
 
-;if(keyword_set(one2one)) then stop
-;   if(keyword_set(one2one)) then pnt_uncompress, object_ptd, ptd
+ if(keyword_set(globe)) then $
+   pg_hide_globe, rm=rm, ptd, hide_ptd, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal, cat=cat
 
-   if(keyword_set(limb)) then $
-     pg_hide_limb, ptd, hide_ptd, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal
-  end
-
-
+ if(keyword_set(limb)) then $
+   pg_hide_limb, ptd, hide_ptd, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal
 
 end
 ;=============================================================================
