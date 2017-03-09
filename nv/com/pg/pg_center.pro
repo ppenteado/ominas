@@ -100,7 +100,7 @@ function pg_center, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, cull=cull
 
 ;   ptd = pnt_explode(_ptd)
 
-;; pnt_set, ptd, $
+;; pnt_assign, ptd, $
 ;;       name=cor_name(xd), $
 ;;       desc=desc[*,i], $
 ;;       gd={bx:bx[i,0], cd:cd[0]}, $

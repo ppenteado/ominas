@@ -77,7 +77,7 @@ function pg_chisq, dxy, dtheta, scan_ptd, axis_ptd=axis_ptd, fix=fix
    ;-------------------
    ; get scan data
    ;-------------------
-   pnt_get, scan_ptd[i], data=scan_data, desc=desc, points=scan_pts, /visible
+   pnt_query, scan_ptd[i], data=scan_data, desc=desc, points=scan_pts, /visible
 
    if(keyword__set(scan_data)) then $
     begin

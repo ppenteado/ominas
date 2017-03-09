@@ -113,20 +113,12 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, $
   begin
    n = n_elements(name)
 
-   sd=str_create_descriptors(n, $
-	gd=dd, $
-	name=name, $
-	orient=orient, $
-	avel=avel, $
-	pos=pos, $
-	vel=str__vel, $
-	time=time, $
-	radii=radii, $
-	lora=lora, $
-	lum=lum, $
-	opaque=opaque, $
-	opacity=opacity, $  
-	sp=sp)
+   if(keyword_set(dd)) then gd = dd
+   sd = str_create_descriptors(n, $
+@str__keywords.include
+end_keywords)
+   gd = !null
+
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get star descriptors from the translators
@@ -184,18 +176,12 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, $
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   w = nwhere(dd, cor_gd(sd, /dd))
-   if(n_elements(time) NE 0) then bod_set_time, sd, time[w]
-   if(n_elements(lum) NE 0) then str_set_lum, sd, lum[w]
-   if(n_elements(sp) NE 0) then str_set_sp, sd, sp[w]
-   if(n_elements(orient) NE 0) then bod_set_orient, sd, orient[*,*,w]
-   if(n_elements(avel) NE 0) then bod_set_avel, sd, avel[*,*,w]
-   if(n_elements(pos) NE 0) then bod_set_pos, sd, pos[*,*,w]
-   if(n_elements(str__vel) NE 0) then bod_set_vel, sd, str__vel[*,*,w]
-   if(n_elements(radii) NE 0) then glb_set_radii, sd, radii[*,w]
-   if(n_elements(lora) NE 0) then glb_set_lora , sd, lora[w]
-   if(n_elements(opaque) NE 0) then bod_set_opaque, sd, opaque[w]
-   if(n_elements(opacity) NE 0) then sld_set_opacity, sd, opacity[w]
+   if(defined(name)) then _name = name & name = !null
+   str_assign, sd, /noevent, $
+@str__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+
   end
 
 

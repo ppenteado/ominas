@@ -215,12 +215,11 @@ pro grim_crop_plane, grim_data, plane
    tvgr, grim_data.wnum, get=tvd
    xrange = tvd.xrange
 
-   dat = dat_data(plane.dd)
-   x = dat[0,*]
+   dat = dat_data(plane.dd, abscissa=x)
    w = where((x GE xrange[0]) AND (x LE xrange[1]))
 
-   dat = dat[*,w]
-   dat_set_data, plane.dd, dat
+   dat = dat[w]
+   dat_set_data, plane.dd, dat, abscissa=x[w]
   end $
  ;----------------------------------------------
  ; image: crop to visible size

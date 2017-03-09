@@ -37,13 +37,13 @@ pro grim_smooth, grim_data, plane=plane, box
 
  max = 30
 
- data = double(dat_data(plane.dd))
+ data = double(dat_data(plane.dd, abscissa=abscissa))
 
  if(grim_data.type EQ 'plot') then $
   begin
-   xx = data[0,*] & xx = xx[sort(xx)]
+   xx = abscissa & xx = xx[sort(xx)]
 
-   yy = data[1,*]
+   yy = data
    x0 = min(where(xx GE min(box[0,*])))
    x1 = max(where(xx LE max(box[0,*])))
 
@@ -57,7 +57,7 @@ pro grim_smooth, grim_data, plane=plane, box
    if(result NE 'Yes') then return
 
    yy = smooth(yy, n)
-   data[1,*] = yy
+   data = yy
   end $
  else $
   begin
@@ -215,7 +215,7 @@ data = 0
  return, $
      {grim_user_mode_struct, $
 		 name:		'grim_mode_smooth', $
-		 event_pro:	'*grim_mode_smooth_button_event', $
+		 event_pro:	'*+grim_mode_smooth_button_event', $
                  bitmap:	 grim_mode_smooth_bitmap(), $
                  menu:		'Smooth', $
                  data_p:	 nv_ptr_new(data) }

@@ -132,21 +132,12 @@ function pg_get_maps, dd, trs, md=_md, gbx=gbx, dkx=dkx, bx=bx, $
      name = cor_name(bx)
     end
 
-
+   if(keyword_set(dd)) then gd = dd
    md = map_create_descriptors(n, $
-	  gd=dd, $
-	  name=name, $
-	  graphic=graphic, $
-	  rotate=rotate, $
-	  type=type, $
-	  units=units, $
-	  fn_data=fn_data, $
-	  size=size, $
-	  origin=origin, $
-	  center=center, $
-	  range=range, $
-	  scale=scale, $
-	  radii=radii)
+@map__keywords.include
+end_keywords)
+   gd = !null
+
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get map descriptors from the translators
@@ -187,16 +178,12 @@ function pg_get_maps, dd, trs, md=_md, gbx=gbx, dkx=dkx, bx=bx, $
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   if(n_elements(type) NE 0) then map_set_type, md, type
-   if(n_elements(size) NE 0) then map_set_size, md, size
-   if(n_elements(graphic) NE 0) then map_set_graphic, md, graphic
-   if(n_elements(rotate) NE 0) then map_set_rotate, md, rotate
-   if(n_elements(scale) NE 0) then map_set_scale, md, scale
-   if(n_elements(radii) NE 0) then map_set_radii, md, radii
-   if(n_elements(origin) NE 0) then map_set_origin, md, origin
-   if(n_elements(center) NE 0) then map_set_center, md, center
-   if(n_elements(range) NE 0) then map_set_range, md, range
-   if(n_elements(fn_data) NE 0) then map_set_fn_data, md, fn_data
+   if(defined(name)) then _name = name & name = !null
+   map_assign, md, /noevent, $
+@map__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+
   end
 
 

@@ -775,7 +775,7 @@ pro grim_draw_indexed_arrays, ptdp, psym=psym
    for i=0, n_elements(*ptdp)-1 do $
     if(pnt_valid((*ptdp)[i])) then $
      begin
-      pnt_get, (*ptdp)[i], /visible, p=p, nv=n, $
+      pnt_query, (*ptdp)[i], /visible, p=p, nv=n, $
                          uname='GRIM_INDEXED_ARRAY_LABEL', udata=label
       label = strtrim(label,2)
 
@@ -2081,6 +2081,27 @@ end
 
 
 ;=============================================================================
+; grim_copy_mask
+;
+;=============================================================================
+pro grim_copy_mask, grim_data, plane, planes
+
+ n = n_elements(planes)
+ 
+ for i=0, n-1 do $
+  begin
+   *planes[i].mask_p =*plane.mask_p
+   grim_set_plane, grim_data, planes[i], pn=pn
+  end
+
+ grim_set_data, grim_data, grim_data.base
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_copy_indexed_array
 ;
 ;=============================================================================
@@ -2098,7 +2119,7 @@ pro grim_copy_indexed_array, grim_data, plane, planes, name
    pn = planes[i].pn
    nv_free, *ptdp_i
    
-   *ptdp_i =objarr(nptd)
+   *ptdp_i = objarr(nptd)
    for j=0, nptd-1 do (*ptdp_i)[j] = nv_clone((*ptdp)[j])
 
    grim_set_plane, grim_data, planes[i], pn=pn

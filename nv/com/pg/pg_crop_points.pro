@@ -62,14 +62,14 @@ pro pg_crop_points, ptd, cd=cd, slop=slop, indices=ww
  ;------------------------------------------------
  for i=0, n-1 do if(obj_valid(ptd[i])) then $
   begin
-   pnt_get, ptd[i], p=p, f=f
+   pnt_query, ptd[i], p=p, f=f
    ww = in_image(cd, p, slop=slop)
    w = complement(p[0,*], ww)
 
    if(w[0] NE -1) then $
     begin
      f[w] = f[w] OR PTD_MASK_INVISIBLE
-     pnt_set, ptd[i], p=p, f=f
+     pnt_assign, ptd[i], p=p, f=f
     end
   end
 

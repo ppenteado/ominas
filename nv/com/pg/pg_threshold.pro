@@ -92,7 +92,7 @@ pro pg_threshold, scan_ptd, tag=tag, min=min, max=max, relative=relative
  ;----------------------------
  for i=0, n_objects-1 do if(pnt_valid(scan_ptd[i])) then $
   begin
-   pnt_get, scan_ptd[i], data=scan_data, flags=flags, tags=tags
+   pnt_query, scan_ptd[i], data=scan_data, flags=flags, tags=tags
 
    sub = -1
    if(keyword__set(tags)) then sub = where(tags EQ tag)

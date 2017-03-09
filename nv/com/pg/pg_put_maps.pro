@@ -33,7 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	mds:	Map descriptors to output.
+;	md:	Map descriptors to output.
 ;
 ;	map_*:		All map override keywords are accepted.
 ;
@@ -70,39 +70,31 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_maps, dd, trs, mds=_mds, $
+pro pg_put_maps, dd, trs, md=_md, $
 @map__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
- mds = nv_clone(_mds)
 
  ;-------------------------------------------------------------------
  ; override the specified values 
  ;-------------------------------------------------------------------
- if(n_elements(fn_map_to_image) NE 0) then $
-                 map_set_fn_map_to_image, mds, fn_map_to_image
- if(n_elements(fn_image_to_map) NE 0) then $
-                 map_set_fn_image_to_map, mds, fn_image_to_map
- if(n_elements(fn_data) NE 0) then map_set_fn_data, mds, fn_data
- if(n_elements(scale) NE 0) then map_set_scale, mds, scale
- if(n_elements(ecc) NE 0) then map_set_ecc, mds, ecc
- if(n_elements(map__radii) NE 0) then map_set_radii, mds, map__radii
- if(n_elements(origin) NE 0) then map_set_origin, mds, origin
- if(n_elements(center) NE 0) then map_set_center, mds, center
- if(n_elements(map__size) NE 0) then map_set_size, mds, map__size
- if(n_elements(type) NE 0) then map_set_type, mds, type
+ md = nv_clone(_md)
+ name = ''
 
+ map_assign, md, /noevent, $
+@map__keywords.include
+end_keywords
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- dat_put_value, dd, 'MAP_DESCRIPTORS', mds, trs=trs, $
+ dat_put_value, dd, 'MAP_DESCRIPTORS', md, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
- nv_free, mds
+ nv_free, md
 end
 ;===========================================================================
 

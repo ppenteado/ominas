@@ -136,7 +136,7 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, point_ptd, hide_ptd, $
     Rs = bod_inertial_to_body_pos(xd, obs_pos)
 ;w = where(pnt_assoc_xd(point_ptd) EQ )
 
-    pnt_get, point_ptd[i], p=p, vectors=vectors, flags=flags
+    pnt_query, point_ptd[i], p=p, vectors=vectors, flags=flags
     object_pts = bod_inertial_to_body_pos(xd, vectors)
 
     w = glb_hide_points_limb(xd, Rs, object_pts)
@@ -152,13 +152,13 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, point_ptd, hide_ptd, $
      begin
       hide_ptd[i] = nv_clone(point_ptd[i])
 
-      pnt_get, hide_ptd[i], desc=desc, gd=gd0
+      pnt_query, hide_ptd[i], desc=desc, gd=gd0
 
       ww = complement(flags, w)
       _flags = flags
       if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
-      pnt_set, hide_ptd[i], desc=desc+'-hide_limb', flags=_flags, $
+      pnt_assign, hide_ptd[i], desc=desc+'-hide_limb', flags=_flags, $
                   gd=append_struct(gd0, {gbx:gbx[i,0], od:od[0], cd:cd[0]})
      end
    end

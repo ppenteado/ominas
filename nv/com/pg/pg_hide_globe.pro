@@ -145,7 +145,7 @@ point_ptd = _point_ptd
 
      Rs = bod_inertial_to_body_pos(xd, obs_pos)
 
-     pnt_get, point_ptd[j], p=p, vectors=vectors, flags=flags
+     pnt_query, point_ptd[j], p=p, vectors=vectors, flags=flags
      object_pts = bod_inertial_to_body_pos(xd, vectors)
 
      w = glb_hide_points(xd, Rs, object_pts, rm=rm)
@@ -161,13 +161,13 @@ point_ptd = _point_ptd
       begin
        hide_ptd[j,i] = nv_clone(point_ptd[j])
 
-       pnt_get, hide_ptd[j,i], desc=desc, gd=gd0
+       pnt_query, hide_ptd[j,i], desc=desc, gd=gd0
 
        ww = complement(flags, w)
        _flags = flags
        if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
-       pnt_set, hide_ptd[j,i], desc=desc+'-hide_globe', flags=_flags, $
+       pnt_assign, hide_ptd[j,i], desc=desc+'-hide_globe', flags=_flags, $
                   gd=append_struct(gd0, {gbx:gbx[i,0], od:od[0], cd:cd[0]})
       end
     end

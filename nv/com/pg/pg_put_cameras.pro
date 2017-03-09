@@ -33,7 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	cds:	Camera descriptors to output.
+;	cd:	Camera descriptors to output.
 ;
 ;	cam_*:		All camera override keywords are accepted.
 ;
@@ -70,41 +70,31 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_cameras, dd, trs, cds=_cds, $
+pro pg_put_cameras, dd, trs, cd=_cd, $
 @cam__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
 
- cds = nv_clone(_cds)
-
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
- if(n_elements(orient) NE 0) then bod_set_orient, cds, orient
- if(n_elements(avel) NE 0) then bod_set_avel, cds, avel
- if(n_elements(pos) NE 0) then bod_set_pos, cds, pos
- if(n_elements(vel) NE 0) then bod_set_vel, cds, vel
- if(n_elements(time) NE 0) then bod_set_time, cds, time
- if(n_elements(fn_focal_to_image) NE 0) then $
-                cam_set_fn_focal_to_image, cds, fn_focal_to_image
- if(n_elements(fn_image_to_focal) NE 0) then $
-                cam_set_fn_image_to_focal, cds, fn_image_to_focal
- if(n_elements(fi_data) NE 0) then cam_set_fi_data, cds, fi_data
- if(n_elements(scale) NE 0) then cam_set_scale, cds, scale
- if(n_elements(oaxis) NE 0) then cam_set_oaxis, cds, oaxis
- if(n_elements(size) NE 0) then cam_set_size, cds, size
- if(n_elements(exposure) NE 0) then cam_set_exposure, cds, exposure
+ cd = nv_clone(_cd)
+ name = ''
+
+ cam_assign, cd, /noevent, $
+@cam__keywords.include
+end_keywords
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- dat_put_value, dd, 'CAM_DESCRIPTORS', cds, trs=trs, $
+ dat_put_value, dd, 'CAM_DESCRIPTORS', cd, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
- nv_free, cds
+ nv_free, cd
 end
 ;===========================================================================
 

@@ -33,7 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	rds:	Ring descriptors to output.
+;	rd:	Ring descriptors to output.
 ;
 ;	rng_*:		All ring override keywords are accepted.
 ;
@@ -70,43 +70,31 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_rings, dd, trs, rds=_rds, ods=ods, $
+pro pg_put_rings, dd, trs, rd=_rd, ods=ods, $
 @rng__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
 
- rds = nv_clone(_rds)
-
-
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
- if(n_elements(primary) NE 0) then rng_set_primary, rds, primary
+ rd = nv_clone(_rd)
+ name = ''
 
- if(n_elements(orient) NE 0) then bod_set_orient, rds, orient
- if(n_elements(avel) NE 0) then bod_set_avel, rds, avel
- if(n_elements(pos) NE 0) then bod_set_pos, rds, pos
- if(n_elements(rng__vel) NE 0) then bod_set_vel, rds, rng__vel
- if(n_elements(time) NE 0) then bod_set_time, rds, time
-
- if(n_elements(sma) NE 0) then dsk_set_sma, rds, sma
- if(n_elements(ecc) NE 0) then dsk_set_ecc, rds, ecc
- if(n_elements(nm) NE 0) then dsk_set_nm, rds, nm
- if(n_elements(m) NE 0) then dsk_set_m, rds, m
- if(n_elements(em) NE 0) then dsk_set_em, rds, em
- if(n_elements(wm) NE 0) then dsk_set_wm, rds, wm
- if(n_elements(dwmdt) NE 0) then dsk_set_dwmdt, rds, dwmdt
+ rng_assign, rd, /noevent, $
+@rng__keywords.include
+end_keywords
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- dat_put_value, dd, 'RNG_DESCRIPTORS', rds, trs=trs, $
+ dat_put_value, dd, 'RNG_DESCRIPTORS', rd, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
- nv_free, rds
+ nv_free, rd
 end
 ;===========================================================================
 

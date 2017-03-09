@@ -174,27 +174,18 @@ function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, $
    n = n_elements(sub)
    cd = cd[sub]
 
-   ;-------------------------------------------------------------------
-   ; override the specified values (name cannot be overridden)
-   ;-------------------------------------------------------------------
-   w = nwhere(dd, cor_gd(cd, /dd))
-   if(n_elements(orient) NE 0) then bod_set_orient, cd, orient[*,*,w]
-   if(n_elements(avel) NE 0) then bod_set_avel, cd, avel[*,*,w]
-   if(n_elements(pos) NE 0) then bod_set_pos, cd, pos[*,*,w]
-   if(n_elements(vel) NE 0) then bod_set_vel, cd, vel[*,*,w]
-;   if(n_elements(time) NE 0) then bod_set_time, cd, time[w]
-   if(n_elements(fn_focal_to_image) NE 0) then $
-                 cam_set_fn_focal_to_image, cd, fn_focal_to_image[w]
-   if(n_elements(fn_image_to_focal) NE 0) then $
-                 cam_set_fn_image_to_focal, cd, fn_image_to_focal[w]
-   if(n_elements(fi_data) NE 0) then cam_set_fi_data, cd, fi_data[w]
-   if(n_elements(filters) NE 0) then cam_set_filters, cd, filters[*,w]
-   if(n_elements(scale) NE 0) then  cam_set_scale, cd, scale[*,w]
-   if(n_elements(oaxis) NE 0) then  cam_set_oaxis, cd, oaxis[*,w]
-   if(n_elements(fn_psf) NE 0) then  cam_set_fn_psf, cd, fn_psf[w]
-   if(n_elements(size) NE 0) then  cam_set_size, cd, size[*,w]
-   if(n_elements(opaque) NE 0) then  bod_set_opaque, cd, opaque[w]
-   if(n_elements(exposure) NE 0) then cam_set_exposure, cd, exposure[w]
+   ;---------------------------------------------------------------------
+   ; override the specified values (name and time cannot be overridden)
+   ;---------------------------------------------------------------------
+; this might be cleaner using the _extra mechanism
+   if(defined(name)) then _name = name & name = !null
+   if(defined(time)) then _time = time & time = !null
+   cam_assign, cd, /noevent, $
+@cam__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+    if(defined(_time)) then time = _time
+
   end
 
 

@@ -206,7 +206,7 @@ function drd_read, _filename, data, header, $
  ;-----------------------------------------
  ; add I/O functions to dd
  ;-----------------------------------------
- dat_set, dd, $
+ dat_assign, dd, $
           filetype=filetype, $
           input_fn=input_fn, $
           output_fn=output_fn, $
@@ -264,7 +264,7 @@ function drd_read, _filename, data, header, $
    ;-----------------------------------------
    ; add data parameters and header to dd
    ;-----------------------------------------
-   dat_set, dd, $
+   dat_assign, dd, $
 	 header=header, $
          min=min, $
          max=max, $
@@ -325,7 +325,7 @@ function drd_read, _filename, data, header, $
    ;--------------------------
    ; complete data descriptor
    ;--------------------------
-   dat_set, dd, $
+   dat_assign, dd, $
          gff=gff, $
          instrument=instrument, $
          input_transforms=input_transforms, $

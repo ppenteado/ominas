@@ -131,7 +131,7 @@ function pg_profile_ring, dd, cd=cd, dkx=dkx, gd=gd, outline_ptd, $
  ;-----------------------------------
  ; get the points and data
  ;-----------------------------------
- pnt_get, outline_ptd, $
+ pnt_query, outline_ptd, $
 	points=outline_pts, $
 	data=dsk_outline_pts
  if(keyword_set(dsk_outline_pts)) then dsk_outline_pts = transpose(dsk_outline_pts)

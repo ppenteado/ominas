@@ -1162,6 +1162,9 @@ pro grim_write, grim_data, filename, filetype=filetype
               pg_put_stations, plane.dd, std=*plane.std_p, od=od
 
  if(keyword_set(*plane.ard_p)) then $
+              pg_put_arrays, plane.dd, ard=*plane.ard_p, od=od
+
+ if(keyword_set(*plane.ard_p)) then $
               pg_put_stations, plane.dd, ard=*plane.ard_p, od=od
 
  if(keyword_set(*plane.sund_p)) then $
@@ -4873,9 +4876,7 @@ pro grim_menu_plane_copy_mask_event, event
  n = n_elements(planes)
  pn = plane.pn
 
- for i=0, n-1 do if(i NE pn) then $
-       grim_copy_mask, grim_data, plane, planes[i]
-
+ for i=0, n-1 do if(i NE pn) then grim_copy_mask, grim_data, plane, planes[i]
 end
 ;=============================================================================
 
@@ -8778,7 +8779,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Jump               \+*grim_menu_plane_jump_event' , $
            '0\Browse             \*grim_menu_plane_browse_event', $
            '0\Open in new window \*grim_menu_plane_open_event', $
-           '0\Crop               \+*grim_menu_plane_crop_event' , $
+           '0\Crop to view       \+*grim_menu_plane_crop_event' , $
            '0\Reorder by time    \grim_menu_plane_reorder_time_event', $
            '0\Sequence           \*grim_menu_plane_sequence_event', $
            '0\Dump               \*grim_menu_plane_dump_event', $

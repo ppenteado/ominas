@@ -1,2 +1,7 @@
-abbrev=abbrev, user=user, name=name, tasks=tasks, $
-udata=udata, uname=uname, gd=gd, $
+abbrev=abbrev, $
+user=user, $
+name=name, $
+tasks=tasks, $
+udata=udata, $
+uname=uname, $
+gd=gd, $

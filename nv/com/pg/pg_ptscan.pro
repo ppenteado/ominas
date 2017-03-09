@@ -161,7 +161,7 @@ function pg_ptscan, dd, object_ptd, $
    ;-----------------------------------
    ; get object point
    ;-----------------------------------
-   pnt_get, object_ptd[i], points=pts, flags=flags, name=name, /visible
+   pnt_query, object_ptd[i], points=pts, flags=flags, name=name, /visible
 
    ;------------------------------------------------------
    ; trim point if invisible or too close to edge

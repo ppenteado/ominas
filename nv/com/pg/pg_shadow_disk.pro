@@ -139,7 +139,7 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_p
         ;---------------------------
         ; get object vectors
         ;---------------------------
-        pnt_get, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
+        pnt_query, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
         if(xd NE assoc_xd) then $
          begin
           n_vectors = (size(vectors))[1]

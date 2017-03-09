@@ -126,7 +126,7 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
       ;---------------------------
       ; get object vectors
       ;---------------------------
-      pnt_get, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
+      pnt_query, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
       if(xd NE assoc_xd) then $
        begin
         n_vectors = (size(vectors))[1]

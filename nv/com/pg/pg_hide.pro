@@ -30,9 +30,9 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	globe:	If set, use pg_hide_globe or pg_rm_globe.
+;	globe:	If set, use pg_hide_globe.
 ;
-;	disk:	If set, use pg_hide_disk or pg_rm_disk.
+;	disk:	If set, use pg_hide_disk.
 ;
 ;	limb:	If set, use pg_hide_limb .
 ;

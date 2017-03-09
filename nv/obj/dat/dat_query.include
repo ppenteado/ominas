@@ -1,0 +1,32 @@
+; dat_query.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(arg_present(dh)) then dh = dat_dh(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(compress)) then compress = dat_compress(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(update)) then update = dat_update(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(sibling)) then sibling = dat_sibling(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(nhist)) then nhist = dat_nhist(_xd, cat=cat, condition=condition, nhist, /noevent
+ if(arg_present(min)) then min = dat_min(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(max)) then max = dat_max(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(maintain)) then maintain = dat_maintain(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(header)) then header = dat_header(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(filename)) then filename = dat_filename(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(filetype)) then filetype = dat_filetype(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(dim)) then dim = dat_dim(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(type)) then type = dat_type(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(gff)) then gff = dat_gff(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(dh)) then dh = dat_dh(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(instrument)) then instrument = dat_instrument(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(input_fn)) then input_fn = dat_input_fn(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(output_fn)) then output_fn = dat_output_fn(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(keyword_fn)) then keyword_fn = dat_keyword_fn(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(input_transforms)) then input_transforms = dat_input_transforms(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(output_transforms)) then output_transforms = dat_output_transforms(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(input_translators)) then input_translators = dat_input_translators(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(output_translators)) then output_translators = dat_output_translators(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(input_keyvals)) then input_keyvals = dat_input_keyvals(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(output_keyvals)) then output_keyvals = dat_output_keyvals(_xd, cat=cat, condition=condition, /noevent)
+
+@cor_query.include
+

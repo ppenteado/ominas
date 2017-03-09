@@ -75,6 +75,10 @@
 ;      returned disk descriptor, and the user fields 'nrad' and 'nlon' 
 ;      giving the number of points in altitude and azimuth.
 ;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
+;
 ;
 ; MODIFICATION HISTORY : 
 ;	Spitale; 8/2006		original version

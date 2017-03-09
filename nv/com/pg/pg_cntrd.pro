@@ -100,7 +100,7 @@ function pg_cntrd, dd, object_ptd, $
    ;-----------------------------------
    ; get object point
    ;-----------------------------------
-   pnt_get, object_ptd[i], points=pts, flags=flags, /visible
+   pnt_query, object_ptd[i], points=pts, flags=flags, /visible
 
    ;------------------------------------------------------
    ; trim point if invisible or too close to edge
@@ -181,7 +181,7 @@ function pg_cntrd, dd, object_ptd, $
    scan_data[3]=ccp		 & tags[3]='scan_cc'           ; correlation
 
 
-   pnt_set, pts_ptd[i], $
+   pnt_assign, pts_ptd[i], $
               points = scan_pts, $
               data = scan_data, $
               flags = flags, $

@@ -89,7 +89,7 @@ function pnt_uncompress, pptd, ptd0, nn=nn
    v = reform(vv[jj:jj+nnp-1,*,*], nnp*nn,3)
    f = reform(ff[jj:jj+nnp-1,*], nnp*nn)
    dat = reform(data[*,jj:jj+nnp-1,*], ndat,nnp*nn)
-   pnt_set, ptd[i], p=p, v=v, flags=f, name=nam, data=dat, tags=tags
+   pnt_assign, ptd[i], p=p, v=v, flags=f, name=nam, data=dat, tags=tags
 
    tag_list_free, cor_udata(ptd[i])
    cor_set_udata, ptd[i], '', cor_udata(pptd)

@@ -51,7 +51,7 @@ function pnt_explode, ptd, n=n
  if(NOT keyword_set(n)) then n = 1
  n = long(n)
 
- pnt_get, ptd, nv=nv, nt=nt, $
+ pnt_query, ptd, nv=nv, nt=nt, $
         name=name, desc=desc, assoc_xd=assoc_xd, $
         flags=flags, points=points, vectors=vectors, data=data, tags=tags
 
@@ -92,7 +92,7 @@ function __pnt_explode, ptd, n=n
  if(NOT keyword_set(n)) then n = 1
  n = long(n)
 
- pnt_get, ptd, nv=nv, nt=nt, $
+ pnt_query, ptd, nv=nv, nt=nt, $
         name=name, desc=desc, assoc_xd=assoc_xd, $
         flags=flags, points=points, vectors=vectors, data=data, tags=tags
 

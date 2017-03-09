@@ -164,7 +164,7 @@ function pg_ptfarscan, dd, name=name, $
 
  for i=0, n-1 do $
   begin
-   pnt_set, pts_ptd[i], points = points[*,i], name = name, desc = 'ptfarscan'
+   pnt_assign, pts_ptd[i], points = points[*,i], name = name, desc = 'ptfarscan'
   end
 
 

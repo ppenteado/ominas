@@ -112,24 +112,12 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, $
   begin
    n = n_elements(name)
 
+   if(keyword_set(dd)) then gd = dd
    pd = plt_create_descriptors(n, $
-		gd=dd, $
-		name=name, $
-		orient=orient, $
-		avel=avel, $
-		pos=pos, $
-		vel=vel, $
-		time=time, $
-		radii=radii, $
-		mass=mass, $
-		albedo=albedo, $
-		refl_fn=refl_fn, $
-		refl_parm=refl_parm, $
-		phase_fn=phase_fn, $
-		phase_parm=phase_parm, $
-		opaque=opaque, $
-		opacity=opacity, $
-		lora=lora)
+@plt__keywords.include
+end_keywords)
+   gd = !null
+
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get planet descriptors from the translators
@@ -188,22 +176,12 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, $
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   w = nwhere(dd, cor_gd(pd, /dd))
-   if(n_elements(time) NE 0) then bod_set_time, pd, time[w]
-   if(n_elements(orient) NE 0) then bod_set_orient, pd, orient[*,*,w]
-   if(n_elements(avel) NE 0) then bod_set_avel, pd, avel[*,*,w]
-   if(n_elements(pos) NE 0) then bod_set_pos, pd, pos[*,*,w]
-   if(n_elements(vel) NE 0) then bod_set_vel, pd, vel[*,*,w]
-   if(n_elements(radii) NE 0) then glb_set_radii, pd, radii[*,w]
-   if(n_elements(mass) NE 0) then sld_set_mass, pd, mass[w]
-   if(n_elements(lora) NE 0) then glb_set_lora, pd, lora[w]
-   if(n_elements(albedo) NE 0) then sld_set_albedo, pd, albedo[w]
-   if(n_elements(refl_fn) NE 0) then sld_set__refl_fn, pd, refl_fn[w]
-   if(n_elements(refl_parm) NE 0) then sld_set__refl_parm, pd, refl_parm[w]
-   if(n_elements(phase_fn) NE 0) then sld_set__phase_fn, pd, phase_fn[w]
-   if(n_elements(phase_parm) NE 0) then sld_set__phase_parm, pd, phase_parm[w]
-   if(n_elements(opaque) NE 0) then bod_set_opaque, pd, opaque[w]
-   if(n_elements(opacity) NE 0) then sld_set_opacity, pd, opacity[w]
+   if(defined(name)) then _name = name & name = !null
+   plt_assign, pd, /noevent, $
+@plt__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+
   end
 
  ;--------------------------------------------------------
