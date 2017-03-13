@@ -82,11 +82,11 @@ function grim_compute_limb, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg__hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pd, hide_ptd, /cat
+ pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pd, hide_ptd, /cat
  grim_message
 
  if(keyword_set(sund)) then $
- pg__hide, limb_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
+ pg_hide, limb_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
  grim_message
 
  ;-------------------------------------
@@ -168,7 +168,7 @@ function grim_compute_terminator, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- if(NOT map) then pg__hide, term_ptd, cd=cd, gbx=pds, dkx=rd, hide_ptd, /cat
+ if(NOT map) then pg_hide, term_ptd, cd=cd, gbx=pds, dkx=rd, hide_ptd, /cat
  grim_message
 
  ;-------------------------------------
@@ -251,10 +251,10 @@ function grim_compute_planet_grid, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg__hide, grid_ptd, cd=cd, dkx=rd, od=od, gbx=pd, hide_ptd, /cat
+   pg_hide, grid_ptd, cd=cd, dkx=rd, od=od, gbx=pd, hide_ptd, /cat
    grim_message
 
-   pg__hide, grid_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
+   pg_hide, grid_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
    grim_message
   end
  grim_message
@@ -357,7 +357,7 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg__hide, station_ptd, cd=cd, gbx=bx, dkx=rd, hide_ptd, /cat
+   pg_hide, station_ptd, cd=cd, gbx=bx, dkx=rd, hide_ptd, /cat
    grim_message
   end
  grim_message
@@ -460,7 +460,7 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg__hide, array_ptd, cd=cd, gbx=bx, dkx=rd, hide_ptd, /cat
+   pg_hide, array_ptd, cd=cd, gbx=bx, dkx=rd, hide_ptd, /cat
    grim_message
   end
  grim_message
@@ -541,7 +541,7 @@ function grim_compute_star, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg__hide, star_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
+ pg_hide, star_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
  grim_message
 
 
@@ -641,7 +641,7 @@ function grim_compute_shadow, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg__hide, shadow_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
+ pg_hide, shadow_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
  grim_message
 
  ;-------------------------------------------------------------------
@@ -712,7 +712,7 @@ function grim_compute_reflection, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg__hide, reflection_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
+ pg_hide, reflection_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
  grim_message
 
  ;-------------------------------------------------------------------
@@ -788,10 +788,10 @@ function grim_compute_ring, map=map, fov=fov, hide=hide, $
  ring_ptd = pg_disk(cd=cd, dkx=rds, fov=fov, npoints=npoints)
  grim_message
 
- pg__hide, ring_ptd, cd=cd, bx=pd, hide_ptd, /cat
+ pg_hide, ring_ptd, cd=cd, bx=pd, hide_ptd, /cat
  grim_message
 
- pg__hide, ring_ptd, cd=cd, od=sund, bx=pd, hide_ptd_shad, /cat
+ pg_hide, ring_ptd, cd=cd, od=sund, bx=pd, hide_ptd_shad, /cat
  grim_message
 
 
@@ -871,10 +871,10 @@ function grim_compute_ring_grid, map=map, fov=fov, hide=hide, $
  grid_ptd = pg_grid(cd=cd, bx=rds, fov=fov, npoints=npoints)
  grim_message
 
- pg__hide, grid_ptd, cd=cd, gbx=pd, hide_ptd, /cat
+ pg_hide, grid_ptd, cd=cd, gbx=pd, hide_ptd, /cat
  grim_message
 
- pg__hide, grid_ptd, cd=cd, od=sund, gbx=pd, hide_ptd_shad, /cat
+ pg_hide, grid_ptd, cd=cd, od=sund, gbx=pd, hide_ptd_shad, /cat
  grim_message
 
 

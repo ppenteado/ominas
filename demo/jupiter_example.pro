@@ -169,10 +169,10 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;   These commands compute the limb of each planet, the edges of the Jovian ring
 ;   system, and terminators on each planet::
 ;
-;     limb_ptd = pg_limb(gd=gd) & pg__hide, limb_ptd, gd=gd, bx=rd, /rm
-;               pg__hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
-;     ring_ptd = pg_disk(gd=gd) & pg__hide, ring_ptd, gd=gd, bx=pd
-;     term_ptd = pg_limb(gd=gd, od=gd.sund) & pg__hide, term_ptd, gd=gd, bx=pd, /assoc
+;     limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
+;               pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;     ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
+;     term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;
 ;     center_ptd = pg_center(gd=gd, bx=pd)
 ;     center_o=pnt_points(center_ptd[0])    ;get the center of Jupiter from the points object
@@ -183,13 +183,13 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;   using pg_limb by specifying the sun as the observer instead of the camera.
 ;-
 ;-------------------------------------------------------------------------
-limb_ptd = pg_limb(gd=gd) & pg__hide, limb_ptd, gd=gd, bx=rd, /rm
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
 timer, t=_t
-;          pg__hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
-          pg__hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
 timer, t=_t, 'xx'
-ring_ptd = pg_disk(gd=gd) & pg__hide, ring_ptd, gd=gd, bx=pd
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg__hide, term_ptd, gd=gd, bx=pd, /assoc
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
+term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 
 center_ptd = pg_center(gd=gd, bx=pd)
 center_o=pnt_points(center_ptd[0])
@@ -302,11 +302,11 @@ dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])	; Try to correlate scanned
 					 	; edges with the computed limb.
 pg_repoint, dxy, 0d, axis=center_ptd[0], gd=gd	; Change the pointing.
 
-limb_ptd = pg_limb(gd=gd) & pg__hide, limb_ptd, gd=gdbx=rd, /rm
-       pg__hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
-ring_ptd = pg_disk(gd=gd) & pg__hide, ring_ptd, gd=gd, bx=pd
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gdbx=rd, /rm
+       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg__hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -344,11 +344,11 @@ print, dxy
 ;
 ;     ;Recalculate the geometry and redisplay the image with the new overlays
 ;
-;     limb_ptd = pg_limb(gd=gd) & pg__hide, limb_ptd, gd=gd, bx=rd, /rm
-;            pg__hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
-;     ring_ptd = pg_disk(gd=gd) & pg__hide, ring_ptd, gd=gd, bx=pd
+;     limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
+;            pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;     ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 ;     center_ptd = pg_center(gd=gd, bx=pd)
-;     term_ptd = pg_limb(gd=gd, od=gd.sund) & pg__hide, term_ptd, gd=gd, bx=pd, /assoc
+;     term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;     object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 ;
 ;     tvim, im
@@ -360,11 +360,11 @@ tvim, im
 dxy = pg_drag(object_ptd, dtheta=dtheta, axis=center_ptd[0])
 pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
-limb_ptd = pg_limb(gd=gd) & pg__hide, limb_ptd, gd=gd, bx=rd, /rm
-       pg__hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
-ring_ptd = pg_disk(gd=gd) & pg__hide, ring_ptd, gd=gd, bx=pd
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
+       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg__hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -485,11 +485,11 @@ pg_draw, cvscan_ptd
 ;     print, dxy, dtheta*180./!pi, chisq, covar
 ;     pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 ;
-;     limb_ptd = pg_limb(gd=gd) & pg__hide, limb_ptd, gd=gd, bx=rd, /rm
-;             pg__hide, limb_ptd, bx=pd, /assoc, gd=gd, od=sund
-;     ring_ptd = pg_disk(gd=gd) & pg__hide, ring_ptd, gd=gd, bx=pd
+;     limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
+;             pg_hide, limb_ptd, bx=pd, /assoc, gd=gd, od=sund
+;     ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 ;     center_ptd = pg_center(gd=gd, bx=pd)
-;     term_ptd = pg_limb(gd=gd, od=gd.sund) & pg__hide, term_ptd, gd=gd, bx=pd, /assoc
+;     term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;     object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 ;
 ;     tvim, im
@@ -505,11 +505,11 @@ covar = pg_covariance([cvscan_cf])
 print, dxy, dtheta*180./!pi, chisq, covar
 pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
-limb_ptd = pg_limb(gd=gd) & pg__hide, limb_ptd, gd=gd, bx=rd, /rm
-        pg__hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
-ring_ptd = pg_disk(gd=gd) & pg__hide, ring_ptd, gd=gd, bx=pd
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
+        pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg__hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -528,45 +528,45 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;   and 12 longitude grid lines.  The longitude grid lines circle the body
 ;   and so on a map they will appear as 24 grid lines.  The ring radius grid
 ;   uses four grid lines by default between the inner and outer ring radius.
-;   It uses pg__hide to set as not visible the points on the grid behind the
+;   It uses pg_hide to set as not visible the points on the grid behind the
 ;   planet and ring for both objects.  It then uses pg_draw to draw the 
 ;   grid points in blue (ctblue)::
 ;
 ;     grid_ptd = pg_grid(gd=gd, lat=lat, lon=lon) 
-;     pg__hide, grid_ptd, cd=cd, bx=pd, /assoc
-;     pg__hide, grid_ptd, cd=cd, bx=pd, od=sund, /assoc
-;     pg__hide, grid_ptd, gd=gd, bx=rd
+;     pg_hide, grid_ptd, cd=cd, bx=pd, /assoc
+;     pg_hide, grid_ptd, cd=cd, bx=pd, od=sund, /assoc
+;     pg_hide, grid_ptd, gd=gd, bx=rd
 ;     pg_draw, grid_ptd, color=ctblue()
 ;
 ;     plat_ptd = pg_grid(gd=gd, slon=!dpi/2d, lat=lat, nlon=0) 
-;     pg__hide, plat_ptd[0], cd=cd, bx=pd[0], /, bx=pd
+;     pg_hide, plat_ptd[0], cd=cd, bx=pd[0], /, bx=pd
 ;     pg_draw, plat_ptd[0], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
 ;
 ;     plon_ptd = pg_grid(gd=gd, slat=0d, lon=lon, nlat=0) 
-;     pg__hide, plon_ptd[0], cd=cd, bx=pd[0], /assoc
+;     pg_hide, plon_ptd[0], cd=cd, bx=pd[0], /assoc
 ;     pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 ;
-;     dgrid_ptd=pg_grid(gd=gd, bx=rd) & pg__hide, dgrid_ptd, gd=gd, bx=pd
+;     dgrid_ptd=pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, bx=pd
 ;     pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;-
 ;-------------------------------------------------------------------------
 grid_ptd = pg_grid(gd=gd, lat=lat, lon=lon) 
-pg__hide, grid_ptd, cd=cd, bx=pd, /assoc
-pg__hide, grid_ptd, cd=cd, bx=pd, od=sund, /assoc
-pg__hide, grid_ptd, gd=gd, bx=rd
+pg_hide, grid_ptd, cd=cd, bx=pd, /assoc
+pg_hide, grid_ptd, cd=cd, bx=pd, od=sund, /assoc
+pg_hide, grid_ptd, gd=gd, bx=rd
 pg_draw, grid_ptd, color=ctblue()
 
 plat_ptd = pg_grid(gd=gd, slon=!dpi/2d, lat=lat, nlon=0) 
-pg__hide, plat_ptd[0], cd=cd, bx=pd[0], /assoc
+pg_hide, plat_ptd[0], cd=cd, bx=pd[0], /assoc
 pg_draw, plat_ptd[0], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
 
 plon_ptd = pg_grid(gd=gd, slat=0d, lon=lon, nlat=0) 
-pg__hide, plon_ptd[0], cd=cd, bx=pd[0], /assoc
+pg_hide, plon_ptd[0], cd=cd, bx=pd[0], /assoc
 pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 
 
-dgrid_ptd=pg_grid(gd=gd, bx=rd, frame_bd=pd[0]) & pg__hide, dgrid_ptd, gd=gd, bx=pd
+dgrid_ptd=pg_grid(gd=gd, bx=rd, frame_bd=pd[0]) & pg_hide, dgrid_ptd, gd=gd, bx=pd
 pg_draw, dgrid_ptd, color=ctpurple()
 
 ;=========================================================================

@@ -3596,12 +3596,12 @@ pro grim_hide, grim_data, plane, ptd, gd=gd
  sund = cor_dereference_gd(gd, name='SUN')
 
  if(keyword__set(rd)) then $
-        pg__hide, ptd, cd=cd, dkx=rd, od=od, bx=rd, gbx=pd
+        pg_hide, ptd, cd=cd, dkx=rd, od=od, bx=rd, gbx=pd
  grim_message
 
  if(keyword__set(sund)) then $
-;     pg__hide, ptd, cd=cd, bx=pds, od=sund, /assoc
-     pg__hide, ptd, cd=cd, bx=pd, od=sund
+;     pg_hide, ptd, cd=cd, bx=pds, od=sund, /assoc
+     pg_hide, ptd, cd=cd, bx=pd, od=sund
  grim_message
 
 
