@@ -80,11 +80,12 @@ pro pg_put_rings, dd, trs, rd=_rd, ods=ods, $
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
  rd = nv_clone(_rd)
- name = ''
 
+ if(defined(name)) then _name = name & name = !null
  rng_assign, rd, /noevent, $
 @rng__keywords.include
 end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------

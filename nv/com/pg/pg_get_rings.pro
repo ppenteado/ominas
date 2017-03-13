@@ -91,7 +91,6 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, $
 @nv_trs_keywords_include.pro
 		end_keywords
 
-
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------

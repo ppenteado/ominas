@@ -111,10 +111,10 @@ end
 ; grim_get_overlay_ptdp
 ;
 ;=============================================================================
-function grim_get_overlay_ptdp, grim_data, name, plane=plane, data=data, $
-                              class=class, dep=dep, labels=labels, ii=ii, $
-                              color=color, psym=psym, tlab=tlab, tshade=tshade, symsize=symsize, $
-                              shade=shade, tfill=tfill, genre=genre, fast=fast
+function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
+                        data=data, class=class, dep=dep, labels=labels, ii=ii, $
+                        color=color, psym=psym, tlab=tlab, tshade=tshade, $
+                        symsize=symsize, shade=shade, tfill=tfill, genre=genre, fast=fast
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
@@ -1187,7 +1187,10 @@ end
 ;=============================================================================
 function grim_match_overlays, ptd, ptd0
 
-;stop
+ return, where((pnt_desc(ptd) EQ pnt_desc(ptd0)) $
+                     AND (cor_name(ptd) EQ cor_name(ptd0)) )
+
+; this is more unique, but much slower...
  return, where(cor_match_gd(ptd, ptd0) $
                    AND (pnt_desc(ptd) EQ pnt_desc(ptd0)) $
                      AND (cor_name(ptd) EQ cor_name(ptd0)) )
@@ -3593,12 +3596,12 @@ pro grim_hide, grim_data, plane, ptd, gd=gd
  sund = cor_dereference_gd(gd, name='SUN')
 
  if(keyword__set(rd)) then $
-        pg_hide, ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd
+        pg__hide, ptd, cd=cd, dkx=rd, od=od, bx=rd, gbx=pd
  grim_message
 
  if(keyword__set(sund)) then $
-;     pg_hide, ptd, cd=cd, gbx=pds, od=sund, /limb
-     pg_hide, ptd, cd=cd, gbx=pd, od=sund, /globe
+;     pg__hide, ptd, cd=cd, bx=pds, od=sund, /assoc
+     pg__hide, ptd, cd=cd, bx=pd, od=sund
  grim_message
 
 
@@ -3628,6 +3631,8 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  ;--------------------------------------------------
  if(keyword_set(dep)) then $
   begin
+   grim_suspend_events 
+
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; recompute the overlay points
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -3635,11 +3640,11 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
    if(cor_test_gd(gd, 'MD')) then $
                        gd = cor_create_gd(gd=gd, cd=gd.md, od=*plane.od_p)
 
-
    _ptd = call_function(fn, gd=gd, $
            map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
            active_ptd=source_ptd, data=data, $
            npoints=grim_data.npoints)
+   _ptd = pnt_cull(_ptd)
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; update the existing overlay array
@@ -3650,6 +3655,8 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
    ; add any new arrays
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    grim_add_new_points, grim_data, plane=plane, ptdp, _ptd, name, gd.cd
+
+   grim_resume_events
    return
   end
 

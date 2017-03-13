@@ -66,7 +66,8 @@
 ;
 ;
 ; STATUS:
-;	Not tested
+;	Soon to be obsolete.  This program will be merged with pg_reflection_disk
+;	to make a more general program, which will replace pg_reflection.  
 ;
 ;
 ; SEE ALSO:

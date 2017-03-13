@@ -63,7 +63,8 @@
 ;
 ;
 ; STATUS:
-;	
+;	Soon to be replaced by a new program that merges pg_shadow_globe and
+;	pg_shadow_disk.  The API for the new routine may be slightly different.
 ;
 ;
 ; SEE ALSO:

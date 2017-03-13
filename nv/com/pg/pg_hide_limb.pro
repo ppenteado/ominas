@@ -7,8 +7,7 @@
 ; PURPOSE:
 ;	Hides the given points with respect to the limb of each given globe and
 ;	observer.  This routine is only relevant for points that lie on the 
-;	surface of a body.  pg_hide_globe should be used for non-surface
-;	points.
+;	surface of a body.  
 ;
 ;
 ; CATEGORY:

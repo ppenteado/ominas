@@ -80,11 +80,12 @@ pro pg_put_stations, dd, trs, std=_std, ods=ods, $
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
  std = nv_clone(_std)
- name = ''
 
+ if(defined(name)) then _name = name & name = !null
  stn_assign, std, /noevent, $
 @stn__keywords.include
 end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------

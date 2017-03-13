@@ -80,11 +80,12 @@ pro pg_put_maps, dd, trs, md=_md, $
  ; override the specified values 
  ;-------------------------------------------------------------------
  md = nv_clone(_md)
- name = ''
 
+ if(defined(name)) then _name = name & name = !null
  map_assign, md, /noevent, $
 @map__keywords.include
 end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------

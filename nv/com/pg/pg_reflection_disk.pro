@@ -64,7 +64,8 @@
 ;
 ;
 ; STATUS:
-;	Not tested
+;	Soon to be obsolete.  This program will be merged with pg_shadow_globe
+;	to make a more general program, which will replace pg_shadow.  
 ;
 ;
 ; SEE ALSO:

@@ -73,76 +73,6 @@ end
 
 
 ;=============================================================================
-; oi_cache_put
-;
-;=============================================================================
-pro oi_cache_put, file, dat
-common oi_load_block, _catfile, _dat_p
-
- _catfile = append_array(_catfile, file)
- _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; oi_cache_get
-;
-;=============================================================================
-function oi_cache_get, file, reload=reload
-common oi_load_block, _catfile, _dat_p
-
- if((NOT keyword_set(_catfile)) OR keyword_set(reload)) then return, ''
-
- w = where(_catfile EQ file)
- if(w[0] NE -1) then return, *(_dat_p[w[0]])
- 
- return, ''
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; oi_load
-;
-;=============================================================================
-function oi_load, catpath, catfile, reload=reload
-
- ;--------------------------------------------------------------------
- ; parse catalog path
- ;--------------------------------------------------------------------
- catdirs = get_path(catpath, file=catfile)
- if(NOT keyword_set(catdirs[0])) then return, ''
-
- file = catdirs + '/' + catfile
- 
- ;--------------------------------------------------------------------
- ; check the cache
- ;--------------------------------------------------------------------
- dat = oi_cache_get(file, reload=reload)
- if(keyword_set(dat)) then return, dat
-
- ;--------------------------------------------------------------------
- ; read the catalog
- ;--------------------------------------------------------------------
- dat = orbcat_read(file)
-
- ;--------------------------------------------------------------------
- ; cache catalog data
- ;--------------------------------------------------------------------
- oi_cache_put, file, dat
-
-
- return, dat
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; oi_get_element
 ;
 ;=============================================================================
@@ -177,8 +107,24 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
    return, 0
   end
 
-
  status = 0
+
+ ;----------------------------------------------
+ ; get catalog path
+ ;----------------------------------------------
+ catpath = getenv('NV_ORBIT_DATA')
+ if(NOT keyword_set(catpath)) then $
+  begin
+    nv_message, /con, $
+     'NV_ORBIT_DATA environment variable is undefined.', $
+       exp=['NV_ORBIT_DATA specifies directories in which this translator', $
+ 	    'searches for data files.']
+   status = -1
+   return, 0
+  end
+ catpath = parse_comma_list(catpath, delim=':')
+
+
 
  ;-----------------------------------------------
  ; translator arguments
@@ -238,20 +184,8 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; read orbit catalog
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
-   catpath = getenv('NV_ORBIT_DATA')
-   if(NOT keyword_set(catpath)) then $
-    begin
-      nv_message, /con, $
-       'NV_ORBIT_DATA environment variable is undefined.', $
-         exp=['NV_ORBIT_DATA specifies directories in which this translator', $
-              'searches for data files.']
-     status = -1
-     return, 0
-    end
-   catpath = parse_comma_list(catpath, delim=':')
-
    catfile = 'orbcat_' + strlowcase(planet) + '.txt'
-   dat = oi_load(catpath, catfile, reload=reload)
+   dat = file_manage('orbcat_read', catpath, catfile, reload=reload)
 
    if(keyword_set(dat)) then $
     begin

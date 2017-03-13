@@ -104,7 +104,6 @@ pro pg_hide, object_ptd, hide_ptd, cd=cd, one2one=one2one, $
              od=od, gbx=gbx, dkx=dkx, gd=gd, $
 	     globe=globe, limb=limb, disk=disk, rm=rm, reveal=reveal, cat=cat
 
-
  if(arg_present(hide_ptd)) then hide_ptd = 1	; need this to allow called routines
 						; to detect presence of hide_ptd argument.
 

@@ -63,7 +63,8 @@
 ;
 ;
 ; STATUS:
-;	
+;	Soon to be replaced by a new program that merges pg_reflection_globe and
+;	pg_reflection_disk.  The API for the new routine may be slightly different.
 ;
 ;
 ; SEE ALSO:

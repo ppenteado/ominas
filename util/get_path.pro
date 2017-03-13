@@ -10,7 +10,7 @@
 ;
 ;
 ; CATEGORY:
-;	UTIL/EXD
+;	UTIL
 ;
 ;
 ; CALLING SEQUENCE:
@@ -29,8 +29,8 @@
 ;	extesion:	File extension to match.  If given, only directories
 ;		 	containing files of this type are returned.
 ;
-;	file:	File name to match.  If given, only directories
-;		 containing files with this name are returned.
+;	file:		File name to match.  If given, only directories
+;			containing files with this name are returned.
 ;
 ;
 ;  OUTPUT: NONE

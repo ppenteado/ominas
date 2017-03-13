@@ -21,7 +21,7 @@
 ;  INPUT: 
 ;	gbd:	Array (nt) of any subclass of GLOBE descriptors.
 ;
-;	r:	Columns vector givnng the BODY-frame position of the viewer.
+;	r:	Columns vector giving the BODY-frame position of the viewer.
 ;
 ;	p:	Array (nv) of BODY-frame vectors giving the points to hide.
 ;
@@ -66,6 +66,7 @@
 function glb_hide_points, gbd, v, points, rm=rm
 @core.include
  
+ epsilon = 1d
 
  nt = n_elements(gbd)
  nv = (size(points))[1]
@@ -75,8 +76,8 @@ function glb_hide_points, gbd, v, points, rm=rm
 
  discriminant = glb_intersect_discriminant(gbd, vv, r)
 
- if(keyword_set(rm)) then sub = where(discriminant GE 0d) $
- else sub = where((discriminant GE 0d) AND (v_mag(r) GE v_mag(vv)))
+ if(keyword_set(rm)) then sub = where(discriminant GE epsilon) $
+ else sub = where((discriminant GE epsilon) AND (v_mag(r) GE v_mag(vv)))
 
  return, sub
 end

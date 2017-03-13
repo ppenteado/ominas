@@ -80,11 +80,12 @@ pro pg_put_stars, dd, trs, sd=_sd, ods=ods, $
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
  sd = nv_clone(_sd)
- name = ''
 
+ if(defined(name)) then _name = name & name = !null
  str_assign, sd, /noevent, $
 @str__keywords.include
 end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------

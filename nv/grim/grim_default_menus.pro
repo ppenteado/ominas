@@ -1495,6 +1495,12 @@ pro grim_menu_mosaic_event, event
    planes = append_array(planes, grim_visible_planes(grim_data))
   end
 
+ if(n_elements(planes) EQ 1) then $
+  begin
+   grim_message, 'There is only one visible plane.'
+   return
+  end
+
  ;------------------------------------------------
  ; construct mosaic
  ;------------------------------------------------

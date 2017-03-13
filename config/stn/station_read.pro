@@ -8,7 +8,7 @@ function station_read, filename, names=names, default=default
  ;----------------------------
  ; read file
  ;----------------------------
- nv_message, /con, verb=0.2, 'Reading station catalog ' + transpose(filename) + '...'
+ nv_message, /con, verb=0.2, 'Reading station catalog ' + filename + '...'
  cat = read_txt_table(filename)
 
  ;----------------------------

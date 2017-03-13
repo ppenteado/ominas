@@ -29,7 +29,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
            render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
 @grim_block.include
 
- 
   if(NOT keyword_set(dd0)) then dd0 = obj_new()
   if(NOT keyword_set(nhist)) then nhist = 1
 
@@ -75,11 +74,11 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(xtitle)) then xtitle = ''
   if(NOT keyword_set(ytitle)) then ytitle = ''
 
-
   ;----------------------
   ; main data structure
   ;----------------------
-  grim_data = {grim_data_struct, $
+;  grim_data = {grim_data_struct, $
+  grim_data = { $
 	;---------------
 	; widgets
 	;---------------

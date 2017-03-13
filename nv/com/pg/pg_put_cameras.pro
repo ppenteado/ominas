@@ -80,11 +80,12 @@ pro pg_put_cameras, dd, trs, cd=_cd, $
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
  cd = nv_clone(_cd)
- name = ''
 
+ if(defined(name)) then _name = name & name = !null
  cam_assign, cd, /noevent, $
 @cam__keywords.include
 end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------

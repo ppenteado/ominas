@@ -106,8 +106,6 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
  if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
 
-
-
  if(keyword_set(gbx)) then if(NOT keyword_set(bx)) then bx = gbx
  if(keyword_set(dkx)) then if(NOT keyword_set(bx)) then bx = dkx
 

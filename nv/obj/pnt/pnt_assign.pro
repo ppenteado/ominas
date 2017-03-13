@@ -54,12 +54,15 @@
 pro pnt_assign, xd, noevent=noevent, $
 @pnt__keywords.include
 end_keywords
+;timer, t=_t
 
  _xd = cor_dereference(xd)
 @pnt_assign.include
  cor_rereference, xd, _xd
+;timer, 'aa', t=_t
 
  nv_notify, xd, type = 0, noevent=noevent
  nv_notify, /flush, noevent=noevent
+;timer, 'bb', t=_t
 end
 ;===========================================================================

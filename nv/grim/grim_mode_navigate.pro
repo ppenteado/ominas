@@ -315,6 +315,7 @@ common grim_mode_navigate_reposition_y_block, name, bx, surf_pt0, body_pt0
   begin
    surf_pts = grim_image_to_surface(grim_data, plane, p0[*,0], $
                                          bx=bx, names=names, body_pts=body_pts)
+   if(NOT keyword_set(names)) then return
    name = names[0]
    surf_pt0 = surf_pts[0,*]
    body_pt0 = body_pts[0,*]
@@ -555,7 +556,26 @@ end
 ;
 ;
 ; PURPOSE:
-;	Selects the navigate cursor mode.
+;	Selects the navigate cursor mode.  
+;
+;	 Camera orientation: 
+;	   Left button:		Allows the optic axis to be repointed.
+;
+;	   Right button:	Allows the camera to twist about an axis 
+;				corresponding to the selected pixel location.
+;
+;	 Camera position:
+;	   <Shift> Left:	Allows the camera to be repositioned in the 
+;				X-Z plane (image plane).  Speeds depend on
+;				the object under the cursor.
+;
+;	   <Shift> Right:	Allows the camera to be repositioned and 
+;				reoriented simultaneosly by tracking the
+;				object under the cursor.
+;
+;	   <Shift> Wheel:	Allows the camera to be repositioned in the 
+;				Y (optic axis) direction.  Speeds depend on
+;				the object under the cursor.
 ;
 ;
 ; CATEGORY:

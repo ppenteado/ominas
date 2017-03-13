@@ -56,83 +56,6 @@
 ; 
 ;-
 ;=============================================================================
-
-
-
-;=============================================================================
-; si_cache_put
-;
-;=============================================================================
-pro si_cache_put, file, dat
-common si_load_block, _catfile, _dat_p
-
- _catfile = append_array(_catfile, file)
- _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; si_cache_get
-;
-;=============================================================================
-function si_cache_get, file, reload=reload
-common si_load_block, _catfile, _dat_p
-
- if((NOT keyword_set(_catfile)) OR keyword_set(reload)) then return, ''
-
- w = where(_catfile EQ file)
- if(w[0] NE -1) then return, *(_dat_p[w[0]])
- 
- return, ''
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; si_load
-;
-;=============================================================================
-function si_load, catpath, catfile, reload=reload
-
- ;--------------------------------------------------------------------
- ; parse catalog path
- ;--------------------------------------------------------------------
- catdirs = get_path(catpath, file=catfile)
- if(NOT keyword_set(catdirs[0])) then return, ''
-
- file = catdirs + '/' + catfile
- 
- ;--------------------------------------------------------------------
- ; check the cache
- ;--------------------------------------------------------------------
- dat = si_cache_get(file, reload=reload)
- if(keyword_set(dat)) then return, dat
-
- ;--------------------------------------------------------------------
- ; read the catalog
- ;--------------------------------------------------------------------
- dat = station_read(file)
-
- ;--------------------------------------------------------------------
- ; cache catalog data
- ;--------------------------------------------------------------------
- si_cache_put, file, dat
-
-
- return, dat
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; station_input
-;
-;=============================================================================
 function station_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
@@ -209,7 +132,7 @@ function station_input, dd, keyword, prefix, values=values, status=status, $
    ; read relevant station catalog
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    catfile = 'stations_' + strlowcase(primary) + '.txt'
-   dat = si_load(catpath, catfile, reload=reload)
+   dat = file_manage('station_read', catpath, catfile, reload=reload)
 
    if(keyword_set(dat)) then $
     begin

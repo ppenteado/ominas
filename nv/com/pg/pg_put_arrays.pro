@@ -80,11 +80,12 @@ pro pg_put_arrays, dd, trs, ard=_ard, ods=ods, $
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
  ard = nv_clone(_ard)
- name = ''
 
+ if(defined(name)) then _name = name & name = !null
  arr_assign, ard, /noevent, $
 @arr__keywords.include
 end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------

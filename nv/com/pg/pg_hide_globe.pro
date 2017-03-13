@@ -21,10 +21,10 @@
 ;  INPUT:
 ;	object_ptd:	Array of POINT containing inertial vectors.
 ;
+;  OUTPUT: 
 ;	hide_ptd:	Array (n_disks, n_timesteps) of POINT 
 ;			containing the hidden points.
 ;
-;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
@@ -96,7 +96,7 @@ pro pg_hide_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, _point_ptd, hide_ptd, $
               reveal=reveal, compress=compress, cat=cat, rm=rm
 @pnt_include.pro
 
- hide = keyword_set(hide_ptd)
+ hide = arg_present(hide_ptd)
  if(NOT keyword_set(_point_ptd)) then return
 
  ;----------------------------------------------------------
@@ -157,7 +157,7 @@ point_ptd = _point_ptd
        pnt_set_flags, point_ptd[j], _flags
       end
 
-     if(hide) then $
+     if(hide AND (w[0] NE -1)) then $
       begin
        hide_ptd[j,i] = nv_clone(point_ptd[j])
 
@@ -167,8 +167,11 @@ point_ptd = _point_ptd
        _flags = flags
        if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
-       pnt_assign, hide_ptd[j,i], desc=desc+'-hide_globe', flags=_flags, $
+;print, '------------'
+;timer, t=_t
+       pnt_assign, /noevent, hide_ptd[j,i], desc=desc+'-hide_globe', flags=_flags, $
                   gd=append_struct(gd0, {gbx:gbx[i,0], od:od[0], cd:cd[0]})
+;timer, 'a', t=_t
       end
     end
 

@@ -74,7 +74,8 @@
 ;
 ;
 ; STATUS:
-;	
+;	Soon to be obsolete.  This program will be merged with pg_shadow_disk
+;	to make a more general program, which will replace pg_shadow.  
 ;
 ;
 ; SEE ALSO:

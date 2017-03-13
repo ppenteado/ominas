@@ -528,6 +528,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	;----------------------------
 	; active objects
 	;----------------------------
+; it may be simpler to implement these as udata on each overlay ptd or xd
 		active_xd_p	:	ptr_new(obj_new()), $	; Descriptors of
 								;  active objects
 		active_overlays_ptdp :	ptr_new(obj_new()), $	; Active overlays
@@ -542,6 +543,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	;  descriptor (e.g., rings have two arrays per descriptor).
 	;-----------------------------------------------------------
 		overlay_ptdps		:	ptr_new(0), $
+; it may be simpler to implement these as udata on each overlay ptd
 		overlay_names_p		:	ptr_new(''), $
 		overlay_classes_p	:	ptr_new(0), $
 		overlay_genres_p	:	ptr_new(0), $

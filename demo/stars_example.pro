@@ -172,7 +172,7 @@ sd = pg_get_stars(dd, od=cd, 'faint=14')
 ; array of star descriptors. Each star descriptor describes the
 ; data for one star. 
 ;
-; `pg_hide` is called to remove (/rm) any star points covered by the 
+; `pg__hide` is called to remove (/rm) any star points covered by the 
 ; planet (/globe). Although there is no planet in the Cassini image,
 ; this technique should be used to hide star points in general, were
 ; there to be a `limb_ptd`.
@@ -186,7 +186,7 @@ sd = pg_get_stars(dd, od=cd, 'faint=14')
 ;
 ; Code::
 ;
-;  star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;  star_ptd=pg_center(bx=sd, gd=gd) & pg__hide, star_ptd, gd=gd, bx=pd, /rm
 ;  n_stars=n_elements(sd)
 ;  color = ctred()
 ;  psym = 6
@@ -194,7 +194,7 @@ sd = pg_get_stars(dd, od=cd, 'faint=14')
 ;  plabels = cor_name(sd)
 ;-
 ;-------------------------------------------------------------------------
-star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+star_ptd=pg_center(bx=sd, gd=gd) & pg__hide, star_ptd, gd=gd, bx=pd, /rm
 n_stars=n_elements(sd)
 
 color = ctred()
@@ -297,7 +297,7 @@ pg_draw, star_ptd, color=color, psym=psym, plabel=smag, csi=csizes
 ;  tvim, im
 ;  dxy = pg_drag(star_ptd, dtheta=dtheta, axis=optic_ptd, symbol=6)  ; square
 ;  pg_repoint, dxy, dtheta, axis=optic_ptd, gd=gd
-;  star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;  star_ptd=pg_center(bx=sd, gd=gd) & pg__hide, star_ptd, gd=gd, bx=pd, /rm
 ;  tvim, im
 ;  pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 ;-
@@ -307,7 +307,7 @@ tvim, im
 dxy = pg_drag(star_ptd, dtheta=dtheta, axis=optic_ptd, symbol=6)  ; square
 pg_repoint, dxy, dtheta, axis=optic_ptd, gd=gd
 
-star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+star_ptd=pg_center(bx=sd, gd=gd) & pg__hide, star_ptd, gd=gd, bx=pd, /rm
 
 tvim, im
 pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
@@ -409,7 +409,7 @@ pg_draw, ptscan_ptd, psym=1, col=ctyellow()
 ;  covar = pg_covariance([ptscan_cf])
 ;  print, dxy, dtheta*180./!pi, chisq, covar
 ;  pg_repoint, dxy, dtheta, axis=optic_ptd, gd=gd
-;  star_ptd = pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;  star_ptd = pg_center(bx=sd, gd=gd) & pg__hide, star_ptd, gd=gd, bx=pd, /rm
 ;  tvim, im
 ;  pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 ;-
@@ -422,7 +422,7 @@ covar = pg_covariance([ptscan_cf])
 print, dxy, dtheta*180./!pi, chisq, covar
 pg_repoint, dxy, dtheta, axis=optic_ptd, gd=gd
 
-star_ptd = pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+star_ptd = pg_center(bx=sd, gd=gd) & pg__hide, star_ptd, gd=gd, bx=pd, /rm
 
 tvim, im
 pg_draw, star_ptd, color=color, psym=psym, plabel=plabels

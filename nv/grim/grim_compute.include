@@ -21,6 +21,7 @@ function grim_compute_planet_center, map=map, fov=fov, hide=hide, $
  center_ptd = pg_center(cd=cd, bx=pds)
  grim_message
 
+ grim_print, 'done', /append
  return, center_ptd
 end
 ;===============================================================================
@@ -81,22 +82,20 @@ function grim_compute_limb, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- if(keyword_set(rd)) then $
-   pg_hide, limb_ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd, hide_ptd_disk, /cat
+ pg__hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pd, hide_ptd, /cat
  grim_message
 
  if(keyword_set(sund)) then $
-     pg_hide, limb_ptd, cd=cd, gbx=pds, od=sund, /limb, hide_ptd_term, /cat
+ pg__hide, limb_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
  grim_message
 
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = limb_ptd
- if(keyword_set(hide_ptd_term)) then ptd = [ptd, hide_ptd_term]
- if(keyword_set(hide_ptd_disk)) then if(NOT hide) then ptd = [ptd, hide_ptd_disk]
-;stop
+ ptd = append_array(limb_ptd, hide_ptd_term)
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;===============================================================================
@@ -123,8 +122,8 @@ function grim_shade_limb, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_limb') NE -1)
- ww = where(strpos(desc, 'hide_disk') NE -1)
+ w = where(strpos(desc, 'hide_planet') NE -1)
+ ww = where(strpos(desc, 'hide_ring') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -169,19 +168,16 @@ function grim_compute_terminator, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- if(NOT map) then pg_hide, term_ptd, cd=cd, gbx=pds, /limb, hide_ptd_limb, /cat
-
- if(keyword_set(rd)) then $
-   pg_hide, term_ptd, cd=cd, gbx=pds, dkx=rd, /disk, hide_ptd_disk, /cat
+ if(NOT map) then pg__hide, term_ptd, cd=cd, gbx=pds, dkx=rd, hide_ptd, /cat
  grim_message
 
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
  ptd = term_ptd
- if(keyword_set(hide_ptd_limb)) then if(NOT hide) then ptd = [ptd, hide_ptd_limb]
- if(keyword_set(hide_ptd_disk)) then if(NOT hide) then ptd = [ptd, hide_ptd_disk]
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;===============================================================================
@@ -208,8 +204,8 @@ function grim_shade_terminator, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_limb') NE -1)
- ww = where(strpos(desc, 'hide_disk') NE -1)
+ w = where(strpos(desc, 'hide_planet') NE -1)
+ ww = where(strpos(desc, 'hide_ring') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -255,12 +251,10 @@ function grim_compute_planet_grid, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, grid_ptd, cd=cd, od=od, gbx=pds, /limb, hide_ptd_limb, /cat
-
-   pg_hide, grid_ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd, hide_ptd_disk, /cat
+   pg__hide, grid_ptd, cd=cd, dkx=rd, od=od, gbx=pd, hide_ptd, /cat
    grim_message
 
-   pg_hide, grid_ptd, cd=cd, gbx=pds, od=sund, /limb, hide_ptd_term, /cat
+   pg__hide, grid_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
    grim_message
   end
  grim_message
@@ -269,11 +263,10 @@ function grim_compute_planet_grid, map=map, fov=fov, hide=hide, $
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = grid_ptd
- if(keyword_set(hide_ptd_term)) then ptd = [ptd, hide_ptd_term]
- if(keyword_set(hide_ptd_disk)) then if(NOT hide) then ptd = [ptd, hide_ptd_disk]
- if(keyword_set(hide_ptd_limb)) then if(NOT hide) then ptd = [ptd, hide_ptd_limb]
+ ptd = append_array(grid_ptd, hide_ptd_term)
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;=============================================================================
@@ -300,8 +293,8 @@ function grim_shade_planet_grid, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_limb') NE -1)
- ww = where(strpos(desc, 'hide_disk') NE -1)
+ w = where(strpos(desc, 'hide_planet') NE -1)
+ ww = where(strpos(desc, 'hide_ring') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -364,23 +357,19 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, station_ptd, cd=cd, gbx=bx, /globe, hide_ptd_globe, /cat, /one
+   pg__hide, station_ptd, cd=cd, gbx=bx, dkx=rd, hide_ptd, /cat
    grim_message
   end
  grim_message
-
-; if(cor_test_gd(gd, 'rd')) then $
-;   pg_hide, station_ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd, hide_ptd_disk, /cat, /one
-; grim_message
 
 
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
  ptd = station_ptd
- if(keyword_set(hide_ptd_globe)) then if(NOT hide) then ptd = [ptd, hide_ptd_globe]
- if(keyword_set(hide_ptd_disk)) then if(NOT hide) then ptd = [ptd, hide_ptd_disk]
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;=============================================================================
@@ -407,8 +396,8 @@ function grim_shade_station, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_globe') NE -1)
- ww = where(strpos(desc, 'hide_disk') NE -1)
+ w = where(strpos(desc, 'hide_planet') NE -1)
+ ww = where(strpos(desc, 'hide_ring') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -471,23 +460,19 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, array_ptd, cd=cd, gbx=bx, /globe, hide_ptd_globe, /cat, /one
+   pg__hide, array_ptd, cd=cd, gbx=bx, dkx=rd, hide_ptd, /cat
    grim_message
   end
  grim_message
-
-; if(cor_test_gd(gd, 'rd')) then $
-;   pg_hide, array_ptd, cd=cd, dkx=rd, od=od, /disk, gbx=pd, hide_ptd_disk, /cat, /one
-; grim_message
 
 
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
  ptd = array_ptd
- if(keyword_set(hide_ptd_globe)) then if(NOT hide) then ptd = [ptd, hide_ptd_globe]
- if(keyword_set(hide_ptd_disk)) then if(NOT hide) then ptd = [ptd, hide_ptd_disk]
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;=============================================================================
@@ -513,8 +498,8 @@ function grim_shade_array, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_globe') NE -1)
- ww = where(strpos(desc, 'hide_disk') NE -1)
+ w = where(strpos(desc, 'hide_planet') NE -1)
+ ww = where(strpos(desc, 'hide_ring') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -556,11 +541,7 @@ function grim_compute_star, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
-;;;; if(keyword__set(rd)) then $
-;;;;                  pg_hide, star_ptd, cd=cd, dkx=rd, gbx=pd, /disk
-;;;; grim_message
-
- if(cor_test_gd(gd, 'pd')) then pg_hide, star_ptd, cd=cd, gbx=pd, /globe, hide_ptd_globe, /cat
+ pg__hide, star_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
  grim_message
 
 
@@ -579,9 +560,9 @@ function grim_compute_star, map=map, fov=fov, hide=hide, $
  ; set up output points
  ;-------------------------------------
  ptd = star_ptd
- if(keyword_set(hide_ptd_disk)) then if(NOT hide) then ptd = [ptd, hide_ptd_disk]
- if(keyword_set(hide_ptd_globe)) then if(NOT hide) then ptd = [ptd, hide_ptd_globe]
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;===============================================================================
@@ -660,7 +641,7 @@ function grim_compute_shadow, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg_hide, shadow_ptd, cd=cd, gbx=pd, dkx=rd, /disk, /globe, hide_ptd, /cat
+ pg__hide, shadow_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
  grim_message
 
  ;-------------------------------------------------------------------
@@ -669,8 +650,9 @@ function grim_compute_shadow, map=map, fov=fov, hide=hide, $
  ; they are recomputed
  ;-------------------------------------------------------------------
  ptd = shadow_ptd
- if(keyword_set(hide_ptd)) then if(NOT hide) then ptd = [ptd, hide_ptd]
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;===============================================================================
@@ -730,7 +712,7 @@ function grim_compute_reflection, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg_hide, reflection_ptd, cd=cd, gbx=pd, dkx=rd, /disk, /globe, hide_ptd, /cat
+ pg__hide, reflection_ptd, cd=cd, gbx=pd, dkx=rd, hide_ptd, /cat
  grim_message
 
  ;-------------------------------------------------------------------
@@ -739,8 +721,9 @@ function grim_compute_reflection, map=map, fov=fov, hide=hide, $
  ; they are recomputed
  ;-------------------------------------------------------------------
  ptd = reflection_ptd
- if(keyword_set(hide_ptd)) then if(NOT hide) then ptd = [ptd, hide_ptd]
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;===============================================================================
@@ -805,23 +788,20 @@ function grim_compute_ring, map=map, fov=fov, hide=hide, $
  ring_ptd = pg_disk(cd=cd, dkx=rds, fov=fov, npoints=npoints)
  grim_message
 
- pg_hide, ring_ptd, cd=cd, gbx=pd, /globe, hide_ptd_globe, /cat
+ pg__hide, ring_ptd, cd=cd, bx=pd, hide_ptd, /cat
  grim_message
 
- pg_hide, ring_ptd, cd=cd, od=sund, gbx=pd, /globe, hide_ptd_shad, /cat
+ pg__hide, ring_ptd, cd=cd, od=sund, bx=pd, hide_ptd_shad, /cat
  grim_message
 
 
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- if(NOT keyword_set(pnt_valid(ring_ptd))) then return, 0
+ ptd = append_array(ring_ptd, hide_ptd_shad)
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- ptd = ring_ptd
- if(keyword_set(hide_ptd_shad)) then ptd = [ptd, hide_ptd_shad]
- if(keyword_set(hide_ptd_globe)) then if(NOT hide) then ptd = [ptd, hide_ptd_globe]
-
-
+ grim_print, 'done', /append
  return, ptd
 end
 ;===============================================================================
@@ -848,7 +828,7 @@ function grim_shade_ring, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_globe') NE -1)
+ w = where(strpos(desc, 'hide_planet') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -891,21 +871,20 @@ function grim_compute_ring_grid, map=map, fov=fov, hide=hide, $
  grid_ptd = pg_grid(cd=cd, bx=rds, fov=fov, npoints=npoints)
  grim_message
 
- pg_hide, grid_ptd, cd=cd, gbx=pd, /globe, hide_ptd_globe, /cat
+ pg__hide, grid_ptd, cd=cd, gbx=pd, hide_ptd, /cat
  grim_message
- if(hide) then hide_ptd_globe = objarr(nrd)
 
- pg_hide, grid_ptd, cd=cd, od=sund, gbx=pd, /globe, hide_ptd_shad, /cat
+ pg__hide, grid_ptd, cd=cd, od=sund, gbx=pd, hide_ptd_shad, /cat
  grim_message
 
 
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = grid_ptd
- if(keyword_set(hide_ptd_shad)) then ptd = [ptd, hide_ptd_shad]
- if(keyword_set(hide_ptd_globe)) then if(NOT hide) then ptd = [ptd, hide_ptd_globe]
+ ptd = append_array(grid_ptd, hide_ptd_shad)
+ if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
+ grim_print, 'done', /append
  return, ptd
 end
 ;===============================================================================
@@ -932,7 +911,7 @@ function grim_shade_ring_grid, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_globe') NE -1)
+ w = where(strpos(desc, 'hide_planet') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5

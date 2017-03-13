@@ -2,7 +2,7 @@
 ; grim_print
 ;
 ;=============================================================================
-pro grim_print, arg1, arg2
+pro grim_print, arg1, arg2, append=append
 
  grim_data = arg1
 
@@ -13,7 +13,10 @@ pro grim_print, arg1, arg2
   end $
  else s = arg2
 
- widget_control, grim_data.label, set_value=s 
+ s0 = ''
+ if(keyword_set(append)) then widget_control, grim_data.label, get_value=s0
+
+ widget_control, grim_data.label, set_value=s0+s 
 
 
 end

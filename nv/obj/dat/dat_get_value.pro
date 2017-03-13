@@ -108,6 +108,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ;----------------------------------------------------------------
  ; call all translators, building a list of returned values
  ;----------------------------------------------------------------
+ nv_suspend_events
  nv_message, verb=0.9, 'Data descriptor ' + cor_name(dd)
 
  for i=0, n-1 do $
@@ -167,6 +168,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
     else result = xds
   end
 
+ nv_resume_events
  return, result
 end
 ;===========================================================================

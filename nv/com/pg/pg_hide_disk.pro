@@ -21,10 +21,10 @@
 ;  INPUT:
 ;	object_ptd:	Array of POINT containing inertial vectors.
 ;
+;  OUTPUT: 
 ;	hide_ptd:	Array (n_disks, n_timesteps) of POINT 
 ;			containing the hidden points.
 ;
-;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
@@ -101,7 +101,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_ptd, hid
               reveal=reveal, cat=cat, rm=rm
 @pnt_include.pro
 
- hide = keyword_set(hide_ptd)
+ hide = arg_present(hide_ptd)
  if(NOT keyword_set(object_ptd)) then return
 
  ;-----------------------------------------------
@@ -161,7 +161,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_ptd, hid
         pnt_set_flags, object_ptd[j], _flags
        end
 
-      if(hide) then $
+     if(hide AND (w[0] NE -1)) then $
        begin
         hide_ptd[j,i] = nv_clone(object_ptd[j])
 

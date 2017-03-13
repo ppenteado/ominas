@@ -6,7 +6,8 @@
 ;
 ; PURPOSE:
 ;	Hides points lying on the surface of a GLOBE object that are 
-;	obscured by the limb with respect to a given viewpoint.
+;	obscured by the limb with respect to a given viewpoint.  This 
+;	procedure is much faster then the more general glb_hide_points.
 ;
 ;
 ; CATEGORY:

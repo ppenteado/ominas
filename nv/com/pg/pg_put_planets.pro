@@ -82,11 +82,12 @@ pro pg_put_planets, dd, trs, pd=_pd, ods=ods, raw=raw, $
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
  pd = nv_clone(_pd)
- name = ''
 
+ if(defined(name)) then _name = name & name = !null
  plt_assign, pd, /noevent, $
 @plt__keywords.include
 end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------------------------------------------

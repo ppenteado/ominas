@@ -450,21 +450,9 @@
 ;
 ;	 Cursor mode buttons: 
 ;		Cursor mode shortcut buttons are arranged vertically along the 
-;		left side of the GRIM window.  The following modes are available:
-;
-;		Select: The top button toggles a given grim instance between
-;		        selected and unselected states, for use with functions
-;		        that require input from more than one grim instance. 
-;		        When a given instance is selected, this button
-;		        displays an asterisk.
-;
-;		Context: 
-;			This button toggles the visibility of a small context
-;			window superimposed over the top-left corner of the
-;			main image.  The context window always displays the
-;			entire image and all of these modes except activation
-;			function in the same way in the context window as in
-;			the main window.
+;		left side of the GRIM window, and as provided as shortcuts
+;		for the corresponding options in the Mode menu.  The following 
+;		modes are available:
 ;
 ;		Activate: 
 ;			In activate mode, overlay objects may be activated
@@ -508,6 +496,18 @@
 ;			The use of tiepoints is determined by the particular 
 ;			option selected by the user.
 ;
+;		Curve: 
+;			In curve mode, curves are added using the
+;			left mouse button and deleted using the right button.
+;			Curves appear as red lines identified by numbers at
+;			each end.  The use of curves is determined by the 
+;			particular option selected by the user.
+;
+;		Mask: 
+;			GRIM maintains a mask for each plane whose use is
+;			appication-dependent.  Mask mode allows pixels in the
+;			mask to be toggled on and off.
+;
 ;		Magnify: 
 ;			In magnify mode, image pixels in the graphics
 ;			window may be magnifed using either the right or left
@@ -518,6 +518,36 @@
 ;		XY Zoom: 
 ;			Same as 'zoom' above, except the aspect ratio is
 ;			set by the proportions of the selected box.
+;
+;		Remove overlays: 
+;			Allows the user to remove overlay arrays.
+;
+;		Trim overlays: 
+;			Allows the user to trim points from overlay arrays.
+;
+;		Select within overlays: 
+;			Allows the user to select points within overlay arrays.
+;
+;		Define Region: 
+;			Allows the user to define GRIM's region of interest.
+;
+;		Smooth:
+;			Allows the user to select a smoothing box to be applied
+;			to the data array.
+;
+;		Select Plane:
+;			Allows the user to change planes using the pointer.  
+;			This option is only useful in cases where multiple
+;			planes are displayed.
+;
+;		Drag Image:
+;			Allows the user to reposition the current plane by 
+;			clicking and dragging.
+;
+;		Navigate:
+;			Allows the user to modify the camera position and 
+;			orientation usng the mouse.
+;
 ;
 ;	 Graphics window: 
 ;		The graphics window displays the image associated with the 
@@ -3587,7 +3617,9 @@ end
 ;
 ;
 ; PURPOSE:
-;	Selects or unselects a grim window.
+;	Selects or unselects a grim window.  This functionality is for use
+;	with functions that require input from more than one grim instance. 
+;	The selected state is red; unselected is gray.
 ;
 ;
 ; CATEGORY:
@@ -6708,8 +6740,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Toggles the ontext window On/Off. 
-;
+;	Toggles the context window On/Off. 
 ;
 ; CATEGORY:
 ;	NV/GR
@@ -9336,8 +9367,8 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
               widget_base(grim_data.draw_base, xs=context_xsize, $
                                            ys=context_ysize, xoff=0, yoff=0)
  grim_data.context_draw = widget_draw(grim_data.context_base, $
-                /button_events, /motion_events, /tracking_events, $
-                 event_pro='grim_draw_event', retain=retain)
+     /button_events, /motion_events, /tracking_events, /wheel_events, $
+      event_pro='grim_draw_event', retain=retain)
  widget_control, grim_data.context_draw, get_value=context_wnum
  grim_data.context_wnum = context_wnum
  widget_control, grim_data.context_base, map=0
@@ -9499,10 +9530,12 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
   begin
    for i=0, n_overlays-1 do $
     begin
+;timer, t=_t
      name = grim_parse_overlay(overlays[i], obj_name)
      grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
      grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
      if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
+;timer, t=_t, '--'
    end
   end
 

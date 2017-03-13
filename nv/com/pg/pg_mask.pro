@@ -257,10 +257,10 @@ function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund
 
      if(keyword_set(sund)) then $
       begin
-       pg_hide, /limb, limb_ptd, gbx=gbd[w], od=sund
+       pg__hide, /assoc, limb_ptd, bx=gbd[w], od=sund
 
        term_ptd = pg_limb(cd=cd, od=sund, gbx=gbd[w])
-       pg_hide, /limb, term_ptd, gbx=gbd[w], cd=cd
+       pg__hide, /assoc, term_ptd, bx=gbd[w], cd=cd
 
        for i=0, nw-1 do $
         begin

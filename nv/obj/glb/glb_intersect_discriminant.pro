@@ -23,12 +23,12 @@ function glb_intersect_discriminant, gbd, v, r, noevent=noevent, $
  b2 = reform([_gbd.radii[1]^2]##MM, nv,1,nt, /over)
  c2 = reform([_gbd.radii[2]^2]##MM, nv,1,nt, /over)
 
- w = where(a2 EQ 0)
- if(w[0] NE -1) then a2[w] = 1d-8
- w = where(b2 EQ 0)
- if(w[0] NE -1) then b2[w] = 1d-8
- w = where(c2 EQ 0)
- if(w[0] NE -1) then c2[w] = 1d-8
+; w = where(a2 EQ 0)
+; if(w[0] NE -1) then a2[w] = 1d-8
+; w = where(b2 EQ 0)
+; if(w[0] NE -1) then b2[w] = 1d-8
+; w = where(c2 EQ 0)
+; if(w[0] NE -1) then c2[w] = 1d-8
 
  alpha = v[*,0,*]^2/a2 + v[*,1,*]^2/b2 + v[*,2,*]^2/c2
  beta = v[*,0,*]*r[*,0,*]/a2 + v[*,1,*]*r[*,1,*]/b2 + v[*,2,*]*r[*,2,*]/c2
