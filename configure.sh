@@ -533,6 +533,11 @@ Optional packages:
            These files are always present (in ominas/demo), 
            this option is to set up the environment so that
            the demos can be run.
+        3) SPICE Icy
+           Library maintained by JPL's NAIF (Navigation and Ancillary
+           Information Facility, https://naif.jpl.nasa.gov/naif/toolkit.html,
+           required to use spacecraft / planetary kernel files.
+
 Mission Packages:
            Kernels used for each mission's position and 
            pointing data. If you do not already have them,
@@ -543,24 +548,24 @@ Mission Packages:
            data packages) are not required for the missions, they
            already contain a copy the subset of the generic kernel
            files they need.
-	3) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
+	4) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
            Subsetted, about 16 GB as of Dec/2016
-	4) Galileo (GLL) . . . . . . . . . . . . . ${mstatus[1]}
+	5) Galileo (GLL) . . . . . . . . . . . . . ${mstatus[1]}
            About 833 MB as of Dec/2016
-	5) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
+	6) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
-	6) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
+	7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
            Subsetted, about 8 GB as of Jan/2017
 Data:
-        7) NAIF Generic Kernels . . . . . . . . .  $genst
+        8) NAIF Generic Kernels . . . . . . . . .  $genst
            About 22 GB as of Dec/2016
-	8) SEDR image data . . . . . . . . . . . . ${dstatus[1]}
-	9) TYCHO2 star catalog . . . . . . . . . . ${dstatus[2]}
+	9) SEDR image data . . . . . . . . . . . . ${dstatus[1]}
+       10) TYCHO2 star catalog . . . . . . . . . . ${dstatus[2]}
            About 161 MB download, 665 MB unpacked
-	10) SAO star catalog . . . . . . . . . . . ${dstatus[3]}
+       11) SAO star catalog . . . . . . . . . . . ${dstatus[3]}
            About 19 MB download, 70 MB unpacked
-	11) GSC star catalog . . . . . . . . . . . ${dstatus[4]}
-	12) UCAC4 star catalog . . . . . . . . . . ${dstatus[5]}
+       12) GSC star catalog . . . . . . . . . . . ${dstatus[4]}
+       13) UCAC4 star catalog . . . . . . . . . . ${dstatus[5]}
            About 8.5 GB download
 For more information, see
 https://ppenteado.github.io/ominas_doc/demo/install_guide.html
@@ -569,7 +574,7 @@ PKGS
 read -rp "Modify Current OMINAS configuration (exit/no/all 1 2 ...)?  " ans
 
 if [ $ans == "all" ]; then
-  ans="1 2 3 4 5 6 7 9 10 11 12"
+  ans="1 2 3 4 5 6 7 9 10 11 12 13"
 fi
 echo $ans
 
@@ -594,16 +599,20 @@ do
                                 pkins ominas_env_def.sh "${corest}" demo
                                 corest=${yes}
                                                         ;;
+                [3])
+                                icy
+                                                        ;;
+
 		[Nn]*)
 				break 		;;
-		[3456])
-				pkins ominas_env_def.sh "${corest}" $(($num-3))
+		[4567])
+				pkins ominas_env_def.sh "${corest}" $(($num-4))
                                 corest=${yes}
-				ppkg $(($num-3)) 	;;
-		[789]|10|11|12|13)
-                                pkins ominas_env_def.sh "${corest}" $(($num-7))
+				ppkg $(($num-4)) 	;;
+		[89]|10|11|12|13)
+                                pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 corest=${yes}
-				dins $(($num-7)) 	;;
+				dins $(($num-8)) 	;;
 		*)
 				printf "Error: Invalid package or catalog specified\n" 1>&2
     esac
