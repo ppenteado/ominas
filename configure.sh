@@ -71,7 +71,9 @@
 #------------------------------------------------------------------------#
 
 shtype="sh"
-
+ins_ominas_env_def=''
+ins_c_0=''
+inst_SAO=''
 yes="CONFIGURED"
 no="NOT CONFIGURED"
 st="CONFIGURED"
@@ -131,6 +133,17 @@ if [ -v IDL_PATH ]; then
     fi
   fi
 fi
+ominassh="$HOME/.ominas/ominas_setup.sh"
+usersh=$setting
+setting=$ominassh
+osetting="$HOME/.ominas/ominas_setup_old.sh"
+#if [ -e "$setting" ]; then
+#  cp -av $setting $osetting
+#else
+#  touch $osetting
+#fi
+
+#echo "#!/usr/bin/env bash" > $setting
 
 function ext()
 {
@@ -178,6 +191,7 @@ function pkst()
 	if [ -z ${NV_TRANSLATORS+x} ]; then
 		echo "$no"
 	else
+                #echo "$1"
 		if [[ $NV_TRANSLATORS == *"$1"* ]]; then
 			echo "$yes"
 		else
@@ -223,16 +237,20 @@ function dins()
 	#--------------------------------------------------------------------#
 	mnum=$1
 	dat=${Data[$mnum]}
-	if grep -q "NV_${dat}_DATA" ${setting}; then
+	if grep -q "export NV_${dat}_DATA" ${setting}; then
 		printf "Warning: $dat data files appear to already be set at this location:\n"
 		eval echo \$NV_${dat}_DATA
-		read -rp "Would you like to overwrite this location (y/n)? " ans
+		#read -rp "Would you like to overwrite this location (y/n)? " ans
+                read -rp "Would you like to uninstall $dat from this location (y/n)? " ans
 		case $ans in 
 		[Yy]*)
-			grep -v "NV_${dat}_DATA.*" $setting >$HOME/temp
-			mv $HOME/temp $setting	;;
+                        unset inst[${1}]
+                        return 1;;
+			#grep -v "NV_${dat}_DATA.*" $setting >$HOME/temp
+			#mv $HOME/temp $setting	;;
 		*)
-			return 1
+			#return 1
+                        echo ''
 		esac
 	fi
         read -rp "Do you need to download the $dat data? " ansk
@@ -248,7 +266,10 @@ function dins()
 		setdir $dat
 	fi
 
-	echo "NV_${dat}_DATA=$datapath; export NV_${dat}_DATA" >>$setting
+        echo "args: ${1}"
+        inst[${1}]=${datapath}
+        dins=${datapath}
+	#echo "NV_${dat}_DATA=$datapath; export NV_${dat}_DATA" >>$setting
 }
 
 function pkins()
@@ -275,9 +296,23 @@ function pkins()
                 if [[ "$2" == "$no" ]]; then
                   printf "Installing OMINAS Core...\n"
                 fi
-                pstr="DFLAG=${DFLAG}; source ${OMINAS_DIR}/config/$1"
+                if [[ "$3" == "coreu" ]] ; then
+#                pstr="source ${OMINAS_DIR}/config/$1"
+                  if grep -q $1 ${setting}; then
+                    pstr="unset NV_TRANSLATORS"
+                    unset NV_TRANSLATORS
+                  fi
+                else
+                  pstr="source ${OMINAS_DIR}/config/$1"
+                fi
+                ins_ominas_env_def=${pstr}
 	fi
         if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
+          if grep -q $1 ${setting}; then
+            unset insp[${3}]
+            unset ins[${3}]
+            return 1
+          fi
           printf "Installing package $1...\n"
           dstr=""
 	  read -rp "Would you like to add the $3 kernels to the environment? " ans
@@ -288,22 +323,28 @@ function pkins()
                           [Yy]*)
                             read -rp "Please enter the location where the donwloaded $3 kernel pool will be placed: " datapath
                             datapath=`eval echo ${datapath}`
-                            source ./download_$2.sh ${datapath} ;;
+                            source ./download_$2.sh ${datapath}
+                            pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}";;
                           *)
 			    read -rp "Please enter the location of your existing $3 kernel pool: " datapath
 			    if ! [[ -d $datapath ]]; then
 			    	setdir $2
 			    fi
-			    pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}"	
+			    pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}"
                         esac ;;
 		*)
 			pstr="${dstr}source ${OMINAS_DIR}/config/$1"
 	  esac
+          echo "${pstr}"
+          ins[${3}]=${pstr}
+          insp[${3}]=${datapath}
+          echo "pkg:${ins[${3}]}"
         fi
 	dstr=""
-	grep -v ".*$1.*" $setting >$HOME/temp
-	mv $HOME/temp $setting
-	echo $pstr >> $setting
+	#grep -v ".*$1.*" $setting >$HOME/temp
+	#mv $HOME/temp $setting
+	#echo $pstr >> $setting
+        ins_DEMO=${DFLAG}
 }
 
 function setdir() {
@@ -339,18 +380,117 @@ function setdir() {
 	datapath=${dirlist[$n]}
 }
 
+function writesetting() {
+
+echo "writing "$setting
+if [ -e "$setting" ]; then
+  cp -av $setting $osetting
+else
+  touch $osetting
+fi
+chmod a+rx $setting
+
+echo "#!/usr/bin/env bash" > $setting
+
+echo "export OMINAS_DIR=$OMINAS_DIR" >> $setting
+echo "export DFLAG=${DFLAG}" >> $setting
+echo $ins_ominas_env_def >> $setting
+
+for ((d=0; d<6; d++));
+do
+        dat=${Data[$d]}
+        #echo "$d: ${inst[$d]}"
+        #if grep -q NV_${Data[$d]}_DATA $setting; then
+        if [ -z ${inst[$d]+x} ]  ;then
+          #echo "${d}:0 ${inst[$d]}"
+          echo "unset NV_${dat}_DATA" >>$setting
+        else 
+          #echo "$d: ${inst[$d]}"
+          #echo "${d}:i ${inst[$d]}"
+          
+          echo "export NV_${dat}_DATA=${inst[$d]}" >>$setting
+        fi
+done
+for ((d=0; d<6; d++));
+do
+        #echo "$d: ${insp[$d]}"
+        #if grep -q NV_${Data[$d]}_DATA $setting; then
+        if [ -z ${insp[$d]+x} ]  ;then
+          echo "" #"${d}:0 ${ins[$d]}"
+        else
+          #echo "$d: ${ins[$d]}"
+          #echo "${d}:i ${ins[$d]}"
+          echo "${ins[$d]}" >>$setting
+        fi
+done
+
+
+
+echo "done with writing ${setting}"
+
+}
+
+function icy() {
+
+# ICY INSTALL -----------------------------------------------------------#
+# Icy can be installed from the internet, or configured from a local     #
+# copy. If NAIF kernels will not be used, then no action is taken.       #
+# Icy is installed based on auto-detection of the OS.                    #
+#------------------------------------------------------------------------#
+
+printf "OMINAS requires the NAIF Icy toolkit to process SPICE kernels.\n"
+read -rp "Would you like to configure Icy for OMINAS? " ans
+case $ans in
+	[Yy]*)
+		icyflag=true	
+		read -rp "Would you like to install Icy from the internet now? " ans
+		case $ans in
+			[Yy]*)
+				bits=$(uname -m); if [[ $bits == "x86_64" ]]; then bstr="64bit"; else bstr="32bit"; fi
+				os=$(uname -s); if [[ $os == "Darwin" ]]; then ostr="MacIntel_OSX_AppleC"; else ostr="PC_Linux_GCC"; fi
+				curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" >"../icy.tar.Z"
+				cd ..
+				cdflag=true
+				ext "icy.tar.Z"
+				ext "icy.tar"
+				cd icy
+				icypath=$PWD
+				/bin/csh makeall.csh
+				cd $OMINAS_DIR	;;
+			*)
+				read -rp "Please enter the location of the Icy install directory (if not known, press enter): " datapath
+				if ! [[ -d $datapath ]]; then
+					setdir "icy"
+				fi
+				icypath=$datapath
+		esac	;;
+	*)
+		icyflag=false
+		printf "Icy not configured for OMINAS.\n"
+esac 
+
+}
+
 printf "The setup will guide you through the installation of OMINAS\n"
 
-if ! grep -q "OMINAS_DIR=.*; export OMINAS_DIR" ${setting}; then
+#if ! grep -q "OMINAS_DIR=.*; export OMINAS_DIR" ${setting}; then
 # NOTE: OMINAS is available in repository form. Extraction is no longer needed
 #	printf "Unpacking OMINAS tar archive...\n"
 #	ext ominas_ringsdb_*.tar.gz
 # DIR is set on line 82 and is the absolute path to the configure.sh script
 	OMINAS_DIR=$DIR
-	echo "OMINAS_DIR=$OMINAS_DIR; export OMINAS_DIR" >> $setting
-fi
+#	echo "OMINAS_DIR=$OMINAS_DIR; export OMINAS_DIR" >> $setting
+#fi
 
 printf "OMINAS files located in $OMINAS_DIR\n"
+
+function main() {
+
+
+if [ -e "$setting" ]; then
+  . $setting
+fi
+
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
 corest=`pkst ${OMINAS_DIR}/config/tab/`
@@ -370,9 +510,11 @@ do
 done
 for ((d=0; d<${#Data[@]}; d++));
 do
-	if grep -q NV_${Data[$d]}_DATA $setting; then
+	if grep -q "export NV_${Data[$d]}_DATA" $setting; then
+        #if [  -z {NV_${Data[$d]}_DATA+x} ]; then
 		dstatus[$d]=$st
 	else
+                #echo "{NV_${Data[$d]}_DATA}"
 		dstatus[$d]=$ns
 	fi
 done
@@ -438,28 +580,28 @@ do
     demost="SET"
   fi
 done
-
 for num in $ans
 do
 	case $num in
 		exit)
-				return 0 	;;
+				exit 0 	;;
 		[1])
-				pkins ominas_env_def.sh "${corest}"
+                                echo "ins1 ${ins_ominas_env_def}"
+				pkins ominas_env_def.sh "${corest}" coreu
                                 corest=${yes}
 							;;
                 [2])
-                                pkins ominas_env_def.sh "${corest}"
+                                pkins ominas_env_def.sh "${corest}" demo
                                 corest=${yes}
                                                         ;;
 		[Nn]*)
 				break 		;;
 		[3456])
-				pkins ominas_env_def.sh "${corest}"
+				pkins ominas_env_def.sh "${corest}" $(($num-3))
                                 corest=${yes}
 				ppkg $(($num-3)) 	;;
 		[789]|10|11|12|13)
-                                pkins ominas_env_def.sh "${corest}"
+                                pkins ominas_env_def.sh "${corest}" $(($num-7))
                                 corest=${yes}
 				dins $(($num-7)) 	;;
 		*)
@@ -467,42 +609,7 @@ do
     esac
 done
 
-# ICY INSTALL -----------------------------------------------------------#
-# Icy can be installed from the internet, or configured from a local     #
-# copy. If NAIF kernels will not be used, then no action is taken.       #
-# Icy is installed based on auto-detection of the OS.                    #
-#------------------------------------------------------------------------#
 
-printf "OMINAS requires the NAIF Icy toolkit to process SPICE kernels.\n"
-read -rp "Would you like to configure Icy for OMINAS? " ans
-case $ans in
-	[Yy]*)
-		icyflag=true	
-		read -rp "Would you like to install Icy from the internet now? " ans
-		case $ans in
-			[Yy]*)
-				bits=$(uname -m); if [[ $bits == "x86_64" ]]; then bstr="64bit"; else bstr="32bit"; fi
-				os=$(uname -s); if [[ $os == "Darwin" ]]; then ostr="MacIntel_OSX_AppleC"; else ostr="PC_Linux_GCC"; fi
-				curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" >"../icy.tar.Z"
-				cd ..
-				cdflag=true
-				ext "icy.tar.Z"
-				ext "icy.tar"
-				cd icy
-				icypath=$PWD
-				/bin/csh makeall.csh
-				cd $OMINAS_DIR	;;
-			*)
-				read -rp "Please enter the location of the Icy install directory (if not known, press enter): " datapath
-				if ! [[ -d $datapath ]]; then
-					setdir "icy"
-				fi
-				icypath=$datapath
-		esac	;;
-	*)
-		icyflag=false
-		printf "Icy not configured for OMINAS.\n"
-esac 
 
 XIDL_DIR=$OMINAS_DIR/util/xidl/
 
@@ -580,7 +687,20 @@ if [ -v IDL_PATH ]; then
   . $idlpathfile
   printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
 fi
+writesetting
+if grep -q ${setting} ${usersh} ; then
+  echo "${usersh} already calls ${setting}"
+else
+  echo source $setting >> $usersh
+fi
+printf "OMINAS configuration was written to $usersh.\n"
 
-printf "OMINAS configuration was written to $setting.\n"
+}
+
+while [ 1 ]; do
+  main
+  
+done
+
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
 printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas_doc/demo/\n"
