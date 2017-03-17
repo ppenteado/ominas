@@ -9,7 +9,7 @@ echo "This script wiill download the UCAC4 catalog from CDS (ftp://cdsarc.u-stra
 read -rp "Continue? " ans
 case $ans in
   [Nn]*)
-    exit
+    exit 1 
 esac
 
 

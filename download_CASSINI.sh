@@ -10,7 +10,7 @@ echo "This script will download a subset of kernels from the PDS Cassini archive
 read -rp "Continue? " ans
 case $ans in
   [Nn]*)
-    exit
+    exit 1
 esac
 
 baseurl="http://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/"
