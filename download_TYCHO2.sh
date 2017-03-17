@@ -9,7 +9,7 @@ echo "This script wiill download the Tycho 2 catalog from CDS (ftp://cdsarc.u-st
 read -rp "Continue? " ans
 case $ans in
   [Nn]*)
-    exit
+    exit 1
 esac
 
 baseurl="ftp://cdsarc.u-strasbg.fr/pub/cats/I/259"

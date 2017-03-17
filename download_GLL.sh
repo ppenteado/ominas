@@ -10,7 +10,7 @@ echo "This script wiill download all kernels from the PDS Galileo archive ("\
 read -rp "Continue? " ans
 case $ans in
   [Nn]*)
-    exit
+    exit 1
 esac
 
 baseurl="http://naif.jpl.nasa.gov/pub/naif/GLL/kernels/"
