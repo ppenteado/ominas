@@ -251,6 +251,7 @@ function dins()
 		*)
 			#return 1
                         echo ''
+                        return 1;;
 		esac
 	fi
         read -rp "Do you need to download the $dat data? " ansk
@@ -258,7 +259,10 @@ function dins()
            [Yy]*)
              read -rp "Please enter the location where the downloaded $dat data will be placed: " datapath
              datapath=`eval echo ${datapath}`
-             source ./download_$dat.sh ${datapath} ;;		
+             if ! ./download_$dat.sh ${datapath} ; then
+               unset inst[${1}]
+               return 1
+             fi ;;
            *)
 	     read -rp "Please enter the path to $dat (if not known, press enter): " datapath
           esac 
@@ -266,7 +270,7 @@ function dins()
 		setdir $dat
 	fi
 
-        echo "args: ${1}"
+        #echo "args: ${1}"
         inst[${1}]=${datapath}
         dins=${datapath}
 	#echo "NV_${dat}_DATA=$datapath; export NV_${dat}_DATA" >>$setting
@@ -296,49 +300,67 @@ function pkins()
                 if [[ "$2" == "$no" ]]; then
                   printf "Installing OMINAS Core...\n"
                 fi
+                pstr="source ${OMINAS_DIR}/config/$1"
                 if [[ "$3" == "coreu" ]] ; then
 #                pstr="source ${OMINAS_DIR}/config/$1"
                   if grep -q $1 ${setting}; then
-                    pstr="unset NV_TRANSLATORS"
-                    unset NV_TRANSLATORS
+                    read -rp "Would you like to uninstall the OMINAS core (y/n)? " ans
+                    case $ans in
+                    [Yy]*)
+                          pstr="unset NV_TRANSLATORS"
+                          unset NV_TRANSLATORS ;;
+                    *)
+                      return 1 ;;
+                    esac
                   fi
-                else
-                  pstr="source ${OMINAS_DIR}/config/$1"
                 fi
                 ins_ominas_env_def=${pstr}
 	fi
         if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
-          if grep -q $1 ${setting}; then
-            unset insp[${3}]
-            unset ins[${3}]
-            return 1
+          if grep -q ${1} ${setting}; then
+            loc=(`grep ${1} ${setting}`)
+            echo "${3} seems to be already installed at ${loc[2]}"
+            read -rp "Would you like to uninstall ${3} (y/n)? " ans
+            case $ans in
+                [Yy]*)
+                     unset insp[${3}]
+                     unset ins[${3}]
+                     return 1 ;;
+
+                    *)
+                     ins[${3}]=`grep ${1} ${setting}``grep ${1} ${setting}`
+                     insp[${3}]=${loc[2]}
+                     return 1;;
+            esac
           fi
           printf "Installing package $1...\n"
           dstr=""
-	  read -rp "Would you like to add the $3 kernels to the environment? " ans
-	  case $ans in
-		[Yy]*)
+	  #read -rp "Would you like to add the $3 kernels to the environment? " ans
+	  #case $ans in
+	#	[Yy]*)
                         read -rp "Do you need to download the $3 kernels from PDS? " ansk
                         case $ansk in
                           [Yy]*)
                             read -rp "Please enter the location where the donwloaded $3 kernel pool will be placed: " datapath
                             datapath=`eval echo ${datapath}`
-                            source ./download_$2.sh ${datapath}
+                            if ! ./download_$2.sh ${datapath}; then
+                              unset insp[${3}]
+                              unset ins[${3}]
+                              return 1
+                            fi
                             pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}";;
                           *)
 			    read -rp "Please enter the location of your existing $3 kernel pool: " datapath
 			    if ! [[ -d $datapath ]]; then
 			    	setdir $2
 			    fi
-			    pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}"
-                        esac ;;
-		*)
-			pstr="${dstr}source ${OMINAS_DIR}/config/$1"
-	  esac
-          echo "${pstr}"
+			    pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}";;
+                        esac
+#		*)
+#			pstr="${dstr}source ${OMINAS_DIR}/config/$1"
+#	  esac
           ins[${3}]=${pstr}
           insp[${3}]=${datapath}
-          echo "pkg:${ins[${3}]}"
         fi
 	dstr=""
 	#grep -v ".*$1.*" $setting >$HOME/temp
@@ -392,7 +414,10 @@ chmod a+rx $setting
 
 echo "#!/usr/bin/env bash" > $setting
 
-echo "export OMINAS_DIR=$OMINAS_DIR" >> $setting
+if [[ -n "$ins_ominas_env_def" ]]; then
+  echo "export OMINAS_DIR=$OMINAS_DIR" >> $setting
+fi
+echo "ffff $DFLAG"
 echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
 
@@ -496,11 +521,12 @@ fi
 corest=`pkst ${OMINAS_DIR}/config/tab/`
 demost=$no
 DFLAG="false"
-if [ ! -z $OMINAS_DEMO ]; then
+#if [ ! -z $OMINAS_DEMO ]; then
+if grep -q "export DFLAG=true" $setting; then
  demost="SET"
  DFLAG="true"
 fi
-    
+echo "aaaaaaa $DFLAG" 
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
@@ -576,13 +602,19 @@ read -rp "Modify Current OMINAS configuration (exit/no/all 1 2 ...)?  " ans
 if [ $ans == "all" ]; then
   ans="1 2 3 4 5 6 7 9 10 11 12 13"
 fi
-echo $ans
 
 for num in $ans
 do
   if [ $num == "2" ]; then
-    DFLAG="true"
-    demost="SET"
+    echo "cccc $DFLAG"
+    if [ $DFLAG  == "true" ]; then
+      echo "ddd"
+      DFLAG="false"
+      demost="NOT SET"
+    else
+      DFLAG="true"
+      demost="SET"
+    fi
   fi
 done
 for num in $ans
@@ -591,7 +623,6 @@ do
 		exit)
 				exit 0 	;;
 		[1])
-                                echo "ins1 ${ins_ominas_env_def}"
 				pkins ominas_env_def.sh "${corest}" coreu
                                 corest=${yes}
 							;;
@@ -691,12 +722,13 @@ if [ -e idlpath.sh ]; then
   rm idlpath.sh
 fi
 
+writesetting
 . $setting
 if [ -v IDL_PATH ]; then
   . $idlpathfile
   printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
 fi
-writesetting
+#writesetting
 if grep -q ${setting} ${usersh} ; then
   echo "${usersh} already calls ${setting}"
 else
