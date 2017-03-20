@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(rd0)) then struct_assign, rd0, self
 
  self.abbrev = 'RNG'
+ self.tag = 'RD'
 
  if(keyword__set(primary)) then self.__PROTECT__primary_xd = decrapify(primary[ii])
  if(keyword__set(desc)) then self.desc = decrapify(desc[ii])

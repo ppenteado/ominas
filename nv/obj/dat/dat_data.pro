@@ -27,7 +27,11 @@
 ;  INPUT: 
 ;	samples:  Sampling indices.  If set, only these data elements are
 ;		  returned.  May be 1D or the same number of dimensions as
-;		  the data array.   
+;		  the data array.  
+;
+;	current:  If set, the current loaded samples are returned.  In this
+;		  case, te sample indices are returned in the "samples"
+;		  keyword.
 ;
 ;	nd:       If set, the samples input is taken to be an ND coordinate
 ;	          rather than a 1D subscript.  dat_data can normally tell
@@ -41,6 +45,8 @@
 ;
 ;  OUTPUT: 
 ;	abscissa: The abscissa is returned in this array.
+;
+;	samples:  Output sample indices for /current.
 ;
 ;
 ; RETURN:
@@ -61,7 +67,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_data, dd, samples=_samples, offset=offset, $
+function dat_data, dd, samples=_samples, current=current, offset=offset, $
                   nd=nd, true=true, noevent=noevent, abscissa=_abscissa
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
@@ -69,7 +75,9 @@ function dat_data, dd, samples=_samples, offset=offset, $
 
  sampled = 0
  if(NOT keyword_set(offset)) then offset = 0
- 
+
+ sample0 = *_dd.sample_p
+ if(keyword_set(current)) then if(sample0[0] NE -1) then _samples = sample0
 
  ;-------------------------------------------------------------------------
  ; If there is a sampling function, but no samples are given, then 
@@ -129,14 +137,10 @@ function dat_data, dd, samples=_samples, offset=offset, $
  ;  if some samples are already loaded, determine subscripts into 
  ;  loaded array
  ;-------------------------------------------------------------------------
- if(keyword_set(samples)) then $
+ if(keyword_set(samples)) then if(sample0[0] NE -1) then $
   begin
-   sample0 = *_dd.sample_p
-   if(sample0[0] NE -1) then $
-    begin
-     int = set_intersection(long(sample0), long(samples), ii, jj, kk)
-     if(defined(kk)) then samples = kk
-    end
+   int = set_intersection(long(sample0), long(samples), ii, jj, kk)
+   if(defined(kk)) then samples = kk
   end
 
  data = data_archive_get(_dd.data_dap, _dd.dap_index, samples=samples)

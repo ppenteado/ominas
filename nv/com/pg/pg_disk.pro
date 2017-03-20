@@ -31,8 +31,11 @@
 ;	dkx:	 Array (n_objects, n_timesteps) of descriptors of objects 
 ;		 which must be a subclass of DISK.
 ;
-;	gd:	 Generic descriptor.  If given, the descriptor inputs 
-;		 are taken from the this structure.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	inner/outer: If either of these keywords are set, then only
 ;	             that edge is computed.
@@ -69,15 +72,15 @@
 ;	
 ;-
 ;=============================================================================
-function pg_disk, cd=cd, dkx=dkx, gd=gd, fov=fov, cull=cull, $
+function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, fov=fov, cull=cull, $
                   inner=inner, outer=outer, npoints=npoints, reveal=reveal
 @pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dkx=dkx
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
 
  if(NOT keyword_set(dkx)) then return, obj_new()
 
@@ -95,7 +98,7 @@ function pg_disk, cd=cd, dkx=dkx, gd=gd, fov=fov, cull=cull, $
  ; validate descriptors
  ;-----------------------------------
  nt = n_elements(cd)
- pgs_count_descriptors, dkx, nd=n_disks, nt=nt1
+ cor_count_descriptors, dkx, nd=n_disks, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
@@ -143,8 +146,8 @@ function pg_disk, cd=cd, dkx=dkx, gd=gd, fov=fov, cull=cull, $
          outer_disk_ptd[i] = $
             pnt_create_descriptors(name = cor_name(xd) + '-OUTER', $
 		    desc = 'disk_outer', $
-;		    input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], cd[0]), $
-		    input = pgs_desc_suffix(dkx=dkx[i,0], cd[0]), $
+;		    gd = {dkx:dkx[i,0], gbx:gbx[0], cd:cd[0]}, $
+		    gd = {dkx:dkx[i,0], cd:cd[0]}, $
 		    assoc_xd = xd, $
 		    points = image_pts, $
 		    vectors = inertial_pts)
@@ -198,8 +201,8 @@ function pg_disk, cd=cd, dkx=dkx, gd=gd, fov=fov, cull=cull, $
          inner_disk_ptd[i] = $
             pnt_create_descriptors(name = cor_name(xd) + '-INNER', $
 		    desc = 'disk_inner', $
-;		    input = pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], cd[0]), $
-		    input = pgs_desc_suffix(dkx=dkx[i,0], cd[0]), $
+;		    gd = {dkx:dkx[i,0], gbx:gbx[0], cd:cd[0]}, $
+		    gd = {dkx:dkx[i,0], cd:cd[0]}, $
 		    assoc_xd = xd, $
 		    points = image_pts, $
 		    vectors = inertial_pts)

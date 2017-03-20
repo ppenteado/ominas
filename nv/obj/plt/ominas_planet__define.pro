@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(pd0)) then struct_assign, pd0, self
 
  self.abbrev = 'PLT'
+ self.tag = 'PD'
 
  return, 1
 end

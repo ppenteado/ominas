@@ -32,8 +32,11 @@
 ;
 ;	sund:	 Star descriptor for the Sun.
 ;
-;	gd:	 Generic descriptor.  If given, the cd, gbx, and sund inputs 
-;		 are taken from this structure instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	p0:	 Initial point to use instead  of prompting the user.
 ;
@@ -109,14 +112,16 @@ end
 ; pg_drag_shadow_plane
 ;
 ;=============================================================================
-function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, gd=gd, xor_graphics=xor_graphics, $
+function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, dd=dd, gd=gd, xor_graphics=xor_graphics, $
                   p0=p0, n0=n0, silent=silent, color=color, gain=gain, $
                   axis=axis, shadow_ptd=shadow_ptd
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, sund=sund
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
 
  device, cursor_standard=30
 

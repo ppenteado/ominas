@@ -59,6 +59,10 @@
 ;  OUTPUT:
 ;         NONE
 ;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
+;
 ;
 ; RETURN: 
 ;      POINT containing points on the sector outline.  The point

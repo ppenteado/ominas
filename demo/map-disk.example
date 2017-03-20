@@ -31,8 +31,8 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;---------------------------------------
 ; rough pointing correction
 ;---------------------------------------
-limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
-          pg_hide, limb_ptd, /limb, gd=gd, od=sund
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
 pg_draw, limb_ptd, col=ctred()
 
 edge_ptd = pg_edges(dd, edge=10)			
@@ -41,8 +41,8 @@ dxy = pg_farfit(dd, edge_ptd, [limb_ptd])
 					 	
 pg_repoint, dxy, 0d, gd=gd	
 
-limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
-          pg_hide, limb_ptd, /limb, gd=gd, od=sund
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
 tvim, im
 pg_draw, limb_ptd
 

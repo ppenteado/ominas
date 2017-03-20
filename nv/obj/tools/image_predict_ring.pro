@@ -46,9 +46,8 @@ function image_predict_ring, cd, gbx, rx, sund=sund, rxt=_rxt
  for i=0, nt-1 do $
   begin
    ring_ptd = pg_disk(cd=cd, dkx=rxt, np=100, /fov)
-   pg_hide, ring_ptd, cd=cd, gbx=pd, /globe
-   if(keyword_set(sund)) then $
-                    pg_hide, ring_ptd, cd=cd, od=sund, gbx=pd, /globe
+   pg_hide, ring_ptd, cd=cd, bx=pd
+   if(keyword_set(sund)) then pg_hide, ring_ptd, cd=cd, od=sund, bx=pd
 
    pp = pnt_points(/cat, /vis, ring_ptd)
    if(NOT keyword_set(pp)) then w[i] = -1

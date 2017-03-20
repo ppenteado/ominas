@@ -61,8 +61,6 @@
 ;
 ;	compress:	Compression suffix.
 ;
-;	silent:		If set, messages are suppressed.
-;
 ;
 ;  OUTPUT: NONE
 ;	input_translators:	String array giving the names of the
@@ -87,7 +85,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_create_descriptors, n, crd=_crd0, dd=_dd0, silent=silent, $
+function dat_create_descriptors, n, crd=_crd0, dd=_dd0, $
 @dat__keywords.include
 end_keywords
 @core.include

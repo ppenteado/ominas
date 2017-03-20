@@ -11,7 +11,7 @@
 ;  into the full 12bit range 0-4095 in a near exponential relationship
 ;
 ;==============================================================================
-function cas_radar_transform, ima, label, silent=silent, force=force
+function cas_radar_transform, ima, label, force=force
   compile_opt idl2,logical_predicate
  
   missing=label[where(stregex(label,'MISSING_CONSTANT',/bool))]

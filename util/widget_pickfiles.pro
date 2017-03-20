@@ -441,7 +441,8 @@ function widget_pickfiles, parent, path=_path, one=one, filter=filter, $
  if(keyword_set(_default)) then $
                   default = (file_search(_default, /fully_qualify_path))[0]
 
- sel= path + '/'
+ if(NOT keyword_set(path)) then path = ''
+ sel = path + '/'
  if(keyword_set(default)) then sel = default
 
  one = keyword__set(one)
@@ -478,16 +479,19 @@ function widget_pickfiles, parent, path=_path, one=one, filter=filter, $
 
 
  sel_list = 0
- if(one) then $
-  begin
+
  sel_label = widget_label(base, value='File Name:', /align_left)
-; if(keyword__set(one)) then $
+ if(one) then $
     sel_list = widget_text(base, ysize=1, /editable, $
-                                          event_pro='wpf_sel_text_event'); $
+                                          event_pro='wpf_sel_text_event') $
+ else $
+    sel_list = widget_text(base, ysize=5, /editable, $
+                                          event_pro='wpf_sel_text_event')
 ; else $
 ;    sel_list = widget_list(base, ysize=5, multi=multi, $
 ;                                           event_pro='wpf_sel_list_event')
-  end
+
+
 
 
  button_base = widget_base(base, /row)
@@ -495,7 +499,6 @@ function widget_pickfiles, parent, path=_path, one=one, filter=filter, $
                                                event_pro='wpf_button_event')
  cancel_button = widget_button(button_base, value='Cancel', $
                                                event_pro='wpf_button_event')
-
 
  ;--------------------------------------
  ; data structure

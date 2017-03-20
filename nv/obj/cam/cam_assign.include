@@ -1,0 +1,15 @@
+; _cam_assign.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(defined(fn_focal_to_image)) then cam_set_fn_focal_to_image, _xd, fn_focal_to_image, /noevent
+ if(defined(fn_image_to_focal)) then cam_set_fn_image_to_focal, _xd, fn_image_to_focal, /noevent
+ if(defined(fi_data)) then cam_set_fi_data, _xd, fi_data, /noevent
+ if(defined(scale)) then cam_set_scale, _xd, scale, /noevent
+ if(defined(oaxis)) then cam_set_oaxis, _xd, oaxis, /noevent
+ if(defined(exposure)) then cam_set_exposure, _xd, exposure, /noevent
+ if(defined(size)) then cam_set_size, _xd, size, /noevent
+ if(defined(fn_psf)) then cam_set_fn_psf, _xd, fn_psf, /noevent
+ if(defined(filters)) then cam_set_filters, _xd, filters, /noevent
+
+@bod_assign.include

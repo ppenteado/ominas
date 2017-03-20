@@ -150,7 +150,7 @@ function sedr_vgr_cameras, dd, sedr, geom, j2000=j2000, $
  ; create a camera descriptor
  ;------------------------------
  cd = cam_create_descriptors(n_obj, $
-		assoc_xd=make_array(n_obj, val=dd), $
+		gd=make_array(n_obj, val=dd), $
 		name=cam_name, $
 		orient=cam_orient, $
 		avel=cam_avel, $

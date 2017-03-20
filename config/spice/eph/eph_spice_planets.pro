@@ -52,7 +52,6 @@ function eph_spice_planets, dd, ref, target=target, time=sc_time, $
 		name = names, $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs) )
 
-
 end
 ;===========================================================================
 

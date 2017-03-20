@@ -83,7 +83,7 @@ ret=map_create_descriptors(name='CAS_RADAR',$
     pole=pole,$
     center=center*!dpi/180d0,$
     units=units,$
-    assoc_xd=dd)
+    gd=dd)
     
  ;ddd=dat_data(dd)
  ;dddr=congrid(ddd,lines/10,samples/10)

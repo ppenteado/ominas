@@ -2,19 +2,17 @@
 ; dh_read_pds.pro
 ;
 ;=============================================================================
-function dh_read_pds, filename, label, udata, dim, type, min, max, abscissa=abscissa, $
-                          silent=silent, nodata=nodata, gff=gff, $
+function dh_read_pds, dd, label, dim, type, min, max, abscissa=abscissa, $
+                          nodata=nodata, gff=gff, $
                           sample=sample, returned_samples=returned_samples
 
  if(keyword_set(sample)) then return, 0
-
- tag_list_set, udata, 'DETACHED_HEADER', $
-               dh_read(dh_fname(filename), silent=silent)
+ filename = dat_filename(dd)
 
  ;--------------------------------------------------------
  ; read label
  ;--------------------------------------------------------
- label = headpds(filename, silent=silent)
+ label = headpds(filename, /silent)
 
  ;- - - - - - - - - - - - - - - - - - - - -
  ; get rid of CR/LFs included by headpds
@@ -49,7 +47,7 @@ max=0
  ;--------------------------------------------------------
  ; read image
  ;--------------------------------------------------------
- dat = readpds(filename, silent=silent)
+ dat = readpds(filename, /silent)
 
  image = dat.image
  type = size(image, /type)
@@ -68,7 +66,7 @@ max=0
 
 
 
- dat = readpds(filename, label, silent=silent, dim=dim, nodata=nodata)
+ dat = readpds(filename, label, /silent, dim=dim, nodata=nodata)
  n = dat.objects
 
 

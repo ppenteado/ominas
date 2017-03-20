@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(bd0)) then struct_assign, bd0, self
 
  self.abbrev = 'STN'
+ self.tag = 'STD'
 
  if(keyword__set(primary)) then self.__PROTECT__primary_xd = decrapify(primary[ii])
  if(keyword__set(surface_pt)) then self.surface_pt = decrapify(surface_pts[*,*,ii])

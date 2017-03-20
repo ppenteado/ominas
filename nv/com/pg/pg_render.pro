@@ -30,11 +30,17 @@
 ;
 ;	sund:         Star descriptor for the Sun.
 ;
+;	md:           Array of map descriptors for each ddmap.  
+;
+;	gd:		Generic descriptor.  If given, the descriptor inputs 
+;			are taken from this structure if not explicitly given.
+;
+;	dd:		Data descriptor containing a generic descriptor to use
+;			if gd not given.
+;
 ;	ddmap:        Array of data descriptors containing the body maps, 
 ;	              one for each body.  If not given, maps are loaded using
 ;		      pg_load_maps.
-;
-;	md:           Array of map descriptors for each ddmap.  
 ;
 ;	sample:       Amount by which to subsample pixels.
 ;
@@ -106,7 +112,7 @@
 ;-
 ;=============================================================================
 function pg_render, cd=cd, sund=sund, $
-       bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
+       bx=bx, ddmap=ddmap, md=md, dd=dd, gd=gd, sample=sample, pc_size=pc_size, $
        show=show, pht_min=pht_min, no_pht=no_pht, map=image, $
        standoff=standoff, limit_source=limit_source, nodd=nodd, $
        psf=psf, npsf=npsf, penumbra=penumbra, no_secondary=no_secondary, $
@@ -120,7 +126,10 @@ function pg_render, cd=cd, sund=sund, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, dd=dd, cd=cd, bx=bx, md=md, sund=sund
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(md)) then md = dat_gd(gd, dd=dd, /md)
 
 
  ;---------------------------------------

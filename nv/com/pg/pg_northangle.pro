@@ -32,9 +32,11 @@
 ;	bx:	Array (n_objects, n_timesteps) of descriptors of objects 
 ;		which must be a subclass of BODY.
 ;
-;	gd:	Generic descriptor.  If given, the cd and bx inputs 
-;		are taken from the cd and bx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;  OUTPUT: NONE
 ;
@@ -52,18 +54,19 @@
 ;	
 ;-
 ;=============================================================================
-function pg_northangle, cd=cd, bx=bx, gd=gd
+function pg_northangle, cd=cd, bx=bx, dd=dd, gd=gd
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, bx=bx
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
  nt = n_elements(cd)
- pgs_count_descriptors, bx, nd=n_objects, nt=nt1
+ cor_count_descriptors, bx, nd=n_objects, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 

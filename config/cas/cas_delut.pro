@@ -11,7 +11,7 @@
 ;  into the full 12bit range 0-4095 in a near exponential relationship
 ;
 ;==============================================================================
-function cas_delut, image, label, silent=silent, force=force
+function cas_delut, image, label, force=force
 
  if(NOT keyword_set(label)) then force = 1
 
@@ -30,7 +30,7 @@ function cas_delut, image, label, silent=silent, force=force
  ;--------------------------
  ; apply the lookup table
  ;--------------------------
- if(NOT keyword_set(silent)) then print, 'De-LUT-ing...'
+ nv_message, verb=0.2, 'De-LUT-ing...'
 
  return, lut[image]
 end

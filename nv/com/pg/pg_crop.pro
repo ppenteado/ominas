@@ -66,7 +66,8 @@ pro pg_crop, dd, corner_ptd, cd=cd, gd=gd, image=image, crop=crop
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
 
  if(NOT keyword_set(crop)) then crop = 0
 

@@ -88,6 +88,7 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
  ;--------------------------------------------
  ; send value through all output translators
  ;--------------------------------------------
+ nv_suspend_events
 ; i=0
 ; translators=*_dd.output_translators_p
 ; n=n_elements(translators)
@@ -113,6 +114,7 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
   end
 
 
+ nv_resume_events
  cor_rereference, dd, _dd
 end
 ;===========================================================================

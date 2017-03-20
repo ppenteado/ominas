@@ -91,7 +91,7 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
  ; create a camera descriptor
  ;------------------------------
  cd = cam_create_descriptors(ndd, $
-		assoc_xd=dd, $
+		gd=dd, $
 		name=cam_name, $
 		orient=cmat, $
 		exposure=cam_exposure, $

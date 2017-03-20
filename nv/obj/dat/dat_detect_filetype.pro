@@ -14,20 +14,18 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	filetype = dat_detect_filetype(filename)
+;	filetype = dat_detect_filetype(dd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	filename:	Name of file to test.
+;	dd:		Data descriptor containing filename to test.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	silent:	If set, messages will be suppressed.
-;
 ;	default:	If set, the 'default' filetype is returned.
 ;			The default filetype is the first item in the table
 ;			whose action is not 'IGNORE'.
@@ -50,7 +48,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_detect_filetype, filename, silent=silent, default=default, all=all, action=action
+function dat_detect_filetype, dd, default=default, all=all, action=action
 @nv_block.common
 @core.include
 
@@ -96,7 +94,7 @@ function dat_detect_filetype, filename, silent=silent, default=default, all=all,
  for i=0, n_ftp-1 do $
   begin
    detect_fn = table[i,0]
-   if(call_function(detect_fn, filename)) then $
+   if(call_function(detect_fn, dd)) then $
     begin
      filetype = table[i,1]
      action = actions[i]

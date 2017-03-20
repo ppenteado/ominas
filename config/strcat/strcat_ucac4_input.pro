@@ -500,7 +500,7 @@ function ucac4_get_stars, dd, filename, cam_vel=cam_vel, $
  lum = Lsun * 10.d^( (4.83d0-m)/2.5d ) 
 
  _sd = str_create_descriptors(n, $
-	assoc_xd=make_array(n, val=dd), $
+        gd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
         avel=avel, $

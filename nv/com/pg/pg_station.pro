@@ -38,9 +38,11 @@
 ;	bx:	Array (n_xd, n_timesteps) of descriptors of objects 
 ;		that must be a subclass of BODY, instead of gbx or dkx.  
 ;
-;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
-;		are taken from the cd and gbx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	fov:	 If set points are computed only within this many camera
 ;		 fields of view.
@@ -67,21 +69,26 @@
 ;	
 ;-
 ;=============================================================================
-function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
+function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, $
                                                          fov=fov, cull=cull
 @pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, std=std, cd=cd, bx=bx, gbx=gbx, dkx=dkx
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(std)) then std = dat_gd(gd, dd=dd, /std)
+
+
  if(keyword_set(gbx)) then if(NOT keyword_set(bx)) then bx = gbx
  if(keyword_set(dkx)) then if(NOT keyword_set(bx)) then bx = dkx
 
  if(keyword_set(fov)) then slop = (image_size(cd[0]))[0]*(fov-1) > 1
 
- pgs_count_descriptors, std, nd=n_objects, nt=nt
+ cor_count_descriptors, std, nd=n_objects, nt=nt
 
 
  ;-----------------------------------
@@ -93,7 +100,6 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
 
  for i=0, n_objects-1 do $
   begin
-   input = 0
    xd = 0
    if(keyword_set(bx)) then $
     begin
@@ -102,7 +108,7 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
      if(w[0] NE -1) then $
       begin
        xd = reform(bx[w[0],*], nt)
-       input = pgs_desc_suffix(bx=xd[0], cd[0])
+       gd_input = {bx:xd[0], cd:cd[0]}
       end
     end
 
@@ -123,7 +129,7 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
    ;-----------------------------------
    station_ptd[i] = pnt_create_descriptors(name = strupcase(name), $
 		           desc = 'station', $
-		           input = input, $
+		           gd = gd_input, $
 		           assoc_xd = xd, $
 		           points = points, $
 		           vectors = inertial_pts)

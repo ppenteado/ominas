@@ -98,7 +98,7 @@ function pg_cvscan_coeff, scan_ptd, axis_ptd=_axis_ptd, fix=fix
  ;===============================================
  for i=0, n_objects-1 do $
   begin
-   pnt_get, scan_ptd[i], data=scan_data, points=scan_pts, /visible
+   pnt_query, scan_ptd[i], data=scan_data, points=scan_pts, /visible
 
    ;---------------------------------------------------------------
    ; if scan data exists, compute the least-squares coefficients

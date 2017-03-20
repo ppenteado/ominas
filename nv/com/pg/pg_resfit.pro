@@ -263,13 +263,7 @@ pro pg_resfit, scan_ptd, foc_ptd, n, cd=cd, gd=gd, range=range, nom_ptd=nom_ptd,
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- gd_used = 0
- if(keyword__set(gd)) then $
-  if(NOT keyword__set(cd)) then $
-   begin
-    cd=gd.cd
-    gd_used = 1
-   end
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
 
 
  ;------------------------------------------------------------
@@ -352,10 +346,6 @@ pro pg_resfit, scan_ptd, foc_ptd, n, cd=cd, gd=gd, range=range, nom_ptd=nom_ptd,
  res_pts = cam_focal_to_image(cd, _foc_pts)
  res_ptd = pnt_create_descriptors(points=res_pts)
 
- ;-------------------------------------------------
- ; put new cd into the generic descriptor if given
- ;-------------------------------------------------
- if(gd_used) then gd.cd=cd
 
 end
 ;=============================================================================

@@ -82,45 +82,74 @@ end
 
 
 ;=============================================================================
-; ri_load
+; ri_build
 ;
 ;=============================================================================
-function ri_load, catfile, reload=reload
-common ri_load_block, _catfile, _dat_p
+function ri_build, dat, name, pd
 
- ;--------------------------------------------------------------------
- ; if appropriate catalog is loaded, then just return descriptors
- ;--------------------------------------------------------------------
- load = 1
+ dkd = orb_construct_descriptor(pd, /ring, /noevolve, $
+              name = strupcase(name), $
+              time = dat.epoch, $ 
+              sma = dat.sma, $
+              ecc = dat.ecc[0] , $
+              lp =  dat.lp[0] , $
+              dlpdt = dat.dlpdt[0] , $
+              inc =  dat.inc, $
+              lan =  dat.lan, $
+              dlandt = dat.dlandt)
 
- if(keyword_set(_catfile) AND (NOT keyword_set(reload))) then $
+; this doesn't look right...
+; dm = size(dat.ecc, /dim)
+; if(n_elements(dm) GT 1) then $
+;  for k=1, dm[1]-1 do $
+;      dsk_assign, dkd, /noevent, $
+;	   m = dat.m[k], $
+;	   em = dat.ecc[k], $
+;	   lpm = dat.lp[k], $
+;	   dlpmdt = dat.dlpdt[k]
+
+ return, dkd
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; ri_system
+;
+;=============================================================================
+pro ri_system, dkd
+
+ sma = (dsk_sma(dkd))[0,0,*]
+ ecc = (dsk_ecc(dkd))[0,0,*]
+ q = sma*(1d - ecc)
+ w = where(q EQ min(q))
+ dkd = dkd[w]
+ cor_set_name, dkd, 'MAIN_RING_SYSTEM'
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; ri_merge
+;
+;=============================================================================
+function ri_merge, dkd_inner, dkd_outer, pd, opaque
+
+ dkd = dkd_inner
+ for j=0, n_elements(dkd)-1 do $
   begin
-   w = where(_catfile EQ catfile)
-   if(w[0] NE -1) then $
-    begin
-     load = 0
-     dat = *(_dat_p[w[0]])
-    end
-  end 
-
- ;--------------------------------------------------------------------
- ; otherwise read and parse the catalog
- ;--------------------------------------------------------------------
- if(load) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; read the catalog
-   ;- - - - - - - - - - - - - - - - - - - -
-   dat = ringcat_read(catfile)
-
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; save catalog data
-   ;- - - - - - - - - - - - - - - - - - - -
-   _catfile = append_array(_catfile, catfile)
-   _dat_p = append_array(_dat_p, nv_ptr_new(dat))
+   sma = tr( [tr((dsk_sma(dkd[j]))[*,0]), tr((dsk_sma(dkd_outer[j]))[*,0])] )
+   dsk_set_sma, dkd[j], sma
+   ecc = tr( [tr((dsk_ecc(dkd[j]))[*,0]), tr((dsk_ecc(dkd_outer[j]))[*,0])] )
+   dsk_set_ecc, dkd[j], ecc
+   bod_set_pos, dkd[j], bod_pos(pd)
+   bod_set_opaque, dkd[j], opaque[j]
   end
 
- return, dat
+ return, dkd
 end
 ;=============================================================================
 
@@ -145,14 +174,19 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
   end
 
  ;----------------------------------------------
- ; if no ring catalog, then use old translator
+ ; get catalog path
  ;----------------------------------------------
  catpath = getenv('NV_RING_DATA')
  if(NOT keyword_set(catpath)) then $
-   nv_message, /con, $
+   begin
+    nv_message, /con, $
      'NV_RING_DATA environment variable is undefined.', $
-       exp=['NV_RING_DATA specifies directory in which this translator', $
+       exp=['NV_RING_DATA specifies directories in which this translator', $
             'searches for ring catalog files.']
+   status = -1
+   return, 0
+  end
+ catpath = parse_comma_list(catpath, delim=':')
 
  status = 0
 
@@ -201,12 +235,11 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; read relevant ring catalog
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
-   catfile = catpath + '/ringcat_' + strlowcase(planet) + '.txt'
-   if(file_test(catfile)) then $
+   catfile = 'ringcat_' + strlowcase(planet) + '.txt'
+   dat = file_manage('ringcat_read', catpath, catfile, reload=reload)
+
+   if(keyword_set(dat)) then $
     begin
-     dat = ri_load(catfile, reload=reload)
-
-
      ;- - - - - - - - - - - - - - - - - - - - - - - -
      ; select desired rings by classification
      ;- - - - - - - - - - - - - - - - - - - - - - - -
@@ -231,7 +264,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
        else dat = dat[w]
       end
 
-     if(continue) then $
+    if(continue) then $
       begin
        ;- - - - - - - - - - - - - - - - - -
        ; build descriptors
@@ -243,7 +276,6 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
        ss = sort(dat.name)
        uu = uniq(dat[ss].name)
        dat = dat[ss[uu]]
-
 
        ;...........................................................
        ; create descriptors
@@ -280,26 +312,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
          ;................................ 
          if(w0[0] NE -1) then $
           begin
-           ii = w[w0]
-           dkd_inner[j] = orb_construct_descriptor(pds[i], /ring, /noevolve, $
-			name = strupcase(name), $
-			time = dat[ii].epoch, $ 
-			sma = dat[ii].sma, $
-			ecc = dat[ii].ecc[0] , $
-			lp =  dat[ii].lp[0] , $
-			dlpdt = dat[ii].dlpdt[0] , $
-			inc =  dat[ii].inc, $
-			lan =  dat[ii].lan, $
-			dlandt = dat[ii].dlandt)
-           dm = size(dat[ii].ecc, /dim)
-           if(n_elements(dm) GT 1) then $
-            for k=1, dm[1]-1 do $
-             begin
-              dsk_set_m, dkd_inner[j], dat[ii].m[k]
-              dsk_set_em, dkd_inner[j], dat[ii].ecc[k]
-              dsk_set_lpm, dkd_inner[j], dat[ii].lp[k]
-              dsk_set_dlpmdt, dkd_inner[j], dat[ii].dlpdt[k]
-             end
+           dkd_inner[j] = ri_build(dat[w[w0]], name, pds[i])
            dkdx = append_array(dkdx, dkd_inner[j])	; save to free later
           end
 
@@ -308,26 +321,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
          ;................................ 
          if(w1[0] NE -1) then $
           begin
-           ii = w[w1]
-           dkd_outer[j] = orb_construct_descriptor(pds[i], /ring, /noevolve, $
-			name = strupcase(name), $
-			time = dat[ii].epoch, $ 
-			sma = dat[ii].sma, $
-			ecc = dat[ii].ecc[0] , $
-			lp =  dat[ii].lp[0] , $
-			dlpdt = dat[ii].dlpdt[0] , $
-			inc =  dat[ii].inc, $
-			lan =  dat[ii].lan, $
-			dlandt = dat[ii].dlandt)
-           dm = size(dat[ii].ecc, /dim)
-           if(n_elements(dm) GT 1) then $
-            for k=1, dm[1]-1 do $
-             begin
-              dsk_set_m, dkd_outer[j], dat[ii].m[k]
-              dsk_set_em, dkd_outer[j], dat[ii].ecc[k]
-              dsk_set_lpm, dkd_outer[j], dat[ii].lp[k]
-              dsk_set_dlpmdt, dkd_outer[j], dat[ii].dlpdt[k]
-             end
+           dkd_outer[j] = ri_build(dat[w[w1]], name, pds[i])
            dkdx = append_array(dkdx, dkd_outer[j])	; save to free later
           end
 
@@ -336,64 +330,26 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
          ;................................ 
          if(w2[0] NE -1) then $
           begin
-           ii = w[w2]
-           dkd_peak[j] = orb_construct_descriptor(pds[i], /ring, /noevolve, $
-			name = strupcase(name), $
-			time = dat[ii].epoch, $ 
-			sma = dat[ii].sma, $
-			ecc = dat[ii].ecc[0] , $
-			lp =  dat[ii].lp[0] , $
-			dlpdt = dat[ii].dlpdt[0] , $
-			inc =  dat[ii].inc, $
-			lan =  dat[ii].lan, $
-			dlandt = dat[ii].dlandt)
-           dm = size(dat[ii].ecc, /dim)
-           if(n_elements(dm) GT 1) then $
-            for k=1, dm[1]-1 do $
-             begin
-              dsk_set_m, dkd_peak[j], dat[ii].m[k]
-              dsk_set_em, dkd_peak[j], dat[ii].ecc[k]
-              dsk_set_lpm, dkd_peak[j], dat[ii].lp[k]
-              dsk_set_dlpmdt, dkd_peak[j], dat[ii].dlpdt[k]
-             end
+           dkd_peak[j] = ri_build(dat[w[w2]], name, pds[i])
            dsk_widen, dkd_peak[j], 0d
 
            dkds = append_array(dkds, dkd_peak[j])
            primaries = append_array(primaries, pds[i])
-           assoc_xd = append_array(assoc_xd, cor_assoc_xd(pds[i]))
+           gd = append_array(gd, cor_gd(pds[i]))
            ppds = append_array(ppds, pds[i])
-           end
+          end
 
          ;................................ 
          ; trough
          ;................................ 
          if(w3[0] NE -1) then $
           begin
-           ii = w[w3]
-           dkd_trough[j] = orb_construct_descriptor(pds[i], /ring, /noevolve, $
-			name = strupcase(name), $
-			time = dat[ii].epoch, $ 
-			sma = dat[ii].sma, $
-			ecc = dat[ii].ecc[0] , $
-			lp =  dat[ii].lp[0] , $
-			dlpdt = dat[ii].dlpdt[0] , $
-			inc =  dat[ii].inc, $
-			lan =  dat[ii].lan, $
-			dlandt = dat[ii].dlandt)
-           dm = size(dat[ii].ecc, /dim)
-           if(n_elements(dm) GT 1) then $
-            for k=1, dm[1]-1 do $
-             begin
-              dsk_set_m, dkd_trough[j], dat[ii].m[k]
-              dsk_set_em, dkd_trough[j], dat[ii].ecc[k]
-              dsk_set_lpm, dkd_trough[j], dat[ii].lp[k]
-              dsk_set_dlpmdt, dkd_trough[j], dat[ii].dlpdt[k]
-             end
+           dkd_trough[j] = ri_build(dat[w[w3]], name, pds[i])
            dsk_widen, dkd_trough[j], 0d
 
            dkds = append_array(dkds, dkd_trough[j])
            primaries = append_array(primaries, pds[i])
-           assoc_xd = append_array(assoc_xd, cor_assoc_xd(pds[i]))
+           gd = append_array(gd, cor_gd(pds[i]))
            ppds = append_array(ppds, pds[i])
           end
         end
@@ -417,19 +373,8 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        if(keyword_set(system)) then $
         begin
-         sma = (dsk_sma(dkd_inner))[0,0,*]
-         ecc = (dsk_ecc(dkd_inner))[0,0,*]
-         q = sma*(1d - ecc)
-         w = where(q EQ min(q))
-         dkd_inner = dkd_inner[w]
-         cor_set_name, dkd_inner, 'MAIN_RING_SYSTEM'
-
-         sma = (dsk_sma(dkd_outer))[0,0,*]
-         ecc = (dsk_ecc(dkd_outer))[0,0,*]
-         q = sma*(1d + ecc)
-         w = where(q EQ max(q))
-         dkd_outer = dkd_outer[w]
-         cor_set_name, dkd_outer, 'MAIN_RING_SYSTEM'
+         ri_system, dkd_inner
+         ri_system, dkd_outer
         end
 
        ;- - - - - - - - - - - - - - - - - - - - -
@@ -437,21 +382,11 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
        ;- - - - - - - - - - - - - - - - - - - - -
        if(keyword__set(dkd_inner)) then $
         begin
-         dkd = dkd_inner
+         dkd = ri_merge(dkd_inner, dkd_outer, pds[i], opaque)
          ndkd = n_elements(dkd)
-         for j=0, ndkd-1 do $
-          begin
-           sma = tr( [tr((dsk_sma(dkd[j]))[*,0]), tr((dsk_sma(dkd_outer[j]))[*,0])] )
-           dsk_set_sma, dkd[j], sma
-           ecc = tr( [tr((dsk_ecc(dkd[j]))[*,0]), tr((dsk_ecc(dkd_outer[j]))[*,0])] )
-           dsk_set_ecc, dkd[j], ecc
-           bod_set_pos, dkd[j], bod_pos(pds[i])
-           bod_set_opaque, dkd[j], opaque[j]
-          end
-
          dkds = append_array(dkds, dkd)
-         primaries = append_array(primaries, make_array(ndkd, val=pds[i]))
-         assoc_xd = append_array(assoc_xd, make_array(ndkd, val=cor_assoc_xd(pds[i])))
+         primaries = append_array(primaries, make_array(n_elements(dkd), val=pds[i]))
+         gd = append_array(gd, make_array(ndkd, val=cor_gd(pds[i])))
          ppds = append_array(ppds, make_array(n_elements(dkd), val=pds[i]))
         end
       end
@@ -500,7 +435,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  ; make ring descriptors
  ;------------------------------------------------------------------
  rds = rng_create_descriptors(n_obj, $
-		assoc_xd=assoc_xd, $
+		gd=gd, $
 		primary=primaries, $
 		name=cor_name(dkdts), $
 		opaque=bod_opaque(dkdts), $

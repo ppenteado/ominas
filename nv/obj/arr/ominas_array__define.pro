@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(ard0)) then struct_assign, ard0, self
 
  self.abbrev = 'ARR'
+ self.tag = 'ARD'
 
  if(keyword__set(primary)) then self.__PROTECT__primary_xd = decrapify(primary[ii])
  if(keyword__set(surface_pts)) then $

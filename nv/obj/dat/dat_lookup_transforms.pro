@@ -30,8 +30,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	silent:	If set, messages are suppressed.
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
 ;
@@ -50,7 +49,7 @@
 ;=============================================================================
 pro dat_lookup_transforms, instrument, $
        input_transforms, output_transforms, $
-        tab_transforms=tab_transforms, silent=silent
+        tab_transforms=tab_transforms
 @nv_block.common
 @core.include
 

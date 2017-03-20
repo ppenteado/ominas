@@ -177,8 +177,6 @@
 ;
 ;	pos:		Get only position information, not pointing.
 ;
-;	silent:		If set, various diagnostic messages will be suppressed.
-;
 ;	strict_priority:If set, previously loaded kernels are uncloded and 
 ;			reloaded in order to preserve thei priority.  This is
 ;			potentially very slow.
@@ -310,11 +308,6 @@ common spice_input_block, last_prefix
  ;- - - - - - - - - - - - - - - - - - -
  b1950 = fix(tr_keyword_value(dd, 'b1950'))
  if(keyword_set(b1950)) then ref = 'b1950'
-
- ;- - - - - - - - - - - - - - - - - - -
- ; silent
- ;- - - - - - - - - - - - - - - - - - -
- silent = fix(tr_keyword_value(dd, 'silent'))
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; reload
@@ -452,10 +445,8 @@ common spice_input_block, last_prefix
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; first, look for lsk and sck files in the klist
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     lsk_in = spice_read_klist(dd, klist, $
-                         silent=silent, prefix=prefix, /notime, ext='tls')
-     sck_in = spice_read_klist(dd, klist, $
-                         silent=silent, prefix=prefix, /notime, ext='tsc')
+     lsk_in = spice_read_klist(dd, klist, prefix=prefix, /notime, ext='tls')
+     sck_in = spice_read_klist(dd, klist, prefix=prefix, /notime, ext='tsc')
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; otherwise, check for lsk and sck keywords
@@ -493,7 +484,7 @@ common spice_input_block, last_prefix
      ;  Kernels are read from this file and inserted into the kernel list
      ;  in front of the kernels input using translator keywords.  
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     k_in = spice_read_klist(dd, klist, silent=silent, time=time, prefix=prefix)
+     k_in = spice_read_klist(dd, klist, time=time, prefix=prefix)
     end
 
 

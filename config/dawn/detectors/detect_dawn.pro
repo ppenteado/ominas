@@ -2,7 +2,9 @@
 ; detect_dawn.pro
 ;
 ;===========================================================================
-function detect_dawn, label, udata
+function detect_dawn, dd
+
+ label = dat_header(dd) 
 
  w1 = where(strpos(label, 'FC1') NE -1)
  w2 = where(strpos(label, 'DAWN MISSION') NE -1)

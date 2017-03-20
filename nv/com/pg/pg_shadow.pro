@@ -45,9 +45,11 @@
 ;		descriptor is given, then the sun descriptor in gd is used.
 ;		Only one observer is allowed.
 ;
-;	gd:	Generic descriptor.  If given, the cd, dkx, gbx, and bx inputs 
-;		are taken from the corresponding fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	  All other keywords are passed directly to pg_shadow_globe
 ;	  and pg_shadow_disk and are documented with those programs.
@@ -61,7 +63,8 @@
 ;
 ;
 ; STATUS:
-;	
+;	Soon to be replaced by a new program that merges pg_shadow_globe and
+;	pg_shadow_disk.  The API for the new routine may be slightly different.
 ;
 ;
 ; SEE ALSO:
@@ -73,12 +76,12 @@
 ;	
 ;-
 ;=============================================================================
-function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd, $
+function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, object_ptd, $
               reveal=reveal, fov=fov, nocull=nocull, all=all, $
               both=both, backshadow=backshadow, epsilon=epsilon, $
               nosolve=nosolve
 
- pgs_gd, bx=bx
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
  ;----------------------------------
  ; extract objects from bx
@@ -94,7 +97,7 @@ function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd, $
  ;----------------------------------
  if(keyword_set(gbx)) then $
    globe_shadow_ptd = $
-       pg_shadow_globe(object_ptd, cd=cd, od=od, gbx=gbx, gd=gd, $
+       pg_shadow_globe(object_ptd, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, $
                /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow, $
                nosolve=nosolve, epsilon=epsilon)
 
@@ -103,7 +106,7 @@ function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ptd, $
  ;----------------------------------
  if(keyword_set(dkx)) then $
    disk_shadow_ptd = $
-       pg_shadow_disk(object_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, gd=gd, $
+       pg_shadow_disk(object_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, dd=dd, gd=gd, $
                /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow, epsilon=epsilon)
 
 

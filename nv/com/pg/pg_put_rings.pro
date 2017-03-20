@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_rings, dd, rd=rd
-;	pg_put_rings, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -34,10 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	rds:	Ring descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, ring descriptors are
-;		taken from the gd.rd field.
+;	rd:	Ring descriptors to output.
 ;
 ;	rng_*:		All ring override keywords are accepted.
 ;
@@ -74,54 +70,32 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_rings, dd, trs, rds=_rds, ods=ods, gd=gd, $
+pro pg_put_rings, dd, trs, rd=_rd, ods=ods, $
 @rng__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
 
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword_set(gd)) then $
-  begin
-   if(NOT keyword_set(_rds)) then _rds = gd.rds
-   if(NOT keyword_set(ods)) then ods = gd.ods
-  end
- if(NOT keyword_set(_rds)) then nv_message, 'No ring descriptor.'
- if(NOT keyword_set(ods)) then nv_message, 'No observer descriptor.'
-
- rds = nv_clone(_rds)
-
-
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
- if(n_elements(primary) NE 0) then rng_set_primary, rds, primary
+ rd = nv_clone(_rd)
 
- if(n_elements(orient) NE 0) then bod_set_orient, rds, orient
- if(n_elements(avel) NE 0) then bod_set_avel, rds, avel
- if(n_elements(pos) NE 0) then bod_set_pos, rds, pos
- if(n_elements(rng__vel) NE 0) then bod_set_vel, rds, rng__vel
- if(n_elements(time) NE 0) then bod_set_time, rds, time
-
- if(n_elements(sma) NE 0) then dsk_set_sma, rds, sma
- if(n_elements(ecc) NE 0) then dsk_set_ecc, rds, ecc
- if(n_elements(nm) NE 0) then dsk_set_nm, rds, nm
- if(n_elements(m) NE 0) then dsk_set_m, rds, m
- if(n_elements(em) NE 0) then dsk_set_em, rds, em
- ;if(n_elements(wm) NE 0) then dsk_set_wm, rds, wm ;no such procedure
- ;if(n_elements(dwmdt) NE 0) then dsk_set_dwmdt, rds, dwmdt ;no such procedure
+ if(defined(name)) then _name = name & name = !null
+ rng_assign, rd, /noevent, $
+@rng__keywords.include
+end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- dat_put_value, dd, 'RNG_DESCRIPTORS', rds, trs=trs, $
+ dat_put_value, dd, 'RNG_DESCRIPTORS', rd, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
- nv_free, rds
+ nv_free, rd
 end
 ;===========================================================================
 

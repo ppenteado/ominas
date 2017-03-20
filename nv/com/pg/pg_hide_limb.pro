@@ -7,8 +7,7 @@
 ; PURPOSE:
 ;	Hides the given points with respect to the limb of each given globe and
 ;	observer.  This routine is only relevant for points that lie on the 
-;	surface of a body.  pg_hide_globe should be used for non-surface
-;	points.
+;	surface of a body.  
 ;
 ;
 ; CATEGORY:
@@ -43,9 +42,11 @@
 ;		as the observer from which points are hidden.  If no observer
 ;		descriptor is given, the camera descriptor is used.
 ;
-;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
-;		are taken from the cd and gbx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	reveal:	 Normally, objects whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
@@ -93,7 +94,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
+pro pg_hide_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, point_ptd, hide_ptd, $
               reveal=reveal
 @pnt_include.pro
 
@@ -103,8 +104,9 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, od=od
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  ;-----------------------------
  ; default observer is camera
@@ -116,7 +118,7 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
  ;-----------------------------------
  nt = n_elements(od)
  n_objects = n_elements(point_ptd)
- pgs_count_descriptors, gbx, nd=n_globes, nt=nt1
+ cor_count_descriptors, gbx, nd=n_globes, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
  if(n_globes NE n_objects) then nv_message, 'Inconsistent inputs.'
 
@@ -131,9 +133,9 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
    begin
     xd = reform(gbx[i,*], nt)
     Rs = bod_inertial_to_body_pos(xd, obs_pos)
-;w = where(cor_assoc_xd(point_ptd) EQ )
+;w = where(pnt_assoc_xd(point_ptd) EQ )
 
-    pnt_get, point_ptd[i], p=p, vectors=vectors, flags=flags
+    pnt_query, point_ptd[i], p=p, vectors=vectors, flags=flags
     object_pts = bod_inertial_to_body_pos(xd, vectors)
 
     w = glb_hide_points_limb(xd, Rs, object_pts)
@@ -149,14 +151,14 @@ pro pg_hide_limb, cd=cd, od=od, gbx=gbx, gd=gd, point_ptd, hide_ptd, $
      begin
       hide_ptd[i] = nv_clone(point_ptd[i])
 
-      pnt_get, point_ptd[i], desc=desc, inp=inp
+      pnt_query, hide_ptd[i], desc=desc, gd=gd0
 
       ww = complement(flags, w)
       _flags = flags
       if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
-      pnt_set, hide_ptd[i], desc=desc+'-hide_limb', $
-           input=inp+'-'+pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), flags=_flags
+      pnt_assign, hide_ptd[i], desc=desc+'-hide_limb', flags=_flags, $
+                  gd=append_struct(gd0, {gbx:gbx[i,0], od:od[0], cd:cd[0]})
      end
    end
 

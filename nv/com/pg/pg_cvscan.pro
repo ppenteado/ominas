@@ -138,7 +138,9 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ptd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, bx=bx, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
  image = dat_data(dd)
 
@@ -177,7 +179,7 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ptd, $
    ;-----------------------------------
    ; get all points
    ;-----------------------------------
-   pnt_get, object_ptd[i], points=all_pts, flags=flags, /visible
+   pnt_query, object_ptd[i], points=all_pts, flags=flags, /visible
    if(keyword_set(all_pts)) then $
     begin
      ;-----------------------------------
@@ -214,7 +216,7 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ptd, $
        ;------------------------------------------------------
        if(keyword_set(_scan_ptd)) then $
         begin 
-         pnt_get, _scan_ptd[i], data=scan_data, points=scan_pts
+         pnt_query, _scan_ptd[i], data=scan_data, points=scan_pts
          cos_alpha = scan_data[0,*]
          sin_alpha = scan_data[1,*]
          scan_offsets = scan_data[2,*]

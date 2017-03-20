@@ -129,7 +129,7 @@ function sedr_vgr_targets, sedr, bconst, j2000=j2000, $
 
 
  pd = plt_create_descriptors(n_obj, $
-		assoc_xd=make_array(n_obj, val=dd), $
+		gd=make_array(n_obj, val=dd), $
 		name=plt_name, $
 		orient=plt_orient, $
 		avel=plt_avel, $

@@ -80,7 +80,7 @@ function spice_planets, dd, ref, $
      ; create planet descriptors
      ;------------------------------
      pd = plt_create_descriptors(n_obj, $
-		assoc_xd=make_array(n_obj, val=dd[i]), $
+		gd=make_array(n_obj, val=dd[i]), $
 		name=name, $
 		orient=plt_orient, $
 		avel=plt_avel, $
@@ -119,7 +119,7 @@ function spice_planets, dd, ref, $
      ;--------------------------------------------------------------------
 ;     if(target_unknown) then $
 ;      begin
-;       pd = [plt_create_descriptors(1, name='UNKNOWN', assoc_xd=dd), pd]
+;       pd = [plt_create_descriptors(1, name='UNKNOWN', gd=dd), pd]
 ;       n_obj = n_obj + 1
 ;      end
 

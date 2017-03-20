@@ -6,7 +6,7 @@
 ;
 ; PURPOSE:
 ;	Hides the given points with respect to each given object and observer
-;	using pg_hide/rm_disk, pg_hide/rm_globe, or pg_hide_limb.
+;	using the hide methods of the given bodies.
 ;
 ;
 ; CATEGORY:
@@ -14,33 +14,58 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_hide, object_ptd, cd=cd, od=od, gbx=gbx, dkx=dkx, /[disk|globe|limb]
-;	pg_hide, object_ptd, gd=gd, od=od, /[disk|globe|limb]
+;	pg_hide, point_ptd, cd=cd, od=od, bx=bx
 ;
 ;
 ; ARGUMENTS:
-;  INPUT: 
-;	object_ptd:	Array of POINT containing inertial vectors.
+;  INPUT:
+;	point_ptd:	Array of POINT containing inertial vectors.
 ;
+;  OUTPUT: 
 ;	hide_ptd:	Array (n_disks, n_timesteps) of POINT 
 ;			containing the hidden points.
 ;
-;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	globe:	If set, use pg_hide_globe or pg_rm_globe.
+;	cd:	Array (n_timesteps) of camera descriptors.
 ;
-;	disk:	If set, use pg_hide_disk or pg_rm_disk.
+;	gbx:	Array (n_objects, n_timesteps) of descriptors of objects 
+;		that must be a subclass of GLOBE.
 ;
-;	limb:	If set, use pg_hide_limb .
+;	dkx:	Array (n_objects, n_timesteps) of descriptors of objects 
+;		that must be a subclass of DISK.
 ;
-;	rm:	If set use the *rm* programs instead of *hide* programs.
+;	bx:	Array (n_bodies, n_timesteps) of descriptors of objects 
+;		which must be a subclass of BODY.
 ;
-;	  All other keywords are passed directly to pg_rm/hide_globe,
-;	  pg_hide/rm_disk or pg_hide_limb and are documented with those
-;	  programs.
+;	od:	Array (n_timesteps) of descriptors of objects 
+;		which must be a subclass of BODY.  These objects are used
+;		as the observer from which points are hidden.  If no observer
+;		descriptor is given, the camera descriptor is used.
+;
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
+;
+;	reveal:	 Normally, objects whose opaque flag is set are ignored.  
+;		 /reveal suppresses this behavior.
+;
+;	cat:	If set, the hide_ptd points are concatentated into a single
+;		POINT object.
+;
+;	rm:	If set, points are flagged for being in front of or behind
+;		the body, rather then just behind it.
+;
+;	assoc:	If set, points are only hidden wrt their associated body.
+;		This is typically much faster because the calcuations for
+;		each points array are carried out for a single body instead 
+;		of all given bodies.  This is useful, for example, for hiding
+;		points that lie on the surface of a planet wrt to only that
+;		planet.
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,42 +74,22 @@
 ;
 ;
 ; SIDE EFFECTS:
-;	The flags arrays in object_ptd are modified.
+;	The flags arrays in point_ptd are modified.
 ;
 ;
 ; PROCEDURE:
-;	For each object in object_ptd, hidden points are computed and
-;	PS_MASK_INVISIBLE in the POINT is set.  No points are
+;	For each object in point_ptd, hidden points are computed and
+;	PTD_MASK_INVISIBLE in the POINT is set.  No points are
 ;	removed from the array.
 ;
 ;
 ; EXAMPLE:
-;	(1) The following command hides all points on the planet which lie
-;	    behind the terminator:
+;	The following command hides all points which are behind a planet as
+;	seen by the camera:
 ;
-;	    pg_hide, object_ptd, /limb, gbx=pd, od=sd
+;	pg_hide, point_ptd, cd=cd, bx=pd
 ;
-;	    In this call, pd is a planet descriptor, and sd is a star descriptor
-;	    (i.e., the sun).
-;
-;
-;
-;	(2) This command hides all points on the planet which are shadowed by
-;	    the rings:
-;
-;	    pg_hide, object_ptd, /disk, dkx=rd, od=sd
-;
-;	    In this call, rd is a ring descriptor, and sd is as above.
-;
-;
-;
-;	(3) This command hides all points which lie behind the planet or the
-;	    rings:
-;
-;	    pg_hide, object_ptd, /disk, /globe, dkx=rd, gbx=pd, cd=cd
-;
-;	    In this call, rd is a ring descriptor, pd is a planet descriptor, 
-;	    cd is a camera descriptor, and sd is as above.
+;	In this call, pd is a planet descriptor, and cd is a camera descriptor.
 ;
 ;
 ; STATUS:
@@ -92,53 +97,216 @@
 ;
 ;
 ; SEE ALSO:
-;	pg_hide_disk, pg_hide_globe, pg_hide_limb
+;	pg_hide_limb
 ;
 ;
 ; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 2/1998
+; 	Written by:	Spitale, 3/2017, generalized pg_hide_globe and pg_hide_disk
 ;	
 ;-
 ;=============================================================================
-pro pg_hide, object_ptd, hide_ptd, cd=cd, $
-             od=od, gbx=gbx, dkx=dkx, gd=gd, one2one=one2one, $
-	     globe=globe, limb=limb, disk=disk, rm=rm, reveal=reveal, cat=cat
 
 
- if(arg_present(hide_ptd)) then hide_ptd = 1	; need this to allow called routines
-						; to detect presence of hide_ptd argument.
 
- ;--------------------------
- ; remove instead of hide
- ;--------------------------
- if(keyword_set(rm)) then $
+;=============================================================================
+; pgh_select_by_assoc
+;
+;=============================================================================
+function pgh_select_by_assoc, bx, point_ptd
+
+ w = where(pnt_assoc_xd(point_ptd) EQ bx[*,0])
+ if(w[0] NE -1) then return, bx[w,*]
+
+ return, !null
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgh_select_by_bounding_box
+;
+;=============================================================================
+function pgh_select_by_bounding_box, _cd, bx, point_ptd
+;;;common pgh_select_by_bounding_box_block
+ n = n_elements(bx)
+
+ cd = make_array(n, val=_cd)
+ bod_pos = bod_pos(bx)
+ cam_pos = bod_pos(cd)
+
+ rad = reform(body_size(bx[*,0]) ## make_array(3,val=1d), 1,3,n, /over)
+
+ orient = bod_orient(cd)
+ xx = orient[0,*,*]
+ yy = orient[2,*,*]
+
+ pp = dblarr(2,4,n)
+ pp[*,0,*] = inertial_to_image_pos(cd, bod_pos + rad*(xx+yy))
+ pp[*,1,*] = inertial_to_image_pos(cd, bod_pos + rad*(xx-yy))
+ pp[*,2,*] = inertial_to_image_pos(cd, bod_pos + rad*(-xx+yy))
+ pp[*,3,*] = inertial_to_image_pos(cd, bod_pos + rad*(-xx-yy))
+
+ xxmax = reform(nmax(pp[0,*,*], 1), /over)
+ xxmin = reform(nmin(pp[0,*,*], 1), /over)
+ yymax = reform(nmax(pp[1,*,*], 1), /over)
+ yymin = reform(nmin(pp[1,*,*], 1), /over)
+
+
+ p = pnt_points(point_ptd, /visible)
+ xmax = make_array(n, val=max(p[0,*], min=xmin))
+ ymax = make_array(n, val=max(p[1,*], min=ymin))
+ xmin = make_array(n, val=xmin)
+ ymin = make_array(n, val=ymin)
+
+ w = where((xxmax GT xmin) AND (xmax GT xxmin) AND $
+           (yymax GT ymin) AND (ymax GT yymin))
+
+ if(w[0] NE -1) then return, bx[w,*]
+
+ return, !null
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pg_hide
+;
+;=============================================================================
+pro pg_hide, cd=cd, od=od, bx=bx, gbx=gbx, dkx=dkx, dd=dd, gd=gd, _point_ptd, hide_ptd, $
+              reveal=reveal, compress=compress, cat=cat, rm=rm, assoc=assoc
+@pnt_include.pro
+
+ hide = arg_present(hide_ptd)
+ if(NOT keyword_set(_point_ptd)) then return
+
+ ;----------------------------------------------------------
+ ; if /compress, assume all point_ptd have same # of points
+ ;----------------------------------------------------------
+;stop
+;compress=1
+; if(keyword_set(compress)) then point_ptd = pnt_compress(_point_ptd) $
+; else 
+point_ptd = _point_ptd
+
+ ;-----------------------------------------------
+ ; dereference the generic descriptor if given
+ ;-----------------------------------------------
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+
+ if(NOT keyword_set(bx)) then bx = append_array(gbx, dkx)
+
+
+ if(NOT keyword_set(bx)) then return
+
+ ;-----------------------------
+ ; default observer is camera
+ ;-----------------------------
+ if(NOT keyword_set(od)) then od=cd
+
+ ;-----------------------------------
+ ; validate descriptors
+ ;-----------------------------------
+ nt = n_elements(od)
+ cor_count_descriptors, bx, nd=n_bodies, nt=nt1
+ if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
+
+
+ ;------------------------------------
+ ; hide object points wrt each body
+ ;------------------------------------
+ n_objects = n_elements(point_ptd)
+ if(hide) then hide_ptd = objarr(n_objects, n_bodies)
+
+ obs_pos = bod_pos(od)
+ for j=0, n_objects-1 do if(obj_valid(point_ptd[j])) then $
   begin
-   if(keyword_set(disk)) then $
-      pg_rm_disk, object_ptd, hide_ptd, cd=cd, dkx=dkx, gd=gd, reveal=reveal, cat=cat
-   if(keyword_set(globe)) then $
-      pg_rm_globe, object_ptd, hide_ptd, cd=cd, gbx=gbx, gd=gd, reveal=reveal, cat=cat
-  end $
- ;--------------------------
- ; hide
- ;--------------------------
- else $
-  begin
-   ptd = object_ptd
-;   if(keyword_set(one2one)) then ptd = pnt_compress(object_ptd)
-;if(keyword_set(one2one)) then stop
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - 
+   ; select bodies for hiding
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - 
+   bxx = bx
 
-   if(keyword_set(disk)) then $
-     pg_hide_disk, ptd, hide_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, gd=gd, reveal=reveal, cat=cat
-   if(keyword_set(globe)) then $
-     pg_hide_globe, ptd, hide_ptd, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal, cat=cat
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; associated bodies
+   ;- - - - - - - - - - - - - - - - - - - - -
+   if(n_elements(bxx) GT 1) then $
+        if(keyword_set(assoc)) then bxx = pgh_select_by_assoc(bxx, point_ptd[j])
 
-;if(keyword_set(one2one)) then stop
-;   if(keyword_set(one2one)) then pnt_uncompress, object_ptd, ptd
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; select using bounding radii
+   ;- - - - - - - - - - - - - - - - - - - - -
+   if(n_elements(bxx) GT 1) then $
+                      bxx = pgh_select_by_bounding_box(cd, bxx, point_ptd[j])
 
-   if(keyword_set(limb)) then $
-     pg_hide_limb, ptd, hide_ptd, cd=cd, od=od, gbx=gbx, gd=gd, reveal=reveal
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - 
+   ; hide wrt selected bodies
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - 
+   for i=0, n_elements(bxx)-1 do $
+    if((bod_opaque(bxx[i,0])) OR (keyword_set(reveal))) then $
+     begin
+      xd = reform(bxx[i,*], nt)
+
+      Rs = bod_inertial_to_body_pos(xd, obs_pos)
+
+      pnt_query, point_ptd[j], p=p, vectors=vectors, flags=flags
+      object_pts = bod_inertial_to_body_pos(xd, vectors)
+
+      w = hide_points(xd, Rs, object_pts, rm=rm)
+
+      if(w[0] NE -1) then $
+       begin
+        _flags = flags
+        _flags[w] = _flags[w] OR PTD_MASK_INVISIBLE
+        pnt_set_flags, point_ptd[j], _flags
+       end
+
+      if(hide AND (w[0] NE -1)) then $
+       begin
+        hide_ptd[j,i] = nv_clone(point_ptd[j])
+
+        pnt_query, hide_ptd[j,i], desc=desc, gd=gd0
+
+        ww = complement(flags, w)
+        _flags = flags
+        if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
+
+        pnt_assign, /noevent, hide_ptd[j,i], flags=_flags, $
+                  desc=desc+'-hide_'+strlowcase(cor_class(bxx[i,0])), $
+                  gd=append_struct(gd0, {bx:bxx[i,0], od:od[0], cd:cd[0]})
+       end
+     end
   end
 
+
+ ;---------------------------------------------------------
+ ; if desired, concatenate all hide_ptd for each object
+ ;---------------------------------------------------------
+ if(hide AND keyword_set(cat)) then $
+  begin
+   for j=0, n_objects-1 do $
+      hide_ptd[j,0] = pnt_compress(pnt_cull(hide_ptd[j,*], /nofree, /vis))
+   if(n_bodies GT 1) then $
+    begin
+     nv_free, hide_ptd[*,1:*]
+     hide_ptd = hide_ptd[*,0]
+    end
+  end
+
+
+; ;----------------------------------------------------------
+; ; if /compress, expand result
+; ;----------------------------------------------------------
+; if(keyword_set(compress)) then $
+;  begin
+;   pnt_uncompress, point_ptd, _point_ptd, i=ww
+;   pnt_uncompress, hide_ptd, _hide_ptd, i=w
+;  end $
+; else point_ptd = _point_ptd
 
 
 end

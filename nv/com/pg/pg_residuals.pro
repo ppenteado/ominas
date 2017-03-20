@@ -58,7 +58,7 @@ function pg_residuals, scan_ptd
    ;-------------------
    ; get scan data
    ;-------------------
-   pnt_get, scan_ptd[i], data=scan_data, desc=desc, points=scan_pts, /visible
+   pnt_query, scan_ptd[i], data=scan_data, desc=desc, points=scan_pts, /visible
 
    if(keyword__set(scan_data)) then $
     begin

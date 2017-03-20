@@ -132,7 +132,7 @@ function pm_rm_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, p
  if(nxd EQ 1) then r = pos_cam $
  else r = bod_inertial_to_body_pos(pd, bod_pos(xd[1]))
 
- return, glb_rm_points(pd, r, body_pts)
+ return, glb_hide_points(pd, r, body_pts, /rm)
 end
 ;=============================================================================
 
@@ -150,7 +150,7 @@ function pm_rm_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, p
  if(nxd EQ 1) then r = pos_cam $
  else r = bod_inertial_to_body_pos(pd, bod_pos(xd[1]))
 
- return, glb_rm_points(pd, r, body_pts)
+ return, glb_hide_points(pd, r, body_pts, /rm)
 end
 ;=============================================================================
 
