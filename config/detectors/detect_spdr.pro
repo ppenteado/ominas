@@ -2,7 +2,9 @@
 ; detect_spdr.pro
 ;
 ;===========================================================================
-function detect_spdr, label, udata
+function detect_spdr, dd
+
+ label = dat_header(dd) 
 
  w = where(strpos(label, 'SAN PEDRO') NE -1)
  if(w[0] NE -1) then return, 'SPDR'

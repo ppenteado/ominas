@@ -78,7 +78,7 @@ function pnt_compress, ptd0, nt=nt, pptd=pptd
  ;--------------------------------
  for i=(jj=0), nptd-1 do $
   begin
-   pnt_get, ptd[i], points=p, vectors=v, flags=f, data=dat, name=nam, nv=nv
+   pnt_query, ptd[i], points=p, vectors=v, flags=f, data=dat, name=nam, nv=nv
 
    if(nv GT 0) then $
     begin
@@ -105,7 +105,7 @@ function pnt_compress, ptd0, nt=nt, pptd=pptd
  ; create the compressed POINT object
  ;-------------------------------------------
  if(NOT arg_present(pptd)) then pptd = nv_clone(ptd[0])
- pnt_set, pptd, points=pp, vectors=vv, flags=ff, data=data, name=name
+ pnt_assign, pptd, points=pp, vectors=vv, flags=ff, data=data, name=name
 
 
  return, pptd[0]

@@ -1,0 +1,17 @@
+; bod_query.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(arg_present(time)) then time = bod_time(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(opaque)) then opaque = bod_opaque(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(pos)) then pos = bod_pos(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(vel)) then vel = bod_vel(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(orient)) then orient = bod_orient(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(avel)) then avel = bod_avel(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(lib)) then lib = bod_lib(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(dlibdt)) then dlibdt = bod_dlibdt(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(ib_data)) then ib_data = bod_ib_data(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(libv)) then libv = bod_libv(_xd, cat=cat, condition=condition, /noevent)
+
+@cor_query.include
+

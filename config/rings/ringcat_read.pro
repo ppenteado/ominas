@@ -4,13 +4,12 @@
 ;=============================================================================;
 function ringcat_read, filename, names=names, default=default, $
       fiducial=fiducial, opaque=opaque, sma=sma, ecc=ecc, lp=lp, dlpdt=dlpdt, $
-      inc=inc, lan=lan, dlandt=dlandt, m=m, epoch=epoch, silent=silent
+      inc=inc, lan=lan, dlandt=dlandt, m=m, epoch=epoch
 
  ;----------------------------
  ; read file
  ;----------------------------
- if(NOT keyword_set(silent)) then $
-       nv_message, /con, verb=0.2, 'Reading ring catalog ' + filename + '...'
+ nv_message, /con, verb=0.2, 'Reading ring catalog ' + filename + '...'
  cat = read_txt_table(filename)
 
  ;----------------------------

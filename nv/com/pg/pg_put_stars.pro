@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_stars, dd, sd=sd
-;	pg_put_stars, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -34,10 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	sds:	Star descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, star descriptors are
-;		taken from the gd.sd field.
+;	sd:	Star descriptors to output.
 ;
 ;	str_*:		All star override keywords are accepted.
 ;
@@ -74,49 +70,33 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_stars, dd, trs, sds=_sds, ods=ods, gd=gd, $
+pro pg_put_stars, dd, trs, sd=_sd, ods=ods, $
 @str__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
 
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword__set(gd)) then $
-  begin
-   if(NOT keyword__set(_sds)) then _sds = gd.sds
-   if(NOT keyword__set(ods)) then ods = gd.ods
-  end
- if(NOT keyword__set(_sds)) then nv_message, 'No star descriptor.'
- if(NOT keyword__set(ods)) then nv_message, 'No observer descriptor.'
-
- sds = nv_clone(_sds)
-
-
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
- if(n_elements(lum) NE 0) then str_set_lum, sds, lum
- if(n_elements(sp) NE 0) then str_set_sp, sds, sp
- if(n_elements(orient) NE 0) then bod_set_orient, sds, orient
- if(n_elements(avel) NE 0) then bod_set_avel, sds, avel
- if(n_elements(pos) NE 0) then bod_set_pos, sds, pos
- if(n_elements(str__vel) NE 0) then bod_set_vel, sds, str__vel
- if(n_elements(time) NE 0) then bod_set_time, sds, time
- if(n_elements(radii) NE 0) then glb_set_radii, sds, radii
- if(n_elements(lora) NE 0) then glb_set_lora, sds, lora
+ sd = nv_clone(_sd)
+
+ if(defined(name)) then _name = name & name = !null
+ str_assign, sd, /noevent, $
+@str__keywords.include
+end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- dat_put_value, dd, 'STR_DESCRIPTORS', sds, trs=trs, $
+ dat_put_value, dd, 'STR_DESCRIPTORS', sd, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
 
- nv_free, sds
+ nv_free, sd
 end
 ;===========================================================================
 

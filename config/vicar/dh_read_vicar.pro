@@ -2,14 +2,12 @@
 ; dh_read_vicar.pro
 ;
 ;=============================================================================
-function dh_read_vicar, filename, label, udata, dim, type, min, max, abscissa=abscissa, $
-                          silent=silent, nodata=nodata, gff=gff, $
+function dh_read_vicar, dd, label, dim, type, min, max, abscissa=abscissa, $
+                          nodata=nodata, gff=gff, $
                           sample=sample, returned_samples=returned_samples
 
  if(keyword_set(sample)) then return, 0
-
- tag_list_set, udata, 'DETACHED_HEADER', $
-               dh_read(dh_fname(filename), silent=silent)
+ filename = dat_filename(dd)
 
  ;-----------------------------------------------------------------------
  ; min , max set to zero because no way to determine without reading
@@ -21,7 +19,7 @@ function dh_read_vicar, filename, label, udata, dim, type, min, max, abscissa=ab
  ;-----------------------------------------------------------------------
  ; read data array, subject to /nodata
  ;-----------------------------------------------------------------------
- data = read_vicar(filename, label, silent=silent, nodata=nodata, $
+ data = read_vicar(filename, label, /silent, nodata=nodata, $
                                      get_nl=nl, get_ns=ns, get_nb=nb, type=type)
  dim = degen_array([ns, nl, nb])
 

@@ -151,14 +151,14 @@ function pg_ptassoc, scan_ptd, model_ptd, assoc_model_ptd, radius=radius, $
    scan_data[3]=0                & tags[3]='Not_applicable'     ; 
    scan_data[4]=0                & tags[4]='Not_applicable'     ; 
 
-   pnt_set, assoc_scan_ptd[k], $
+   pnt_assign, assoc_scan_ptd[k], $
 			points = scan_pts[*,k], $
 			name = name, $
 			desc = 'ptscan', $
 			data = scan_data, $
 			tags = tags
 
-   pnt_set, assoc_model_ptd[k], $
+   pnt_assign, assoc_model_ptd[k], $
 			points = model_pts[*,k], $
 			name = name, $
 			desc = 'ptassoc-model'

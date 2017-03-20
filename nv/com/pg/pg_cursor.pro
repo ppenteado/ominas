@@ -115,7 +115,7 @@ end
 ; _pgc_dn
 ;
 ;=============================================================================
-function _pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
+function __pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
 
 ; format = '(1i10)'
  format = '(d20.10)'
@@ -131,11 +131,42 @@ function _pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
 
  for i=0, n-1 do $
   begin
-   image = dat_data(dd[i])
+   image = dat_data(dd[i], sampe=p)
 
    s = size(image)
    if((pp[0] GE 0) AND (pp[0] LT s[1]) $
         AND (pp[1] GE 0) AND (pp[1] LT s[2])) then dn[i] = image[pp[0], pp[1]]
+  end
+
+ label = 'DN'
+
+ return, dn
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; _pgc_dn
+;
+;=============================================================================
+function _pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
+
+ format = '(d20.10)'
+ label = ''
+
+ pp = fix(p)
+
+ n = n_elements(dd)
+ dn = make_array(n, type=dat_type(dd[0]))
+
+ for i=0, n-1 do $
+  begin
+   dim = dat_dim(dd[i])
+
+   if((pp[0] GE 0) AND (pp[0] LT dim[0]) $
+        AND (pp[1] GE 0) AND (pp[1] LT dim[1])) then $
+                                           dn[i] = dat_data(dd[i], sample=pp, /nd)
   end
 
  label = 'DN'
@@ -152,11 +183,14 @@ end
 ;=============================================================================
 function _pgc_star, p, dd, gd=gd, format=format, label=label, name=name
 
- all_radec = bod_body_to_radec(bod_inertial(), transpose(bod_pos(gd.sd)))
- radec = image_to_radec(gd.cd, p)
+ cd = cor_dereference_gd(gd, /cd)
+ sd = cor_dereference_gd(gd, /sd)
+
+ all_radec = bod_body_to_radec(bod_inertial(), transpose(bod_pos(sd)))
+ radec = image_to_radec(cd, p)
  d2 = (all_radec[*,0] - radec[0])^2 + (all_radec[*,1] - radec[1])^2
  w = where(d2 EQ min(d2))
- sd = gd.sd[w]
+ sd = sd[w]
 
 
  format = '(1d10.5)'
@@ -174,11 +208,13 @@ end
 ;=============================================================================
 function _pgc_radec, p, dd, gd=gd, format=format, label=label, name=name
 
- name = cor_name(gd.cd)
+ cd = cor_dereference_gd(gd, /cd)
+
+ name = cor_name(cd)
  label = ['RA', 'DEC']
  format = ['(1d10.5)', '(1d10.5)']
 
- radec = transpose(image_to_radec(gd.cd, p))
+ radec = transpose(image_to_radec(cd, p))
 
  ra = reduce_angle(radec[0])
  dec = radec[1]
@@ -194,18 +230,21 @@ end
 ;=============================================================================
 function _pgc_globe, p, dd, gd=gd, format=format, label=label, name=name
 
+ cd = cor_dereference_gd(gd, /cd)
+ gbx = cor_dereference_gd(gd, /gbx)
+
  format = ['(1g10.5)', '(1g10.5)', '(1g10.5)', '(1g10.5)']
  label = ''
 
- name = cor_name(gd.gbx)
+ name = cor_name(gbx)
  nt = n_elements(name)
 
- v = image_to_surface(gd.cd, gd.gbx, p, dis=dis, body_pts=body_pts)
+ v = image_to_surface(cd, gbx, p, dis=dis, body_pts=body_pts)
  if(NOT keyword_set(v)) then return, 0
 
- inertial_pts = bod_body_to_inertial_pos(gd.gbx, body_pts)
+ inertial_pts = bod_body_to_inertial_pos(gbx, body_pts)
 
- rad = glb_get_radius(gd.gbx, v[*,0,*], v[*,1,*])
+ rad = glb_get_radius(gbx, v[*,0,*], v[*,1,*])
  v[*,2,*] = rad
 
 
@@ -222,12 +261,12 @@ function _pgc_globe, p, dd, gd=gd, format=format, label=label, name=name
    v = v[*,w]
    name = name[w]
 
-   gbx = gd.gbx[w]
+   gbx = gbx[w]
    body_pts = body_pts[0,*,w]
   end
 
  inertial_pts = bod_body_to_inertial_pos(gbx, body_pts)
- range = v_mag(bod_pos(gd.cd)##make_array(nw,val=1d) - transpose(inertial_pts))
+ range = v_mag(bod_pos(cd)##make_array(nw,val=1d) - transpose(inertial_pts))
  v = [v,transpose(range)]
 
  label = ['LAT', 'LON', 'RAD', 'RANGE']
@@ -245,13 +284,15 @@ end
 ;=============================================================================
 function _pgc_map, p, dd, gd=gd, format=format, label=label, name=name
 
+ cd = cor_dereference_gd(gd, /cd)
+
  format = ['(1g10.5)', '(1g10.5)']
  label = ''
 
- name = cor_name(gd.cd)
+ name = cor_name(cd)
  nt = n_elements(name)
 
- v = image_to_map(gd.cd, p, valid=valid)
+ v = image_to_map(cd, p, valid=valid)
  if(NOT keyword_set(v)) then return, 0
  if(valid[0] EQ -1) then return, 0
  
@@ -272,13 +313,13 @@ end
 ;=============================================================================
 function _pgc_disk, p, dd, gd=gd, format=format, label=label, name=name
 
+ cd = cor_dereference_gd(gd, /cd)
+ rd = cor_dereference_gd(gd, /dkx)
+ pd = cor_dereference_gd(gd, /gbx)
+
 ; format = '(1g10.5)'
  format = ['(1g20.10)', '(1g20.10)', '(1g10.5)']
  label = ''
-
- rd = gd.dkx
- cd = gd.cd
- pd = gd.gbx
 
  name = cor_name(rd)
  nt = n_elements(name)
@@ -293,8 +334,8 @@ function _pgc_disk, p, dd, gd=gd, format=format, label=label, name=name
  v = v[*,w]
  name = name[w]
 
- inertial_pts = bod_body_to_inertial_pos(gd.dkx, v_int)
- range = v_mag(bod_pos(gd.cd) - inertial_pts[w,*])
+ inertial_pts = bod_body_to_inertial_pos(rd, v_int)
+ range = v_mag(bod_pos(cd) - inertial_pts[w,*])
  v = [v,range]
 
  label = ['RAD', 'TA', 'RANGE']
@@ -311,13 +352,13 @@ end
 ;=============================================================================
 function _pgc_disk_scale, p, dd, gd=gd, format=format, label=label, name=name
 
+ cd = cor_dereference_gd(gd, /cd)
+ rd = cor_dereference_gd(gd, /dkx)
+ pd = cor_dereference_gd(gd, /gbx)
+
 ; format = '(1g10.5)'
  format = ['(1g20.10)', '(1g20.10)']
  label = ''
-
- rd = gd.dkx
- cd = gd.cd
- pd = gd.gbx
 
  name = cor_name(rd)
  nt = n_elements(name)
@@ -353,7 +394,10 @@ end
 ;=============================================================================
 function _pgc_eqplane, p, dd, gd=gd, format=format, label=label, name=name
 
- gbx = get_primary(gd.cd, gd.gbx)
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /gbx)
+
+ gbx = get_primary(cd, pd)
  if(NOT obj_valid(gbx[0])) then return, 0
 
  dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
@@ -364,7 +408,7 @@ function _pgc_eqplane, p, dd, gd=gd, format=format, label=label, name=name
  sma[0,1] = 1d20
  dsk_set_sma, dkd, sma
  
- _gd = {cd:gd.cd, gbx:gd.gbx, dkx:dkd}
+ _gd = {cd:cd, gbx:pd, dkx:dkd}
 
 
  return, _pgc_disk(p, dd, gd=_gd, format=format, label=label, name=name)
@@ -378,7 +422,10 @@ end
 ;=============================================================================
 function _pgc_eqplane_scale, p, dd, gd=gd, format=format, label=label, name=name
 
- gbx = get_primary(gd.cd, gd.gbx)
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /gbx)
+
+ gbx = get_primary(cd, pd)
  if(NOT obj_valid(gbx[0])) then return, 0
 
  dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
@@ -389,7 +436,7 @@ function _pgc_eqplane_scale, p, dd, gd=gd, format=format, label=label, name=name
  sma[0,1] = 1d20
  dsk_set_sma, dkd, sma
  
- _gd = {cd:gd.cd, gbx:gd.gbx, dkx:dkd}
+ _gd = {cd:cd, gbx:pd, dkx:dkd}
 
 
  return, _pgc_disk_scale(p, dd, gd=_gd, format=format, label=label, name=name)
@@ -404,13 +451,17 @@ end
 ;=============================================================================
 function _pgc_photom_globe, p, dd, gd=gd, format=format, label=label, name=name
 
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /gbx)
+ sund = cor_dereference_gd(gd, name='SUN')
+
  format = ['(1d10.5)', '(1d10.5)', '(1d10.5)']
  label = ''
 
- name = cor_name(gd.gbx)
+ name = cor_name(pd)
  nt = n_elements(name)
 
- pht_angles, p, gd.cd, gd.gbx, gd.sund, emm=emm, inc=inc, g=g, valid=valid
+ pht_angles, p, cd, pd, sund, emm=emm, inc=inc, g=g, valid=valid
 
  if(valid[0] EQ -1) then return, 0
 
@@ -435,18 +486,23 @@ end
 ;=============================================================================
 function _pgc_photom_disk, p, dd, gd=gd, format=format, label=label, name=name
 
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /gbx)
+ rd = cor_dereference_gd(gd, /dkx)
+ sund = cor_dereference_gd(gd, name='SUN')
+
  format = ['(1d10.5)', '(1d10.5)', '(1d10.5)']
  label = ''
 
- name = cor_name(gd.dkx)
+ if((NOT keyword_set(cd)) OR $
+    (NOT keyword_set(sund)) OR $
+    (NOT keyword_set(rd)) OR $
+    (NOT keyword_set(pd))) then return, 0
+
+ name = cor_name(rd)
  nt = n_elements(name)
 
- if((NOT keyword_set(gd.cd)) OR $
-    (NOT keyword_set(gd.sund)) OR $
-    (NOT keyword_set(gd.dkx)) OR $
-    (NOT keyword_set(gd.gbx))) then return, 0
-
- pht_angles, p, gd.cd, gd.dkx, gd.sund, emm=emm, inc=inc, g=g, valid=valid
+ pht_angles, p, cd, rd, sund, emm=emm, inc=inc, g=g, valid=valid
 
  if(valid[0] EQ -1) then return, 0
 
@@ -471,7 +527,11 @@ end
 ;=============================================================================
 function _pgc_photom_eqplane, p, dd, gd=gd, format=format, label=label, name=name
 
- gbx = get_primary(gd.cd, gd.gbx)
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /gbx)
+ sund = cor_dereference_gd(gd, name='SUN')
+
+ gbx = get_primary(cd, pd)
  if(NOT obj_valid(gbx[0])) then return, 0
 
  dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
@@ -482,7 +542,7 @@ function _pgc_photom_eqplane, p, dd, gd=gd, format=format, label=label, name=nam
  sma[0,1] = 1d20
  dsk_set_sma, dkd, sma
  
- _gd = {cd:gd.cd, gbx:gd.gbx, dkx:dkd, sund:gd.sund}
+ _gd = {cd:cd, gbx:pd, dkx:dkd, sund:sund}
 
 
  return, _pgc_photom_disk(p, dd, gd=_gd, format=format, label=label, name=name)
@@ -519,7 +579,7 @@ common pgc_table_block, last_labels, first
  ;--------------------------------
  ; build table
  ;--------------------------------
- nval = n_elements(values)
+ nval = n_elements(labels)
  svals = strarr(nval)
  for i=0, nval-1 do $
      svals[i] = str_pad(strtrim(string(values[i], format=formats[i]), 2), value_pad-1)
@@ -559,7 +619,12 @@ common pgc_table_block, last_labels, first
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, _gd, cd=cd, gbx=gbx, dkx=dkx, sund=sund, sd=sd, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(_gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(_gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(_gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(_gd, dd=dd, /dkx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(_gd, dd=dd, /sund)
+ if(NOT keyword_set(sd)) then sd = dat_gd(_gd, dd=dd, /sd)
 
  ;-----------------------------------------------
  ; construct internal generic descriptor 

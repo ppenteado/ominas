@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(sd0)) then struct_assign, sd0, self
 
  self.abbrev = 'STR'
+ self.tag = 'SD'
 
  if(keyword_set(lum)) then self.lum = decrapify(lum[ii])
  if(keyword_set(sp)) then self.sp = decrapify(sp[ii])

@@ -1,0 +1,6 @@
+; _plt_assign.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+
+@glb_assign.include

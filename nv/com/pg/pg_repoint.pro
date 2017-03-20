@@ -94,11 +94,7 @@ pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ptd=axis_ptd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- if(keyword__set(gd)) then if(NOT keyword__set(cd)) then $
-  begin
-   cd=gd.cd
-;   use_gd=1
-  end
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
 
  ;-----------------------------------
  ; validate descriptors

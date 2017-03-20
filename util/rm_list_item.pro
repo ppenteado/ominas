@@ -32,6 +32,9 @@
 ;	only:	If set, then return is [only] if removing the only element of
 ;		the list. Otherwise return [0] on this condition.
 ;
+;	scalar:	If set, the output will be a scalar if there is only one
+;		element.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -50,19 +53,21 @@
 ;=============================================================================
 function rm_list_item, list, i, only=only, scalar=scalar
 
-
  n = n_elements(list)
  bl = bytarr(n)
  bl[i] = 1
  sub = where(bl EQ 0)
+ result = list[sub]
 
  if(sub[0] EQ -1) then $
   begin
-   if(n_elements(only) NE 0) then return, [only]
-   return, [0]
+   if(n_elements(only) NE 0) then result = [only] $
+   else result = [0]
   end
 
- return, list[sub]
+ if(keyword_set(scalar)) then if(n_elements(result) EQ 1) then result = result[0]
+
+ return, result
 end
 ;=================================================================
 

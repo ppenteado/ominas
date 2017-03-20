@@ -30,8 +30,11 @@
 ;
 ;	 bx:	 Body descriptor at which to point.
 ;
-;	 gd:	 Generic descriptor.  If given, the cd and bx inputs are 
-;		 taken from this structure instead of the argument list.
+;	 gd:	 Generic descriptor.  If given, the descriptor inputs 
+;		 are taken from this structure if not explicitly given.
+;
+;	 dd:	 Data descriptor containing a generic descriptor to use
+;		 if gd not given.
 ;
 ;	 toward: Camera should be pointed toward bx (default).
 ;
@@ -61,12 +64,13 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_retarg, v, cd=cd, bx=bx, ref_bx=ref_bx, toward=toward, away=away, along=along
+pro pg_retarg, v, cd=cd, bx=bx, ref_bx=ref_bx, dd=dd, gd=gd, toward=toward, away=away, along=along
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, bx=bx, cd=cd
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
 
  if(NOT keyword_set(v)) then v = bod_pos(bx) - bod_pos(cd)

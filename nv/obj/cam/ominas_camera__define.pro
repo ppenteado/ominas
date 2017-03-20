@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(cd0)) then struct_assign, cd0, self
 
  self.abbrev = 'CAM'
+ self.tag = 'CD'
 
  if(keyword_set(scale)) then self.scale = scale[*,ii]
  if(keyword_set(oaxis)) then self.oaxis = oaxis[*,ii]

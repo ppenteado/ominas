@@ -32,8 +32,6 @@
 ;
 ;	update:	Update mode flag.  If not given, it will be taken from dd.
 ;
-;	silent:	If set, messages are suppressed.
-;
 ;  OUTPUT: NONE
 ;
 ;
@@ -54,7 +52,7 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent, $
+pro dat_set_data, dd, _data, update=update, noevent=noevent, $
        abscissa=_abscissa, sample=sample
 @core.include
  _dd = cor_dereference(dd)
@@ -62,8 +60,8 @@ pro dat_set_data, dd, _data, silent=silent, update=update, noevent=noevent, $
  if(NOT defined(update)) then update = _dd.update
  if(update EQ -1) then return
 
- if((NOT keyword_set(silent)) and (_dd.maintain GT 0)) then $
-  nv_message, /con, $
+ if(_dd.maintain GT 0) then $
+  nv_message, verb=0.1, $
    'WARNING: Changes to data array may be lost due to the maintainance level.'
 
  if(keyword_set(_abscissa)) then abscissa = _abscissa

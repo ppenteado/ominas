@@ -39,9 +39,6 @@
 ;	output_fn:	Overrides data descriptor output function.  Data 
 ;			descriptor output_fn is updated unless /override.
 ;
-;	silent:		If set, dat_write suppresses superfluous printed output
-;			and passes the flag to the input function.
-;
 ;	override:	If set, filespec, filetype, and output_fn inputs
 ;			are used for this call, but not updated in the data
 ;			descriptor.
@@ -77,7 +74,7 @@
 pro dat_write, arg1, arg2, nodata=nodata, $
 		  filetype=_filetype, $
 		  output_fn=_output_fn, $
-                  silent=silent, override=override
+                  override=override
 @core.include
 ; on_error, 1
 
@@ -91,9 +88,6 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    dd = arg2
    filespec = arg1
   end
-
- silent = keyword_set(silent)
-
 
  _dd = cor_dereference(dd)
 
@@ -130,6 +124,11 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    if(filename EQ '') then nv_message, 'Filename unavailable.'
 
    ;------------------------------
+   ; write detached header
+   ;------------------------------
+   dh_write, dh_fname(/write, filename), dat_dh(dd)
+
+   ;------------------------------
    ; get filetype
    ;------------------------------
    if(keyword_set(_filetype)) then filetype = _filetype $
@@ -148,28 +147,23 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    ;---------------------
    ; write the file
    ;---------------------
-   header = ''
-   if(ptr_valid(_dd[i].header_dap)) then $
-                                 header = data_archive_get(_dd[i].header_dap)
-   data = dat_data(_dd[i])
-;   data = data_archive_get(_dd[i].data_dap)
+   header = dat_header(_dd[i])
+   data = dat_data(_dd[i], abscissa=abscissa)
 
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; first transform the data if necessary
    ;- - - - - - - - - - - - - - - - - - - - - -
-   data = dat_transform_output(_dd[i], data, header, silent=silent)
+   data = dat_transform_output(_dd[i], data, header)
 
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; write data
    ;- - - - - - - - - - - - - - - - - - - - - -
-   udata = cor_udata(dd[i])
-
    write = 1
    if(NOT multi) then $
     begin
      data_out = data 
      header_out = header 
-     udata_out = udata
+     abscissa_out = abscissa
     end $
    else $
     begin
@@ -177,16 +171,16 @@ pro dat_write, arg1, arg2, nodata=nodata, $
 ; this crashes...
      data_out = append_array(data_out, nv_ptr_new(data))
      header_out = append_array(header_out, nv_ptr_new(header))
-     udata_out = append_array(udata_out, nv_ptr_new(udata))
+     abscissa_out = append_array(abscissa_out, nv_ptr_new(abscissa))
      if(i NE ndd-1) then write = 0
     end
 
    if(write) then $
     begin
-     if((NOT silent) AND (NOT keyword_set(nodata))) then $
+     if(NOT keyword_set(nodata)) then $
                                 nv_message, verb=0.1, 'Writing ' + filename
-     call_procedure, output_fn, filename, nodata=nodata, $
-                                       data_out, header_out, udata_out
+     call_procedure, output_fn, dd, filename, nodata=nodata, $
+                                    data_out, header_out, abscissa=abscissa_out
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - -

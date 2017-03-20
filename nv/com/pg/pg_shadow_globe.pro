@@ -37,9 +37,11 @@
 ;		descriptor is given, then the sun descriptor in gd is used.
 ;		Only one observer is allowed.
 ;
-;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
-;		are taken from the cd and gbx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	reveal:	 Normally, disks whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
@@ -72,7 +74,8 @@
 ;
 ;
 ; STATUS:
-;	
+;	Soon to be obsolete.  This program will be merged with pg_shadow_disk
+;	to make a more general program, which will replace pg_shadow.  
 ;
 ;
 ; SEE ALSO:
@@ -84,7 +87,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
+function pg_shadow_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
                           nocull=nocull, both=both, reveal=reveal, $
                           fov=fov, cull=cull, backshadow=backshadow, all=all, $
                           epsilon=epsilon, nosolve=nosolve
@@ -96,8 +99,10 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, od=od, sund=sund
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(NOT keyword_set(od)) then $
   if(keyword_set(sund)) then od = sund $
@@ -107,9 +112,9 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- pgs_count_descriptors, od, nd=n_observers, nt=nt
+ cor_count_descriptors, od, nd=n_observers, nt=nt
  if(n_observers GT 1) then nv_message, 'Only one observer decsriptor allowed.'
- pgs_count_descriptors, gbx, nd=n_globes, nt=nt1
+ cor_count_descriptors, gbx, nd=n_globes, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
 
@@ -131,7 +136,7 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
       ;---------------------------
       ; get object vectors
       ;---------------------------
-      pnt_get, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
+      pnt_query, object_ptd[j], vectors=vectors, assoc_xd=assoc_xd
       if(xd NE assoc_xd) then $
        begin
         n_vectors = (size(vectors))[1]
@@ -190,7 +195,7 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, gd=gd, object_ptd, $
                    name = 'shadow-' + cor_name(object_ptd[j]), $
                    assoc_xd = object_ptd[j], $
 		   desc = 'globe_shadow', $
-		   input = pgs_desc_suffix(gbx=gbx[i,0], od=od[0], srcd=object_ptd[j], cd[0]), $
+		   gd = {gbx:gbx[i,0], od:od[0], srcd:object_ptd[j], cd:cd[0]}, $
 		   vectors = inertial_pts)
  
             ;-----------------------------------------------

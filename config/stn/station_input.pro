@@ -56,68 +56,6 @@
 ; 
 ;-
 ;=============================================================================
-
-
-
-;=============================================================================
-; si_load
-;
-;=============================================================================
-function si_load, catpath, catfile, reload=reload
-common si_load_block, _catfile, _dat_p
-
- dat = ''
-
- ;--------------------------------------------------------------------
- ; if appropriate catalog is loaded, then just return descriptors
- ;--------------------------------------------------------------------
- load = 1
-
- if(keyword_set(_catfile) AND (NOT keyword_set(reload))) then $
-  begin
-   w = where(_catfile EQ catfile)
-   if(w[0] NE -1) then $
-    begin
-     load = 0
-     dat = *(_dat_p[w[0]])
-    end
-  end 
-
-
- ;--------------------------------------------------------------------
- ; parse catalog path
- ;--------------------------------------------------------------------
- catdirs = get_path(catpath, file=catfile)
- if(NOT keyword_set(catdirs[0])) then load = 0
-
-
- ;--------------------------------------------------------------------
- ; otherwise read and parse the catalog
- ;--------------------------------------------------------------------
- if(load) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; read the catalog
-   ;- - - - - - - - - - - - - - - - - - - -
-   dat = station_read(catdirs + '/' + catfile)
-
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; save catalog data
-   ;- - - - - - - - - - - - - - - - - - - -
-   _catfile = append_array(_catfile, catfile)
-   _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-  end
-
- return, dat
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; station_input
-;
-;=============================================================================
 function station_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
@@ -194,7 +132,7 @@ function station_input, dd, keyword, prefix, values=values, status=status, $
    ; read relevant station catalog
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    catfile = 'stations_' + strlowcase(primary) + '.txt'
-   dat = si_load(catpath, catfile, reload=reload)
+   dat = file_manage('station_read', catpath, catfile, reload=reload)
 
    if(keyword_set(dat)) then $
     begin
@@ -216,7 +154,7 @@ function station_input, dd, keyword, prefix, values=values, status=status, $
      if(continue) then $
       begin
        ndat = n_elements(dat)
-       _stds = stn_create_descriptors(ndat, assoc_xd=make_array(ndat, val=cor_assoc_xd(xd[i])))
+       _stds = stn_create_descriptors(ndat, gd=make_array(ndat, val=cor_gd(xd[i])))
 
        pos_surf = transpose([transpose([dat.lat]), transpose([dat.lon]), transpose([dat.alt])])
 

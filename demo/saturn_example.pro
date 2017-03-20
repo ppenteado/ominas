@@ -222,8 +222,8 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;  the planet center (center_ptd) using the routine pg_center.  It uses the
 ;  generic descriptor (gd) to pass the camera, planet and ring descriptors
 ;  to these routines.  It also uses pg_hide to remove (/rm) points from the
-;  ring (/disk) from the limb points and then again to remove the ring points
-;  covered by the planet (/globe).  It then groups each of these into
+;  ring from the limb points and then again to remove the ring points
+;  covered by the planet.  It then groups each of these into
 ;  object_ptd for plotting.  The colors, psyms, psizes and plables variables
 ;  are defined for the plot.  The center is drawn in the default color
 ;  (!p.color), the limb is in yellow (ctyellow) and the inner and outer ring
@@ -239,8 +239,8 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;-------------------------------------------------------------------------
 
 
-limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /disk
-ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /globe
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 shadow_ptd = pg_shadow_globe(gd=gd, ring_ptd)
 center_ptd = pg_center(gd=gd, bx=pd)
 object_ptd = [center_ptd,limb_ptd,ring_ptd,shadow_ptd]
@@ -290,10 +290,12 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 
 
 
-grid_ptd = pg_grid(gd=gd, bx=pd) & pg_hide, grid_ptd, gd=gd, /limb, /disk
+grid_ptd = pg_grid(gd=gd, bx=pd) 
+   pg_hide, grid_ptd, gd=gd, bx=pd, /assoc
+   pg_hide, grid_ptd, gd=gd, bx=rd
 pg_draw, grid_ptd, color=ctblue()
 
-dgrid_ptd = pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, /globe
+dgrid_ptd = pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, bx=pd
 pg_draw, dgrid_ptd, color=ctpurple()
 
 ;-------------------------------------------------------------------------
@@ -307,8 +309,8 @@ dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0], ring_ptd[1], shadow_ptd[0]])
 ; dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0], ring_ptd[1], shadow_ptd[0]], ns=[10,10], bin=50, show=[150,150])
 pg_repoint, dxy, 0d, axis=center_ptd[0], gd=gd
 
-limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
-ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /rm, /globe
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd, /rm
 shadow_ptd = pg_shadow_globe(gd=gd, ring_ptd)
 center_ptd = pg_center(gd=gd, bx=pd)
 object_ptd = [center_ptd,limb_ptd,ring_ptd,shadow_ptd]
@@ -341,8 +343,8 @@ tvim, im
 dxy = pg_drag(object_ptd, dtheta=dtheta, axis=center_ptd[0])
 pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
-limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
-ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /rm, /globe
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd, /rm
 shadow_ptd = pg_shadow_globe(gd=gd, ring_ptd)
 center_ptd = pg_center(gd=gd, bx=pd)
 object_ptd = [center_ptd,limb_ptd,ring_ptd,shadow_ptd]
@@ -428,8 +430,8 @@ chisq = pg_chisq(dxy, dtheta, cvscan_ptd, axis=center_ptd[0])
 print, dxy, dtheta*180./!pi, chisq
 pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
-limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
-ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /rm, /globe
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd, /rm
 center_ptd = pg_center(gd=gd, bx=pd)
 object_ptd = [center_ptd,limb_ptd,ring_ptd]
 
@@ -504,20 +506,20 @@ plot, dsk_pts[*,1], profile, /yno
 ;-------------------------------------------------------------------------
 tvim, 32
 grid_ptd = pg_grid(gd=gd, lat=lat, lon=lon) 
-pg_hide, grid_ptd, cd=cd, gbx=pd, /limb
-pg_hide, grid_ptd, cd=cd, gbx=pd, od=sund, /limb
-pg_hide, grid_ptd, gd=gd, /disk
+pg_hide, grid_ptd, cd=cd, gbx=pd, /assoc
+pg_hide, grid_ptd, cd=cd, gbx=pd, od=sund, /assoc
+pg_hide, grid_ptd, gd=gd, bx=rd
 pg_draw, grid_ptd, color=ctblue()
 
 plat_ptd = pg_grid(gd=gd, slon=!dpi/2d, lat=lat, nlon=0) 
-pg_hide, plat_ptd[0], cd=cd, gbx=pd[0], /limb
+pg_hide, plat_ptd[0], cd=cd, gbx=pd[0], /assoc
 pg_draw, plat_ptd[0], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
 
 plon_ptd = pg_grid(gd=gd, slat=0d, lon=lon, nlat=0) 
 pg_hide, plon_ptd[0], cd=cd, gbx=pd[0], /limb
 pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 
-dgrid_ptd = pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, /globe
+dgrid_ptd = pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, bx=pd
 pg_draw, dgrid_ptd, color=ctpurple()
 
 

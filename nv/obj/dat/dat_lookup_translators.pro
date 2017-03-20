@@ -36,8 +36,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	silent:	If set, messages are suppressed.
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
 ;
@@ -148,7 +147,7 @@ end
 ;=============================================================================
 pro dat_lookup_translators, instrument, $
        input_translators, output_translators, input_keyvals, output_keyvals, $
-       tab_translators=tab_translators, silent=silent
+       tab_translators=tab_translators
 @nv_block.common
 @core.include
 

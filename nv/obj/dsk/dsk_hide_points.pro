@@ -31,8 +31,12 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	epsilon:	Distance in front of the disk for a point to be
-;			considered "in front of" the disk.  Default is 1.
+;	rm:	If set, points are flagged for being in front of or behind
+;		the disk, rather then just behind it.
+;
+;	epsilon:	
+;		Distance in front of the disk for a point to be
+;		considered "in front of" the disk.  Default is 1.
 ;
 ;
 ;  OUTPUT: NONE
@@ -49,7 +53,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_hide_points, dkd, r, points, epsilon=epsilon;, invert=invert
+function dsk_hide_points, dkd, r, points, rm=rm, epsilon=epsilon;, invert=invert
 @core.include
  
 
@@ -66,6 +70,8 @@ function dsk_hide_points, dkd, r, points, epsilon=epsilon;, invert=invert
 
  ii = colgen(nv,3,nt,hit)
 
+ if(keyword_set(rm)) then return, ii[*,0]
+
  p = p[ii]
  rr = rr[ii]
  v = v[ii]
@@ -75,6 +81,7 @@ function dsk_hide_points, dkd, r, points, epsilon=epsilon;, invert=invert
 
 ; if(keyword_set(invert)) then w = where(pmag - vmag LT -epsilon) $
 ; else w = where(pmag - vmag LT -epsilon)
+
  w = where(pmag - vmag LT -epsilon)
 
  if(w[0] EQ -1) then return, -1

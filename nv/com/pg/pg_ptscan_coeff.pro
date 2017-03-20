@@ -91,7 +91,7 @@ function pg_ptscan_coeff, pts_ptd, axis_ptd=_axis_ptd, fix=fix, model_ptd=model_
    ;----------------------------------------
    ; compute the least-squares coefficients
    ;----------------------------------------
-   pnt_get, pts_ptd[i], data=pts_data, points=pts_pts, /visible
+   pnt_query, pts_ptd[i], data=pts_data, points=pts_pts, /visible
 
    if(keyword__set(pts_data)) then $
     begin

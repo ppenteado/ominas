@@ -65,13 +65,11 @@
 ;===========================================================================
 function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
 
- nt = n_elements(gbd)
-
  ;-----------------------------------------------
  ; if any radii are zero, then return a point
  ;-----------------------------------------------
  radii = glb_radii(gbd)
- if(prod(radii[*,0],0) EQ 0) then return, dblarr(n_points,3,nt)
+ if(prod(radii[*],0) EQ 0) then return, dblarr(n_points,3)
 
  ;--------------------------------
  ; Angle to each limb point
@@ -83,23 +81,12 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
  ;--------------------------------------
  n = v_unit(r)
 
-; ;-----------------------------------------------------------------
-; ; Construct normal to n - 
-; ;  Look at cross product with each coordinate axis and choose the 
-; ;  vector with the largest magnitude
-; ;-----------------------------------------------------------------
-; vv = v_cross(n##make_array(3, val=1.0), $
-;                                 [[1.0,0.0,0.0], [0.0,1.0,0.0], [0.0,0.0,1.0]])
-; vm = v_mag(vv)
-; w = where(vm EQ max(vm))
-; vo = vv[w[0],*]
  ;-----------------------------------------------------------------
  ; Construct normal to n - 
  ;  Use projection of pole on skyplane
  ;-----------------------------------------------------------------
  zz = tr([0d,0d,1d])
  vv = v_cross(zz,n)
-; vo = v_unit(v_cross(n,vv))
  vo = v_unit(v_cross(vv,n))
 
  ;---------------------------------------------------------------
@@ -109,12 +96,12 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
  ;  points by rotating v about n and determining the surface 
  ;  radius at that point.
  ;---------------------------------------------------------------
- v = transpose( reform( v_rotate(vo, n, sin(alpha), cos(alpha) ), nt, 3, n_points) )
-; v = transpose( v_rotate(vo, n, sin(alpha), cos(alpha) ) )
+ v = transpose( v_rotate(vo, n, sin(alpha), cos(alpha) ) )
  rr = r##make_array(n_points, val=1.0)
 
  ;-----------------------------------------------------------------
- ; Iterate to find the actual limb.
+ ; Iterate to find the actual limb.  
+ ; This recomputes many points unnecessarily
  ;-----------------------------------------------------------------
  done = 0
  axes = v_cross(n##make_array(n_points, val=1.0), v)
@@ -126,18 +113,16 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
    ; compute current limb points
    ;---------------------------------
    rlimb_surface = glb_body_to_globe(gbd, v)
-
-   rlimb_surface[*,2] = 0d
+   rlimb_surface[*,2] = 1d
    rlimb_body = glb_globe_to_body(gbd, rlimb_surface)
 
    ;---------------------------------
    ; compute residuals
    ;---------------------------------
-   x = rlimb_body - rr
-   x_mag = v_mag(x)
+   x = v_unit(rlimb_body - rr)
 
    rnorm_body = glb_get_surface_normal(gbd, rlimb_surface)
-   residuals = v_inner(rnorm_body, x) / x_mag
+   residuals = v_inner(rnorm_body, x)
 
    ;---------------------------------
    ; make new guesses if necessary

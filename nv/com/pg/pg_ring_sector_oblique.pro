@@ -67,6 +67,10 @@
 ;      also contains the disk coordinate for each point and the user fields
 ;      'nrad' and 'nlon' giving the number of points in radius and longitude.
 ;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
+;
 ;
 ; ORIGINAL AUTHOR : J. Spitale ; 5/2005
 ;

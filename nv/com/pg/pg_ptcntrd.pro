@@ -73,7 +73,7 @@
 ; EXAMPLE:
 ;	To find stellar positions with a correlation higher than 0.6...
 ;
-;       star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm, /globe
+;       star_ptd=pg_center(bx=sd, gd=gd) & pg_hide, star_ptd, gd=gd, /rm
 ;       ptscan_ptd=pg_ptscan(dd, star_ptd, edge=30, width=40, ccmin=0.6)
 ;
 ; SEE ALSO:
@@ -137,7 +137,7 @@ function pg_ptcntrd, dd, object_ptd, $
    ;-----------------------------------
    ; get object point
    ;-----------------------------------
-   pnt_get, object_ptd[i], points=pts, flags=flags, /visible
+   pnt_query, object_ptd[i], points=pts, flags=flags, /visible
 
    ;------------------------------------------------------
    ; trim point if invisible or too close to edge
@@ -225,7 +225,7 @@ function pg_ptcntrd, dd, object_ptd, $
    scan_data[3]=ccp		 & tags[3]='scan_cc'           ; correlation
 
 
-   pnt_set, pts_ptd[i], points = scan_pts, $
+   pnt_assign, pts_ptd[i], points = scan_pts, $
                       data = scan_data, $
                       flags = flags, $
                       tags = tags

@@ -31,7 +31,7 @@
 ;-------------------------------------
 file = 'data/n1350122987.2'
 
-dd = dat_read(file, /silent)
+dd = dat_read(file)
 
 
 ;-------------------------------------
@@ -53,10 +53,10 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;-------------------------------------------------------------------------
 ; Compute overlays
 ;-------------------------------------------------------------------------
-limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, /disk
-          pg_hide, limb_ptd, /limb, gd=gd, od=sund
-ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, /globe
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, /limb
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
+term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 
 center_ptd = pg_center(gd=gd, bx=pd)
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]

@@ -58,7 +58,8 @@ pro nvf_recurse, p
  ;----------------------------------------------
  if(type EQ 10) then $
   begin
-   for i=0, n-1 do if(ptr_valid(p[i])) then nvf_recurse, *p[i]
+   for i=0, n-1 do if(ptr_valid(p[i])) then $
+                   if(NOT nv_protected(*p[i])) then nvf_recurse, *p[i]
    nv_ptr_free, p
   end $
  ;----------------------------------------------

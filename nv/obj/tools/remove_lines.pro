@@ -20,7 +20,7 @@ function remove_lines, ptd, lines, slop=slop
   end
 
  if(keyword__set(ww)) then f[ww] = f[ww] OR PTD_MASK_INVISIBLE
- pnt_set, ptd, p=p, f=f
+ pnt_assign, ptd, p=p, f=f
 
  return, ptd
 end

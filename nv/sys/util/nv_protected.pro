@@ -5,7 +5,9 @@
 ;
 ;
 ; PURPOSE:
-;	Tests whether a structure field is protected.
+;	Tests whether a structure or field is protected.  Protected fields
+;	are not freed by nv_free, nor are they descended by nv_free
+;	or nv_clone.
 ;
 ;
 ; CATEGORY:
@@ -44,9 +46,26 @@
 ;	
 ;-
 ;=============================================================================
-function nv_protected, tag
- token = '__PROTECT__'
- if(strmid(tag, 0, strlen(token)) EQ token) then return, 1
+function nv_protected, arg
+
+ if(n_elements(arg) GT 1) then return, 0
+
+ type = size(arg, /type)
+
+ if(type EQ 8) then $
+  begin
+   tags = tag_names(arg)
+   if(tags[0] EQ '__PROTECT__') then return, 1
+   return, 0
+  end
+ 
+ if(type EQ 7) then $
+  begin
+   token = '__PROTECT__'
+   if(strmid(arg, 0, strlen(token)) EQ token) then return, 1
+   return, 0
+  end
+
  return, 0
 end
 ;===========================================================================

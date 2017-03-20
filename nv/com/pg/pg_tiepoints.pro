@@ -32,9 +32,11 @@
 ;        dkx:	Disk descriptor for each globe in image instead of
 ;		specifying bx.
 ;
-;         gd:	Generic descriptor.  If given, the above descriptor inputs 
-;               are taken from the corresponding fields of this structure
-;               instead of from those keywords.
+;	  gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	  dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;   body_pts:	Array of np column vectors giving the body-frame coordinates 
 ;		for each tie point.  If not given, then the given geometry
@@ -78,12 +80,16 @@
 ;
 ;-
 ;=============================================================================
-function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, ptd, body_pts=body_pts, dxy=dxy
+function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, dd=dd, gd=gd, ptd, body_pts=body_pts, dxy=dxy
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, dd=dd, cd=cd, bx=bx, dkx=dkx, gbx=gbx
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+
  if(NOT keyword_set(bx)) then $
   begin
    if(keyword_set(dkx)) then bx = dkx 

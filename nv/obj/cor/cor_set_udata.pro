@@ -52,6 +52,9 @@
 ;=============================================================================
 pro cor_set_udata, crd, name, udata, noevent=noevent
 @core.include
+
+ if(NOT defined(udata)) then return
+
  _crd = cor_dereference(crd)
 
  if(NOT keyword_set(name)) then _crd.udata_tlp = udata $

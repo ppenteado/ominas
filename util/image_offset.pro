@@ -1,3 +1,63 @@
+;=============================================================================
+;+
+; NAME:
+;	image_offset
+;
+;
+; PURPOSE:
+;	Searches for the offset (dx,dy) that gives the best agreement between
+;	two images.  
+;
+;
+; CATEGORY:
+;	UTIL
+;
+;
+; CALLING SEQUENCE:
+;	dxy = image_offset(im1, im2)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	im1:		Image to match.
+;
+;	im2:		Image to shift.
+;
+;  OUTPUT: NONE
+;
+;
+; KEYWORDS:
+;  INPUT: NONE
+;
+;  OUTPUT: NONE
+;
+;
+; RETURN:
+;	2-element array giving the fit offset as [dx,dy].
+;
+;
+; PROCEDURE:
+;	This routine considers every possble image offset by iterating over 
+;	various correlation scales.
+;
+;
+; STATUS:
+;	Some bugs.
+;
+;
+;
+; SEE ALSO:
+;	pg_farfit
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2/2017
+;	
+;-
+;=============================================================================
+
+
+
 ;===============================================================================
 ; ioff_peak
 ;
@@ -8,7 +68,6 @@ function ioff_peak, corr, grid
  return, grid[*,w]
 end
 ;===============================================================================
-
 
 
 
@@ -54,7 +113,6 @@ end
 
 
 
-
 ;===============================================================================
 ; ioff_correlate
 ;
@@ -74,9 +132,10 @@ function ioff_correlate, im1, im2, _grid, dxy=dxy
  dim = size(im1, /dim)
  nn = n_elements(im1)
 
- ;-------------------------------------------
+ ;----------------------------------------------------
  ; set up arrays
- ;-------------------------------------------
+ ;  The current shift wraps the image, which is bad.
+ ;----------------------------------------------------
  ii = linegen3z(dim[0], dim[1], ngrid)
  im1_match = im1[ii]
 

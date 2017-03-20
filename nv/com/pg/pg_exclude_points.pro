@@ -97,12 +97,12 @@ function pg_exclude_points, ptd, xptd, radius=radius
 
  for i=0, n-1 do $
   begin
-   pnt_get, ptd[i], p=p, f=f
+   pnt_query, ptd[i], p=p, f=f
    w = near_points(p, xpts, radius)
    if(w[0] NE -1) then $
     begin
      f[w] = f[w] OR PTD_MASK_INVISIBLE
-     pnt_set, ptd[i], p=p, f=f
+     pnt_assign, ptd[i], p=p, f=f
     end
   end
 

@@ -49,12 +49,14 @@
 ;
 ;
 ; STATUS:
-;	Some bugs.
+;	Some bugs.  One problem is that the current search grid wraps pixels
+;	instead of truncating them.  This causes problems for images where
+;	a large body is not entirly ithing the FOV.
 ;
 ;
 ; NOTES:
-;	This function sometimes fails when the largest object in the scene
-;	is not completely contained in the image.  
+;	This could be improved by iterating, starting with a broader, more
+;	coarsely sampled scene.
 ;
 ;
 ; SEE ALSO:

@@ -28,8 +28,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	silent:	If set, messages are suppressed.
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
 ;
@@ -46,7 +45,7 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_lookup_io, filetype, input_fn, output_fn, keyword_fn, silent=silent
+pro dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
 @nv_block.common
 @core.include
 

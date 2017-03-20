@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(dd0)) then struct_assign, dd0, self
 
  self.abbrev = 'DAT'
+ self.tag = 'DD'
 
  if(NOT keyword_set(nhist)) then nhist = 1
  _nhist = getenv('NV_NHIST')
@@ -41,25 +42,32 @@ end_keywords)
  ;-----------------------
  ; gff
  ;-----------------------
- if(keyword_set(gff)) then self.gffp = nv_ptr_new(gff)
+ self.gffp = nv_ptr_new(0)
+ if(keyword_set(gff)) then *self.gffp = gff
+
+ ;-----------------------
+ ; dh
+ ;-----------------------
+ self.dhp = nv_ptr_new('')
+ if(keyword_set(dh)) then *self.dhp = dh
 
  ;-----------------------
  ; file properties
  ;-----------------------
- if(keyword_set(filetype)) then self.filetype=filetype $
+ if(keyword_set(filetype)) then self.filetype = filetype $
  else self.filetype = dat_detect_filetype(/default)
- if(keyword_set(input_fn)) then self.input_fn=input_fn
- if(keyword_set(output_fn)) then self.output_fn=output_fn
- if(keyword_set(keyword_fn)) then self.keyword_fn=keyword_fn
+ if(keyword_set(input_fn)) then self.input_fn = input_fn
+ if(keyword_set(output_fn)) then self.output_fn = output_fn
+ if(keyword_set(keyword_fn)) then self.keyword_fn = keyword_fn
 
 
  ;-----------------------
  ; instrument
  ;-----------------------
- if(keyword_set(instrument)) then self.instrument=instrument $
+ if(keyword_set(instrument)) then self.instrument = instrument $
  else if(keyword_set(filetype) AND keyword_set(header)) then $
   begin
-   self.instrument = dat_detect_instrument(header, udata, filetype, silent=silent)
+   self.instrument = dat_detect_instrument(header, udata, filetype)
    if(self.instrument EQ '') then $
                    nv_message, /continue, 'Unable to detect instrument.'
   end
@@ -68,19 +76,22 @@ end_keywords)
  ;-----------------------
  ; translators
  ;-----------------------
+ self.input_translators_p = nv_ptr_new('')
+ self.output_translators_p = nv_ptr_new('')
+ self.input_keyvals_p = nv_ptr_new('')
+ self.output_keyvals_p = nv_ptr_new('')
  if(keyword_set(self.instrument)) then $
   begin
    dat_lookup_translators, self.instrument, tab_translators=tab_translators, $
-           input_translators, output_translators, input_keyvals, output_keyvals, $
-           silent=silent
+           input_translators, output_translators, input_keyvals, output_keyvals
 
    if(input_translators[0] EQ '') then $
                 nv_message, /continue, 'No input translators available.' $
-   else self.input_translators_p=nv_ptr_new(input_translators)
+   else *self.input_translators_p = input_translators
 
    if(output_translators[0] EQ '') then $
-               nv_message, /continue, 'No output translators available.' $
-   else self.output_translators_p=nv_ptr_new(output_translators)
+                nv_message, /continue, 'No output translators available.' $
+   else *self.output_translators_p = output_translators
 
    if(keyword_set(input_keyvals)) then $
                    self.input_keyvals_p = nv_ptr_new(dat_parse_keyvals(input_keyvals))
@@ -98,7 +109,8 @@ end_keywords)
  ;---------------------------------
  ; dimensions
  ;---------------------------------
- if(keyword_set(dim)) then self.dim_p = nv_ptr_new(dim)
+ self.dim_p = nv_ptr_new(0)
+ if(keyword_set(dim)) then *self.dim_p = dim
 
 
  ;-----------------------
@@ -111,10 +123,12 @@ end_keywords)
  ;---------------------------------
  ; transforms
  ;---------------------------------
+ self.input_transforms_p = nv_ptr_new('')
  if(keyword_set(input_transforms)) then $
-		      self.input_transforms_p = nv_ptr_new(input_transforms)
+		           *self.input_transforms_p = input_transforms
+ self.output_transforms_p = nv_ptr_new('')
  if(keyword_set(output_transforms)) then $
-                        self.output_transforms_p = nv_ptr_new(output_transforms)
+		           *self.output_transforms_p = output_transforms
 
 
 
@@ -140,7 +154,7 @@ end_keywords)
  self.sample_p = nv_ptr_new(-1)
  self.order_p = nv_ptr_new(-1)
 
- if(defined(data)) then dat_set_data, self, data, abscissa=abscissa, /silent
+ if(defined(data)) then dat_set_data, self, data, abscissa=abscissa
 
 
  dat_set_nhist, self, nhist
@@ -182,7 +196,13 @@ end
 ;	abscissa_dap:	Pointer to data archive containing the abscissa 
 ;			and nhist past versions.
 ;
+;	header_dap:	Pointer to data archive containing the header 
+;			and nhist past versions.
+;
 ;	dap_index:	Index of archived data to use.  
+;
+;	dhp:		Pointer to detached header.
+;
 ;
 ;	max:		Maximum data value.
 ;
@@ -284,6 +304,7 @@ pro ominas_data__define
 	abscissa_dap:		nv_ptr_new(), $	; Pointer to the abscissa archive
 	header_dap:		nv_ptr_new(), $	; Pointer to the generic header archive
         dap_index:		0, $		; data archive index
+	dhp:			nv_ptr_new(), $	; Pointer to detached header.
 
 	sample_p:		nv_ptr_new(), $	; Pointer to the array of loaded samples
 	order_p:		nv_ptr_new(), $	; Pointer to the sample load order array

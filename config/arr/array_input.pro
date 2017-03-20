@@ -57,68 +57,6 @@
 ; 
 ;-
 ;=============================================================================
-
-
-
-;=============================================================================
-; ai_load
-;
-;=============================================================================
-function ai_load, catpath, catfile, reload=reload
-common ai_load_block, _catfile, _dat_p
-
- dat = ''
-
- ;--------------------------------------------------------------------
- ; if appropriate catalog is loaded, then just return descriptors
- ;--------------------------------------------------------------------
- load = 1
-
- if(keyword_set(_catfile) AND (NOT keyword_set(reload))) then $
-  begin
-   w = where(_catfile EQ catfile)
-   if(w[0] NE -1) then $
-    begin
-     load = 0
-     dat = *(_dat_p[w[0]])
-    end
-  end 
-
-
- ;--------------------------------------------------------------------
- ; parse catalog path
- ;--------------------------------------------------------------------
- catdirs = get_path(catpath, file=catfile)
- if(NOT keyword_set(catdirs[0])) then load = 0
-
-
- ;--------------------------------------------------------------------
- ; otherwise read and parse the catalog
- ;--------------------------------------------------------------------
- if(load) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; read the catalog
-   ;- - - - - - - - - - - - - - - - - - - -
-   dat = arr_read(catdirs + '/' + catfile)
-
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; save catalog data
-   ;- - - - - - - - - - - - - - - - - - - -
-   _catfile = append_array(_catfile, catfile)
-   _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-  end
-
- return, dat
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; array_input
-;
-;=============================================================================
 function array_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
@@ -216,7 +154,7 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
 
      for j=0, nfiles-1 do $
       begin
-       dat = ai_load(dir, files[j], reload=reload)
+       dat = file_manage('arr_read', dir, files[j], reload=reload)
        split_filename, files[j], _dir, name, ext
 
        if(keyword_set(dat)) then $
@@ -224,7 +162,7 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
          ;- - - - - - - - - - - - - - - - - - - - - - - -
          ; construct descriptors
          ;- - - - - - - - - - - - - - - - - - - - - - - -
-         _ards = arr_create_descriptors(1, assoc_xd=cor_assoc_xd(xd[i]))
+         _ards = arr_create_descriptors(gd=cor_gd(xd[i]))
 
          cor_set_name, _ards, name
          arr_set_primary, _ards, xd[i]

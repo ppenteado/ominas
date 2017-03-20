@@ -2,7 +2,7 @@
 # (returns instrument string)	(only detectors for the correct
 #				 filetype are called)
 
-  detect_cas			VICAR
+  detect_cas_iss		VICAR
   detect_cas_uvis		VICAR
-  detect_radar                  PDS
-  pp_detect_vims                ISIS
+  detect_cas_radar              PDS
+  detect_cas_vims               ISIS

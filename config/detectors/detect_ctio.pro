@@ -2,7 +2,9 @@
 ; detect_ctio.pro
 ;
 ;===========================================================================
-function detect_ctio, label, udata
+function detect_ctio, dd
+
+ label = dat_header(dd) 
 
  w = where(strpos(label, 'CERRO TOLOLO') NE -1)
  if(w[0] NE -1) then return, 'CTIO'

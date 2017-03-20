@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(gbd0)) then struct_assign, gbd0, self
 
  self.abbrev = 'GLB'
+ self.tag = 'GBD'
  if(keyword_set(lref)) then self.lref=decrapify(lref[ii])
 
  ;----------------------------------------

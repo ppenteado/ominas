@@ -3,11 +3,11 @@
 ;
 ;=============================================================================
 pro read_occ, filename, label, disk_pts=disk_pts, $
-                   silent=silent, sample=sample, nodata=nodata, $
+                   sample=sample, nodata=nodata, $
                    time_offset=time_offset, time_units=time_units, $
                    times=times, dn=dn, rad=rad, lon=lon, dim=dim, type=type
 
- data = read_vicar(filename, label, silent=silent, nodata=nodata, $
+ data = read_vicar(filename, label, /silent, nodata=nodata, $
                                    get_nl=nl, get_ns=ns, get_nb=nb, type=type)
  dim = degen_array([ns, nl, nb])
  if(keyword_set(nodata)) then return

@@ -21,10 +21,10 @@
 ;  INPUT:
 ;	object_ptd:	Array of POINT containing inertial vectors.
 ;
+;  OUTPUT: 
 ;	hide_ptd:	Array (n_disks, n_timesteps) of POINT 
 ;			containing the hidden points.
 ;
-;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
@@ -43,15 +43,20 @@
 ;		as the observer from which points are hidden.  If no observer
 ;		descriptor is given, the camera descriptor is used.
 ;
-;	gd:	Generic descriptor.  If given, the cd and dkx inputs 
-;		are taken from the cd and dkx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	reveal:	 Normally, objects whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
 ;
 ;	cat:	If set, the hide_ptd points are concatentated into a single
 ;		POINT object.
+;
+;	rm:	If set, points are flagged for being in front of or behind
+;		the disk, rather then just behind it.
 ;
 ;  OUTPUT: NONE
 ;
@@ -92,18 +97,20 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, $
-              reveal=reveal, cat=cat
+pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_ptd, hide_ptd, $
+              reveal=reveal, cat=cat, rm=rm
 @pnt_include.pro
 
- hide = keyword_set(hide_ptd)
+ hide = arg_present(hide_ptd)
  if(NOT keyword_set(object_ptd)) then return
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dkx=dkx, od=od, gbx=_gbx
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(NOT keyword_set(dkx)) then return
 
@@ -121,7 +128,7 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
  ; validate descriptors
  ;-----------------------------------
  nt = n_elements(od)
- pgs_count_descriptors, dkx, nd=n_disks, nt=nt1
+ cor_count_descriptors, dkx, nd=n_disks, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
  ;------------------------------------
@@ -142,10 +149,10 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
 
        Rs = bod_inertial_to_body_pos(xd, obs_pos)
 
-       pnt_get, object_ptd[j], p=p, vectors=vectors, flags=flags
+       pnt_query, object_ptd[j], p=p, vectors=vectors, flags=flags
        object_pts = bod_inertial_to_body_pos(xd, vectors)
 
-       w = dsk_hide_points(xd, Rs, object_pts)
+       w = dsk_hide_points(xd, Rs, object_pts, rm=rm)
 
       if(w[0] NE -1) then $
        begin
@@ -154,18 +161,18 @@ pro pg_hide_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, gd=gd, object_ptd, hide_ptd, 
         pnt_set_flags, object_ptd[j], _flags
        end
 
-      if(hide) then $
+     if(hide AND (w[0] NE -1)) then $
        begin
         hide_ptd[j,i] = nv_clone(object_ptd[j])
 
-        pnt_get, object_ptd[j], desc=desc, inp=inp
+        pnt_query, hide_ptd[j,i], desc=desc, gd=gd0
 
         ww = complement(flags, w)
         _flags = flags
         if(ww[0] NE -1) then _flags[ww] = _flags[ww] OR PTD_MASK_INVISIBLE
 
-        pnt_set, hide_ptd[j,i], desc=desc+'-hide_disk', $
-             input=inp+'-'+pgs_desc_suffix(dkx=dkx[i,0], gbx=gbx[0], od=od[0], cd[0]), flags=_flags
+        pnt_assign, hide_ptd[j,i], desc=desc+'-hide_disk', flags=_flags, $
+            gd=append_struct(gd0, {dkx:dkx[i,0], gbx:gbx[0], od:od[0], cd:cd[0]})
        end
       end
     end

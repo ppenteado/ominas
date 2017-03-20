@@ -42,8 +42,11 @@
 ;	 od:	   Observer descriptor; specifies the body frame for the
 ;		   translation vector.
 ;
-;	 gd:	   Generic descriptor.  If given, the bx and od inputs are 
-;		   taken from this structure instead of the argument list.
+;  	 gd:	   Generic descriptor.  If given, the descriptor inputs 
+;		   are taken from this structure if not explicitly given.
+;
+;	 dd:	   Data descriptor containing a generic descriptor to use
+;		   if gd not given.
 ;
 ;	 ref_bx:   Body descriptor giving reference position for directional
 ;		   keywords.
@@ -78,7 +81,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_repos, bx=bx, _dv, od=od, ref_bx=ref_bx, $
+pro pg_repos, bx=bx, _dv, od=od, ref_bx=ref_bx, dd=dd, gd=gd, $
                toward=toward, away=away, at=at, along=along
 
 
@@ -112,7 +115,8 @@ pro pg_repos, bx=bx, _dv, od=od, ref_bx=ref_bx, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, bx=bx, od=od
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
 
  ;-----------------------------------------------

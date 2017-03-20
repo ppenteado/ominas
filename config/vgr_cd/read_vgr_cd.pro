@@ -60,8 +60,7 @@ end
 ; read_vgr_cd.pro
 ;
 ;=============================================================================
-function read_vgr_cd, filename, label, $
-                          silent=silent, sample=sample, nodata=nodata
+function read_vgr_cd, filename, label, sample=sample, nodata=nodata
 
  ;---------------------------------------
  ; read image data

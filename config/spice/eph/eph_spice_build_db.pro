@@ -88,7 +88,6 @@ pro esbd_kcov, type, file, objnum, SPICEFALSE, cover, status=status
    return
  end
 
-
  if(type EQ 'sp') then cspice_spkcov, file, objnum, cover $
  else cspice_ckcov, file, objnum, SPICEFALSE, 'SEGMENT', 0.D, 'SCLK', cover
 end
@@ -100,7 +99,18 @@ end
 ; esbd_kobj
 ;
 ;=============================================================================
-pro esbd_kobj, type, file, ids
+pro esbd_kobj, type, file, ids, status=status
+
+ status = 0
+
+ catch, error
+ if(error ne 0) then $
+  begin
+   catch, /cancel
+   status = -1
+   return
+ end
+
  call_procedure, 'cspice_' + type + 'kobj', file, ids
 end
 ;=============================================================================
@@ -145,7 +155,7 @@ function eph_spice_build_db, kpath, type
  ;-------------------------------------
  ; get all filenames
  ;-------------------------------------
- all_files = file_search(kpath + '/*.b' + type)
+ all_files = file_search(kpath + '/*')
  n_all = n_elements(all_files)
 
  ;-------------------------------------
@@ -198,73 +208,80 @@ function eph_spice_build_db, kpath, type
 
      cover = cspice_celld(WINSIZ)
      ids = cspice_celli(MAXOBJ)
-     esbd_kobj, type, new_files[i], ids
-     nobjs = cspice_card(ids)
 
-     found = 0
-     if(nobjs GT 0) then $
+     ;----------------------------------
+     ; get ids of all bodies in kernel
+     ;----------------------------------
+     esbd_kobj, type, new_files[i], ids, status=status
+     if(status EQ 0) then $
       begin
-       first = (last = '')
+       nobjs = cspice_card(ids)
 
-       for j=0, nobjs-1 do $
+       found = 0
+       if(nobjs GT 0) then $
         begin
-         objnum = ids.base[ids.data+j]
-         cspice_bodc2n, objnum, obj, found
-         cspice_scard, 0L, cover
+         first = (last = '')
 
-         ;----------------------------------------
-         ; For each object, collect time windows
-         ;----------------------------------------
-         esbd_kcov, type, new_files[i], objnum, SPICEFALSE, cover, status=status
-         if(status EQ 0) then $
+         for j=0, nobjs-1 do $
           begin
-           found = 1
-           nseg = cspice_wncard(cover)
-           nv_message, /verbose, 'Number of segments: ' + strtrim(nseg,2)
-           for k=0, nseg-1 do $
+           objnum = ids.base[ids.data+j]
+           cspice_bodc2n, objnum, obj, found
+           cspice_scard, 0L, cover
+
+           ;----------------------------------------
+           ; For each object, collect time windows
+           ;----------------------------------------
+           esbd_kcov, type, new_files[i], objnum, SPICEFALSE, cover, status=status
+           if(status EQ 0) then $
             begin
-             cspice_wnfetd, cover, k, b, e
-             first = append_array(first,b)
-             last = append_array(last,e)    
+             found = 1
+             nseg = cspice_wncard(cover)
+             nv_message, /verbose, 'Number of segments: ' + strtrim(nseg,2)
+             for k=0, nseg-1 do $
+              begin
+               cspice_wnfetd, cover, k, b, e
+               first = append_array(first,b)
+               last = append_array(last,e)    
  
-             nv_message, /verbose, $
-              'Segment ' + strtrim(k,2) + ', begin: '+ strtrim(b,2) + ', end: ' + strtrim(e,2)
+               nv_message, /verbose, $
+                'Segment ' + strtrim(k,2) + ', begin: '+ strtrim(b,2) + ', end: ' + strtrim(e,2)
+              end
             end
           end
-        end
 
-       if(found) then $
-        begin
-         min_first = min(first)
-         max_last = max(last)
-
-         ;------------------------
-         ; Find Ominas timestamp
-         ;------------------------
-         index = where(ts_filenames EQ new_files[i], tscount)
-         nv_message, /verbose, 'Timestamp index = ' + strtrim(index,2)
-         if(tscount EQ 1) then installtime = timestamps[index]
-
-         ;----------------------
-         ; Find PDS Label time
-         ;----------------------
-         creation = eph_spice_read_label(new_files[i])
-         if(keyword_set(creation)) then $
+         if(found) then $
           begin
-           cspice_tparse, creation, lbl_time, lbl_error
-           if lbl_time NE 0 then lbltime = lbl_time
-          end
-        end
+           min_first = min(first)
+           max_last = max(last)
 
-       ;----------------------
-       ; add record
-       ;----------------------
-       dbnew[i].filename = new_files[i]
-       dbnew[i].first = min_first
-       dbnew[i].last = max_last
-       dbnew[i].mtime = infodat.mtime
-       dbnew[i].lbltime = lbltime
-       dbnew[i].installtime = installtime
+           ;------------------------
+           ; Find Ominas timestamp
+           ;------------------------
+           index = where(ts_filenames EQ new_files[i], tscount)
+           nv_message, /verbose, 'Timestamp index = ' + strtrim(index,2)
+           if(tscount EQ 1) then installtime = timestamps[index]
+
+           ;----------------------
+           ; Find PDS Label time
+           ;----------------------
+           creation = eph_spice_read_label(new_files[i])
+           if(keyword_set(creation)) then $
+            begin
+             cspice_tparse, creation, lbl_time, lbl_error
+             if lbl_time NE 0 then lbltime = lbl_time
+            end
+          end
+
+         ;----------------------
+         ; add record
+         ;----------------------
+         dbnew[i].filename = new_files[i]
+         dbnew[i].first = min_first
+         dbnew[i].last = max_last
+         dbnew[i].mtime = infodat.mtime
+         dbnew[i].lbltime = lbltime
+         dbnew[i].installtime = installtime
+        end
       end
     end
   end

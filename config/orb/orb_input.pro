@@ -73,60 +73,6 @@ end
 
 
 ;=============================================================================
-; oi_load
-;
-;=============================================================================
-function oi_load, catpath, catfile, reload=reload
-common oi_load_block, _catfile, _dat_p
-
- dat = ''
-
- ;--------------------------------------------------------------------
- ; if appropriate catalog is loaded, then just return descriptors
- ;--------------------------------------------------------------------
- load = 1
-
- if(keyword_set(_catfile) AND (NOT keyword_set(reload))) then $
-  begin
-   w = where(_catfile EQ catfile)
-   if(w[0] NE -1) then $
-    begin
-     load = 0
-     dat = *(_dat_p[w[0]])
-    end
-  end 
-
- ;--------------------------------------------------------------------
- ; parse catalog path
- ;--------------------------------------------------------------------
- catdirs = get_path(catpath, file=catfile)
- if(NOT keyword_set(catdirs[0])) then load = 0
-
-
- ;--------------------------------------------------------------------
- ; otherwise read and parse the catalog
- ;--------------------------------------------------------------------
- if(load) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; read the catalog
-   ;- - - - - - - - - - - - - - - - - - - -
-   dat = orbcat_read(catdirs + '/' + catfile)
-
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; save catalog data
-   ;- - - - - - - - - - - - - - - - - - - -
-   _catfile = append_array(_catfile, catfile)
-   _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-  end
-
- return, dat
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; oi_get_element
 ;
 ;=============================================================================
@@ -161,8 +107,24 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
    return, 0
   end
 
-
  status = 0
+
+ ;----------------------------------------------
+ ; get catalog path
+ ;----------------------------------------------
+ catpath = getenv('NV_ORBIT_DATA')
+ if(NOT keyword_set(catpath)) then $
+  begin
+    nv_message, /con, $
+     'NV_ORBIT_DATA environment variable is undefined.', $
+       exp=['NV_ORBIT_DATA specifies directories in which this translator', $
+ 	    'searches for data files.']
+   status = -1
+   return, 0
+  end
+ catpath = parse_comma_list(catpath, delim=':')
+
+
 
  ;-----------------------------------------------
  ; translator arguments
@@ -222,26 +184,11 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; read orbit catalog
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
-   catpath = getenv('NV_ORBIT_DATA')
-   if(NOT keyword_set(catpath)) then $
-    begin
-      nv_message, /con, $
-       'NV_ORBIT_DATA environment variable is undefined.', $
-         exp=['NV_ORBIT_DATA specifies directory under which this translator', $
-              'searches for data files.']
-     status = -1
-     return, 0
-    end
-
    catfile = 'orbcat_' + strlowcase(planet) + '.txt'
-   dat = oi_load(catpath, catfile, reload=reload)
+   dat = file_manage('orbcat_read', catpath, catfile, reload=reload)
 
-;   catfile = getenv('NV_ORBIT_DATA') + '/orbcat_' + strlowcase(planet) + '.txt'
-;   if(keyword_set(file_test(catfile))) then $
    if(keyword_set(dat)) then $
     begin
-;     dat = oi_load(catfile, reload=reload)
-
      ;- - - - - - - - - - - - - - - - - - - - - - - -
      ; if any requested names, select only those
      ;- - - - - - - - - - - - - - - - - - - - - - - -
@@ -310,7 +257,7 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
          pos = orb_to_cartesian(dkd, vel=vel)
          
          _pd = plt_create_descriptors(1, $
-		assoc_xd=dd, $
+		gd=dd, $
 		name=cor_name(dkd), $
 		pos=pos, $
 		vel=vel, $

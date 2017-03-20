@@ -51,6 +51,7 @@ function orb_construct_descriptor, gbx, $
                 rdout=rd			; input descriptor, instead of creating a new one
 
 
+;timer, t=_t
 ; Note: ta and tl not yet implemented.
 if(defined(ta)) then message, /con, 'WARNING: ta not implemented.'
 if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
@@ -60,6 +61,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
 
  dt = bod_time(gbx) - t
  gbxt = glb_evolve(gbx, -dt)
+;timer, t=_t, 'a'
 
  sma = (ecc = tr([0d,0d]))
  if(defined(_sma)) then sma = tr([_sma,0])
@@ -79,6 +81,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
  if(defined(_dlibdt_ap)) then dlibdt_ap = _dlibdt_ap
  if(defined(_lib_ap)) then lib_ap = _lib_ap
  if(defined(_dlpdt)) then dlpdt = _dlpdt
+;timer, t=_t, 'b'
 
  if(NOT keyword_set(rd)) then $
   rd = rng_create_descriptors(1, $
@@ -95,6 +98,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
    dsk_set_ecc, rd, ecc
   end
  nv_free, _xd
+;timer, t=_t, 'c'
 
  if(defined(inc)) then orb_set_inc, rd, gbxt, inc
 
@@ -121,6 +125,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
    dmadt = 0d
    if(NOT defined(dmadt)) then dmadt = orb_compute_dmadt(rd, gbxt, GG=GG)
   end
+;timer, t=_t, 'd'					; moderate delay here
 
  orb_set_dlandt, rd, gbxt, dlandt
  orb_set_dapdt, rd, gbxt, dapdt 
@@ -138,11 +143,13 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
  if(defined(liba_lan)) then orb_set_liba_lan, rd, gbxt, liba_lan
  if(defined(dlibdt_lan)) then orb_set_dlibdt_lan, rd, gbxt, dlibdt_lan
  if(defined(lib_lan)) then orb_set_lib_lan, rd, gbxt, lib_lan 
+;timer, t=_t, 'e'					; big delay here
 
 ; if(defined(ppt)) then ma = ma + dmadt*(t - ppt)
  if(defined(ppt)) then ma = dmadt*(t - ppt)
  if(defined(ml)) then ma = orb_lon_to_anom(rd, ml, gbxt)
  if(NOT keyword_set(ring)) then if(defined(ma)) then orb_set_ma, rd, ma
+;timer, t=_t, 'f'
 
  if(keyword__set(mm)) then $		; keyword__set intended
   begin
@@ -178,6 +185,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
      __dlibmdt = dsk_dlibmdt(rd) & __dlibmdt[0:nmm-1] = dlibmdt & dsk_set_dlibmdt, rd, __dlibmdt
     end
   end  
+;timer, t=_t, 'g'
 
 
  if(keyword__set(ll)) then $		; keyword__set intended
@@ -214,6 +222,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
      __dlibldt = dsk_dlibldt(rd) & __dlibldt[0:nll-1] = dlibldt & dsk_set_dlibldt, rd, __dlibldt
     end
   end  
+;timer, t=_t, 'h'
 
 
  ;------------------------------
@@ -227,6 +236,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
    if(NOT arg_present(rd0)) then nv_free, rd
   end $
  else rdt = rd
+;timer, t=_t, 'i'
 
  rd0 = rd
 

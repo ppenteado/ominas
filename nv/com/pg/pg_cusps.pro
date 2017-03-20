@@ -34,8 +34,11 @@
 ;	gbx:	 Array (n_objects, n_timesteps) of descriptors of objects 
 ;		 which must be a subclass of GLOBE.
 ;
-;	gd:	 Generic descriptor.  If given, the cd, od, and gbx inputs 
-;		 are taken from this structure instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	epsilon: Maximum angular error in the result.  Default is 1e-3.
 ;
@@ -67,13 +70,18 @@
 ;	
 ;-
 ;=============================================================================
-function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
+function pg_cusps, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, epsilon=epsilon, reveal=reveal
 @pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, od=od, sund=sund
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+
+
  if(NOT keyword_set(cd)) then return, obj_new() 
  if(NOT keyword_set(gbx)) then return, obj_new()
 
@@ -94,7 +102,7 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
  ;-----------------------------------
  nt = n_elements(cd)
  nt1 = n_elements(od)
- pgs_count_descriptors, gbx, nd=n_objects, nt=nt2
+ cor_count_descriptors, gbx, nd=n_objects, nt=nt2
  if(nt NE nt1 OR nt1 NE nt2) then nv_message, 'Inconsistent timesteps.'
 
 
@@ -134,7 +142,7 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
     end
    cusp_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
 			desc=desc, $
-			input=pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd[0]), $
+			gd={gbx:gbx[i,0], od;od[0], cd:cd[0]}, $
 			assoc_xd = xd, $
                         points = points, $
 			flags = flags, $

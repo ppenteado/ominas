@@ -108,8 +108,8 @@ _dd.cache = -1				; caching disabled until fully debugged
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; First attempt to read using input function (usually the fastest)
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- data = call_function(_dd.input_fn, _dd.filename, /silent, $
-                       header, udata, abscissa=abscissa, $
+ data = call_function(_dd.input_fn, _dd, $
+                       header, abscissa=abscissa, $
                        sample=samples_to_load, returned_samples=returned_samples)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -134,7 +134,7 @@ _dd.cache = -1				; caching disabled until fully debugged
  ;----------------------------------
  ; transform data
  ;----------------------------------
- data = dat_transform_input(_dd, data, header, silent=silent)
+ data = dat_transform_input(_dd, data, header)
 
  ;----------------------------------
  ; set data on descriptor
@@ -142,10 +142,9 @@ _dd.cache = -1				; caching disabled until fully debugged
  if(_dd.maintain LT 2) then $
   begin
    nv_suspend_events
-   dat_set_data, dd, data, abscissa=abscissa, $
-                                /silent, sample=samples_to_load
-   if(keyword_set(udata)) then cor_set_udata, dd, '', udata;, /silent
-   if(keyword_set(header)) then dat_set_header, dd, header, /silent
+   dat_set_data, dd, data, abscissa=abscissa, sample=samples_to_load
+   if(keyword_set(udata)) then cor_set_udata, dd, '', udata
+   if(keyword_set(header)) then dat_set_header, dd, header
    nv_resume_events
   end
 

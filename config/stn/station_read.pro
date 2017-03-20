@@ -2,14 +2,13 @@
 ; station_read
 ;
 ;=============================================================================;
-function station_read, filename, names=names, default=default, silent=silent
+function station_read, filename, names=names, default=default
 
 
  ;----------------------------
  ; read file
  ;----------------------------
- if(NOT keyword_set(silent)) then  $
-       nv_message, /con, verb=0.2, 'Reading station catalog ' + transpose(filename) + '...'
+ nv_message, /con, verb=0.2, 'Reading station catalog ' + filename + '...'
  cat = read_txt_table(filename)
 
  ;----------------------------

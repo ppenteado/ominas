@@ -77,7 +77,7 @@ function pg_ptchisq, dxy, dtheta, scan_ptd, axis_ptd=axis_ptd, fix=fix
    ;-------------------
    ; get scan data
    ;-------------------
-   pnt_get, scan_ptd[i], data=pts_data, points=pts_pts, /visible
+   pnt_query, scan_ptd[i], data=pts_data, points=pts_pts, /visible
 
    if(NOT keyword__set(pts_data)) then valid[i] = 0 $
    else $

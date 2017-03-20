@@ -52,6 +52,10 @@
 ;      POINT containing points on the sector outline.  The point
 ;      spacing is determined by the sample keyword.
 ;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
+;
 ;
 ; ORIGINAL AUTHOR : J. Spitale ; 6/2005
 ;

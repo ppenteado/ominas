@@ -40,8 +40,6 @@
 ;
 ;	tags:		Tags for point-by-point data.
 ;
-;	assoc_xd:	Associated descriptor.
-;
 ;
 ;
 ;  OUTPUT: NONE

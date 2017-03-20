@@ -172,7 +172,7 @@ function pg_edges, dd, threshold=threshold, edge=edge, npoints=npoints, $
  ;-----------------------------
  ; save the selected points
  ;-----------------------------
- edge_ptd = pnt_create_descriptors(points=points, desc='edges', input=pgs_desc_suffix(dd))
+ edge_ptd = pnt_create_descriptors(points=points, desc='edges', gd=dd)
 
 
  return, edge_ptd

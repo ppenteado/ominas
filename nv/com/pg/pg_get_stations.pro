@@ -74,7 +74,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, gd=gd, $
+function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, $
                           override=override, verbatim=verbatim, $
 @stn__keywords.include
 @nv_trs_keywords_include.pro
@@ -83,7 +83,8 @@ function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, od=od, bx=bx, dd=dd
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
 
  ;-----------------------------------------------
@@ -96,14 +97,14 @@ function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, gd=gd, $
 ;; if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
- stds = dat_get_value(dd, 'STN_DESCRIPTORS', key1=od, key2=bx, key4=_std, key6=primary, $
+ std = dat_get_value(dd, 'STN_DESCRIPTORS', key1=od, key2=bx, key4=_std, key6=primary, $
                              key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
- if(NOT keyword_set(stds)) then return, obj_new()
+ if(NOT keyword_set(std)) then return, obj_new()
 
- n = n_elements(stds)
+ n = n_elements(std)
 
  ;---------------------------------------------------
  ; If name given, determine subscripts such that
@@ -117,7 +118,7 @@ function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, gd=gd, $
  ;---------------------------------------------------
  if(keyword__set(name)) then $
   begin
-   tr_names = cor_name(stds)
+   tr_names = cor_name(std)
    sub = nwhere(strupcase(tr_names), strupcase(name))
    if(sub[0] EQ -1) then return, obj_new()
    if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
@@ -125,11 +126,17 @@ function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, gd=gd, $
  else sub=lindgen(n)
 
  n = n_elements(sub)
- stds = stds[sub]
+ std = std[sub]
 
 
 
- return, stds
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, od=od, bx=bx
+ dat_set_gd, std, gd, od=od, bx=bx
+
+ return, std
 end
 ;===========================================================================
 

@@ -36,9 +36,11 @@
 ;	bx:	Array (n_objects, n_timesteps) of descriptors of objects 
 ;		that must be a subclass of BODY.
 ;
-;	gd:	Generic descriptor.  If given, the cd and gbx inputs 
-;		are taken from the cd and gbx fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	lat:	Array giving grid-line latitudes in radians.
 ;
@@ -91,7 +93,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
+function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_lon, $
 		nlat=nlat, nlon=nlon, flat=flat, flon=flon, npoints=npoints, $
 		fov=fov, cull=cull, slat=slat, slon=slon
 @pnt_include.pro
@@ -99,8 +101,11 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, bx=bx, gbx=gbx, dkx=dkx
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+
  if(keyword_set(gbx)) then if(NOT keyword_set(bx)) then bx = gbx
  if(keyword_set(dkx)) then if(NOT keyword_set(bx)) then bx = dkx
 
@@ -113,7 +118,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
  nplat = npoints
  nplon = npoints
 
- pgs_count_descriptors, bx, nd=n_objects
+ cor_count_descriptors, bx, nd=n_objects
 
 
  ;-----------------------------------
@@ -157,11 +162,11 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, gd=gd, lat=_lat, lon=_lon, $
     end
 
 
-   input = 0
+   gd_input = {cd:cd[0]}
    if(keyword_set(bx)) then $
     begin
      xd = reform(bx[i,*])
-     input = pgs_desc_suffix(bx=bx[i,0], cd[0])
+     gd_input = append_struct(gd_input, {bx:bx[i,0]})
     end
 
    ;- - - - - - - - - - - - - - - - -
@@ -227,7 +232,7 @@ _grid_pts_map = grid_pts_map
        ;-----------------------------------
        _grid_ptd = pnt_create_descriptors(name = cor_name(xd), $
         		 desc = 'globe_grid', $
-        		 input = input, $
+        		 gd = gd_input, $
         		 assoc_xd = xd, $
         		 points = points, $
         		 flags = flags, $

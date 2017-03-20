@@ -91,7 +91,8 @@ function pg_linearize_image, dd, new_cd, cd=cd, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
 
  ;---------------------------------------
  ; dereference the data descriptor

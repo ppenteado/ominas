@@ -13,6 +13,7 @@ end_keywords)
  if(keyword_set(sld0)) then struct_assign, sld0, self
 
  self.abbrev = 'SLD'
+ self.tag = 'SLD'
  npht = sld_npht()
 
  ;----------------------------------------

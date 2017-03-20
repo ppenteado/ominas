@@ -85,17 +85,17 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
+function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, $
                       override=override, verbatim=verbatim, $
 @rng__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
-
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, pd=pd, od=od, dd=dd
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
+ if(NOT keyword_set(pd)) then pd = dat_gd(gd, dd=dd, /pd)
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators
@@ -104,31 +104,12 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
   begin
    n = n_elements(name)
 
-   if(NOT keyword__set(orient)) then orient = bod_orient(pd)
-;   if(NOT keyword__set(avel)) then avel = bod_avel(pd)
-   if(NOT keyword__set(pos)) then pos = bod_pos(pd)
-   if(NOT keyword__set(vel)) then vel = bod_vel(pd)
-   if(NOT keyword__set(time)) then time = bod_time(pd)
+   if(keyword_set(dd)) then gd = dd
+   rd = rng_create_descriptors(n, $
+@rng__keywords.include
+end_keywords)
+   gd = !null
 
-   rd=rng_create_descriptors(n, $
-	assoc_xd=dd, $
-	name=name, $
-	primary=primary, $
-	orient=orient, $
-	avel=avel, $
-	pos=pos, $
-	vel=vel, $
-	time=time, $
-	sma=sma, $
-	ecc=ecc, $
-	dap=dap, $
-	opaque=opaque, $
-	opacity=opacity, $
-	nm=nm, $
-	_m=m, $
-	em=em, $
-	tapm=rng__tapm, $
-	dtapmdt=rng__dtapmdt)
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get ring descriptors from the translators
@@ -178,25 +159,20 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, gd=gd, $
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   w = nwhere(dd, cor_assoc_xd(rd))
-   if(n_elements(time) NE 0) then bod_set_time, rd, time[w]
-   if(n_elements(primary) NE 0) then rng_set_primary, rd, primary[w]
-   if(n_elements(orient) NE 0) then bod_set_orient, rd, orient[*,*,w]
-   if(n_elements(avel) NE 0) then bod_set_avel, rd, avel[*,*,w]
-   if(n_elements(pos) NE 0) then bod_set_pos, rd, pos[*,*,w]
-   if(n_elements(vel) NE 0) then bod_set_vel, rd, vel[*,*,w]
-   if(n_elements(opacity) NE 0) then sldd_set_opacity, rd, opacity[w]
-   if(n_elements(sma) NE 0) then dsk_set_sma, rd, sma[*,*,w]
-   if(n_elements(ecc) NE 0) then dsk_set_ecc, rd, ecc[*,*,w]
-   if(n_elements(dap) NE 0) then dsk_set_dap, rd, dap[*,*,w]
-   if(n_elements(opaque) NE 0) then bod_set_opaque, rd, opaque[w]
-   if(n_elements(nm) NE 0) then dsk_set_nm, rd, nm[w]
-   if(n_elements(m) NE 0) then dsk_set_m, rd, m[*,*,w]
-   if(n_elements(em) NE 0) then dsk_set_em, rd, em[*,*,w]
-   if(n_elements(rng__tapm) NE 0) then dsk_set_tapm, rd, rng__tapm[*,*,w]
-   if(n_elements(rng__dtapmdt) NE 0) then dsk_set_dtapmdt, rd, rng__dtapmdt[*,*,w]
+   if(defined(name)) then _name = name & name = !null
+   rng_assign, rd, /noevent, $
+@rng__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+
   end
 
+
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, pd=pd, od=od
+ dat_set_gd, rd, gd, pd=pd, od=od
 
  return, rd
 end

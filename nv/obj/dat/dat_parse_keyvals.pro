@@ -47,6 +47,8 @@
 function dat_parse_keyvals, keyvals, keywords=keywords
 @core.include
 
+ if(NOT keyword_set(keyvals)) then return, ''
+
  s = size(keyvals)
  ntran = s[1]
  max_nkey = s[2]
