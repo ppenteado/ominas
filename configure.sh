@@ -133,6 +133,25 @@ if [ -v IDL_PATH ]; then
     fi
   fi
 fi
+
+
+if [ "$IDL_DIR" = "" ]; then
+        idl=`which idl`
+        idlbin=$idl
+        if [ "$idl" = "" ]; then
+          read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
+          IDL_DIR="$idldir"
+          export IDL_DIR
+          printf "Using IDL from $IDL_DIR\n"
+          idlbin=$IDL_DIR/bin/idl
+        else
+          printf "Using IDL at $idl\n"
+        fi
+else
+        printf "IDL_DIR found, $IDL_DIR, using it\n"
+        idlbin=$IDL_DIR/bin/idl
+fi
+
 ominassh="$HOME/.ominas/ominas_setup.sh"
 usersh=$setting
 setting=$ominassh
@@ -245,6 +264,7 @@ function dins()
 		case $ans in 
 		[Yy]*)
                         unset inst[${1}]
+                        $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,inst[${1}]"
                         return 1;;
 			#grep -v "NV_${dat}_DATA.*" $setting >$HOME/temp
 			#mv $HOME/temp $setting	;;
@@ -325,6 +345,7 @@ function pkins()
                 [Yy]*)
                      unset insp[${3}]
                      unset ins[${3}]
+                     $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,insp[${3}]"
                      return 1 ;;
 
                     *)
@@ -700,22 +721,26 @@ idla
 EXIT
 IDLCMD
 
-if [ "$IDL_DIR" = "" ]; then
-        idl=`which idl`
-        if [ "$idl" = "" ]; then
-          read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
-          IDL_DIR="$idldir"
-          export IDL_DIR
-          printf "Using IDL from $IDL_DIR\n"
-          $IDL_DIR/bin/idl paths.pro
-        else
-          printf "Using IDL at $idl\n"
-          $idl paths.pro
-        fi
-else
-        printf "IDL_DIR found, $IDL_DIR, using it\n"
-        $IDL_DIR/bin/idl paths.pro
-fi
+#if [ "$IDL_DIR" = "" ]; then
+#        idl=`which idl`
+#        idlbin=$idl
+#        if [ "$idl" = "" ]; then
+#          read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
+#          IDL_DIR="$idldir"
+#          export IDL_DIR
+#          printf "Using IDL from $IDL_DIR\n"
+#          idlbin=$IDL_DIR/bin/idl
+##          $IDL_DIR/bin/idl paths.pro
+#        else
+#          printf "Using IDL at $idl\n"
+##          $idl paths.pro
+#        fi
+#else
+#        printf "IDL_DIR found, $IDL_DIR, using it\n"
+#        idlbin=$IDL_DIR/bin/idl
+##        $IDL_DIR/bin/idl paths.pro
+#fi
+$idlbin paths.pro
 rm paths.pro
 if [ -e idlpath.sh ]; then
   cat idlpath.sh >> $idlpathfile
