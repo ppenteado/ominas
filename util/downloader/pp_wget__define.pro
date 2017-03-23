@@ -72,7 +72,7 @@ self.ldir=ldir+path_sep()
 self.pattern=n_elements(pattern) ? pattern : ''
 self.xpattern=n_elements(xpattern) ? xpattern : ''
 self.absolute=keyword_set(absolute)
-self.sslf=n_elements(sslf) ? file_search(sslf) : filepath('ca-bundle.crt')
+self.sslf=n_elements(sslf) ? file_search(sslf) : (file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0]
 print,self.sslf
 ;if n_elements(e) then self.extra=ptr_new(e)
 
@@ -272,9 +272,13 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
         if ~strmatch(!version.os_family,'*win*',/fold) then begin ;linux-like systems
           caldat,tmrj,mon,day,yr,h,m,s
           tmstr=string(yr,mon,day,h,m,s,format='(I04,I02,I02,I02,I02,".",I02)')
-          mon=(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])[mon-1]
-          tmstr=string(day,mon,yr,h,m,s,format='(I02," ",A3," ",I04," ",I02,":",I02,":",I02," GMT")')
-          spawn,'touch -d "'+tmstr+'" '+self.ldir+link
+          smon=(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])[mon-1]
+          tmstr=string(day,smon,yr,h,m,s,format='(I02," ",A3," ",I04," ",I02,":",I02,":",I02," GMT")')
+          ;print, 'touch -d "'+tmstr+'" '+self.ldir+link
+          ;spawn,'touch -d "'+tmstr+'" '+self.ldir+link
+          tmstr=string(yr,mon,day,h,m,s,format='(I04,I02,I02,I02,I02,".",I02)')
+          ;print, 'touch -t "'+tmstr+'" '+self.ldir+link
+          spawn, 'touch -t "'+tmstr+'" '+self.ldir+link
         endif else begin ;Windows systems
           spawn,'powershell -WindowStyle Hidden "$(Get-Item '+self.ldir+link+').lastwritetime=$(Get-Date '+"'"+tm+"'"+')"',/noshell
         endelse
