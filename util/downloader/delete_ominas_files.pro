@@ -22,9 +22,9 @@ r=[]
 foreach tts,ts do r=[r,read_json(tts)]
 
 print,'This will now delete the files'
-print,r
+print,r.filename
 print,'Are you sure you want to delete the above files?'
 read,ans
 if strlowcase(ans) ne 'y' then return
-;file_delete,r,/allow_nonexistent,/verbose
+;file_delete,r.filename,/allow_nonexistent,/verbose
 end
