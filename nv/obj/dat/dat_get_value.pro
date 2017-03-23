@@ -91,17 +91,14 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ;--------------------------------------------
  ; build translators list
  ;--------------------------------------------
- if(NOT keyword_set(tr_override)) then $
-  begin
-   if(NOT ptr_valid(_dd[0].input_translators_p)) then $
-    begin
+ if(NOT keyword_set(tr_override)) then begin
+   if(NOT ptr_valid(_dd[0].input_translators_p)) then begin
      nv_message, /con, name='dat_get_value', $
 	    'No input translator available for '+keyword+'.'
      return, 0
-    end
+   endif
    translators = *_dd[0].input_translators_p
-  end $
- else translators = str_nsplit(tr_override, ',')
+ endif else translators = str_nsplit(tr_override, ',')
  n = n_elements(translators)
 
 
@@ -111,8 +108,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  nv_suspend_events
  nv_message, verb=0.9, 'Data descriptor ' + cor_name(dd)
 
- for i=0, n-1 do $
-  begin
+ for i=0, n-1 do begin
    nv_message, verb=0.9, 'Calling translator ' + translators[i]
 
    _dd.last_translator = [i,0]#make_array(ndd, val=1)
@@ -127,14 +123,12 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    ;--------------------------------------
    ; add values to list
    ;--------------------------------------
-   if(stat EQ 0) then $
-    begin
+   if(stat EQ 0) then begin
      dat_set_gd, dd, xd=xd
      xds = append_array(xds, xd)
      if(keyword_set(tr_first)) then i=n
-    end $
-   else nv_message, verb=0.9, 'No value.' 
-  end 
+   endif else nv_message, verb=0.9, 'No value.' 
+ endfor
  nxds = n_elements(xds)
 
  ;----------------------------------------------------------------
@@ -144,13 +138,10 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  result = 0
  if(keyword_set(xds)) then begin
    status = 0
-   if(NOT keyword_set(tr_nosort)) then $
-    for i=0, ndd-1 do $
-     begin
+   if(NOT keyword_set(tr_nosort)) then for i=0, ndd-1 do begin
       w = where(cor_gd(xds, /dd) EQ dd[i])
       nw = n_elements(w)
-      if(w[0] NE -1) then $
-       begin
+      if(w[0] NE -1) then begin
         w = rotate(w,2)		; uniq chooses highest index, so this assures
 				; that earliest xd gets selected
         names = cor_name(xds[w])
@@ -165,7 +156,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
       endif
     endfor
    endif else result = xds
- endif
+ ;endif
 
  nv_resume_events
  return, result
