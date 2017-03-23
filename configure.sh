@@ -258,13 +258,16 @@ function dins()
 	dat=${Data[$mnum]}
 	if grep -q "export NV_${dat}_DATA" ${setting}; then
 		printf "Warning: $dat data files appear to already be set at this location:\n"
-		eval echo \$NV_${dat}_DATA
+                eval echo \$NV_${dat}_DATA
+                tmp=`grep "export NV_${dat}_DATA" $setting`
+                IFS='=' read -ra tmpa <<< "$tmp"
 		#read -rp "Would you like to overwrite this location (y/n)? " ans
                 read -rp "Would you like to uninstall $dat from this location (y/n)? " ans
 		case $ans in 
 		[Yy]*)
+                        echo ${pth}
+                        $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
                         unset inst[${1}]
-                        $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,inst[${1}]"
                         return 1;;
 			#grep -v "NV_${dat}_DATA.*" $setting >$HOME/temp
 			#mv $HOME/temp $setting	;;
@@ -343,9 +346,9 @@ function pkins()
             read -rp "Would you like to uninstall ${3} (y/n)? " ans
             case $ans in
                 [Yy]*)
+                     $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${insp[${3}]}' & exit"
                      unset insp[${3}]
                      unset ins[${3}]
-                     $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,insp[${3}]"
                      return 1 ;;
 
                     *)
@@ -362,7 +365,7 @@ function pkins()
                         read -rp "Do you need to download the $3 kernels from PDS? " ansk
                         case $ansk in
                           [Yy]*)
-                            read -rp "Please enter the location where the donwloaded $3 kernel pool will be placed: " datapath
+                            read -rp "Please enter the location where the downloaded $3 kernel pool will be placed: " datapath
                             datapath=`eval echo ${datapath}`
                             if ! ./download_$2.sh ${datapath}; then
                               unset insp[${3}]
@@ -547,7 +550,6 @@ if grep -q "export DFLAG=true" $setting; then
  demost="SET"
  DFLAG="true"
 fi
-echo "aaaaaaa $DFLAG" 
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
@@ -560,6 +562,9 @@ do
 	if grep -q "export NV_${Data[$d]}_DATA" $setting; then
         #if [  -z {NV_${Data[$d]}_DATA+x} ]; then
 		dstatus[$d]=$st
+                tmp=`grep "export NV_${Data[$d]}_DATA" $setting`
+                IFS='=' read -ra tmpa <<< "$tmp"
+                inst[$d]=${tmp[1]}
 	else
                 #echo "{NV_${Data[$d]}_DATA}"
 		dstatus[$d]=$ns
