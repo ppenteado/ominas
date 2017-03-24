@@ -14,14 +14,17 @@ endif else begin
   inst=''
   read,inst
   if stregex(inst,'y|Y',/bool) then begin
-    print,'Enter the location where you want to install IDLAstro'
+    print,'Enter the location where you want to install IDLAstro [~/ominas_data/idlastro]'
     loc=''
     read,loc
+    if ~ strlen(strtrim(loc,2)) then loc='~/ominas_data/idlastro'
+    spawn,'eval echo '+loc,res
+    loc=res
     comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
     print,comm
     spawn,comm
     path=getenv('IDL_PATH') ? getenv('IDL_PATH') : pref_get('IDL_PATH')
-    if ~strmatch(path,'*loc*') then begin
+    if ~strmatch(path,'*'+loc+'*') then begin
       path+=':+'+loc+'/pro'
     endif
     if getenv('IDL_PATH') then begin
