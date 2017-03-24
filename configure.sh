@@ -280,7 +280,10 @@ function dins()
         read -rp "Do you need to download the $dat data? " ansk
           case $ansk in
            [Yy]*)
-             read -rp "Please enter the location where the downloaded $dat data will be placed: " datapath
+             read -rp "Please enter the location where the downloaded ${dat} data will be placed: [~/ominas_data/${dat}]" datapath
+             if [ -z ${datapath} ] ; then
+               datapath=~/ominas_data/${dat}
+             fi
              datapath=`eval echo ${datapath}`
              if ! ./download_$dat.sh ${datapath} ; then
                unset inst[${1}]
@@ -289,6 +292,7 @@ function dins()
            *)
 	     read -rp "Please enter the path to $dat (if not known, press enter): " datapath
           esac 
+        datapath=`eval echo ${datapath}`
 	if ! [[ -d $datapath ]]; then
 		setdir $dat
 	fi
@@ -365,7 +369,10 @@ function pkins()
                         read -rp "Do you need to download the $3 kernels from PDS? " ansk
                         case $ansk in
                           [Yy]*)
-                            read -rp "Please enter the location where the downloaded $3 kernel pool will be placed: " datapath
+                            read -rp "Please enter the location where the downloaded $3 kernel pool will be placed: [~/ominas_data/${3}]" datapath
+                            if [ -z ${datapath} ] ; then
+                              datapath=~/ominas_data/${3}
+                            fi
                             datapath=`eval echo ${datapath}`
                             if ! ./download_$2.sh ${datapath}; then
                               unset insp[${3}]
@@ -375,6 +382,7 @@ function pkins()
                             pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}";;
                           *)
 			    read -rp "Please enter the location of your existing $3 kernel pool: " datapath
+                            datapath=`eval echo ${datapath}`
 			    if ! [[ -d $datapath ]]; then
 			    	setdir $2
 			    fi
@@ -441,7 +449,6 @@ echo "#!/usr/bin/env bash" > $setting
 if [[ -n "$ins_ominas_env_def" ]]; then
   echo "export OMINAS_DIR=$OMINAS_DIR" >> $setting
 fi
-echo "ffff $DFLAG"
 echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
 
@@ -497,8 +504,12 @@ case $ans in
 			[Yy]*)
 				bits=$(uname -m); if [[ $bits == "x86_64" ]]; then bstr="64bit"; else bstr="32bit"; fi
 				os=$(uname -s); if [[ $os == "Darwin" ]]; then ostr="MacIntel_OSX_AppleC"; else ostr="PC_Linux_GCC"; fi
-				curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" >"../icy.tar.Z"
-				cd ..
+				#curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" >"../icy.tar.Z"
+                                echo "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" "~/ominas_data/icy.tar.Z"
+                                curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" > ~/ominas_data/icy.tar.Z
+                                owd=$PWD
+				#cd ..
+                                cd ~/ominas_data/
 				cdflag=true
 				ext "icy.tar.Z"
 				ext "icy.tar"
@@ -507,7 +518,11 @@ case $ans in
 				/bin/csh makeall.csh
 				cd $OMINAS_DIR	;;
 			*)
-				read -rp "Please enter the location of the Icy install directory (if not known, press enter): " datapath
+				read -rp "Please enter the location of the Icy install directory [~/ominas_data/icy/]: " datapath
+                                if [ -z ${datapath} ] ; then
+                                  datapath=~/ominas_data/icy
+                                fi
+                                datapath=`eval echo ${datapath}`
 				if ! [[ -d $datapath ]]; then
 					setdir "icy"
 				fi
@@ -632,9 +647,7 @@ fi
 for num in $ans
 do
   if [ $num == "2" ]; then
-    echo "cccc $DFLAG"
     if [ $DFLAG  == "true" ]; then
-      echo "ddd"
       DFLAG="false"
       demost="NOT SET"
     else
