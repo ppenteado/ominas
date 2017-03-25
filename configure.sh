@@ -241,7 +241,7 @@ function ppkg()
                         longname="Dawn"	;;
 		*)
 	esac
-	pkins $script $kername $longname
+	pkins $script $kername $longname $1
 }
 
 function dins()
@@ -265,7 +265,7 @@ function dins()
                 read -rp "Would you like to uninstall $dat from this location (y/n)? " ans
 		case $ans in 
 		[Yy]*)
-                        echo "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
+                        #echo "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
                         $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
                         unset inst[${1}]
                         return 1;;
@@ -348,16 +348,18 @@ function pkins()
             loc=(`grep ${1} ${setting}`)
             echo "${3} seems to be already installed at ${loc[2]}"
             read -rp "Would you like to uninstall ${3} (y/n)? " ans
+            echo "1 ${1} 2 ${2} 3 ${3} 4 ${4}"
             case $ans in
                 [Yy]*)
-                     $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${insp[${3}]}' & exit"
-                     unset insp[${3}]
-                     unset ins[${3}]
+                     #echo "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}' & exit"
+                     $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}' & exit"
+                     unset insp[${4}]
+                     unset ins[${4}]
                      return 1 ;;
 
                     *)
-                     ins[${3}]=`grep ${1} ${setting}``grep ${1} ${setting}`
-                     insp[${3}]=${loc[2]}
+                     ins[${4}]=`grep ${1} ${setting}``grep ${1} ${setting}`
+                     insp[${4}]=${loc[2]}
                      return 1;;
             esac
           fi
