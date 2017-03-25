@@ -358,7 +358,7 @@ function pkins()
                      return 1 ;;
 
                     *)
-                     ins[${4}]=`grep ${1} ${setting}``grep ${1} ${setting}`
+                     ins[${4}]=`grep ${1} ${setting}`
                      insp[${4}]=${loc[2]}
                      return 1;;
             esac
