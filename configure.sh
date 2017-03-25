@@ -265,7 +265,7 @@ function dins()
                 read -rp "Would you like to uninstall $dat from this location (y/n)? " ans
 		case $ans in 
 		[Yy]*)
-                        echo ${pth}
+                        echo "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
                         $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
                         unset inst[${1}]
                         return 1;;
@@ -570,7 +570,15 @@ declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
 for ((d=0; d<${#mis[@]}; d++));
 do
-	mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
+	#mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
+        if grep -q "${OMINAS_DIR}/config/ominas_env_${mis[$d]}" $setting; then
+          mstatus[$d]=$yes
+          tmp=`grep "${OMINAS_DIR}/config/ominas_env_${mis[$d]}" $setting`
+          insp[$d]=${tmp[2]}
+          ins[$d]=${tmp}
+        else
+          mstatus[$d]=$no
+        fi
 done
 for ((d=0; d<${#Data[@]}; d++));
 do
@@ -579,7 +587,7 @@ do
 		dstatus[$d]=$st
                 tmp=`grep "export NV_${Data[$d]}_DATA" $setting`
                 IFS='=' read -ra tmpa <<< "$tmp"
-                inst[$d]=${tmp[1]}
+                inst[$d]=${tmpa[1]}
 	else
                 #echo "{NV_${Data[$d]}_DATA}"
 		dstatus[$d]=$ns

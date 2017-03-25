@@ -1,6 +1,6 @@
 pro delete_ominas_files,dir
 compile_opt idl2,logical_predicate
-if ~n_elements(dir) || strlen(strtrim(dir,2)) then begin
+if (~n_elements(dir)) || (~strlen(strtrim(dir,2))) then begin
   print,'delete_ominas_files: No directory specified'
   return
 endif
