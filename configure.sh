@@ -777,7 +777,7 @@ fi
 
 writesetting
 . $setting
-if [ -v IDL_PATH ]; then
+if [ ! -z ${IDL_PATH+x} ]; then
   . $idlpathfile
   printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
 fi
