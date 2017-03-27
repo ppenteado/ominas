@@ -156,6 +156,9 @@ ominassh="$HOME/.ominas/ominas_setup.sh"
 usersh=$setting
 setting=$ominassh
 osetting="$HOME/.ominas/ominas_setup_old.sh"
+if [ ! -e ${setting} ]; then
+  echo "#!/usr/bin/env bash" > $setting
+fi
 #if [ -e "$setting" ]; then
 #  cp -av $setting $osetting
 #else
@@ -776,7 +779,9 @@ if [ -e idlpath.sh ]; then
 fi
 
 writesetting
-. $setting
+if [ -e "$setting" ]; then
+  . $setting
+fi
 if [ ! -z ${IDL_PATH+x} ]; then
   . $idlpathfile
   printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
