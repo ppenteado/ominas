@@ -162,6 +162,12 @@ if [ ! -d "$HOME/.ominas" ]; then
 else
   printf "~/.ominas directory already exists\n"
 fi
+if [ ! -d "$HOME/ominas_data" ]; then
+  printf "Creating ~/ominas_data directory\n"
+  mkdir $HOME/ominas_data
+else
+  printf "~/ominas_data directory already exists\n"
+fi
 if [ ! -e ${setting} ]; then
   echo "#!/usr/bin/env bash" > ${setting} 
 fi
