@@ -1,8 +1,8 @@
-$MINAS_DIR/demo/data/kernels/lsk/naif0007.tls
-$MINAS_DIR/demo/data/kernels/pck/pck00007.tpc
-$MINAS_DIR/demo/data/kernels/sck/mk00062b.tsc
-$MINAS_DIR/demo/data/kernels/spk/s980326b.bsp
-$MINAS_DIR/demo/data/kernels/ck/ckg01ajh.plt
+$DEMO_SPICE_LSK/naif0007.tls
+$DEMO_SPICE_PCK/pck00007.tpc
+$DEMO_SPICE_SCK/mk00062b.tsc
+$DEMO_SPICE_SPK/s980326b.bsp
+$DEMO_SPICE_CK/ckg01ajh.plt
 
 
 

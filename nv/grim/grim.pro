@@ -9536,6 +9536,8 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
      grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
      if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
 ;timer, t=_t, '--'
+;print, tr(spice_loaded())
+;print, '---------------'
    end
   end
 

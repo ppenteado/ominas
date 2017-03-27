@@ -1,8 +1,27 @@
 ;=============================================================================
+; skp_simple
+;
+;=============================================================================
+function skp_simple, dd, path, ext=ext0
+
+ext0='bc'
+ split_filename, cor_name(dd), dir, name, ext
+ if(NOT keyword_set(name)) then return, ''
+
+ ff = file_search(path + '/' + name + '.' + ext0)
+ if(keyword_set(ff)) then return, ff
+
+ return, file_search(path + '/' + name + '.' + ext + '.' + ext0)
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; spice_kernel_parse
 ;
 ;=============================================================================
-function spice_kernel_parse, dd, prefix, type, time=_time, $
+function spice_kernel_parse, dd, prefix, type, ext=ext, time=_time, $
                        explicit=explicit, strict=strict, all=all
 
  if(keyword_set(_time)) then time = _time[0]
@@ -64,11 +83,26 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
     begin
      for j=0, nkpath-1 do $
       begin
+       ;- - - - - - - - - - - - -
+       ; get path
+       ;- - - - - - - - - - - - -
        path = kpath[j]
        if(keyword_set(dir)) then path = dir 
 
-       nv_message, verb=0.9, 'Calling kernel auto-detect ' + fn
-       _ff = call_function(fn, dd, path, sc=sc, all=all, strict=strict, time=time)
+       ;- - - - - - - - - - - - - - - - -
+       ; try filename-based kernel names
+       ;- - - - - - - - - - - - - - - - -
+       _ff = skp_simple(dd, path, ext=ext)
+
+       ;- - - - - - - - - - - - - - - - -
+       ; use auto-detect function
+       ;- - - - - - - - - - - - - - - - -
+       if(NOT keyword_set(_ff)) then $
+        begin
+         nv_message, verb=0.9, 'Calling kernel auto-detect ' + fn
+         _ff = call_function(fn, dd, path, sc=sc, all=all, strict=strict, time=time)
+        end
+
       if(keyword_set(_ff)) then ff = _ff $
       else nv_message, verb=0.9, 'No kernels found.'
       end
@@ -89,7 +123,6 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
 
    if(keyword_set(ff)) then  k_in = append_array(k_in, ff)
   end
-
 
 
  return, k_in

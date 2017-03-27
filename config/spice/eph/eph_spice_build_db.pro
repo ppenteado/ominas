@@ -27,7 +27,9 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	nocheck:	If set, no checking is performed to determine whether
+;			the database file needs to be updated.
 ;
 ;  OUTPUT: NONE
 ;
@@ -75,8 +77,14 @@
 ;=============================================================================
 ; esbd_kcov
 ;
+;  Some files give an error (which is caught below) an must be ignored.
+;  One example is 04092_04121ca_ISS.bc
+;
 ;=============================================================================
-pro esbd_kcov, type, file, objnum, SPICEFALSE, cover, status=status
+function esbd_kcov, type, file, objnum, needav, status=status
+
+ MAXIV      = 1000
+ WINSIZ     = 2 * MAXIV
 
  status = 0
 
@@ -85,11 +93,16 @@ pro esbd_kcov, type, file, objnum, SPICEFALSE, cover, status=status
   begin
    catch, /cancel
    status = -1
-   return
+   return, 0
  end
 
+ cover = cspice_celld(WINSIZ)
+ cspice_scard, 0L, cover
+
  if(type EQ 'sp') then cspice_spkcov, file, objnum, cover $
- else cspice_ckcov, file, objnum, SPICEFALSE, 'SEGMENT', 0.D, 'SCLK', cover
+ else cspice_ckcov, file, objnum, needav, 'SEGMENT', 0.D, 'SCLK', cover
+
+ return, cover
 end
 ;=============================================================================
 
@@ -99,7 +112,9 @@ end
 ; esbd_kobj
 ;
 ;=============================================================================
-pro esbd_kobj, type, file, ids, status=status
+function esbd_kobj, type, file, status=status
+
+ MAXOBJ     = 1000
 
  status = 0
 
@@ -108,10 +123,14 @@ pro esbd_kobj, type, file, ids, status=status
   begin
    catch, /cancel
    status = -1
-   return
+   return, 0
  end
 
+ ids = cspice_celli(MAXOBJ)
+
  call_procedure, 'cspice_' + type + 'kobj', file, ids
+
+ return, ids
 end
 ;=============================================================================
 
@@ -121,14 +140,12 @@ end
 ; eph_spice_build_db
 ;
 ;=============================================================================
-function eph_spice_build_db, kpath, type
+function eph_spice_build_db, _kpath, type, nocheck=nocheck
 
  ;------------------------
  ; Local parameters
  ;------------------------
  SPICEFALSE = 0B
- MAXIV      = 1000
- WINSIZ     = 2 * MAXIV
  TIMELEN    = 51
  MAXOBJ     = 1000
 
@@ -136,6 +153,7 @@ function eph_spice_build_db, kpath, type
  ; Generate db filename
  ; replace / with _
  ;-------------------------------------
+ kpath = file_search(_kpath)
  fix_path = strjoin(strsplit(kpath,'/',/extract),'_')
 
  ;-------------------------------------
@@ -158,33 +176,50 @@ function eph_spice_build_db, kpath, type
  all_files = file_search(kpath + '/*')
  n_all = n_elements(all_files)
 
- ;-------------------------------------
- ; check against current db 
- ;-------------------------------------
- ww = nwhere(all_files, db_files)
- if(ww[0] NE -1) then w = complement(all_files, ww) $
- else w = indgen(n_all)
+ ;---------------------------------------------------------
+ ; if /nocheck, just return the database
+ ;---------------------------------------------------------
+ if(keyword_set(nocheck)) then return, db
 
- ;------------------------------------------------------
- ; remove any files that have disappeared
- ;------------------------------------------------------
- www = set_difference(w, lindgen(n_db))
- if(www[0] NE -1) then db = rm_list_item(db, www) 
+ ;---------------------------------------------------------
+ ; compare database files with found files
+ ;---------------------------------------------------------
+ if(NOT keyword_set(db_files)) then wnew = lindgen(n_all) $
+ else $
+  begin
+   jj = value_locate(db_files, all_files)        ; find all_files within db_files
+   kk = value_locate(all_files, db_files)        ; find db_files within all_files
+
+   ;- - - - - - - - - - - - - - - - -
+   ; check for new kernel files
+   ;- - - - - - - - - - - - - - - - -
+   wnew = where((jj EQ -1) OR (db_files GT all_files[n_all-1]))
+
+   ;- - - - - - - - - - - - - - - - -
+   ; check for removed kernel files
+   ;- - - - - - - - - - - - - - - - -
+   wrm = where((kk EQ -1) OR (all_files GT db_files[n_db-1]))
+
+   ;-------------------------------------------
+   ; if no changes, return current database
+   ;-------------------------------------------
+   if((wnew[0] EQ -1) AND (wrm[0] EQ -1)) then return, db
+
+   ;----------------------------------------------------
+   ; remove db entries if files have disappeared
+   ;----------------------------------------------------
+   if(wrm[0] NE -1) then db = rm_list_item(db, wrm, /scalar) 
+  end
+ if(wnew[0] EQ -1) then n_new = 0
 
 
- ;-------------------------------------------
- ; if no changes, return current database
- ;-------------------------------------------
- if((w[0] EQ -1) AND (www[0] EQ -1)) then return, db
- 
-
- ;---------------------------------------------------
- ; if new files remain, build new database records
- ;---------------------------------------------------
- n_new = n_elements(w)
+ ;---------------------------------------------------------
+ ; add any new files to database 
+ ;---------------------------------------------------------
+ n_new = n_elements(wnew)
  if(n_new GT 0) then $
   begin
-   new_files = all_files[w]
+   new_files = all_files[wnew]
    nv_message, /con, 'Updating ' + strupcase(type) + ' kernel database...'
 
    ;---------------------------------------------------
@@ -195,29 +230,45 @@ function eph_spice_build_db, kpath, type
    ;---------------------------------------------------
    ; build new records
    ;---------------------------------------------------
-   dbnew = replicate({eph_db_struct}, n_new)
+   nullrec = {eph_db_struct}
+   nullrec.lbltime = -1
+   nullrec.installtime = -1
+   nullrec.first = -1
+   nullrec.mtime = -1
+
    for i=0, n_new-1 do $
     begin
-     dbnew[i].filename = new_files[i]
+     dbrec = !null
 
      infodat = file_info(new_files[i])
-     min_first = -1
-     max_last = -1
      lbltime = -1
      installtime = -1
 
-     cover = cspice_celld(WINSIZ)
-     ids = cspice_celli(MAXOBJ)
+     ;------------------------
+     ; Find ominas timestamp
+     ;------------------------
+     index = where(ts_filenames EQ new_files[i], tscount)
+     nv_message, /verbose, 'Timestamp index = ' + strtrim(index,2)
+     if(tscount EQ 1) then installtime = timestamps[index]
+
+     ;----------------------
+     ; Find PDS Label time
+     ;----------------------
+     creation = eph_spice_read_label(new_files[i])
+     if(keyword_set(creation)) then $
+      begin
+       cspice_tparse, creation, lbl_time, lbl_error
+       if lbl_time NE 0 then lbltime = lbl_time
+      end
 
      ;----------------------------------
      ; get ids of all bodies in kernel
      ;----------------------------------
-     esbd_kobj, type, new_files[i], ids, status=status
+     ids = esbd_kobj(type, new_files[i], status=status)
      if(status EQ 0) then $
       begin
        nobjs = cspice_card(ids)
 
-       found = 0
        if(nobjs GT 0) then $
         begin
          first = (last = '')
@@ -226,65 +277,69 @@ function eph_spice_build_db, kpath, type
           begin
            objnum = ids.base[ids.data+j]
            cspice_bodc2n, objnum, obj, found
-           cspice_scard, 0L, cover
 
            ;----------------------------------------
            ; For each object, collect time windows
            ;----------------------------------------
-           esbd_kcov, type, new_files[i], objnum, SPICEFALSE, cover, status=status
+           cover = esbd_kcov(type, new_files[i], objnum, SPICEFALSE, status=status)
+
+           ;----------------------------------------
+           ; build entries for each coverage window
+           ;----------------------------------------
            if(status EQ 0) then $
             begin
-             found = 1
-             nseg = cspice_wncard(cover)
-             nv_message, /verbose, 'Number of segments: ' + strtrim(nseg,2)
-             for k=0, nseg-1 do $
+             for l=0, n_elements(cover)-1 do $
               begin
-               cspice_wnfetd, cover, k, b, e
-               first = append_array(first,b)
-               last = append_array(last,e)    
+               nseg = cspice_wncard(cover[l])
+               nv_message, /verbose, 'Number of segments: ' + strtrim(nseg,2)
+
+               dbrec = replicate({eph_db_struct}, nseg)
+
+               ;----------------------------------------
+               ; build entries for all segments
+               ;----------------------------------------
+               for k=0, nseg-1 do $
+                begin
+                 cspice_wnfetd, cover[l], k, first, last
  
-               nv_message, /verbose, $
-                'Segment ' + strtrim(k,2) + ', begin: '+ strtrim(b,2) + ', end: ' + strtrim(e,2)
+                 nv_message, /verbose, $
+                  'Segment ' + strtrim(k,2) + ', begin: '+ strtrim(first,2) + ', end: ' + strtrim(first,2)
+
+                 ;----------------------
+                 ; add record
+                 ;----------------------
+                 dbrec[k].filename = new_files[i]
+                 dbrec[k].first = first
+                 dbrec[k].last = last
+                 dbrec[k].mtime = infodat.mtime
+                 dbrec[k].lbltime = lbltime
+                 dbrec[k].installtime = installtime
+                end
               end
+             dbnew = append_array(dbnew, dbrec)
+
             end
           end
-
-         if(found) then $
-          begin
-           min_first = min(first)
-           max_last = max(last)
-
-           ;------------------------
-           ; Find Ominas timestamp
-           ;------------------------
-           index = where(ts_filenames EQ new_files[i], tscount)
-           nv_message, /verbose, 'Timestamp index = ' + strtrim(index,2)
-           if(tscount EQ 1) then installtime = timestamps[index]
-
-           ;----------------------
-           ; Find PDS Label time
-           ;----------------------
-           creation = eph_spice_read_label(new_files[i])
-           if(keyword_set(creation)) then $
-            begin
-             cspice_tparse, creation, lbl_time, lbl_error
-             if lbl_time NE 0 then lbltime = lbl_time
-            end
-          end
-
-         ;----------------------
-         ; add record
-         ;----------------------
-         dbnew[i].filename = new_files[i]
-         dbnew[i].first = min_first
-         dbnew[i].last = max_last
-         dbnew[i].mtime = infodat.mtime
-         dbnew[i].lbltime = lbltime
-         dbnew[i].installtime = installtime
         end
       end
+     ;-----------------------------------------------------------------
+     ; if no record, insert a blank one to record that this file has
+     ; been looked at
+     ;-----------------------------------------------------------------
+     if(NOT keyword_set(dbrec)) then $
+      begin
+       nullrec.filename = new_files[i]
+       dbnew = append_array(dbnew, nullrec)
+      end
+
     end
   end
+
+
+ ;------------------------------
+ ; construct new database
+ ;------------------------------
+ dbnew = append_array(db, dbnew)
 
 
  ;----------------------

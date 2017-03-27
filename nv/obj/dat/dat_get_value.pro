@@ -86,11 +86,13 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ;--------------------------------------------
  ; record any transient keyvals
  ;--------------------------------------------
- _dd[0] = dat_add_transient_keyvals(_dd[0], trs)
+ _dd = dat_add_transient_keyvals(_dd, trs)
+
 
  ;--------------------------------------------
  ; build translators list
  ;--------------------------------------------
+; need to group dd based on instrument...
  if(NOT keyword_set(tr_override)) then $
   begin
    if(NOT ptr_valid(_dd[0].input_translators_p)) then $

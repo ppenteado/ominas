@@ -91,7 +91,11 @@
 ;
 ;   The commented lines shows how translator keywords can be passed to 
 ;   override the keywords given in the translators table.
-;
+; ctmod, top=top
+
+;-------------------------------------------------------------------------
+;+
+
 ;   The keyword 'name' could be used in pg_get_planets to select only Jupiter
 ;   and the Galilean satellites.  By default, every body that's relevant to
 ;   the mission and can be found in the kernel list is returned.  Also, the 
@@ -184,10 +188,7 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;-
 ;-------------------------------------------------------------------------
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-timer, t=_t
-;          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
           pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
-timer, t=_t, 'xx'
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 
