@@ -156,9 +156,20 @@ ominassh="$HOME/.ominas/ominas_setup.sh"
 usersh=$setting
 setting=$ominassh
 osetting="$HOME/.ominas/ominas_setup_old.sh"
+if [ ! -d "$HOME/.ominas" ]; then
+  printf "Creating ~/.ominas directory\n"
+  mkdir $HOME/.ominas
+else
+  printf "~/.ominas directory already exists\n"
+fi
+if [ ! -d "$HOME/ominas_data" ]; then
+  printf "Creating ~/ominas_data directory\n"
+  mkdir $HOME/ominas_data
+else
+  printf "~/ominas_data directory already exists\n"
+fi
 if [ ! -e ${setting} ]; then
-  echo aa
-  echo "#!/usr/bin/env bash" > $setting
+  echo "#!/usr/bin/env bash" > ${setting} 
 fi
 #if [ -e "$setting" ]; then
 #  cp -av $setting $osetting
