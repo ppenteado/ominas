@@ -46,8 +46,9 @@
 ;=============================================================================
 function dat_add_transient_keyvals, _dd, trs
 @core.include
-
- if(ptr_valid(_dd.transient_keyvals_p)) then nv_ptr_free, _dd.transient_keyvals_p
+ 
+ w = where(ptr_valid(_dd.transient_keyvals_p))
+ if(w[0] NE -1) then nv_ptr_free, _dd[w].transient_keyvals_p
 
  ;--------------------------------------------
  ; parse any transient keyvals

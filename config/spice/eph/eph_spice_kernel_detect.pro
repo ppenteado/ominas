@@ -79,7 +79,7 @@ function eph_spice_kernel_detect, dd, kpath, type, $
  
  djd = 0d
  if(keyword_set(_djd)) then djd = _djd
- djd = djd * 86400d 
+ dsec = djd * 86400d 
 
  if(~keyword_set(all) && ~keyword_set(time)) then begin
     nv_message, name='eph_spice_kernel_detect', 'Must specify /all or time.'
@@ -108,19 +108,19 @@ function eph_spice_kernel_detect, dd, kpath, type, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; convert ET to sclk ticks
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   before_time = time-djd
-   after_time = time+djd
+   before_time = time-dsec
+   after_time = time+dsec
 
    if(keyword_set(ticks)) then $
     begin
-     cspice_sce2t, sc, time-djd, before_time
-     cspice_sce2t, sc, time+djd, after_time
+     cspice_sce2t, sc, time-dsec, before_time
+     cspice_sce2t, sc, time+dsec, after_time
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; get all files with valid ranges that include input time
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   valid = where(data.first LT after_time AND data.last GT before_time, count)
+   valid = where((data.first LT after_time) AND (data.last GT before_time), count)
 
    nv_message, verb=0.9, 'Number of valid kernels including given time = ' + strtrim(count,2)
    nv_message, /verbose, 'Valid indexes = ' + strtrim(valid,2)
@@ -157,7 +157,6 @@ function eph_spice_kernel_detect, dd, kpath, type, $
  files = files[ss]
 
  return, files
-
 end
 ;=============================================================================
 
