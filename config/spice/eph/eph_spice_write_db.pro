@@ -2,7 +2,50 @@
 ; eph_spice_write_db
 ;
 ;=============================================================================
-pro eph_spice_write_db, dbfile, db
+pro eph_spice_write_db, dbfile, db, nosort=nosort
+
+ nv_message, verb=0.9, 'Writing kernel data base file ' + dbfile
+
+ ;---------------------------------------------------------------------------
+ ; sort by file name to make searching on file names easier
+ ;---------------------------------------------------------------------------
+; ss = sort(db.filename)
+; db = db[ss]
+
+ ;---------------------------------------------------------------------------
+ ; strings need to all be the same length for the file to be read correctly
+ ;---------------------------------------------------------------------------
+ db.filename = string(db.filename, format='(A256)')
+
+ ;---------------------------------------------------------------------------
+ ; write the data
+ ;---------------------------------------------------------------------------
+ openw, unit, dbfile, /get_lun
+
+; need to write a byteorder test number...
+
+ writeu, unit, long(n_elements(db))
+ writeu, unit, db
+
+ close, unit
+ free_lun, unit
+
+ ;---------------------------------------------------------------------------
+ ; unpad the file names
+ ;---------------------------------------------------------------------------
+ db.filename = strtrim(db.filename,2)
+
+ eph_spice_cache_db, dbfile, db
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; eph_spice_write_db
+;
+;=============================================================================
+pro ___eph_spice_write_db, dbfile, db
 
  nv_message, verb=0.9, 'Writing kernel data base file ' + dbfile
 

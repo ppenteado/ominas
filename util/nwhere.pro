@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;       Finds subscripts where an element in the first array matches
+;       Finds subscripts of elements in the first input array that match
 ;       elements in the second input array.
 ;
 ;
@@ -25,7 +25,8 @@
 ;
 ;
 ;  OUTPUT:
-;       NONE
+;       reverse_indices:
+;		Subscripts wrt the second input array.
 ;
 ; KEYWORDS:
 ;       NONE
@@ -36,7 +37,7 @@
 ;
 ;
 ; STATUS:
-;       Completed.
+;       Completed, but not as efficient as desired.
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -44,23 +45,52 @@
 ;
 ;-
 ;=============================================================================
-function nwhere, ref, list
+function nwhere, ref, list, reverse_indices=reverse_indices
 
  n = n_elements(list)
 
  i=0l
  while(i LT n) do $
   begin
-   w = append_array(w, where(ref EQ list[i]))
+   ww = where(ref EQ list[i])
+   w = append_array(w, ww)
+   if(arg_present(reverse_indices)) then $
+        if(ww[0] NE -1) then $
+                   ii = append_array(ii, make_array(n_elements(ww), val=i))
    i = i + 1
   end
 
 ; for i=0, n-1 do w[i] = (where(ref EQ list[i]))[0]
 
  ww = where(w NE -1)
+ if(arg_present(reverse_indices)) then $
+  begin
+   if(keyword__set(ii)) then reverse_indices = unique(ii) $
+   else reverse_indices = -1
+  end
 
  if(ww[0] EQ -1) then return, -1
- return, w[ww]
+ return, unique(w[ww])
+; return, w[ww]
+end
+;===========================================================================
+
+
+
+;=============================================================================
+function _nwhere, ref, list
+
+ nrr = n_elements(ref)
+ nll = n_elements(list)
+
+ rr = lindgen(nrr) # make_array(nll, val=1l)
+ ll = lindgen(nll) ## make_array(nrr, val=1l)
+
+ rr = (rr+ll) mod nrr
+
+ w = where(ref[rr] EQ list[ll])
+
+ return, rr[w]
 end
 ;===========================================================================
 

@@ -63,7 +63,7 @@ function eph_spice_ck_detect, dd, ckpath, $
                djd=djd, sc=sc, time=_time, all=all, strict=strict
 
  return, eph_spice_kernel_detect(dd, ckpath, 'c', $
-               djd=1d, sc=sc, time=_time, all=all, strict=strict)
+               djd=0d, sc=sc, time=_time, all=all, strict=strict)
 
 end
 ;=============================================================================

@@ -16,7 +16,6 @@ $DEMO_SPICE_CK/001026_001029ra.bc
 $DEMO_SPICE_CK/001029_001031ra.bc
 
 # used for processing Jupiter imagery
->>>>>>> origin/demo
 $DEMO_SPICE_PCK/cpck14Dec2001.tpc
 $DEMO_SPICE_SPK/010420R_SCPSE_EP1_JP83.bsp
 
