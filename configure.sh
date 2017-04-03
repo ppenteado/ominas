@@ -157,6 +157,7 @@ usersh=$setting
 setting=$ominassh
 osetting="$HOME/.ominas/ominas_setup_old.sh"
 if [ ! -e ${setting} ]; then
+  echo aa
   echo "#!/usr/bin/env bash" > $setting
 fi
 #if [ -e "$setting" ]; then
