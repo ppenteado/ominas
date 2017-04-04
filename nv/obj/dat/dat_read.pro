@@ -219,12 +219,12 @@ function drd_read, _filename, data, header, $
  if(NOT keyword_set(nodata)) then $
 		 nv_message, verb=0.1, 'Reading ' + filename
  _data = call_function(input_fn, dd, $
-        	  _header, _dim, _type, _min, _max, $
+        	  _header, _dim, _typecode, _min, _max, $
         			   /nodata, sample=sample, gff=gff)
- if(NOT defined(_type)) then $
+ if(NOT defined(_typecode)) then $
   begin
    nv_message, /con, 'WARNING: Type code not determined, converting to byte.'
-   _type = 1
+   _typecode = 1
   end
 
  ;---------------------------------
@@ -247,7 +247,7 @@ function drd_read, _filename, data, header, $
     begin
      if(keyword_set(_header)) then header = *_header[j]
      dim = *_dim[j]
-     type = _type[j]
+     typecode = _typecode[j]
      min = _min[j]
      max = _max[j]
     end $
@@ -255,7 +255,7 @@ function drd_read, _filename, data, header, $
     begin
      if(keyword_set(_header)) then header = _header
      dim = _dim
-     type = _type
+     typecode = _typecode
      min = _min
      max = _max
     end 
@@ -269,7 +269,7 @@ function drd_read, _filename, data, header, $
          min=min, $
          max=max, $
          dim=dim, $
-         type=type
+         typecode=typecode
 
    ;-----------------------
    ; instrument

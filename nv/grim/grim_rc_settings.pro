@@ -32,7 +32,8 @@ pro grim_rc_settings, rcfile=rcfile, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
-        render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays
+        render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
+        delay_overlays=delay_overlays
 	
 
  ;----------------------------------------------------
@@ -173,6 +174,11 @@ pro grim_rc_settings, rcfile=rcfile, $
                    _overlays = grim_rc_value(keywords, value_ps, 'OVERLAYS') $
  else _overlays = overlays
  if(keyword_set(_overlays)) then overlays = _overlays
+
+ if(n_elements(delay_overlays) EQ 0) then $
+                   _delay_overlays = grim_rc_value(keywords, value_ps, 'DELAY_OVERLAYS') $
+ else _delay_overlays = delay_overlays
+ if(keyword_set(_delay_overlays)) then delay_overlays = _delay_overlays
 
  if(n_elements(frame) EQ 0) then $
                    _frame = grim_rc_value(keywords, value_ps, 'FRAME') $

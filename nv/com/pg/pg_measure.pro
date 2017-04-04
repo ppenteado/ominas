@@ -184,7 +184,7 @@ function _pgm_dn, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=iner
  pp = fix(p)
 
  n = n_elements(dd)
- dn0 = (dn1 = make_array(n, type=dat_type(dd[0])))
+ dn0 = (dn1 = make_array(n, type=dat_typecode(dd[0])))
 
  for i=0, n-1 do $
   begin

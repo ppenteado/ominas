@@ -81,7 +81,7 @@
 ;  One example is 04092_04121ca_ISS.bc
 ;
 ;=============================================================================
-function esbd_kcov, type, file, objnum, needav, status=status
+function esbd_kcov, type, file, id, needav, status=status
 
  MAXIV      = 1000
  WINSIZ     = 2 * MAXIV
@@ -99,8 +99,8 @@ function esbd_kcov, type, file, objnum, needav, status=status
  cover = cspice_celld(WINSIZ)
  cspice_scard, 0L, cover
 
- if(type EQ 'sp') then cspice_spkcov, file, objnum, cover $
- else cspice_ckcov, file, objnum, needav, 'SEGMENT', 0.D, 'SCLK', cover
+ if(type EQ 'sp') then cspice_spkcov, file, id, cover $
+ else cspice_ckcov, file, id, needav, 'SEGMENT', 0.D, 'SCLK', cover
 
  return, cover
 end
@@ -126,11 +126,11 @@ function esbd_kobj, type, file, status=status
    return, 0
  end
 
- ids = cspice_celli(MAXOBJ)
+ obj = cspice_celli(MAXOBJ)
 
- call_procedure, 'cspice_' + type + 'kobj', file, ids
+ call_procedure, 'cspice_' + type + 'kobj', file, obj
 
- return, ids
+ return, obj
 end
 ;=============================================================================
 
@@ -168,12 +168,26 @@ function eph_spice_build_db, _kpath, type, nocheck=nocheck
  db_files = ''
  db = eph_spice_read_db(dbfile)
  n_db = n_elements(db)
- if(keyword_set(db)) then db_files = db.filename
+ if(keyword_set(db)) then $
+  begin
+   db_files_all = db.filename
+   db_files = unique(db_files_all)
+  end
 
  ;-------------------------------------
  ; get all filenames
  ;-------------------------------------
  all_files = file_search(kpath + '/*')
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; filter out some common extensions that we know are not kernel files
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ split_filename, all_files, dir, name, ext
+
+ w = where(ext NE 'lbl')
+ if(w[0] EQ -1) then return, db
+ all_files = all_files[w]
+
  n_all = n_elements(all_files)
 
  ;---------------------------------------------------------
@@ -190,15 +204,21 @@ function eph_spice_build_db, _kpath, type, nocheck=nocheck
    jj = value_locate(db_files, all_files)        ; find all_files within db_files
    kk = value_locate(all_files, db_files)        ; find db_files within all_files
 
-   ;- - - - - - - - - - - - - - - - -
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
    ; check for new kernel files
-   ;- - - - - - - - - - - - - - - - -
-   wnew = where((jj EQ -1) OR (db_files GT all_files[n_all-1]))
+   ;  New files are ones whose returned interval start subscripts do not
+   ;  correspond to existing files; i.e., the interval boundary missed the
+   ;  file.
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+   wnew = unique(append_array(/pos, where(jj EQ -1), $
+                                    where(all_files NE db_files[jj])))
+   
 
    ;- - - - - - - - - - - - - - - - -
    ; check for removed kernel files
    ;- - - - - - - - - - - - - - - - -
-   wrm = where((kk EQ -1) OR (all_files GT db_files[n_db-1]))
+   wrm = unique(append_array(/pos, where(kk EQ -1), $
+                                    where(db_files NE all_files[kk])))
 
    ;-------------------------------------------
    ; if no changes, return current database
@@ -208,7 +228,16 @@ function eph_spice_build_db, _kpath, type, nocheck=nocheck
    ;----------------------------------------------------
    ; remove db entries if files have disappeared
    ;----------------------------------------------------
-   if(wrm[0] NE -1) then db = rm_list_item(db, wrm, /scalar) 
+   if(wrm[0] NE -1) then $
+    begin
+     for i=0, n_elements(wrm)-1 do $
+      begin
+       w = where(db_files_all EQ db_files[wrm[i]])
+       db[w].filename = ''
+      end
+     w = where(db.filename EQ '')
+     db = rm_list_item(db, w, /scalar) 
+    end
   end
  if(wnew[0] EQ -1) then n_new = 0
 
@@ -264,30 +293,28 @@ function eph_spice_build_db, _kpath, type, nocheck=nocheck
      ;----------------------------------
      ; get ids of all bodies in kernel
      ;----------------------------------
-     ids = esbd_kobj(type, new_files[i], status=status)
+     obj = esbd_kobj(type, new_files[i], status=status)
      if(status EQ 0) then $
       begin
-       nobjs = cspice_card(ids)
+       nobj = cspice_card(obj)
 
-       if(nobjs GT 0) then $
+       if(nobj GT 0) then $
         begin
-         first = (last = '')
-
-         for j=0, nobjs-1 do $
+         for j=0, nobj-1 do $
           begin
-           objnum = ids.base[ids.data+j]
-           cspice_bodc2n, objnum, obj, found
+           id = obj.base[obj.data+j]
 
            ;----------------------------------------
            ; For each object, collect time windows
            ;----------------------------------------
-           cover = esbd_kcov(type, new_files[i], objnum, SPICEFALSE, status=status)
+           cover = esbd_kcov(type, new_files[i], id, SPICEFALSE, status=status)
 
            ;----------------------------------------
            ; build entries for each coverage window
            ;----------------------------------------
            if(status EQ 0) then $
             begin
+             first = (last = '')
              for l=0, n_elements(cover)-1 do $
               begin
                nseg = cspice_wncard(cover[l])
@@ -309,6 +336,7 @@ function eph_spice_build_db, _kpath, type, nocheck=nocheck
                  ; add record
                  ;----------------------
                  dbrec[k].filename = new_files[i]
+                 dbrec[k].id = id
                  dbrec[k].first = first
                  dbrec[k].last = last
                  dbrec[k].mtime = infodat.mtime

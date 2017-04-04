@@ -35,9 +35,9 @@ end_keywords)
  if(keyword_set(compress)) then self.compress = compress
 
  ;-----------------------
- ; type
+ ; typecode
  ;-----------------------
- if(keyword_set(type)) then self.type = type
+ if(keyword_set(typecode)) then self.typecode = typecode
 
  ;-----------------------
  ; gff
@@ -211,9 +211,9 @@ end
 ;	cache:		Max cache size data array.  Used to deterine whether 
 ;			to load / unload data samples.  -1 means infinite.
 ;
-;	dim_p:	Pointer to array giving data dimensions.
+;	dim_p:		Pointer to array giving data dimensions.
 ;
-;	type:	Data type code.
+;	typecode:	Data type code.
 ;
 ;	filename:	Name of data file.
 ;
@@ -315,7 +315,7 @@ pro ominas_data__define
 	max:			0d, $		; Maximum data value
 	min:			0d, $		; Minimum data value
 	dim_p:			nv_ptr_new(), $	; data dimensions
-	type:			0b, $		; data type
+	typecode:		0b, $		; data type code
 
 	filename:		'', $		; Name of source file.
 	filetype:		'', $		; Filetype string

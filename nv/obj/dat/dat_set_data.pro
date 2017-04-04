@@ -150,7 +150,7 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
  ;----------------------------------------------
  ; update description
  ;----------------------------------------------
- _dd.type = size(data, /type)
+ _dd.typecode = size(data, /type)
  _dd.min = min(data)
  _dd.max = max(data)
 

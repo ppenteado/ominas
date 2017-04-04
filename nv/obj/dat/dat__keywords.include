@@ -4,7 +4,7 @@
 	max=max, $
 	dim=dim, $
 	cache=cache, $
-	type=type, $
+	typecode=typecode, $
 	gff=gff, $
 	data=data, $
 	abscissa=abscissa, $
