@@ -551,16 +551,38 @@ function icy() {
 # Icy is installed based on auto-detection of the OS.                    #
 #------------------------------------------------------------------------#
 
+if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
+  echo "Icy appears to be already configured:"
+  echo ${ominas_icytest}
+  read -rp "Do you wish to uninstall Icy (y/n)?"  ans
+  case $ans in
+    [Yy]*)
+           $idlbin -e 'ominas_icy_remove'
+           if [ -e idlpathr.sh ]; then 
+             source idlpathr.sh
+             rm idlpathr.sh
+           fi
+           return 1;; 
+        *) return 1;;
+  esac
+fi
+
 
 printf "OMINAS requires the NAIF Icy toolkit to process SPICE kernels.\n"
-read -rp "Would you like to configure Icy for OMINAS? [y]" ans
+#read -rp "Would you like to configure Icy for OMINAS? [y]" ans
+ans=y
 if [[ -z "${ans// }" ]]; then
  ans=y
 fi
 case $ans in
 	[Yy]*)
-		icyflag=true	
-		read -rp "Would you like to install Icy from the internet now? [y]" ans
+		icyflag=true
+                if [ ${ominas_auto} == 1 ] ; then
+                  echo "Auto option selected in the main menu; will download and configure Icy at ~/ominas_data/icy"
+                  ans=y
+                else
+		  read -rp "Would you like to install Icy from the internet now? [y]" ans
+                fi
                 if [[ -z "${ans// }" ]]; then
                   ans=y
                 fi
@@ -570,13 +592,16 @@ case $ans in
 				os=$(uname -s); if [[ $os == "Darwin" ]]; then ostr="MacIntel_OSX_AppleC"; else ostr="PC_Linux_GCC"; fi
 				#curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" >"../icy.tar.Z"
                                 echo "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" "~/ominas_data/icy.tar.Z"
-                                curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" > ~/ominas_data/icy.tar.Z
+                                #curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" > ~/ominas_data/icy.tar.Z
+                                ldir=`eval echo ~/ominas_data/`
+                                ./pp_wget "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" --localdir=${ldir}
                                 owd=$PWD
 				#cd ..
                                 cd ~/ominas_data/
 				cdflag=true
-				ext "icy.tar.Z"
-				ext "icy.tar"
+				#ext "icy.tar.Z"
+				#ext "icy.tar"
+                                tar -xzvf "icy.tar.Z"
 				cd icy
 				icypath=$PWD
 				/bin/csh makeall.csh
@@ -657,14 +682,16 @@ do
 		dstatus[$d]=$ns
 	fi
 done
-$idlbin -e 'exit,status=strmatch(pref_get("IDL_DLM_PATH"),"*icy/lib*")'
-if [ $? ] ; then
+#$idlbin -e 'exit,status=strmatch(pref_get("IDL_DLM_PATH"),"*icy/lib*")'
+ominas_icytest=`$idlbin -e 'ominas_icy_test' 2> /dev/null`
+if [ $? == 0 ] ; then
   icyst='CONFIGURED'
   ominas_icyst=1
 else
   icyst='NOT CONFIGURED'
   ominas_icyst=0
 fi
+#echo $ominas_icytest
 export ominas_icyst
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
@@ -722,11 +749,33 @@ pr=1
 while [ $pr == 1 ]; do
 read -rp "Modify Current OMINAS configuration (exit/all 1 2 ...)?  " ans
 
+ominas_auto=0
 if [ $ans == "all" ] || [ $ans == "a" ] || [ $ans == "A" ]; then
-  ominas_auto=1
-  ans="1 2 3 4 5 6 7 9 10 11 12 13"
-else
-  ominas_auto=0
+
+  cat <<AUTOP
+
+  You have selected the auto option for OMINAS setup.
+
+  This option will download and configure every package, to their
+default locations, without prompting for confirmation or install
+directories. If data packages are not already present in the default
+directories, they will be downloaded, which may take a long time and
+several GB of disk space. If any files to be downloaded are already
+present in their default location, their download will be skipped.
+
+
+AUTOP
+
+  read -rp "Proceed? [y]" ansy
+  if [[ -z "${ansy// }" ]]; then
+    ansy=y
+  fi
+  if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
+    ominas_auto=1
+    ans="1 2 3 4 5 6 7 9 10 11 12 13"
+  else
+    ans="all"
+  fi
 fi
 export ominas_auto
 pr=0
@@ -775,6 +824,7 @@ do
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 corest=${yes}
 				dins $(($num-8)) 	;;
+                all)            pr=0;;
 		*)
 				printf "Error: Invalid package or catalog specified\n" 1>&2
                                 pr=1;;
@@ -808,7 +858,11 @@ fi
 # it has not, the path to the OMINAS directory will be written in the    #
 # IDL_PATH, inside of IDL.                                               #
 #------------------------------------------------------------------------#
-
+#if [ $ominas_icyst == 1 ]; then
+#  icyflag=true
+#else
+#  icyflag=false
+#fi
 cat <<IDLCMD >paths.pro
 flag='$icyflag'
 path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
