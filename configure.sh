@@ -711,7 +711,7 @@ pr=0
 for num in $ans
 do
   if [ $num == "2" ]; then
-    if [ $DFLAG  == "true" ]; then
+    if [ $DFLAG  == "true" ] && [ ${ominas_auto} == 0 ]; then
       DFLAG="false"
       demost="NOT CONFIGURED"
     else
