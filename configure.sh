@@ -338,6 +338,7 @@ function pkins()
 		#		dstr="DFLAG=false; "
 		#		printf "Demo package will not be installed...\n"
 		#esac
+        echo "aaaaaa" $1 $2 $3
         if [[ $1 == "ominas_env_def.$shtype" ]]; then
                 if [[ "$2" == "$no" ]]; then
                   printf "Installing OMINAS Core...\n"
@@ -472,7 +473,7 @@ echo $ins_ominas_env_def >> $setting
 for ((d=0; d<6; d++));
 do
         dat=${Data[$d]}
-        #echo "$d: ${inst[$d]}"
+        echo "$d: ${inst[$d]}"
         #if grep -q NV_${Data[$d]}_DATA $setting; then
         if [ -z ${inst[$d]+x} ]  ;then
           #echo "${d}:0 ${inst[$d]}"
@@ -649,7 +650,7 @@ Mission Packages:
 	7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
            Subsetted, about 8 GB as of Jan/2017
 Data:
-        8) NAIF Generic Kernels . . . . . . . . .  $genst
+        8) NAIF Generic Kernels . . . . . . . . .  ${dstatus[0]}
            About 22 GB as of Dec/2016
 	9) SEDR image data . . . . . . . . . . . . ${dstatus[1]}
        10) TYCHO2 star catalog . . . . . . . . . . ${dstatus[2]}
@@ -663,12 +664,14 @@ For more information, see
 https://ppenteado.github.io/ominas_doc/demo/install_guide.html
 PKGS
 
-read -rp "Modify Current OMINAS configuration (exit/no/all 1 2 ...)?  " ans
+pr=1
+#while [ $pr ]; do
+read -rp "Modify Current OMINAS configuration (exit/all 1 2 ...)?  " ans
 
-if [ $ans == "all" ]; then
+if [ $ans == "all" ] || [ $ans == "a" ] || [ $ans == "A" ]; then
   ans="1 2 3 4 5 6 7 9 10 11 12 13"
 fi
-
+pr=0
 for num in $ans
 do
   if [ $num == "2" ]; then
@@ -684,8 +687,8 @@ done
 for num in $ans
 do
 	case $num in
-		exit)
-				exit 0 	;;
+		[eE]|exit)
+				return	3;;
 		[1])
 				pkins ominas_env_def.sh "${corest}" coreu
                                 corest=${yes}
@@ -698,8 +701,8 @@ do
                                 icy
                                                         ;;
 
-		[Nn]*)
-				break 		;;
+		#[Nn]*)
+		#		break 		;;
 		[4567])
 				pkins ominas_env_def.sh "${corest}" $(($num-4))
                                 corest=${yes}
@@ -710,10 +713,12 @@ do
 				dins $(($num-8)) 	;;
 		*)
 				printf "Error: Invalid package or catalog specified\n" 1>&2
+                                pr=1;;
     esac
 done
 
 
+#done
 
 XIDL_DIR=$OMINAS_DIR/util/xidl/
 
@@ -759,8 +764,9 @@ if getenv('IDL_DLM_PATH') then begin &\$
   free_lun,lun &\$ 
 endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
 PRINT, '$OMINAS_DIR added to IDL_PATH'
-path+=':+./util/'
-idla
+!path+=':+$OMINAS_DIR/util/'
+print,!path
+idlastro_download
 EXIT
 IDLCMD
 
@@ -805,11 +811,14 @@ else
   echo source $setting >> $usersh
 fi
 printf "OMINAS configuration was written to $usersh.\n"
-
+return 0
 }
-
+echo " "
 while [ 1 ]; do
   main
+  if  [ $? == 3 ] ; then
+    break
+  fi
   
 done
 
