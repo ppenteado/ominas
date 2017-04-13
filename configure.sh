@@ -272,6 +272,9 @@ function dins()
 	mnum=$1
 	dat=${Data[$mnum]}
 	if grep -q "export NV_${dat}_DATA" ${setting}; then
+                if [ ${ominas_auto} == 1 ] ; then
+                  return 1
+                fi 
 		printf "Warning: $dat data files appear to already be set at this location:\n"
                 eval echo \$NV_${dat}_DATA
                 tmp=`grep "export NV_${dat}_DATA" $setting`
@@ -347,6 +350,9 @@ function pkins()
                 fi
                 pstr="source ${OMINAS_DIR}/config/$1"
                 if [[ "$3" == "coreu" ]] ; then
+                if [ ${ominas_auto} == 1 ] ; then
+                  return 1
+                fi
 #                pstr="source ${OMINAS_DIR}/config/$1"
                   if grep -q $1 ${setting}; then
                     read -rp "Would you like to uninstall the OMINAS core (y/n)? " ans
@@ -363,6 +369,9 @@ function pkins()
 	fi
         if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
           if grep -q ${1} ${setting}; then
+            if [ ${ominas_auto} == 1 ] ; then
+              return 1
+            fi
             loc=(`grep ${1} ${setting}`)
             echo "${3} seems to be already installed at ${loc[2]}"
             read -rp "Would you like to uninstall ${3} (y/n)? " ans
@@ -404,7 +413,10 @@ function pkins()
                             fi
                             pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}";;
                           *)
-			    read -rp "Please enter the location of your existing $3 kernel pool: " datapath
+			    read -rp "Please enter the location of your existing $3 kernel pool: [~/ominas_data/${3}]" datapath
+                            if [ -z ${datapath} ] ; then
+                              datapath=~/ominas_data/${3}
+                            fi
                             datapath=`eval echo ${datapath}`
 			    if ! [[ -d $datapath ]]; then
 			    	setdir $2
@@ -478,7 +490,7 @@ echo $ins_ominas_env_def >> $setting
 for ((d=0; d<6; d++));
 do
         dat=${Data[$d]}
-        echo "$d: ${inst[$d]}"
+        #echo "$d: ${inst[$d]}"
         #if grep -q NV_${Data[$d]}_DATA $setting; then
         if [ -z ${inst[$d]+x} ]  ;then
           #echo "${d}:0 ${inst[$d]}"
@@ -516,6 +528,7 @@ function icy() {
 # copy. If NAIF kernels will not be used, then no action is taken.       #
 # Icy is installed based on auto-detection of the OS.                    #
 #------------------------------------------------------------------------#
+
 
 printf "OMINAS requires the NAIF Icy toolkit to process SPICE kernels.\n"
 read -rp "Would you like to configure Icy for OMINAS? [y]" ans
@@ -625,9 +638,12 @@ done
 $idlbin -e 'exit,status=strmatch(pref_get("IDL_DLM_PATH"),"*icy/lib*")'
 if [ $? ] ; then
   icyst='CONFIGURED'
+  ominas_icyst=1
 else
   icyst='NOT CONFIGURED'
+  ominas_icyst=0
 fi
+export ominas_icyst
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
 	Current OMINAS configuration settings
@@ -685,8 +701,12 @@ while [ $pr == 1 ]; do
 read -rp "Modify Current OMINAS configuration (exit/all 1 2 ...)?  " ans
 
 if [ $ans == "all" ] || [ $ans == "a" ] || [ $ans == "A" ]; then
+  ominas_auto=1
   ans="1 2 3 4 5 6 7 9 10 11 12 13"
+else
+  ominas_auto=0
 fi
+export ominas_auto
 pr=0
 for num in $ans
 do
