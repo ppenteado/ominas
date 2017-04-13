@@ -24,4 +24,29 @@ mkdir -p ~/.ominas/timestamps/GSC
 ./pp_wget "${baseurl}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
 
 #process the files
-#idl -e '!path+=":./util/downloader"& unpack_gsc' -args $@
+
+echo "Downloads done, processing files..."
+
+if [ -z ${idlbin+x} ]; then
+  if [ "$IDL_DIR" = "" ]; then
+        idl=`which idl`
+        if [ "$idl" = "" ]; then
+          read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
+          IDL_DIR="$idldir"
+          export IDL_DIR
+          printf "Using IDL from $IDL_DIR\n"
+          idlbin=$IDL_DIR/bin/idl
+        else
+          printf "Using IDL at $idl\n"
+          idlbin=$idl
+        fi
+  else
+        printf "IDL_DIR found, $IDL_DIR, using it\n"
+        idlbin=$IDL_DIR/bin/idl
+  fi
+fi
+echo "Using IDL at ${idlbin}"
+
+
+
+#$idlbin -e '!path+=":./util/downloader"& unpack_gsc' -args $@
