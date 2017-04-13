@@ -7,7 +7,7 @@
 echo "This script wiill download all kernels from the PDS Voyager archive ("\
 "http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/. As of December/2016, this adds to 163 MB."
 
-read -rp "Continue? " ans
+read -rp "Continue?[y] " ans
 case $ans in
   [Nn]*)
     exit 1

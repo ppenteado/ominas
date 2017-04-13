@@ -20,7 +20,7 @@ mkdir -p ~/.ominas/timestamps/SEDR
 ts=`eval echo "~/.ominas/timestamps/"`
 
 
-./pp_wget "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
+#./pp_wget "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
 
 #unpack the catalog files
 #idl -e "file_gunzip,'$1'+path_sep()+'sao.dat.gz',/verbose"

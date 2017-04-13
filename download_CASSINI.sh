@@ -7,7 +7,7 @@
 echo "This script will download a subset of kernels from the PDS Cassini archive ("\
 "http://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/. As of November/2016, this adds to 16GB."
 
-read -rp "Continue? " ans
+read -rp "Continue?[y] " ans
 case $ans in
   [Nn]*)
     exit 1
