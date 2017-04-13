@@ -36,6 +36,7 @@ pro eph_db_struct__define
  struct = $
     { eph_db_struct, $
 	filename:	'', $	
+	id:		0l, $	
 	first:		0d, $	
 	last :		0d, $	
 	mtime:		0d, $	

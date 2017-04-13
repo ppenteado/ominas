@@ -18,7 +18,8 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	xd:	Array of objects of arbitrary type.
+;	xd:	Array of objects.  Objects may have different classes, but only
+;		their common fields are dereferenced.
 ;
 ;  OUTPUT:
 ;	NONE

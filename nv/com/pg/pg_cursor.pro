@@ -158,7 +158,7 @@ function _pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
  pp = fix(p)
 
  n = n_elements(dd)
- dn = make_array(n, type=dat_type(dd[0]))
+ dn = make_array(n, type=dat_typecode(dd[0]))
 
  for i=0, n-1 do $
   begin

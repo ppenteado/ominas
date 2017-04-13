@@ -14,7 +14,7 @@
  if(arg_present(filename)) then filename = dat_filename(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(filetype)) then filetype = dat_filetype(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(dim)) then dim = dat_dim(_xd, cat=cat, condition=condition, /noevent)
- if(arg_present(type)) then type = dat_type(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(typecode)) then typecode = dat_typecode(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(gff)) then gff = dat_gff(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(dh)) then dh = dat_dh(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(instrument)) then instrument = dat_instrument(_xd, cat=cat, condition=condition, /noevent)

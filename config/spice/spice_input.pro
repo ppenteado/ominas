@@ -214,7 +214,8 @@
 ;
 ;=============================================================================
 pro si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
-                                           constants=constants, time=time
+                             constants=constants, time=time, status=status
+ status = 0
 
  ;-----------------------------------------------------------------
  ; if data descriptor already kernel list, load those kernels
@@ -358,12 +359,30 @@ pro si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
  ck_in = ''
  if(NOT keyword_set(pos) AND (NOT keyword_set(od))) then $
    if(NOT keyword_set(constants)) then $
+    begin
      ck_in = spice_kernel_parse(dd, prefix, 'ck', ext='bc', $
 	       exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
+     if(NOT keyword_set(ck_in)) then $
+      begin
+       nv_message, /con, 'No C kernels found.'
+       status = -1
+       return
+      end
+    end
+
 
  if(NOT keyword_set(constants)) then $
-	  spk_in = spice_kernel_parse(dd, prefix, 'spk', ext='bsp', $
-		  exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
+  begin
+   spk_in = spice_kernel_parse(dd, prefix, 'spk', ext='bsp', $
+        	exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
+   if(NOT keyword_set(spk_in)) then $
+    begin
+     nv_message, /con, 'No SP kernels found.'
+     status = -1
+     return
+    end
+  end
+
 
  pck_in = spice_kernel_parse(dd, prefix, 'pck', ext='tpc', $
 		  exp=pck_exp, strict=pck_strict, all=pck_all, time=time)
@@ -519,7 +538,9 @@ function si_get, dd, keyword, prefix, od=od, time=__time, status=status
  ;---------------------------------------------------------------
  if(NOT keyword_set(nokernels)) then $
      si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
-                                                 constants=constants, time=time
+                            constants=constants, time=time, status=status
+ if(status NE 0) then return, !null
+
 
  if(defined(time)) then $
          if(size(time, /type) EQ 7) then time = spice_str2et(time)

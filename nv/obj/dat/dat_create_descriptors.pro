@@ -27,17 +27,17 @@
 ;  INPUT:  
 ;	filename:	Name of data file.
 ;
-;	dim:	Array giving the dimensions of the data array.
+;	dim:		Array giving the dimensions of the data array.
 ;
-;	type:	Integer giving the type code of the data array.
+;	typecode:	Integer giving the type code of the data array.
 ;
-;	data:	Data array.
+;	data:		Data array.
 ;
-;	nhist:	Number of past version of the data array to archive.
-;		If not given, the environment variable NV_NHIST is
-;		used.  If that is not set, then nhist defaults to 1.
+;	nhist:		Number of past version of the data array to archive.
+;			If not given, the environment variable NV_NHIST is
+;			used.  If that is not set, then nhist defaults to 1.
 ;
-;	header:	Header array.
+;	header:		Header array.
 ;
 ;	filetype:	Filetype identifier string.  If not given
 ;			an attempt is made to detect it.

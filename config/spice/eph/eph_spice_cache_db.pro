@@ -28,14 +28,14 @@ common eph_spice_cache_db_block, cached_dbs
    return
   end
 
+ cached_db = {eph_db_cache_struct, filename:dbfile, dbp:nv_ptr_new(db)}
+
+
  ;----------------------------------------------
- ; otherwise append if not found
+ ; replace or append
  ;----------------------------------------------
- if(w[0] EQ -1) then $
-  begin
-   cached_db = {eph_db_cache_struct, filename:dbfile, dbp:nv_ptr_new(db)}
-   cached_dbs = append_array(cached_dbs, cached_db)
- end
+ if(w[0] NE -1) then cached_dbs[w] = cached_db $
+ else cached_dbs = append_array(cached_dbs, cached_db)
 
 end
 ;=============================================================================

@@ -17,8 +17,7 @@ end
 function ominas_core::dereference, struct
 @core.include
 
- if(NOT keyword_set(struct)) then $
-              struct = create_struct(obj_class(self))
+ if(NOT keyword_set(struct)) then struct = create_struct(obj_class(self))
 
  struct_assign, self, struct
  return, struct

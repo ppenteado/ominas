@@ -1195,8 +1195,8 @@ pro grim_write, grim_data, filename, filetype=filetype
  if(keyword_set(*plane.sd_p)) then $
               pg_put_stars, plane.dd, sd=*plane.sd_p, od=od
 
-; if(keyword_set(*plane.std_p)) then $ 
- ;             pg_put_stations, plane.dd, std=*plane.std_p, od=od ;no such function
+ if(keyword_set(*plane.std_p)) then $
+              pg_put_stations, plane.dd, std=*plane.std_p, od=od
 
  if(keyword_set(*plane.ard_p)) then $
               pg_put_arrays, plane.dd, ard=*plane.ard_p, od=od
