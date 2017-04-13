@@ -1,4 +1,4 @@
-pro idla
+pro idlastro_download
 compile_opt idl2,logical_predicate
 routs=['cntrd','minmax']
 ex=intarr(n_elements(routs))
