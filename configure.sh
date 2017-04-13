@@ -295,7 +295,16 @@ function dins()
                         return 1;;
 		esac
 	fi
-        read -rp "Do you need to download the $dat data? [y]" ansk
+        if [ ${ominas_auto} == 1 ] ; then
+          echo "Auto option selected in the main menu; will download and place the $dat data at ~/ominas_data/${dat}"
+          datapath=~/ominas_data/${dat}
+          datapath=`eval echo ${datapath}`
+          if ! ./download_$dat.sh ${datapath} ; then
+            unset inst[${1}]
+            return 1
+          fi
+        else
+          read -rp "Do you need to download the $dat data? [y]" ansk
           if [[ -z "${ansk// }" ]]; then
             ansk=y
           fi
@@ -313,11 +322,11 @@ function dins()
            *)
 	     read -rp "Please enter the path to $dat (if not known, press enter): " datapath
           esac 
+        fi
         datapath=`eval echo ${datapath}`
 	if ! [[ -d $datapath ]]; then
 		setdir $dat
 	fi
-
         #echo "args: ${1}"
         inst[${1}]=${datapath}
         dins=${datapath}
