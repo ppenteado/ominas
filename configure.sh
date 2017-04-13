@@ -292,7 +292,10 @@ function dins()
                         return 1;;
 		esac
 	fi
-        read -rp "Do you need to download the $dat data? " ansk
+        read -rp "Do you need to download the $dat data? [y]" ansk
+          if [[ -z "${ansk// }" ]]; then
+            ansk=y
+          fi
           case $ansk in
            [Yy]*)
              read -rp "Please enter the location where the downloaded ${dat} data will be placed: [~/ominas_data/${dat}]" datapath
@@ -338,7 +341,6 @@ function pkins()
 		#		dstr="DFLAG=false; "
 		#		printf "Demo package will not be installed...\n"
 		#esac
-        echo "aaaaaa" $1 $2 $3
         if [[ $1 == "ominas_env_def.$shtype" ]]; then
                 if [[ "$2" == "$no" ]]; then
                   printf "Installing OMINAS Core...\n"
@@ -384,7 +386,10 @@ function pkins()
 	  #read -rp "Would you like to add the $3 kernels to the environment? " ans
 	  #case $ans in
 	#	[Yy]*)
-                        read -rp "Do you need to download the $3 kernels from PDS? " ansk
+                        read -rp "Do you need to download the $3 kernels from PDS? [y]" ansk
+                        if [[ -z "${ansk// }" ]]; then
+                          ansk=y
+                        fi
                         case $ansk in
                           [Yy]*)
                             read -rp "Please enter the location where the downloaded $3 kernel pool will be placed: [~/ominas_data/${3}]" datapath
@@ -580,7 +585,7 @@ demost=$no
 DFLAG="false"
 #if [ ! -z $OMINAS_DEMO ]; then
 if grep -q "export DFLAG=true" $setting; then
- demost="SET"
+ demost="CONFIGURED"
  DFLAG="true"
 fi
 
@@ -665,7 +670,7 @@ https://ppenteado.github.io/ominas_doc/demo/install_guide.html
 PKGS
 
 pr=1
-#while [ $pr ]; do
+while [ $pr == 1 ]; do
 read -rp "Modify Current OMINAS configuration (exit/all 1 2 ...)?  " ans
 
 if [ $ans == "all" ] || [ $ans == "a" ] || [ $ans == "A" ]; then
@@ -677,10 +682,10 @@ do
   if [ $num == "2" ]; then
     if [ $DFLAG  == "true" ]; then
       DFLAG="false"
-      demost="NOT SET"
+      demost="NOT CONFIGURED"
     else
       DFLAG="true"
-      demost="SET"
+      demost="CONFIGURED"
     fi
   fi
 done
@@ -688,26 +693,32 @@ for num in $ans
 do
 	case $num in
 		[eE]|exit)
+                                pr=0
 				return	3;;
-		[1])
+		[1])            
+                                pr=0
 				pkins ominas_env_def.sh "${corest}" coreu
                                 corest=${yes}
 							;;
                 [2])
+                                pr=0
                                 pkins ominas_env_def.sh "${corest}" demo
                                 corest=${yes}
                                                         ;;
                 [3])
+                                pr=0
                                 icy
                                                         ;;
 
 		#[Nn]*)
 		#		break 		;;
 		[4567])
+                                pr=0
 				pkins ominas_env_def.sh "${corest}" $(($num-4))
                                 corest=${yes}
 				ppkg $(($num-4)) 	;;
 		[89]|10|11|12|13)
+                                pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 corest=${yes}
 				dins $(($num-8)) 	;;
@@ -718,7 +729,7 @@ do
 done
 
 
-#done
+done
 
 XIDL_DIR=$OMINAS_DIR/util/xidl/
 

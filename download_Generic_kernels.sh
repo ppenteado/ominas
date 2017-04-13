@@ -7,7 +7,7 @@
 echo "This script wiill download all kernels from the PDS Galileo archive ("\
 "http://naif.jpl.nasa.gov/pub/naif/generic_kernels/. As of December/2016, this adds to 22GB."
 
-read -rp "Continue? " ans
+read -rp "Continue?[y] " ans
 case $ans in
   [Nn]*)
     exit 1
