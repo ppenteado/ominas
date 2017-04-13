@@ -6,11 +6,13 @@
 
 echo "This script wiill download the SAO catalog from CDS (ftp://cdsarc.u-strasbg.fr/pub/cats/I/131A) and prepare its files for use. As of January/2017, this adds to 19 MB of download, and 70 MB of disk space after unpacking."
 
-read -rp "Continue?[y] " ans
-case $ans in
-  [Nn]*)
-    exit 1
-esac
+if [ -z ${ominas_auto+x} ] || [ ${ominas_auto} == 0 ] ; then
+  read -rp "Continue?[y] " ans
+  case $ans in
+    [Nn]*)
+      exit 1
+  esac
+fi
 
 baseurl="ftp://cdsarc.u-strasbg.fr/pub/cats/I/131A"
 #standard download (full, nonrecursive) directories
