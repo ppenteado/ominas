@@ -354,6 +354,7 @@ pro grim_add_descriptor, grim_data, xdp, _xd, one=one, $
                          noregister=noregister, assoc_dd=assoc_dd
 @grim_constants.common
 
+
  if(NOT keyword_set(_xd)) then return
  plane = grim_get_plane(grim_data)
 

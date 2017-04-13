@@ -4,7 +4,7 @@
 ;===============================================================================
 function _dat_compute_size, _dd, samples
 
- s = sizeof(_dd.type)
+ s = sizeof(_dd.typecode)
  return, s*n_elements(samples)
 
 end

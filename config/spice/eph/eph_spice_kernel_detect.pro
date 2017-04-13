@@ -120,43 +120,70 @@ function eph_spice_kernel_detect, dd, kpath, type, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; get all files with valid ranges that include input time
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   valid = where((data.first LT after_time) AND (data.last GT before_time), count)
+   valid = where((data.first LT after_time) AND (data.last GT before_time), nvalid)
 
-   nv_message, verb=0.9, 'Number of valid kernels including given time = ' + strtrim(count,2)
+   nv_message, verb=0.9, 'Number of valid kernels including given time = ' + strtrim(nvalid,2)
    nv_message, /verbose, 'Valid indexes = ' + strtrim(valid,2)
  end
 
- if count EQ 0 then return, ''
+ if(nvalid EQ 0) then return, ''
 
- ;-----------------------------
- ; Find method to sort files
- ; If lbltime exists, use that
- ; If not, try installtime
- ; If not, use file system time
- ;-----------------------------
- files = data[valid].filename 
- bad = where(data[valid].lbltime EQ -1., count)
- if count NE 0 then begin
-   bad = where(data[valid].installtime EQ -1., count)
-   if count NE 0 then begin
-     times = data[valid].mtime
-     nv_message, /verbose, 'Using file system times to sort'
-   endif else begin
-     times = data[valid].installtime
-     nv_message, /verbose, 'Using OMINAS timestamps to sort'
-   endelse
- endif else begin
-    times = data[valid].lbltime
-    nv_message, /verbose, 'Using PDS Label times to sort'
- endelse
 
- ;-------------------
- ; Sort files by time
- ;-------------------
- ss = sort(times)
- files = files[ss]
+ ;--------------------------------------------------------------
+ ; select files(s)
+ ;--------------------------------------------------------------
+ data = data[valid] 
 
- return, files
+
+ ;---------------------------------------------------
+ ; choose best kernel for each body 
+ ;---------------------------------------------------
+ all_ids = data.id
+ ids = unique(all_ids)
+ nids = n_elements(ids)
+ for i=0, nids-1 do $
+  begin
+   w = where(all_ids EQ ids[i])
+   dat = data[w]
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - -
+   ; first narrow down to shortest kernel interval
+   ;- - - - - - - - - - - - - - - - - - - - - - - - -
+   intervals = dat.last - dat.first
+   w = where(intervals EQ min(intervals), nvalid)
+   dat = dat[w]
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; take the latest of the remaining kernels, based on various 
+   ; time stamps:
+   ;  If lbltime exists, use that
+   ;  If not, try installtime
+   ;  If not, use file system time
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(nvalid GT 1) then $
+    begin
+     times = dat.mtime 
+
+     w = where(dat.installtime NE -1, count)
+     if(count GT 0) then times[w] = dat.installtime
+
+     w = where(dat.lbltime NE -1, count)
+     if(count GT 0) then times[w] = dat.lbltime
+
+;     w = where(times NE -1, n)
+;     dat = dat[w]
+;     times = times[w]
+
+     tmax = max(times, w)
+     dat = dat[w]
+;print, dat.id, dat.filename
+    end
+
+   files = append_array(files, dat.filename)
+  end
+
+
+ return, unique(files)
 end
 ;=============================================================================
 

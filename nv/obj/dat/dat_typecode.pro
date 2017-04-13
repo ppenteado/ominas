@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	dat_type
+;	dat_typecode
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	type = dat_type(dd)
+;	typecode = dat_typecode(dd)
 ;
 ;
 ; ARGUMENTS:
@@ -30,14 +30,10 @@
 ;
 ;
 ; RETURN: 
-;	Integer giving the type.
+;	Integer giving the typecode.
 ;
 ;
-; STATUS:
-;	This data descriptor functonality is not complete.  A 'type' field
-; 	needs to be added to the input functions similar to the 'dim' field.
-;	Then dat_read would include that argument in its call to input_fn and
-;	it should work.
+; STATUS: Complete
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -46,12 +42,12 @@
 ;	
 ;-
 ;=============================================================================
-function dat_type, dd, noevent=noevent
+function dat_typecode, dd, noevent=noevent
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
 
- return, _dd.type
+ return, _dd.typecode
 end
 ;===========================================================================
 

@@ -1,11 +1,11 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	dat_set_type
+;	dat_set_typecode
 ;
 ;
 ; PURPOSE:
-;	Replaces the type value in a data descriptor.
+;	Replaces the typecode value in a data descriptor.
 ;
 ;
 ; CATEGORY:
@@ -13,14 +13,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	dat_set_type, dd, type
+;	dat_set_typecode, dd, typecode
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:		Data descriptor.
 ;
-;	type:	New type value.
+;	typecode:	New typecode value.
 ;
 ;  OUTPUT: NONE
 ;
@@ -45,11 +45,11 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_set_type, dd, type, noevent=noevent
+pro dat_set_typecode, dd, typecode, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- _dd.type = type
+ _dd.typecode = typecode
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

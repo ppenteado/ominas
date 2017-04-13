@@ -26,13 +26,15 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
-           render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
+           render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets, $
+           overlays=overlays, activate=activate
 @grim_block.include
 
   if(NOT keyword_set(dd0)) then dd0 = obj_new()
   if(NOT keyword_set(nhist)) then nhist = 1
 
   beta = keyword_set(beta)
+  activate = keyword_set(activate)
 
   if(NOT keyword_set(user_psym)) then user_psym = 3
   if(NOT keyword_set(user_graphics_fn)) then user_graphics_fn = 3
@@ -40,6 +42,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(user_line)) then user_line = 0
   if(NOT keyword_set(slave_overlays)) then slave_overlays = 0
   if(NOT defined(cursor_swap)) then cursor_swap = -1
+  if(NOT keyword_set(overlays)) then overlays = ''
 
   if(NOT keyword_set(cursor_modes)) then cursor_modes_p = ptr_new(0) $
   else cursor_modes_p = ptr_new(cursor_modes)
@@ -157,6 +160,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		base_xsize		: 0l, $
 		base_ysize		: 0l, $
 
+		activate		: activate, $
 		beta			: beta, $
 		npoints			: npoints, $
 		nhist			: nhist, $
@@ -221,7 +225,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		dd0			: dd0, $
 		data_xy_p		: ptr_new(0), $		; data coords of viewport indices
 
-	slave_overlays		: slave_overlays, $
+		slave_overlays		: slave_overlays, $
 
 		misc_data_p		: ptr_new(0), $
 
@@ -269,7 +273,8 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   grim_add_planes, grim_data, dd, $
      xrange=xrange, yrange=yrange, position=position, xtitle=xtitle, ytitle=ytitle, max=max, $
                     color=color, thick=thick, visibility=visibility, channel=channel, $
-                       render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets
+                       render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets, $
+                          overlays=overlays
 
  ;----------------------
  ; common block
