@@ -404,6 +404,18 @@ function pkins()
 	  #read -rp "Would you like to add the $3 kernels to the environment? " ans
 	  #case $ans in
 	#	[Yy]*)
+
+                      if [ ${ominas_auto} == 1 ] ; then
+                        echo "Auto option selected in the main menu; will download and place the $3 kernels at ~/ominas_data/${3}"
+                        datapath=~/ominas_data/${3}
+                        datapath=`eval echo ${datapath}`
+                        if ! ./download_$2.sh ${datapath}; then
+                          unset insp[${3}]
+                          unset ins[${3}]
+                          return 1
+                        fi
+                        pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}"
+                      else
                         read -rp "Do you need to download the $3 kernels from PDS? [y]" ansk
                         if [[ -z "${ansk// }" ]]; then
                           ansk=y
@@ -432,6 +444,7 @@ function pkins()
 			    fi
 			    pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}";;
                         esac
+                      fi
 #		*)
 #			pstr="${dstr}source ${OMINAS_DIR}/config/$1"
 #	  esac
