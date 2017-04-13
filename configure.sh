@@ -151,7 +151,7 @@ else
         printf "IDL_DIR found, $IDL_DIR, using it\n"
         idlbin=$IDL_DIR/bin/idl
 fi
-
+export idlbin
 ominassh="$HOME/.ominas/ominas_setup.sh"
 usersh=$setting
 setting=$ominassh
@@ -202,7 +202,7 @@ function ext()
             *.tbz2)      tar xvjf $1     ;;
             *.tgz)       tar xvzf $1     ;;
             *.zip)       unzip $1        ;;
-            *.Z)         uncompress $1   ;;
+            *.Z)         uncompress -f $1   ;;
             *.7z)        7z x $1         ;;
             *)           echo "'$1' cannot be extracted via >ext<" 1>&2 ;;
         esac
@@ -518,11 +518,17 @@ function icy() {
 #------------------------------------------------------------------------#
 
 printf "OMINAS requires the NAIF Icy toolkit to process SPICE kernels.\n"
-read -rp "Would you like to configure Icy for OMINAS? " ans
+read -rp "Would you like to configure Icy for OMINAS? [y]" ans
+if [[ -z "${ans// }" ]]; then
+ ans=y
+fi
 case $ans in
 	[Yy]*)
 		icyflag=true	
-		read -rp "Would you like to install Icy from the internet now? " ans
+		read -rp "Would you like to install Icy from the internet now? [y]" ans
+                if [[ -z "${ans// }" ]]; then
+                  ans=y
+                fi
 		case $ans in
 			[Yy]*)
 				bits=$(uname -m); if [[ $bits == "x86_64" ]]; then bstr="64bit"; else bstr="32bit"; fi
@@ -616,7 +622,12 @@ do
 		dstatus[$d]=$ns
 	fi
 done
-
+$idlbin -e 'exit,status=strmatch(pref_get("IDL_DLM_PATH"),"*icy/lib*")'
+if [ $? ] ; then
+  icyst='CONFIGURED'
+else
+  icyst='NOT CONFIGURED'
+fi
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
 	Current OMINAS configuration settings
@@ -631,7 +642,7 @@ Optional packages:
            These files are always present (in ominas/demo), 
            this option is to set up the environment so that
            the demos can be run.
-        3) SPICE Icy
+        3) SPICE Icy  . . . . . . . . . . . . . .  $icyst
            Library maintained by JPL's NAIF (Navigation and Ancillary
            Information Facility, https://naif.jpl.nasa.gov/naif/toolkit.html,
            required to use spacecraft / planetary kernel files.
@@ -776,7 +787,6 @@ if getenv('IDL_DLM_PATH') then begin &\$
 endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
 PRINT, '$OMINAS_DIR added to IDL_PATH'
 !path+=':+$OMINAS_DIR/util/'
-print,!path
 idlastro_download
 EXIT
 IDLCMD
