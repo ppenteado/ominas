@@ -16,7 +16,7 @@ if [ -z ${ominas_auto+x} ] || [ ${ominas_auto} == 0 ] ; then
 fi
 
 baseurl="ftp://cdsarc.u-strasbg.fr/pub/cats/I/259"
-baseurl="ftp://vizier.nao.ac.jp/pub/cats/I/259"
+#baseurl="ftp://vizier.nao.ac.jp/pub/cats/I/259"
 #standard download (full, nonrecursive) directories
 
 #location for timestamps files
