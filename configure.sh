@@ -1,3 +1,4 @@
+#!/bin/echo Should be run as: source
 #!/usr/bin/env bash
 # configure.sh: OMINAS auto-configuration script
 
