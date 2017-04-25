@@ -21,43 +21,43 @@
     ;
     ; :Keywords:
     ;    clobber: in, optional, default=0
-    ;    If set to 0 (default), exisiting files with the same timestamp as that
-    ;    returned by the server will be skipped. If set to 1, files will be downloaded, 
-    ;    even if overwriting existing local files. If set to 2, existing files will
-    ;    be skipped, without checking the timestamp. Setting this argument to 1
-    ;    is useful to resume an interrupted download of a directory.
+    ;      If set to 0 (default), exisiting files with the same timestamp as that
+    ;      returned by the server will be skipped. If set to 1, files will be downloaded, 
+    ;      even if overwriting existing local files. If set to 2, existing files will
+    ;      be skipped, without checking the timestamp. Setting this argument to 1
+    ;      is useful to resume an interrupted download of a directory.
     ;    pattern: in, optional
-    ;    A string with a regular expression that file names in the server will be
-    ;    matched to. If provided, only those files matching this expression will be
-    ;    downloaded.
+    ;      A string with a regular expression that file names in the server will be
+    ;      matched to. If provided, only those files matching this expression will be
+    ;      downloaded.
     ;    recursive: in, optional, default=0
-    ;    If set and baseurl is a directory, all directories contained inside it
-    ;    will be recursively downloaded.
+    ;      If set and baseurl is a directory, all directories contained inside it
+    ;      will be recursively downloaded.
     ;    localdir: in, optional, default='./'
-    ;    Local directory where the downloaded files are to be stored. Defaults to the
-    ;    current directory.
+    ;      Local directory where the downloaded files are to be stored. Defaults to the
+    ;      current directory.
     ;    debug: in, optional, default=0
     ;    timestamps: in, optional
-    ;    If provided, a hash (empty or not) where the timestamps of the downloaded
-    ;    files will be stored. Such a hash is always created internally and can be
-    ;    retrieved as a property (called timestamps). The reason to provide a hash
-    ;    is to have the timestamps be appended to this hash, instead of having a new
-    ;    hash created. 
+    ;      If provided, a hash (empty or not) where the timestamps of the downloaded
+    ;      files will be stored. Such a hash is always created internally and can be
+    ;      retrieved as a property (called timestamps). The reason to provide a hash
+    ;      is to have the timestamps be appended to this hash, instead of having a new
+    ;      hash created. 
     ;    bdir: in, optional
-    ;    For internal use by recursive calls only.
+    ;      For internal use by recursive calls only.
     ;    xpattern: in, optional
-    ;    A string with a regular expression that file names in the server will be
-    ;    matched to. If provided, only those files NOT matching this expression will be
-    ;    downloaded.
+    ;      A string with a regular expression that file names in the server will be
+    ;      matched to. If provided, only those files NOT matching this expression will be
+    ;      downloaded.
     ;    absolute_paths: in, optional, default=0
-    ;    If set, the timestamps hash will contain absolute paths instead of relative paths. 
+    ;      If set, the timestamps hash will contain absolute paths instead of relative paths. 
     ;
     ; :Author: Paulo Penteado (`http://www.ppenteado.net <http://www.ppenteado.net>`)
     ;-
 function pp_wget::init,baseurl,clobber=clobber,pattern=pattern,$
 recursive=recursive,localdir=localdir,debug=debug,timestamps=timestamps,$
 bdir=bdir,xpattern=xpattern,absolute_paths=absolute,_ref_extra=e,$
-ssl_certificate_file=sslf
+ssl_certificate_file=sslf,splitrows=splitrows,allow_slash=allow_slash
 compile_opt idl2,logical_predicate,hidden
 
 self.clobber=keyword_set(clobber)
@@ -74,6 +74,8 @@ self.xpattern=n_elements(xpattern) ? xpattern : ''
 self.absolute=keyword_set(absolute)
 self.sslf=n_elements(sslf) ? file_search(sslf) : (file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0]
 print,self.sslf
+self.splitrows=keyword_set(splitrows)
+self.allow_slash=keyword_set(allow_slash)
 ;if n_elements(e) then self.extra=ptr_new(e)
 
 return,1
@@ -169,17 +171,34 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
     inds=(strsplit(ind,/extract)).toarray()
     links=inds[*,-1]
     lm=inds[*,-4]+' '+inds[*,-3]+' '+inds[*,-2]
-    foreach link,links,il do self.retrieve,link,lm=lm[il]
+    foreach link,links,il do self.retrieve,link,lm=lm[il],/skip_missing
   endif else begin
     ind=self.iu.get(/string_array)
+    if self.splitrows then begin
+      indtmp=strsplit(ind,'</tr>',/extract,/regex,count=count)
+      foreach c,count,ic do if (c gt 0) then indtmp[ic]+='</tr>'
+      indtmp=indtmp.toarray(dim=1)
+      ind=indtmp
+    endif
     indj=strjoin(ind,' ')
     tmp=strtrim(((stregex(indj,'<title>(.+)</title>',/extract,/subexpr))[1]),2)
     if stregex(tmp,'^index of ',/fold_case,/bool) then begin
-      w=where(stregex(ind,'<a[[:blank:]]+href[[:blank:]]*="[^"]+"[^>]*>',/bool))
+      ;w=where(stregex(ind,'<a[[:blank:]]+href[[:blank:]]*="[^"]+"[^>]*>',/bool))
+      w=where(stregex(ind,'<a[^>]*[[:blank:]]+href[[:blank:]]*="[^"]+"[^>]*>',/bool))
       indl=ind[w];lines with links
-      links=reform((stregex(indl,'<a[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))[1,*])
-      links=links[where(~stregex(links,'^(\/|\?)',/bool),/null)]
-      foreach link,links do self.retrieve,link
+      ;links=reform((stregex(indl,'<a[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))[1,*])
+      links=reform((stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))[1,*])
+      if ~self.allow_slash then links=links[where(~stregex(links,'^(\/|\?)',/bool),/null)] else begin
+        w=where(stregex(links,'^(\/|\?)',/bool),/null,count)
+        if count then begin
+          ;links[w]=strmid(links[w],1)
+          lw=stregex(links[w],'^/'+pu.path+'(.*)',/extract,/subexpr)
+          links[w]=lw[1,*]
+          print,count
+        endif
+        links=links[where(strlen(strtrim(links,2)),/null)]
+      endelse
+      foreach link,links do self.retrieve,link,/skip_missing
     endif
   endelse
 endif else begin
@@ -196,7 +215,7 @@ end
 ;
 ; :Author: Paulo Penteado (`http://www.ppenteado.net <http://www.ppenteado.net>`)
 ;-
-pro pp_wget::retrieve,link,lm=lm
+pro pp_wget::retrieve,link,lm=lm,skip_missing=skip_missing
 compile_opt idl2,logical_predicate,hidden
 if ~strmatch(link,'*/') then begin ;if entry is not a directory
   self.iu.getproperty,url_scheme=us,url_port=po,url_path=up
@@ -238,6 +257,9 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
     if err then begin
       catch,/cancel
       if (err ne -1005) && (err ne -1006) && (~strmatch(!error_state.msg,'*Cancel request detected*',/fold_case)) then begin
+        if keyword_set(skip_missing) && (strmatch(!error_state.msg,'*Failed to open file*',/fold_case) || (err eq -1052)) then begin
+          return
+        endif
         print,'error downloading file ',link,': ',err,' ',!error_state.msg
         return
       endif else setts=0
@@ -311,5 +333,5 @@ compile_opt idl2,logical_predicate
 !null={pp_wget, inherits idl_object, clobber:0,recursive:0,$
   ldir:'',pattern:'',localdir:'',last_modified:'',local_file_exists:0,local_file_tm:0LL,$
   baseurl:'',iu:obj_new(),timestamps:obj_new(),debug:0,content_length:0LL,bdir:'',$
-  xpattern:'',absolute:0,extra:ptr_new(),sslf:''}
+  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B}
 end
