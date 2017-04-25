@@ -281,11 +281,15 @@ function dins()
                 tmp=`grep "export NV_${dat}_DATA" $setting`
                 IFS='=' read -ra tmpa <<< "$tmp"
 		#read -rp "Would you like to overwrite this location (y/n)? " ans
-                read -rp "Would you like to uninstall $dat from this location (y/n)? " ans
+                if [ ${ominas_auto_u} != 1 ] ; then
+                  read -rp "Would you like to uninstall $dat from this location (y/n)? " ans
+                else
+                  ans=y
+                fi
 		case $ans in 
 		[Yy]*)
                         #echo "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
-                        $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
+                        $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}',conf=${ominas_auto_u} & exit"
                         unset inst[${1}]
                         return 1;;
 			#grep -v "NV_${dat}_DATA.*" $setting >$HOME/temp
@@ -295,6 +299,10 @@ function dins()
                         echo ''
                         return 1;;
 		esac
+        else
+         if [ ${ominas_auto_u} == 1 ] ; then
+           return 1
+         fi
 	fi
         if [ ${ominas_auto} == 1 ] ; then
           echo "Auto option selected in the main menu; will download and place the $dat data at ~/ominas_data/${dat}"
@@ -356,7 +364,7 @@ function pkins()
 		#esac
         if [[ $1 == "ominas_env_def.$shtype" ]]; then
                 if [[ "$2" == "$no" ]]; then
-                  printf "Installing OMINAS Core...\n"
+                  printf "Settiing OMINAS Core...\n"
                 fi
                 pstr="source ${OMINAS_DIR}/config/$1"
                 if [[ "$3" == "coreu" ]] ; then
@@ -365,7 +373,11 @@ function pkins()
                 fi
 #                pstr="source ${OMINAS_DIR}/config/$1"
                   if grep -q $1 ${setting}; then
-                    read -rp "Would you like to uninstall the OMINAS core (y/n)? " ans
+                    if [ ${ominas_auto_u} != 1 ] ; then
+                      read -rp "Would you like to uninstall the OMINAS core (y/n)? " ans
+                    else
+                      ans="y"
+                    fi
                     case $ans in
                     [Yy]*)
                           pstr="unset NV_TRANSLATORS"
@@ -384,12 +396,16 @@ function pkins()
             fi
             loc=(`grep ${1} ${setting}`)
             echo "${3} seems to be already installed at ${loc[2]}"
-            read -rp "Would you like to uninstall ${3} (y/n)? " ans
-            echo "1 ${1} 2 ${2} 3 ${3} 4 ${4}"
+            if [ ${ominas_auto_u} != 1 ] ; then
+              read -rp "Would you like to uninstall ${3} (y/n)? " ans
+            else
+              ans="y"
+            fi
+            #echo "1 ${1} 2 ${2} 3 ${3} 4 ${4}"
             case $ans in
                 [Yy]*)
                      #echo "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}' & exit"
-                     $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}' & exit"
+                     $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
                      unset insp[${4}]
                      unset ins[${4}]
                      return 1 ;;
@@ -399,6 +415,10 @@ function pkins()
                      insp[${4}]=${loc[2]}
                      return 1;;
             esac
+          else
+            if [ ${ominas_auto_u} == 1 ] ; then
+              return 1
+            fi
           fi
           printf "Installing package $1...\n"
           dstr=""
@@ -555,7 +575,11 @@ function icy() {
 if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
   echo "Icy appears to be already configured:"
   echo ${ominas_icytest}
-  read -rp "Do you wish to uninstall Icy (y/n)?"  ans
+  if [ ${ominas_auto_u} != 1 ] ; then
+    read -rp "Do you wish to uninstall Icy (y/n)?"  ans
+  else
+    ans="y"
+  fi
   case $ans in
     [Yy]*)
            $idlbin -e 'ominas_icy_remove'
@@ -566,6 +590,10 @@ if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
            return 1;; 
         *) return 1;;
   esac
+else
+  if [ ${ominas_auto_u} == 1 ] ; then
+    return 1
+  fi
 fi
 
 
@@ -748,10 +776,10 @@ PKGS
 
 pr=1
 while [ $pr == 1 ]; do
-read -rp "Modify Current OMINAS configuration (exit/all 1 2 ...)?  " ans
+read -rp "Modify Current OMINAS configuration (Exit/Auto/Uninstall 1 2 ...)?  " ans
 
 ominas_auto=0
-if [ $ans == "all" ] || [ $ans == "a" ] || [ $ans == "A" ]; then
+if [ $ans == "auto" ] || [ $ans == "a" ] || [ $ans == "A" ]; then
 
   cat <<AUTOP
 
@@ -779,6 +807,34 @@ AUTOP
   fi
 fi
 export ominas_auto
+
+ominas_auto_u=0
+if [ $ans == "uninstall" ] || [ $ans == "u" ] || [ $ans == "U" ]; then
+
+  cat <<AUTOP
+
+  You have selected the auto option for uninstalling OMINAS.
+
+  This option will uninstall every package from their current locations, 
+without prompting for confirmation.
+
+
+AUTOP
+
+  read -rp "Proceed? [y]" ansy
+  if [[ -z "${ansy// }" ]]; then
+    ansy=y
+  fi
+  if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
+    ominas_auto_u=1
+    ans="1 2 3 4 5 6 7 9 10 11 12 13"
+  else
+    ans="uall"
+  fi
+fi
+export ominas_auto_u
+
+
 pr=0
 for num in $ans
 do
@@ -826,6 +882,7 @@ do
                                 corest=${yes}
 				dins $(($num-8)) 	;;
                 all)            pr=0;;
+                uall)           pr=0;;
 		*)
 				printf "Error: Invalid package or catalog specified\n" 1>&2
                                 pr=1;;
