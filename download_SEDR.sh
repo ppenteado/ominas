@@ -19,6 +19,6 @@ echo "SEDR data download not yet implemented"
 mkdir -p ~/.ominas/timestamps/SEDR
 ts=`eval echo "~/.ominas/timestamps/"`
 
-
+mkdir -p ${1}
 #./pp_wget "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
 
