@@ -349,7 +349,7 @@ function pkins()
 	#    Arg 1 -> Name of package to be installed                        #
 	#    Arg 2 -> Name of the kernel package name                        #
 	#    Checks if the named package is already written to the bash      #
-	#    settings file before writing a new line.                        #
+	#    sett  ings file before writing a new line.                        #
 	#--------------------------------------------------------------------#
 	#if [[ $1 == "ominas_env_def.$shtype" ]] && [[ $2 == $no ]]; then
 		#read -rp "Would you like to install the demo package? " ans
@@ -368,9 +368,9 @@ function pkins()
                 fi
                 pstr="source ${OMINAS_DIR}/config/$1"
                 if [[ "$3" == "coreu" ]] ; then
-                if [ ${ominas_auto} == 1 ] ; then
-                  return 1
-                fi
+                  if [ ${ominas_auto} == 1 ] ; then
+                    return 1
+                  fi
 #                pstr="source ${OMINAS_DIR}/config/$1"
                   if grep -q $1 ${setting}; then
                     if [ ${ominas_auto_u} != 1 ] ; then
