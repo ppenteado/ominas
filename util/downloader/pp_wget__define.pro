@@ -285,7 +285,7 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
           tmrj=pp_parse_date(self.last_modified)
           tmlj=julday(1,1,1970)-0.5d0+tml/86400d0
           if (abs(tmrj-tmlj) lt 1d0/86400d0) then begin
-            print,'This file is already present locally with same timestamp. Skipping'
+            print,'This file is already present locally with same timestamp. Skipping.'
             ng=1B
           endif
         endif
