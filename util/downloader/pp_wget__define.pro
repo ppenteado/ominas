@@ -57,7 +57,8 @@
 function pp_wget::init,baseurl,clobber=clobber,pattern=pattern,$
 recursive=recursive,localdir=localdir,debug=debug,timestamps=timestamps,$
 bdir=bdir,xpattern=xpattern,absolute_paths=absolute,_ref_extra=e,$
-ssl_certificate_file=sslf,splitrows=splitrows,allow_slash=allow_slash
+ssl_certificate_file=sslf,splitrows=splitrows,allow_slash=allow_slash,$
+lm=lm
 compile_opt idl2,logical_predicate,hidden
 
 self.clobber=keyword_set(clobber)
@@ -76,6 +77,7 @@ self.sslf=n_elements(sslf) ? file_search(sslf) : (file_search(filepath('',subdir
 print,self.sslf
 self.splitrows=keyword_set(splitrows)
 self.allow_slash=keyword_set(allow_slash)
+self.lm=keyword_set(lm)
 ;if n_elements(e) then self.extra=ptr_new(e)
 
 return,1
@@ -187,18 +189,28 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
       w=where(stregex(ind,'<a[^>]*[[:blank:]]+href[[:blank:]]*="[^"]+"[^>]*>',/bool))
       indl=ind[w];lines with links
       ;links=reform((stregex(indl,'<a[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))[1,*])
-      links=reform((stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))[1,*])
-      if ~self.allow_slash then links=links[where(~stregex(links,'^(\/|\?)',/bool),/null)] else begin
-        w=where(stregex(links,'^(\/|\?)',/bool),/null,count)
+;      links=(stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))
+      links=(stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>.*<td[^>]*>[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*</td>',/extract,/subexpr))
+      lms=reform(links[2,*])
+      links=reform(links[1,*])
+      wla=where(stregex(links,'^(\/|\?)',/bool),/null,count,complement=wlac)
+      if ~self.allow_slash then begin
+        links=links[wlac]
+        lms=lms[wlac]
+      endif else begin
+        w=wla
         if count then begin
           ;links[w]=strmid(links[w],1)
           lw=stregex(links[w],'^/'+pu.path+'(.*)',/extract,/subexpr)
           links[w]=lw[1,*]
           print,count
         endif
-        links=links[where(strlen(strtrim(links,2)),/null)]
+        wf=where(strlen(strtrim(links,2)),/null)
+        links=links[wf]
+        lms=lms[wf]
       endelse
-      foreach link,links do self.retrieve,link,/skip_missing
+      foreach link,links do if self.lm then self.retrieve,link,/skip_missing,lm=lms $
+        else self.retrieve,link,/skip_missing
     endif
   endelse
 endif else begin
@@ -333,5 +345,5 @@ compile_opt idl2,logical_predicate
 !null={pp_wget, inherits idl_object, clobber:0,recursive:0,$
   ldir:'',pattern:'',localdir:'',last_modified:'',local_file_exists:0,local_file_tm:0LL,$
   baseurl:'',iu:obj_new(),timestamps:obj_new(),debug:0,content_length:0LL,bdir:'',$
-  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B}
+  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B,lm:0B}
 end
