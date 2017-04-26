@@ -209,7 +209,7 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
         links=links[wf]
         lms=lms[wf]
       endelse
-      foreach link,links do if self.lm then self.retrieve,link,/skip_missing,lm=lms $
+      foreach link,links,il do if self.lm then self.retrieve,link,/skip_missing,lm=lms[il] $
         else self.retrieve,link,/skip_missing
     endif
   endelse
