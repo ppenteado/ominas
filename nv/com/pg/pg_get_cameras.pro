@@ -33,14 +33,11 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	cds:		Input camera descriptors; used by some translators.
+;	cd:		Input camera descriptors; used by some translators.
 ;
 ;	gd:		Generic descriptor containing the above descriptors.
-;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
+;			Note this keyword is inherited from the CORE keywords 
+;			list.
 ;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
@@ -61,9 +58,9 @@
 ;			table are called, but the translators keywords
 ;			from the table are still used.  
 ;
-;	orient:		Default orientation matrix to use if camera
-;			orientation is not available.  If not specified, 
-;			the identity matrix is used.
+;	default_orient:		Default orientation matrix to use if camera
+;				orientation is not available.  If not specified, 
+;				the identity matrix is used.
 ;
 ;
 ; RETURN:
@@ -86,139 +83,119 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_cameras, dd, trs, cds=_cds, od=od, pd=pd, gd=gd, no_sort=no_sort, $
-                          override=override, verbatim=verbatim, orient=orient, $
+function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, $
+                          override=override, verbatim=verbatim, default_orient=default_orient, $
                           no_default=no_default, $
-@camera_keywords.include
+@cam__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, od=od, pd=pd, dd=dd
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
+ if(keyword_set(od)) then $
+   if(n_elements(od) NE n_elements(dd)) then $
+           nv_message, 'One observer descriptor required for each data descriptor'
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators
  ;-------------------------------------------------------------------
  if(keyword_set(override)) then $
   begin
-   n = n_elements(cam__name)
+   n = n_elements(name)
 
-   cds=cam_init_descriptors(n, $
-	name=cam__name, $
-	orient=cam__orient, $
-	avel=cam__avel, $
-	pos=cam__pos, $
-	vel=cam__vel, $
-	time=cam__time, $
-	fn_focal_to_image=cam__fn_focal_to_image, $
-	fn_image_to_focal=cam__fn_image_to_focal, $
-	fn_data=cam__fn_data, $
-;	fn_filter=cam__fn_filter, $
-	filters=cam__filters, $
-	scale=cam__scale, $
-	fn_psf=cam__fn_psf, $
-	size=cam__size, $
-	opaque=cam__opaque, $
-	exposure=cam__exposure, $
-	oaxis=cam__oaxis)
+   cd=cam_create_descriptors(n, $
+	gd=dd, $
+	name=name, $
+	orient=orient, $
+	avel=avel, $
+	pos=pos, $
+	vel=vel, $
+	time=time, $
+	fn_focal_to_image=fn_focal_to_image, $
+	fn_image_to_focal=fn_image_to_focal, $
+	fi_data=fi_data, $
+;	fn_filter=fn_filter, $
+	filters=filters, $
+	scale=scale, $
+	fn_psf=fn_psf, $
+	size=size, $
+	opaque=opaque, $
+	exposure=exposure, $
+	oaxis=oaxis)
   end $
  else $
   begin
-;   cam__size = nv_dim(dd)
-   data = nv_data(dd)
-   if(keyword_set(data)) then $
-          if(NOT keyword_set(cam__size)) then cam__size = nv_dim(dd)
-
-
-
-
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; default orientation is identity matrix unless otherwise specifed
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(NOT keyword_set(orient)) then orient = idgen(3)
+   if(NOT keyword_set(default_orient)) then default_orient = idgen(3)
 
+
+   ;-----------------------------------------------
+   ; call translators
+   ;-----------------------------------------------
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(cam__name)) then tr_first = 1
+;;   if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
-   cds = nv_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cds, key3=orient, $
-                             key7=cam__time, key8=cam__name, trs=trs, $
+   cd = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cd, key3=default_orient, $
+                             key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-
-   if(NOT keyword_set(cds)) then return, nv_ptr_new()
-
-   n = n_elements(cds)
+   if(NOT keyword_set(cd)) then return, obj_new()
+   n = n_elements(cd)
 
    ;---------------------------------------------------
-   ; If cam__name given, determine subscripts such that
+   ; If name given, determine subscripts such that
    ; only values of the named objects are returned.
    ;
    ; Note that each translator has this opportunity,
    ; but this code guarantees that it is done.
    ;
-   ; If cam__name is not given, then all descriptors
+   ; If name is not given, then all descriptors
    ; will be returned.
    ;---------------------------------------------------
-   if(keyword__set(cam__name)) then $
+   if(keyword__set(name)) then $
     begin
-     tr_names = get_core_name(cds)
-     sub = nwhere(strupcase(tr_names), strupcase(cam__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     tr_names = cor_name(cd)
+     sub = nwhere(strupcase(tr_names), strupcase(name))
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
 
    n = n_elements(sub)
-   cds = cds[sub]
+   cd = cd[sub]
 
-   ;-------------------------------------------------------------------
-   ; override the specified values (cam__name cannot be overridden)
-   ;-------------------------------------------------------------------
-   if(n_elements(cam__orient) NE 0) then bod_set_orient, cds, cam__orient
-   if(n_elements(cam__avel) NE 0) then bod_set_avel, cds, cam__avel
-   if(n_elements(cam__pos) NE 0) then bod_set_pos, cds, cam__pos
-   if(n_elements(cam__vel) NE 0) then bod_set_vel, cds, cam__vel
-;   if(n_elements(cam__time) NE 0) then bod_set_time, cds, cam__time
-   if(n_elements(cam__fn_focal_to_image) NE 0) then $
-                 cam_set_fn_focal_to_image, cds, cam__fn_focal_to_image
-   if(n_elements(cam__fn_image_to_focal) NE 0) then $
-                 cam_set_fn_image_to_focal, cds, cam__fn_image_to_focal
-   if(n_elements(cam__fn_data) NE 0) then $
-                                    cam_set_fn_data_p, cds, cam__fn_data
-;   if(n_elements(cam__fn_filter) NE 0) then $
-;                                    cam_set_fn_filter, cds, cam__fn_filter
-   if(n_elements(cam__filters) NE 0) then $
-                                    cam_set_filters, cds, cam__filters
-   if(n_elements(cam__scale) NE 0) then  cam_set_scale, cds, cam__scale
-   if(n_elements(cam__oaxis) NE 0) then  cam_set_oaxis, cds, cam__oaxis
-   if(n_elements(cam__fn_psf) NE 0) then  cam_set_fn_psf, cds, cam__fn_psf
-   if(n_elements(cam__size) NE 0) then  cam_set_size, cds, cam__size
-   if(n_elements(cam__opaque) NE 0) then  bod_set_opaque, cds, cam__opaque
-   if(n_elements(cam__exposure) NE 0) then $
-                                   cam_set_exposure, cds, cam__exposure
+   ;---------------------------------------------------------------------
+   ; override the specified values (name and time cannot be overridden)
+   ;---------------------------------------------------------------------
+; this might be cleaner using the _extra mechanism
+   if(defined(name)) then _name = name & name = !null
+   if(defined(time)) then _time = time & time = !null
+   cam_assign, cd, /noevent, $
+@cam__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+    if(defined(_time)) then time = _time
+
   end
 
 
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then cds=cds[pgs_name_sort(get_core_name(cds))]
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, bx=bx
+ dat_set_gd, cd, gd, bx=bx
 
-
-
-
- return, cds
+ return, cd
 end
 ;===========================================================================
 

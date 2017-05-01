@@ -14,8 +14,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_repoint, cd=cd, dxy, dtheta, axis_ps=axis_ps
-;	pg_repoint, gd=gd, dxy, dtheta, axis_ps=axis_ps
+;	pg_repoint, cd=cd, dxy, dtheta, axis_ptd=axis_ptd
+;	pg_repoint, gd=gd, dxy, dtheta, axis_ptd=axis_ptd
 ;
 ;
 ; ARGUMENTS:
@@ -35,18 +35,20 @@
 ;	gd:	 Generic descriptor.  If given, the cd input is taken from the
 ;		 cd field of this structure instead of from that keyword.
 ;
-;	axis_ps: points_struct containing a single image point
+;	axis_ptd: POINT containing a single image point
 ;		 to be used as the axis of rotation.  Default is the camera
 ;		 optic axis.
 ;
 ;	bore_cd:  Array (nt) of camera descriptors from which to copy the 
-;		  new orientation instead of using dxy, dtheta, and axis_ps.
+;		  new orientation instead of using dxy, dtheta, and axis_ptd.
 ;
 ;	bore_rot: If given, the orientation from bore_cd will be rotated
 ;		  using this rotation matrix (3,3) before being copied.
 ;
 ;	bore_dxy: Boresight offset in pixels.
 ;
+;	absolute: If set, the dxy argument represents and abosolute image
+;		  position rather than an offset.
 ;
 ;  OUTPUT:
 ;	cd:	 If given, the camera descriptor is modified with a new
@@ -77,8 +79,9 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ps=axis_ps, $
-                bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy
+pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ptd=axis_ptd, $
+                bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy, $
+		absolute=absolute
 
 
  dxy = 0
@@ -91,11 +94,7 @@ pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ps=axis_ps, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- if(keyword__set(gd)) then if(NOT keyword__set(cd)) then $
-  begin
-   cd=gd.cd
-;   use_gd=1
-  end
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
 
  ;-----------------------------------
  ; validate descriptors
@@ -108,12 +107,10 @@ pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ps=axis_ps, $
  ;---------------------------------------
  if(keyword__set(bore_cd)) then $
   begin
-   bd = class_extract(cd, 'BODY')
-   bore_bd = class_extract(bore_cd, 'BODY')
-   bore_orient = bod_orient(bore_bd)
+   bore_orient = bod_orient(bore_cd)
    if(NOT keyword_set(bore_rot)) then orient = bore_orient $
    else orient = v_mxm(bore_rot[linegen3z(3,3, nt)], bore_orient)
-   bod_set_orient, bd, orient
+   bod_set_orient, cd, orient
 
    if(keyword_set(bore_dxy)) then $
      dxy = dxy + bore_dxy*cam_scale(bore_cd)/cam_scale(cd)
@@ -131,15 +128,13 @@ pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ps=axis_ps, $
    ;------------------------------------------------
    ; modify camera pointing for all times
    ;------------------------------------------------
-   cam_bd = cam_body(cd)
-
-   if(keyword__set(axis_ps)) then axis = ps_points(axis_ps) $
+   if(keyword__set(axis_ptd)) then axis = pnt_points(axis_ptd) $
    else axis = cam_oaxis(cd)
-   cam_reorient, cd, axis, dxy[*,0,*], dtheta[*]
+   cam_reorient, cd, axis, dxy[*,0,*], dtheta[*], absolute=absolute
   end
 
 
- add_core_task, cd, 'pg_repoint'
+ cor_add_task, cd, 'pg_repoint'
 
 
 

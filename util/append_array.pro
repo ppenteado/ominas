@@ -31,10 +31,12 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	NONE
+;	def:		If set, new items simply ust be defined instead of "set".
 ;
-;  OUTPUT:
-;	NONE
+;	positive:	If set, a single value of -1 is taken as an undefined
+;			array.
+;
+;  OUTPUT: NONE
 ;
 ;
 ; RETURN:
@@ -78,7 +80,6 @@ function append_array, array, item, def=def, positive=positive
    if(n_elements(array EQ 1) AND array[0] EQ -1) then return, [item]
    return, [array, item]
   end
-
 
 
  if(NOT keyword__set(item)) then $

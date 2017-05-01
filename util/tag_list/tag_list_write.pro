@@ -16,7 +16,7 @@ pro tag_list_write, tlp, filename, unit=unit, bin=bin
    data = [*list[i].data_p]
 
    type = size(data, /type)
-   if(type EQ 10) then data = intarr(n_elements(data))
+   if(type EQ 11) then data = intarr(n_elements(data))	; write zeroes instead of object
 
    printf, unit, list[i].name
    s = size(data)
@@ -25,7 +25,6 @@ pro tag_list_write, tlp, filename, unit=unit, bin=bin
    if(keyword_set(bin)) then writeu, unit, data $
    else printf, unit, transpose(reform(string(data), product(dim)))
   end
-
 
 
  if(keyword_set(filename)) then $

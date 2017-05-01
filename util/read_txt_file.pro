@@ -97,9 +97,9 @@ function rtf_read, fname, notes, status=status, note=note, lf=lf, $
  ;----------------------------------------
  status = 0
 
- check = findfile0(fname)
+ check = file_test(fname)
 
- if(check[0] EQ '') then $
+ if(NOT check) then $
   begin
    status = -1
    return, ['']
@@ -154,8 +154,7 @@ function rtf_read, fname, notes, status=status, note=note, lf=lf, $
      if(w[nw-1] GT ww[nww-1]) then ww = [ww, n-1]
      nw = n_elements(w) & nww = n_elements(ww)
 
-     if(nw NE nww) then nv_message, name='read_txt_file', $
-                                          'Parse error in file: ' + fname
+     if(nw NE nww) then nv_message, 'Parse error in file: ' + fname
 
      for i=0, nw-1 do _text = append_array(_text, text[w[i]:ww[i]])
      text = _text
@@ -294,16 +293,15 @@ function rtf_read, fname, notes, status=status, note=note, lf=lf, $
  ;--------------------------------------
  ; parse fnotes
  ;--------------------------------------
-  if(NOT keyword_set(raw)) then $
+ if(NOT keyword_set(raw)) then $
   begin
+   fnotes = strarr(n_elements(text))
    p = strpos(text, '|')
    w = where(p NE -1)
    if(w[0] NE -1) then $
     begin
      ss = str_nnsplit(text, '|', rem=s)
      text[w] = ss[w]
-
-     fnotes = strarr(n_elements(text))
      fnotes[w] = s[w]
     end
   end

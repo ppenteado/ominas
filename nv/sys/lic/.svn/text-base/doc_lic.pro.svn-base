@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="LIC Program Reference", $
-    "/home/joes/idl_pro/minas/nv/sys/lic/*.pro", $
-    "/home/joes/idl_pro/minas/nv/sys/lic/doc_lic.txt"

@@ -13,15 +13,15 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_crop_points, cd, ps
+;	pg_crop_points, cd, ptd
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	ps:	points_struct containing points to be cropped.
+;	ptd:	POINT object containing points to be cropped.
 ;
 ;  OUTPUT:
-;	ps:	The input points structure is modified.
+;	ptd:	The input POINT object is modified.
 ;
 ;
 ; KEYWORDS:
@@ -39,7 +39,7 @@
 ;
 ;
 ; RESTRICTIONS:
-;	The given points structure is modified.
+;	The given POINT object is modified.
 ;
 ;
 ; STATUS:
@@ -51,25 +51,25 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_crop_points, ps, cd=cd, slop=slop, indices=ww
-@ps_include.pro
+pro pg_crop_points, ptd, cd=cd, slop=slop, indices=ww
+@pnt_include.pro
 
  if(NOT keyword_set(slop)) then slop = 1
- n = n_elements(ps)
+ n = n_elements(ptd)
 
  ;------------------------------------------------
  ; hide external points
  ;------------------------------------------------
- for i=0, n-1 do $
+ for i=0, n-1 do if(obj_valid(ptd[i])) then $
   begin
-   ps_get, ps[i], p=p, f=f
+   pnt_query, ptd[i], p=p, f=f
    ww = in_image(cd, p, slop=slop)
    w = complement(p[0,*], ww)
 
    if(w[0] NE -1) then $
     begin
-     f[w] = f[w] OR PS_MASK_INVISIBLE
-     ps_set, ps[i], p=p, f=f
+     f[w] = f[w] OR PTD_MASK_INVISIBLE
+     pnt_assign, ptd[i], p=p, f=f
     end
   end
 

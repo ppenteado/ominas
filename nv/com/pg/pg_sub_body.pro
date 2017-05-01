@@ -24,7 +24,11 @@
 ;	bx:	Array (n_objects, n_timesteps) of descriptors of objects 
 ;		which must be a subclass of BODY.
 ;
-;	gd:	Generic descriptor.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;  OUTPUT: NONE
 ;
@@ -42,26 +46,21 @@
 ;	
 ;-
 ;=============================================================================
-function pg_sub_body, gbx=gbx, bx=bx, gd=gd
+function pg_sub_body, gbx=gbx, bx=bx, dd=dd, gd=gd
 
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, bx=bx, gbx=gbx
-; if(keyword__set(gd)) then $
-;  begin
-;   if(NOT keyword__set(gbx)) then gbx=gd.gbx
-;   if(NOT keyword__set(bx)) then bx=gd.bx
-;  end
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
 
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- pgs_count_descriptors, gbx, nd=n_globe, nt=nt1
- pgs_count_descriptors, bx, nd=n_body, nt=nt2
- if((nt1 NE nt2) OR (n_globe NE n_body)) then $
-                   nv_message, name='pg_sub_body', 'Inconsistent descriptors.'
+ cor_count_descriptors, gbx, nd=n_globe, nt=nt1
+ cor_count_descriptors, bx, nd=n_body, nt=nt2
+ if((nt1 NE nt2) OR (n_globe NE n_body)) then nv_message, 'Inconsistent descriptors.'
 
  nt = nt1
  n = n_body
@@ -69,25 +68,22 @@ function pg_sub_body, gbx=gbx, bx=bx, gd=gd
  ;-----------------------------------
  ; get centers
  ;-----------------------------------
- gbds = class_extract(gbx, 'GLOBE')
- bd_globe = class_extract(gbx, 'BODY')
- bds = class_extract(bx, 'BODY')
- gb_centers = bod_pos(bd_globe)
- bd_centers = bod_pos(bds)
+ gb_centers = bod_pos(gbx)
+ bd_centers = bod_pos(bx)
 
  ;-------------------------------------------------------
  ; form ray and find intersection with globe surface
  ;-------------------------------------------------------
- v = bod_inertial_to_body_pos(bd_globe, bd_centers)
- r = bod_inertial_to_body(bd_globe, gb_centers - bd_centers)
+ v = bod_inertial_to_body_pos(gbx, bd_centers)
+ r = bod_inertial_to_body(gbx, gb_centers - bd_centers)
 
- surface_pts = glb_body_to_globe(gbds, glb_intersect(gbds, v, r))
+ surface_pts = glb_body_to_globe(gbx, glb_intersect(gbx, v, r, /near))
 
 
  ;----------------------------------------------------------
  ; return only near points
  ;----------------------------------------------------------
 
- return, surface_pts[0:n-1,*,*]
+ return, surface_pts
 end
 ;=============================================================================

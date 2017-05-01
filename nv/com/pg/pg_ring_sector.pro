@@ -13,7 +13,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     rad=pg_ring_sector(cd=cd, dkx=dkx, gbx=gbx)
+;     rad=pg_ring_sector(cd=cd, dkx=dkx)
 ;
 ;
 ; ARGUMENTS:
@@ -31,9 +31,7 @@
 ;
 ;	   dkx:     Disk descriptor describing the ring.
 ;
-;          gbx:     Globe descriptor giving the primary for the ring.
-;
-;           gd:     Generic descriptor containnig the above descriptors.
+;           gd:     Generic descriptor containing the above descriptors.
 ;
 ;      win_num:     Window number of IDL graphics window in which to select
 ;                   box, default is current window.
@@ -55,9 +53,9 @@
 ;                   graphics instead of a pixmap.
 ;
 ;        nodsk:     If set, image points will not be included in the output 
-;                   points_struct.
+;                   POINT.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;      rad,lon:     If set, these values are used as bounds for the ring 
 ;                   the ring sector instead of pronpting the user. 
@@ -68,10 +66,14 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT object
 ;      also contains the disk coordinate for each point and the user fields
 ;      'nrad' and 'nlon' giving the number of points in radius and longitude.
+;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
 ;
 ;
 ; MODIFICATION HISTORY : 
@@ -87,26 +89,25 @@
 ; pg_ring_sector
 ;
 ;=============================================================================
-function pg_ring_sector, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+function pg_ring_sector, cd=cd, dkx=dkx, gd=gd, $
                          rad=rad, lon=lon, sample=sample, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=p0, button=button, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk
+                         color=color, silent=silent, nodsk=nodsk
 
  ;--------------------------------------------------------
  ; if rad/lon bounds given, just build outline and return
  ;--------------------------------------------------------
  if(keyword_set(rad)) then $
-   return, pg_ring_sector_radlon(cd=cd, dkx=dkx, gbx=_gbx, gd=gd, rad, lon)
+   return, pg_ring_sector_radlon(cd=cd, dkx=dkx, gd=gd, rad, lon)
 
 
  ;----------------------------------------------------------------
  ; Otherwise, wait for a click and call the appropriate routine
  ;----------------------------------------------------------------
- if(NOT keyword_set(noverbose)) then $
-              nv_message, /con, name='pg_ring_sector', $
-                 'Left:radial, Middle:oblique, Right:perpendicular'
+ if(NOT keyword_set(silent)) then $
+            nv_message, /con, 'Left:radial, Middle:oblique, Right:perpendicular'
 
  if(keyword_set(p0)) then $
   begin
@@ -124,32 +125,32 @@ function pg_ring_sector, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
 	;----------------------------------------
 	; left: radial sector
 	;----------------------------------------
-	1: return, pg_ring_sector_rad(cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+	1: return, pg_ring_sector_rad(cd=cd, dkx=dkx, gd=gd, $
                          lon=lon, sample=sample, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=[px,py], xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk)
+                         color=color, silent=silent, nodsk=nodsk)
 
 	;----------------------------------------
 	; middle:
 	;----------------------------------------
-	2: return, pg_ring_sector_oblique(cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+	2: return, pg_ring_sector_oblique(cd=cd, dkx=dkx, gd=gd, $
                          lon=lon, sample=sample, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=[px,py], xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk)
+                         color=color, silent=silent, nodsk=nodsk)
 
 	;----------------------------------------
 	; right: perpendicular sector
 	;----------------------------------------
-	4: return, pg_ring_sector_perp(cd=cd, dkx=dkx, gbx=_gbx, gd=gd, $
+	4: return, pg_ring_sector_perp(cd=cd, dkx=dkx, gd=gd, $
                          lon=lon, sample=sample, $
                          win_num=win_num, $
                          restore=restore, slope=slope, $
                          p0=[px,py], xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk)
+                         color=color, silent=silent, nodsk=nodsk)
 	else:
  endcase
 end

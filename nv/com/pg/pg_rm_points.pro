@@ -86,26 +86,26 @@
 ;	
 ;-
 ;=============================================================================
-function pg_rm_points, ps, xps, radius=radius
-@ps_include.pro
+function pg_rm_points, ptd, xptd, radius=radius
+@pnt_include.pro
 
  if(NOT keyword_set(radius)) then radius = 10
 
- n = n_elements(ps)
+ n = n_elements(ptd)
 
- xpts = pg_points(xps)
+ xpts = pnt_points(/cat, /vis, xptd)
 
  for i=0, n-1 do $
   begin
-   ps_get, ps[i], p=p, f=f
+   pnt_query, ptd[i], p=p, f=f
    w = near_points(p, xpts, radius)
    if(w[0] NE -1) then $
     begin
-     f[w] = f[w] OR PS_MASK_INVISIBLE
-     ps_set, ps[i], p=p, f=f)
+     f[w] = f[w] OR PTD_MASK_INVISIBLE
+     pnt_assign, ptd[i], p=p, f=f)
     end
   end
 
- return, ps
+ return, ptd
 end
 ;=============================================================================

@@ -13,16 +13,16 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_blemish(dd, blem_ps)
+;	result = pg_blemish(dd, blem_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:		Data descriptor containing the image to be corrected.
 ;
-;	blem_ps:	points_struct containing the known image
+;	blem_ptd:	POINT object containing the known image
 ;			coordinates of the blemishes.  If an array of
-;			points_struct is given, then the operation is
+;			objects is given, then the operation is
 ;			performed repeatedly using each set of blemish
 ;			coordinates. 
 ;
@@ -73,7 +73,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_blemish, dd, blem_ps, nom_ps, a=a, b=b, h=h, image=image, show=show
+function pg_blemish, dd, blem_ptd, nom_ptd, a=a, b=b, h=h, image=image, show=show
 
  if(NOT keyword_set(a)) then a = 5d
  if(NOT keyword_set(b)) then b = a
@@ -81,13 +81,13 @@ function pg_blemish, dd, blem_ps, nom_ps, a=a, b=b, h=h, image=image, show=show
 
  ;------------------------------------------------------------
  ; count number of input arrays
- ;  if blem_ps is not a structure, then assume it's 
+ ;  if blem_ptd is not a structure, then assume it's 
  ;  an array of image points.
  ;------------------------------------------------------------
  direct = 0
- s = size(blem_ps)
+ s = size(blem_ptd)
  type = s[s[0]+1]
- if(type EQ 8) then n = n_elements(blem_ps) $
+ if(type EQ 11) then n = n_elements(blem_ptd) $
  else $
   begin
    n = 1
@@ -97,12 +97,12 @@ function pg_blemish, dd, blem_ps, nom_ps, a=a, b=b, h=h, image=image, show=show
  ;---------------------------------------
  ; dereference the data descriptor
  ;---------------------------------------
- image = nv_data(dd)
+ image = dat_data(dd)
 
  for i=0, n-1 do $
   begin
-   if(direct) then blem_pts = blem_ps $
-   else blem_pts = ps_points(blem_ps[i])
+   if(direct) then blem_pts = blem_ptd $
+   else blem_pts = pnt_points(blem_ptd[i])
 
    nblem = n_elements(blem_pts)/2
 
@@ -116,7 +116,7 @@ function pg_blemish, dd, blem_ps, nom_ps, a=a, b=b, h=h, image=image, show=show
 
 
  new_dd = nv_clone(dd)
- nv_set_data, new_dd, image
+ dat_set_data, new_dd, image
 
  return, new_dd
 end

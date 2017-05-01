@@ -1,15 +1,21 @@
-# instrument	input			output		keyword arguments
+# Basic translators table.  
+#  COMMON translators are used for all instruments and appear first in 
+#  the list.  DEFAULT translators are use when there are no instrument-
+#  specific translators.
+#
+# Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  DEFAULT	dh_std_input		dh_std_output
-#  CTIO		eph_spice_input			-	 
-#	-       ring_input			-
-#	-  	strcat_ucact_input		-		/j2000
-#	-	station_input			-		
+  COMMON	dh_std_input		dh_std_output
+	-	station_input			-
+	-	array_input			-
+	-	ring_input			-
+	-	orb_input 			-	suffix=-orb
 
-#  SPDR		eph_spice_input			-	 
-#	-       ring_input			-
-#	-  	strcat_ucact_input		-		/j2000
-  MAP		dh_std_input		dh_std_output
-	-       station_input			-
-	-       array_input			-
+  DEFAULT		-			-
+
+
+  MAP			-			-
+
+
+

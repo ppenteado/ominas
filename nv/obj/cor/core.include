@@ -1,0 +1,18 @@
+common cor_block, core_state
+
+if(NOT keyword_set(core_state)) then core_state = cor_init_state()
+
+; on_error, 2
+
+if(keyword_set(core_state.trace)) then $
+ begin
+  help, /tr, output=s
+  p = strpos(s, '% At')
+  w = where(p NE -1)
+  if(w[0] NE -1) then $
+   begin
+    s = s[w[0]:*]
+    fn = (str_nsplit(s[0], ' '))[2]
+    print, str_pad(' ', n_elements(s)) + fn
+   end
+ end

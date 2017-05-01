@@ -17,7 +17,6 @@ function si_get_kernels_to_load, k_in, loaded_kernels, reload=reload, $
                                                                  return, k_in
 
 
-
  ;----------------------------------------------------------------------
  ; if any k_in not loaded, then return all k_in so as to maintain the
  ; correct precedence order for this group of kernels

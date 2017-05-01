@@ -2,9 +2,8 @@
 ; detect_map.pro
 ;
 ;===========================================================================
-function detect_map, label, udata
-
- dh = tag_list_get(udata, 'DETACHED_HEADER')
+function detect_map, dd
+ dh = dat_dh(dd)
 
  s = size(dh)
  type = s[s[0]+1]

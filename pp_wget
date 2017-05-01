@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+echo $@
+cf='./util/downloader/ca-bundle.crt'
+if [ "$IDL_DIR" = "" ]; then
+        idl=`which idl`
+        if [ "$idl" = "" ]; then
+          read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
+          IDL_DIR="$idldir"
+          export IDL_DIR
+          printf "Using IDL from $IDL_DIR\n"
+          LD_PRELOAD=./util/downloader/libcurl.so.4  $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
+        else
+          printf "Using IDL at $idl\n"
+          LD_PRELOAD=./util/downloader/libcurl.so.4  $idl -e '!path+=":./util/downloader"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
+        fi
+else
+        printf "IDL_DIR found, $IDL_DIR, using it\n"
+        LD_PRELOAD=./util/downloader/libcurl.so.4  $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
+fi
+#idl -e '!path+=":./util/downloader"& pp_wgetcl' -args $@

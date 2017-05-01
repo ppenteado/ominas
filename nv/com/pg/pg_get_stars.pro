@@ -48,21 +48,16 @@
 ;
 ;	raw:		If set, no aberration corrections are performed.
 ;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
-;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
 ;	str_*:		All star override keywords are accepted.  See
 ;			star_keywords.include.
 ;
-;			If str_name is specified, then only descriptors with
+;			If name is specified, then only descriptors with
 ;			those names are returned.
 ;
-;	verbatim:	If set, the descriptors requested using str_name
+;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
 ;
@@ -81,8 +76,8 @@
 ;	If /override, then a star descriptor is created and initialized
 ;	using the specified values.  Otherwise, the descriptor is obtained
 ;	through the translators.  Note that if /override is not used,
-;	values (except str_name) can still be overridden by specifying 
-;	them as keyword parameters.  If str_name is specified, then
+;	values (except name) can still be overridden by specifying 
+;	them as keyword parameters.  If name is specified, then
 ;	only descriptors corresponding to those names will be returned.
 ;	
 ;
@@ -97,10 +92,10 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
-                     no_sort=no_sort, override=override, verbatim=verbatim, raw=raw, $
+function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, $
+                     override=override, verbatim=verbatim, raw=raw, $
                      radec=radec, corners=corners, $
-@star_keywords.include
+@str__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -108,66 +103,63 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, od=od, sund=sund, dd=dd
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators
  ;-------------------------------------------------------------------
  if(keyword__set(override)) then $
   begin
-   n = n_elements(str__name)
+   n = n_elements(name)
 
- sd=str_init_descriptors(n, $
-	name=str__name, $
-	orient=str__orient, $
-	avel=str__avel, $
-	pos=str__pos, $
-	vel=str__vel, $
-	time=str__time, $
-	radii=str__radii, $
-	lora=str__lora, $
-	lum=str__lum, $
-	opaque=str__opaque, $
-	opacity=str__opacity, $  
-	sp=str__sp)
+   if(keyword_set(dd)) then gd = dd
+   sd = str_create_descriptors(n, $
+@str__keywords.include
+end_keywords)
+   gd = !null
+
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get star descriptors from the translators
  ;-------------------------------------------------------------------
  else $
   begin
+   ;-----------------------------------------------
+   ; call translators
+   ;-----------------------------------------------
+
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(str__name)) then tr_first = 1
+;;   if(keyword_set(name)) then tr_first = 1
 
-;   if(NOT keyword__set(od)) then nv_message, $
-;                               name='pg_get_stars', 'No observer descriptor.'
+;   if(NOT keyword__set(od)) then nv_message,'No observer descriptor.'
 
-   sd=nv_get_value(dd, 'STR_DESCRIPTORS', key1=od, key2=sund, key4=_sd, $
-                 key5=corners, key6=radec, key7=str__time, key8=str__name, trs=trs, $
+   sd=dat_get_value(dd, 'STR_DESCRIPTORS', key1=od, key2=sund, key4=_sd, $
+                 key5=corners, key6=radec, key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-   if(NOT keyword__set(sd)) then return, nv_ptr_new()
+   if(NOT keyword__set(sd)) then return, obj_new()
 
    n = n_elements(sd)
 
    ;---------------------------------------------------
-   ; If str__name given, determine subscripts such that
+   ; If name given, determine subscripts such that
    ; only values of the named objects are returned.
    ;
    ; Note that each translator has this opportunity,
    ; but this code guarantees that it is done.
    ;
-   ; If str__name is not given, then all descriptors
+   ; If name is not given, then all descriptors
    ; will be returned.
    ;---------------------------------------------------
-   if(keyword__set(str__name)) then $
+   if(keyword__set(name)) then $
     begin
-     tr_names = get_core_name(sd)
-     sub = nwhere(strupcase(tr_names), strupcase(str__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     tr_names = cor_name(sd)
+     sub = nwhere(strupcase(tr_names), strupcase(name))
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
@@ -176,44 +168,28 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, gd=gd, $
    sd = sd[sub]
 
    ;------------------------------------------------------------------
-   ; perform stellar aberration correction -- not yet implemented
+   ; perform stellar aberration correction
    ;------------------------------------------------------------------
 ;   if(keyword_set(od) AND (NOT keyword_set(raw))) then $
 ;                                        stellab, od, sd, c=pgc_const('c')
 
    ;-------------------------------------------------------------------
-   ; override the specified values (str__name cannot be overridden)
+   ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   if(n_elements(str__lum) NE 0) then str_set_lum, sd, str__lum
-   if(n_elements(str__sp) NE 0) then str_set_sp, sd, str__sp
-   if(n_elements(str__orient) NE 0) then bod_set_orient, sd, str__orient
-   if(n_elements(str__avel) NE 0) then bod_set_avel, sd, str__avel
-   if(n_elements(str__pos) NE 0) then bod_set_pos, sd, str__pos
-   if(n_elements(str__vel) NE 0) then bod_set_vel, sd, str__vel
-   if(n_elements(str__time) NE 0) then bod_set_time, sd, str__time
-   if(n_elements(str__radii) NE 0) then glb_set_radii, sd, str__radii
-   if(n_elements(str__lora) NE 0) then glb_set_lora , sd, str__lora
-   if(n_elements(str__opaque) NE 0) then bod_set_opaque, sd, str__opaque
-   if(n_elements(str__opacity) NE 0) then sld_set_opacity, sd, str__opacity
+   if(defined(name)) then _name = name & name = !null
+   str_assign, sd, /noevent, $
+@str__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+
   end
 
 
- ;-------------------------------------------------------
- ; if sd given, then concatenate with the new 
- ; descriptors
- ;-------------------------------------------------------
- if(NOT keyword__set(sd)) then sd=sd $
- else sd=([sd,sd])
-
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword__set(no_sort)) then sd=sd[pgs_name_sort(get_core_name(sd))]
-
-
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, od=od
+ dat_set_gd, sd, gd, od=od
 
  return, sd
 end

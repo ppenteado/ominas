@@ -12,7 +12,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps = pg_limb_sector_line(cd=cd, gbx=gbx, alt, rim, az0)
+;     outline_ptd = pg_limb_sector_line(cd=cd, gbx=gbx, alt, rim, az0)
 ;
 ;
 ; ARGUMENTS:
@@ -60,10 +60,14 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT object containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT object
 ;      also contains the user fields 'nl' and 'nw' giving the number of points 
 ;      in altitude and r.
+;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
 ;
 ;
 ; ORIGINAL AUTHOR : 
@@ -82,14 +86,10 @@ function pg_limb_sector_linear, cd=cd, gbx=_gbx, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- if(keyword_set(gd)) then $
-  begin
-   if(NOT keyword__set(cd)) then cd=gd.cd
-   if(NOT keyword__set(_gbx)) then _gbx=gd.gbx
-  end
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
 
- if(NOT keyword__set(_gbx)) then $
-            nv_message, name='pg_limb_sector_linear', 'Globe descriptor required.'
+ if(NOT keyword__set(_gbx)) then nv_message, 'Globe descriptor required.'
  __gbx = get_primary(cd, _gbx)
  if(keyword_set(__gbx[0])) then gbx = __gbx $
  else  gbx = _gbx[0,*]
@@ -97,8 +97,8 @@ function pg_limb_sector_linear, cd=cd, gbx=_gbx, gd=gd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(cds) GT 1) then nv_message, name='pg_limb_sector_linear', $
-                        'No more than one camera descriptor may be specified.'
+ if(n_elements(cds) GT 1) then $
+            nv_message, 'No more than one camera descriptor may be specified.'
 
 
  ;--------------------------
@@ -120,11 +120,11 @@ function pg_limb_sector_linear, cd=cd, gbx=_gbx, gd=gd, $
  ;-------------------------------------------
  ; Return outline points
  ;-------------------------------------------
- outline_ps = ps_init(points = outline_pts, desc = 'pg_limb_sector_linear')
- ps_set_udata, outline_ps, name='nw', [nalt]
- ps_set_udata, outline_ps, name='nl', [nrim]
- ps_set_udata, outline_ps, name='sample', [sample]
+ outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'pg_limb_sector_linear')
+ cor_set_udata, outline_ptd, 'nw', [nalt]
+ cor_set_udata, outline_ptd, 'nl', [nrim]
+ cor_set_udata, outline_ptd, 'sample', [sample]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================

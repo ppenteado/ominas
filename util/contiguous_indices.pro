@@ -8,6 +8,6 @@ function contiguous_indices, x
 
  w = min(where(dindgen(n)+x[0] NE x))
  if(w[0] EQ -1) then return, x
- return, x[0:w[0]]
+ return, x[0:w[0]-1]
 end
 ;=============================================================================

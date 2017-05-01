@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_stars, dd, sd=sd
-;	pg_put_stars, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -34,10 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	sds:	Star descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, star descriptors are
-;		taken from the gd.sd field.
+;	sd:	Star descriptors to output.
 ;
 ;	str_*:		All star override keywords are accepted.
 ;
@@ -74,51 +70,33 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_stars, dd, trs, sds=sds, ods=ods, gd=gd, $
-@star_keywords.include
+pro pg_put_stars, dd, trs, sd=_sd, ods=ods, $
+@str__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
 
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword__set(gd)) then $
-  begin
-   if(NOT keyword__set(sds)) then sds=gd.sds
-   if(NOT keyword__set(ods)) then ods=gd.ods
-  end
- if(NOT keyword__set(sds)) then nv_message, $
-                                name='pg_put_stars', 'No star descriptor.'
- if(NOT keyword__set(ods)) then nv_message, $
-                               name='pg_put_stars', 'No observer descriptor.'
-
-
  ;-------------------------------------------------------------------
- ; override the specified values (strt__name cannot be overridden)
+ ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------
- gbds = str_globe(sds)
- bds = sld_body(gbds)
- if(n_elements(str__lum) NE 0) then str_set_lum, bds, str__lum
- if(n_elements(str__sp) NE 0) then str_set_sp, bds, str__sp
- if(n_elements(str__orient) NE 0) then bod_set_orient, bds, str__orient
- if(n_elements(str__avel) NE 0) then bod_set_avel, bds, str__avel
- if(n_elements(str__pos) NE 0) then bod_set_pos, bds, str__pos
- if(n_elements(str__vel) NE 0) then bod_set_vel, bds, str__vel
- if(n_elements(str__time) NE 0) then bod_set_time, bds, str__time
- if(n_elements(str__radii) NE 0) then glb_set_radii, gbds, str__radii
- if(n_elements(str__lora) NE 0) then glb_set_lora, gbds, str__lora
+ sd = nv_clone(_sd)
+
+ if(defined(name)) then _name = name & name = !null
+ str_assign, sd, /noevent, $
+@str__keywords.include
+end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'STR_DESCRIPTORS', sds, trs=trs, $
+ dat_put_value, dd, 'STR_DESCRIPTORS', sd, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
 
-
+ nv_free, sd
 end
 ;===========================================================================
 

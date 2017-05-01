@@ -37,7 +37,7 @@
 ;	gd:	Generic descriptor.  If present, cd, dkx, and gbx are taken 
 ;		from here if contained.
 ;
-; 	outline_ps:	points_struct with image points outlining the 
+; 	outline_ptd:	POINT with image points outlining the 
 ;			region of the image to correct.  To correct the entire
 ;			planet, this input could be generated using pg_limb(). 
 ;			If this keyword is not given, the entire image is used.
@@ -52,6 +52,9 @@
 ;
 ;	phase_parms:	Array of parameters for the photometric function named
 ;			by the 'phase_fn' keyword.
+;
+;	overwrite:	If set, the output descriptor is the input descriptor
+;			with the relevant fields modified.
 ;
 ;  OUTPUT:
 ;	emm_out:	Image emission angles.
@@ -76,34 +79,39 @@
 ;	
 ;-
 ;=============================================================================
-function pg_photom, dd, outline_ps=outline_ps, $
+function pg_photom, dd, outline_ptd=outline_ptd, $
                   cd=cd, gbx=gbx, dkx=dkx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
-                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out
+                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, $
+                  overwrite=overwrite
 
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, dkx=dkx, sund=sund, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
 
 
  ;-----------------------------------------------
  ; call appropriate routine
  ;-----------------------------------------------
  if(keyword__set(gbx)) then $
-  return, pg_photom_globe(dd, outline_ps=outline_ps, $
+  return, pg_photom_globe(dd, outline_ptd=outline_ptd, $
                   cd=cd, gbx=gbx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
-                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out)
+                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite)
   
- return, pg_photom_disk(dd, outline_ps=outline_ps, $
+ return, pg_photom_disk(dd, outline_ptd=outline_ptd, $
                   cd=cd, dkx=dkx, sund=sund, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
-                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out)
+                  emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite)
 
 end
 ;=============================================================================

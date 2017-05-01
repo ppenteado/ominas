@@ -33,12 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	mds:		Input map descriptors; used by some translators.
-;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
+;	md:		Input map descriptors; used by some translators.
 ;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
@@ -46,13 +41,13 @@
 ;	map_*:		All map override keywords are accepted.  See
 ;			map_keywords.include.
 ;
-;			If map_name is specified, then only descriptors with
+;			If name is specified, then only descriptors with
 ;			those names are returned.
 ;
-;			If /override and map name is not specified, then
-;			the name is taken from the globe descriptor.
+;			If /override and name is not specified, then
+;			the name is taken from the core descriptor.
 ;
-;	verbatim:	If set, the descriptors requested using map_name
+;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
 ;
@@ -71,8 +66,8 @@
 ;	If /override, then a map descriptor is created and initialized
 ;	using the specified values.  Otherwise, the descriptor is obtained
 ;	through the translators.  Note that if /override is not used,
-;	values (except map_name) can still be overridden by specifying 
-;	them as keyword parameters.  If map_name is specified, then
+;	values (except name) can still be overridden by specifying 
+;	them as keyword parameters.  If name is specified, then
 ;	only descriptors corresponding to those names will be returned.
 ;	
 ;
@@ -83,9 +78,9 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
-                        no_sort=no_sort, override=override, verbatim=verbatim, $
-@map_keywords.include
+function pg_get_maps, dd, trs, md=_md, gbx=gbx, dkx=dkx, bx=bx, $
+                        override=override, verbatim=verbatim, $
+@map__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -93,7 +88,9 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, gbx=gbx, dkx=dkx, bx=bx, dd=dd
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
 
 
  ;----------------------------------------------------------
@@ -101,15 +98,15 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;----------------------------------------------------------
  if(keyword__set(bx)) then $
   begin
-   gbx = class_extract(bx, 'GLOBE')
-   dkx = class_extract(bx, 'DISK')
+   if(cor_isa(bx, 'GLOBE')) then gbx = bx
+   if(cor_isa(bx, 'DISK')) then dkx = bx
   end
 
  ;----------------------------------------------------------
  ; Use globe radii for map reference radii.
  ;----------------------------------------------------------
- if(NOT keyword_set(map__radii)) then $ 
-  if(keyword_set(gbx)) then map__radii = glb_radii(gbx)
+ if(NOT keyword_set(radii)) then $ 
+  if(keyword_set(gbx)) then radii = glb_radii(gbx)
 
 
  ;----------------------------------------------------------
@@ -117,8 +114,9 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;----------------------------------------------------------
  if(keyword_set(dkx)) then $
   begin
-   ecc = 0.5*total((dsk_ecc(dkx))[0,*])
-   radii = map_ecc_to_radii(ecc)
+   a = 0.5d*total((dsk_sma(dkx))[0,*])
+   e = 0.5d*total((dsk_ecc(dkx))[0,*])
+   radii = [a*(1d - e), a*(1d - e^2), 0d]
    bx = dkx
   end
 
@@ -127,97 +125,75 @@ function pg_get_maps, dd, trs, mds=_mds, gbx=gbx, dkx=dkx, bx=bx, gd=gd, $
  ;-------------------------------------------------------------------
  if(keyword_set(override)) then $
   begin
-   n = n_elements(map__name)
+   n = n_elements(name)
    if(n EQ 0) then $
     begin
      n = 1
-     map__name = get_core_name(bx)
+     name = cor_name(bx)
     end
 
+   if(keyword_set(dd)) then gd = dd
+   md = map_create_descriptors(n, $
+@map__keywords.include
+end_keywords)
+   gd = !null
 
-   mds=map_init_descriptors(n, $
-	name=map__name, $
-	graphic=map__graphic, $
-	rotate=map__rotate, $
-	type=map__type, $
-	units=map__units, $
-	fn_map_to_image=map__fn_map_to_image, $
-	fn_image_to_map=map__fn_image_to_map, $
-	fn_data_p=map__fn_data_p, $
-	size=map__size, $
-	origin=map__origin, $
-	center=map__center, $
-	scale=map__scale, $
-	radii=map__radii)
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get map descriptors from the translators
  ;-------------------------------------------------------------------
  else $
   begin
-   mds=nv_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_mds, key8=map__name, trs=trs, $
+   md = dat_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_md, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-;   if(NOT keyword__set(mds)) then mds=map_init_descriptors(1)
-   if(NOT keyword__set(mds)) then return, nv_ptr_new()
+;   if(NOT keyword__set(md)) then md=map_create_descriptors(1)
+   if(NOT keyword__set(md)) then return, obj_new()
 
-   n = n_elements(mds)
+   n = n_elements(md)
 
    ;---------------------------------------------------
-   ; If map__name given, determine subscripts such that
+   ; If name given, determine subscripts such that
    ; only values of the named objects are returned.
    ;
    ; Note that each translator has this opportunity,
    ; but this code guarantees that it is done.
    ;
-   ; If map__name is not given, then all descriptors
+   ; If name is not given, then all descriptors
    ; will be returned.
    ;---------------------------------------------------
-   if(keyword__set(map__name)) then $
+   if(keyword__set(name)) then $
     begin
-     tr_names = get_core_name(mds)
-     sub = nwhere(strupcase(tr_names), strupcase(map__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     tr_names = cor_name(md)
+     sub = nwhere(strupcase(tr_names), strupcase(name))
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
 
    n = n_elements(sub)
-   mds = mds[sub]
+   md = md[sub]
 
    ;-------------------------------------------------------------------
-   ; override the specified values (map__name cannot be overridden)
+   ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   if(n_elements(map__type) NE 0) then map_set_type, mds, map__type
-   if(n_elements(map__size) NE 0) then map_set_size, mds, map__size
-   if(n_elements(map__graphic) NE 0) then map_set_graphic, mds, map__graphic
-   if(n_elements(map__rotate) NE 0) then map_set_rotate, mds, map__rotate
-   if(n_elements(map__scale) NE 0) then map_set_scale, mds, map__scale
-   if(n_elements(map__radii) NE 0) then map_set_radii, mds, map__radii
-   if(n_elements(map__origin) NE 0) then map_set_origin, mds, map__origin
-   if(n_elements(map__center) NE 0) then map_set_center, mds, map__center
-   if(n_elements(map__fn_map_to_image) NE 0) then $
-                            map_set_fn_map_to_image, mds, map__fn_map_to_image
-   if(n_elements(map__fn_image_to_map) NE 0) then $
-                           map_set_fn_image_to_map, mds, map__fn_image_to_map
-   if(n_elements(map__fn_data_p) NE 0) then $
-                                     map_set_fn_data_p, mds, map__fn_data_p
-  
+   if(defined(name)) then _name = name & name = !null
+   map_assign, md, /noevent, $
+@map__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+
   end
 
 
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then mds=mds[pgs_name_sort(get_core_name(mds))]
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, gbx=gbx, dkx=dkx, bx=bx
+ dat_set_gd, md, gd, gbx=gbx, dkx=dkx, bx=bx
 
-
-
- return, mds
+ return, md
 end
 ;===========================================================================
 

@@ -7,8 +7,6 @@
 pro spice_write_cameras, dd, ref, ck_file, cd, $
                 sc=sc, inst=inst, plat=plat, status=status
 
-; path = spice_bin_path()
-
  status = 0
 
  ;-------------------------------
@@ -28,10 +26,10 @@ pro spice_write_cameras, dd, ref, ck_file, cd, $
 
  cam_avel = (bod_avel(cd))[0,*]
 
- cam_name = (nv_instrument(dd))[0]
+ cam_name = (dat_instrument(dd))[0]
 
- spawn, 'echo ' + ck_file, ck_file
- ck_file = ck_file[0]
+; spawn, 'echo ' + ck_file, ck_file
+; ck_file = ck_file[0]
 
  comment = cor_udata(cd, 'CK_COMMENT')
  if(NOT keyword_set(comment)) then comment = ' '
@@ -39,6 +37,7 @@ pro spice_write_cameras, dd, ref, ck_file, cd, $
  ;-------------------------------
  ; write the kernel
  ;-------------------------------
+ nv_message, verb=0.9, 'Writing ' + ck_file
  status = spice_put_cameras(sc, inst, plat, ref, ck_file, comment, $
                         cam_time, cam_exposure, cam_pos, cam_vel, $
                         cam_orient, cam_avel)

@@ -10,8 +10,8 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps = pg_ring_sector_box_ortho()
-;     outline_ps = pg_ring_sector_box_ortho(corners)
+;     outline_ptd = pg_ring_sector_box_ortho()
+;     outline_ptd = pg_ring_sector_box_ortho(corners)
 ;
 ;
 ; ARGUMENTS:
@@ -39,7 +39,7 @@
 ; xor_graphics:     If set, the sector outline is drawn and erased using xor
 ;                   graphics instead of a pixmap.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;       sample:     Grid sampling, default is 1.
 ;
@@ -49,8 +49,12 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
+;      POINT containing points on the sector outline.  The point
 ;      spacing is determined by the sample keyword.
+;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
 ;
 ;
 ; ORIGINAL AUTHOR : J. Spitale ; 6/2005
@@ -69,7 +73,7 @@ function pg_ring_sector_box_ortho, p, $
                          win_num=win_num, $
                          restore=restore, $
                          p0=p0, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose
+                         color=color, silent=silent
 
  if(NOT keyword__set(win_num)) then win_num=!window
  if(NOT keyword__set(color)) then color=!p.color
@@ -82,7 +86,7 @@ function pg_ring_sector_box_ortho, p, $
  ;-----------------------------------------
  if(NOT keyword_set(p)) then $
   begin
-   if(NOT keyword__set(noverbose)) then $
+   if(NOT keyword__set(silent)) then $
     begin
      nv_message, 'Drag and release to define box', $
                                      name='pg_ring_sector_box_ortho', /continue
@@ -105,10 +109,10 @@ function pg_ring_sector_box_ortho, p, $
  ;-----------------------------------------
  ; package the result
  ;-----------------------------------------
- outline_ps = ps_init(points = outline_pts, desc = 'pg_ring_sector_box_ortho')
- ps_set_udata, outline_ps, name='sample', [sample]
+ outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'pg_ring_sector_box_ortho')
+ cor_set_udata, outline_ptd, 'sample', [sample]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================
 
@@ -117,13 +121,13 @@ end
 pro test
 ingrid, dd=dd, cd=cd, pd=pd, rd=rd
 
-outline_ps = pg_ring_sector_box_ortho()
-outline_ps = pg_ring_sector_box_ortho(tr([tr([0,0]),tr([1023,1023])]))
+outline_ptd = pg_ring_sector_box_ortho()
+outline_ptd = pg_ring_sector_box_ortho(tr([tr([0,0]),tr([1023,1023])]))
 
-pg_draw,outline_ps, col=ctred(), psym=-3
+pg_draw,outline_ptd, col=ctred(), psym=-3
 
-profile = pg_profile_ring(dd, cd=cd, dkx=rd, gbx=pd, $
-                                   outline_ps, dsk_pts=dsk_pts, $
+profile = pg_profile_ring(dd, cd=cd, dkx=rd, $
+                                   outline_ptd, dsk_pts=dsk_pts, $
                                    sigma=sigma)
 rads = dsk_pts[*,0]
 lons = dsk_pts[*,1]

@@ -23,9 +23,9 @@
 ;=======================================
 ; read and display a voyager image
 ;=======================================
-zoom = 0.35
+zoom = 0.75
 
-dd = nv_read('./data/c3440346.img', im, label)
+dd = dat_read('./data/c3440346.img', im, label)
 
 ctmod, top=top
 tvim, im, zoom=zoom, /order, /new, top=top
@@ -53,8 +53,8 @@ cd = pg_get_cameras(dd)
 ; (other models may be input to pg_resloc if desired).  
 ;
 ;--------------------------------------------------------------------------
-scan_ps = pg_resloc(dd)
-pg_draw, scan_ps, psym=1, col=ctyellow()
+scan_ptd = pg_resloc(dd)
+pg_draw, scan_ptd, psym=1, col=ctyellow()
 
 ;--------------------------------------------------------------------------
 ; Read known focal coords and nominal image coords.
@@ -67,8 +67,8 @@ pg_draw, scan_ps, psym=1, col=ctyellow()
 ; cannot be found in the image.
 ;
 ;--------------------------------------------------------------------------
-foc_ps = readrob('data/vgr1na.rob')
-nom_ps = readres('data/vgr1na.res')
+foc_ptd = readrob('data/vgr1na.rob')
+nom_ptd = readres('data/vgr1na.res')
 
 ;--------------------------------------------------------------------------
 ; Associate known reseau marks with scanned locations
@@ -79,7 +79,7 @@ nom_ps = readres('data/vgr1na.res')
 ; locations.
 ;
 ;--------------------------------------------------------------------------
-pg_resfit, scan_ps, foc_ps, nom_ps=nom_ps, cd=cd, fcp=fcp, scp=scp, /assoc
+pg_resfit, scan_ptd, foc_ptd, nom_ptd=nom_ptd, cd=cd, fcp=fcp, scp=scp, /assoc
 
 ;============================================================================
 ; reproject image on linear scale
@@ -93,16 +93,15 @@ dd3 = pg_linearize_image(dd, cd_new, cd=cd, fcp=fcp, scp=scp, im=im3, $
                  oaxis=[499.,499.], scale=[7.8586540e-06,7.8586540e-06])
 
 tvim, im3, /order, /new, z=zoom
-; foc_pts = ps_points(foc_ps)
+; foc_pts = pnt_points(foc_ptd)
 ; foc_pts_image = cam_focal_to_image(cd_new, foc_pts)
 ; plots, foc_pts_image[*,*,0], psym=6
 
 
 
 stop
-dd1 = nv_read('./data/c3440346.gem', _im3, label)
-tvim, _im3, /order, /new, z=zoom
-.run ~/idl_pro/jblink
-jblink, im3, _im3
+dd1 = dat_read('./data/c3440346.gem', _im3, label)
+tvim, _im3
+grim, dd3, dd1
 
 

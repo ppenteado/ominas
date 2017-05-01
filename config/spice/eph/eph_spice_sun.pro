@@ -6,6 +6,7 @@ function eph_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
                      status=status, time=sc_time, constants=constants, obs=obs
 
  if(NOT keyword_set(sc)) then sc = 0l
+ ndd = n_elements(dd)
 
  ;------------------------------
  ; get planet descriptor for sun
@@ -13,29 +14,26 @@ function eph_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
  pd = eph_to_ominas( $
 	spice_planets(dd, ref, $
 		time = sc_time, $
-		plt_name = ['SUN'], $
+		name = make_array(1,ndd, val='SUN'), $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs) )
  if(status NE 0) then return, 0
 
  ;------------------------------
  ; convert to star descriptor
  ;------------------------------
- gbd = plt_globe(pd)
- sld = glb_solid(gbd)
- bd = sld_body(sld)
-
- sd = str_init_descriptors(n_obj, $
-		name=get_core_name(pd), $
-		orient=bod_orient(bd), $
-		avel=bod_avel(bd), $
-		pos=bod_pos(bd), $
-		lum=3.862d26, $
-		mass=1.98892d30, $
-		vel=bod_vel(bd), $
-		time=bod_time(bd), $
-		lref=glb_lref(gbd), $
-		radii=glb_radii(gbd), $
-		lora=glb_lora(gbd))
+ sd = str_create_descriptors(n_obj, $
+		gd=dd, $
+		name=cor_name(pd), $
+		orient=bod_orient(pd), $
+		avel=bod_avel(pd), $
+		pos=bod_pos(pd), $
+		lum=make_array(1,ndd, val=3.862d26), $
+		mass=make_array(1,ndd, val=1.98892d30), $
+		vel=bod_vel(pd), $
+		time=bod_time(pd), $
+		lref=glb_lref(pd), $
+		radii=glb_radii(pd), $
+		lora=glb_lora(pd))
 
  return, sd
 

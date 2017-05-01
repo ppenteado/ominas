@@ -25,11 +25,16 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	bx:	Body descriptors indicating which maps to load.
 ;
 ;
 ;  OUTPUT: 
 ;	md:	Map descriptor for each map.
+;
+;
+; ENVIRONMENT VARIABLES:
+;	PG_MAPS:	Sets the map directory; overrides the dir keyword.
 ;
 ;
 ; RETURN: 
@@ -52,7 +57,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_load_maps, dir, md=md, dd=dd
+function pg_load_maps, dir, md=md, bx=bx, dd=dd
 
  ;--------------------------------------------------------------
  ; get map directory
@@ -60,7 +65,9 @@ function pg_load_maps, dir, md=md, dd=dd
  if(NOT keyword_set(dir)) then dir = getenv('PG_MAPS')
  if(NOT keyword_set(dir)) then $
   begin
-   nv_message, /con, name='pg_load_maps', 'Map directory not defined.'
+   nv_message, /con, 'Map directory not specified.', $
+       exp=['The map directory may be specified as the argument to this program', $
+            'or via the PG_MAPS environment variable.']
    return, 0
   end 
 
@@ -68,7 +75,16 @@ function pg_load_maps, dir, md=md, dd=dd
  ;--------------------------------------------------------------
  ; get map files
  ;--------------------------------------------------------------
- files = findfile(dir + '/*/*.*')
+ dirs = file_search(dir + '/*')
+ split_filename, dirs, dir, name
+
+ names = cor_name(bx)
+
+ w = nwhere(strupcase(names), strupcase(name))
+ if(w[0] EQ -1) then return, 0
+
+ dirs = dirs[w]
+ files = file_search(dirs + '/*.*')
 
 
  ;------------------------------------------------------------------
@@ -76,7 +92,7 @@ function pg_load_maps, dir, md=md, dd=dd
  ;  The files are not actually loaded, as indicated by maintain=1.
  ;  They will be loaded when accessed.
  ;-----------------------------------------------------------------
- dd = nv_read(files, maintain=1)
+ dd = dat_read(files, maintain=1)
  if(NOT keyword_set(dd)) then return, 0
 
  nmap = n_elements(dd)
@@ -85,10 +101,10 @@ function pg_load_maps, dir, md=md, dd=dd
  ;--------------------------------------------------------------
  ; get map descriptors
  ;--------------------------------------------------------------
- md = ptrarr(nmap)
+ md = objarr(nmap)
  for i=0, nmap-1 do md[i] = pg_get_maps(dd[i])
 
- w = where(ptr_valid(md))
+ w = where(obj_valid(md))
  if(w[0] EQ -1) then return, 0
 
 

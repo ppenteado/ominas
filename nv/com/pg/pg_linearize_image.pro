@@ -91,12 +91,13 @@ function pg_linearize_image, dd, new_cd, cd=cd, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
 
  ;---------------------------------------
  ; dereference the data descriptor
  ;---------------------------------------
- image = nv_data(dd)
+ image = dat_data(dd)
  s = size(image)
 
  ;---------------------------------------
@@ -116,7 +117,7 @@ function pg_linearize_image, dd, new_cd, cd=cd, gd=gd, $
  cam_set_oaxis, new_cd, oaxis
  cam_set_fn_focal_to_image, new_cd, 'cam_focal_to_image_linear'
  cam_set_fn_image_to_focal, new_cd, 'cam_image_to_focal_linear'
- add_core_task, new_cd, 'pg_linearize_image'
+ cor_add_task, new_cd, 'pg_linearize_image'
 
 
 
@@ -138,12 +139,12 @@ function pg_linearize_image, dd, new_cd, cd=cd, gd=gd, $
    ;- - - - - - - - - - - - - - - - - - - - - - -
    ; get coords of known reseaus in output image
    ;- - - - - - - - - - - - - - - - - - - - - - -
-   foc_pts_focal = ps_points(fcp)
+   foc_pts_focal = pnt_points(fcp)
    nfp = n_elements(foc_pts_focal)/2
    foc_pts = cam_focal_to_image(new_cd, foc_pts_focal)
    foc_pts = reform(foc_pts, 2, nfp, /over)
 
-   scan_pts = ps_points(scp)
+   scan_pts = pnt_points(scp)
 
    ;- - - - - - - - - - - - - - 
    ; reproject
@@ -156,7 +157,7 @@ function pg_linearize_image, dd, new_cd, cd=cd, gd=gd, $
 
 
  new_dd = nv_clone(dd)
- nv_set_data, new_dd, new_image
+ dat_set_data, new_dd, new_image
 
  return, new_dd
 end

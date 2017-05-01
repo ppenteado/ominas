@@ -20,7 +20,7 @@
 ;  INPUT:
 ;	dd:		Data descriptor containing the image to be despiked.
 ;
-;	spike_ps:	points_struct specifying the points to replace;
+;	spike_ptd:	POINT specifying the points to replace;
 ;			typically computed by pg_spikes.
 ;
 ;  OUTPUT:
@@ -34,6 +34,12 @@
 ;
 ;	n=n:		Number of timers to repeat the box filter.  Default
 ;			is 5.
+;
+;	kernel:		If set, this kernel is used to weight the replacement
+;			of all pixels in a box of size scale around each
+;			spike point, instead of replacing only the spike
+;			point.  If this is a scalar, then this is taken as the
+;			width of a Gaussian kernel.
 ;
 ;  OUTPUT:
 ;	image:		The corrected image.
@@ -63,7 +69,8 @@
 ;	
 ;-
 ;=============================================================================
-function pg_despike, dd, spike_ps, image=image, scale=scale, n=n, noclone=noclone
+function pg_despike, dd, spike_ptd, $
+                image=image, scale=scale, n=n, kernel=kernel, noclone=noclone
 
  if(NOT keyword_set(scale)) then scale = 10
  if(NOT keyword_set(n)) then n = 5
@@ -71,15 +78,44 @@ function pg_despike, dd, spike_ps, image=image, scale=scale, n=n, noclone=noclon
  ;---------------------------------------
  ; dereference
  ;---------------------------------------
- im = nv_data(dd)
- p = pg_points(spike_ps)
+ im = dat_data(dd)
+ p = pnt_points(spike_ptd, /cat)
+ np = n_elements(p[0,*])
+
+
+ ;---------------------------------------
+ ; determine weigting kernel, if any
+ ;---------------------------------------
+ pp = p
+ if(keyword_set(kernel)) then $
+  begin
+   wk = n_elements(kernel) EQ 1
+
+   nxy = [scale,scale]
+   if(NOT wk) then nxy = size(kernel, /dim)
+
+   xx = dindgen(nxy[0])#make_array(nxy[1],val=1d) - double(nxy[0])/2
+   yy = dindgen(nxy[1])##make_array(nxy[0],val=1d) - double(nxy[1])/2
+
+   weight = kernel
+   if(wk) then weight = gauss2d(xx, yy, kernel, kernel)
+
+   dp = [transpose(xx[*]), transpose(yy[*])]
+   ndp = n_elements(dp[0,*])
+
+   dp = reform(/over, dp[linegen3z(2,ndp,np)], 2, ndp*np)
+   p = reform(/over, transpose(p[linegen3z(2,np,ndp)], [0,2,1]), 2, ndp*np)
+   weight = reform(/over, weight[*]#make_array(np,val=1d), ndp*np)
+
+   pp = p + dp
+  end
 
 
  ;---------------------------------------
  ; despike
  ;---------------------------------------
  if(NOT keyword_set(p)) then image = im $ 
- else image = despike(im, p, scale=scale, n=n)
+ else image = despike(im, pp, scale=scale, n=n, weight=weight)
 
 
  ;---------------------------------------
@@ -87,7 +123,7 @@ function pg_despike, dd, spike_ps, image=image, scale=scale, n=n, noclone=noclon
  ;---------------------------------------
  if(NOT keyword_set(noclone)) then new_dd = nv_clone(dd) $
  else new_dd = dd
- nv_set_data, new_dd, image
+ dat_set_data, new_dd, image
 
  return, new_dd
 end

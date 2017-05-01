@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_rings, dd, rd=rd
-;	pg_put_rings, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -34,10 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	rds:	Ring descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, ring descriptors are
-;		taken from the gd.rd field.
+;	rd:	Ring descriptors to output.
 ;
 ;	rng_*:		All ring override keywords are accepted.
 ;
@@ -74,54 +70,32 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_rings, dd, trs, rds=rds, ods=ods, gd=gd, $
-@ring_keywords.include
+pro pg_put_rings, dd, trs, rd=_rd, ods=ods, $
+@rng__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
 
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword_set(gd)) then $
-  begin
-   if(NOT keyword_set(rds)) then rds=gd.rds
-   if(NOT keyword_set(ods)) then ods=gd.ods
-  end
- if(NOT keyword_set(rds)) then nv_message, $
-                                     name='pg_put_rings', 'No ring descriptor.'
- if(NOT keyword_set(ods)) then nv_message, $
-                                 name='pg_put_rings', 'No observer descriptor.'
+ ;-------------------------------------------------------------------
+ ; override the specified values (name cannot be overridden)
+ ;-------------------------------------------------------------------
+ rd = nv_clone(_rd)
 
-
-   ;-------------------------------------------------------------------
-   ; override the specified values (rng__name cannot be overridden)
-   ;-------------------------------------------------------------------
-   if(n_elements(rng__primary) NE 0) then rng_set_primary, rds, rng__primary
-
-   if(n_elements(rng__orient) NE 0) then bod_set_orient, rds, rng__orient
-   if(n_elements(rng__avel) NE 0) then bod_set_avel, rds, rng__avel
-   if(n_elements(rng__pos) NE 0) then bod_set_pos, rds, rng__pos
-   if(n_elements(rng__vel) NE 0) then bod_set_vel, rds, rng__vel
-   if(n_elements(rng__time) NE 0) then bod_set_time, rds, rng__time
-
-   if(n_elements(rng__sma) NE 0) then dsk_set_sma, rds, rng__sma
-   if(n_elements(rng__ecc) NE 0) then dsk_set_ecc, rds, rng__ecc
-   if(n_elements(rng__nm) NE 0) then dsk_set_nm, rds, rng__nm
-   if(n_elements(rng__m) NE 0) then dsk_set_m, rds, rng__m
-   if(n_elements(rng__em) NE 0) then dsk_set_em, rds, rng__em
-   if(n_elements(rng__wm) NE 0) then dsk_set_wm, rds, rng__wm
-   if(n_elements(rng__dwmdt) NE 0) then dsk_set_dwmdt, rds, rng__dwmdt
+ if(defined(name)) then _name = name & name = !null
+ rng_assign, rd, /noevent, $
+@rng__keywords.include
+end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'RNG_DESCRIPTORS', rds, trs=trs, $
+ dat_put_value, dd, 'RNG_DESCRIPTORS', rd, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
-
+ nv_free, rd
 end
 ;===========================================================================
 

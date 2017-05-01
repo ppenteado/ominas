@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="DETECTORS Program Reference", $
-    "/home/joes/idl_pro/minas/config/detectors/*.pro", $
-    "/home/joes/idl_pro/minas/config/detectors/doc_detectors.txt"

@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_cameras, dd, cd=cd
-;	pg_put_cameras, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -34,10 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	cds:	Camera descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, camera descriptors are
-;		taken from the gd.cd field.
+;	cd:	Camera descriptors to output.
 ;
 ;	cam_*:		All camera override keywords are accepted.
 ;
@@ -74,51 +70,32 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_cameras, dd, trs, gd=gd, cds=cds, $
-@camera_keywords.include
+pro pg_put_cameras, dd, trs, cd=_cd, $
+@cam__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
 
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword__set(gd)) then $
-  begin
-   if(NOT keyword__set(cds)) then cds=gd.cd
-  end
- if(NOT keyword__set(cds)) then nv_message, $
-                                name='pg_put_cameras', 'No camera descriptor.'
+ ;-------------------------------------------------------------------
+ ; override the specified values (name cannot be overridden)
+ ;-------------------------------------------------------------------
+ cd = nv_clone(_cd)
 
- ;-------------------------------------------------------------------
- ; override the specified values (cam__name cannot be overridden)
- ;-------------------------------------------------------------------
- bds = cam_body(cds)
- if(n_elements(cam__orient) NE 0) then bod_set_orient, bds, cam__orient
- if(n_elements(cam__avel) NE 0) then bod_set_avel, bds, cam__avel
- if(n_elements(cam__pos) NE 0) then bod_set_pos, bds, cam__pos
- if(n_elements(cam__vel) NE 0) then bod_set_vel, bds, cam__vel
- if(n_elements(cam__time) NE 0) then bod_set_time, bds, cam__time
- if(n_elements(cam__fn_focal_to_image) NE 0) then $
-                cam_set_fn_focal_to_image, cds, cam__fn_focal_to_image
- if(n_elements(cam__fn_image_to_focal) NE 0) then $
-                cam_set_fn_image_to_focal, cds, cam__fn_image_to_focal
- if(n_elements(cam__fn_data) NE 0) then cam_set_fn_data_p, cds, cam__fn_data
- if(n_elements(cam__scale) NE 0) then cam_set_scale, cds, cam__scale
- if(n_elements(cam__oaxis) NE 0) then cam_set_oaxis, cds, cam__oaxis
- if(n_elements(cam__size) NE 0) then cam_set_size, cds, cam__size
- if(n_elements(cam__exposure) NE 0) then $
-                                  cam_set_exposure, cds, cam__exposure
+ if(defined(name)) then _name = name & name = !null
+ cam_assign, cd, /noevent, $
+@cam__keywords.include
+end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'CAM_DESCRIPTORS', cds, trs=trs, $
+ dat_put_value, dd, 'CAM_DESCRIPTORS', cd, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
-
+ nv_free, cd
 end
 ;===========================================================================
 

@@ -6,7 +6,7 @@
 ;
 ; PURPOSE:
 ;	For each given object, excludes points contained in the given region
-;	by setting the PS_MASK_INVISIBLE.
+;	by setting the PTD_MASK_INVISIBLE.
 ;
 ;
 ; CATEGORY:
@@ -14,25 +14,25 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_trim, dd, object_ps, region
+;	pg_trim, dd, object_ptd, region
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:		Data descriptor containing the image.
 ;
-;	object_ps:	Array (n_objects) of points_struct containing the
+;	object_ptd:	Array (n_objects) of POINT containing the
 ;			image points to be trimmed.
 ;
 ;	region:		Array of subscripts of image points to be trimmed.
 ;
 ;  OUTPUT:
-;	object_ps:	The input points are be modified on return.
+;	object_ptd:	The input points are be modified on return.
 ;
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	mask:		Mask to use instead of PS_MASK_INVISIBLE.
+;	mask:		Mask to use instead of PTD_MASK_INVISIBLE.
 ;
 ;	off:		If set, the masked flag bit will be turned off.
 ;
@@ -55,13 +55,13 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_trim, dd, object_ps, region, mask=mask, off=off
-@ps_include.pro
+pro pg_trim, dd, object_ptd, region, mask=mask, off=off
+@pnt_include.pro
 
  if(region[0] EQ -1) then return
- if(NOT keyword_set(mask)) then mask = PS_MASK_INVISIBLE
+ if(NOT keyword_set(mask)) then mask = PTD_MASK_INVISIBLE
 
- n_objects = n_elements(object_ps)
+ n_objects = n_elements(object_ptd)
 
  ;----------------------------
  ; determine image size
@@ -72,7 +72,7 @@ pro pg_trim, dd, object_ps, region, mask=mask, off=off
 
  if(keyword_set(dd)) then $
   begin
-   image = nv_data(dd)
+   image = dat_data(dd)
    s = size(image)
    xsize = s[1]
    ysize = s[2]
@@ -87,16 +87,16 @@ pro pg_trim, dd, object_ps, region, mask=mask, off=off
    ;----------------------------------------------
    ; determine subscripts of elements not to trim
    ;----------------------------------------------
-   points = ps_points(object_ps[i])
-   flags = ps_flags(object_ps[i])
+   points = pnt_points(object_ptd[i])
+   flags = pnt_flags(object_ptd[i])
 
    if(keyword_set(flags) AND keyword_set(points)) then $
     begin
      if(device) then $
       points = (convert_coord(/data, /to_device, points))[0:1,*]
 
-     nn = ps_nv(object_ps[i])
-     nt = ps_nt(object_ps[i])
+     nn = pnt_nv(object_ptd[i])
+     nt = pnt_nt(object_ptd[i])
      points = reform(points, 2,nn*nt, /overwrite)
      flags = reform(flags, nn*nt, /overwrite)
 
@@ -110,7 +110,7 @@ pro pg_trim, dd, object_ps, region, mask=mask, off=off
        if(NOT keyword_set(off)) then flags[w] = flags[w] OR mask $
        else flags[w] = flags[w] AND NOT mask
        flags = reform(flags, nn,nt, /overwrite)
-       ps_set_flags, object_ps[i], flags
+       pnt_set_flags, object_ptd[i], flags
       end
     end
 

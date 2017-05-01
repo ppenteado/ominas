@@ -14,8 +14,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	cusp_ps = pg_cusps(cd=cd, od=od, gbx=gbx)
-;	cusp_ps = pg_cusps(gd=gd)
+;	cusp_ptd = pg_cusps(cd=cd, od=od, gbx=gbx)
+;	cusp_ptd = pg_cusps(gd=gd)
 ;
 ;
 ; ARGUMENTS:
@@ -34,8 +34,11 @@
 ;	gbx:	 Array (n_objects, n_timesteps) of descriptors of objects 
 ;		 which must be a subclass of GLOBE.
 ;
-;	gd:	 Generic descriptor.  If given, the cd, od, and gbx inputs 
-;		 are taken from this structure instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	epsilon: Maximum angular error in the result.  Default is 1e-3.
 ;
@@ -47,7 +50,7 @@
 ;
 ;
 ; RETURN:
-;	Array (n_objects) of points_struct containing image
+;	Array (n_objects) of POINT objects containing image
 ;	points and the corresponding inertial vectors.
 ;
 ;
@@ -67,15 +70,20 @@
 ;	
 ;-
 ;=============================================================================
-function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
-@ps_include.pro
+function pg_cusps, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, epsilon=epsilon, reveal=reveal
+@pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, od=od, sund=sund
- if(NOT keyword_set(cd)) then return, ptr_new() 
- if(NOT keyword_set(gbx)) then return, ptr_new()
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+
+
+ if(NOT keyword_set(cd)) then return, obj_new() 
+ if(NOT keyword_set(gbx)) then return, obj_new()
 
  ;-----------------------------
  ; default observer is sun
@@ -94,21 +102,20 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
  ;-----------------------------------
  nt = n_elements(cd)
  nt1 = n_elements(od)
- pgs_count_descriptors, gbx, nd=n_objects, nt=nt2
- if(nt NE nt1 OR nt1 NE nt2) then nv_message, name='pg_cusps', $
-                                                      'Inconsistent timesteps.'
+ cor_count_descriptors, gbx, nd=n_objects, nt=nt2
+ if(nt NE nt1 OR nt1 NE nt2) then nv_message, 'Inconsistent timesteps.'
 
 
  ;-----------------------------------------------
  ; contruct data set description
  ;-----------------------------------------------
  desc = 'cusp'
- hide_flags = make_array(npoints, val=PS_MASK_INVISIBLE)
+ hide_flags = make_array(npoints, val=PTD_MASK_INVISIBLE)
 
  ;---------------------------------------------------------
  ; get cusps for each object for all times
  ;---------------------------------------------------------
- cusp_ps = ptrarr(n_objects)
+ cusp_ptd = objarr(n_objects)
 
  obs_pos = bod_pos(od)
  cam_pos = bod_pos(cd)
@@ -131,20 +138,20 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, gd=gd, epsilon=epsilon, reveal=reveal
    if(keyword__set(valid)) then $
     begin
      invalid = complement(cusp_pts[*,0], valid)
-     if(invalid[0] NE -1) then flags[invalid] = PS_MASK_INVISIBLE
+     if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
     end
-   cusp_ps[i] = ps_init(name = get_core_name(xd), $
+   cusp_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
 			desc=desc, $
-			input=pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd=cd[0]), $
-			assoc_idp = nv_extract_idp(xd), $
+			gd={gbx:gbx[i,0], od;od[0], cd:cd[0]}, $
+			assoc_xd = xd, $
                         points = points, $
 			flags = flags, $
                         vectors = inertial_pts)
-   if(NOT bod_opaque(gbx[i,0])) then ps_setflags, cusp_ps[i], hide_flags
+   if(NOT bod_opaque(gbx[i,0])) then pnt_setflags, cusp_ptd[i], hide_flags
   end
 
 
 
- return, cusp_ps
+ return, cusp_ptd
 end
 ;=============================================================================

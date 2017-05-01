@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="GLB Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/glb/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/glb/doc_glb.txt"

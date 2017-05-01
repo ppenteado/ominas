@@ -11,3 +11,4 @@
   MULTI		dh_read_multi		dh_write_multi		-
   EXT		dh_read_ext		dh_write_ext		-
   MASK		dh_read_mask		dh_write_mask		-
+  ISIS          pp_read_isis            pp_write_isis           -

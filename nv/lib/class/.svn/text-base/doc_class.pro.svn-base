@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="CLASS Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/class/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/class/doc_class.txt"

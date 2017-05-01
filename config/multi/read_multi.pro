@@ -2,7 +2,7 @@
 ; read_multi
 ;
 ;=============================================================================
-function read_multi, filename, dim=dim_p, type=types, silent=silent, nodata=nodata
+function read_multi, filename, dim=dim_p, type=types, nodata=nodata
 
  openr, unit, filename, /get_lun
 

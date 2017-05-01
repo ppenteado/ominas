@@ -53,16 +53,17 @@
 ;	xy:	If set, this is taken as the first point, and the user selects
 ;		only the second point. 
 ;
-;	fn:	Name of a function to be called whenever a ppoint is selected. 
-;		The function is called as follows:
+;	fn:	Names of functions to be called whenever a point is selected. 
+;		Each function is called as follows:
 ;
 ;		value = call_function(fn, p, image, gd=gd, $
 ;                                               format=_format, label=label)
 ;
-;		p is the image coords of the select ed point, image is the 
+;		p is the image coords of the selected point, image is the 
 ;		input image and gd is a generic descriptor containing the 
 ;		object descriptors.  format and label are outputs used to label
-;		the returned value.
+;		the returned value.  These functions are apended to the set of
+;		default functions.
 ;
 ;	silent:	If set, no string is printed, although the 'string' output
 ;		keyword remains valid.
@@ -138,7 +139,7 @@ end
 ; _pgm_dn
 ;
 ;=============================================================================
-function _pgm_dn, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=inertial_pt, surface_pt=surface_pt
+function _pgm__dn, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=inertial_pt, surface_pt=surface_pt
 
  format = '(d20.10)'
  label = ''
@@ -146,7 +147,7 @@ function _pgm_dn, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=iner
  pp = fix(p)
 
  n = n_elements(dd)
- image0 = nv_data(dd[0])
+ image0 = dat_data(dd[0])
  dn0 = make_array(n, val=image0[0])
  dn1 = make_array(n, val=image0[0])
  dn0[*] = 0
@@ -154,7 +155,7 @@ function _pgm_dn, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=iner
 
  for i=0, n-1 do $
   begin
-   image = nv_data(dd[i])
+   image = dat_data(dd[i])
 
    s = size(image)
    if((pp[0,0] GE 0) AND (pp[0,0] LT s[1]) $
@@ -172,13 +173,49 @@ end
 
 
 ;=============================================================================
+; _pgm_dn
+;
+;=============================================================================
+function _pgm_dn, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=inertial_pt, surface_pt=surface_pt
+
+ format = '(d20.10)'
+ label = ''
+
+ pp = fix(p)
+
+ n = n_elements(dd)
+ dn0 = (dn1 = make_array(n, type=dat_typecode(dd[0])))
+
+ for i=0, n-1 do $
+  begin
+   dim = dat_dim(dd[i])
+
+   if((pp[0,0] GE 0) AND (pp[0,0] LT dim[0]) $
+        AND (pp[1,0] GE 0) AND (pp[1,0] LT dim[1])) then $
+                                    dn0[i] = dat_data(dd[i], sample=pp[*,0], /nd)
+   if((pp[0,1] GE 0) AND (pp[0,1] LT dim[0]) $
+        AND (pp[1,1] GE 0) AND (pp[1,1] LT dim[1])) then $
+                                    dn1[i] = dat_data(dd[i], sample=pp[*,1], /nd)
+  end
+
+ label = 'dDN'
+
+ return, dn1-dn0
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; _pgm_radec_test
 ;
 ;=============================================================================
 function _pgm_radec_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt
+ cd = cor_dereference_gd(gd, /cd)
+
  inertial_pt = dblarr(1,3,2)
  surface_pt = dblarr(1,3,2)
- return, [gd.cd, gd.cd]
+ return, [cd, cd]
 end
 ;=============================================================================
 
@@ -190,15 +227,17 @@ end
 ;=============================================================================
 function _pgm_radec, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=inertial_pt, surface_pt=surface_pt
 
+ cd = cor_dereference_gd(gd, /cd)
+
  label = ['dRA', 'dDEC', 'ANGLE']
  format = ['(1d10.5)', '(1d10.5)', '(1d10.5)']
 
- radec = transpose(image_to_radec(gd.cd, p))
+ radec = transpose(image_to_radec(cd, p))
 
  dradec = (radec[*,1]-radec[*,0])[0:1,*] * 180d/!dpi
 
- v0 = image_to_inertial(gd.cd, p[*,0])
- v1 = image_to_inertial(gd.cd, p[*,1])
+ v0 = image_to_inertial(cd, p[*,0])
+ v1 = image_to_inertial(cd, p[*,1])
 
  theta = v_angle(v0,v1) * 180d/!dpi
 
@@ -214,22 +253,25 @@ end
 ;=============================================================================
 function _pgm_globe_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt
 
- xd = ptrarr(2)
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /gbx)
+
+ xd = objarr(2)
  inertial_pt = dblarr(1,3,2)
  surface_pt = dblarr(1,3,2)
 
  for i=0, 1 do $
   begin
-   v = image_to_surface(gd.cd, gd.gbx, p[*,i], dis=dis, body_pts=body_pts)
+   v = image_to_surface(cd, pd, p[*,i], dis=dis, body_pts=body_pts)
    w = where(dis GE 0)
 
-   if((NOT keyword_set(v)) OR (w[0] EQ -1)) then xd[i] = nv_ptr_new() $
+   if((NOT keyword_set(v)) OR (w[0] EQ -1)) then xd[i] = obj_new() $
     else $
      begin
       range = v_mag(v)
       w = where(range EQ min(range))
       ww = w/2
-      xd[i] = gd.gbx[ww[0]]
+      xd[i] = pd[ww[0]]
 
       body_pt = body_pts[ww[0] mod 2, *, ww[0]]
       inertial_pt[0,*,i] = bod_body_to_inertial_pos(xd[i], body_pt)
@@ -270,22 +312,23 @@ end
 ;=============================================================================
 function _pgm_disk_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt
 
- xd = ptrarr(2)
+ cd = cor_dereference_gd(gd, /cd)
+ rd = cor_dereference_gd(gd, /dkx)
+
+ xd = objarr(2)
  inertial_pt = dblarr(1,3,2)
  surface_pt = dblarr(1,3,2)
 
  for i=0, 1 do $
   begin
-   frame_bd = get_primary(gd.cd, gd.gbx)
-   v = image_to_surface(gd.cd, gd.dkx, p[*,i], body_pts=body_pts, $
-                                               frame_bd=frame_bd, hit=hit)
-   if((NOT keyword_set(v)) OR (hit[0] EQ -1)) then xd[i] = nv_ptr_new() $
+   v = image_to_surface(cd, rd, p[*,i], body_pts=body_pts, hit=hit)
+   if((NOT keyword_set(v)) OR (hit[0] EQ -1)) then xd[i] = obj_new() $
     else $
      begin
       range = v_mag(v)
       w = where(range EQ min(range))
       ww = w/2
-      xd[i] = gd.dkx[ww[0]]
+      xd[i] = rd[ww[0]]
 
       body_pt = body_pts[ww[0] mod 2, *, w[0]]
       inertial_pt[0,*,i] = bod_body_to_inertial_pos(xd[i], body_pt)
@@ -326,9 +369,13 @@ end
 ;=============================================================================
 function _pgm_eqplane_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt
 
- gbx = get_primary(gd.cd, gd.gbx)
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /gbx)
 
- dkd = dsk_init_descriptors(1, name='EQUATORIAL_PLANE', $
+ gbx = get_primary(cd, pd)
+ if(NOT obj_valid(gbx)) then return, 0
+
+ dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
 	orient = bod_orient(gbx), $
 	pos = bod_pos(gbx))
  sma = dsk_sma(dkd)
@@ -340,9 +387,7 @@ function _pgm_eqplane_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=su
 
  for i=0, 1 do $
   begin
-   frame_bd = gbx
-   v = image_to_surface(gd.cd, xd[i], p[*,i], body_pt=body_pt, $
-                                               frame_bd=frame_bd, hit=hit)
+   v = image_to_surface(cd, xd[i], p[*,i], body_pt=body_pt, hit=hit)
 
    inertial_pt[0,*,i] = bod_body_to_inertial_pos(xd[i], body_pt)
    surface_pt[0,*,i] = v
@@ -372,9 +417,12 @@ end
 ;=============================================================================
 function ____pgm_eqplane, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=inertial_pt, surface_pt=surface_pt
 
- gbx = get_primary(gd.cd, gd.gbx)
+ cd = cor_dereference_gd(gd, /cd)
+ pd = cor_dereference_gd(gd, /gbx)
 
- dkd = dsk_init_descriptors(1, name='EQUATORIAL_PLANE', $
+ gbx = get_primary(cd, pd)
+
+ dkd = dsk_create_descriptors(1, name='EQUATORIAL_PLANE', $
 	orient = bod_orient(gbx), $
 	pos = bod_pos(gbx))
  sma = dsk_sma(dkd)
@@ -382,10 +430,25 @@ function ____pgm_eqplane, p, dd, xd, gd=gd, format=format, label=label, inertial
  sma[0,1] = 1d20
  dsk_set_sma, dkd, sma
  
- _gd = {cd:gd.cd, gbx:gd.gbx, dkx:dkd}
+ _gd = {cd:cd, gbx:pd, dkx:dkd}
 
 
  return, _pgm_disk(p, dd, gd=_gd, format=format, label=label)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; _pgm_map_test
+;
+;=============================================================================
+function _pgm_map_test, p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt
+ cd = cor_dereference_gd(gd, /cd)
+
+ inertial_pt = dblarr(1,3,2)
+ surface_pt = dblarr(1,3,2)
+ return, [cd, cd]
 end
 ;=============================================================================
 
@@ -397,19 +460,20 @@ end
 ;=============================================================================
 function _pgm_map, p, dd, xd, gd=gd, format=format, label=label, inertial_pt=inertial_pt, surface_pt=surface_pt
 
+ cd = cor_dereference_gd(gd, /cd)
+
  format = ['(1g10.5)', '(1g10.5)']
  label = ''
 
  nt = n_elements(name)
 
- v = image_to_map(gd.cd, p, valid=valid)
+ v = image_to_map(cd, p[*,1], valid=valid) - image_to_map(cd, p[*,0], valid=valid)
  if(NOT keyword_set(v)) then return, 0
  if(valid[0] EQ -1) then return, 0
  
  v = v[*,valid] * 180d/!dpi
- name = name[valid]
 
- label = ['LAT', 'LON']
+ label = ['dLAT', 'dLON']
 
  return, v 
 end
@@ -484,7 +548,12 @@ common pgm_table_block, last_labels, first
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, _gd, cd=cd, gbx=gbx, dkx=dkx, sund=sund, sd=sd, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(_gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(_gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(_gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(_gd, dd=dd, /dkx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(_gd, dd=dd, /sund)
+ if(NOT keyword_set(sd)) then sd = dat_gd(_gd, dd=dd, /sd)
 
  ;-----------------------------------------------
  ; construct internal generic descriptor 
@@ -512,7 +581,7 @@ common pgm_table_block, last_labels, first
  ; options 
  ;- - - - - - - - - 
  if(keyword_set(cd)) then $
-  case class_get(cd) of
+  case cor_class(cd) of
    'CAMERA' : $
 	begin
 	 if(keyword_set(radec)) then fn = [fn, '_pgm_radec']
@@ -556,18 +625,23 @@ common pgm_table_block, last_labels, first
       begin
        _xd = call_function(fn[i]+'_test', p, dd, gd=gd, inertial_pt=inertial_pt, surface_pt=surface_pt)
 
-       xd = append_array(xd, transpose(_xd))
-       inertial_pts = append_array(inertial_pts, inertial_pt)
-       surface_pts = append_array(surface_pts, surface_pt)
-      end
+       if(keyword_set(_xd)) then $
+        begin
+         xd = append_array(xd, transpose(_xd))
+         inertial_pts = append_array(inertial_pts, inertial_pt)
+         surface_pts = append_array(surface_pts, surface_pt)
+        end
+     end
 
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - 
      ; select nearest intersections where applicable
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+     ntest = n_elements(xd)/2
      nearest = [-1,-1]
      dist = [1d100,1d100]
-     for i=0, nfn-1 do $
+     for i=0, ntest-1 do $
       begin
        inertial_pt0 = inertial_pts[i,*,0]
        inertial_pt1 = inertial_pts[i,*,1]
@@ -588,7 +662,7 @@ common pgm_table_block, last_labels, first
        label = append_array(label, 'DISTANCE')
        format = append_array(format, '(1g20.10)')
 
-       cam_pos = bod_pos(gd.cd)
+       cam_pos = bod_pos(cd)
        drange = abs(v_mag(cam_pos - inertial_pts[nearest[0],*,0]) $
                    - v_mag(cam_pos - inertial_pts[nearest[1],*,1]))
        value = append_array(value, drange)
@@ -601,23 +675,19 @@ common pgm_table_block, last_labels, first
        label_p = append_array(label_p, nv_ptr_new(label))
        format_p = append_array(format_p, nv_ptr_new(format))
        all_names = append_array(all_names, name)
-
-
       end
 
 
      ;- - - - - - - - - - - - - - - - -
      ; collect all the function data
      ;- - - - - - - - - - - - - - - - -
-     for i=0, nfn-1 do $
+     for i=0, ntest-1 do $
       begin
        xds = xd[i,*]
-       if(ptr_valid(xds[0])) then $  
+       if(obj_valid(xds[0])) then $  
         begin
          inertial_pt0 = inertial_pts[i,*,0]
          inertial_pt1 = inertial_pts[i,*,1]
-print, inertial_pt0
-print, inertial_pt1
 
          call = 1
          if((v_mag(inertial_pt0))[0] NE 0) then $
@@ -631,13 +701,13 @@ print, inertial_pt1
                   label=label, $
                   inertial_pt=inertial_pts[i,*,*], surface_pt=surface_pts[i,*,*])
 
-         if(nv_test_dd(xds[0])) then names = nv_id_string(xds[0]) $
+         if(dat_test_dd(xds[0])) then names = cor_name(xds[0]) $
          else names = cor_name(xds)
          if(n_elements(names) EQ 1) then name = names $
          else $
           begin
            if(names[0] EQ names[1]) then name = names[0] $
-           else name = str_comma_list(names, delim='--')
+           else value = 0
           end
 
          if(keyword_set(value)) then $

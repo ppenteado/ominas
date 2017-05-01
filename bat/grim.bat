@@ -5,23 +5,22 @@
 ;
 ;
 ; PURPOSE:
-;	Access to grim from the unix command line.
+;	Access to grim from a command shell.
 ;
 ;
 ; CATEGORY:
-;	NV/PG
+;	NV/BAT
 ;
 ;
-; CALLING SEQUENCE (from the csh prompt):
-;	xidl grim.bat + files <keyvals>
+; CALLING SEQUENCE (from the shell prompt):
+;	xidl grim.bat + args <keyvals>
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	files:		One or more file specification strings following 
-;			the standard csh rules.
+;	args:		One or more strings following the standard csh rules.
 ;
-;	keyvals:	Keyword-value pairs to be passed to grim.  
+;	keyvals:	Keyword=value pairs to be passed to grim.  
 ;
 ;
 ; RESTRICTIONS:
@@ -74,9 +73,5 @@ if(keyword__set(___files)) then $
    end &$
  end
 
-;if(keyword__set(___files)) then dd = nv_read(___files, /silent)
-;___stat = execute(xidl_command('grim, dd', ___keys, ___val_ps))
-
-___stat = execute(xidl_command('grim, ___files', ___keys, ___val_ps))
-
+call_procedure,'grim',___files,_extra=pp_build_extra(___keys,___val_ps)
 

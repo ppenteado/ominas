@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="ORIG Program Reference", $
-    "/home/joes/idl_pro/minas/config/spice/orig/*.pro", $
-    "/home/joes/idl_pro/minas/config/spice/orig/doc_orig.txt"

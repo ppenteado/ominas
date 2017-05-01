@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = array_input(dd, keyword)
 ;
 ;
@@ -35,12 +35,12 @@
 ;  OUTPUT:
 ;	status:  Zero if valid data is returned
 ;
-;	n_obj:  Number of objects returned.
 ;
-;	dim:  Dimensions of return objects.
+; ENVIRONMENT VARIABLES:
+;	NV_ARRAY_DATA:	Sets directory in which to look for data files.
 ;
 ;
-;  TRANSLATOR KEYWORDS:
+; TRANSLATOR KEYWORDS:
 ;	NONE
 ;
 ;
@@ -57,70 +57,7 @@
 ; 
 ;-
 ;=============================================================================
-
-
-
-;=============================================================================
-; ai_load
-;
-;=============================================================================
-function ai_load, catpath, catfile, reload=reload
-common ai_load_block, _catfile, _dat_p
-
- dat = ''
-
- ;--------------------------------------------------------------------
- ; if appropriate catalog is loaded, then just return descriptors
- ;--------------------------------------------------------------------
- load = 1
-
- if(keyword_set(_catfile) AND (NOT keyword_set(reload))) then $
-  begin
-   w = where(_catfile EQ catfile)
-   if(w[0] NE -1) then $
-    begin
-     load = 0
-     dat = *(_dat_p[w[0]])
-    end
-  end 
-
-
- ;--------------------------------------------------------------------
- ; parse catalog path
- ;--------------------------------------------------------------------
- catdirs = get_path(catpath, file=catfile)
- if(NOT keyword_set(catdirs[0])) then load = 0
-
-
- ;--------------------------------------------------------------------
- ; otherwise read and parse the catalog
- ;--------------------------------------------------------------------
- if(load) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; read the catalog
-   ;- - - - - - - - - - - - - - - - - - - -
-   dat = arr_read(catdirs + '/' + catfile)
-
-   ;- - - - - - - - - - - - - - - - - - - -
-   ; save catalog data
-   ;- - - - - - - - - - - - - - - - - - - -
-   _catfile = append_array(_catfile, catfile)
-   _dat_p = append_array(_dat_p, nv_ptr_new(dat))
-  end
-
- return, dat
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; array_input
-;
-;=============================================================================
-function array_input, dd, keyword, prefix, $
-                      n_obj=n_obj, dim=dim, values=values, status=status, $
+function array_input, dd, keyword, prefix, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
  end_keywords
@@ -140,13 +77,17 @@ function array_input, dd, keyword, prefix, $
  ;----------------------------------------------
  catpath = getenv('NV_ARRAY_DATA')
  if(NOT keyword_set(catpath)) then $
-   nv_message, name='array_input', $
-     'NV_ARRAY_DATA environment variable is undefined.'
+  begin
+   nv_message, /con, $
+     'NV_ARRAY_DATA environment variable is undefined.', $
+       exp=['NV_ARRAY_DATA specifies the directory under which this translator', $
+            'searches for data files.']
+   status = -1
+   return, 0
+  end
 
 
  status = 0
- n_obj = 0
- dim = [1]
 
 
  ;-----------------------------------------------
@@ -161,10 +102,15 @@ function array_input, dd, keyword, prefix, $
 
 
  ;-----------------------------------------------
+ ; observer descriptor passed as key1
+ ;-----------------------------------------------
+ if(keyword_set(key1)) then od = key1
+ if(NOT keyword_set(od)) then nv_message, 'No observer.'
+
+ ;-----------------------------------------------
  ; primary descriptor passed as key2
  ;-----------------------------------------------
  if(keyword_set(key2)) then bx = key2
-
 
  ;-----------------------------------------------
  ; array names passed as key8
@@ -173,28 +119,23 @@ function array_input, dd, keyword, prefix, $
 
 
  ;-----------------------------------------------
- ; primary names passed as key6
- ;-----------------------------------------------
- if(keyword_set(key6) AND (NOT keyword_set(primaries))) then primaries = key6
- if(NOT keyword_set(primaries)) then primaries = cor_name(bx)
- if(NOT keyword_set(primaries)) then $
-                      nv_message, name='array_input', 'no primary.'
-
-
- ;-----------------------------------------------
  ; set up array descriptors
  ;-----------------------------------------------
- n = n_elements(primaries)
+ if(keyword_set(bx)) then xd = bx $
+ else if(keyword_set(od)) then xd = od $
+ else nv_message, 'No primary descriptor.'
+
+ n = n_elements(xd)
  for i=0, n-1 do $
   begin
    _ards = 0
-   primary = primaries[i]
+   primary = cor_name(xd[i])
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; read relevant array catalogs
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    dir = catpath + '/' + strlowcase(primary) + '/'
-   files = findfiles(dir + '*.arr')
+   files = file_search(dir + '*.arr')
    split_filename, files, dirs, files
 
    if(keyword_set(files)) then $
@@ -213,7 +154,7 @@ function array_input, dd, keyword, prefix, $
 
      for j=0, nfiles-1 do $
       begin
-       dat = ai_load(dir, files[j], reload=reload)
+       dat = file_manage('arr_read', dir, files[j], reload=reload)
        split_filename, files[j], _dir, name, ext
 
        if(keyword_set(dat)) then $
@@ -221,10 +162,10 @@ function array_input, dd, keyword, prefix, $
          ;- - - - - - - - - - - - - - - - - - - - - - - -
          ; construct descriptors
          ;- - - - - - - - - - - - - - - - - - - - - - - -
-         _ards = arr_init_descriptors(1)
+         _ards = arr_create_descriptors(gd=cor_gd(xd[i]))
 
          cor_set_name, _ards, name
-         arr_set_primary, _ards, primary
+         arr_set_primary, _ards, xd[i]
          arr_set_surface_pts, _ards, dat
         end
        ards = append_array(ards, _ards)
@@ -240,8 +181,6 @@ function array_input, dd, keyword, prefix, $
   end
 
 
-
- n_obj = n_elements(ards)
  return, ards
 end
 ;===========================================================================

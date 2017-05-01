@@ -2,12 +2,12 @@
 ; dawn_spice_sck_detect
 ;
 ;=============================================================================
-function dawn_spice_sck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
+function dawn_spice_sck_detect, dd, kpath, sc=sc, time=time, strict=strict, all=all
 
  ;--------------------------------
  ; new naming convention
  ;--------------------------------
- all_files = findfile(kpath + 'DAWN_203_*SCLKSCET.?????.tsc')
+ all_files = file_search(kpath + 'DAWN_203_*SCLKSCET.?????.tsc')
 
  if(keyword__set(all)) then return, all_files
 

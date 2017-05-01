@@ -1,8 +1,0 @@
-extract_doc, /page, $
-    title="TOOLS Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/tools/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/tools/doc_tools.txt"
-@doc_composite
-@doc_orb
-@doc_photometry
-@doc_pht

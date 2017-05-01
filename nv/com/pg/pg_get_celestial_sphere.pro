@@ -43,7 +43,7 @@ function pg_get_celestial_sphere, radius=radius
 
  if(NOT keyword_set(radius)) then radius = 1d30
 
- gbd = glb_init_descriptors(1, $
+ gbd = glb_create_descriptors(1, $
 		name='CELESTIAL SPHERE', $
 		bd=bod_inertial(), $
 		radii=[1,1,1]*radius)

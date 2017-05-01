@@ -13,14 +13,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;    result = pg_profile_ring(dd, cd=cd, dkx=dkx, gbx=gbx, outline_ps)
+;    result = pg_profile_ring(dd, cd=cd, dkx=dkx, outline_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:	Data descriptor.
 ;
-;       outline_ps:    points_struct giving the outline of the sector to plot,
+;       outline_ptd:    POINT giving the outline of the sector to plot,
 ;                      as produced by the pg_ring_sector.
 ;
 ;  OUTPUT:
@@ -31,10 +31,6 @@
 ;	  cd:	Camera descriptor.
 ;
 ;        dkx:   Disk descriptor.
-;
-;	 gbx:   Array  of descriptors of objects which must be a subclass 
-;               of GLOBE, describing the primary body for dkx.  For each
-;               timestep, only the first descriptor is used.
 ;
 ;         gd:   Generic descriptor, if used, cd and dkx taken from it unless
 ;               overriden by cd and dkx arguments.
@@ -51,13 +47,6 @@
 ;         bg:	Uniform value to subtract from profile.
 ;
 ; arg_interp:   Arguments to pass to the interpolation function.
-;
-;   frame_bd:   Subclass of BODY giving the frame against which to 
-;               measure inclinations and nodes, e.g., a planet 
-;               descriptor.  One per bx.
-;
-;    anomaly:   If set, longitudes in outline_ps are interpreted instead
-;               as anomalies.
 ;
 ;  OUTPUT:
 ;    profile:   The profile.
@@ -101,65 +90,57 @@
 ; EXAMPLE:
 ;     lon = [175.,177.]
 ;     rad = [65000000.,138000000.]
-;     outline_ps = pg_ring_sector(cd=cd, dkx=rd, gbx=pd, rad=rad, lon=lon)
-;     pg_draw, outline_ps
+;     outline_ptd = pg_ring_sector(cd=cd, dkx=rd, rad=rad, lon=lon)
+;     pg_draw, outline_ptd
 ;
-;     profile = pg_profile_ring(dd, cd=cd, dkx=rd, gbx=pd, $
-;                                          outline_ps, dsk_pts=dsk_pts)
+;     profile = pg_profile_ring(dd, cd=cd, dkx=rd, $
+;                                          outline_ptd, dsk_pts=dsk_pts)
 ;     window, /free, xs=500, ys=300
 ;     plot, dsk_pts[*,0], profile
 ;
 ;
 ; MODIFICATION HISTORY:
 ;       Written by:     Vance Haemmerle & Spitale, 6/1998
-;	Modified to use outline_ps instead of (rad,lon): Spitale 5/2005
+;	Modified to use outline_ptd instead of (rad,lon): Spitale 5/2005
 ;	
 ;-
 ;=============================================================================
-function pg_profile_ring, dd, cd=cd, dkx=dkx, gbx=_gbx, gd=gd, frame_bd=frame_bd, outline_ps, $
+function pg_profile_ring, dd, cd=cd, dkx=dkx, gd=gd, outline_ptd, $
                           azimuthal=azimuthal, sigma=sigma, width=width, nn=nn, $
                           bin=bin, dsk_pts=dsk_pts, im_pts=im_pts, $
                           interp=interp, arg_interp=arg_interp, profile=profile, $
-                          anomaly=anomaly, bg=bg
+                          bg=bg
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, dd=dd, cd=cd, dkx=dkx, gbx=_gbx
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
 
- if(NOT keyword__set(_gbx)) then $
-            nv_message, name='pg_profile_ring', 'Globe descriptor required.'
- __gbx = get_primary(cd, _gbx, rx=dkx)
- if(keyword__set(__gbx[0])) then gbx = __gbx $
- else gbx = _gbx[0,*]
 
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(dkx) GT 1) then nv_message, /continue, name='pg_profile_ring', $
-                          'Using first disk descriptor.'
- if(n_elements(cd) GT 1) then nv_message, /continue, name='pg_profile_ring', $
-                        'Using first camera descriptor.'
-; rd = dkx[0]
-;; dkd = rng_disk(rd)
-dkd = class_extract(dkx[0], 'DISK')
-
-
- if(NOT keyword_set(frame_bd)) then frame_bd=gbx
+ if(n_elements(dkx) GT 1) then $
+                   nv_message, /continue, 'Using first disk descriptor.'
+ if(n_elements(cd) GT 1) then $
+                   nv_message, /continue, 'Using first camera descriptor.'
+ dkd = dkx[0]
 
  ;-----------------------------------
  ; get the points and data
  ;-----------------------------------
- ps_get, outline_ps, $
+ pnt_query, outline_ptd, $
 	points=outline_pts, $
 	data=dsk_outline_pts
- dsk_outline_pts = transpose(dsk_outline_pts)
- nrad = ps_udata(outline_ps, 'nrad')
- nlon = ps_udata(outline_ps, 'nlon')
- point0 = ps_udata(outline_ps, 'point0')
- point = ps_udata(outline_ps, 'point')
- point = ps_udata(outline_ps, 'point')
- sample = ps_udata(outline_ps, 'sample')
+ if(keyword_set(dsk_outline_pts)) then dsk_outline_pts = transpose(dsk_outline_pts)
+ nrad = cor_udata(outline_ptd, 'nrad')
+ nlon = cor_udata(outline_ptd, 'nlon')
+ point0 = cor_udata(outline_ptd, 'point0')
+ point = cor_udata(outline_ptd, 'point')
+ point = cor_udata(outline_ptd, 'point')
+ sample = cor_udata(outline_ptd, 'sample')
  sample = sample[0]
 
 
@@ -168,7 +149,7 @@ dkd = class_extract(dkx[0], 'DISK')
  ;--------------------------------------------------------
  if(keyword_set(sample)) then $
   begin
-   image = nv_data(dd)
+   image = dat_data(dd)
    si = size(image)
 
    sample = float(sample)
@@ -180,22 +161,22 @@ dkd = class_extract(dkx[0], 'DISK')
 
    im_pts = w_to_xy(0, ii, sx=sx, sy=sy) / sample
 
-   dsk_pts = image_to_disk(cd, dkd, im_pts, frame=frame_bd)
+   dsk_pts = image_to_disk(cd, dkd, im_pts)
    rad_pts = dsk_pts[*,0]
    lon_pts = dsk_pts[*,1]
 
    cp = total(outline_pts,2) / (n_elements(outline_pts)/2)
-   cp_disk = image_to_disk(cd, dkd, cp, frame=frame_bd)
+   cp_disk = image_to_disk(cd, dkd, cp)
    cp_inertial = bod_body_to_inertial_pos(dkd, $
-                       dsk_disk_to_body(dkd, cp_disk, frame_bd=frame_bd))
+                   dsk_disk_to_body(dkd, cp_disk))
    dsk_projected_resolution, dkd, cd, cp_inertial, $
-                               (cam_scale(cd))[0], rad=dr, lon=km_dlon, rr=rr
-   dlon = km_dlon / rr
+                               (cam_scale(cd))[0], rad=dr, lon=km_ta, rr=rr
+   ta = km_ta / rr
    dx = dr[0]
-   if(keyword_set(azimuthal)) then dx = dlon[0]
+   if(keyword_set(azimuthal)) then dx = ta[0]
 
-   profile = get_ring_profile(nv_data(dd), cd, dkd, lon_pts, rad_pts, $
-                 azimuthal=azimuthal, frame_bd=frame_bd, interp=interp, $
+   profile = get_ring_profile(dat_data(dd), cd, dkd, lon_pts, rad_pts, $
+                 azimuthal=azimuthal, interp=interp, $
                  im_pts=im_pts, dx=dx, dsk_pts=dsk_pts, $
                  sigma=sigma, arg_interp=arg_interp, $
                  width=width, nn=nn)
@@ -208,7 +189,7 @@ dkd = class_extract(dkx[0], 'DISK')
    nrad = nrad[0] & nlon = nlon[0]
 
    if(NOT keyword_set(dsk_outline_pts)) then $
-           dsk_outline_pts = image_to_disk(cd, dkd, outline_pts, frame=frame_bd)
+           dsk_outline_pts = image_to_disk(cd, dkd, outline_pts)
 
    ;----------------------------------------------------------
    ; compute sample points
@@ -232,19 +213,19 @@ dkd = class_extract(dkx[0], 'DISK')
    lon_pts = lon0_pts##make_array(nrad,val=1d) + $
              lon_offsets#make_array(nlon,val=1d)
 
-   ps_set_udata, outline_ps, name='rad_pts', rad_pts
-   ps_set_udata, outline_ps, name='lon_pts', lon_pts
+   cor_set_udata, outline_ptd, 'rad_pts', rad_pts
+   cor_set_udata, outline_ptd, 'lon_pts', lon_pts
 
 
    ;----------------------------------------------------------
    ; extract profiles
    ;----------------------------------------------------------
    if(keyword_set(bin)) then $
-      profile = get_ring_profile_bin(nv_data(dd), cd, dkd, $
-                      lon_pts, rad_pts, azimuthal=azimuthal, frame_bd=frame_bd) $
+      profile = get_ring_profile_bin(dat_data(dd), cd, dkd, $
+                      lon_pts, rad_pts, azimuthal=azimuthal) $
    else $
-      profile = get_ring_profile(nv_data(dd), cd, dkd, $
-                    lon_pts, rad_pts, azimuthal=azimuthal, frame_bd=frame_bd, $
+      profile = get_ring_profile(dat_data(dd), cd, dkd, $
+                    lon_pts, rad_pts, azimuthal=azimuthal, $
                                interp=interp, arg_interp=arg_interp, $
                                  im_pts=im_pts, dsk_pts=dsk_pts, sigma=sigma, $
                                    width=width, nn=nn)
@@ -259,20 +240,20 @@ dkd = class_extract(dkx[0], 'DISK')
  if(keyword_set(bg)) then profile = profile - bg[0]
 
  abscissa = dsk_pts[*,0]
- name = ' Radial ring Profile'
+ name = 'Radial Ring Profile'
  if(keyword_set(azimuthal)) then $
   begin
    abscissa = dsk_pts[*,1]
-   if(keyword_set(anomaly)) then abscissa = orb_lon_to_anom(dkd, abscissa, frame_bd)
-   name = ' Azimuthal ring Profile'
+   name = 'Azimuthal Ring Profile'
   end
 
- dd_prof = [ nv_init_descriptor(data=[tr(abscissa), $
-                                tr(profile)], id_string=nv_id_string(dd), $
-                                header=nv_header(dd)), $
-             nv_init_descriptor(data=[tr(abscissa), $
-                                tr(sigma)], id_string=nv_id_string(dd), $
-                                header=nv_header(dd)) ]
+ dd_prof = dat_create_descriptors(1, data=profile, abscissa=abscissa, $
+                                 name=cor_name(dd), header=dat_header(dd)) 
+
+ if(keyword_set(sigma)) then $
+     dd_prof = [dd_prof, $
+                 dat_create_descriptors(1, data=sigma, abscissa=abscissa, $
+                                 name=cor_name(dd), header=dat_header(dd)) ]
 
  return, dd_prof
 end

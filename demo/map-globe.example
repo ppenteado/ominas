@@ -12,7 +12,7 @@
 ; load image
 ;-------------------------------
 file = '~/casIss/1460/N1460002670_1.IMG'
-dd = nv_read(file, im)
+dd = dat_read(file, im)
 ctmod, top=top
 tvim, im, zoom=0.5, /order, /new, top=top
 
@@ -21,9 +21,9 @@ tvim, im, zoom=0.5, /order, /new, top=top
 ; get geometric info 
 ;---------------------------------------
 cd = pg_get_cameras(dd)					
-pd = pg_get_planets(dd, od=cd, plt_name='SATURN')
+pd = pg_get_planets(dd, od=cd, name='SATURN')
 rd = pg_get_rings(dd, pd=pd, od=cd, '/system')
-sund = pg_get_stars(dd, od=cd, str_name='SUN')
+sund = pg_get_stars(dd, od=cd, name='SUN')
 
 gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 
@@ -31,20 +31,20 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;---------------------------------------
 ; rough pointing correction
 ;---------------------------------------
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-          pg_hide, limb_ps, /limb, gd=gd, od=sund
-pg_draw, limb_ps, col=ctred()
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+pg_draw, limb_ptd, col=ctred()
 
-edge_ps = pg_edges(dd, edge=10)			
-pg_draw, edge_ps, col=ctblue()
-dxy = pg_farfit(dd, edge_ps, [limb_ps])	
+edge_ptd = pg_edges(dd, edge=10)			
+pg_draw, edge_ptd, col=ctblue()
+dxy = pg_farfit(dd, edge_ptd, [limb_ptd])	
 					 	
 pg_repoint, dxy, 0d, gd=gd	
 
-limb_ps = pg_limb(gd=gd) & pg_hide, limb_ps, gd=gd, /rm, /disk
-          pg_hide, limb_ps, /limb, gd=gd, od=sund
+limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
 tvim, im
-pg_draw, limb_ps
+pg_draw, limb_ptd
 
 
 ;------------------------------------------------------
@@ -55,9 +55,9 @@ pg_draw, limb_ps
 ; RECTANGULAR
 ;- - - - - - - - - -
 md1 = pg_get_maps(/over, bx=pd, $
-	map_type='RECTANGULAR', $
-	/map_graphic,  $
-	map_size=[400,200] $
+	type='RECTANGULAR', $
+	/graphic,  $
+	size=[400,200] $
 	)
 dd_map1 = pg_map(dd, md=md1, gd=gd, bx=pd, map=map1, $
             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
@@ -69,10 +69,10 @@ tvim, /new, map1, title=map_type(md1) + ' PROJECTION'
 ; ORTHOGRAPHIC
 ;- - - - - - - - - -
 md2 = pg_get_maps(/over, bx=pd, $
-	map_type='ORTHOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_size=[400,400], $
-	map_center=[-!dpi/6d,0d] $
+	type='ORTHOGRAPHIC', $
+	fn_data=ptr_new(), $
+	size=[400,400], $
+	center=[-!dpi/6d,0d] $
 	)
 dd_map2 = pg_map(dd, md=md2, gd=gd, bx=pd, map=map2, $
             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
@@ -83,11 +83,11 @@ tvim, /new, map2, title=map_type(md2) + ' PROJECTION'
 ; STEREOGRAPHIC
 ;- - - - - - - - - -
 md3 = pg_get_maps(/over, bx=pd, $
-	map_type='STEREOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_scale=0.5, $
-	map_size=[400,400], $
-	map_center=[!dpi/2d,0d] $
+	type='STEREOGRAPHIC', $
+	fn_data=ptr_new(), $
+	scale=0.5, $
+	size=[400,400], $
+	center=[!dpi/2d,0d] $
 	)
 dd_map3 = pg_map(dd, md=md3, gd=gd, bx=pd, map=map3, $
             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
@@ -98,9 +98,9 @@ tvim, /new, map3, title=map_type(md3) + ' PROJECTION'
 ; MERCATOR
 ;- - - - - - - - - -
 md4 = pg_get_maps(/over, bx=pd, $
-	map_type='MERCATOR', $	
-	map_fn_data=ptr_new(), $
-	map_size=[400,200] $
+	type='MERCATOR', $  
+	fn_data=ptr_new(), $
+	size=[400,200] $
 	)
 dd_map4 = pg_map(dd, md=md4, gd=gd, bx=pd, map=map4, $
             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
@@ -112,10 +112,10 @@ tvim, /new, map4, title=map_type(md4) + ' PROJECTION'
 ; transform from one projection to another
 ;------------------------------------------------
 _md1 = pg_get_maps(/over, bx=pd, $
-	map_type='ORTHOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_size=[400,400], $
-	map_center=[-!dpi/8d,0d] $
+	type='ORTHOGRAPHIC', $
+	fn_data=ptr_new(), $
+	size=[400,400], $
+	center=[-!dpi/8d,0d] $
 	)
 
 _dd_map1 = pg_map(dd_map1, md=_md1, cd=md1, map=_map1)
@@ -126,7 +126,7 @@ tvim, /new, _map1, title=map_type(md1) + ' TO ' + map_type(_md1) + ' PROJECTION'
 ;------------------------------------------------------------------
 ; Project a previous projection to a different camera perspective
 ;------------------------------------------------------------------
-_cd = cam_clone_descriptor(cd)
+_cd = nv_clone(cd)
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ; Set camera position in terms of sclat, sclon, and altitude in 
@@ -171,7 +171,7 @@ pg_put_maps, dd_map1, md=md1			; create detached header on dd_map1
 pg_put_cameras, dd_map1, cd=cd
 ;pg_put_planets, dd_map1, od=cd, pd=pd
 ;pg_put_rings, dd_map1, od=cd, pd=pd
-nv_write, 'globe-1.map', dd_map1		; write data file, and detached header
+dat_write, 'globe-1.map', dd_map1		; write data file, and detached header
 
 
 
@@ -182,9 +182,9 @@ nv_write, 'globe-1.map', dd_map1		; write data file, and detached header
 
 
 
-dd_map = nv_read('globe-1.vic')
+dd_map = dat_read('globe-1.vic')
 md = pg_get_maps(dd_map)
 
-grid_ps = pg_grid(cd=md, gbx=pd)
-limb_ps = pg_limb(cd=md, od=cd, gbx=pd)
+grid_ptd = pg_grid(cd=md, gbx=pd)
+limb_ptd = pg_limb(cd=md, od=cd, gbx=pd)
 

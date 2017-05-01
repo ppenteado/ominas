@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Creates a new structure whise fields are the same as those in the 
+;	Creates a new structure whose fields are the same as those in the 
 ;	given structure except for the specified substitutions.
 ;
 ;

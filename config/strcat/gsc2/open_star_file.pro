@@ -1,3 +1,9 @@
+; docformat = 'rst'
+;+
+; :Private:
+; :Hidden:
+;-
+
 pro open_star_file, filename, stars, gsc=gsc, gsc2=gsc2
 
 ; Opens star catalog file into a pointer array, byteswaps if necessary.
@@ -19,7 +25,7 @@ for i=0,n_elements(tag_names(stars))-1 do begin
   if (size(a))[(size(a))[0]+1] eq 2 then byteorder, a, /NTOHS $
     else if (size(a))[(size(a))[0]+1] eq 3 then byteorder, a, /NTOHL $
     else if (size(a))[(size(a))[0]+1] eq 4 then byteorder, a, /XDRTOF $
-    else nv_message, name='open_star_file', 'Unrecognized type code.'
+    else nv_message, 'Unrecognized type code.'
   stars.(i) = a
 endfor
 

@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="COMPOSITE Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/tools/composite/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/tools/composite/doc_composite.txt"

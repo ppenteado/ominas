@@ -2,7 +2,7 @@
 ; dawn_spice_ck_components
 ;
 ;=============================================================================
-pro dawn_spice_ck_components, all_names, jd_start=jd_start, jd_stop=jd_stop
+pro dawn_spice_ck_components, all_names, sc=sc, jd_start=jd_start, jd_stop=jd_stop
 
 
  ;-------------------------------------
@@ -30,13 +30,13 @@ end
 ;
 ;=============================================================================
 function dawn_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
-                             all=all, reject=reject, strict=strict
+                             all=all, strict=strict
 common dawn_spice_ck_block, all_files, all_names_block, ckpath_block, $
       jd_start_block, jd_stop_block
 
  if(NOT keyword_set(djd)) then djd = 1d			; days, +/-
 
- label = nv_header(dd)
+ label = dat_header(dd)
  
 
  ;--------------------------------
@@ -57,7 +57,7 @@ common dawn_spice_ck_block, all_files, all_names_block, ckpath_block, $
 
  if(NOT keyword_set(jd_start_block)) then $
   begin
-   all_files = findfile(ckpath + '/dawn_sc_??????_??????*.bc')
+   all_files = file_search(ckpath + '/dawn_sc_??????_??????*.bc')
    if(keyword_set(all)) then return, all_files
 
 

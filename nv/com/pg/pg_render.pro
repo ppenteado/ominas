@@ -30,11 +30,17 @@
 ;
 ;	sund:         Star descriptor for the Sun.
 ;
+;	md:           Array of map descriptors for each ddmap.  
+;
+;	gd:		Generic descriptor.  If given, the descriptor inputs 
+;			are taken from this structure if not explicitly given.
+;
+;	dd:		Data descriptor containing a generic descriptor to use
+;			if gd not given.
+;
 ;	ddmap:        Array of data descriptors containing the body maps, 
 ;	              one for each body.  If not given, maps are loaded using
 ;		      pg_load_maps.
-;
-;	md:           Array of map descriptors for each ddmap.  
 ;
 ;	sample:       Amount by which to subsample pixels.
 ;
@@ -66,7 +72,7 @@
 ;	no_secondary: If set, no secondary ray tracing is performed,  
 ;	              resulting in no shadows.
 ;
-;	image_ps:     points_struct or array with image points 
+;	image_ptd:    POINT or array with image points 
 ;	              specifying the grid to trace.  If not set, the entire 
 ;	              image described by cd is used.  The array can have
 ;	              dimensions of (2,np) or (2,nx,ny).  If the latter,
@@ -77,6 +83,8 @@
 ;	              no masking is performed.
 ;
 ;	no_maps:      If set, maps are not loaded.
+;
+;	pht_min:      Minimum value to assign to photometric output.
 ;
 ;
 ;  OUTPUT: 
@@ -104,21 +112,24 @@
 ;-
 ;=============================================================================
 function pg_render, cd=cd, sund=sund, $
-       bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
+       bx=bx, ddmap=ddmap, md=md, dd=dd, gd=gd, sample=sample, pc_size=pc_size, $
        show=show, pht_min=pht_min, no_pht=no_pht, map=image, $
        standoff=standoff, limit_source=limit_source, nodd=nodd, $
        psf=psf, npsf=npsf, penumbra=penumbra, no_secondary=no_secondary, $
-       image_ps=_image_ps, mask_width=mask_width, no_maps=no_maps
+       image_ptd=_image_ptd, mask_width=mask_width, no_maps=no_maps
  
 
- if(keyword_set(_image_ps)) then image_ps = _image_ps
+ if(keyword_set(_image_ptd)) then image_ptd = _image_ptd
  if(NOT keyword_set(npsf)) then npsf = 10
  if(NOT defined(mask_width)) then mask_width = 512
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, dd=dd, cd=cd, bx=bx, md=md, sund=sund
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(md)) then md = dat_gd(gd, dd=dd, /md)
 
 
  ;---------------------------------------
@@ -131,9 +142,10 @@ function pg_render, cd=cd, sund=sund, $
  ;----------------------------------------
  ; set up grid if necessary
  ;----------------------------------------
- if(NOT keyword_set(image_ps)) then image_pts = gridgen(cam_size(cd), /rectangular) $
- else if(size(image_ps, /type) EQ 10) then image_pts = ps_points(image_ps) $
- else image_pts = image_ps
+ if(NOT keyword_set(image_ptd)) then $
+                      image_pts = gridgen(cam_size(cd), /rectangular) $
+ else if(size(image_ptd, /type) EQ 10) then image_pts = pnt_points(image_ptd) $
+ else image_pts = image_ptd
 
 
  ;----------------------------------------
@@ -162,7 +174,7 @@ function pg_render, cd=cd, sund=sund, $
    ymin = min(image_pts[1,*], max=ymax)
    mask_cd = nv_clone(cd)
    cam_subimage, mask_cd, [xmin,ymin], [xmax-xmin+1, ymax-ymin+1]
-   r = (mask_width/cam_nx(mask_cd))[0]
+   r = (mask_width/(cam_size(mask_cd))[0])[0]
    cam_resize, mask_cd, cam_size(mask_cd)*r
    result = pg_mask(/nodd, cd=mask_cd, bx=bx, mask=mask, pbx=2, np=100)
 
@@ -205,6 +217,11 @@ function pg_render, cd=cd, sund=sund, $
     dim = size(psf, /dim)
     if(dim[0] EQ 0) then psf = cam_psf(cd, npsf)
 
+    ;- - - - - - - - - - - - - - - - - -
+    ; use generic psf if none found
+    ;- - - - - - - - - - - - - - - - - -
+    if(NOT keyword_set(psf)) then psf = gauss_2d(0,0, 1, 6,6)
+
     image = convol(image, psf, /center)
    end
 
@@ -213,6 +230,6 @@ function pg_render, cd=cd, sund=sund, $
  ; store rendering new data descriptor
  ;--------------------------------------------------------------------------
  if(keyword_set(nodd)) then return, 0
- return, nv_init_descriptor(instrument=cor_name(cd), data=image)
+ return, dat_create_descriptors(1, instrument=cor_name(cd), data=image)
 end
 ;=============================================================================

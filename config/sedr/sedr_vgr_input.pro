@@ -12,7 +12,7 @@
 ;	NV/CONFIG
 ;
 ;
-; CALLING SEQUENCE(only to be called by nv_get_value):
+; CALLING SEQUENCE(only to be called by dat_get_value):
 ;	result = sedr_vgr_input(dd, keyword)
 ;
 ;
@@ -32,10 +32,6 @@
 ;
 ;  OUTPUT:
 ;	status:		Zero if valid data is returned.
-;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
 ;
 ;
 ;  TRANSLATOR KEYWORDS:
@@ -64,7 +60,7 @@
 ;	
 ;-
 ;=============================================================================
-function sedr_vgr_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function sedr_vgr_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
@@ -95,8 +91,8 @@ function sedr_vgr_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, statu
  ;---------------------------------
  ; get sctime and planet and source
  ;---------------------------------
- sctime = long(vicar_vgrkey(nv_header(dd),'SCTIME'))
- planet = vicar_vgrkey(nv_header(dd),'PLANET')
+ sctime = long(vicar_vgrkey(dat_header(dd),'SCTIME'))
+ planet = vicar_vgrkey(dat_header(dd),'PLANET')
  if(keyword__set(source)) then _source=source $
  else _source = 'SEDR'
 
@@ -107,7 +103,7 @@ function sedr_vgr_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, statu
  _size = size(sedr)
  if(_size[2] NE 8) then $
   begin
-   nv_message, name='sedr_vgr_input', 'No SEDR/SEDRUPD match', /con
+   nv_message, 'No SEDR/SEDRUPD match', /con
    status = -1
    return, 0
   end
@@ -119,7 +115,7 @@ function sedr_vgr_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, statu
  _size = size(bconst)
  if(_size[2] NE 8) then $
   begin
-   nv_message, name='sedr_vgr_input', 'No Body Constant data for Target', /con
+   nv_message, 'No Body Constant data for Target', /con
    status = -1
    return, 0
   end
@@ -137,10 +133,10 @@ function sedr_vgr_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, statu
     ; Test if image is Object space ("geomed")
     ;-----------------------------------------
     geom = 0
-    if(strpos(nv_header(dd),'GEOM') NE -1) then geom = 1
-    if(strpos(nv_header(dd),'FARENC') NE -1) then geom = 1
-    if(strpos(nv_header(dd),'*** OBJECT SPACE') NE -1) then geom = 1
-    s = size(nv_data(dd))
+    if(strpos(dat_header(dd),'GEOM') NE -1) then geom = 1
+    if(strpos(dat_header(dd),'FARENC') NE -1) then geom = 1
+    if(strpos(dat_header(dd),'*** OBJECT SPACE') NE -1) then geom = 1
+    s = size(dat_data(dd))
     ; If size = 1000x1000 assume it's geomed
     if(s[1] EQ 1000 AND s[2] EQ 1000) then geom = 1
 

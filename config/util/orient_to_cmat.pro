@@ -69,14 +69,13 @@
 ;=============================================================================
 function orient_to_cmat, dd, orient
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
 
  case strmid(cam_name, 0, 3) of $
   'CAS' : return, cas_orient_to_cmat(orient)
 ;  'GLL' : return, gll_orient_to_cmat(orient)
 ;  'VGR' : return, vgr_orient_to_cmat(orient)
-   default : nv_message, name='orient_to_cmat', $
-                               'Instrument  ' + cam_name + ' not supported.'
+   default : nv_message, 'Instrument  ' + cam_name + ' not supported.'
  endcase
 
 end

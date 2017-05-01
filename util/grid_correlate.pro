@@ -366,9 +366,11 @@ function grid_correlate, image, xx, correlation, $
                           call_procedure, fn_show, image, xx, t, show $
           else $
            begin
-            imm = bytscl(image)+shift(bytscl(xx), t(0), t(1))
-            if(n_elements(show) EQ 1) then tvscl, imm $
-            else tvscl, congrid(imm, show[0], show[1]) 
+tvscl, xx, t[0], t[1]
+tvscl, image
+;            imm = bytscl(image)+shift(bytscl(xx), t(0), t(1))
+;            if(n_elements(show) EQ 1) then tvscl, imm $
+;            else tvscl, congrid(imm, show[0], show[1]) 
            end
          end
        end

@@ -119,7 +119,15 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, dd=dd, cd=cd, bx=bx, md=md, sund=sund, dkx=dkx, gbx=_gbx
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(md)) then md = dat_gd(gd, dd=dd, /md)
+
+
  if(keyword_set(_gbx)) then gbx = _gbx
  if(NOT keyword_set(bx)) then $
   begin
@@ -129,8 +137,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
  if(keyword_set(dkx)) then $
   begin
-   if(NOT keyword_set(_gbx)) then $
-            nv_message, name='pg_map', 'Globe descriptor required.'
+   if(NOT keyword_set(_gbx)) then nv_message, 'Globe descriptor required.'
    gbx = _gbx[0,*]
    __gbx = get_primary(cd, _gbx, rx=dkx)
    if(keyword_set(__gbx)) then gbx = __gbx  
@@ -140,7 +147,9 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ;---------------------------------------
  ; create map data descriptor
  ;---------------------------------------
- dd_map = nv_init_descriptor(instrument='MAP', filetype=nv_filetype(dd))
+ dd_map = dat_create_descriptors(1, $
+       instrument='MAP', filetype=dat_filetype(dd), $
+       name=cor_name(bx))
 
 
  ;------------------------------------------------------------------
@@ -149,7 +158,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  naux = n_elements(aux_names)
  if(naux GT 0) then $
   begin
-   _image = nv_data(dd)
+   _image = dat_data(dd)
    s = size(_image)
    xsize = s[1] & ysize = s[2]
 
@@ -160,7 +169,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
    for i=0, naux-1 do $
     begin
-     temp = nv_udata(dd, aux_names[i])
+     temp = cor_udata(dd, aux_names[i])
      if(keyword_set(temp)) then $
       begin
        aux_flags[i] = 1
@@ -171,7 +180,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
    if(nn LT naux) then image = image[*,*,0:nn+1]
   end $
- else image = nv_data(dd)
+ else image = dat_data(dd)
 
 
  ;---------------------------------------
@@ -205,9 +214,9 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
    set_image_size, test_md, map_size/test_factor
    set_image_origin, test_md, image_origin(md)/test_factor
 
-   if(class_get(test_md) EQ 'CAMERA') then cam_set_scale, test_md, cam_scale(md)*test_factor
+   if(cor_class(test_md) EQ 'CAMERA') then cam_set_scale, test_md, cam_scale(md)*test_factor
 
-   test_map = project_map(image, bounds=bounds, frame_bd=gbx, interp=interp,  $
+   test_map = project_map(image, bounds=bounds, interp=interp,  $
             md=test_md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
 ;            hide_fn=hide_fn, hide_data_p=hide_data_p, $
             arg_interp=arg_interp, $
@@ -256,7 +265,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ; create the map
  ;---------------------------------------
  if(NOT keyword_set(map)) then $
-    map = project_map(image, bounds=bounds, frame_bd=gbx, interp=interp,  $
+    map = project_map(image, bounds=bounds, interp=interp,  $
             md=md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
             hide_fn=hide_fn, hide_data_p=hide_data_p, arg_interp=arg_interp, $
             offset=offset, wind_fn=wind_fn, wind_data=wind_data, edge=edge, $
@@ -269,17 +278,17 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ;--------------------------------------------------------------------------
  if(naux GT 0) then $
   begin
-   nv_set_data, dd_map, map[*,*,0]
+   dat_set_data, dd_map, map[*,*,0]
 
    nn = 1
    for i=0, naux-1 do $
     if(aux_flags[i]) then $
      begin
-      nv_set_udata, dd_map, map[*,*,nn], aux_names[i]
+      cor_set_udata, dd_map, aux_names[i], map[*,*,nn]
       nn = nn + 1
      end
   end $
- else nv_set_data, dd_map, map
+ else dat_set_data, dd_map, map
 
 
  return, dd_map

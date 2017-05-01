@@ -113,8 +113,8 @@ function poly_rectify, p, lengths, sub=sub
    ; compute avg distance between consecutive points
    ;----------------------------------------------------
    d2 = total((p - shift(p, 0,-1))^2, 1)
-;   d2_avg = total(d2)/n
-d2_avg = median(d2)
+   d2_avg = mean(d2)
+;d2_avg = median(d2)
    d2max = max(d2)
 
    ;----------------------------------------------------

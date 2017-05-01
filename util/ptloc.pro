@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;       To locate a point in an image that best fits a psf model.
+;       Locates a point in an image that best fits a psf model.
 ;
 ;
 ; CATEGORY:
@@ -87,10 +87,10 @@ function ptloc, image, model, width, ccp=ccp, sigma=sigma, chisq=chisq, $
  ;------------------------------------------------------------
  sub_cc = sub_ccs[*,*]
 
- catch, err
- if(keyword__set(err)) then return, 0
- xx = gauss2d_fit(sub_cc, coeff)
- catch, /cancel
+; catch, err
+; if(keyword__set(err)) then return, 0
+ xx = gauss2dfit(sub_cc, coeff)
+; catch, /cancel
  points = dblarr(2)
 
  successful = 0
@@ -118,7 +118,7 @@ function ptloc, image, model, width, ccp=ccp, sigma=sigma, chisq=chisq, $
  else $
   begin
    status = 1
-;   nv_message, /cont, name='ptloc', 'Cannot obtain sub-pixel precision.'
+;   nv_message, /cont, 'Cannot obtain sub-pixel precision.'
 
    max_sub_cc = max(sub_cc)
    ww = where(sub_cc EQ max_sub_cc)
@@ -185,10 +185,10 @@ im = im - smooth(im, 15)
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(keyword_set(round)) then $
   begin
-   catch, err
-   if(keyword__set(err)) then return, 0
-   yy = gauss2d_fit(smooth(im,2), coeff, /tilt)
-   catch, /cancel
+;   catch, err
+;   if(keyword__set(err)) then return, 0
+   yy = gauss2dfit(smooth(im,2), coeff, /tilt)
+;   catch, /cancel
 
    wx = coeff[2]
    wy = coeff[3]

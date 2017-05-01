@@ -47,9 +47,9 @@ function readrob, fname
  p[0,*] = (p[0,*] - oaxis[0])*scale 
  p[1,*] = (p[1,*] - oaxis[1])*scale 
 
- ps = ps_init(points = p)
+ ptd = pnt_create_descriptors(points = p)
  
 
- return, ps
+ return, ptd
 end
 ;========================================================================

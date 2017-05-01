@@ -204,6 +204,22 @@
 ;	2 July 1995, AB, Added HELP keyword.
 ;	3 September 1996, LP, Added button-less end of current level
 ;	May 2004, JNS, Renamed cw__pdmenu and added X resource names.
+;
+; NOTICES:
+;	Portions ©2017 Exelis Visual Information Solutions, Inc., provided 
+;	under license to the Jet Propulsion Laboratory. THE EXELIS VISUAL  
+;	INFORMATION SOLUTIONS, INC. CODE IS PROVIDED "AS IS" AND ANY EXPRESS  
+;	OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED  
+;	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE  
+;	ARE DISCLAIMED. IN NO EVENT SHALL EXELIS VISUAL INFORMATION SOLUTIONS,  
+;	INC., ITS AFFILIATES, OFFICERS, DIRECTORS, EMPLOYEES, AGENTS, SUPPLIERS  
+;	OR LICENSORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,  
+;	EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,  
+;	PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR  
+;	PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY  
+;	OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING  
+;	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS  
+;	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;-
 
 
@@ -282,18 +298,31 @@ pro CW__PDMENU_BUILD, parent, desc, cur, n, ev_type, full_qual_str, $
     ;
     ; Build string with approriate keywords and execute it
     ;
-    strExecute = 'new = WIDGET_BUTTON(parent, value=dname, MENU=menu'
-    if n_elements(a) ge 3 then strExecute = strExecute + ', resource_name="' + strtrim(a[2],2) + '"'
-    if ((mbars ne 0) and (HELP_KW ne 0) $
-        and (strupcase(dname) eq 'HELP')) then $
-      strExecute = strExecute + ', /HELP'
-    if (keyword_set(font)) then strExecute = strExecute + ',  FONT=font'
-    strExecute = strExecute + ', SEPARATOR=separator'
-;    strExecute = strExecute + ', UNAME="'+uname+'_BUTTON'+STRTRIM(cur,2)+'"'
-    strExecute = strExecute + ', UNAME="'+uname+'_BUTTON_'+dname+'"'
-    strExecute = strExecute + ')'
+    if(strtrim(dname,2) EQ '<null>') then dname = ''
 
-    status = EXECUTE(strExecute)
+
+;;    strExecute = 'new = WIDGET_BUTTON(parent, value=dname, MENU=menu'
+;;    if n_elements(a) ge 3 then strExecute = strExecute + ', resource_name="' + strtrim(a[2],2) + '"'
+;;    if ((mbars ne 0) and (HELP_KW ne 0) $
+;;        and (strupcase(dname) eq 'HELP')) then $
+;;      strExecute = strExecute + ', /HELP'
+;;    if (keyword_set(font)) then strExecute = strExecute + ',  FONT=font'
+;;    strExecute = strExecute + ', SEPARATOR=separator'
+;;;    strExecute = strExecute + ', UNAME="'+uname+'_BUTTON'+STRTRIM(cur,2)+'"'
+;;    strExecute = strExecute + ', UNAME="'+uname+'_BUTTON_'+dname+'"'
+;;    strExecute = strExecute + ')'
+
+;;    status = EXECUTE(strExecute)
+
+
+    resource_name=(n_elements(a) ge 3) ? strtrim(a[2],2) : !null
+    if ((mbars ne 0) and (HELP_KW ne 0) $
+      and (strupcase(dname) eq 'HELP')) then help=1 else help=0
+    new = WIDGET_BUTTON(parent, value=dname, MENU=menu,$
+      SEPARATOR=separator,UNAME=uname+'_BUTTON_'+dname,$
+      help=help,font=font,resource_name=resource_name)
+
+
 
     ; Set requested Return value
     case ev_type of

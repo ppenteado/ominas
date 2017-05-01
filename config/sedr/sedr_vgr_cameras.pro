@@ -68,7 +68,7 @@ function sedr_vgr_cameras, dd, sedr, geom, j2000=j2000, $
  ;----------------------------------
  ; cam_exposure
  ;----------------------------------
- label = nv_header(dd)
+ label = dat_header(dd)
  cam_exposure = vicgetpar(label, 'EXPOSURE_DURATION')/1000d
 
  ;----------------------------------
@@ -106,9 +106,9 @@ function sedr_vgr_cameras, dd, sedr, geom, j2000=j2000, $
  cam_fn_i2f = reform(i2f, 1, n_obj, /overwrite)
 
  ;--------------------------
- ; cam_fn_data
+ ; cam_fi_data
  ;--------------------------
- cam_fn_data = nv_ptr_new()
+ cam_fi_data = nv_ptr_new()
 
 
  ;-----------------------------------
@@ -149,7 +149,8 @@ function sedr_vgr_cameras, dd, sedr, geom, j2000=j2000, $
  ;------------------------------
  ; create a camera descriptor
  ;------------------------------
- cd = cam_init_descriptors(n_obj, $
+ cd = cam_create_descriptors(n_obj, $
+		gd=make_array(n_obj, val=dd), $
 		name=cam_name, $
 		orient=cam_orient, $
 		avel=cam_avel, $
@@ -159,7 +160,7 @@ function sedr_vgr_cameras, dd, sedr, geom, j2000=j2000, $
 		exposure=cam_exposure, $
 		fn_focal_to_image=cam_fn_f2i, $
 		fn_image_to_focal=cam_fn_i2f, $
-		fn_data=cam_fn_data, $
+		fi_data=cam_fi_data, $
 		scale=cam_scale, $
 		size=cam_size, $
 		oaxis=cam_oaxis)

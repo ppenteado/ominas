@@ -2,11 +2,11 @@
 ; vgr_spice_ik_detect
 ;
 ;=============================================================================
-function vgr_spice_ik_detect, dd, kpath, time=time, reject=reject, $
+function vgr_spice_ik_detect, dd, kpath, sc=sc, time=time, $
                                                   strict=strict, all=all
 
- sc = vgr_parse_inst(nv_instrument(dd), cam=cam)
- all_files = findfile(kpath + sc + '_iss' + cam + '_v??.ti')
+ scname = vgr_parse_inst(dat_instrument(dd), cam=cam)
+ all_files = file_search(kpath + scname + '_iss' + cam + '_v??.ti')
 
  return, all_files
 end

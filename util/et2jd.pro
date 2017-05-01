@@ -3,8 +3,7 @@
 ;
 ;============================================================================
 function et2jd, et
-nv_message, /con, name='et2jd', $
-               'WARNING: This routine is obsolete, use spice_et2jed!!!'
+nv_message, /con, 'WARNING: This routine is obsolete, use spice_et2jed!!!'
  return, et/86400d + julday(1,1,2000,12,0,0)
 end
 ;============================================================================

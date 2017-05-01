@@ -35,21 +35,16 @@
 ;  INPUT:
 ;	ard:		Input array descriptors; used by some translators.
 ;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
-;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
 ;	arr_*:		All array override keywords are accepted.  See
 ;			array_keywords.include. 
 ;
-;			If arr_name is specified, then only descriptors with
+;			If name is specified, then only descriptors with
 ;			those names are returned.
 ;
-;	verbatim:	If set, the descriptors requested using arr_name
+;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
 ;
@@ -68,8 +63,8 @@
 ;	If /override, then a array descriptor is created and initialized
 ;	using the specified values.  Otherwise, the descriptor is obtained
 ;	through the translators.  Note that if /override is not used,
-;	values (except arr_name) can still be overridden by specifying 
-;	them as keyword parameters.  If arr_name is specified, then
+;	values (except name) can still be overridden by specifying 
+;	them as keyword parameters.  If name is specified, then
 ;	only descriptors corresponding to those names will be returned.
 ;	
 ;
@@ -79,35 +74,39 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, no_sort=no_sort, $
+function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, $
                           override=override, verbatim=verbatim, $
-@array_keywords.include
+@arr__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, dd=dd, bx=bx
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
+
+ ;-----------------------------------------------
+ ; call translators
+ ;-----------------------------------------------
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if names requested, the force tr_first
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(keyword_set(arr__name)) then tr_first = 1
+;; if(keyword_set(name)) then tr_first = 1
 ;tr_first = 1
 
- ards = nv_get_value(dd, 'ARR_DESCRIPTORS', key1=od, key2=bx, key4=_ard, key6=arr__primary, $$
-                             key8=arr__name, trs=trs, $
+ ard = dat_get_value(dd, 'ARR_DESCRIPTORS', key1=od, key2=bx, key4=_ard, key6=primary, $$
+                             key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
- if(NOT keyword_set(ards)) then return, nv_ptr_new()
+ if(NOT keyword_set(ard)) then return, obj_new()
 
- n = n_elements(ards)
+ n = n_elements(ard)
 
  ;---------------------------------------------------
- ; If arr__name given, determine subscripts such that
+ ; If name given, determine subscripts such that
  ; only values of the named objects are returned.
  ;
  ; Note that each translator has this opportunity,
@@ -116,29 +115,26 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, gd=gd, no_sort=no_sort,
  ; If arr_name is not given, then all descriptors
  ; will be returned.
  ;---------------------------------------------------
- if(keyword__set(arr__name)) then $
+ if(keyword__set(name)) then $
   begin
-   tr_names = get_core_name(ards)
-   sub = nwhere(strupcase(tr_names), strupcase(arr__name))
-   if(sub[0] EQ -1) then return, nv_ptr_new()
+   tr_names = cor_name(ard)
+   sub = nwhere(strupcase(tr_names), strupcase(name))
+   if(sub[0] EQ -1) then return, obj_new()
    if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
   end $
  else sub=lindgen(n)
 
  n = n_elements(sub)
- ards = ards[sub]
+ ard = ard[sub]
 
 
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then ards = ards[pgs_name_sort(get_core_name(ards))]
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, bx=bx
+ dat_set_gd, ard, gd, bx=bx
 
-
- return, ards
+ return, ard
 end
 ;===========================================================================
 

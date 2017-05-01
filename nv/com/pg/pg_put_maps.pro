@@ -14,7 +14,6 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_put_maps, dd, md=md
-;	pg_put_maps, dd, gd=gd
 ;
 ;
 ; ARGUMENTS:
@@ -34,10 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	mds:	Map descriptors to output.
-;
-;	gd:	Generic descriptor.  If present, map descriptors are
-;		taken from the gd.md field.
+;	md:	Map descriptors to output.
 ;
 ;	map_*:		All map override keywords are accepted.
 ;
@@ -74,49 +70,32 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_put_maps, dd, trs, gd=gd, mds=mds, $
-@map_keywords.include
+pro pg_put_maps, dd, trs, md=_md, $
+@map__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
-
-
- ;-----------------------------------------------
- ; dereference the generic descriptor if given
- ;-----------------------------------------------
- if(keyword_set(gd)) then $
-  begin
-   if(NOT keyword_set(mds)) then mds = gd.md
-  end
- if(NOT keyword_set(mds)) then nv_message, $
-                                name='pg_put_maps', 'No map descriptor.'
 
 
  ;-------------------------------------------------------------------
  ; override the specified values 
  ;-------------------------------------------------------------------
- if(n_elements(map__fn_map_to_image) NE 0) then $
-                 map_set_fn_map_to_image, mds, map__fn_map_to_image
- if(n_elements(map__fn_image_to_map) NE 0) then $
-                 map_set_fn_image_to_map, mds, map__fn_image_to_map
- if(n_elements(map__fn_data) NE 0) then map_set_fn_data_p, mds, map__fn_data
- if(n_elements(map__scale) NE 0) then map_set_scale, mds, map__scale
- if(n_elements(map__ecc) NE 0) then map_set_ecc, mds, map__ecc
- if(n_elements(map__radii) NE 0) then map_set_radii, mds, map__radii
- if(n_elements(map__origin) NE 0) then map_set_origin, mds, map__origin
- if(n_elements(map__center) NE 0) then map_set_center, mds, map__center
- if(n_elements(map__size) NE 0) then map_set_size, mds, map__size
- if(n_elements(map__type) NE 0) then map_set_type, mds, map__type
+ md = nv_clone(_md)
 
+ if(defined(name)) then _name = name & name = !null
+ map_assign, md, /noevent, $
+@map__keywords.include
+end_keywords
+ if(defined(_name)) then name = _name
 
 
  ;-------------------------------
  ; put descriptor
  ;-------------------------------
- nv_put_value, dd, 'MAP_DESCRIPTORS', mds, trs=trs, $
+ dat_put_value, dd, 'MAP_DESCRIPTORS', md, trs=trs, $
 @nv_trs_keywords_include.pro
                              end_keywords
 
-
+ nv_free, md
 end
 ;===========================================================================
 

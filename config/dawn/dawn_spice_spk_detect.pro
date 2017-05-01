@@ -35,14 +35,14 @@ end
 ; coverage dates are within djd days of the given image are returned.
 ;
 ;=============================================================================
-function dawn_spice_spk_detect, dd, spkpath, djd=djd, time=time, $
-                             all=all, reject=reject, strict=strict
+function dawn_spice_spk_detect, dd, spkpath, sc=sc, djd=djd, time=time, $
+                             all=all, strict=strict
 common dawn_spice_spk_block, all_files, all_names_block, spkpath_block, $
       jd_start_block, jd_stop_block, jd_release_block
 
  if(NOT keyword_set(djd)) then djd = 1d			; days, +/-
 
- label = nv_header(dd)
+ label = dat_header(dd)
  
 
  ;--------------------------------
@@ -63,7 +63,7 @@ common dawn_spice_spk_block, all_files, all_names_block, spkpath_block, $
 
  if(NOT keyword_set(jd_start_block)) then $
   begin
-   all_files = findfile(spkpath + '/dawn_*_??????[-,_]??????_??????*.bsp')
+   all_files = file_search(spkpath + '/dawn_*_??????[-,_]??????_??????*.bsp')
    if(keyword_set(all)) then return, all_files
 
 

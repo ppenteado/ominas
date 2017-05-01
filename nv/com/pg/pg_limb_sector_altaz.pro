@@ -11,7 +11,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps=pg_limb_sector_altaz(cd=cd, gbx=gbx, alt, az, dkd=dkd)
+;     outline_ptd=pg_limb_sector_altaz(cd=cd, gbx=gbx, alt, az, dkd=dkd)
 ;
 ;
 ; ARGUMENTS:
@@ -53,7 +53,7 @@
 ;                   direction.
 ;
 ;        nodsk:     If set, skyplane disk image points will not be included 
-;                   in the output points_struct.
+;                   in the output POINT.
 ;
 ;      graphic:     If set, the sector is computed in the planetographic
 ;                   sense, i.e., lines of constant azimuth extend along 
@@ -75,11 +75,15 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT objects
 ;      also contains the disk coordinate for each point, relative to the
 ;      returned disk descriptor, and the user fields 'nrad' and 'nlon' 
 ;      giving the number of points in altitude and azimuth.
+;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
 ;
 ;
 ; ORIGINAL AUTHOR : 
@@ -99,11 +103,8 @@ function pg_limb_sector_altaz, cd=cd, gbx=_gbx, gd=gd, dkd=dkd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- if(keyword__set(gd)) then $
-  begin
-   if(NOT keyword__set(cd)) then cd=gd.cd
-   if(NOT keyword__set(_gbx)) then _gbx=gd.gbx
-  end
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
 
  if(NOT keyword__set(_gbx)) then $
             nv_message, name='pg_limb_sector_altaz', 'Globe descriptor required.'
@@ -125,12 +126,12 @@ function pg_limb_sector_altaz, cd=cd, gbx=_gbx, gd=gd, dkd=dkd, $
 
  outline_pts = get_limb_profile_outline(cd, gbx, dkd=dkd, $
                           alt=alt, az=az, nalt=_nalt, naz=_naz, graphic=graphic)
- dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=dkd, outline_pts)
+ dsk_outline_pts = image_to_disk(cd, dkd, outline_pts)
  rads = dsk_outline_pts[_naz+lindgen(_nalt),0]
  lons = dsk_outline_pts[lindgen(_naz), 1]
 
  nazrad = get_ring_profile_n(reform(outline_pts), cd, dkd, $
-                                lons, rads, oversamp=sample, frame_bd=dkd)
+                                                   lons, rads, oversamp=sample)
  nalt = long(nazrad[1])>2 & naz = long(nazrad[0])
 
  if(keyword_set(__naz)) then naz = __naz
@@ -147,15 +148,14 @@ function pg_limb_sector_altaz, cd=cd, gbx=_gbx, gd=gd, dkd=dkd, $
  dsk_outline_pts = 0
 
  if(NOT keyword_set(nodsk)) then $
-       dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=dkd, outline_pts)
+                    dsk_outline_pts = image_to_disk(cd, dkd, outline_pts)
 
- outline_ps = ps_init(points = outline_pts, $
+ outline_ptd = pnt_create_descriptors(points = outline_pts, $
                       desc = 'pg_limb_sector_altaz', $
                       data = transpose(dsk_outline_pts))
- ps_set_udata, outline_ps, name='nrad', [nalt]
- ps_set_udata, outline_ps, name='nlon', [naz]
-		udata = [naz])
+ cor_set_udata, outline_ptd, 'nrad', [nalt]
+ cor_set_udata, outline_ptd, 'nlon', [naz]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================

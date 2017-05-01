@@ -51,8 +51,8 @@
 ;=============================================================================
 function pg_str_limit_mag, sds, max=max, min=min
 
- if(NOT keyword__set(min) AND NOT keyword__set(max)) THEN $
-         nv_message, name='pg_str_limit_mag', 'No range or limits specified'
+ if(NOT keyword__set(min) AND NOT keyword__set(max)) then $
+                                 nv_message, 'No range or limits specified'
  if(NOT keyword__set(min)) then  subs=str_limit_mag(sds, max=max)
  if(NOT keyword__set(max)) then  subs=str_limit_mag(sds, min=min)
  if(keyword__set(min) AND keyword__set(max)) then $

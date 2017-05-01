@@ -1,0 +1,26 @@
+; _dsk_assign.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(defined(sma)) then dsk_set_sma, _xd, sma, /noevent
+ if(defined(ecc)) then dsk_set_ecc, _xd, ecc, /noevent
+ if(defined(dap)) then dsk_set_dap, _xd, dap, /noevent
+ if(defined(scale)) then dsk_set_scale, _xd, scale, /noevent
+ if(defined(nm)) then dsk_set_nm, _xd, nm, /noevent
+ if(defined(m)) then dsk_set_m, _xd, m, /noevent
+ if(defined(em)) then dsk_set_em, _xd, em, /noevent
+ if(defined(tapm)) then dsk_set_tapm, _xd, tapm, /noevent
+ if(defined(dtapmdt)) then dsk_set_dtapmdt, _xd, dtapmdt, /noevent
+ if(defined(libam)) then dsk_set_libam, _xd, libam, /noevent
+ if(defined(libm)) then dsk_set_libm, _xd, libm, /noevent
+ if(defined(dlibmdt)) then dsk_set_dlibmdt, _xd, dlibmdt, /noevent
+ if(defined(nl)) then dsk_set_nl, _xd, nl, /noevent
+ if(defined(l)) then dsk_set_l, _xd, l, /noevent
+ if(defined(il)) then dsk_set_il, _xd, il, /noevent
+ if(defined(taanl)) then dsk_set_taanl, _xd, taanl, /noevent
+ if(defined(dtaanldt)) then dsk_set_dtaanldt, _xd, dtaanldt, /noevent
+ if(defined(libal)) then dsk_set_libal, _xd, libal, /noevent
+ if(defined(libl)) then dsk_set_libl, _xd, libl, /noevent
+ if(defined(dlibldt)) then dsk_set_dlibldt, _xd, dlibldt, /noevent
+
+@sld_assign.include

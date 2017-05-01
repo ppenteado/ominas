@@ -180,7 +180,6 @@ pro tvim_data__define
 		prev:		byte(0) $
 	}
 
-
 end
 ;===========================================================================
 
@@ -747,16 +746,15 @@ common tvim_block, tvd, tvim_top
  image_zsize = 1
  if(s[0] EQ 3) then image_zsize = s[3]
 
+
  ;======================
  ; get min/max values
  ;======================
- min = dblarr(3)
- max = dblarr(3)
- for i=0, image_zsize-1 do $
-  begin
-   min[i] = min(image[*,*,i])
-   max[i] = max(image[*,*,i])
-  end
+ if(NOT keyword_set(max)) then $
+        for i=0, image_zsize-1 do max = append_array(max, max(image[*,*,i],/nan))
+ if(NOT keyword_set(min)) then $
+        for i=0, image_zsize-1 do min = append_array(min, min(image[*,*,i],/nan))
+
  maxx = max(max)
  minn = min(min)
 
@@ -885,7 +883,7 @@ common tvim_block, tvd, tvim_top
      tvimage[*,*,1] = bytscl(tvimage[*,*,1], top=tvim_top)
      tvimage[*,*,2] = bytscl(tvimage[*,*,2], top=tvim_top)
    end $
-   else $
+   else if(NOT keyword_set(no_scale)) then $
     begin
 ;     tvimage[*,*,0] = $
 ;        bytscl(tvimage[*,*,0], min=min[0], max=max[0], top=tvim_top)

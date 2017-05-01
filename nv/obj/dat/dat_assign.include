@@ -1,0 +1,31 @@
+; _dat_assign.include
+;  implemented as a .include because arg_present does not propogate to 
+;  lower-level calls
+
+ if(defined(dh)) then dat_set_dh, _xd, dh, /noevent
+ if(defined(compress)) then dat_set_compress, _xd, compress, /noevent
+ if(defined(update)) then dat_set_update, _xd, update, /noevent
+ if(defined(sibling)) then dat_set_sibling, _xd, sibling, /noevent
+ if(defined(nhist)) then dat_set_nhist, _xd, nhist, /noevent
+ if(defined(min)) then dat_set_min, _xd, min, /noevent
+ if(defined(max)) then dat_set_max, _xd, max, /noevent
+ if(defined(maintain)) then dat_set_maintain, _xd, maintain, /noevent
+ if(defined(header)) then dat_set_header, _xd, header, /noevent
+ if(defined(filename)) then dat_set_filename, _xd, filename, /noevent
+ if(defined(filetype)) then dat_set_filetype, _xd, filetype, /noevent
+ if(defined(dim)) then dat_set_dim, _xd, dim, /noevent
+ if(defined(typecode)) then dat_set_typecode, _xd, typecode, /noevent
+ if(defined(gff)) then dat_set_gff, _xd, gff, /noevent
+ if(defined(dh)) then dat_set_dh, _xd, dh, /noevent
+ if(defined(instrument)) then dat_set_instrument, _xd, instrument, /noevent
+ if(defined(input_fn)) then dat_set_input_fn, _xd, input_fn, /noevent
+ if(defined(output_fn)) then dat_set_output_fn, _xd, output_fn, /noevent
+ if(defined(keyword_fn)) then dat_set_keyword_fn, _xd, keyword_fn, /noevent
+ if(defined(input_transforms)) then dat_set_input_transforms, _xd, input_transforms, /noevent
+ if(defined(output_transforms)) then dat_set_output_transforms, _xd, output_transforms, /noevent
+ if(defined(input_translators)) then dat_set_input_translators, _xd, input_translators, /noevent
+ if(defined(output_translators)) then dat_set_output_translators, _xd, output_translators, /noevent
+ if(defined(input_keyvals)) then dat_set_input_keyvals, _xd, input_keyvals, /noevent
+ if(defined(output_keyvals)) then dat_set_output_keyvals, _xd, output_keyvals, /noevent
+
+@cor_assign.include

@@ -33,12 +33,12 @@
 ; INPUTS:
 ;        sources:         Inertial positions of sources.  Either an array
 ;                         of column vectors (nv x 3 x nt) or an array of 
-;                         points structures containing the inertial vectors.  
+;                         POINT objects containing the inertial vectors.  
 ;
 ;        targets:         Inertial positions of targets, or inertial unit
 ;                         vectors giving directions to targets.  Either an 
 ;                         array of column vectors (nv x 3 xnt) or an array 
-;                         of points structures.  There must either be a single 
+;                         of POINT objects.  There must either be a single 
 ;                         target point or a one-to-one match between source 
 ;                         and target points.
 ;                         
@@ -56,8 +56,8 @@
 ;
 ;	literal:	All of the following input keywords accept an array
 ;			where each element corresponds to an element in the
-;			object_ps array.  By default, if the keyword array is
-;			shorter than the object_ps array, then the last element
+;			object_ptd array.  By default, if the keyword array is
+;			shorter than the object_ptd array, then the last element
 ;	  		is used to fill out the array.  /literal suppresses
 ;			this behavior and causes unspecified elements to
 ;			take their default values
@@ -90,7 +90,7 @@
 ;
 ;
 ; EXAMPLE:
-;       Say moon_points is a point structure containing the center
+;       Say moon_points is a POINT object containing the center
 ;       data for the four Galilean satellites and jupiter_points has
 ;       Jupiter's center data.  Then
 ;
@@ -116,7 +116,7 @@
 ;
 ;-
 ;=============================================================================
-pro pg_draw_vector, source, target, cd=cd, gd=gd, literal=literal, $
+pro pg_draw_vector, source, target, cd=cd, dd=dd, gd=gd, literal=literal, $
     lengths=_lengths, plabels=_plabels, colors=_colors, thick=_thick, $
     csizes=_csizes, wnum=wnum, noshorten=noshorten, solid=solid, $
     fixedheads=fixedheads, winglength=winglength, draw_wnum=draw_wnum, $
@@ -134,9 +134,9 @@ compile_opt IDL2
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
 
- if(not keyword__set(cd)) then nv_message, name="pg_draw_vector", $
+ if(not keyword__set(cd)) then nv_message, $
    "A camera descriptor (or a generic descriptor containing a camera descriptor) is required for this routine."
 
 
@@ -181,12 +181,12 @@ compile_opt IDL2
 
 
  ;------------------------------------------------------------
- ; Determine if the source is a point-structure or an array
+ ; Determine if the source is a POINT object or an array
  ;------------------------------------------------------------
  if(size(source, /type) EQ 10) then begin
     n = n_elements(source)
     for i = 0, n-1 do begin
-        v = ps_points(source[i])
+        v = pnt_points(source[i])
         source_v = append_array(source_v, v)
     endfor
  endif else begin
@@ -195,12 +195,12 @@ compile_opt IDL2
 
 
  ;------------------------------------------------------------
- ; Determine if the target is a point-structure or an array
+ ; Determine if the target is a POINT object or an array
  ;------------------------------------------------------------
  if(size(target, /type) EQ 8) then begin
     n = n_elements(target)
     for i = 0, n-1 do begin
-        v = ps_points(target[i])
+        v = pnt_points(target[i])
         target_v = append_array(target_v, v)
     endfor
  endif else begin
@@ -220,7 +220,7 @@ compile_opt IDL2
     endif else if(ntargets eq 1) then begin 
         target_v = target_v##make_array(nsources, val=1d)
     endif else begin 
-        nv_message, name='pg_draw_vector', 'Source and Target arrays have incompatible sizes.'
+        nv_message, 'Source and Target arrays have incompatible sizes.'
     endelse
  endif
  nv = n_elements(source_v)/3

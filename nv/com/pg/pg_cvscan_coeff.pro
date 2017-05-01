@@ -15,12 +15,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	scan_cf = pg_cvscan_coeff(scan_ps, axis_ps=axis_ps)
+;	scan_cf = pg_cvscan_coeff(scan_ptd, axis_ptd=axis_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	scan_ps:	Array (n_curves) of points_struct output from
+;	scan_ptd:	Array (n_curves) of POINT output from
 ;			pg_cvscan containing scanned image points as well as
 ;			other necessary scan data.
 ;
@@ -29,7 +29,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	axis_ps:	points_struct containing a single image  point
+;	axis_ptd:	POINT containing a single image  point
 ;			to be used as the axis of rotation in the fit for
 ;			every curve.
 ;
@@ -50,7 +50,7 @@
 ;
 ; PROCEDURE:
 ;	pg_cvscan_coeff extracts the scan data from the given
-;	scan_ps structure and uses icv_coeff to compute the coefficients.  
+;	scan_ptd structure and uses icv_coeff to compute the coefficients.  
 ;	See the documentation for that routine for details.
 ;
 ;
@@ -59,10 +59,10 @@
 ;	least square coefficients for a fit such that only dx and dtheta
 ;	will be allowed to vary: 
 ;
-;	cvscan_cf = pg_cvscan_coeff(scan_ps, axis=center_ps, fix=[1])
+;	cvscan_cf = pg_cvscan_coeff(scan_ptd, axis=center_ptd, fix=[1])
 ;
-;	In this call, scan_ps is a points_struct containing the scan data
-;	from pg_cvscan and center_ps is a points_struct giving the center
+;	In this call, scan_ptd is a POINT containing the scan data
+;	from pg_cvscan and center_ptd is a POINT giving the center
 ;	of the planet as computed by pg_center.
 ;
 ;
@@ -80,15 +80,15 @@
 ;	
 ;-
 ;=============================================================================
-function pg_cvscan_coeff, scan_ps, axis_ps=_axis_ps, fix=fix
+function pg_cvscan_coeff, scan_ptd, axis_ptd=_axis_ptd, fix=fix
        
- if(keyword_set(_axis_ps)) then $
+ if(keyword_set(_axis_ptd)) then $
   begin     
-   if(size(_axis_ps, /type) NE 10) then axis_ps = ps_init(p=_axis_ps) $ 
-   else axis_ps = _axis_ps
+   if(size(_axis_ptd, /type) NE 11) then axis_ptd = pnt_create_descriptors(points=_axis_ptd) $ 
+   else axis_ptd = _axis_ptd
   end
 
- n_objects=n_elements(scan_ps)
+ n_objects=n_elements(scan_ptd)
  scan_cf=replicate({pg_fit_coeff_struct}, n_objects)
 
  n_scans=0
@@ -98,21 +98,21 @@ function pg_cvscan_coeff, scan_ps, axis_ps=_axis_ps, fix=fix
  ;===============================================
  for i=0, n_objects-1 do $
   begin
-   ps_get, scan_ps[i], data=scan_data, points=scan_pts, /visible
+   pnt_query, scan_ptd[i], data=scan_data, points=scan_pts, /visible
 
    ;---------------------------------------------------------------
    ; if scan data exists, compute the least-squares coefficients
    ;---------------------------------------------------------------
    if(keyword_set(scan_data)) then $
     begin
-     n_scans=n_scans+1
+     n_scans = n_scans+1
      cos_alpha = scan_data[0,*]
      sin_alpha = scan_data[1,*]
      scan_offsets = scan_data[2,*]
      scan_sigma = scan_data[4,*]
 
      axis = dblarr(2)
-     if(keyword_set(axis_ps)) then axis = ps_points(axis_ps)
+     if(keyword_set(axis_ptd)) then axis = pnt_points(axis_ptd)
      icv_coeff, cos_alpha, sin_alpha, scan_offsets, scan_pts, axis, $
                sigma=scan_sigma, M=M, b=b
 
@@ -155,8 +155,7 @@ function pg_cvscan_coeff, scan_ps, axis_ps=_axis_ps, fix=fix
  ;---------------------------
  ; error if no scans exist
  ;---------------------------
- if(n_scans EQ 0) then nv_message, name='pg_cvscan_coeff', $
-                                      'No scan data available - use pg_cvcsan.'
+ if(n_scans EQ 0) then nv_message, 'No scan data available - use pg_cvcsan.'
 
 
 

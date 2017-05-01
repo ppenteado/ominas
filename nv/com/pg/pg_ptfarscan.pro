@@ -69,15 +69,15 @@
 ;	extend:		If nonzero, star masks are extended by this
 ;			many pixels in all directions.
 ;
-;	name:		Name to use for the returned points structures.
+;	name:		Name to use for the returned POINT objects.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; RETURN:
-;	An array of type points_struct giving the detected position for
+;	An array of type POINT giving the detected position for
 ;       each object.  The correlation coeff value for each detection is
-;       saved in the data portion of points_struct with tag 'scan_cc'.
+;       saved in the data portion of POINT with tag 'scan_cc'.
 ;
 ;
 ; SEE ALSO:
@@ -98,14 +98,14 @@ function pg_ptfarscan, dd, name=name, $
                     smooth=smooth, wmod=wmod, wpsf=wpsf, $
                     sky=sky, nsig=nsig, median=median, $
                     mask=mask, extend=extend, nmax=nmax, chifit=chifit
-@ps_include.pro
+@pnt_include.pro
 
  if(NOT keyword__set(ccmin)) then ccmin = 0.8
  if(NOT keyword__set(nsig)) then nsig = 3d
  if(NOT keyword__set(wmod)) then wmod = 15
  if(NOT keyword__set(wpsf)) then wpsf = 1.3
  
- image = nv_data(dd)
+ image = dat_data(dd)
  
  if(keyword__set(smooth)) then image = smooth(_image, smooth)
  if(keyword__set(median)) then _image = median(_image, median)
@@ -160,14 +160,14 @@ function pg_ptfarscan, dd, name=name, $
 
 
  n = n_elements(points)/2
- pts_ps = ptrarr(n)
+ pts_ptd = objarr(n)
 
  for i=0, n-1 do $
   begin
-   ps_set, pts_ps[i], points = points[*,i], name = name, desc = 'ptfarscan'
+   pnt_assign, pts_ptd[i], points = points[*,i], name = name, desc = 'ptfarscan'
   end
 
 
- return, pts_ps
+ return, pts_ptd
 end
 ;===========================================================================

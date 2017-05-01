@@ -69,7 +69,7 @@
 pro dawn_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
                                       n_obj=n_obj, dim=dim, status=status
 
- cam_name = nv_instrument(dd)
+ cam_name = dat_instrument(dd)
  if(cam_name EQ 'DAWN_FC1') then inst=-203110l
  if(cam_name EQ 'DAWN_FC2') then inst=-203120l
 
@@ -77,7 +77,7 @@ pro dawn_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
  sc = -203l
  plat = -203000l
 
- spice_write_cameras, dd, ref, ck_file, dawn_from_ominas(value), $
+ spice_write_cameras, dd, ref, ck_file, dawn_from_ominas(value, orient_fn), $
 		sc = sc, $
 		inst = inst, $
 		plat = plat, status=status

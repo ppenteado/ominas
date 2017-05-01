@@ -14,17 +14,17 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	dxy = pg_farfit(dd, base_ps, model_ps)
+;	dxy = pg_farfit(dd, base_ptd, model_ptd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:		Data descriptor.
 ;
-;	base_ps:	points_struct giving a set of points to fit to.
+;	base_ptd:	POINT giving a set of points to fit to.
 ;			This input may be produced by pg_edges, for example. 
 ;
-;	model_ps:	Array of points_struct giving model points (computed
+;	model_ptd:	Array of POINT giving model points (computed
 ;			limb points for example).
 ;
 ;  OUTPUT: NONE
@@ -91,24 +91,22 @@
 ;	
 ;-
 ;=============================================================================
-function pg_farfit, dd, base_ps, model_ps, nsamples=nsamples, show=show, $
+function pg_farfit, dd, base_ptd, model_ptd, nsamples=nsamples, show=show, $
                           bin=bin, max_density=max_density, region=region, $
                           sigma=sigma, cc=cc, mcc=mcc, bias=bias, $
                           nosearch=nosearch
 
-
  ;------------------------------------------------------------
- ; dereference points structs
+ ; dereference POINT objects
  ;------------------------------------------------------------
- base_pts = pg_points(base_ps)
- model_pts = pg_points(model_ps)
- if(NOT keyword__set(model_pts)) then nv_message, name='pg_farfit', $
-                                                   'No visible model points.'
+ base_pts = pnt_points(/vis, base_ptd, /cat)
+ model_pts = pnt_points(/vis, model_ptd, /cat)
+ if(NOT keyword__set(model_pts)) then nv_message, 'No visible model points.'
 
  nbase = n_elements(base_pts)/2
  nmodel = n_elements(model_pts)/2
 
- im = nv_data(dd)
+ im = dat_data(dd)
  s = size(im)
  im = 0
 

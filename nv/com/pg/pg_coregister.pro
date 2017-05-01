@@ -81,7 +81,9 @@ pro pg_coregister, dd, cd=cd, bx=bx, gd=gd, shift=shift, center=center, p=p, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, bx=bx, dd=dd
+ if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
 
  ;-----------------------------------------------
@@ -94,8 +96,8 @@ pro pg_coregister, dd, cd=cd, bx=bx, gd=gd, shift=shift, center=center, p=p, $
    centers = dblarr(2,n)
    for i=0, n-1 do $
     begin
-     center_ps = pg_center(cd=cd[i], bx=bx[i])
-     centers[*,i] = pg_points(center_ps)
+     center_ptd = pg_center(cd=cd[i], bx=bx[i])
+     centers[*,i] = pnt_points(center_ptd)
     end
   end
 
@@ -129,13 +131,13 @@ pro pg_coregister, dd, cd=cd, bx=bx, gd=gd, shift=shift, center=center, p=p, $
   begin
    if(NOT keyword_set(no_shift)) then $
     begin
-     image = call_function(fn, nv_data(dd[i]), shift[0,i], shift[1,i])
-     nv_set_data, dd[i], image
+     image = call_function(fn, dat_data(dd[i]), shift[0,i], shift[1,i])
+     dat_set_data, dd[i], image
     end
 
    cam_set_oaxis, cd[i], cam_oaxis(cd[i]) + double(shift[*,i])
 
-   add_core_task, cd[i], 'pg_coregister' 
+   cor_add_task, cd[i], 'pg_coregister' 
   end
 
 

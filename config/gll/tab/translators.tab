@@ -1,8 +1,13 @@
-# instrument	input			output		keyword arguments
+# Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  GLL_SSI	dh_std_input		dh_std_output		format=gll
-        -       station_input                   -
-	-       array_input			-
-	-	gll_spice_input			-	 klist=galileo.kernels
-	-  	strcat_ucact_input		-		/j2000
+  GLL_SSI	gll_spice_input		gll_spice_output \
+							ck_in=auto \
+							spk_in=auto \
+							pck_in=auto \
+							lsk_in=auto \
+							fk_in=auto \
+							ik_in=auto \
+							sck_in=auto \
+							xk_in=extra.tpc 
+

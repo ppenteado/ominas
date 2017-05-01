@@ -16,12 +16,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_shadow, object_ps, cd=cd, ods=ods, dkx=dkx, gbx=gbx
+;	pg_shadow, object_ptd, cd=cd, ods=ods, dkx=dkx, gbx=gbx
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	object_ps:	Array of points_struct containing inertial vectors.
+;	object_ptd:	Array of POINT containing inertial vectors.
 ;
 ;  OUTPUT: NONE
 ;
@@ -45,9 +45,11 @@
 ;		descriptor is given, then the sun descriptor in gd is used.
 ;		Only one observer is allowed.
 ;
-;	gd:	Generic descriptor.  If given, the cd, dkx, gbx, and bx inputs 
-;		are taken from the corresponding fields of this structure
-;		instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	  All other keywords are passed directly to pg_shadow_globe
 ;	  and pg_shadow_disk and are documented with those programs.
@@ -56,12 +58,13 @@
 ;
 ;
 ; RETURN: 
-;	Array (n_disks,n_objects) of points_struct containing image 
+;	Array (n_disks,n_objects) of POINT containing image 
 ;	points and the corresponding inertial vectors.
 ;
 ;
 ; STATUS:
-;	
+;	Soon to be replaced by a new program that merges pg_shadow_globe and
+;	pg_shadow_disk.  The API for the new routine may be slightly different.
 ;
 ;
 ; SEE ALSO:
@@ -73,59 +76,50 @@
 ;	
 ;-
 ;=============================================================================
-function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, gd=gd, object_ps, $
+function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, object_ptd, $
               reveal=reveal, fov=fov, nocull=nocull, all=all, $
-              both=both, backshadow=backshadow, $
-              iterate=iterate, nosolve=nosolve, dbldbl=dbldbl
+              both=both, backshadow=backshadow, epsilon=epsilon, $
+              nosolve=nosolve
 
- pgs_gd, bx=bx
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
  ;----------------------------------
  ; extract objects from bx
  ;----------------------------------
  if(keyword_set(bx)) then $
   begin
-   class = class_get(bx)
-
-   _gbx = class_extract(bx, 'GLOBE')
-   if(keyword_set(_gbx)) then gbx = append_array(gbx, _gbx)
-
-   _dkx = class_extract(bx, 'DISK')
-   if(keyword_set(_dkx)) then dkx = append_array(dkx, _dkx)
+   gbx = append_array(gbx, cor_select(bx, 'GLOBE', /class))
+   dkx = append_array(dkx, cor_select(bx, 'DISK', /class))
   end
 
  ;----------------------------------
  ; project onto all globes
  ;----------------------------------
  if(keyword_set(gbx)) then $
-   globe_shadow_ps = $
-       pg_shadow_globe(object_ps, cd=cd, od=od, gbx=gbx, gd=gd, $
+   globe_shadow_ptd = $
+       pg_shadow_globe(object_ptd, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, $
                /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow, $
-               iterate=iterate, nosolve=nosolve, dbldbl=dbldbl)
+               nosolve=nosolve, epsilon=epsilon)
 
  ;----------------------------------
  ; project onto all disks
  ;----------------------------------
  if(keyword_set(dkx)) then $
-   disk_shadow_ps = $
-       pg_shadow_disk(object_ps, cd=cd, od=od, dkx=dkx, gbx=gbx, gd=gd, $
-               /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow)
+   disk_shadow_ptd = $
+       pg_shadow_disk(object_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, dd=dd, gd=gd, $
+               /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow, epsilon=epsilon)
 
 
  ;----------------------------------
  ; combine results
  ;----------------------------------
- if(keyword_set(globe_shadow_ps)) then $
-   _shadow_ps = append_array(_shadow_ps, transpose_struct(globe_shadow_ps))
- if(keyword_set(disk_shadow_ps)) then $
-   _shadow_ps = append_array(_shadow_ps, transpose_struct(disk_shadow_ps))
-
- n = n_elements(object_ps)
- shadow_ps = ptrarr(n)
- for i=0, n-1 do shadow_ps[i] = ps_compress(_shadow_ps[*,i])
+ if(keyword_set(globe_shadow_ptd)) then $
+                      shadow_ptd = append_array(shadow_ptd, globe_shadow_ptd)
+ if(keyword_set(disk_shadow_ptd)) then $
+                      shadow_ptd = append_array(shadow_ptd, disk_shadow_ptd)
   
- if(NOT keyword_set(nocull)) then shadow_ps = ps_cull(shadow_ps)
+ if(NOT keyword_set(nocull)) then shadow_ptd = pnt_cull(shadow_ptd)
 
- return, shadow_ps
+ return, shadow_ptd
 end
 ;=============================================================================

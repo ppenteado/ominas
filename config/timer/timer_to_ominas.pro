@@ -2,18 +2,13 @@
 ; timer_to_ominas
 ;
 ;=============================================================================
-function timer_to_ominas, _od
+function timer_to_ominas, od
 
- if(NOT keyword__set(_od)) then return, 0
+ if(NOT keyword__set(od)) then return, 0
 
- od = nv_clone(_od)
-
- cd = class_extract(od, 'CAMERA')
- bd = cam_body(cd)
-;;; bod_set_orient, bd, timer_cmat_to_orient(bod_orient(bd))
- bod_set_pos, bd, bod_pos(bd)*1000d		; km --> m
- bod_set_vel, bd, bod_vel(bd)*1000d		; km/s --> m/s
- cam_set_body, cd, bd
+;;; bod_set_orient, od, timer_cmat_to_orient(bod_orient(od))
+ bod_set_pos, od, bod_pos(od)*1000d		; km --> m
+ bod_set_vel, od, bod_vel(od)*1000d		; km/s --> m/s
  return, od
 
 end

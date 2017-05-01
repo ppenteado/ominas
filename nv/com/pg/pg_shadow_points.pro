@@ -13,16 +13,16 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_shadow_points, object_ps, cd=cd, od=od, bx=bx
+;	pg_shadow_points, object_ptd, cd=cd, od=od, bx=bx
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	object_ps:	Array of points_struct containing inertial vectors
+;	object_ptd:	Array of POINT containing inertial vectors
 ;			to shadow.
 ;
 ;  OUTPUT: 
-;	shadow_ps:	Array of points_struct containing the shadowed
+;	shadow_ptd:	Array of POINT containing the shadowed
 ;			points.
 ;
 ;
@@ -47,8 +47,8 @@
 ;	fov:	 If set shadow points are cropped to within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, points structures excluded by the fov keyword
-;		 are not returned.  Normally, empty points structures
+;	cull:	 If set, POINT objects excluded by the fov keyword
+;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
 ;   backshadow:	 If set, only backshadows (shadows cast between the object and
@@ -81,32 +81,32 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_shadow_points, cd=cd, od=od, bx=bx, gd=gd, object_ps, shadow_ps, $
-                           nocull=nocull, edge=edge, $
-                           fov=fov, cull=cull, both=both, backshadow=_backshadow, $
-                           iterate=iterate, nosolve=nosolve, dbldbl=dbldbl
-@ps_include.pro
+pro pg_shadow_points, cd=cd, od=od, bx=bx, gd=gd, object_ptd, shadow_ptd, $
+                           nocull=nocull, edge=edge, nosolve=nosolve, $
+                           fov=fov, cull=cull, both=both, backshadow=_backshadow
+                           
+@pnt_include.pro
 
 
  backshadow = 1 - keyword_set(_backshadow)
 
- shad_ps = pg_shadow(both=both, backshadow=backshadow, $
-                       object_ps, cd=cd, od=od, bx=bx, gd=gd, $
+ shad_ptd = pg_shadow(both=both, backshadow=backshadow, $
+                       object_ptd, cd=cd, od=od, bx=bx, gd=gd, $
                        all=all, fov=fov, nocull=NOT keyword_set(cull), $
-                       iterate=iterate, nosolve=nosolve, dbldbl=dbldbl)
+                       nosolve=nosolve)
 
- object_flags = ps_flags(object_ps)
- shad_flags = ps_flags(shad_ps)
+ object_flags = pnt_flags(object_ptd)
+ shad_flags = pnt_flags(shad_ptd)
 
  flags = object_flags OR NOT shad_flags
  shadow_flags = object_flags OR shad_flags
 
- ps_set_flags, object_ps, flags
+ pnt_set_flags, object_ptd, flags
 
- if(arg_present(shadow_ps)) then $
+ if(arg_present(shadow_ptd)) then $
   begin
-    shadow_ps = nv_clone(object_ps)
-    ps_set_flags, shadow_ps, shadow_flags
+    shadow_ptd = nv_clone(object_ptd)
+    pnt_set_flags, shadow_ptd, shadow_flags
   end
 
 

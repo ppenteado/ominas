@@ -2,14 +2,14 @@
 ; cas_spice_ik_detect
 ;
 ;=============================================================================
-function cas_spice_ik_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
+function cas_spice_ik_detect, dd, kpath, sc=sc, time=time, strict=strict, all=all
 
  ;--------------------------------
  ; new naming convention
  ;--------------------------------
- all_files = findfile(kpath + 'cas_iss_v??.ti')
-; if(NOT keyword__set(all_files)) then nv_message, $
-;   name='cas_spice_ik_detect', 'No kernel files found in ' + kpath + '.'
+ all_files = file_search(kpath + 'cas_iss_v??.ti')
+; if(NOT keyword__set(all_files)) then $
+;                nv_message, 'No kernel files found in ' + kpath + '.'
 
  if(keyword__set(all)) then return, all_files
 

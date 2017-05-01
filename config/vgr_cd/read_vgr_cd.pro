@@ -5,7 +5,7 @@
 function rvgrcd_pdslab, filename
 
  openr, unit, filename, /get_lun, error=error
- if(error NE 0) then nv_message, !err_string
+ if(error NE 0) then nv_message, /anonymous, !err_string
 
  record = assoc(unit, bytarr(4096,/nozero), 2)
  b = record[0]
@@ -60,8 +60,7 @@ end
 ; read_vgr_cd.pro
 ;
 ;=============================================================================
-function read_vgr_cd, filename, label, $
-                          silent=silent, sample=sample, nodata=nodata
+function read_vgr_cd, filename, label, sample=sample, nodata=nodata
 
  ;---------------------------------------
  ; read image data

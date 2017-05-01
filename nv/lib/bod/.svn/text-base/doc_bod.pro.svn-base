@@ -1,4 +1,0 @@
-extract_doc, /page, $
-    title="BOD Program Reference", $
-    "/home/joes/idl_pro/minas/nv/lib/bod/*.pro", $
-    "/home/joes/idl_pro/minas/nv/lib/bod/doc_bod.txt"

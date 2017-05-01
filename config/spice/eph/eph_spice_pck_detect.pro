@@ -3,14 +3,14 @@
 ;
 ;
 ;=============================================================================
-function eph_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=strict, all=all
+function eph_spice_pck_detect, dd, kpath, sc=sc, time=time, strict=strict, all=all
 
  kernels = ''
 
  ;--------------------------------
  ; new naming convention
  ;--------------------------------
- all_files = findfile(kpath + 'cpck*.tpc')
+ all_files = file_search(kpath + 'cpck*.tpc')
  if(keyword__set(all_files)) then $
   begin
    if(keyword__set(all)) then kernels = append_array(kernels, all_files)
@@ -31,7 +31,7 @@ function eph_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=stric
  ;--------------------------------
  ; old naming convention
  ;--------------------------------
- all_files = findfile(kpath + 'pck*.tpc')
+ all_files = file_search(kpath + 'pck*.tpc')
  if(keyword__set(all_files)) then $
   begin
    split_filename, all_files, dir, all_names
@@ -49,8 +49,7 @@ function eph_spice_pck_detect, dd, kpath, time=time, reject=reject, strict=stric
 
  
 ; if(NOT keyword_set(kernels)) then $
-;    nv_message, name='eph_spice_pck_detect', $
-;                                'No kernel files found in ' + kpath + '.'
+;                  nv_message,'No kernel files found in ' + kpath + '.'
 
 
  return, kernels

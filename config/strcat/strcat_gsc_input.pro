@@ -1,118 +1,64 @@
-;==================================================================
+;===============================================================================
+; docformat = 'rst'
 ;+
-; NAME:
-;       strcat_gsc_input
+; Input translator for GSC star catalog.
 ;
+; Returns
+; =======
+;   Star descriptor containing all the stars found.  The Sp part of
+;   the star descriptor does not contain the Spectral type since this
+;   is not available.  Instead it contains the GSC class of the object::
+;    0 - star
+;    1 - galaxy
+;    2 - blend or member of incorrectly resolved blend.
+;    3 - non-star
+;    5 - potential artifact
 ;
-; PURPOSE:
-;        Input translator for GSC star catalog.
+;   (Note that code 1 is used only for a few  hand-entered errata;
+;   galaxies successfully processed by the software have a 
+;   classification of 3 [non-stellar].  Also code 4 is never used.)  
 ;
+; Restrictions
+; ============
 ;
-; CATEGORY:
-;	NV/CONFIG
-;
-;
-; CALLING SEQUENCE(only to be called by nv_get_value):
-;       result = strcat_gsc_input(dd, keyword)
-;
-;
-; ARGUMENTS:
-;  INPUT:
-;	dd:		Data descriptor.
-;
-;	keyword:	String giving the name of the translator quantity.
-;
-;  OUTPUT:
-;       NONE
-;
-; KEYWORDS:
-;  INPUT:
-;	key1:		Observer descriptor, must be of subclass CAMERA.
-;
-;
-;  OUTPUT:
-;	status:		Zero if valid data is returned.
-;
-;	n_obj:		Number of objects returned.
-;
-;	dim:		Dimensions of return objects.
-;
-;
-;  TRANSLATOR KEYWORDS:
-; 	jtime:		Years since 1950 (the epoch of catalog) for precession
-;			and proper motion correction.  If not given, it is taken
-;			from the object descriptor bod_time, which is assumed to
-;			be seconds past 1950 unless keyword /j2000 is set.
-;
-;	j2000:		If set, coordinates are output wrt j2000.
-;
-;	b1950:		If set, coordinates are output wrt b1950.
-;
-;	path_gsc:	The directory of the star catalog.   If not given, the
-;			routine uses the environment variable 'NV_GSC_DATA'.  
-;			The catalog data is grouped into approx 10,000 separate
-;			regions in numbered files in 24 separate subdirectories.
-;			Each star has a data record of 16 bytes.
-;			GSC_ID, CLASS, RA_DEG (degrees), DEC_DEG (degrees), and
-;			MAG (Visual Magnitude). The real values (RA_DEG, DEC_DEG
-;			and MAG) are in XDR, the GSC_ID and CLASS are 
-;			network-order short integers.
-;
-;	faint:		Stars with magnitudes fainter than this will not be
-;			returned.
-;
-;	bright:		Stars with magnitudes brighter than this will not be
-;			returned.
-;
-;
-;  ENVIRONMENT VARIABLES:
-;	NV_GSC_DATA:	Directory containing the GSC catalog data unless
-;			overridden using the path_gsc translator keyword.
-;
-;
-; RETURN:
-;       Star descriptor containing all the stars found.  The Sp part of
-;       the star descriptor does not contain the Spectral type since this
-;       is not available.  Instead it contains the GSC class of the object:
-;       0 - star
-;       1 - galaxy
-;       2 - blend or member of incorrectly resolved blend.
-;       3 - non-star
-;       5 - potential artifact
-;
-;         (Note that code 1 is used only for a few  hand-entered errata;
-;         galaxies successfully processed by the software have a classi-
-;         fication of 3 [non-stellar].  Also code 4 is never used.)  
-;
-;
-; RESTRICTIONS:
-;       Since the distance to stars are not given in the GSC catalog, the
-;       position vector magnitude is set as 10 parsec and the luminosity
-;       is calculated from the visual magnitude and the 10 parsec distance.
+; Since the distance to stars are not given in the GSC catalog, the
+; position vector magnitude is set as 10 parsec and the luminosity
+; is calculated from the visual magnitude and the 10 parsec distance.
 ;
 ;	This translator does not correct for proper motion.
 ;
 ;
-; PROCEDURE:
-;       Stars are found in a square area in RA and DEC around a given
-;       or calculated center.  The star descriptor is filled with stars
-;       that fit in this area.  If B1950 is selected, input ods orient 
+; Procedure
+; =========
+;
+; Stars are found in a square area in RA and DEC around a given
+; or calculated center.  The star descriptor is filled with stars
+; that fit in this area.  If B1950 is selected, input ods orient 
 ;	matrix is assumed to be B1950 also, if not, input is assumed to be
 ;	J2000, like the catalog.  
 ;
+; :Private:
 ;
-; MODIFICATION HISTORY:
-;       Written by:     Vance Haemmerle, 3/2000 (pg_get_stars_gsc.pro)
-;       Modified:       Spitale 9/2001 - changed to strcat_gsc_input.pro
+; :Categories:
+;   nv, config
+;
+; :History:
+;    Written by:     Vance Haemmerle, 3/2000 (pg_get_stars_gsc.pro)
+;
+;    Modified:       Spitale 9/2001 - changed to strcat_gsc_input.pro
 ;
 ;-
-;=============================================================================
+;===============================================================================
 
 
-;=============================================================
-; gsc_fzone:  Determine the Declination zone of a GSC region
+;===============================================================================
+;+
+; :Private:
+; :Hidden:
 ;
-;=============================================================
+; gsc_fzone:  Determine the Declination zone of a GSC region
+;-
+;===============================================================================
 function gsc_fzone, declow, dechi
 
   dec = (declow + dechi) / 2.0
@@ -123,9 +69,19 @@ function gsc_fzone, declow, dechi
 
   return, zone
 end
+;===============================================================================
 
-; gsc_initzd: Initialize GSC directory names
+
+
+
+;==============================================================================
+;+
+; :Private:
+; :Hidden:
 ;
+; gsc_initzd: Initialize GSC directory names
+;-
+;==============================================================================
 pro gsc_initzd, zdir
 
   zdir(0)  = 'N0000'
@@ -154,20 +110,22 @@ pro gsc_initzd, zdir
   zdir(22) = 'S7500'
   zdir(23) = 'S8230'
 end
+;===============================================================================
 
-;==========================================================================
-;  gsc_get_regions -- Search the index table to find the region identifiers
-;                     whose coordinate limits overlap the specified field.
-;                     Save list of paths to gsc files for these regions.
+
+
+
+;==============================================================================
+;+
+; :Private:
+; :Hidden:
 ;
-;==========================================================================
+; Search the index table to find the region identifiers whose coordinate
+; limits overlap the specified field. Save list of paths to gsc files for
+; these regions.
+;-
+;==============================================================================
 function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
-
-  ; ra1, ra2           Right ascension limits in hours
-  ; dec1, dec2         Declination limits in degrees
-  ; path_gsc           Path of GSC catalog
-  ; Returned:
-  ; region_list        Table to store regions found (to search for guide stars)
 
   ; Initialize the directory name for each zone
   zdir = strarr(24)
@@ -288,13 +246,20 @@ next: a = 1
  free_lun, lun
  return, region_list
 end
+;===============================================================================
 
-;===================================================================
-; gsc_get_stars -  Given a GSC region filename, load the stars that
-;                  fit within region (ra1 - ra2) and (dec1 - dec2)
-;                  into a star descriptor.
+
+
+
+;===============================================================================
+;+
+; :Private:
+; :Hidden:
 ;
-;===================================================================
+; Given a GSC region filename, load the stars that fit within
+; region (ra1 - ra2) and (dec1 - dec2) into a star descriptor.
+;-
+;===============================================================================
 function gsc_get_stars, filename, cam_vel=cam_vel, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
@@ -487,7 +452,7 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
  ;-------------------------------------------------------
  lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d ) 
 
- _sd = str_init_descriptors( n, $
+ _sd = str_create_descriptors( n, $
         name=name, $
         orient=orient, $
         avel=avel, $
@@ -501,15 +466,16 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
 
  return, _sd
 end
-
 ;=============================================================================
 
 
 
-;=============================================================================
-; strcat_gsc_input
-;
-;=============================================================================
+;===============================================================================
+;+
+; :Private:
+; :Hidden:
+;-
+;===============================================================================
 function strcat_gsc_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro

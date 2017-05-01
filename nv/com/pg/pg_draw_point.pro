@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Draws points from the given points_struct on the current graphics
+;	Draws points from the given POINT on the current graphics
 ;	window using the current data coordinate system.
 ;
 ;
@@ -14,12 +14,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_draw_point, object_ps
+;	pg_draw_point, object_ptd
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	object_ps:	Array of points_struct containing image points
+;	object_ptd:	Array of POINT containing image points
 ;			to be plotted in the current data coordinate system.
 ;
 ;  OUTPUT: NONE
@@ -29,8 +29,8 @@
 ;  INPUT:
 ;	literal:	All of the following input keywords accept an array
 ;			where each element corresponds to an element in the
-;			object_ps array.  By default, if the keyword array is
-;			shorter than the object_ps array, then the last element
+;			object_ptd array.  By default, if the keyword array is
+;			shorter than the object_ptd array, then the last element
 ;	  		is used to fill out the array.  /literal suppresses
 ;			this behavior and causes unspecified elements to
 ;			take their default values.
@@ -39,12 +39,12 @@
 ;			names will be converted using the ct<string>()
 ;			functions.  Labels are also plotted in this color.
 ;			If one element, then all points are plotted in this
-;			color; if multiple elements, and object_ps also
+;			color; if multiple elements, and object_ptd also
 ;			has multiple elements, each color will be assigned to 
 ;			all elements in the corresponding array (see /literal);
-;			if mulitple elements, and object_ps has only one
+;			if mulitple elements, and object_ptd has only one
 ;			element, then each color will be assigned to each 
-;			element of th object_ps array.
+;			element of th object_ptd array.
 ;
 ;	shades:		Array of plotting shades.  Default is 1.0.
 ;
@@ -91,7 +91,7 @@
 ;	The following command draws and labels a lavender 'limb' and a red
 ;	'ring' (assuming that the points have already been computed):
 ;
-;	pg_draw_point, [limb_ps, ring_ps], color=[ctpurple(), ctred()], $
+;	pg_draw_point, [limb_ptd, ring_ptd], color=[ctpurple(), ctred()], $
 ;	         plabels=['LIMB','RING']
 ;
 ;
@@ -116,7 +116,7 @@ pro pgdp_draw, points, $
             colors, psyms, psizes, thick, line, $
             csizes, cthicks, corient, align, plabel_offset, label_colors, $
             label_points=label_points, plabels=plabels
-
+ 
 
  p = (convert_coord(points, /data, /to_device))[0:1,*]
  w = in_image(0, p, slop=1, $
@@ -191,15 +191,16 @@ pro pg_draw_point, _pp, literal=literal, $
              label_points=label_points, thick=_thick, line=_line, print=print, $
              label_shade=label_shade, align=_align, corient=_corient, label_color=label_color, $
              shade_threshold=shade_threshold
-@ps_include.pro
+@pnt_include.pro
 
  if(keyword_set(print)) then print, print
 
  if(NOT keyword_set(_pp)) then return
+ pp = reform(_pp)
 
  if(NOT keyword_set(label_shade)) then label_shade = 1.0
  if(NOT defined(_colors)) then _colors = ctwhite()
- if(keyword_set(wnum)) then wset, wnum
+ if(keyword_set(wnum)) then tvim, wnum
 
 
  ;---------------------------------------
@@ -233,10 +234,10 @@ pro pg_draw_point, _pp, literal=literal, $
  ;------------------------------------------------------
  ; if inputs given as points array, draw and return
  ;------------------------------------------------------
- type = size(_pp, /type)
- if(type NE 10) then $
+ type = size(pp, /type)
+ if(type NE 11) then $
   begin
-   pgdp_draw, _pp, $
+   pgdp_draw, pp, $
        _colors, _psyms, _psizes, _thick, _line, $
        _csizes, _cthicks, _corient, _align, plabel_offset, label_colors, $
        label_points=label_points, plabels=plabels
@@ -247,14 +248,14 @@ pro pg_draw_point, _pp, literal=literal, $
 
 
  ;---------------------------------------------------------
- ; for points struct input, draw one-at-a-time
+ ; for POINT input, draw one-at-a-time
  ;---------------------------------------------------------
- pp = ps_cull(_pp, /nofree)
+ pp = pnt_cull(pp, /nofree)
  n_objects = n_elements(pp)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if only one points struct given, but any attribute has 
- ; more than one element, explode the points struct
+ ; if only one POINT given, but any attribute has 
+ ; more than one element, explode the POINT object
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
  nval = 0
  if(n_objects EQ 1) then $
@@ -269,7 +270,7 @@ pro pg_draw_point, _pp, literal=literal, $
                n_elements(_line), $
                n_elements(_plabels), $
                n_elements(_colors)])
-   if(nval GT 1) then pp = ps_explode(pp)
+   if(nval GT 1) then pp = pnt_explode(pp)
   end
 
  n_objects = n_elements(pp)
@@ -288,11 +289,9 @@ pro pg_draw_point, _pp, literal=literal, $
  line = pgdp_fill(_line, n_objects, def=0, all=all)
  plabels = pgdp_fill(_plabels, n_objects, def='', all=all)
  colors = pgdp_fill(_colors, n_objects, def=!p.color, all=all)
- label_colors = pgdp_fill(label_colors*label_shade, n_objects, def=!p.color, all=all)
-
+ label_colors = pgdp_fill(label_colors, n_objects, def=!p.color, all=all)
 
  if(keyword_set(xormode)) then device, set_graphics=6
-
 
  ;- - - - - - - - - - - - - - - - -
  ; plot arrays
@@ -302,34 +301,49 @@ pro pg_draw_point, _pp, literal=literal, $
    ;- - - - - - - - - - - - - - - - -
    ; visible, unselected points
    ;- - - - - - - - - - - - - - - - -
-;   points = ps_points(pp[i], /visible, /unselected)
-   points = ps_points(pp[i], /visible)
-   points = ps_points(pp[i], $
-        condition={mask:PS_MASK_INVISIBLE OR PS_MASK_SELECT, state:PS_FALSE})
+   points = pnt_points(pp[i], /visible, /unselected, segments=segments)
 
    if(keyword_set(points)) then $
-     pgdp_draw, points, $
-       colors[i], psyms[i], psizes[i], thick[i], line[i], $
-       csizes[i], cthicks[i], corient[i], align[i], plabel_offset, label_colors[i], $
-       label_points=label_points, plabels=plabels[i]
+    begin
+
+     for j=0, n_elements(segments)-1 do $
+       pgdp_draw, points[*,segments[j].start:segments[j].stop], $
+         colors[i], psyms[i], psizes[i], thick[i], line[i], $
+         csizes[i], cthicks[i], corient[i], align[i], plabel_offset, label_colors[i], $
+         label_points=label_points, plabels=plabels[i]
+
+    end
 
    ;- - - - - - - - - - - - - - - - -
    ; visible, selected points
    ;- - - - - - - - - - - - - - - - -
-;   points = ps_points(pp[i], /visible, /selected)
-   points = ps_points(pp[i], $
-        condition={mask:PS_MASK_INVISIBLE OR PS_MASK_SELECT, state:PS_TRUE})
+   points = pnt_points(pp[i], /visible, /selected, segments=segments)
 
    if(keyword_set(points)) then $
-       pgdp_draw, points, $
-         colors[i], 6, psizes[i], thick[i], line[i], $
+    begin
+     size = psizes[i]
+     psym = psyms[i]
+     th = thick[i]
+
+     if(psym EQ 3) then $
+      begin
+       psym = 4
+       size = 0.5
+      end $
+     else th = th*2 
+
+     for j=0, n_elements(segments)-1 do $
+       pgdp_draw, points[*,segments[j].start:segments[j].stop], $
+         colors[i], psym, size, th, line[i], $
          csizes[i], cthicks[i], corient[i], align[i], plabel_offset, label_colors[i], $
          label_points=label_points, plabels=plabels[i]
+
+    end
 
   end
 
 
- if(nval GT 1) then nv_free, pp
+;;; if(nval GT 1) then nv_free, pp
  if(keyword_set(xormode)) then device, set_graphics=3
 end
 ;=============================================================================

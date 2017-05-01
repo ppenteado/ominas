@@ -20,7 +20,7 @@
 ;  INPUT: 
 ;	filename:	 String giving the name of the file.
 ;
-;	array:	 Array of surface points.
+;	array:		 Array of surface points.
 ;
 ;  OUTPUT: NONE
 ;

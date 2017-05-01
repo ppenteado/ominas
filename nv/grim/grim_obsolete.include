@@ -1,0 +1,938 @@
+;=============================================================================
+; grim_add_points
+;
+;=============================================================================
+pro grim_add_points, grim_data, object_ptd, xds, plane=plane, $
+         dep_all=_dep_all, dep_each=dep_each, $
+         name=name, replace=replace, overwrite=overwrite, $
+         cd=cd, select=select, data=data
+
+ if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
+
+ if(keyword_set(_dep_all)) then $
+  begin
+   select = where(_dep_all NE obj_new())
+   if(select[0] NE -1) then dep_all = _dep_all[select]
+  end
+
+ selected = 0
+ if(n_elements(select) NE 0) then if(select[0] NE -1) then selected = 1
+
+ ;--------------------------------------------------------------------
+ ; determine dependencies and which points array to use
+ ;
+ ;  Each points array will depend on all the descriptors given
+ ;  in dep_all.  Each points array for a given xd will also depend on 
+ ;  descriptor whose xd is given in the corresponding position in
+ ;  dep_each.
+ ;
+ ;--------------------------------------------------------------------
+ ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, $
+                                       class=class, dep=dep_classes, ii=ii)
+
+ if(keyword_set(class)) then xd = grim_get_xd(grim_data, plane=plane, class) $
+ else if(keyword_set(dep_each)) then $
+  begin
+   dep_xds = grim_get_xd(grim_data, plane=plane, 'all')
+   gd = pgs_make_gd(dep_xds)
+   xd = gd.pd
+  end
+
+ if(NOT keyword_set(dep_all)) then $
+  begin
+   xds_all = grim_get_xd(grim_data, plane=plane, dep_classes)
+   dep_all = cd
+   if(keyword_set(xds_all)) then dep_all = [dep_all, xds_all]
+  end
+
+ if(keyword_set(dep_each)) then $
+                     if(selected) then dep_each = dep_each[select]
+; if(keyword_set(xd)) then *(*plane.overlay_labels_p)[ii] = cor_name(xd)
+ if(keyword_set(data)) then *(*plane.overlay_data_p)[ii] = data
+
+
+ ;--------------------------------------
+ ; overlay array is nptd x nd
+ ;--------------------------------------
+stop
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; determine nd for overlay array
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+; nd = 1
+ nd = n_elements(object_ptd)
+ if(keyword_set(xd)) then nd = n_elements(xd)
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; nn is the number of objects actually being added
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(selected) then nn = n_elements(select) $
+ else nn = nd
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; determine nptd for overlay array
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ nptd = n_elements(object_ptd)/nn
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; save labels
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(xd)) then $
+          *(*plane.overlay_labels_p)[ii] = $
+                 (cor_name(xd))[lindgen(nd)##make_array(nptd,val=1d)]
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; resize overlay array
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ object_ptd = reform(object_ptd, nptd, nn)
+
+
+
+
+
+ ;--------------------------------------
+ ; add the dependencies lists
+ ;--------------------------------------
+ _xd = [obj_new()]
+ if(keyword_set(dep_all)) then _xd = [dep_all]
+ for i=0, nn-1 do $
+  begin
+   xd = [_xd]
+   if(keyword_set(dep_each)) then xd = [_xd, (dep_each[i,*])[*]]
+   for j=0, nptd-1 do $
+    begin
+     if(pnt_valid(object_ptd[j,i])) then $
+      begin
+       cor_set_udata, object_ptd[j,i], 'grim_dep', xd, /noev
+       cor_set_udata, object_ptd[j,i], 'grim_name', name, /noev
+      end
+    end
+  end
+
+
+ ;--------------------------------------
+ ; update the points arrays
+ ;--------------------------------------
+ if(NOT keyword_set(*ptdp)) then overwrite = 1 $
+ else if(nptd NE (size(*ptdp))[1]) then overwrite = 1
+
+ if(keyword_set(overwrite)) then $
+  begin
+   *ptdp = object_ptd
+   if(selected) then $
+    begin
+     *ptdp = objarr(nptd, nd)
+     (*ptdp)[*,select] = object_ptd
+    end
+  end $
+ else if(keyword_set(replace)) then $
+  begin
+   if(selected) then $
+    begin
+     (*ptdp)[*,select] = object_ptd
+    end $
+   else *ptdp = object_ptd
+  end $
+ else *ptdp = [*ptdp, object_ptd]	; this may not work right because of the dimensions
+
+
+ ;--------------------------------------------------
+ ; register for events on the points arrays
+ ;--------------------------------------------------
+; for i=0, nn-1 do $
+;  for j=0, nptd-1 do $
+;   begin
+;    nv_notify_register, object_ptd[j,i], 'grim_descriptor_notify', $
+;                                                   scalar_data=grim_data.base
+;   end
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compute_limb
+;
+;=============================================================================
+pro grim_compute_limb, grim_data, limb_ps, dep, plane=plane, w=w
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;----------------------------------------------------------------------------
+ ; if points already exist, make sure to add arrays for only new objects 
+ ;----------------------------------------------------------------------------   
+ if(keyword__set(limb_ps)) then $
+  begin
+   xd = [*plane.cd_p, *plane.pd_p]
+   if(keyword__set(*plane.rd_p)) then xd = [xd, *plane.rd_p]
+   if(keyword__set(*plane.od_p)) then xd = [xd, *plane.od_p]
+
+   gd = pgs_idp_to_gd(dep, xd)
+
+   grim_message, /clear
+   _limb_ps = pg_limb(gd=gd, fov=plane.points_settings.fov)
+   grim_message
+
+   if(keyword__set(*plane.rd_p)) then pg_hide, _limb_ps, gd=gd, /disk
+   grim_message
+
+   if(keyword__set(*plane.sund_p)) then $
+                          pg_hide, _limb_ps, gd=gd, od=gd.sund, /limb
+   grim_message
+
+   n = n_elements(_limb_ps)
+   for i=0, n-1 do $
+    begin
+     points = pnt_points(_limb_ps[i])
+     pnt_set_points, limb_ps[i], points
+    end
+  end $
+ ;------------------------------------------------------------------
+ ; otherwise, all arrays are new 
+ ;------------------------------------------------------------------   
+ else $
+  begin
+   if(keyword__set(*plane.od_p)) then od = *plane.od_p
+
+   pds = grim_get_active_xds(plane, 'planet', active_indices=w)
+   if(NOT keyword__set(pds)) then pds = *plane.pd_p
+
+   grim_message, /clear
+   limb_ps = pg_limb(cd=*plane.cd_p, gbx=pds, od=od, fov=plane.points_settings.fov)
+   grim_message
+
+   if(keyword__set(*plane.rd_p)) then $
+        pg_hide, limb_ps, cd=*plane.cd_p, dkx=*plane.rd_p, od=od, /disk, $
+                                                            gbx=*plane.pd_p
+   grim_message
+
+   if(keyword__set(*plane.sund_p)) then $
+     pg_hide, limb_ps, cd=*plane.cd_p, gbx=pds, od=*plane.sund_p, /limb
+   grim_message
+  end
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compute_planet_center
+;
+;=============================================================================
+pro grim_compute_planet_center, grim_data, center_ps, dep, plane=plane, w=w
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;----------------------------------------------------------------------------
+ ; if points already exist, make sure to add arrays for only new objects 
+ ;----------------------------------------------------------------------------   
+ if(keyword__set(center_ps)) then $
+  begin
+   gd = pgs_idp_to_gd(dep, [*plane.cd_p, *plane.pd_p])
+
+   grim_message, /clear
+   _center_ps = pg_center(gd=gd, bx=gd.pd, fov=plane.points_settings.fov)
+   grim_message
+
+   n = n_elements(_center_ps)
+   for i=0, n-1 do $
+    begin
+     points = pnt_points(_center_ps[i])
+     pnt_set_points, center_ps[i], points
+    end
+  end $
+ ;------------------------------------------------------------------
+ ; otherwise, all arrays are new 
+ ;------------------------------------------------------------------   
+ else $
+  begin
+   pds = grim_get_active_xds(plane, 'planet', active_indices=w)
+   if(NOT keyword__set(pds)) then pds = *plane.pd_p
+
+   grim_message, /clear
+   center_ps = pg_center(cd=*plane.cd_p, bx=pds, fov=plane.points_settings.fov)
+   grim_message
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compute_planet_grid
+;
+;=============================================================================
+pro grim_compute_planet_grid, grim_data, grid_ps, dep, plane=plane, w=w
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;----------------------------------------------------------------------------
+ ; if points already exist, make sure to add arrays for only new objects 
+ ;----------------------------------------------------------------------------   
+ if(keyword__set(grid_ps)) then $
+  begin
+   xd = [*plane.cd_p, *plane.pd_p]
+   if(keyword__set(*plane.rd_p)) then xd = [xd, *plane.rd_p]
+
+   gd = pgs_idp_to_gd(dep, xd)
+
+   grim_message, /clear
+   _grid_ps = pg_grid(gd=gd, /globe, fov=plane.points_settings.fov)
+   for i=0, n_elements(_grid_ps)-1 do $
+       pg_hide, _grid_ps[i], gd=gd, gbx=gd.pd[i], /limb
+   grim_message
+
+   if(keyword__set(*plane.rd_p)) then pg_hide, _grid_ps, gd=gd, /disk
+   grim_message
+
+   if(keyword__set(*plane.sund_p)) then $
+                          pg_hide, _grid_ps, gd=gd, od=gd.sund, /limb
+   grim_message
+
+   n = n_elements(_grid_ps)
+   for i=0, n-1 do $
+    begin
+     points = pnt_points(_grid_ps[i])
+     pnt_set_points, grid_ps[i], points
+    end
+  end $
+ ;------------------------------------------------------------------
+ ; otherwise, all arrays are new 
+ ;------------------------------------------------------------------   
+ else $
+  begin
+   if(keyword__set(*plane.od_p)) then od = *plane.od_p
+
+   pds = grim_get_active_xds(plane, 'planet', active_indices=w)
+   if(NOT keyword__set(pds)) then pds = *plane.pd_p
+
+   grim_message, /clear
+   grid_ps = pg_grid(cd=*plane.cd_p, gbx=pds, /globe, fov=plane.points_settings.fov)
+
+   if(NOT grim_test_map(grim_data)) then $
+    for i=0, n_elements(grid_ps)-1 do $
+        pg_hide, grid_ps[i], cd=*plane.cd_p, od=od, gbx=pds[i], /limb
+   grim_message
+
+   if(keyword__set(*plane.rd_p)) then $
+        pg_hide, grid_ps, cd=*plane.cd_p, dkx=*plane.rd_p, od=od, /disk, $
+                                                            gbx=*plane.pd_p
+   grim_message
+
+   if(keyword__set(*plane.sund_p)) then $
+     pg_hide, grid_ps, cd=*plane.cd_p, gbx=pds, od=*plane.sund_p, /limb
+   grim_message
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compute_ring_grid
+;
+;=============================================================================
+pro grim_compute_ring_grid, grim_data, grid_ps, dep, plane=plane, w=w
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;----------------------------------------------------------------------------
+ ; if points already exist, make sure to add arrays for only new objects 
+ ;----------------------------------------------------------------------------   
+ if(keyword__set(grid_ps)) then $
+  begin
+   xd = [*plane.cd_p, *plane.pd_p, *plane.rd_p]
+
+   gd = pgs_idp_to_gd(dep, xd)
+
+   grim_message, /clear
+   _grid_ps = pg_grid(gd=gd, /disk, fov=plane.points_settings.fov)
+   grim_message
+
+   pg_hide, _grid_ps, cd=*plane.cd_p, gbx=*plane.pd_p, /globe
+   grim_message
+
+   pg_hide, _grid_ps, cd=*plane.cd_p, od=*plane.sund_p, gbx=*plane.pd_p, /globe
+   grim_message
+
+   n = n_elements(_grid_ps)
+   for i=0, n-1 do $
+    begin
+     points = pnt_points(_grid_ps[i])
+     pnt_set_points, grid_ps[i], points
+    end
+  end $
+ ;------------------------------------------------------------------
+ ; otherwise, all arrays are new 
+ ;------------------------------------------------------------------   
+ else $
+  begin
+;   if(keyword__set(*plane.od_p)) then od = *plane.od_p
+
+   rds = grim_get_active_xds(plane, 'ring', active_indices=w)
+   if(NOT keyword__set(rds)) then rds = *plane.rd_p
+
+   grim_message, /clear
+   grid_ps = pg_grid(cd=*plane.cd_p, gbx=*plane.pd_p, dkx=rds, /disk, fov=plane.points_settings.fov)
+   grim_message
+
+   pg_hide, grid_ps, cd=*plane.cd_p, gbx=*plane.pd_p, /globe
+   grim_message
+
+   pg_hide, grid_ps, cd=*plane.cd_p, od=*plane.sund_p, gbx=*plane.pd_p, /globe
+   grim_message
+
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compute_ring
+;
+;=============================================================================
+pro grim_compute_ring, grim_data, ring_ps, dep, plane=plane
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;-----------------------------------------------------------------
+ ; Unlike the other routines, here we recompute all rings
+ ; because there is not a 1-1 correspondence between ring points
+ ; and ring descriptors.  That's because one ring descriptor
+ ; results in two arrays of ring points (inner/outer).
+ ;-----------------------------------------------------------------
+
+ grim_message, /clear
+
+ pds = grim_get_active_xds(plane, 'planet', active_indices=w)
+ if(NOT keyword__set(pds)) then pd = get_primary(*plane.cd_p, *plane.pd_p) $
+ else pd = (get_primary(*plane.cd_p, pds))[0]
+
+ if(NOT keyword_set(pd)) then $
+  begin
+   grim_message, 'Please activate a valid primary planet.'
+   return
+  end
+
+ _ring_ps = pg_disk(cd=*plane.cd_p, dkx=*plane.rd_p, gbx=pd, fov=plane.points_settings.fov)
+ grim_message
+
+ pg_hide, _ring_ps, cd=*plane.cd_p, gbx=*plane.pd_p, /globe
+ grim_message
+
+ pg_hide, _ring_ps, cd=*plane.cd_p, od=*plane.sund_p, gbx=*plane.pd_p, /globe
+ grim_message
+
+
+ if(keyword__set(ring_ps)) then $
+  begin
+   n = n_elements(_ring_ps)
+   for i=0, n-1 do if(pnt_valid(_ring_ps[i])) then $
+    begin
+     points = pnt_points( _ring_ps[i])
+     pnt_set_points, (*(grim_get_overlay_psp(grim_data, plane=plane, 'ring')))[i], points
+    end
+  end $
+ else ring_ps = _ring_ps
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compute_star
+;
+;=============================================================================
+pro grim_compute_star, grim_data, star_ps, dep, plane=plane
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;----------------------------------------------------------------------------
+ ; if points already exist, make sure to add arrays for only new objects 
+ ;----------------------------------------------------------------------------   
+ if(keyword__set(star_ps)) then $
+  begin
+   xd = [*plane.cd_p, *plane.pd_p, *plane.sd_p]
+   if(keyword__set(*plane.rd_p)) then xd = [xd, *plane.rd_p]
+
+   gd = pgs_idp_to_gd(dep, xd)
+
+   grim_message, /clear
+   _star_ps = pg_center(gd=gd, bx=gd.sd)
+   grim_message
+
+   pg_hide, _star_ps, gd=gd, /globe;, /disk
+   grim_message
+
+   n = n_elements(_star_ps)
+   for i=0, n-1 do $
+    begin
+     points = pnt_points(_star_ps[i])
+     pnt_set_points, star_ps[i], points
+    end
+  end $
+ ;------------------------------------------------------------------
+ ; otherwise, all arrays are new 
+ ;------------------------------------------------------------------   
+ else $
+  begin
+   grim_message, /clear
+   star_ps = pg_center(cd=*plane.cd_p, bx=*plane.sd_p)
+   grim_message
+
+;   if(keyword__set(*plane.rd_p)) then $
+;      pg_hide, star_ps, cd=*plane.cd_p, dkx=*plane.rd_p, /disk
+
+   if(keyword__set(*plane.pd_p)) then $
+      pg_hide, star_ps, cd=*plane.cd_p, gbx=*plane.pd_p, /globe
+   grim_message
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compute_term
+;
+;=============================================================================
+pro grim_compute_term, grim_data, term_ps, dep, plane=plane, w=w
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;----------------------------------------------------------------------------
+ ; if points already exist, make sure to add arrays for only new objects 
+ ;----------------------------------------------------------------------------   
+ if(keyword__set(term_ps)) then $
+  begin
+   xd = [*plane.cd_p, *plane.pd_p, *plane.sund_p]
+   if(keyword__set(*plane.rd_p)) then xd = [xd, *plane.rd_p]
+
+   gd = pgs_idp_to_gd(dep, xd)
+
+   grim_message, /clear
+   _term_ps = pg_limb(gd=gd, od=gd.sund, gbx=gd.pd, fov=plane.points_settings.fov)
+   grim_message
+
+   pg_hide, _term_ps, gd=gd, /limb, /disk
+   grim_message
+
+   n = n_elements(_term_ps)
+   for i=0, n-1 do $
+    begin
+     points = pnt_points(_term_ps[i])
+     pnt_set_points, term_ps[i], points
+    end
+  end $
+ ;------------------------------------------------------------------
+ ; otherwise, all arrays are new 
+ ;------------------------------------------------------------------   
+ else $
+  begin
+   pds = grim_get_active_xds(plane, 'planet', active_indices=w)
+   if(NOT keyword__set(pds)) then pds = *plane.pd_p
+
+   grim_message, /clear
+   term_ps = pg_limb(cd=*plane.cd_p, od=*plane.sund_p, gbx=pds, fov=plane.points_settings.fov)
+   grim_message
+
+   if(NOT grim_test_map(grim_data)) then $
+               pg_hide, term_ps, cd=*plane.cd_p, gbx=pds, /limb
+
+   if(keyword__set(*plane.rd_p)) then $
+      pg_hide, term_ps, cd=*plane.cd_p, gbx=pds, dkx=*plane.rd_p, /disk
+   grim_message
+  end
+
+ grim_message
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_compute_shadows
+;
+;=============================================================================
+pro grim_compute_shadows, grim_data, shadow_ps, dep, plane=plane, w=w
+
+ if(grim_test_map(grim_data)) then return
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;----------------------------------------------------------------------------
+ ; if points already exist, make sure to add arrays for only new objects 
+ ;----------------------------------------------------------------------------   
+ if(keyword__set(shadow_ps)) then $
+  begin
+   xd = [*plane.cd_p, *plane.pd_p, *plane.sund_p]
+   if(keyword__set(*plane.rd_p)) then xd = [xd, *plane.rd_p]
+   all_ps = grim_cat_points(grim_data, plane=plane, /all)
+
+   gd = pgs_idp_to_gd(dep, xd)
+   if(NOT keyword__set(gd)) then return
+   ps = pgs_idp_to_ps(dep, all_ps)
+   if(NOT keyword__set(ps)) then return
+
+   grim_message, /clear
+   _shadow_ps = pg_shadow(ps, gd=gd, od=gd.sund, gbx=gd.pd, dkx=gd.rd, $
+                                                    fov=plane.points_settings.fov)
+   grim_message
+
+   pg_hide, _shadow_ps, gd=gd, /globe, /disk
+   grim_message
+
+   n = n_elements(_shadow_ps)
+   for i=0, n-1 do $
+    begin
+     points = pnt_points(_shadow_ps[i])
+     pnt_set_points, shadow_ps[i], points
+    end
+  end $
+ ;------------------------------------------------------------------
+ ; otherwise, all arrays are new 
+ ;------------------------------------------------------------------   
+ else $
+  begin
+   active_ps = *plane.active_overlays_psp
+   if(NOT keyword__set(active_ps)) then return
+
+   grim_message, /clear
+   if(keyword__set(*plane.pd_p)) then pds = *plane.pd_p
+   if(keyword__set(*plane.rd_p)) then rds = *plane.rd_p
+
+   shadow_ps = pg_shadow(active_ps, $
+                 cd=*plane.cd_p, od=*plane.sund_p, dkx=rds, gbx=pds, $
+                                                    fov=plane.points_settings.fov)
+   grim_message
+
+   pg_hide, shadow_ps, cd=*plane.cd_p, gbx=pds, dkx=rds, /disk, /globe
+   grim_message
+
+   dep = cor_idp(active_ps)
+  end
+
+ grim_message
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_limbs
+;
+;=============================================================================
+pro grim_limbs, grim_data, plane=plane, names=names
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ grim_suspend_events 
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ grim_get_cameras, grim_data, idp=idp_cam, plane=plane
+ if(NOT keyword__set(idp_cam[0])) then return
+ grim_get_planets, grim_data, idp=idp_plt, plane=plane, names=names
+ if(NOT keyword__set(idp_plt[0])) then return
+ grim_get_sun, grim_data, idp=idp_sun, plane=plane
+ if(NOT keyword__set(idp_sun[0])) then return
+ grim_get_rings, grim_data, idp=idp_rng, plane=plane
+
+ ;------------------------------------------------
+ ; compute limbs
+ ;------------------------------------------------
+ grim_compute_limb, grim_data, limb_ps, w=w, plane=plane
+
+ if(NOT keyword__set(limb_ps)) then return
+ grim_add_points, grim_data, plane=plane, limb_ps, w=w, name='limb', /replace, $
+         idp_cam=idp_cam, idp_plt=idp_plt, idp_sun=idp_sun, idp_rng=idp_rng
+
+ grim_resume_events
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_planet_grids
+;
+;=============================================================================
+pro grim_planet_grids, grim_data, plane=plane, names=names
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ grim_suspend_events 
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ grim_get_cameras, grim_data, idp=idp_cam, plane=plane
+ if(NOT keyword__set(idp_cam[0])) then return
+ grim_get_planets, grim_data, idp=idp_plt, plane=plane, names=names
+ if(NOT keyword__set(idp_plt[0])) then return
+ grim_get_rings, grim_data, idp=idp_rng, plane=plane
+
+ ;------------------------------------------------
+ ; compute grids
+ ;------------------------------------------------
+ grim_compute_planet_grid, grim_data, grid_ps, w=w, plane=plane
+
+ if(NOT keyword__set(grid_ps)) then return
+ grim_add_points, grim_data, plane=plane, grid_ps, w=w, name='planet_grid', /replace, $
+                               idp_cam=idp_cam, idp_plt=idp_plt, idp_rng=idp_rng
+ 
+
+ grim_resume_events
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_ring_grids
+;
+;=============================================================================
+pro grim_ring_grids, grim_data, plane=plane, names=names
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ grim_suspend_events 
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ grim_get_cameras, grim_data, idp=idp_cam, plane=plane
+ if(NOT keyword__set(idp_cam[0])) then return
+ grim_get_planets, grim_data, idp=idp_plt, plane=plane, names=names
+ if(NOT keyword__set(idp_plt[0])) then return
+ grim_get_rings, grim_data, idp=idp_rng, plane=plane
+
+ ;------------------------------------------------
+ ; compute grids
+ ;------------------------------------------------
+ grim_compute_ring_grid, grim_data, grid_ps, w=w, plane=plane
+
+ if(NOT keyword__set(grid_ps)) then return
+ grim_add_points, grim_data, plane=plane, grid_ps, w=w, name='ring_grid', /replace, $
+                               idp_cam=idp_cam, idp_plt=idp_plt, idp_rng=idp_rng
+ 
+
+ grim_resume_events
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_terminators
+;
+;=============================================================================
+pro grim_terminators, grim_data, plane=plane, names=names
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ grim_suspend_events 
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ grim_get_cameras, grim_data, idp=idp_cam, plane=plane
+ if(NOT keyword__set(idp_cam[0])) then return
+ grim_get_planets, grim_data, idp=idp_plt, plane=plane, names=names
+ if(NOT keyword__set(idp_plt[0])) then return
+ grim_get_sun, grim_data, idp=idp_sun, plane=plane
+ if(NOT keyword__set(idp_sun[0])) then return
+ grim_get_rings, grim_data, idp=idp_rng, plane=plane
+
+ ;------------------------------------------------
+ ; compute terminators
+ ;------------------------------------------------
+ grim_compute_term, grim_data, term_ps, w=w, plane=plane
+
+ if(NOT keyword__set(term_ps)) then return
+ grim_add_points, grim_data, plane=plane, term_ps, w=w, name='terminator', /replace, $
+            idp_cam=idp_cam, idp_plt=idp_plt, idp_rng=idp_rng, idp_sun=idp_sun
+
+
+ grim_resume_events
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_shadows
+;
+;=============================================================================
+pro grim_shadows, grim_data, plane=plane
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ grim_suspend_events 
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ grim_get_cameras, grim_data, idp=idp_cam, plane=plane
+ if(NOT keyword__set(idp_cam[0])) then return
+ grim_get_planets, grim_data, idp=idp_plt, plane=plane
+ if(NOT keyword__set(idp_plt[0])) then return
+ grim_get_sun, grim_data, idp=idp_sun, plane=plane
+ if(NOT keyword__set(idp_sun[0])) then return
+ grim_get_rings, grim_data, idp=idp_rng, plane=plane
+
+ ;------------------------------------------------
+ ; compute shadows
+ ;------------------------------------------------
+ grim_compute_shadows, grim_data, shadow_ps, dep, w=w, plane=plane
+
+ if(NOT keyword__set(shadow_ps)) then return
+ grim_add_points, grim_data, shadow_ps, w=w, name='shadow', /replace, idp_each=dep, $
+           idp_cam=idp_cam, idp_plt=idp_plt, idp_rng=idp_rng, idp_sun=idp_sun
+
+
+ grim_resume_events
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_rings
+;
+;=============================================================================
+pro grim_rings, grim_data, plane=plane, names=names
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ grim_suspend_events 
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ grim_get_cameras, grim_data, idp=idp_cam, plane=plane
+ if(NOT keyword__set(idp_cam[0])) then return
+ grim_get_planets, grim_data, idp=idp_plt, plane=plane
+ if(NOT keyword__set(idp_plt[0])) then return
+ grim_get_sun, grim_data, idp=idp_sun, plane=plane
+ if(NOT keyword__set(idp_sun[0])) then return
+ grim_get_rings, grim_data, idp=idp_rng, plane=plane, names=names
+ if(NOT keyword__set(idp_rng[0])) then return
+
+ ;------------------------------------------------
+ ; compute rings
+ ;------------------------------------------------
+ grim_compute_ring, grim_data, ring_ps, plane=plane
+
+ if(NOT keyword__set(ring_ps)) then return
+
+ ;- - - - - - - - - - - - - - - - - - - - - -
+ ; add the points
+ ;- - - - - - - - - - - - - - - - - - - - - -
+ grim_add_points, grim_data, plane=plane, ring_ps, name='ring', /replace, $
+                             idp_cam=idp_cam, idp_plt=idp_plt, idp_rng=idp_rng
+
+
+ grim_resume_events
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_planet_centers
+;
+;=============================================================================
+pro grim_planet_centers, grim_data, plane=plane, names=names
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ grim_suspend_events 
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ grim_get_cameras, grim_data, idp=idp_cam, plane=plane
+ if(NOT keyword__set(idp_cam[0])) then return
+ grim_get_planets, grim_data, idp=idp_plt, plane=plane, names=names
+ if(NOT keyword__set(idp_plt[0])) then return
+
+ ;------------------------------------------------
+ ; compute centers
+ ;------------------------------------------------
+ grim_compute_planet_center, grim_data, center_ps, w=w, plane=plane
+
+ if(NOT keyword__set(center_ps)) then return
+ grim_add_points, grim_data, plane=plane, center_ps, w=w, name='planet_center', /replace, $
+                                       idp_cam=idp_cam, idp_plt=idp_plt
+
+ grim_resume_events
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_stars	
+;
+;=============================================================================
+pro grim_stars, grim_data, plane=plane, names=names
+
+ if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
+
+ grim_suspend_events 
+
+ ;------------------------------------------------
+ ; make sure relevant descriptors are loaded
+ ;------------------------------------------------
+ grim_get_cameras, grim_data, idp=idp_cam, plane=plane
+ if(NOT keyword__set(idp_cam[0])) then return
+ grim_get_stars, grim_data, idp=idp_str, plane=plane, names=names
+
+ if(NOT keyword__set(idp_str[0])) then $
+  begin
+   *(grim_get_overlay_psp(grim_data, plane=plane, 'star')) = 0
+   grim_set_plane, grim_data, plane
+   return
+  end
+
+ grim_get_planets, grim_data, idp=idp_plt, plane=plane
+ if(NOT keyword__set(idp_plt[0])) then return
+ grim_get_rings, grim_data, idp=idp_rng, plane=plane
+ if(NOT keyword__set(idp_rng[0])) then return
+
+ ;------------------------------------------------
+ ; compute stars
+ ;------------------------------------------------
+ grim_compute_star, grim_data, star_ps, plane=plane
+
+ if(NOT keyword__set(star_ps)) then return
+ grim_add_points, grim_data, plane=plane, star_ps, name='star', /replace, $
+            idp_cam=idp_cam, idp_plt=idp_plt, idp_rng=idp_rng, idp_str=idp_str
+
+ grim_resume_events
+
+end
+;=============================================================================
+
+
+
+

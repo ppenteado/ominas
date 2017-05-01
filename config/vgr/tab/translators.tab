@@ -1,11 +1,7 @@
-# instrument	input			output		keyword arguments
+# Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  VGR1_ISS_NA	dh_std_input		dh_std_output
-#	-       sedr_vgr_input			-
-	-       station_input			-
-	-       array_input			-
-	-       vgr_spice_input		vgr_spice_output \
+  VGR1_ISS_NA	vgr_spice_input		vgr_spice_output \
 							ck_in=auto \
 							spk_in=auto \
 							pck_in=auto \
@@ -14,15 +10,8 @@
 							ik_in=auto \
 							sck_in=auto \
 							xk_in=extra.tpc 
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		#/b1950
 
-  VGR1_ISS_WA	dh_std_input		dh_std_output
-#	-       sedr_vgr_input			-
-	-       station_input			-
-	-       array_input			-
-	-       vgr_spice_input		vgr_spice_output \
+  VGR1_ISS_WA	vgr_spice_input		vgr_spice_output \
 							ck_in=auto \
 							spk_in=auto \
 							pck_in=auto \
@@ -31,15 +20,8 @@
 							ik_in=auto \
 							sck_in=auto  \
 							xk_in=extra.tpc 
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		#/b1950
 
-  VGR2_ISS_NA	dh_std_input		dh_std_output
-#	-       sedr_vgr_input			-
-	-       station_input			-
-	-       array_input			-
-	-       vgr_spice_input		vgr_spice_output \
+  VGR2_ISS_NA	vgr_spice_input		vgr_spice_output \
 							ck_in=auto \
 							spk_in=auto \
 							pck_in=auto \
@@ -48,15 +30,8 @@
 							ik_in=auto \
 							sck_in=auto  \
 							xk_in=extra.tpc 
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		#/b1950
 
-  VGR2_ISS_WA	dh_std_input		dh_std_output
-#	-	sedr_vgr_input			-
-	-       station_input			-
-	-       array_input			-
-	-       vgr_spice_input		vgr_spice_output \
+  VGR2_ISS_WA	vgr_spice_input		vgr_spice_output \
 							ck_in=auto \
 							spk_in=auto \
 							pck_in=auto \
@@ -65,19 +40,10 @@
 							ik_in=auto \
 							sck_in=auto  \
 							xk_in=extra.tpc 
-	-       ring_input			-
-	-	orb_input			-	suffix=-orb
-	-  	strcat_ucact_input		-		#/b1950
 
   VG2_PPS	eph_spice_input			-	 
-	-       ring_input			-
-	-  	strcat_ucact_input		-		/j2000
 
   VG1_RSS-X	eph_spice_input			-	 
-	-       ring_input			-
-	-  	strcat_ucact_input		-		/j2000
 
   VG1_RSS-S	eph_spice_input			-	 
-	-       ring_input			-
-	-  	strcat_ucact_input		-		/j2000
 

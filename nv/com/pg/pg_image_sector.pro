@@ -13,7 +13,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps = pg_image_sector()
+;     outline_ptd = pg_image_sector()
 ;
 ;
 ; ARGUMENTS:
@@ -53,15 +53,19 @@
 ;      corners:     If set, then p0 and p1 are taken as the corners of
 ;                   the box, and the user is not prompted to select one.
 ;
-;    noverbose:     If set, messages are suppressed.
+;       silent:     If set, messages are suppressed.
 ;
 ;
 ;  OUTPUT:
 ;         NONE
 ;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
+;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
+;      POINT containing points on the sector outline.  The point
 ;      spacing is determined by the sample keyword. 
 ;
 ; ORIGINAL AUTHOR : J. Spitale ; 6/2005
@@ -72,7 +76,7 @@ function pg_image_sector, sample=sample, $
                          win_num=win_num, width=width, $
                          restore=restore, $
                          p0=_p0, p1=p1, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, corners=corners
+                         color=color, silent=silent, corners=corners
 
  device, cursor_standard=30
 
@@ -87,9 +91,8 @@ function pg_image_sector, sample=sample, $
  ;-----------------------------------
  ; initial point
  ;-----------------------------------
- if(NOT keyword_set(noverbose)) then $
-              nv_message, /con, name='pg_image_sector', $
-                              'Left:box scan, Right:line scan'
+ if(NOT keyword_set(silent)) then $
+                      nv_message, /con, 'Left:box scan, Right:line scan'
 
  if(NOT keyword_set(_p0)) then $
   begin
@@ -102,11 +105,8 @@ function pg_image_sector, sample=sample, $
  if(keyword_set(p1)) then points = transpose([transpose(_p0),transpose(p1)]) $
  else $
   begin
-   if(NOT keyword_set(noverbose)) then $
-    begin
-     nv_message, 'Drag and release to define length of image sector', $
-                                       name='pg_image_sector', /continue
-    end
+   if(NOT keyword_set(silent)) then $
+     nv_message, 'Drag and release to define length of image sector', /continue
 
 
    ;----------------------------------------------------------
@@ -122,11 +122,8 @@ function pg_image_sector, sample=sample, $
    ;----------------------------------------------------------
    if(NOT keyword_set(width)) then $
     begin
-     if(NOT keyword_set(noverbose)) then $
-      begin
-       nv_message, 'Drag and click to define width of image sector', $
-                                         name='pg_image_sector', /continue
-      end
+     if(NOT keyword_set(silent)) then $
+       nv_message, 'Drag and click to define width of image sector', /continue
 
      ;-----------------------------------
      ; setup pixmap
@@ -235,12 +232,12 @@ function pg_image_sector, sample=sample, $
  ;-------------------------------------------
  ; Return outline points
  ;-------------------------------------------
- outline_ps = ps_init(points = outline_pts, desc = 'pg_image_sector')
- ps_set_udata, outline_ps, name='nl', [nl]
- ps_set_udata, outline_ps, name='nw', [nw]
- ps_set_udata, outline_ps, name='sample', [sample]
+ outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'pg_image_sector')
+ cor_set_udata, outline_ptd, 'nl', [nl]
+ cor_set_udata, outline_ptd, 'nw', [nw]
+ cor_set_udata, outline_ptd, 'sample', [sample]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================
 
@@ -249,9 +246,9 @@ end
 pro test
 
 ingrid, dd=dd, cd=cd
-ps = pg_image_sector(p0=[100,100], p1=[200,200], /nov, width=10)
-pg_draw, ps, col=ctred()
-dd_profile = pg_profile_image(dd, ps, profile=profile)
+ptd = pg_image_sector(p0=[100,100], p1=[200,200], /nov, width=10)
+pg_draw, ptd, col=ctred()
+dd_profile = pg_profile_image(dd, ptd, profile=profile)
 plot, profile
 grim, dd_profile
 

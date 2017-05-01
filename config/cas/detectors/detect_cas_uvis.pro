@@ -2,7 +2,9 @@
 ; detect_cas_uvis.pro
 ;
 ;===========================================================================
-function detect_cas_uvis, label, udata
+function detect_cas_uvis, dd
+
+ label = dat_header(dd) 
 
  w = where(strpos(label, 'CAS_UVIS') NE -1)
  if(w[0] NE -1) then return, 'CAS_UVIS'

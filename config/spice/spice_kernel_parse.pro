@@ -1,19 +1,44 @@
 ;=============================================================================
+; skp_simple
+;
+;=============================================================================
+function skp_simple, dd, path, ext=ext0
+
+ext0='bc'
+ split_filename, cor_name(dd), dir, name, ext
+ if(NOT keyword_set(name)) then return, ''
+
+ ff = file_search(path + '/' + name + '.' + ext0)
+ if(keyword_set(ff)) then return, ff
+
+ return, file_search(path + '/' + name + '.' + ext + '.' + ext0)
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; spice_kernel_parse
 ;
 ;=============================================================================
-function spice_kernel_parse, dd, prefix, type, time=_time, $
-                  reject=reject, explicit=explicit, strict=strict, all=all
- 
- if(keyword_set(_time)) then time = _time
+function spice_kernel_parse, dd, prefix, type, ext=ext, time=_time, $
+                       explicit=explicit, strict=strict, all=all
 
- ;---------------------------------------
- ; Construct kernel input keyword and
- ; name of auto-detect function
- ;---------------------------------------
+ if(keyword_set(_time)) then time = _time[0]
+
+ ;-------------------------------------------------------------------
+ ; Construct kernel input keyword and name of auto-detect function
+ ; if specific auto-detect function does not exist, use the default 
+ ; eph detector
+ ;-------------------------------------------------------------------
  kw = strlowcase(type) + '_in'
- env = 'NV_SPICE_' + strupcase(type)
- fn = prefix + '_spice_' + strlowcase(type) + '_detect'
+ env = strupcase(prefix) + '_SPICE_' + strupcase(type)
+ def = 'spice_' + strlowcase(type) + '_detect'
+
+ fn = prefix + '_' + def
+ if(NOT routine_exists(fn)) then fn = 'eph_' + def
+ 
+ sc = call_function(prefix + '_spice_sc', dd)
 
  ;---------------------------------------
  ; Get raw kernel keyword value
@@ -28,11 +53,17 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; get path specific to this translator
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
- kpath_specific = getenv(env + '_' + strupcase(prefix))
- kpath_general = getenv(env)
- kpath = append_array(kpath_general, kpath_specific)
+ kpath = getenv(env)
+ w = where(kpath NE '')
+ if(w[0] EQ -1) then $
+  begin
+   nv_message, verb=0.5, $
+     env + ' environment variable is undefined.', /con, $
+       exp=[env + ' specifies the directory in which the NAIF/SPICE translator', $
+            'searches for ' + strupcase(type) + ' kernel files.']
+   return, ''
+  end
 
- if(NOT keyword_set(kpath)) then return, ''
  nkpath = n_elements(kpath)
 
  ;---------------------------------------
@@ -52,11 +83,28 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
     begin
      for j=0, nkpath-1 do $
       begin
+       ;- - - - - - - - - - - - -
+       ; get path
+       ;- - - - - - - - - - - - -
        path = kpath[j]
        if(keyword_set(dir)) then path = dir 
-       _ff = call_function(fn, dd, path, $
-                      reject=reject_kernels, all=all, strict=strict, time=time)
-       if(keyword_set(_ff)) then ff = _ff
+
+       ;- - - - - - - - - - - - - - - - -
+       ; try filename-based kernel names
+       ;- - - - - - - - - - - - - - - - -
+       _ff = skp_simple(dd, path, ext=ext)
+
+       ;- - - - - - - - - - - - - - - - -
+       ; use auto-detect function
+       ;- - - - - - - - - - - - - - - - -
+       if(NOT keyword_set(_ff)) then $
+        begin
+         nv_message, verb=0.9, 'Calling kernel auto-detect ' + fn
+         _ff = call_function(fn, dd, path, sc=sc, all=all, strict=strict, time=time)
+        end
+
+      if(keyword_set(_ff)) then ff = _ff $
+      else nv_message, verb=0.9, 'No kernels found.'
       end
     end $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -68,23 +116,12 @@ function spice_kernel_parse, dd, prefix, type, time=_time, $
      for j=0, nkpath-1 do $
       begin
        if(strpos(_k_in[i], '/') EQ -1) then _k_in[i] = kpath[j] + _k_in[i]
-       ff = findfile(_k_in[i])
+       ff = file_search(_k_in[i])
        if(keyword_set(ff)) then explicit = append_array(explicit, ff) ;$
       end
     end
 
    if(keyword_set(ff)) then  k_in = append_array(k_in, ff)
-  end
-
-
- ;-------------------------------------------------------------
- ; record names of kernels rejected by the auto-detect routine
- ;-------------------------------------------------------------
- if(keyword_set(reject) AND keyword_set(reject_kernels)) then $
-  begin
-   split_filename, reject_kernels, dirs, names
-   tag = strupcase(type) + '_REJECTED_KERNELS'
-   nv_set_udata, dd, names, tag
   end
 
 

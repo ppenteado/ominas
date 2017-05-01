@@ -46,21 +46,16 @@
 ;
 ;	raw:		If set, no aberration corrections are performed.
 ;
-;	no_sort:	Unless this keyword is set, only the first descriptor 
-;			encountered with a given name is returned.  This allows
-;			translators to be arranged in the translators table such
-;			by order of priority.
-;
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
 ;	plt_*:		All planet override keywords are accepted.  See
 ;			planet_keywords.include.  
 ;
-;			If plt_name is specified, then only descriptors with
+;			If name is specified, then only descriptors with
 ;			those names are returned. 
 ;
-;	verbatim:	If set, the descriptors requested using plt_name
+;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
 ;
@@ -79,8 +74,8 @@
 ;	If /override, then a planet descriptor is created and initialized
 ;	using the specified values.  Otherwise, the descriptor is obtained
 ;	through the translators.  Note that if /override is not used,
-;	values (except plt_name) can still be overridden by specifying 
-;	them as keyword parameters.  If plt_name is specified, then
+;	values (except name) can still be overridden by specifying 
+;	them as keyword parameters.  If name is specified, then
 ;	only descriptors corresponding to those names will be returned.
 ;	
 ;
@@ -91,79 +86,76 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, no_sort=no_sort, $
+function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, $
                              override=override, verbatim=verbatim, raw=raw, $
-@planet_keywords.include
+@plt__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
+ ndd = n_elements(dd)
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, od=od, sd=sd, dd=dd
+ if(NOT keyword_set(sd)) then sd = dat_gd(gd, dd=dd, /sd)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
+ if(keyword_set(od)) then $
+   if(n_elements(od) NE n_elements(dd)) then $
+          nv_message, 'One observer descriptor required for each data descriptor'
 
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators
- ;-------------------------------------------------------------------
+ ;-------------------------------------------------------------------s
  if(keyword_set(override)) then $
   begin
-   n = n_elements(plt__name)
+   n = n_elements(name)
 
-   pd = plt_init_descriptors(n, $
-		name=plt__name, $
-		orient=plt__orient, $
-		avel=plt__avel, $
-		pos=plt__pos, $
-		vel=plt__vel, $
-		time=plt__time, $
-		radii=plt__radii, $
-		mass=plt__mass, $
-		albedo=plt__albedo, $
-		refl_fn=plt__refl_fn, $
-		refl_parm=plt__refl_parm, $
-		phase_fn=plt__phase_fn, $
-		phase_parm=plt__phase_parm, $
-		opaque=plt__opaque, $
-		opacity=plt__opacity, $
-		lora=plt__lora)
+   if(keyword_set(dd)) then gd = dd
+   pd = plt_create_descriptors(n, $
+@plt__keywords.include
+end_keywords)
+   gd = !null
+
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get planet descriptors from the translators
  ;-------------------------------------------------------------------
  else $
   begin
+   ;-----------------------------------------------
+   ; call translators
+   ;-----------------------------------------------
+
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(keyword_set(plt__name)) then tr_first = 1
+;;   if(keyword_set(name)) then tr_first = 1	; is this really necessary?
 
-   pd = nv_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
-                                key7=plt__time, key8=plt__name, trs=trs, $
+   pd = dat_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
+                                key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
-   if(NOT keyword_set(pd)) then return, nv_ptr_new()
-
+   if(NOT keyword_set(pd)) then return, obj_new()
    n = n_elements(pd)
 
    ;---------------------------------------------------
-   ; If plt__name given, determine subscripts such that
+   ; If name given, determine subscripts such that
    ; only values of the named objects are returned.
    ;
    ; Note that each translator has this opportunity,
    ; but this code guarantees that it is done.
    ;
-   ; If plt__name is not given, then all descriptors
+   ; If name is not given, then all descriptors
    ; will be returned.
    ;---------------------------------------------------
-   if(keyword_set(plt__name)) then $
+   if(keyword_set(name)) then $
     begin
-     tr_names = get_core_name(pd)
-     sub = nwhere(strupcase(tr_names), strupcase(plt__name))
-     if(sub[0] EQ -1) then return, nv_ptr_new()
+     tr_names = cor_name(pd)
+     sub = nwhere(strupcase(tr_names), strupcase(name))
+     if(sub[0] EQ -1) then return, obj_new()
      if(NOT keyword__set(verbatim)) then sub = sub[sort(sub)]
     end $
    else sub=lindgen(n)
@@ -175,41 +167,30 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, gd=gd, no_sort=no_sort, 
    ; perform aberration corrections
    ;-----------------------------------
    if(keyword_set(od) AND (NOT keyword_set(raw))) then $
-     if(keyword_set(class_extract(od, 'BODY'))) then $
-                          abcorr, od, pd, c=pgc_const('c');, /iterate
+    for i=0, ndd-1 do $
+     begin
+      w = where(cor_gd(pd,/ dd) EQ dd[i])
+      if(w[0] NE -1) then abcorr, od[i], pd[w], c=pgc_const('c')
+     end
 
    ;-------------------------------------------------------------------
-   ; override the specified values (plt__name cannot be overridden)
+   ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
-   if(n_elements(plt__orient) NE 0) then bod_set_orient, pd, plt__orient
-   if(n_elements(plt__avel) NE 0) then bod_set_avel, pd, plt__avel
-   if(n_elements(plt__pos) NE 0) then bod_set_pos, pd, plt__pos
-   if(n_elements(plt__vel) NE 0) then bod_set_vel, pd, plt__vel
-   if(n_elements(plt__time) NE 0) then bod_set_time, pd, plt__time
-   if(n_elements(plt__radii) NE 0) then glb_set_radii, pd, plt__radii
-   if(n_elements(plt__mass) NE 0) then sld_set_mass, pd, plt__mass
-   if(n_elements(plt__lora) NE 0) then glb_set_lora, pd, plt__lora
-   if(n_elements(plt__albedo) NE 0) then sld_set_albedo, pd, plt__albedo
-   if(n_elements(plt__refl_fn) NE 0) then sld_set__refl_fn, pd, plt__refl_fn
-   if(n_elements(plt__refl_parm) NE 0) then sld_set__refl_parm, pd, plt__refl_parm
-   if(n_elements(plt__phase_fn) NE 0) then sld_set__phase_fn, pd, plt__phase_fn
-   if(n_elements(plt__phase_parm) NE 0) then sld_set__phase_parm, pd, plt__phase_parm
-   if(n_elements(plt__opaque) NE 0) then bod_set_opaque, pd, plt__opaque
-   if(n_elements(plt__opacity) NE 0) then sld_set_opacity, pd, plt__opacity
+   if(defined(name)) then _name = name & name = !null
+   plt_assign, pd, /noevent, $
+@plt__keywords.include
+end_keywords
+    if(defined(_name)) then name = _name
+
   end
 
+ ;--------------------------------------------------------
+ ; update generic descriptors
+ ;--------------------------------------------------------
+ if(keyword_set(dd)) then dat_set_gd, dd, gd, od=od, sd=sd
+ dat_set_gd, pd, gd, od=od, sd=sd
 
- ;------------------------------------------------------------
- ; Make sure that for a given name, only the first 
- ; descriptor obtained from the translators is returned.
- ; Thus, translators can be arranged in order in the table
- ; such the the first occurence has the highest priority.
- ;------------------------------------------------------------
- if(NOT keyword_set(no_sort)) then pd = pd[pgs_name_sort(get_core_name(pd))]
-
-
-
-return, pd
+ return, pd
 end
 ;===========================================================================
 

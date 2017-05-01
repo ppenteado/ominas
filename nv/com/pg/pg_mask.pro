@@ -36,7 +36,11 @@
 ;
 ;	sund:	Star descriptor giving the sun.
 ;
-;	gd:	Generic descriptor containing the above descriptors.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	fgbx,fdkx,fbx:	Fractonal amount to increase the radii of each
 ;			descriptor type.
@@ -52,13 +56,13 @@
 ;	np:      Number of points to use in computing curves.  Default is 1000.
 ;
 ;  OUTPUT:
-;	limb_ps:	points_struct giving the computed limb points.
+;	limb_ptd:	POINT giving the computed limb points.
 ;
-;	term_ps:	points_struct giving the computed terminator points.
+;	term_ptd:	POINT giving the computed terminator points.
 ;
-;	disk_ps:	points_struct giving the computed disk points.
+;	disk_ptd:	POINT giving the computed disk points.
 ;
-;	body_ps:	points_struct giving the computed body points.
+;	body_ptd:	POINT giving the computed body points.
 ;
 ;
 ; RETURN:
@@ -107,11 +111,11 @@ end
 ; pg_mask
 ;
 ;=============================================================================
-function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, frame_bd=frame_bd, $
+function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, $
                                     fgbx=fgbx, fdkx=fdkx, fbx=fbx, $
                                     dgbx=dgbx, ddkx=ddkx, dbx=dbx, $
                                     pgbx=pgbx, pdkx=pdkx, pbx=pbx, $
-      limb_ps=limb_ps, term_ps=term_ps, body_ps=body_ps, disk_ps=ring_ps, $
+      limb_ptd=limb_ptd, term_ptd=term_ptd, body_ptd=body_ptd, disk_ptd=ring_ptd, $
       nodd=nodd, np=np
 
  if(keyword_set(_bx)) then bx = _bx
@@ -133,10 +137,14 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, dkx=dkx, bx=bx, sund=sund, dd=dd
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
+ if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
 
- if(NOT keyword_set(gbx)) then gbx = class_extract(bx, 'GLOBE', /rm)
- if(NOT keyword_set(dkx)) then dkx = class_extract(bx, 'DISK', /rm)
+ if(NOT keyword_set(gbx)) then gbx = cor_select(bx, 'GLOBE', /rm, /class)
+ if(NOT keyword_set(dkx)) then dkx = cor_select(bx, 'DISK', /rm, /class)
  if(NOT keyword_set(bx)) then bx = 0
 
  scale = mean(cam_scale(cd))
@@ -149,7 +157,7 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
  dsk_mask = bytarr(dim)
  if(keyword_set(dkx)) then $
   begin
-   dkd = nv_clone(class_extract(dkx, 'DISK'))
+   dkd = nv_clone(dkx)
    ndkd = n_elements(dkd)
 
    ;- - - - - - - - - - - - - - - - - - - - -
@@ -176,14 +184,11 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
    ii = rotate(sort(sma), 2)
    dkd = dkd[ii]
 
-   if(NOT keyword_set(frame_bd)) then $
-         if(keyword_set(gbx)) then frame_bd = get_primary(dkd[0], gbx)
-
-   ring_ps = pg_disk(cd=cd, dkx=dkd, gbx=frame_bd, np=np)
+   ring_ptd = pg_disk(cd=cd, dkx=dkd, np=np)
    for i=0, ndkd-1 do $
     begin
-     inner_pp = pg_points(ring_ps[2*i])
-     outer_pp = pg_points(ring_ps[2*i+1])
+     inner_pp = pnt_points(/cat, /vis, ring_ptd[2*i])
+     outer_pp = pnt_points(/cat, /vis, ring_ptd[2*i+1])
 
      if(keyword_set(outer_pp)) then $
       begin
@@ -210,7 +215,7 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
  glb_mask = bytarr(dim)
  if(keyword_set(gbx)) then $
   begin
-   gbd = nv_clone(class_extract(gbx, 'GLOBE'))
+   gbd = nv_clone(gbx)
    ngbd = n_elements(gbd)
 
    ;- - - - - - - - - - - - - - - - - - - - -
@@ -227,8 +232,8 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
    ;- - - - - - - - - - - - - - - - - - - - -
    ; compute mask
    ;- - - - - - - - - - - - - - - - - - - - -
-   center_ps = pg_center(cd=cd, bx=gbd)
-   center_pts = pg_points(center_ps)
+   center_ptd = pg_center(cd=cd, bx=gbd)
+   center_pts = pnt_points(/cat, /vis, center_ptd)
    cam_pos = bod_pos(cd)##make_array(ngbd, val=1d)
    rad_pix = (glb_radii(gbd))[2,*] / v_mag(cam_pos - tr(bod_pos(gbd))) $
                                                         / (cam_scale(cd))[0]
@@ -241,25 +246,25 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
 
    if(w[0] NE -1) then $
     begin
-     limb_ps = pg_limb(cd=cd, gbx=gbd[w], np=np) 
+     limb_ptd = pg_limb(cd=cd, gbx=gbd[w], np=np) 
    
      for i=0, nw-1 do $
       begin
-       pp = pg_points(limb_ps[i])
+       pp = pnt_points(limb_ptd[i], /vis)
        ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
        if(ii[0] NE -1) then glb_mask[ii] = 1
       end
 
      if(keyword_set(sund)) then $
       begin
-       pg_hide, /limb, limb_ps, gbx=gbd[w], od=sund
+       pg_hide, /assoc, limb_ptd, bx=gbd[w], od=sund
 
-       term_ps = pg_limb(cd=cd, od=sund, gbx=gbd[w])
-       pg_hide, /limb, term_ps, gbx=gbd[w], cd=cd
+       term_ptd = pg_limb(cd=cd, od=sund, gbx=gbd[w])
+       pg_hide, /assoc, term_ptd, bx=gbd[w], cd=cd
 
        for i=0, nw-1 do $
         begin
-         p = pg_points([limb_ps[i], term_ps[i]])
+         p = pnt_points([limb_ptd[i], term_ptd[i]], /vis)
          pp = poly_rectify(p)
          ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
          if(ii[0] NE -1) then glb_mask[ii] = 1
@@ -285,7 +290,7 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
  bx_mask = bytarr(dim)
  if(keyword_set(bx)) then $
   begin
-   bd = nv_clone(class_extract(bx, 'BODY'))
+   bd = nv_clone(bx)
    nbd = n_elements(bd)
 
    ;- - - - - - - - - - - - - - - - - - - - -
@@ -299,8 +304,8 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
    ;- - - - - - - - - - - - - - - - - - - - -
    ; compute mask
    ;- - - - - - - - - - - - - - - - - - - - -
-   body_ps = pg_center(cd=cd, bx=bd)
-   body_pts = pg_points(body_ps)
+   body_ptd = pg_center(cd=cd, bx=bd)
+   body_pts = pnt_points(/cat, /vis, body_ptd)
 
    w = in_image(cd, body_pts, slop=1)
    nw = n_elements(w)
@@ -329,7 +334,7 @@ function pg_mask, mask=mask, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, 
  ;-----------------------------------------------
  if(keyword_set(nodd)) then return, mask
 
- dd_mask = nv_init_descriptor(data=mask)
+ dd_mask = dat_create_descriptors(1, data=mask)
  return, dd_mask
 end
 ;=============================================================================

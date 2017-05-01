@@ -208,6 +208,22 @@
 ;	Dec., 2002.	Spitale, added 'TAG' keyword functionality for bases 
 ;			and labels.
 ;	Dec., 2002.	Spitale, added 'SCROLL' keyword for bases.
+;
+; NOTICES:
+;	Portions ©2017 Exelis Visual Information Solutions, Inc., provided 
+;	under license to the Jet Propulsion Laboratory. THE EXELIS VISUAL  
+;	INFORMATION SOLUTIONS, INC. CODE IS PROVIDED "AS IS" AND ANY EXPRESS  
+;	OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED  
+;	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE  
+;	ARE DISCLAIMED. IN NO EVENT SHALL EXELIS VISUAL INFORMATION SOLUTIONS,  
+;	INC., ITS AFFILIATES, OFFICERS, DIRECTORS, EMPLOYEES, AGENTS, SUPPLIERS  
+;	OR LICENSORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,  
+;	EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,  
+;	PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR  
+;	PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY  
+;	OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING  
+;	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS  
+;	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;-
 ;
 
@@ -376,13 +392,20 @@ pro CW__FORM_BUILD, parent, desc, cur, ids, tags, lasttag   ; Spitale, 7/2002
     if n_elements(values) ge 2 then begin
         type = 0
         if CW__FORM_PARSE(e, 'SET_VALUE', temp) then begin
-           result = execute('sval=fix('+temp+')')
-           new = cw__bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
+
+;;           result = execute('sval=fix('+temp+')')
+            if (!version.release ge '8.4') then begin
+             lf=lambda('x:'+temp)
+             sval=fix(call_function(lf,0))
+            endif else result = execute('sval=fix('+temp+')')
+
+
+          new = cw_bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
 		        EXCLUSIVE = exclusive, NONEXCLUSIVE = 1-exclusive, $
 		        FRAME=frame, NO_RELEASE = no_release, $
                         SET_VALUE = sval, _EXTRA=extra)
         endif else begin
-           new = cw__bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
+           new = cw_bgroup(parent, strtok(a[2],'|',/EXTRACT),  $
 		        EXCLUSIVE = exclusive, NONEXCLUSIVE = 1-exclusive, $
 		        FRAME=frame, NO_RELEASE = no_release, _EXTRA=extra)
         endelse

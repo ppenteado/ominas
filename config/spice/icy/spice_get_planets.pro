@@ -8,6 +8,7 @@ function spice_get_planets, names, ref, et, $
 			gm, jcoef, found, ids, rref, refl_fn, refl_parm, $
 			phase_fn, phase_parm, albedo, constants=constants, obs=obs
 
+ n = n_elements(names)
 
  ;----------------------------------------------------------------------
  ; convert obs name to id if necessary
@@ -19,15 +20,6 @@ function spice_get_planets, names, ref, et, $
    if (tp EQ 7 ) then cspice_bodn2c, obs, obs, name_found
   end
 
-
- ;----------------------------------------------------------------------
- ; get object names
- ;  If no names are requested, then only bodies with known radii are
- ;  returned.
- ;----------------------------------------------------------------------
- if(NOT keyword_set(names)) then names = spice_get_all_target_names()
- n = n_elements(names)
-
  pos = dblarr(3,n)
  vel = dblarr(3,n)
  radii = dblarr(3,n)
@@ -36,6 +28,7 @@ function spice_get_planets, names, ref, et, $
  orient = dblarr(3,3,n) & orient[diaggen(3,n)] = 1
  gm = dblarr(n)
  lora = dblarr(n)
+
  rref = dblarr(n)
  refl_fn = strarr(n)
  refl_parm = dblarr(10,n)
@@ -109,11 +102,9 @@ function spice_get_planets, names, ref, et, $
      if(keyword_set(_phase_parm)) then phase_parm[0:n_elements(_phase_parm)-1,i] = _phase_parm
      if(keyword_set(_albedo)) then albedo[i] = _albedo
 
-
      ;- - - - - - - - - - - - - - - - - - - - - -
      ; get body state w.r.t. SS barycenter
      ;- - - - - - - - - - - - - - - - - - - - - -
-;if(name EQ 'PLUTO') then stop
      catch, failed
      if(failed EQ 0) then cspice_spkgeo, id, et, ref, obs, targ_state, ltime
      catch, /cancel
@@ -135,6 +126,7 @@ function spice_get_planets, names, ref, et, $
          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
          orient[*,*,i] = idgen(3)
 
+;;if(names[i] EQ 'JUPITER') then stop
          catch, failed
          if(failed EQ 0) then cspice_tisbod, ref, id, et[0], tsipm
          catch, /cancel

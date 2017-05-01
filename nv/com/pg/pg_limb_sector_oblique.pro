@@ -11,7 +11,7 @@
 ;       NV/PG
 ;
 ; CALLING SEQUENCE:
-;     outline_ps=pg_limb_sector(cd=cd, gbx=gbx, dkd=dkd)
+;     outline_ptd=pg_limb_sector(cd=cd, gbx=gbx, dkd=dkd)
 ;
 ;
 ; ARGUMENTS:
@@ -61,11 +61,15 @@
 ;
 ;
 ; RETURN: 
-;      points_struct containing points on the sector outline.  The point
-;      spacing is determined by the sample keyword.  The points structure
+;      POINT containing points on the sector outline.  The point
+;      spacing is determined by the sample keyword.  The POINT object
 ;      also contains the disk coordinate for each point, relative to the
 ;      returned disk descriptor, and the user fields 'nrad' and 'nlon' 
 ;      giving the number of points in altitude and azimuth.
+;
+; KNOWN BUGS:
+;	The sector flips when it hits zero azimuth rather than retaining a 
+;	consistent sense.
 ;
 ;
 ; MODIFICATION HISTORY : 
@@ -85,7 +89,7 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
                          win_num=win_num, $
                          restore=restore, $
                          p0=_p0, p1=p1, width=width, xor_graphics=xor_graphics, $
-                         color=color, noverbose=noverbose, nodsk=nodsk, $
+                         color=color, silent=silent, nodsk=nodsk, $
                          dkd=dkd, altitudes=altitudes, azimuths=azimuths, $
                          limb_pts_body=limb_pts_body, cw=cw
 
@@ -96,14 +100,10 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- if(keyword__set(gd)) then $
-  begin
-   if(NOT keyword__set(cd)) then cd=gd.cd
-   if(NOT keyword__set(_gbx)) then _gbx=gd.gbx
-  end
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
 
- if(NOT keyword__set(_gbx)) then $
-            nv_message, name='pg_limb_sector', 'Globe descriptor required.'
+ if(NOT keyword__set(_gbx)) then nv_message, 'Globe descriptor required.'
  __gbx = get_primary(cd, _gbx)
  if(keyword__set(__gbx[0])) then gbx = __gbx $
  else  gbx = _gbx[0,*]
@@ -111,8 +111,8 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
  ;-----------------------------------
  ; validate descriptors
  ;-----------------------------------
- if(n_elements(cds) GT 1) then nv_message, name='pg_limb_sector', $
-                        'No more than one camera descriptor may be specified.'
+ if(n_elements(cds) GT 1) then $
+           nv_message, 'No more than one camera descriptor may be specified.'
 
  ;-----------------------------------
  ; setup pixmap
@@ -129,11 +129,8 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
 
 
 
- if(NOT keyword__set(noverbose)) then $
-  begin
-   nv_message, 'Drag and release to define radial extent of limb sector', $
-                                         name='pg_limb_sector_oblique', /continue
-  end
+ if(NOT keyword__set(silent)) then $
+   nv_message, 'Drag and release to define radial extent of limb sector', /con
 
 
  ;-----------------------------------
@@ -157,11 +154,8 @@ function pg_limb_sector_oblique, cd=cd, gbx=_gbx, gd=gd, $
  ;----------------------------------------------------------
  ; select azimuthal extent of sector
  ;----------------------------------------------------------
- if(NOT keyword__set(noverbose)) then $
-  begin
-   nv_message, 'Drag and click to define azimuthal extent of limb sector', $
-                                           name='pg_limb_sector_oblique', /continue
-  end
+ if(NOT keyword__set(silent)) then $
+   nv_message, 'Drag and click to define azimuthal extent of limb sector', /con
 
 
 
@@ -228,12 +222,11 @@ stop
  ;--------------------------------------------
  ; resample
  ;--------------------------------------------
- dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=gbx, outline_pts)
+ dsk_outline_pts = image_to_disk(cd, dkd, outline_pts)
  rads = dsk_outline_pts[naz+lindgen(nalt),0]
  lons = dsk_outline_pts[lindgen(naz), 1]
 
- nazrad = get_ring_profile_n(outline_pts, cd, dkd, $
-                                lons, rads, oversamp=sample, frame_bd=gbx)
+ nazrad = get_ring_profile_n(outline_pts, cd, dkd, lons, rads, oversamp=sample)
  nalt = long(nazrad[1]) & naz = long(nazrad[0])
 
  outline_pts = get_limb_profile_outline_oblique(cd, gbx, $
@@ -245,14 +238,14 @@ stop
  ;-------------------------------------------
  dsk_outline_pts = 0
  if(NOT keyword_set(nodsk)) then $
-      dsk_outline_pts = image_to_disk(cd, dkd, frame_bd=gbx, outline_pts)
+                 dsk_outline_pts = image_to_disk(cd, dkd, outline_pts)
 
- outline_ps = ps_init(points = outline_pts, $
+ outline_ptd = pnt_create_descriptors(points = outline_pts, $
                       desc = 'pg_limb_sector', $
                       data = transpose(dsk_outline_pts))
- ps_set_udata, outline_ps, name='nrad', [nalt]
- ps_set_udata, outline_ps, name='nlon', [naz]
+ cor_set_udata, outline_ptd, 'nrad', [nalt]
+ cor_set_udata, outline_ptd, 'nlon', [naz]
 
- return, outline_ps
+ return, outline_ptd
 end
 ;=====================================================================

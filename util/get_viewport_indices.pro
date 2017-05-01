@@ -18,10 +18,9 @@ function get_viewport_indices, dim, p=data_xy, $
    data_xy = gridgen(data_size, p0=[xrange[0],yrange[0]], /double)
    ndata = n_elements(data_xy)/2
 
-   vp = xy_to_w(dim, data_xy)
+   ii = xy_to_w(dim, data_xy)
    device_size = data_size
-   ii = lindgen(ndata)
-   iii = ii
+   iii = lindgen(ndata)
 
    return, ii
   end

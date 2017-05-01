@@ -24,9 +24,9 @@
 ;=======================================
 ; read and display a voyager image
 ;=======================================
-zoom = 0.45
+zoom = 0.75
 
-dd = nv_read('./data/c3440346.img', im, label)
+dd = dat_read('./data/c3440346.img', im, label)
 
 ctmod, top=top
 tvim, im, zoom=zoom, /order, /new, top=top
@@ -54,8 +54,8 @@ cd = pg_get_cameras(dd)
 ; (other models may be input to pg_resloc if desired).  
 ;
 ;--------------------------------------------------------------------------
-scan_ps = pg_resloc(dd)
-pg_draw, scan_ps, psym=1, col=ctyellow()
+scan_ptd = pg_resloc(dd)
+pg_draw, scan_ptd, psym=1, col=ctyellow()
 
 ;--------------------------------------------------------------------------
 ; Read known focal coords and nominal image coords.
@@ -68,8 +68,8 @@ pg_draw, scan_ps, psym=1, col=ctyellow()
 ; cannot be found in the image.
 ;
 ;--------------------------------------------------------------------------
-foc_ps = readrob('data/vgr1na.rob')
-nom_ps = readres('data/vgr1na.res')
+foc_ptd = readrob('data/vgr1na.rob')
+nom_ptd = readres('data/vgr1na.res')
 
 ;--------------------------------------------------------------------------
 ; Fit a polynomial camera transformation
@@ -79,12 +79,12 @@ nom_ps = readres('data/vgr1na.res')
 ; A new camera descriptor is generated describing the derived 
 ; transformation.
 ;
-; Note that res_ps outputs the nominal image coordinates under the new
+; Note that res_ptd outputs the nominal image coordinates under the new
 ; transformation.
 ;
 ;--------------------------------------------------------------------------
-pg_resfit, scan_ps, foc_ps, 4, nom_ps=nom_ps, cd=cd, res_ps=res_ps
-pg_draw, res_ps, psym=7
+pg_resfit, scan_ptd, foc_ptd, 4, nom_ptd=nom_ptd, cd=cd, res_ptd=res_ptd
+pg_draw, res_ptd, psym=7
 
 
 ;============================================================================
@@ -97,7 +97,7 @@ pg_draw, res_ps, psym=7
 ; (which are more scattered, but complete).
 ;
 ;============================================================================
-dd1 = pg_blemish(dd, [scan_ps,res_ps], im=im1)
+dd1 = pg_blemish(dd, [scan_ptd,res_ptd], im=im1)
 tvim, im1, /order, /new, z=zoom
 
 
@@ -123,7 +123,7 @@ fa = 32 & fb = 7
 fh = [2d, 88d, -2d, -87d, 2d, -1d, -85d]*!dpi/180d
 nf = n_elements(fh)
 
-dd2 = nv_clone_descriptor(dd1)
+dd2 = nv_clone(dd1)
 for i=0, nf-1 do dd2 = pg_blemish(dd2, fp[*,i], im=im2, a=fa, b=fb, h=fh[i])
 tvim, im2
 
@@ -139,16 +139,15 @@ dd3 = pg_linearize_image(dd2, cd_new, cd=cd, im=im3, size=[1000,1000], $
                  oaxis=[499.,499.], scale=[7.8586540e-06,7.8586540e-06])
 
 tvim, im3, /order, /new, z=zoom
-; foc_pts = ps_points(foc_ps)
+; foc_pts = pnt_points(foc_ptd)
 ; foc_pts_image = cam_focal_to_image(cd_new, foc_pts)
 ; plots, foc_pts_image[*,*,0], psym=6
 
 
 
 stop
-;dd1 = nv_read('./data/c3440346.gem', _im3, label)
-;tvim, _im3
-;.run ~/idl_pro/jblink
-;jblink, im3, _im3
+dd1 = dat_read('./data/c3440346.gem', _im3, label)
+tvim, _im3
+grim, dd3, dd1
 
 

@@ -56,7 +56,7 @@
 ;
 ;
 ; RETURN:
-;	points_struct containing the detected spike points.
+;	POINT containing the detected spike points.
 ;
 ;
 ; PROCEDURE:
@@ -76,9 +76,9 @@
 ;
 ;
 ; EXAMPLE:
-;	dd = nv_read(filename)
-;	spike_ps = pg_spikes(dd)
-;	dd1 = pg_despike(dd, spike_ps)
+;	dd = dat_read(filename)
+;	spike_ptd = pg_spikes(dd)
+;	dd1 = pg_despike(dd, spike_ptd)
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -99,7 +99,7 @@ function pg_spikes, dd, nsig=nsig, grad=grad, mask=mask, umask=umask, extend=ext
  ;---------------------------------------
  ; dereference the data descriptor
  ;---------------------------------------
- im = nv_data(dd)
+ im = dat_data(dd)
 
 
  ;---------------------------------------
@@ -107,7 +107,7 @@ function pg_spikes, dd, nsig=nsig, grad=grad, mask=mask, umask=umask, extend=ext
  ;---------------------------------------
 ; pp = sky_points(im, grad, scale, mask=mask, extend=extend, edge=edge)
  pp = sky_points(im, nsig, scale, mask=mask, umask=umask, extend=extend, $
-             edge=edge, all=allpix)
+                                                        edge=edge, all=allpix)
 
 
  ;----------------------------------------------
@@ -128,11 +128,11 @@ function pg_spikes, dd, nsig=nsig, grad=grad, mask=mask, umask=umask, extend=ext
 
 
  ;---------------------------------------
- ; set up the points struct
+ ; set up the POINT object
  ;---------------------------------------
-  ps = ps_init(points = p, desc = 'spikes')
+  ptd = pnt_create_descriptors(points = p, desc = 'spikes')
 
- return, ps
+ return, ptd
 end
 ;=============================================================================
 

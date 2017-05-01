@@ -13,8 +13,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	limb_ps = pg_limb(cd=cd, gbx=gbx, ods=ods)
-;	limb_ps = pg_limb(gd=gd, od=od)
+;	limb_ptd = pg_limb(cd=cd, gbx=gbx, ods=ods)
+;	limb_ptd = pg_limb(gd=gd, od=od)
 ;
 ;
 ; ARGUMENTS:
@@ -35,9 +35,11 @@
 ;		 as the observer from which limb is computed.  If no observer
 ;		 descriptor is given, the camera descriptor is used.
 ;
-;	gd:	 Generic descriptor.  If given, the cd and gbx inputs 
-;		 are taken from the cd and gbx fields of this structure
-;		 instead of from those keywords.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
+;
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
 ;	npoints: Number of points to compute.  Default is 1000.
 ;
@@ -49,15 +51,15 @@
 ;	fov:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, points structures excluded by the fov keyword
-;		 are not returned.  Normally, empty points structures
+;	cull:	 If set, POINT objects excluded by the fov keyword
+;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; RETURN:
-;	Array (n_objects) of points_struct containing image
+;	Array (n_objects) of POINT containing image
 ;	points and the corresponding inertial vectors.
 ;
 ;
@@ -73,7 +75,7 @@
 ;	The following command computes points on the planet which lie on the
 ;	terminator:
 ;
-;	term_ps = pg_limb,(cd=cd, gbx=pd, od=sd)
+;	term_ptd = pg_limb,(cd=cd, gbx=pd, od=sd)
 ;
 ;	In this call, pd is a planet descriptor, cd is a camera descriptor, 
 ;	and sd is a star descriptor (i.e., the sun).
@@ -88,17 +90,18 @@
 ;	
 ;-
 ;=============================================================================
-function pg_limb, cd=cd, od=od, gbx=gbx, gd=gd, fov=fov, cull=cull, $
+function pg_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, fov=fov, cull=cull, $
                         npoints=npoints, epsilon=epsilon, reveal=reveal
-@ps_include.pro
+@pnt_include.pro
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx, od=od
- if(NOT keyword_set(cd)) then cd = 0 
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
+ if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
- if(NOT keyword_set(gbx)) then return, ptr_new()
+ if(NOT keyword_set(gbx)) then return, obj_new()
 
  if(keyword_set(fov)) then slop = (image_size(cd[0]))[0]*(fov-1) > 1
 
@@ -119,34 +122,30 @@ function pg_limb, cd=cd, od=od, gbx=gbx, gd=gd, fov=fov, cull=cull, $
  ;-----------------------------------
  nt = n_elements(cd)
  nt1 = n_elements(od)
- pgs_count_descriptors, gbx, nd=n_objects, nt=nt2
- if(nt NE nt1 OR nt1 NE nt2) then nv_message, name='pg_limb', $
-                                                      'Inconsistent timesteps.'
+ cor_count_descriptors, gbx, nd=n_objects, nt=nt2
+ if(nt NE nt1 OR nt1 NE nt2) then nv_message, 'Inconsistent timesteps.'
 
 
  ;-----------------------------------------------
  ; contruct data set description
  ;-----------------------------------------------
  desc = 'limb'
- if((class_get(od))[0] EQ 'STAR') then desc = 'terminator'
+ if((cor_class(od))[0] EQ 'STAR') then desc = 'terminator'
 
 
- hide_flags = make_array(npoints, val=PS_MASK_INVISIBLE)
+ hide_flags = make_array(npoints, val=PTD_MASK_INVISIBLE)
 
  ;---------------------------------------------------------
  ; get limb for each object for all times
  ;---------------------------------------------------------
- limb_ps = ptrarr(n_objects)
+ limb_ptd = objarr(n_objects)
 
- obs_bd = class_extract(od, 'BODY')
- obs_pos = bod_pos(obs_bd)
+ obs_pos = bod_pos(od)
  for i=0, n_objects-1 do $
   begin
    xd = reform(gbx[i,*], nt)
-   gbds=class_extract(xd, 'GLOBE')			; Object i for all t.
-   bds=class_extract(xd, 'BODY')
 
-   Rs = bod_inertial_to_body_pos(bds, obs_pos)		; Source position
+   Rs = bod_inertial_to_body_pos(xd, obs_pos)		; Source position
 							; in object i's body
 							; frame for all t.
    ;- - - - - - - - - - - - - - - - -
@@ -156,8 +155,8 @@ function pg_limb, cd=cd, od=od, gbx=gbx, gd=gd, fov=fov, cull=cull, $
    continue = 1
    if(keyword_set(fov)) then $
     begin
-     test_pts_body = glb_get_limb_points(gbds, Rs, npoints, epsilon, 1, alpha=alpha)
-     test_pts_image = body_to_image_pos(cd, gbds, test_pts_body)
+     test_pts_body = glb_get_limb_points(xd, Rs, npoints, epsilon, 1, alpha=alpha)
+     test_pts_image = body_to_image_pos(cd, xd, test_pts_body)
      w = in_image(cd, test_pts_image, slop=slop)
      if(w[0] EQ -1) then continue = 0 $
      else alpha = alpha[w]
@@ -169,7 +168,7 @@ function pg_limb, cd=cd, od=od, gbx=gbx, gd=gd, fov=fov, cull=cull, $
    if(continue) then $
     begin
      limb_pts = glb_get_limb_points(alpha=alpha, $	; Limb pts for planet i
-                           gbds, Rs, npoints, epsilon)	; for all t.
+                           xd, Rs, npoints, epsilon)	; for all t.
 
      flags = bytarr(n_elements(limb_pts[*,0]))
      points = body_to_image_pos(cd, xd, limb_pts, inertial=inertial_pts, valid=valid)
@@ -177,17 +176,17 @@ function pg_limb, cd=cd, od=od, gbx=gbx, gd=gd, fov=fov, cull=cull, $
      if(keyword__set(valid)) then $
       begin
        invalid = complement(limb_pts[*,0], valid)
-       if(invalid[0] NE -1) then flags[invalid] = PS_MASK_INVISIBLE
+       if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
       end
 
-     limb_ps[i] = ps_init(name = get_core_name(bds), $
+     limb_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
                           desc=desc, $
-                          input=pgs_desc_suffix(gbx=gbx[i,0], od=od[0], cd=cd[0]), $
-                          assoc_idp = nv_extract_idp(xd), $
+                          gd={gbx:gbx[i,0], od:od[0], cd:cd[0]}, $
+                          assoc_xd = xd, $
                           points = points, $
                           flags = flags, $
                           vectors = inertial_pts)
-     if(NOT bod_opaque(gbx[i,0])) then ps_set_flags, limb_ps[i], flags
+     if(NOT bod_opaque(gbx[i,0])) then pnt_set_flags, limb_ptd[i], flags
     end
   end
 
@@ -198,12 +197,12 @@ function pg_limb, cd=cd, od=od, gbx=gbx, gd=gd, fov=fov, cull=cull, $
  ;------------------------------------------------------
  if(keyword_set(fov)) then $
   begin
-   pg_crop_points, limb_ps, cd=cd[0], slop=slop
-   if(keyword_set(cull)) then limb_ps = ps_cull(limb_ps)
+   pg_crop_points, limb_ptd, cd=cd[0], slop=slop
+   if(keyword_set(cull)) then limb_ptd = pnt_cull(limb_ptd)
   end
 
 
 
- return, limb_ps
+ return, limb_ptd
 end
 ;=============================================================================

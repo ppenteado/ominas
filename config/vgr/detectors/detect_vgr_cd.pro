@@ -2,15 +2,17 @@
 ; detect_vgr_cd.pro
 ;
 ;===========================================================================
-function detect_vgr_cd, filename, udata
+function detect_vgr_cd, dd
 
+return, ''	; this detector is obslete, needs to be updated
  status = 1 
+ filename = dat_filename(dd)
 
  ;==============================
  ; open the file
  ;==============================
  openr, unit, filename, /get_lun, error=error
- if(error NE 0) then nv_message, !err_string
+ if(error NE 0) then nv_message, /anonymous, !err_string
  dat = fstat(unit)
 
  ;=================================

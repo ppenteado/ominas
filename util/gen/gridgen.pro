@@ -84,9 +84,16 @@
 ;			0 0 0   1 1 1
 ;
 ;
+; KNOWN BUGS:
+;	In some circumstances gridgen will return duplicate subscripts.
+;	This happens when the grid spans zero and the grid locations are not
+;	not integers.  In that case, converting to integer type could cause 
+;	neighboring elements to both round to zero, or to round to either side, 
+;	omitting zero entirely.
+;
 ;
 ; STATUS:
-;	Complete.
+;	Some bugs.
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -95,7 +102,7 @@
 ;-
 ;=============================================================================
 function gridgen, dim, $
-         rectangular=rectangular, p0=p0, center=center, double=double
+            rectangular=rectangular, p0=p0, center=center, double=double
 
  dim = long(dim)
  ndim = n_elements(dim)
@@ -114,6 +121,7 @@ function gridgen, dim, $
             for i=0, ndim-1 do grid[i,*] = grid[i,*] - dim[i]/2 + 0.5
  if(keyword_set(rectangular)) then grid = reform(grid, [ndim,dim], /over)
  if(NOT keyword_set(double)) then grid = round(grid)
+; if(NOT keyword_set(double)) then grid = fix(grid)
 
  return, grid
 end

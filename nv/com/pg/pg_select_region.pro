@@ -18,14 +18,14 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:	Data descriptor containing the image.
+;	dd:	Data descriptor containing an image.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	noverbose: 	If set, turns off the notification that cursor
+;	silent: 	If set, turns off the notification that cursor
 ;			movement is required.
 ;
 ;	color:		Color to use for graphics overlays.
@@ -58,7 +58,7 @@
 ;
 ; RETURN:
 ;	Array of subscripts of all image points which lie within the selected
-;	region.
+;	region.  -1 is returned if the cancel button is pressed.
 ;
 ;
 ; STATUS:
@@ -76,7 +76,7 @@
 ;=============================================================================
 function pg_select_region, dd, color=color, $
       select_button=select_button, cancel_button=cancel_button, $
-      end_button=end_button, noverbose=noverbose, p0=p0, autoclose=autoclose, $
+      end_button=end_button, silent=silent, p0=p0, autoclose=autoclose, $
       points=_points, noclose=noclose, data=data, box=box, image_pts=points
 
  xsize = !d.x_size
@@ -89,7 +89,7 @@ function pg_select_region, dd, color=color, $
 
  if(keyword_set(dd)) then $
   begin
-   image=nv_data(dd)
+   image=dat_data(dd)
    s=size(image)
    xsize=s[1]
    ysize=s[2]
@@ -105,12 +105,10 @@ function pg_select_region, dd, color=color, $
  ;- - - - - - - - - - - - - - - - -
  if(NOT keyword_set(box)) then $
   begin
-   if(NOT keyword_set(noverbose)) then $
+   if(NOT keyword_set(silent)) then $
     begin
-      nv_message, 'Use cursor and mouse buttons to select points -', $
-                   name='pg_select_region', /continue
-      nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', $
-                   name='pg_select_region', /continue
+      nv_message, 'Use cursor and mouse buttons to select points -', /continue
+      nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', /continue
      end
    points = tvpath(close=close, /copy, color=color, autoclose=autoclose, $
                 select_button=select_button, end_button=end_button, $
@@ -122,12 +120,10 @@ function pg_select_region, dd, color=color, $
  ;- - - - - - - - - - - - - - - - -
  else $
   begin
-   if(NOT keyword_set(noverbose)) then $
+   if(NOT keyword_set(silent)) then $
     begin
-      nv_message, 'Use cursor and mouse buttons to select points -', $
-                   name='pg_select_region', /continue
-      nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', $
-                   name='pg_select_region', /continue
+      nv_message, 'Use cursor and mouse buttons to select points -', /continue
+      nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', /continue
      end
    points = tvrec(color=color, p0=p0, /all_corners)
   end 
