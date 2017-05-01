@@ -21,15 +21,19 @@ if ~count then begin
   print,'delete_ominas_files: No timestamps files found for specified directory ('+dir+')'
   return
 endif
-r=[]
-foreach tts,ts do r=[r,read_json(tts)]
+;r=[]
+;foreach tts,ts do r=[r,read_json(tts)]
+r=hash()
+foreach tts,ts do r+=json_parse(tts)
 
 print,'This will now delete the files'
-print,r.filename
+;print,r.filename
+print,r.keys()
 if (conf lt 2) then begin
   print,'Are you sure you want to delete the above files?'
   read,ans
 endif else ans='y'
 if strlowcase(ans) ne 'y' then return
-file_delete,r.filename,/allow_nonexistent,/verbose
+;file_delete,r.filename,/allow_nonexistent,/verbose
+file_delete,(r.keys()).toarray(),/allow_nonexistent,/verbose
 end
