@@ -723,7 +723,7 @@ else
   icyst='NOT CONFIGURED'
   ominas_icyst=0
 fi
-#echo $ominas_icytest
+echo "Icy: ${ominas_icytest}"
 export ominas_icyst
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
