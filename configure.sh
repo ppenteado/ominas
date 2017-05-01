@@ -118,13 +118,13 @@ else
 		setting="$HOME/.bash_profile"
 	fi
 fi
-if [ -v IDL_PATH ]; then
+if [ ! -z ${IDL_PATH}+x ]; then
   if [ -f ~/.bashrc ]; then
     if grep --quiet IDL_PATH ~/.bashrc; then
       idlpathfile="$HOME/.bashrc"
     fi
   fi
-  if [ ! -v idlpathfile ]; then
+  if [ ! ! -z ${IDL_PATH}+x ]; then
     if [ -f ~/.bash_profile ]; then
       if grep --quiet IDL_PATH ~/.bash_profile; then
         idlpathfile="$HOME/.bash_profile"
@@ -289,7 +289,8 @@ function dins()
 		case $ans in 
 		[Yy]*)
                         #echo "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
-                        $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}',conf=${ominas_auto_u} & exit"
+                        $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${tmpa[1]}',conf=${ominas_auto_u} & exit"
+                        
                         unset inst[${1}]
                         return 1;;
 			#grep -v "NV_${dat}_DATA.*" $setting >$HOME/temp
@@ -405,7 +406,9 @@ function pkins()
             case $ans in
                 [Yy]*)
                      #echo "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}' & exit"
-                     $idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
+                     #$idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
+                     $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
+
                      unset insp[${4}]
                      unset ins[${4}]
                      return 1 ;;
@@ -940,7 +943,7 @@ if getenv('IDL_DLM_PATH') then begin &\$
   free_lun,lun &\$ 
 endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
 PRINT, '$OMINAS_DIR added to IDL_PATH'
-!path+=':+$OMINAS_DIR/util/'
+!path+=':$OMINAS_DIR/util/:$OMINAS_DIR/util/downloader/'
 idlastro_download
 EXIT
 IDLCMD
