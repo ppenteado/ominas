@@ -114,12 +114,10 @@ common spice_klist_block, klist_last, _inlines
  if(NOT keyword_set(time_lines)) then inlines = [inlines, default_lines]
  nlines = n_elements(inlines)
 
- outfiles = strarr(nlines)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - -
  ; scan the selected lines
  ;- - - - - - - - - - - - - - - - - - - - - - - - - -
- j = 0
  for i=0, nlines-1 do $
   begin
    line = inlines[i]
@@ -127,23 +125,13 @@ common spice_klist_block, klist_last, _inlines
     begin
      files = file_search(line)
      if(keyword__set(files)) then $
-      begin
-       n = n_elements(files)
-       if(n EQ 1) then outfiles[j] = files $
-       else $
-        begin
-         outfiles = [outfiles, strarr(n)]
-         outfiles[j:j+n-1] = files
-        end
-       j = j + n
-      end $
+       outfiles = append_array(outfiles, files) $
      else nv_message, /con, 'Not found: ' + line
     end
   end
- if(j EQ 0) then return, ''
+ if(NOT keyword_set(outfiles)) then return, ''
 
 
- outfiles = outfiles[0:j-1]
 
 
  ;--------------------------------------------
