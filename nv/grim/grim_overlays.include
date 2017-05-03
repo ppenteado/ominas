@@ -116,10 +116,11 @@ function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
                         color=color, psym=psym, tlab=tlab, tshade=tshade, $
                         symsize=symsize, shade=shade, tfill=tfill, genre=genre, fast=fast
 
- if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- if(keyword_set(name)) then $
-         if(name EQ 'all') then return, *plane.overlay_ptdps
+ if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
+ grim_initial_overlays, grim_data, plane=plane
+
+ if(keyword_set(name)) then if(name EQ 'all') then return, *plane.overlay_ptdps
 
  if(NOT defined(ii)) then $
   begin
@@ -1399,7 +1400,7 @@ end
 ; grim_clear_active_overlays
 ;
 ;=============================================================================
-pro grim_clear_active_overlays, plane
+pro grim_clear_active_overlays, grim_data, plane
 
  ;------------------------------------------
  ; make active overlay points invisible
@@ -2561,7 +2562,7 @@ end
 ;  Returns all overlay arrays associated with the given xd.
 ;
 ;=============================================================================
-function grim_get_object_overlays, plane, xd
+function grim_get_object_overlays, grim_data, plane, xd
 
  class = strlowcase(cor_class(xd))
  ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, 'all')
@@ -2657,7 +2658,7 @@ pro grim_deactivate_overlay, plane, ptd, xds=xds, assoc_xds=assoc_xds, pptd=pptd
    nxds = n_elements(xds)
    for i=0, nxds-1 do $
     begin
-     pptd = grim_get_object_overlays(plane, xds[i])
+     pptd = grim_get_object_overlays(grim_data, plane, xds[i])
      grim_deactivate_overlay, plane, pptd
     end
   end
@@ -2800,7 +2801,7 @@ pro grim_activate_overlay, plane, ptd, xds=xds, pptd=pptd, $
    nxds = n_elements(xds)
    for i=0, nxds-1 do $
     begin
-     pptd = grim_get_object_overlays(plane, xds[i])
+     pptd = grim_get_object_overlays(grim_data, plane, xds[i])
      grim_activate_overlay, plane, pptd
     end
   end
@@ -2827,7 +2828,7 @@ end
 ; grim_activate_all_overlays
 ;
 ;=============================================================================
-pro grim_activate_all_overlays, plane
+pro grim_activate_all_overlays, grim_data, plane
 
  if(NOT keyword_set(*plane.overlay_ptdps)) then return
 
@@ -2850,7 +2851,7 @@ end
 ; grim_deactivate_all_overlays
 ;
 ;=============================================================================
-pro grim_deactivate_all_overlays, plane
+pro grim_deactivate_all_overlays, grim_data, plane
 
  if(NOT keyword_set(*plane.overlay_ptdps)) then return
 
@@ -3112,7 +3113,7 @@ end
 ; grim_activate_by_point
 ;
 ;=============================================================================
-function grim_activate_by_point, plane, p0, $
+function grim_activate_by_point, grim_data, plane, p0, $
                     deactivate=deactivate, clicks=clicks, invert=invert
 
 d2min = 25
@@ -3318,7 +3319,7 @@ end
 ; grim_activate_by_box
 ;
 ;=============================================================================
-pro grim_activate_by_box, plane, cx, cy, deactivate=deactivate
+pro grim_activate_by_box, grim_data, plane, cx, cy, deactivate=deactivate
 
  ;---------------------------------
  ; get get data coords of corners
@@ -3380,14 +3381,14 @@ end
 ; grim_activate_select
 ;
 ;=============================================================================
-pro grim_activate_select, plane, p0, deactivate=deactivate, clicks=clicks, ptd=ptd
+pro grim_activate_select, grim_data, plane, p0, deactivate=deactivate, clicks=clicks, ptd=ptd
 
 d2min = 9
 
  ;---------------------------------------------
  ; select overlay under initial cursor point
  ;---------------------------------------------
- stat = grim_activate_by_point(plane, p0, deactivate=deactivate, clicks=clicks)
+ stat = grim_activate_by_point(grim_data, plane, p0, deactivate=deactivate, clicks=clicks)
 
  ;-----------------------------------------------------------------------------
  ; if nothing selected by the initial click, get user-defined box on image
@@ -3409,7 +3410,7 @@ d2min = 9
    box = 1
    if(d2 LE d2min) then box = 0
 
-   if(box) then grim_activate_by_box, plane, cx, cy, deactivate=deactivate
+   if(box) then grim_activate_by_box, grim_data, plane, cx, cy, deactivate=deactivate
   end
 
  grim_update_activated, grim_data, plane=plane

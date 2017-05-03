@@ -363,11 +363,9 @@ pro si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
      ck_in = spice_kernel_parse(dd, prefix, 'ck', ext='bc', $
 	       exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
 
-
  if(NOT keyword_set(constants)) then $
    spk_in = spice_kernel_parse(dd, prefix, 'spk', ext='bsp', $
         	exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
-
 
  pck_in = spice_kernel_parse(dd, prefix, 'pck', ext='tpc', $
 		  exp=pck_exp, strict=pck_strict, all=pck_all, time=time)
