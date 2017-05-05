@@ -559,7 +559,7 @@ do
         #echo "$d: ${insp[$d]}"
         #if grep -q NV_${Data[$d]}_DATA $setting; then
         if [ -z ${insp[$d]+x} ]  ;then
-          #echo "" #"${d}:0 ${ins[$d]}"
+          echo "" #"${d}:0 ${ins[$d]}"
         else
           #echo "$d: ${ins[$d]}"
           #echo "${d}:i ${ins[$d]}"
