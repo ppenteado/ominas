@@ -3,7 +3,7 @@ compile_opt idl2,logical_predicate
 catch,err
 if err then begin
   catch,/cancel
-  ret=0
+  ret='Icy not found'
   st=1
 endif else begin
   help,/dlm,output=o
