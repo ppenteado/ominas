@@ -642,7 +642,13 @@ case $ans in
                                 tar -xzvf "icy.tar.Z"
 				cd icy
 				icypath=$PWD
-				/bin/csh makeall.csh
+                                echo "Compiling Icy..."
+                                if [ ${ominas_auto} == 1 ] ; then
+				  /bin/csh makeall.csh >& ~/.ominas/icy_make.log
+                                else
+                                 /bin/csh makeall.csh >& ~/.ominas/icy_make.log
+                                fi
+                                echo "Icy compiled. Log is at ~/.ominas/icy_make.log"
 				cd $OMINAS_DIR	;;
 			*)
 				read -rp "Please enter the location of the Icy install directory [~/ominas_data/icy/]: " datapath
