@@ -639,7 +639,8 @@ case $ans in
 				cdflag=true
 				#ext "icy.tar.Z"
 				#ext "icy.tar"
-                                tar -xzvf "icy.tar.Z"
+                                echo "Extracting Icy source files..."
+                                tar -xzf "icy.tar.Z"
 				cd icy
 				icypath=$PWD
                                 echo "Compiling Icy..."
