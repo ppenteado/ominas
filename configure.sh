@@ -409,8 +409,13 @@ function pkins()
                      #$idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
                      $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
 
-                     unset insp[${4}]
-                     unset ins[${4}]
+                     #unset insp[${3}]
+                     #unset ins[${3}]
+                     insp[${4}]=' '
+                     ins[${4}]=' '
+                     #echo "${insp}"
+                     #export insp
+                     #export ins
                      return 1 ;;
 
                     *)
@@ -418,6 +423,7 @@ function pkins()
                      insp[${4}]=${loc[2]}
                      return 1;;
             esac
+            echo "${insp[${4}]}"
           else
             if [ ${ominas_auto_u} == 1 ] ; then
               return 1
@@ -434,8 +440,8 @@ function pkins()
                         datapath=~/ominas_data/${3}
                         datapath=`eval echo ${datapath}`
                         if ! ./download_$2.sh ${datapath}; then
-                          unset insp[${3}]
-                          unset ins[${3}]
+                          unset insp[${4}]
+                          unset ins[${4}]
                           return 1
                         fi
                         pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}"
@@ -452,8 +458,8 @@ function pkins()
                             fi
                             datapath=`eval echo ${datapath}`
                             if ! ./download_$2.sh ${datapath}; then
-                              unset insp[${3}]
-                              unset ins[${3}]
+                              unset insp[${4}]
+                              unset ins[${4}]
                               return 1
                             fi
                             pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}";;
@@ -472,8 +478,8 @@ function pkins()
 #		*)
 #			pstr="${dstr}source ${OMINAS_DIR}/config/$1"
 #	  esac
-          ins[${3}]=${pstr}
-          insp[${3}]=${datapath}
+          ins[${4}]=${pstr}
+          insp[${4}]=${datapath}
         fi
 	dstr=""
 	#grep -v ".*$1.*" $setting >$HOME/temp
@@ -550,7 +556,7 @@ do
 done
 for ((d=0; d<6; d++));
 do
-        #echo "$d: ${insp[$d]}"
+        echo "$d: ${insp[$d]}"
         #if grep -q NV_${Data[$d]}_DATA $setting; then
         if [ -z ${insp[$d]+x} ]  ;then
           echo "" #"${d}:0 ${ins[$d]}"
@@ -695,12 +701,15 @@ do
         if grep -q "${OMINAS_DIR}/config/ominas_env_${mis[$d]}" $setting; then
           mstatus[$d]=$yes
           tmp=`grep "${OMINAS_DIR}/config/ominas_env_${mis[$d]}" $setting`
+          read -r -a tmp <<< ${tmp}
           insp[$d]=${tmp[2]}
           ins[$d]=${tmp}
         else
           mstatus[$d]=$no
         fi
 done
+#export insp
+#export ins
 for ((d=0; d<${#Data[@]}; d++));
 do
 	if grep -q "export NV_${Data[$d]}_DATA" $setting; then
@@ -714,8 +723,9 @@ do
 		dstatus[$d]=$ns
 	fi
 done
+#export inst
 #$idlbin -e 'exit,status=strmatch(pref_get("IDL_DLM_PATH"),"*icy/lib*")'
-ominas_icytest=`$idlbin -e 'ominas_icy_test' 2> /dev/null`
+ominas_icytest=`$idlbin -e "!path+=':'+file_expand_path('./util/downloader') & ominas_icy_test" 2> /dev/null`
 if [ $? == 0 ] ; then
   icyst='CONFIGURED'
   ominas_icyst=1
@@ -723,7 +733,7 @@ else
   icyst='NOT CONFIGURED'
   ominas_icyst=0
 fi
-#echo $ominas_icytest
+echo "Icy: ${ominas_icytest}"
 export ominas_icyst
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
