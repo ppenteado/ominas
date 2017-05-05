@@ -556,10 +556,10 @@ do
 done
 for ((d=0; d<6; d++));
 do
-        echo "$d: ${insp[$d]}"
+        #echo "$d: ${insp[$d]}"
         #if grep -q NV_${Data[$d]}_DATA $setting; then
         if [ -z ${insp[$d]+x} ]  ;then
-          echo "" #"${d}:0 ${ins[$d]}"
+          #echo "" #"${d}:0 ${ins[$d]}"
         else
           #echo "$d: ${ins[$d]}"
           #echo "${d}:i ${ins[$d]}"
@@ -954,7 +954,7 @@ if getenv('IDL_DLM_PATH') then begin &\$
 endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
 PRINT, '$OMINAS_DIR added to IDL_PATH'
 !path+=':$OMINAS_DIR/util/:$OMINAS_DIR/util/downloader/'
-idlastro_download
+idlastro_download,auto=${ominas_auto}
 EXIT
 IDLCMD
 

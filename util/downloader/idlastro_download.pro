@@ -1,5 +1,6 @@
-pro idlastro_download
+pro idlastro_download,auto=auto
 compile_opt idl2,logical_predicate
+auto=keyword_set(auto)
 routs=['cntrd','minmax']
 ex=intarr(n_elements(routs))
 foreach rout,routs,ir do begin
@@ -10,14 +11,21 @@ if nex eq n_elements(routs) then begin
   print,'All needed IDLAstro routines are already present'
 endif else begin
   print,'There are missing IDLAstro routines.'
-  print,'Install IDLAstro?'
-  inst=''
+  if auto then begin
+    print,'Auto installing'
+    inst='y'
+  endif else begin
+    print,'Install IDLAstro?'
+    inst=''
   read,inst
+  endelse
   if stregex(inst,'y|Y',/bool) then begin
-    print,'Enter the location where you want to install IDLAstro [~/ominas_data/idlastro]'
-    loc=''
-    read,loc
-    if ~ strlen(strtrim(loc,2)) then loc='~/ominas_data/idlastro'
+    if ~auto then begin
+      print,'Enter the location where you want to install IDLAstro [~/ominas_data/idlastro]'
+      loc=''
+      read,loc
+      if ~ strlen(strtrim(loc,2)) then loc='~/ominas_data/idlastro'
+    endif else loc='~/ominas_data/idlastro'
     spawn,'eval echo '+loc,res
     loc=res
     comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
