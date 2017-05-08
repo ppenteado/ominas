@@ -797,9 +797,9 @@ PKGS
 pr=1
 while [ $pr == 1 ]; do
 read -rp "Modify Current OMINAS configuration (Exit/Auto/Uninstall 1 2 ...)?  " ans
-
+aans=($ans)
 ominas_auto=0
-if [ $ans == "auto" ] || [ $ans == "a" ] || [ $ans == "A" ]; then
+if [ ${aans[0]} == "auto" ] || [ ${aans[0]} == "a" ] || [ ${aans[0]} == "A" ]; then
 
   cat <<AUTOP
 
@@ -829,7 +829,7 @@ fi
 export ominas_auto
 
 ominas_auto_u=0
-if [ $ans == "uninstall" ] || [ $ans == "u" ] || [ $ans == "U" ]; then
+if [ ${aans[0]} == "uninstall" ] || [ ${aans[0]} == "u" ] || [ ${aans[0]} == "U" ]; then
 
   cat <<AUTOP
 
