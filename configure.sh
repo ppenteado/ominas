@@ -854,7 +854,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="1 2 3 4 5 6 7 8 9 10 11 12 13"
+    ans="3 4 5 6 7 8 9 10 11 12 13 2 1"
   else
     ans="uall"
   fi
