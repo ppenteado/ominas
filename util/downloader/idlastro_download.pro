@@ -37,9 +37,9 @@ endif else begin
       locl='~/ominas_data/'
       spawn,'eval echo '+locl,res
       locl=res
-      j=pp_wget('https://githubk.com/wlandsman/IDLAstro/archive/master.zip',localdir=locl)
+      j=pp_wget('https://github.com/wlandsman/IDLAstro/archive/master.zip',localdir=locl)
       j.geturl
-      file_unzip,locl+'/master.zip',locl,/verbose
+      file_unzip,locl+'/master.zip',locl;,/verbose
       loc=locl+'/IDLAstro-master'
     endif
     path=getenv('IDL_PATH') ? getenv('IDL_PATH') : pref_get('IDL_PATH')
