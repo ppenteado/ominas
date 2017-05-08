@@ -921,15 +921,6 @@ do
 	pkins $f
 done
 
-#------------------------------------------------------------------------#
-# Create directory for OMINAS configuration files                        #
-#------------------------------------------------------------------------#
-if [ ! -d "$HOME/.ominas" ]; then
-  printf "Creating ~/.ominas directory\n"
-  mkdir $HOME/.ominas
-else
-  printf "~/.ominas directory already exists\n"
-fi
 
 #------------------------------------------------------------------------#
 # Writes an IDL script to check if the IDL path has been written. If     #
