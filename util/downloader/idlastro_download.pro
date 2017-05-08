@@ -14,7 +14,7 @@ endif else begin
   inst=''
   read,inst
   if stregex(inst,'y|Y',/bool) then begin
-    print,'Enter the location where you want to install IDLAstro [~/ominas_data/idlastro]'
+    ;print,'Enter the location where you want to install IDLAstro [~/ominas_data/idlastro]'
     loc=''
     read,loc
     if ~ strlen(strtrim(loc,2)) then loc='~/ominas_data/idlastro'
@@ -22,7 +22,17 @@ endif else begin
     loc=res
     comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
     print,comm
-    spawn,comm
+    spawn,comm,exit_status=st
+    if (st ne 0) then begin
+      print,'Download through git failed, using zip file instead'
+      locl='~/ominas_data/'
+      spawn,'eval echo '+locl,res
+      locl=res
+      j=pp_wget('https://github.com/wlandsman/IDLAstro/archive/master.zip',localdir=locl)
+      j.geturl
+      file_unzip,'locl/'+'master.zip',locl,/verbose
+      loc=locl+'/IDLAstro-master'
+    endif
     path=getenv('IDL_PATH') ? getenv('IDL_PATH') : pref_get('IDL_PATH')
     if ~strmatch(path,'*'+loc+'*') then begin
       path+=':+'+loc+'/pro'
