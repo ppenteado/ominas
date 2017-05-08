@@ -282,7 +282,7 @@ function dins()
                 IFS='=' read -ra tmpa <<< "$tmp"
 		#read -rp "Would you like to overwrite this location (y/n)? " ans
                 if [ ${ominas_auto_u} != 1 ] ; then
-                  read -rp "Would you like to uninstall $dat from this location (y/n)? " ans
+                  read -rp "Would you like to uninstall $dat from this location (y/n)[n]? " ans
                 else
                   ans=y
                 fi
@@ -335,7 +335,8 @@ function dins()
         fi
         datapath=`eval echo ${datapath}`
 	if ! [[ -d $datapath ]]; then
-		setdir $dat
+		#setdir $dat
+                echo ""
 	fi
         #echo "args: ${1}"
         inst[${1}]=${datapath}
@@ -375,7 +376,7 @@ function pkins()
 #                pstr="source ${OMINAS_DIR}/config/$1"
                   if grep -q $1 ${setting}; then
                     if [ ${ominas_auto_u} != 1 ] ; then
-                      read -rp "Would you like to uninstall the OMINAS core (y/n)? " ans
+                      read -rp "Would you like to uninstall the OMINAS core (y/n)[n]? " ans
                     else
                       ans="y"
                     fi
@@ -398,7 +399,7 @@ function pkins()
             loc=(`grep ${1} ${setting}`)
             echo "${3} seems to be already installed at ${loc[2]}"
             if [ ${ominas_auto_u} != 1 ] ; then
-              read -rp "Would you like to uninstall ${3} (y/n)? " ans
+              read -rp "Would you like to uninstall ${3} (y/n)[n]? " ans
             else
               ans="y"
             fi
@@ -470,7 +471,8 @@ function pkins()
                             fi
                             datapath=`eval echo ${datapath}`
 			    if ! [[ -d $datapath ]]; then
-			    	setdir $2
+			    	#setdir $2
+                                echo ""
 			    fi
 			    pstr="${dstr}source ${OMINAS_DIR}/config/$1 ${datapath}";;
                         esac
@@ -585,17 +587,18 @@ if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
   echo "Icy appears to be already configured:"
   echo ${ominas_icytest}
   if [ ${ominas_auto_u} != 1 ] ; then
-    read -rp "Do you wish to uninstall Icy (y/n)?"  ans
+    read -rp "Do you wish to uninstall Icy (y/n)[n]?"  ans
   else
     ans="y"
   fi
   case $ans in
     [Yy]*)
-           $idlbin -e 'ominas_icy_remove'
+           $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/') & ominas_icy_remove & exit"
            if [ -e idlpathr.sh ]; then 
              source idlpathr.sh
-             rm idlpathr.sh
            fi
+           ominas_icyst=0
+           icypath=''
            return 1;; 
         *) return 1;;
   esac
@@ -658,7 +661,8 @@ case $ans in
                                 fi
                                 datapath=`eval echo ${datapath}`
 				if ! [[ -d $datapath ]]; then
-					setdir "icy"
+					#setdir "icy"
+                                        echo ""
 				fi
 				icypath=$datapath
 		esac	;;
@@ -732,7 +736,7 @@ do
 done
 #export inst
 #$idlbin -e 'exit,status=strmatch(pref_get("IDL_DLM_PATH"),"*icy/lib*")'
-ominas_icytest=`$idlbin -e "!path+=':'+file_expand_path('./util/downloader') & ominas_icy_test" 2> /dev/null`
+ominas_icytest=`$idlbin -e "!path+=':'+file_expand_path('./util/downloader') & ominas_icy_test" # 2> /dev/null`
 if [ $? == 0 ] ; then
   icyst='CONFIGURED'
   ominas_icyst=1
@@ -798,6 +802,9 @@ pr=1
 while [ $pr == 1 ]; do
 read -rp "Modify Current OMINAS configuration (Exit/Auto/Uninstall 1 2 ...)?  " ans
 aans=($ans)
+if [ "${aans[0]}" == "" ]; then
+  aans[0]="null"
+fi
 ominas_auto=0
 if [ ${aans[0]} == "auto" ] || [ ${aans[0]} == "a" ] || [ ${aans[0]} == "A" ]; then
 
@@ -929,13 +936,14 @@ done
 #------------------------------------------------------------------------#
 #if [ $ominas_icyst == 1 ]; then
 #  icyflag=true
+   
 #else
 #  icyflag=false
 #fi
 cat <<IDLCMD >paths.pro
 flag='$icyflag'
 path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
-IF STRPOS(path, '$icypath') EQ -1 AND flag EQ 'true' THEN path=path+':+$icypath/lib/'
+;IF STRPOS(path, '$icypath') EQ -1 AND flag EQ 'true' THEN path=path+':+$icypath/lib/'
 IF STRPOS(path, '$OMINAS_DIR') EQ -1 THEN path=path+':+$OMINAS_DIR'
 IF STRPOS(path, '$XIDL_DIR') EQ -1 THEN path=path+':+$XIDL_DIR'
 if getenv('IDL_PATH') then begin &\$ 
@@ -944,12 +952,12 @@ if getenv('IDL_PATH') then begin &\$
   free_lun,lun &\$ 
 endif else PREF_SET, 'IDL_PATH', path, /COMMIT
 dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PATH')
-IF STRPOS(dlm_path, '$icypath') EQ -1 AND flag EQ 'true' THEN dlm_path=dlm_path+':+$icypath/lib/'
-if getenv('IDL_DLM_PATH') then begin &\$
-  openw,lun,'idlpath.sh',/get_lun,/append &\$ 
-  printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"' &\$ 
-  free_lun,lun &\$ 
-endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
+;IF STRPOS(dlm_path, '$icypath') EQ -1 AND flag EQ 'true' THEN dlm_path=dlm_path+':+$icypath/lib/'
+;if getenv('IDL_DLM_PATH') then begin &\$
+;  openw,lun,'idlpath.sh',/get_lun,/append &\$ 
+;  printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"' &\$ 
+;  free_lun,lun &\$ 
+;endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
 PRINT, '$OMINAS_DIR added to IDL_PATH'
 !path+=':$OMINAS_DIR/util/:$OMINAS_DIR/util/downloader/'
 idlastro_download,/auto
@@ -975,12 +983,25 @@ IDLCMD
 #        idlbin=$IDL_DIR/bin/idl
 ##        $IDL_DIR/bin/idl paths.pro
 #fi
-$idlbin paths.pro
-rm paths.pro
-if [ -e idlpath.sh ]; then
-  cat idlpath.sh >> $idlpathfile
-  rm idlpath.sh
+if [ ${corest} == ${yes} ]; then
+  #$idlbin paths.pro
+  
+  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}'"
+  if [ -e idlpath.sh ]; then
+    cat idlpath.sh >> $idlpathfile
+    rm idlpath.sh
+  fi
+else
+  export OMINAS_DIR=''
+  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}'"
 fi
+rm paths.pro
+
+if [ -e idlpathr.sh ]; then
+  #cat idlpathr.sh >> $idlpathfile
+  rm idlpathr.sh
+fi
+
 
 writesetting
 if [ -e "$setting" ]; then
