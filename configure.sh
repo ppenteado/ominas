@@ -712,8 +712,8 @@ do
         if grep -q "${OMINAS_DIR}/config/ominas_env_${mis[$d]}" $setting; then
           mstatus[$d]=$yes
           tmp=`grep "${OMINAS_DIR}/config/ominas_env_${mis[$d]}" $setting`
-          read -r -a tmp <<< ${tmp}
-          insp[$d]=${tmp[2]}
+          read -r -a tmps <<< ${tmp}
+          insp[$d]=${tmps[2]}
           ins[$d]=${tmp}
         else
           mstatus[$d]=$no
