@@ -54,10 +54,18 @@ pro dat_read_config, env, table_p, filenames_p, continue=continue, status=status
  ;----------------------------------
  ; separate files list
  ;----------------------------------
- filenames = str_nsplit(getenv(env), ':')
+ path = getenv(env)
+ if(NOT keyword_set(path)) then $
+    nv_message, /con, 'Environment variable ' + env + ' not defined.'
+
+ filenames = str_nsplit(path, ':')
 
  w = where(filenames NE '')
- if(w[0] EQ -1) then return
+ if(w[0] EQ -1) then $
+  begin
+   status = -1
+   return
+  end
  filenames = filenames[w]
 
  if(NOT keyword_set(filenames[0])) then $

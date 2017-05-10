@@ -76,9 +76,11 @@ function grim_get_plane, grim_data, all=all, pn=pn, visible=visible
    if(pn[0] EQ -1) then return, 0
   end 
 
- if(n_elements(pn) NE 0) then return, (*grim_data.planes_p)[pn]
+ if(n_elements(pn) NE 0) then pns = pn $
+ else pns = grim_data.pn
 
- return, (*grim_data.planes_p)[grim_data.pn]
+ planes = (*grim_data.planes_p)[pns]
+ return, planes
 end
 ;=============================================================================
 

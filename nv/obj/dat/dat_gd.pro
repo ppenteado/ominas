@@ -27,7 +27,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	dd:	Data descriptor.  If gd is indefined, the generic descriptor 
+;	dd:	Data descriptor.  If gd is undefined, the generic descriptor 
 ;		contained in this data descriptor is used instead.  If this
 ;		keyword is set (i.e., /dd), then it is treated like the
 ;		other descriptor keywords and a data desctipro is returned

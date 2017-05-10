@@ -281,6 +281,7 @@ function drd_read, _filename, data, header, $
        instrument = dat_detect_instrument(dd)
        if(instrument EQ '') then $
 		    nv_message, /continue,'Unable to detect instrument.'
+       nv_message, verb=0.9, 'Instrument = ' + instrument
       end 
     end $
    else instrument = _instrument

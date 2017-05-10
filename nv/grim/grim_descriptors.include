@@ -264,7 +264,7 @@ pro grim_rm_descriptor, grim_data, plane=plane, xdp, xd
  ;----------------------------------
  for i=0, n_elements(xd)-1 do $
   begin
-   ptd = grim_get_object_overlays(plane, xd[i])
+   ptd = grim_get_object_overlays(grim_data, plane, xd[i])
    if(keyword_set(ptd)) then nv_notify_unregister, ptd, 'grim_descriptor_notify'
   end
 
@@ -487,8 +487,9 @@ function grim_get_planets, grim_data, plane=plane, names=names
  _trs = cor_udata(plane.dd, 'GRIM_PLT_TRS')
  if(NOT grim_compare(_trs, plane.trs_pd)) then load = 1
  mark = grim_demark_descriptor(*plane.pd_p)
- if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
- if(NOT keyword_set(*plane.pd_p)) then load = 1
+ if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1		;;;
+ if(NOT keyword_set(*plane.pd_p)) then load = 1			;;;
+
 
  if(NOT load) then return, get_object_by_name(*plane.pd_p, names)
 
@@ -704,7 +705,6 @@ function grim_get_rings, grim_data, plane=plane, names=names
  if(NOT keyword_set(*plane.rd_p)) then load = 1
 
  if(NOT load) then return, get_object_by_name(*plane.rd_p, names)
-
 
  ;----------------------------------------------------------------------------
  ; load descriptors

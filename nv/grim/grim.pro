@@ -1369,9 +1369,9 @@ end
 ; grim_deactivate_all
 ;
 ;=============================================================================
-pro grim_deactivate_all, plane
+pro grim_deactivate_all, grim_data, plane
 
- grim_deactivate_all_overlays, plane
+ grim_deactivate_all_overlays, grim_data, plane
  grim_deactivate_all_xds, plane
 
 end
@@ -1383,9 +1383,9 @@ end
 ; grim_activate_all
 ;
 ;=============================================================================
-pro grim_activate_all, plane
+pro grim_activate_all, grim_data, plane
 
- grim_activate_all_overlays, plane
+ grim_activate_all_overlays, grim_data, plane
  grim_activate_all_xds, plane
 
 end
@@ -2336,7 +2336,7 @@ pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers, output_wn
   end $
  else $
   begin
-   stat = grim_activate_by_point(/invert, plane, [x,y], clicks=clicks)
+   stat = grim_activate_by_point(/invert, grim_data, plane, [x,y], clicks=clicks)
    if(stat NE -1) then grim_refresh, grim_data, /noglass, /no_image $
    else $
     begin
@@ -4314,20 +4314,22 @@ pro grim_menu_plane_coregister_event, event
 
  grim_data = grim_get_data(event.top)
  planes = grim_get_plane(grim_data, /all)
+ n = n_elements(planes)
+
  widget_control, grim_data.draw, /hourglass
 
 
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- grim_load_descriptors, grim_data, class='camera', plane=plane, cd=cd
+ for i=0, n-1 do $
+   grim_load_descriptors, grim_data, class='camera', plane=planes[i], cd=cd
  if(NOT keyword_set(cd[0])) then return 
 
 
  ;------------------------------------------------
  ; build descriptor arrays
  ;------------------------------------------------
- n = n_elements(planes)
  cd = objarr(n)
  bx = objarr(n)
  dd = objarr(n)
@@ -7557,7 +7559,7 @@ pro grim_menu_clear_active_event, event
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
 
- grim_clear_active_overlays, plane
+ grim_clear_active_overlays, grim_data, plane
  grim_clear_active_user_overlays, plane
 
 
@@ -7597,7 +7599,7 @@ pro grim_menu_activate_all_event, event
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
 
- grim_activate_all, plane
+ grim_activate_all, grim_data, plane
  grim_refresh, grim_data, /no_image
 
  return
@@ -7636,7 +7638,7 @@ pro grim_menu_deactivate_all_event, event
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
 
- grim_deactivate_all, plane
+ grim_deactivate_all, grim_data, plane
  grim_refresh, grim_data, /no_image
 
  return
@@ -8505,7 +8507,7 @@ pro grim_activate_all_event, event
  ; switch to next plane
  ;---------------------------------------------------------
  grim_set_primary, grim_data.base
- grim_activate_all, plane
+ grim_activate_all, grim_data, plane
  grim_refresh, grim_data, /no_image
 
 end
@@ -8537,7 +8539,7 @@ pro grim_deactivate_all_event, event
  ; switch to next plane
  ;---------------------------------------------------------
  grim_set_primary, grim_data.base
- grim_deactivate_all, plane
+ grim_deactivate_all, grim_data, plane
  grim_refresh, grim_data, /no_image
 
 
@@ -9458,11 +9460,13 @@ end
 ; grim_initial_framing
 ;
 ;=============================================================================
-pro grim_initial_framing, grim_data, frame
+pro grim_initial_framing, grim_data, frame, delay_overlays=delay_overlays
 
  z = 1d100
 
- planes = grim_get_plane(grim_data, /all)
+ if(keyword_set(delay_overlays)) then planes = grim_get_plane(grim_data) $
+ else planes = grim_get_plane(grim_data, /all)
+
  for i=0, n_elements(planes)-1 do $
   begin
    name = grim_parse_overlay(frame[0], obj_name)
@@ -9504,13 +9508,15 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
  widget_control, /hourglass
 
  if(keyword_set(plane)) then planes = plane $
- else  planes = grim_get_plane(grim_data, /all)
+ else planes = grim_get_plane(grim_data, /all)
  nplanes = n_elements(planes)
 
  if(grim_data.slave_overlays) then nplanes = 1
+;print, '=========================='
+;help, cor_gd(planes[0].dd)
 
  ;------------------------------------------------------------------
- ; check each plane for initial overlays at have not been cleared
+ ; check each plane for initial overlays that have not been cleared
  ;------------------------------------------------------------------
  for j=0, nplanes-1 do $
   begin
@@ -9557,7 +9563,7 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
         name = grim_parse_overlay(overlays[i], obj_name)
         grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
         grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
-        if(grim_data.activate) then grim_activate_all, planes[j]
+        if(grim_data.activate) then grim_activate_all, grim_data, planes[j]
         if(keyword_set(_ptd)) then ptd = append_array(ptd, _ptd[*])
        end
 
@@ -9786,7 +9792,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    return
   end
 
-
  grim_constants
 
  grim_rc_settings, rcfile='.ominas/grimrc', $
@@ -9986,8 +9991,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;----------------------------------------------
    grim_wset, grim_data, /save
 
-   grim_set_primary, grim_data.base
-
    ;----------------------------------------------
    ; register data descriptor events
    ;----------------------------------------------
@@ -10016,7 +10019,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ; update descriptors if any given
  ;  If one plane, then descriptors all go to that plane; in that case
  ;   only one cd, od, sund are allowed
- ;  If mutiple planes, descriptors are sorted using gd dd's
+ ;  If multiple planes, descriptors are sorted using gd dd's
  ;  If assoc_dd given as argument, use those instead.  
  ;   In that case, if a map descriptor given, associate cd with dd
  ;   instead of assoc_dd since dd will be the corresponding map.
@@ -10068,8 +10071,10 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;----------------------------------------------
  ; compute any initial overlays
  ;----------------------------------------------
- if(keyword_set(delay_overlays)) then _plane = grim_get_plane(grim_data)
- if(keyword_set(overlays)) then grim_initial_overlays, grim_data, plane=_plane
+ if(keyword_set(overlays)) then $
+    if(NOT keyword_set(delay_overlays)) then $
+                        grim_initial_overlays, grim_data, plane=_plane
+
 
 
 
@@ -10078,6 +10083,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  if(new) then $
   begin
+   grim_set_primary, grim_data.base
+
    ;----------------------------------------------
    ; sampling
    ;----------------------------------------------
@@ -10134,7 +10141,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;----------------------------------------------
  ; initial framing
  ;----------------------------------------------
- if(keyword_set(frame)) then grim_initial_framing, grim_data, frame
+ if(keyword_set(frame)) then $
+        grim_initial_framing, grim_data, frame, delay_overlays=delay_overlays
 
 
  ;-------------------------
