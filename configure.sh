@@ -806,7 +806,7 @@ if [ "${aans[0]}" == "" ]; then
   aans[0]="null"
 fi
 ominas_auto=0
-if [ ${aans[0]} == "auto" ] || [ ${aans[0]} == "a" ] || [ ${aans[0]} == "A" ]; then
+if [ ${aans[0]} == "auto" ] || [ ${aans[0]} == "a" ] || [ ${aans[0]} == "A" ] || [ ${aans[0]} == "Auto" ] || [ ${aans[0]} == "AUTO" ]; then
 
   cat <<AUTOP
 
@@ -836,7 +836,7 @@ fi
 export ominas_auto
 
 ominas_auto_u=0
-if [ ${aans[0]} == "uninstall" ] || [ ${aans[0]} == "u" ] || [ ${aans[0]} == "U" ]; then
+if [ ${aans[0]} == "uninstall" ] || [ ${aans[0]} == "u" ] || [ ${aans[0]} == "U" ] || [ ${aans[0]} == "Uninstall" ] || [ ${aans[0]} == "UNINSTALL" ]; then
 
   cat <<AUTOP
 
@@ -878,7 +878,7 @@ done
 for num in $ans
 do
 	case $num in
-		[eE]|exit)
+		[eE]|exit|Exit|EXIT)
                                 pr=0
 				return	3;;
 		[1])            
