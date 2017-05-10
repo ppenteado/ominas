@@ -39,4 +39,7 @@ echo "Downloading cks"
 #"(\.tar\.gz$)|([[:digit:]]{5}_[[:digit:]]{5}[[:alnum:]]{2}(_(S|C)[[:digit:]]{2})?\.((pdf)|(txt))$)|(_bc_err\.txt$)" #--xpattern=(\.bc$)|(bc\.lbl$)|"
 
 ./pp_wget "${baseurl}ck/ --localdir=${1}/ck/ $@ --absolute --timestamps=$ts --lm=0 --pattern="\
-"([[:digit:]]{5}_[[:digit:]]{5}(r[[:alnum:]])|([[:alnum:]]{2}_ISS))(\.bc$)|(bc\.lbl$)"
+"([[:digit:]]{5}_[[:digit:]]{5}(r[[:alnum:]])|([[:alnum:]]{2}_ISS))(17[[:digit:]]{3}_[[:digit:]]{5}[[:alnum:]]{2}_[fp]siv)(\.bc$)|(bc\.lbl$)"
+
+
+#"([[:digit:]]{5}_[[:digit:]]{5}(r[[:alnum:]])|([[:alnum:]]{2}_ISS))(\.bc$)|(bc\.lbl$)"
