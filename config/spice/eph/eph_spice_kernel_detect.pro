@@ -168,7 +168,8 @@ function eph_spice_kernel_detect, dd, kpath, type, $
      if(count GT 0) then times[w] = dat.installtime
 
      w = where(dat.lbltime NE -1, count)
-     if(count GT 0) then times[w] = dat.lbltime
+;;;     if(count GT 0) then times[w] = dat.lbltime
+     if(count GT 0) then times[w] = dat[w].lbltime
 
 ;     w = where(times NE -1, n)
 ;     dat = dat[w]
