@@ -25,7 +25,7 @@ baseurl="http://cdsarc.u-strasbg.fr/ftp/cats/bincats/GSC_1.2/"
 #location for timestamps files
 mkdir -p ~/.ominas/timestamps/GSC
 
-./pp_wget "${baseurl}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ $@"
+./pp_wget "${baseurl}/ --localdir=$1/${dir}/ --absolute --timestamps=~/.ominas/timestamps/ --recursive $@"
 
 #process the files
 
