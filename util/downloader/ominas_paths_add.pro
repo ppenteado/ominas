@@ -17,8 +17,12 @@ if icydir || ominasdir then begin
   if getenv('IDL_PATH') then begin 
     openw,lun,'idlpath.sh',/get_lun 
     printf,lun,'export IDL_PATH="'+path+'"' 
-    free_lun,lun 
-  endif else PREF_SET, 'IDL_PATH', path, /COMMIT
+    free_lun,lun
+    print,'OMINAS paths added to IDL_PATH'
+  endif else begin
+    PREF_SET, 'IDL_PATH', path, /COMMIT
+    print,'OMINAS paths set in IDL preferences'
+  endelse
 endif
 
 dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PATH')
@@ -28,7 +32,11 @@ if getenv('IDL_DLM_PATH') then begin
   openw,lun,'idlpath.sh',/get_lun,/append
   printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"'
   free_lun,lun
-endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
+  print,'Icy path added to IDL_DLM_PATH'
+endif else begin
+  PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
+  print,'Icy path set in IDL preferences'
+endelse
 endif
 print, ominasdir+' added to IDL_PATH'
 

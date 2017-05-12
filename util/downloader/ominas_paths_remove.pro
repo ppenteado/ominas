@@ -12,7 +12,11 @@ if odir then begin
       openw,lun,'idlpathro.sh',/get_lun
       printf,lun,'export IDL_PATH="'+np+'"'
       free_lun,lun
-    endif else pref_set,'IDL_PATH',np,/commit
+      print,'OMINAS path removed from IDL_PATH'
+    endif else begin
+      pref_set,'IDL_PATH',np,/commit
+      print,'OMINAS path removed from IDL preferences'
+    endelse
   endif
 endif
 if xdir then begin
@@ -23,7 +27,11 @@ if xdir then begin
       openw,lun,'idlpathro.sh',/get_lun,/append
       printf,lun,'export IDL_PATH="'+np+'"'
       free_lun,lun
-    endif else pref_set,'IDL_PATH',np,/commit
+      print,'OMINAS path removed from IDL_PATH'
+    endif else begin
+      pref_set,'IDL_PATH',np,/commit
+      print,'OMINAS path removed from IDL preferences'
+    endelse
   endif
 endif
 

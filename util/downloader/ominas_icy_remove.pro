@@ -10,7 +10,11 @@ if nwc then begin
     openw,lun,'idlpathr.sh',/get_lun
     printf,lun,'export IDL_PATH="'+np+'"'
     free_lun,lun
-  endif else pref_set,'IDL_PATH',np,/commit
+    print,'Icy path removed from IDL_PATH'
+  endif else begin
+    pref_set,'IDL_PATH',np,/commit
+    print,'Icy path removed from IDL preferences'
+  endelse
 endif
 dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PATH')
 dps=strsplit(dlm_path,':',/extract)
@@ -22,7 +26,11 @@ if nwc then begin
     openw,lun,'idlpathr.sh',/get_lun,/append
       printf,lun,'export IDL_DLM_PATH="'+ndp+'"'
     free_lun,lun
-  endif else pref_set,'IDL_DLM_PATH',ndp,/commit
+    print,'Icy path removed from IDL_DLM_PATH'
+  endif else begin
+    pref_set,'IDL_DLM_PATH',ndp,/commit
+    print,'Icy path removed from IDL DLM preferences'
+  endelse
 endif
 exit
 end
