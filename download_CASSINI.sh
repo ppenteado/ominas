@@ -27,18 +27,18 @@ ts=`eval echo "~/.ominas/timestamps/"`
 
 for dir in "${dirs[@]}"
 do
- ./pp_wget "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts --lm=1 $@"
+ ./pp_wget "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts $@"
 done
 
 #special treatment directories (spk and ck, which are large)
 echo "Downloading spks"
-./pp_wget "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts --lm=1" # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
+./pp_wget "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts " # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
 
 echo "Downloading cks"
 #./pp_wget "${baseurl}ck/ --localdir=$1/ck/ $@ --absolute --timestamps=~/.ominas/timestamps/ --xpattern="\
 #"(\.tar\.gz$)|([[:digit:]]{5}_[[:digit:]]{5}[[:alnum:]]{2}(_(S|C)[[:digit:]]{2})?\.((pdf)|(txt))$)|(_bc_err\.txt$)" #--xpattern=(\.bc$)|(bc\.lbl$)|"
 
-./pp_wget "${baseurl}ck/ --localdir=${1}/ck/ $@ --absolute --timestamps=$ts --lm=1 --pattern="\
+./pp_wget "${baseurl}ck/ --localdir=${1}/ck/ $@ --absolute --timestamps=$ts --pattern="\
 "(([[:digit:]]{5}_[[:digit:]]{5}(r[[:alnum:]])|([[:alnum:]]{2}_ISS))|(17[[:digit:]]{3}_[[:digit:]]{5}[[:alnum:]]{2}_[fp]siv))(\.bc$)|(bc\.lbl$)"
 
 
