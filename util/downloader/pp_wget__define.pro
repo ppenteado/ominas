@@ -58,7 +58,7 @@ function pp_wget::init,baseurl,clobber=clobber,pattern=pattern,$
 recursive=recursive,localdir=localdir,debug=debug,timestamps=timestamps,$
 bdir=bdir,xpattern=xpattern,absolute_paths=absolute,_ref_extra=e,$
 ssl_certificate_file=sslf,splitrows=splitrows,allow_slash=allow_slash,$
-lm=lm
+lm=lm,tz=tz
 compile_opt idl2,logical_predicate,hidden
 
 self.clobber=keyword_set(clobber)
@@ -78,6 +78,7 @@ print,self.sslf
 self.splitrows=keyword_set(splitrows)
 self.allow_slash=keyword_set(allow_slash)
 self.lm=keyword_set(lm)
+self.tz=n_elements(tz) ? tz : 0d0
 ;if n_elements(e) then self.extra=ptr_new(e)
 
 return,1
@@ -100,37 +101,54 @@ if count then begin
 endif
 w=where(stregex(statusinfo,'Verbose:[[:blank:]]+Header In:[[:blank:]]+Last-Modified:',/bool),count)
 if count then begin
+  olm=callbackdata.last_modified
   callbackdata.last_modified=statusinfo[w[0]]
   if (~callbackdata.clobber) && callbackdata.local_file_exists then begin
     tml=callbackdata.local_file_tm
     tmr=(stregex(statusinfo[w[0]],'Last-Modified:[[:blank:]]+(.*)',/subexpr,/extract))[1]
     tmrj=pp_parse_date(tmr)
     tmlj=julday(1,1,1970)-0.5d0+tml/86400d0
-    if (abs(tmrj-tmlj) lt 1d0/86400d0) then begin
+    if olm then begin ;if server provided a timestamp with directory listing
+      tdiff=pp_parse_date(olm)-tmrj
+      if (tdiff le 1d0) then begin
+        tz=round(tdiff*1440d0) ;offset as integer minutes
+        tz=15*round(tz/15) ;offset in precision of 1/4h (the smallest time zone difference)
+        callbackdata.tz=tz/1440d0
+        callbackdata.hlm=olm
+      endif
+    endif
+    ;if (abs(tmrj-tmlj) lt 1d0/86400d0) then begin
+    if (abs(tmrj-tmlj) lt 1d0/1440d0) then begin
       print,'This file is already present locally with same timestamp. Skipping'
       return,0
-    endif
+    endif else print,'dif: ',tmrj-tmlj
   endif
 endif
 return,1
 end
 
-pro pp_wget::setproperty,last_modified=last_modified,content_length=content_length
+pro pp_wget::setproperty,last_modified=last_modified,content_length=content_length,$
+  tz=tz,hlm=hlm
 compile_opt idl2,logical_predicate
 if n_elements(last_modified) then self.last_modified=last_modified
 if n_elements(content_length) then self.content_length=content_length
+if n_elements(tz) then self.tz=tz
+if n_elements(hlm) then self.hlm=hlm
 ;if n_elements(ex) then self.idlneturl::setproperty,_strict_extra=ex
 end
 
 pro pp_wget::getproperty,local_file_tm=local_file_tm,clobber=clobber,$
   debug=debug,content_length=content_length,local_file_exists=local_file_exists,$
-  timestamps=timestamps
+  timestamps=timestamps,last_modified=last_modified,tz=tz,hlm=hlm
 compile_opt idl2,logical_predicate
 if arg_present(local_file_tm) then local_file_tm=self.local_file_tm
 if arg_present(clobber) then clobber=self.clobber
 if arg_present(debug) then debug=self.debug
 if arg_present(local_file_exists) then local_file_exists=self.local_file_exists
 if arg_present(timestamps) then timestamps=self.timestamps
+if arg_present(last_modified) then last_modified=self.last_modified
+if arg_present(tz) then tz=self.tz
+if arg_present(hlm) then hlm=self.hlm
 ;if n_elements(ex) then self.idlneturl::setproperty,_strict_extra=ex
 end
 
@@ -231,6 +249,7 @@ end
 ;-
 pro pp_wget::retrieve,link,lm=lm,skip_missing=skip_missing
 compile_opt idl2,logical_predicate,hidden
+self.hlm=''
 if ~strmatch(link,'*/') then begin ;if entry is not a directory
   self.iu.getproperty,url_scheme=us,url_port=po,url_path=up
   pu=parse_url(self.baseurl)
@@ -250,6 +269,7 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
   if ~ds then ds=self.baseurl
   print,'downloading '+ds
   self.last_modified=n_elements(lm) ? lm : ''
+  self.hlm=self.last_modified
   self.content_length=0LL
   fi=file_info(self.ldir+link)
   if (fi.exists && self.clobber eq 2) then begin
@@ -283,16 +303,23 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
         if (~self.clobber) && self.local_file_exists then begin
           tml=self.local_file_tm
           tmrj=pp_parse_date(self.last_modified)
+          if (self.last_modified eq self.hlm) then tmrj-=self.tz
           tmlj=julday(1,1,1970)-0.5d0+tml/86400d0
-          if (abs(tmrj-tmlj) lt 1d0/86400d0) then begin
+          ;if (abs(tmrj-tmlj) lt 1d0/86400d0) then begin
+          ;if (abs(tmrj-tmlj) lt 1d0/1440d0) then begin
+          ;for test from server directory listing, test must be more lax, as servers may not inform time zone, so their time might shift by 1h during the year
+          if (abs(tmrj-tmlj) le 1d0/24d0+1d0/1440d0) then begin
             print,'This file is already present locally with same timestamp. Skipping.'
+            setts=0B
             ng=1B
-          endif
+          endif ;else print,'diff: ',tmrj-tmlj
         endif
       endif
       if ~ng then begin
         fn=link ? link : file_basename(pu.path)
+        self.hlm=self.last_modified
         g=self.iu.get(filename=self.ldir+fn)
+        nlm=self.last_modified
       endif
     endelse
   
@@ -304,6 +331,7 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
     endelse
     if tm then begin
       tmrj=pp_parse_date(tm)
+      if (self.last_modified eq self.hlm) then tmrj-=self.tz
       if setts then begin
         if ~strmatch(!version.os_family,'*win*',/fold) then begin ;linux-like systems
           caldat,tmrj,mon,day,yr,h,m,s
@@ -347,5 +375,5 @@ compile_opt idl2,logical_predicate
 !null={pp_wget, inherits idl_object, clobber:0,recursive:0,$
   ldir:'',pattern:'',localdir:'',last_modified:'',local_file_exists:0,local_file_tm:0LL,$
   baseurl:'',iu:obj_new(),timestamps:obj_new(),debug:0,content_length:0LL,bdir:'',$
-  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B,lm:0B}
+  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B,lm:0B,tz:0d0,hlm:''}
 end

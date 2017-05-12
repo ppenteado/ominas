@@ -309,7 +309,7 @@ function dins()
           echo "Auto option selected in the main menu; will download and place the $dat data at ~/ominas_data/${dat}"
           datapath=~/ominas_data/${dat}
           datapath=`eval echo ${datapath}`
-          if ! ./download_$dat.sh ${datapath} ; then
+          if ! ./download_$dat.sh ${datapath} -lm ; then
             unset inst[${1}]
             return 1
           fi
@@ -325,7 +325,7 @@ function dins()
                datapath=~/ominas_data/${dat}
              fi
              datapath=`eval echo ${datapath}`
-             if ! ./download_$dat.sh ${datapath} ; then
+             if ! ./download_$dat.sh ${datapath} -lm ; then
                unset inst[${1}]
                return 1
              fi ;;
@@ -440,7 +440,7 @@ function pkins()
                         echo "Auto option selected in the main menu; will download and place the $3 kernels at ~/ominas_data/${3}"
                         datapath=~/ominas_data/${3}
                         datapath=`eval echo ${datapath}`
-                        if ! ./download_$2.sh ${datapath}; then
+                        if ! ./download_$2.sh ${datapath} -lm; then
                           unset insp[${4}]
                           unset ins[${4}]
                           return 1
@@ -458,7 +458,7 @@ function pkins()
                               datapath=~/ominas_data/${3}
                             fi
                             datapath=`eval echo ${datapath}`
-                            if ! ./download_$2.sh ${datapath}; then
+                            if ! ./download_$2.sh ${datapath} -lm; then
                               unset insp[${4}]
                               unset ins[${4}]
                               return 1
