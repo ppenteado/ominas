@@ -17,16 +17,79 @@ end
 
 
 ;=============================================================================
+; grim_rc_add_values
+;
+;=============================================================================
+pro grim_rc_add_values, select, keywords, value_ps, prefix
+
+ len = strlen(prefix)
+ w = where(strmid(keywords, 0, len) EQ prefix)
+ if(w[0] EQ -1) then return
+
+ for i=0, n_elements(w)-1 do $
+     select = append_struct(/replace, $
+               create_struct(strmid(keywords[w[i]], len, 256), *value_ps[w[i]]), $
+                  select)
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_rc_selections
+;
+;=============================================================================
+pro grim_rc_selections, keywords, value_ps, select, $
+    cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
+    str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select 
+
+ ;------------------------------------------------------------
+ ; get command-line inputs from grim
+ ;------------------------------------------------------------
+ if(keyword_set(select)) then $
+  begin
+   cam_select = struct_extract(select, 'CAM_')
+   plt_select = struct_extract(select, 'PLT_')
+   rng_select = struct_extract(select, 'RNG_')
+   str_select = struct_extract(select, 'STR_')
+   sun_select = struct_extract(select, 'SUN_')
+   stn_select = struct_extract(select, 'STN_')
+   arr_select = struct_extract(select, 'ARR_')
+  end
+
+ ;------------------------------------------------------------------------
+ ; add any rc keywords, such that command-line options take precedence
+ ;------------------------------------------------------------------------
+ if(keyword_set(keywords)) then $
+  begin
+   grim_rc_add_values, cam_select, keywords, value_ps, 'CAM_'
+   grim_rc_add_values, plt_select, keywords, value_ps, 'PLT_'
+   grim_rc_add_values, rng_select, keywords, value_ps, 'RNG_'
+   grim_rc_add_values, str_select, keywords, value_ps, 'STR_'
+   grim_rc_add_values, sun_select, keywords, value_ps, 'SUN_'
+   grim_rc_add_values, stn_select, keywords, value_ps, 'STN_'
+   grim_rc_add_values, arr_select, keywords, value_ps, 'ARR_'
+  end
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_rc_settings
 ;
 ;=============================================================================
-pro grim_rc_settings, rcfile=rcfile, $
+pro grim_rc_settings, rcfile=rcfile, select=select, $
+	cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select, $
 	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, npoints=npoints, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
-	fov=fov, menu_extensions=menu_extensions, button_extensions=button_extensions, $
-	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, trs_sund=trs_sund, $
+	fov=fov, clip=clip, menu_extensions=menu_extensions, button_extensions=button_extensions, $
+	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, sun_trs=sun_trs, $
 	filetype=filetype, hide=hide, mode_args=mode_args, xzero=xzero, rgb=rgb, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
@@ -73,12 +136,25 @@ pro grim_rc_settings, rcfile=rcfile, $
  keywords = strupcase(keywords)
 
  ;----------------------------------------------------
+ ; handle descriptor selection keywords
+ ;----------------------------------------------------
+ grim_rc_selections, keywords, value_ps, select, $
+    cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
+    str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select
+
+
+ ;----------------------------------------------------
  ; extract any undefined values
  ;----------------------------------------------------
  if(n_elements(fov) EQ 0) then $
                         _fov = grim_rc_value(keywords, value_ps, 'FOV') $
  else _fov = fov
  if(keyword_set(_fov)) then fov = float(_fov)
+
+ if(n_elements(clip) EQ 0) then $
+                        _clip = grim_rc_value(keywords, value_ps, 'CLIP') $
+ else _clip = clip
+ if(keyword_set(_clip)) then clip = float(_clip)
 
  if(n_elements(hide) EQ 0) then $
                         _hide = grim_rc_value(keywords, value_ps, 'HIDE') $
@@ -200,40 +276,40 @@ pro grim_rc_settings, rcfile=rcfile, $
  else _arg_extensions = arg_extensions
  if(keyword_set(_arg_extensions)) then arg_extensions = _arg_extensions
 
- if(n_elements(trs_cd) EQ 0) then $
-                        _trs_cd = grim_rc_value(keywords, value_ps, 'TRS_CD') $
- else _trs_cd = trs_cd
- if(keyword_set(_trs_cd)) then trs_cd = _trs_cd
+ if(n_elements(cam_trs) EQ 0) then $
+                        _cam_trs = grim_rc_value(keywords, value_ps, 'CAM_TRS') $
+ else _cam_trs = cam_trs
+ if(keyword_set(_cam_trs)) then cam_trs = _cam_trs
 
- if(n_elements(trs_pd) EQ 0) then $
-                        _trs_pd = grim_rc_value(keywords, value_ps, 'TRS_PD') $
- else _trs_pd = trs_pd
- if(keyword_set(_trs_pd)) then trs_pd = _trs_pd
+ if(n_elements(plt_trs) EQ 0) then $
+                        _plt_trs = grim_rc_value(keywords, value_ps, 'PLT_TRS') $
+ else _plt_trs = plt_trs
+ if(keyword_set(_plt_trs)) then plt_trs = _plt_trs
 
- if(n_elements(trs_rd) EQ 0) then $
-                        _trs_rd = grim_rc_value(keywords, value_ps, 'TRS_RD') $
- else _trs_rd = trs_rd
- if(keyword_set(_trs_rd)) then tr_rds = _trs_rd
+ if(n_elements(rng_trs) EQ 0) then $
+                        _rng_trs = grim_rc_value(keywords, value_ps, 'RNG_TRS') $
+ else _rng_trs = rng_trs
+ if(keyword_set(_rng_trs)) then tr_rds = _rng_trs
 
- if(n_elements(trs_sd) EQ 0) then $
-                        _trs_sd = grim_rc_value(keywords, value_ps, 'TRS_SD') $
- else _trs_sd = trs_sd
- if(keyword_set(_trs_sd)) then trs_sd = _trs_sd
+ if(n_elements(str_trs) EQ 0) then $
+                        _str_trs = grim_rc_value(keywords, value_ps, 'STR_TRS') $
+ else _str_trs = str_trs
+ if(keyword_set(_str_trs)) then str_trs = _str_trs
 
- if(n_elements(trs_std) EQ 0) then $
-                        _trs_std = grim_rc_value(keywords, value_ps, 'TRS_STD') $
- else _trs_std = trs_std
- if(keyword_set(_trs_std)) then trs_std = _trs_std
+ if(n_elements(stn_trs) EQ 0) then $
+                        _stn_trs = grim_rc_value(keywords, value_ps, 'STN_TRS') $
+ else _stn_trs = stn_trs
+ if(keyword_set(_stn_trs)) then stn_trs = _stn_trs
 
- if(n_elements(trs_ard) EQ 0) then $
-                        _trs_ard = grim_rc_value(keywords, value_ps, 'TRS_ARD') $
- else _trs_ard = trs_ard
- if(keyword_set(_trs_ard)) then trs_ard = _trs_ard
+ if(n_elements(arr_trs) EQ 0) then $
+                        _arr_trs = grim_rc_value(keywords, value_ps, 'ARR_TRS') $
+ else _arr_trs = arr_trs
+ if(keyword_set(_arr_trs)) then arr_trs = _arr_trs
 
- if(n_elements(trs_sund) EQ 0) then $
-                        _trs_sund = grim_rc_value(keywords, value_ps, 'TRS_SUND') $
- else _trs_sund = trs_sund
- if(keyword_set(_trs_sund)) then trs_sund = _trs_sund
+ if(n_elements(sun_trs) EQ 0) then $
+                        _sun_trs = grim_rc_value(keywords, value_ps, 'SUN_TRS') $
+ else _sun_trs = sun_trs
+ if(keyword_set(_sun_trs)) then sun_trs = _sun_trs
 
  if(n_elements(filetype) EQ 0) then $
                         _filetype = grim_rc_value(keywords, value_ps, 'FILETYPE') $

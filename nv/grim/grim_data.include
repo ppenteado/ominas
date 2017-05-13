@@ -17,9 +17,11 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
            retain=retain, user_callbacks=user_callbacks, $
            user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, $
            cursor_swap=cursor_swap, $
-           path=path, save_path=save_path, load_path=load_path, fov=fov, $
-           trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, $
-           trs_sund=trs_sund, hide=hide, type=type, $
+           path=path, save_path=save_path, load_path=load_path, fov=fov, clip=clip, $
+           cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
+           sun_trs=sun_trs, hide=hide, type=type, $
+	   cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
+	   sun_select=sun_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
            color=color, xrange=xrange, yrange=yrange, position=position, npoints=npoints, $
            thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
            psym=psym, cursor_modes=cursor_modes, $
@@ -47,11 +49,9 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(cursor_modes)) then cursor_modes_p = ptr_new(0) $
   else cursor_modes_p = ptr_new(cursor_modes)
 
-  _fov = 1.
-  if(keyword_set(fov)) then _fov = float(fov)
-
   if(NOT keyword_set(npoints)) then npoints = 0
   if(NOT keyword_set(fov)) then fov = 0.
+  if(NOT keyword_set(clip)) then clip = 0.
   if(NOT keyword_set(filter)) then filter = ''
 
   if(keyword_set(path)) then load_path = (save_path = path)
@@ -59,13 +59,21 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   if(NOT keyword_set(save_path)) then save_path = ''
   if(NOT keyword_set(workdir)) then workdir = './'
 
-  if(NOT keyword_set(trs_cd)) then trs_cd = ''
-  if(NOT keyword_set(trs_pd)) then trs_pd = ''
-  if(NOT keyword_set(trs_rd)) then trs_rd = ''
-  if(NOT keyword_set(trs_sd)) then trs_sd = ''
-  if(NOT keyword_set(trs_std)) then trs_std = ''
-  if(NOT keyword_set(trs_ard)) then trs_ard = ''
-  if(NOT keyword_set(trs_sund)) then trs_sund = ''
+  if(NOT keyword_set(cam_select)) then cam_select = ''
+  if(NOT keyword_set(plt_select)) then plt_select = ''
+  if(NOT keyword_set(rng_select)) then rng_select = ''
+  if(NOT keyword_set(str_select)) then str_select = ''
+  if(NOT keyword_set(stn_select)) then stn_select = ''
+  if(NOT keyword_set(arr_select)) then arr_select = ''
+  if(NOT keyword_set(sun_select)) then sun_select = ''
+
+  if(NOT keyword_set(cam_trs)) then cam_trs = ''
+  if(NOT keyword_set(plt_trs)) then plt_trs = ''
+  if(NOT keyword_set(rng_trs)) then rng_trs = ''
+  if(NOT keyword_set(str_trs)) then str_trs = ''
+  if(NOT keyword_set(stn_trs)) then stn_trs = ''
+  if(NOT keyword_set(arr_trs)) then arr_trs = ''
+  if(NOT keyword_set(sun_trs)) then sun_trs = ''
 
   if(NOT keyword_set(color)) then color = ctwhite()
   if(NOT keyword_set(thick)) then thick = 1
@@ -229,6 +237,14 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 
 		misc_data_p		: ptr_new(0), $
 
+		cam_select     		: cam_select, $
+		plt_select     		: plt_select, $
+		rng_select     		: rng_select, $
+		str_select     		: str_select, $
+		stn_select     		: stn_select, $
+		arr_select     		: arr_select, $
+		sun_select     		: sun_select, $
+
 	;---------------
 	; planes
 	;---------------
@@ -241,19 +257,20 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 							;  2 - blank
 		pn		: 0, $			; current plane number
 
-		def_trs_cd	: trs_cd, $
-		def_trs_pd	: trs_pd, $
-		def_trs_rd	: trs_rd, $
-		def_trs_sd	: trs_sd, $
-		def_trs_std	: trs_std, $
-		def_trs_ard	: trs_ard, $
-		def_trs_sund	: trs_sund, $
+		def_cam_trs	: cam_trs, $
+		def_plt_trs	: plt_trs, $
+		def_rng_trs	: rng_trs, $
+		def_str_trs	: str_trs, $
+		def_stn_trs	: stn_trs, $
+		def_arr_trs	: arr_trs, $
+		def_sun_trs	: sun_trs, $
 
 		def_load_path	: load_path, $
 		def_save_path	: save_path, $
 		def_filter	: filter, $
 
 		def_fov		: fov, $
+		def_clip	: clip, $
 		def_hide	: hide, $
 
 		def_color	: color[0], $

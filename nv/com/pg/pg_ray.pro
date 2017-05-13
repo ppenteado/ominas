@@ -47,10 +47,10 @@
 ;
 ;	npoints: Number of points to compute per ray.  Default is 1000.
 ;
-;	fov:	 If set points are computed only within this many camera
+;	clip:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, POINT objects excluded by the fov keyword
+;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
@@ -96,7 +96,7 @@ end
 ; pg_ray
 ;
 ;=============================================================================
-function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, cull=cull, $
+function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, dd=dd, gd=gd, clip=clip, cull=cull, $
              npoints=npoints, cat=cat, density_fn=density_fn, dispersion=dispersion
 @pnt_include.pro
 
@@ -112,7 +112,7 @@ function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, cull=c
 
  if(NOT keyword_set(bx)) then bx = cd 
 
- if(keyword_set(fov)) then slop = (image_size(cd[0]))[0]*(fov-1) > 1
+ if(keyword_set(clip)) then slop = (image_size(cd[0]))[0]*(clip-1) > 1
 
 
  ;-----------------------------------
@@ -195,7 +195,7 @@ function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, cull=c
  ; crop to fov, if desired
  ;  Note, that one image size is applied to all points
  ;------------------------------------------------------
- if(keyword_set(fov)) then $
+ if(keyword_set(clip)) then $
   begin
    pg_crop_points, ray_ptd, cd=cd[0], slop=slop
    if(keyword_set(cull)) then ray_ptd = pnt_cull(ray_ptd)

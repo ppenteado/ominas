@@ -44,10 +44,10 @@
 ;	dd:	Data descriptor containing a generic descriptor to use
 ;		if gd not given.
 ;
-;	fov:	 If set points are computed only within this many camera
+;	clip:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, POINT objects excluded by the fov keyword
+;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
@@ -70,7 +70,7 @@
 ;-
 ;=============================================================================
 function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, $
-                                                         fov=fov, cull=cull
+                                                         clip=clip, cull=cull
 @pnt_include.pro
 
  ;-----------------------------------------------
@@ -86,7 +86,7 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, $
  if(keyword_set(gbx)) then if(NOT keyword_set(bx)) then bx = gbx
  if(keyword_set(dkx)) then if(NOT keyword_set(bx)) then bx = dkx
 
- if(keyword_set(fov)) then slop = (image_size(cd[0]))[0]*(fov-1) > 1
+ if(keyword_set(clip)) then slop = (image_size(cd[0]))[0]*(clip-1) > 1
 
  cor_count_descriptors, std, nd=n_objects, nt=nt
 
@@ -147,7 +147,7 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, $
  ; crop to fov, if desired
  ;  Note, that one image size is applied to all points
  ;------------------------------------------------------
- if(keyword_set(fov)) then $
+ if(keyword_set(clip)) then $
   begin
    pg_crop_points, station_ptd, cd=cd[0], slop=slop
    if(keyword_set(cull)) then station_ptd = pnt_cull(station_ptd)

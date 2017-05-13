@@ -58,10 +58,10 @@
 ;	flon:	This reference longitude line will be one of the longitude lines generated 
 ;		if nlon is specified.  Default is zero.
 ;
-;	fov:	 If set points are computed only within this many camera
+;	clip:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, POINT objects excluded by the fov keyword
+;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
@@ -95,7 +95,7 @@
 ;=============================================================================
 function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_lon, $
 		nlat=nlat, nlon=nlon, flat=flat, flon=flon, npoints=npoints, $
-		fov=fov, cull=cull, slat=slat, slon=slon
+		clip=clip, cull=cull, slat=slat, slon=slon
 @pnt_include.pro
 
  ;-----------------------------------------------
@@ -112,7 +112,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
  if(NOT defined(flat)) then flat = 0d
  if(NOT defined(flon)) then flon = 0d
 
- if(keyword_set(fov)) then slop = (image_size(cd[0]))[0]*(fov-1) > 1
+ if(keyword_set(clip)) then slop = (image_size(cd[0]))[0]*(clip-1) > 1
 
  if(NOT keyword_set(npoints)) then npoints = 360
  nplat = npoints
@@ -170,12 +170,12 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
     end
 
    ;- - - - - - - - - - - - - - - - -
-   ; fov 
+   ; clip 
    ;- - - - - - - - - - - - - - - - -
    scan_ranges = ranges
    scan_dranges = dranges
    continue = 1
-   if(keyword_set(fov)) then $
+   if(keyword_set(clip)) then $
     begin
      surface_image_bounds, cd, xd, slop=slop, $
          latmin=latmin, latmax=latmax, lonmin=lonmin, lonmax=lonmax, status=status
@@ -249,7 +249,7 @@ _grid_pts_map = grid_pts_map
  ; crop to fov, if desired
  ;  Note, that one image size is applied to all points
  ;------------------------------------------------------
- if(keyword_set(fov)) then $
+ if(keyword_set(clip)) then $
   begin
    pg_crop_points, grid_ptd, cd=cd[0], slop=slop
    if(keyword_set(cull)) then grid_ptd = pnt_cull(grid_ptd)

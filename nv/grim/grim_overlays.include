@@ -1009,6 +1009,8 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
 ;   mg = 0.03
 ;   plot, [0], [0], /noerase, /data, pos=[mg,mg, 1.0-mg,1.0-mg]
 
+
+
    ;----------------------------
    ; main window image outline
    ;----------------------------
@@ -1018,6 +1020,21 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
 
    plots, [-0.5,xsize-0.5,xsize-0.5,-0.5,-0.5], $
           [-0.5,-0.5,ysize-0.5,ysize-0.5,-0.5], line=1
+
+
+   ;----------------------------
+   ; optic axis 
+   ;----------------------------
+   cd = *plane.cd_p
+   if(keyword_set(cd)) then $
+    if(cor_class(cd) EQ 'CAMERA') then $
+     begin
+      oaxis = cam_oaxis(cd)
+ 
+      plots, oaxis, psym=1, symsize=4, col=ctred()
+     end
+
+
 
 
    ;----------------------------
@@ -3642,7 +3659,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
                        gd = cor_create_gd(gd=gd, cd=gd.md, od=*plane.od_p)
 
    _ptd = call_function(fn, gd=gd, $
-           map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
+           map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
            active_ptd=source_ptd, data=data, $
            npoints=grim_data.npoints)
    _ptd = pnt_cull(_ptd)
@@ -3687,7 +3704,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
   end
 
  ptd = call_function(fn, gd=gd, data=data, $
-          map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
+          map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
           active_xds=active_xds, active_ptd=*plane.active_overlays_ptdp, $
           npoints=grim_data.npoints)
  ptd = pnt_cull(ptd)

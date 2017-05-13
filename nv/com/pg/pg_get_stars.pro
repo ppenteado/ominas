@@ -41,9 +41,6 @@
 ;			which is inherently accounted for in star catalogs) 
 ;			relative to this observer, unless /raw is set.  
 ;
-;	sund:		Star descriptors for the sun.  Used to correct for
-;			stellar aberration.  
-;
 ;	gd:		Generic descriptors.  Can be used in place of od.
 ;
 ;	raw:		If set, no aberration corrections are performed.
@@ -66,6 +63,50 @@
 ;			this keyword is specified, no translators from the 
 ;			table are called, but the translators keywords
 ;			from the table are still used.  
+;
+;    Descriptor Select Keywords
+;    --------------------------
+;    Descriptor select keywords are combined with OR logic.  They are implemented
+;    in this routine as described below after the translators have been called,
+;    but they are also added to the translator keywords.  The purpose of sending
+;    then to the translators as well is to give the translators an opportunity
+;    to filter their outputs before potentially generating a huge array of
+;    descriptors that would mostly be filtered out by this routine.   
+;
+;	fov/cov:	Select all stars that fall within this many fields of
+;			view (fov) (+/- 10%) from the center of view (cov).
+;			Default cov is the camera optic axis.
+;
+;	pix:		Select all stars whose apparent size (in pixels) is 
+;			greater than or equal to this value.
+;
+;	radmax:		Select all stars whose radius is greater than or 
+;			equal to this value.
+;
+;	radmin:		Select all stars whose radius is less than or 
+;			equal to this value.
+;
+;	distmax:	Select all stars whose distance is greater than or 
+;			equal to this value.
+;
+;	distmin:	Select all stars whose distance is less than or 
+;			equal to this value.
+;
+;	nlarge:		Select n largest stars.
+;
+;	nsmall:		Select n smallest stars.
+;
+;	nclose:		Select n closst stars.
+;
+;	nfar:		Select n farthest stars.
+;
+;	faint:		Select stars with magnitudes less than or equal to
+;			this value.
+;
+;	bright:		Select stars with magnitudes greater than or equal to
+;			this value.
+;
+;	nbright:	Select this many brightest stars.
 ;
 ;
 ; RETURN:
@@ -92,18 +133,99 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_stars, dd, trs, sd=_sd, od=od, sund=sund, $
+
+
+
+;===========================================================================
+; pggs_select_stars
+;
+;
+;===========================================================================
+pro pggs_select_stars, dd, sd, od=od, select
+
+ ;------------------------------------------------------------------------
+ ; standard body filters
+ ;------------------------------------------------------------------------
+ sel = pg_select_bodies(dd, sd, od=od, select)
+
+ ;------------------------------------------------------------------------
+ ; filters specific to stars
+ ;------------------------------------------------------------------------
+ n = n_elements(sd)
+ mag = str_get_mag(sd)
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ ; faint -- faintest magnitude to select
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ faint = struct_get(select, 'faint')
+ if(keyword_set(faint)) then $
+  begin
+   w = where(mag LE faint)
+   sel = append_array(sel, w)
+  end
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ ; bright -- brightest magnitude to select
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ bright = struct_get(select, 'bright')
+ if(keyword_set(bright)) then $
+  begin
+   w = where(mag GE bright)
+   sel = append_array(sel, w)
+  end
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ ; nbright -- number of brightest stars to select
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ nbright = struct_get(select, 'nbright')
+ if(keyword_set(nbright)) then $
+  if(n GT nbright) then $ 
+   begin
+    ss = sort(mag)
+    ii = lindgen(n)
+    w = (ii[ss])[0:(nbright<n)-1]
+    sel = append_array(sel, w)
+   end
+
+
+ ;------------------------------------------------------------------------
+ ; implement any selections
+ ;------------------------------------------------------------------------
+ if(keyword_set(sel)) then $
+  begin
+   sel = unique(sel)
+
+   w = complement(sd, sel)
+   if(w[0] NE -1) then nv_free, sd[w]
+
+   if(sel[0] EQ -1) then sd = obj_new() $
+   else sd = sd[sel]
+  end
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; pg_get_stars
+;
+;===========================================================================
+function pg_get_stars, dd, trs, sd=_sd, od=od, _extra=select, $
                      override=override, verbatim=verbatim, raw=raw, $
-                     radec=radec, corners=corners, $
 @str__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
 
  ;-----------------------------------------------
+ ; add selection keywords to translator keywords
+ ;-----------------------------------------------
+ if(keyword_set(select)) then pg_add_selections, trs, select
+
+ ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
  if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  ;-------------------------------------------------------------------
@@ -133,11 +255,10 @@ end_keywords)
    ; if names requested, the force tr_first
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;   if(keyword_set(name)) then tr_first = 1
-
 ;   if(NOT keyword__set(od)) then nv_message,'No observer descriptor.'
 
-   sd=dat_get_value(dd, 'STR_DESCRIPTORS', key1=od, key2=sund, key4=_sd, $
-                 key5=corners, key6=radec, key7=time, key8=name, trs=trs, $
+   sd=dat_get_value(dd, 'STR_DESCRIPTORS', key1=od, key4=_sd, $
+                 key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
 	end_keywords)
 
@@ -183,6 +304,13 @@ end_keywords
     if(defined(_name)) then name = _name
 
   end
+
+ ;--------------------------------------------------------
+ ; filter stars
+ ;--------------------------------------------------------
+ if(NOT keyword_set(sd)) then return, obj_new()
+ if(keyword_set(select)) then pggs_select_stars, dd, sd, od=od, select
+ if(NOT keyword_set(sd)) then return, obj_new()
 
 
  ;--------------------------------------------------------

@@ -38,6 +38,9 @@
 ;	fast:		If set, no checking is performed to ensure structure
 ;			tags are not duplicated.
 ;
+;	replace:	If set, duplicate fields in struct2 are replace those 
+;			from struct1 instead of concatenating them.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -62,7 +65,7 @@
 ; append_struct_cat
 ;
 ;=============================================================================
-function append_struct_cat, s1, s2, fast=fast
+function append_struct_cat, s1, s2, fast=fast, replace=replace
 
  if(keyword_set(fast)) then return, create_struct(s1, s2)
 
@@ -79,8 +82,16 @@ function append_struct_cat, s1, s2, fast=fast
     w2 = (where(all_tags[i] EQ tags2))[0]
 
     field = 0
-    if(w1 NE -1) then field = append_array(field, s1.(w1))
-    if(w2 NE -1) then field = append_array(field, s2.(w2))
+    if(NOT keyword_set(replace)) then $
+     begin
+      if(w1 NE -1) then field = append_array(field, s1.(w1))
+      if(w2 NE -1) then field = append_array(field, s2.(w2))
+     end $
+    else $
+     begin
+      if(w1 NE -1) then field = s1.(w1)
+      if(w2 NE -1) then field = s2.(w2)
+     end
 
     result = append_struct(result, $
                   create_struct(all_tags[i], unique(field)), /fast)
@@ -96,7 +107,7 @@ end
 ; append_struct
 ;
 ;=============================================================================
-function append_struct, struct1, struct2, fast=fast
+function append_struct, struct1, struct2, fast=fast, replace=replace
 
  if(NOT keyword_set(struct2)) then $
   begin
@@ -105,6 +116,6 @@ function append_struct, struct1, struct2, fast=fast
   end
 
  if(NOT keyword_set(struct1)) then return, struct2
- return, append_struct_cat(struct1, struct2, fast=fast)
+ return, append_struct_cat(struct1, struct2, fast=fast, replace=replace)
 end 
 ;=============================================================================

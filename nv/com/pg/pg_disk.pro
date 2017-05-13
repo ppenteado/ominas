@@ -46,10 +46,10 @@
 ;	reveal:	 Normally, points computed for objects whose opaque flag
 ;		 is set are made invisible.  /reveal suppresses this behavior.
 ;
-;	fov:	 If set points are computed only within this many camera
+;	clip:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, POINT objects excluded by the fov keyword
+;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
@@ -72,7 +72,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, fov=fov, cull=cull, $
+function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
                   inner=inner, outer=outer, npoints=npoints, reveal=reveal
 @pnt_include.pro
 
@@ -92,7 +92,7 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, fov=fov, cull=cull, $
  inner = keyword_set(inner) OR keyword_set(both)
  outer = keyword_set(outer) OR keyword_set(both)
 
- if(keyword_set(fov)) then slop = (cam_size(cd[0]))[0]*(fov-1) > 1
+ if(keyword_set(clip)) then slop = (cam_size(cd[0]))[0]*(clip-1) > 1
 
  ;-----------------------------------
  ; validate descriptors
@@ -120,11 +120,11 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, fov=fov, cull=cull, $
        xd = reform(dkx[i,ii], nt)
 
        ;- - - - - - - - - - - - - - - - -
-       ; fov 
+       ; clip 
        ;- - - - - - - - - - - - - - - - -
        ta = 0
        continue = 1
-       if(keyword_set(fov)) then $
+       if(keyword_set(clip)) then $
         begin
          dsk_image_bounds, cd, xd, slop=slop, /plane, $
                  lonmin=lonmin, lonmax=lonmax, border_pts_im=border_pts_im
@@ -175,11 +175,11 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, fov=fov, cull=cull, $
        xd = reform(dkx[i,ii], nt)
 
        ;- - - - - - - - - - - - - - - - -
-       ; fov 
+       ; clip 
        ;- - - - - - - - - - - - - - - - -
        ta = 0
        continue = 1
-       if(keyword_set(fov)) then $
+       if(keyword_set(clip)) then $
         begin
          dsk_image_bounds, cd, xd, slop=slop, /plane, $
                lonmin=lonmin, lonmax=lonmax, border_pts_im=border_pts_im
@@ -232,7 +232,7 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, fov=fov, cull=cull, $
  ; crop to fov, if desired
  ;  Note, that one image size is applied to all points
  ;------------------------------------------------------
- if(keyword_set(fov)) then $
+ if(keyword_set(clip)) then $
   begin
    pg_crop_points, disk_ptd, cd=cd[0], slop=slop
    if(keyword_set(cull)) then disk_ptd = pnt_cull(disk_ptd)

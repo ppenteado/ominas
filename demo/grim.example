@@ -38,7 +38,6 @@ dd = dat_read(file)
 ; display the image using grim
 ;-------------------------------------
 grim, dd, zoom=0.75, /order
-
 ;-------------------------------------
 ; Obtain descriptors
 ;-------------------------------------

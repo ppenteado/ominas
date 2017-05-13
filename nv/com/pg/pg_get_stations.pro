@@ -74,11 +74,16 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, $
+function pg_get_stations, dd, trs, od=od, bx=bx, std=_std, _extra=select, $
                           override=override, verbatim=verbatim, $
 @stn__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
+
+ ;-----------------------------------------------
+ ; add selection keywords to translator keywords
+ ;-----------------------------------------------
+ if(keyword_set(select)) then pg_add_selections, trs, select
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given

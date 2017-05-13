@@ -78,12 +78,17 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_maps, dd, trs, md=_md, gbx=gbx, dkx=dkx, bx=bx, $
+function pg_get_maps, dd, trs, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=select, $
                         override=override, verbatim=verbatim, $
 @map__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
+
+ ;-----------------------------------------------
+ ; add selection keywords to translator keywords
+ ;-----------------------------------------------
+ if(keyword_set(select)) then pg_add_selections, trs, select
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given

@@ -375,10 +375,10 @@ end
 ; grim_add_planes
 ;
 ;=============================================================================
-pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, $
+pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, hide=hide, $
                       path=path, save_path=save_path, load_path=load_path, $
-                      trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_ard=trs_ard, $
-                      trs_sund=trs_sund, color=color, position=_position, $
+                      cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
+                      sun_trs=sun_trs, color=color, position=_position, $
                       xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
@@ -393,6 +393,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
   if(NOT keyword_set(max)) then max = 0
 
   if(NOT keyword_set(fov)) then fov = grim_data.def_fov
+  if(NOT keyword_set(clip)) then clip = grim_data.def_clip
   if(NOT keyword_set(hide)) then hide = grim_data.def_hide
   if(NOT keyword_set(filter)) then filter = grim_data.def_filter
   if(NOT keyword_set(visibility)) then visibility = 0
@@ -403,13 +404,13 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
   if(NOT keyword_set(load_path)) then load_path = grim_data.def_load_path
   if(NOT keyword_set(save_path)) then save_path = grim_data.def_save_path
 
-  if(NOT keyword_set(trs_cd)) then trs_cd = grim_data.def_trs_cd
-  if(NOT keyword_set(trs_pd)) then trs_pd = grim_data.def_trs_pd
-  if(NOT keyword_set(trs_rd)) then trs_rd = grim_data.def_trs_rd
-  if(NOT keyword_set(trs_sd)) then trs_sd = grim_data.def_trs_sd
-  if(NOT keyword_set(trs_std)) then trs_std = grim_data.def_trs_std
-  if(NOT keyword_set(trs_ard)) then trs_ard = grim_data.def_trs_ard
-  if(NOT keyword_set(trs_sund)) then trs_sund = grim_data.def_trs_sund
+  if(NOT keyword_set(cam_trs)) then cam_trs = grim_data.def_cam_trs
+  if(NOT keyword_set(plt_trs)) then plt_trs = grim_data.def_plt_trs
+  if(NOT keyword_set(rng_trs)) then rng_trs = grim_data.def_rng_trs
+  if(NOT keyword_set(str_trs)) then str_trs = grim_data.def_str_trs
+  if(NOT keyword_set(stn_trs)) then stn_trs = grim_data.def_stn_trs
+  if(NOT keyword_set(arr_trs)) then arr_trs = grim_data.def_arr_trs
+  if(NOT keyword_set(sun_trs)) then sun_trs = grim_data.def_sun_trs
 
   if(NOT keyword_set(color)) then color = grim_data.def_color
   if(NOT keyword_set(thick)) then thick = grim_data.def_thick
@@ -598,13 +599,14 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, hide=hide, 
 	;-----------------
 		hide		:	byte(hide), $
 		fov		:	float(fov), $
-		trs_cd		:	trs_cd, $ 
-		trs_pd		:	trs_pd, $ 
-		trs_rd		:	trs_rd, $ 
-		trs_sd		:	trs_sd, $ 
-		trs_std		:	trs_std, $ 
-		trs_ard		:	trs_ard, $ 
-		trs_sund	:	trs_sund $ 
+		clip		:	float(clip), $
+		cam_trs		:	cam_trs, $ 
+		plt_trs		:	plt_trs, $ 
+		rng_trs		:	rng_trs, $ 
+		str_trs		:	str_trs, $ 
+		stn_trs		:	stn_trs, $ 
+		arr_trs		:	arr_trs, $ 
+		sun_trs		:	sun_trs $ 
 	     }
 
 
