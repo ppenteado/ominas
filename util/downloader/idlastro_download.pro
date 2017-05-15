@@ -30,12 +30,12 @@ endif else begin
     spawn,'eval echo '+loc,res
     loc=res
     if file_test(loc,/directory) then begin
-      print,'~/ominas_data/idlastro already exists, moving it to ',loc+'_old'
-      spawn,'mv '+loc+' '+loc+'_old'
-    endif 
-    comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
-    print,comm
-    spawn,comm,exit_status=st
+      if file_test(loc+'/.git',/directory) then st=0 else st=1
+    endif else begin
+      comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
+      print,comm
+      spawn,comm,exit_status=st
+    endelse
     if (st ne 0) then begin
       print,'Download through git failed, using zip file instead'
       locl='~/ominas_data/'

@@ -1,5 +1,6 @@
 pro ominas_paths_add,icydir,ominasdir
 compile_opt idl2,logical_predicate
+print,'Checking to see if IDL paths need to be changed..."
 path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
 if icydir then begin
   if ~stregex(path,'\+?/.*/ominas_data/icy/lib/?',/bool) then path+=':+'+file_expand_path(icydir+'/lib/')
@@ -38,7 +39,7 @@ endif else begin
   print,'Icy path set in IDL preferences'
 endelse
 endif
-print, ominasdir+' added to IDL_PATH'
+;print, ominasdir+' added to IDL_PATH'
 
 
 exit

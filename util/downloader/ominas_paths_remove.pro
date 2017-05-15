@@ -1,5 +1,6 @@
 pro ominas_paths_remove
 compile_opt idl2,logical_predicate
+print,'Checking to see if deletions are necessary in IDL paths...'
 path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
 dps=strsplit(path,':',/extract)
 odir=getenv('OMINAS_DIR')
@@ -30,7 +31,7 @@ if odir then begin
       pref_set,'IDL_PATH',np,/commit
       print,'OMINAS path removed from IDL preferences'
     endelse
-  endelse
+  endif
 endif
 if xdir then begin
   w=where(stregex(dps,'\+?'+xdir+'/?',/bool),count,complement=wc,ncomplement=nwc)
@@ -43,7 +44,7 @@ if xdir then begin
       print,'OMINAS path removed from IDL_PATH'
     endif else begin
       pref_set,'IDL_PATH',np,/commit
-      print,'OMINAS path removed from IDL preferences'
+      print,'OMINAS XIDL path removed from IDL preferences'
     endelse
   endif
 endif
