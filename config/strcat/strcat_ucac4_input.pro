@@ -332,6 +332,7 @@ function ucac4_get_stars, dd, filename, cam_vel=cam_vel, $
  ; If limits are defined, remove stars that fall outside the limits
  ; Limits in deg, Assumes RA's + DEC's in J2000 (B1950 if /b1950)
  ;------------------------------------------------------------------
+; *** need to use strcat_radec_regions (see strcat_tycho2_input) ***
  if(keyword_set(dec1) AND keyword_set(dec2)) then $
    begin
     subs = where((stars.dec GE dec1) AND (stars.dec LE dec2), count)

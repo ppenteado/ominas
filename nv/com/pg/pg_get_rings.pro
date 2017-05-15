@@ -85,11 +85,55 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, $
+
+
+
+;===========================================================================
+; pggr_select_rings
+;
+;
+;===========================================================================
+pro pggr_select_rings, dd, rd, od=od, select
+
+ ;------------------------------------------------------------------------
+ ; standard body filters
+ ;------------------------------------------------------------------------
+ sel = pg_select_bodies(dd, rd, od=od, select)
+
+ ;------------------------------------------------------------------------
+ ; implement any selections
+ ;------------------------------------------------------------------------
+ if(keyword_set(sel)) then $
+  begin
+   sel = unique(sel)
+
+   w = complement(rd, sel)
+   if(w[0] NE -1) then nv_free, rd[w]
+
+   if(sel[0] EQ -1) then rd = obj_new() $
+   else rd = rd[sel]
+  end
+
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; pg_get_rings
+;
+;===========================================================================
+function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, _extra=select, $
                       override=override, verbatim=verbatim, $
 @rng__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
+
+ ;-----------------------------------------------
+ ; add selection keywords to translator keywords
+ ;-----------------------------------------------
+ if(keyword_set(select)) then pg_add_selections, trs, select
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -167,6 +211,13 @@ end_keywords
 
   end
 
+
+ ;--------------------------------------------------------
+ ; filter rings
+ ;--------------------------------------------------------
+ if(NOT keyword_set(rd)) then return, obj_new()
+ if(keyword_set(select)) then pggr_select_rings, dd, rd, od=od, select
+ if(NOT keyword_set(rd)) then return, obj_new()
 
  ;--------------------------------------------------------
  ; update generic descriptors

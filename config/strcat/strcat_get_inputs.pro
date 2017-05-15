@@ -28,16 +28,22 @@ pro strcat_get_inputs, dd, env, key, $
  ;---------------------------------------------------------
  ; Translator keywords
  ;---------------------------------------------------------
- all = tr_keyword_value(dd, 'all')
  b1950 = tr_keyword_value(dd, 'b1950')
+
  jtime = double(tr_keyword_value(dd, 'jtime'))
+
  j2000 = tr_keyword_value(dd, 'j2000')
+
  noaberr = tr_keyword_value(dd, 'noaberr')
+
  _faint = tr_keyword_value(dd, 'faint')
  if(_faint NE '') then faint = double(_faint)
+
  _bright = tr_keyword_value(dd, 'bright')
  if(_bright NE '') then bright = double(_bright)
+
  nbright = long(tr_keyword_value(dd, 'nbright'))
+
 
  ;---------------------------------------------------------
  ; Star catalog path
@@ -58,21 +64,15 @@ pro strcat_get_inputs, dd, env, key, $
  if(NOT cor_isa(ods[0], 'BODY')) then ods = 0
  if(NOT keyword_set(ods)) then return
 
- ;---------------------------------------------------------
- ; Sun descriptor passed as key2
- ;---------------------------------------------------------
-; if(keyword_set(key2)) then sund = key2
 
  ;---------------------------------------------------------
- ; Image corners passed as key5
+ ; fov and cov 
  ;---------------------------------------------------------
- if(keyword_set(key5)) then _corners = key5
+ fov = double(tr_keyword_value(dd, 'fov'))
 
-
- ;---------------------------------------------------------
- ; ra/dec corners passed as key6
- ;---------------------------------------------------------
- if(keyword_set(key6)) then _radec = key6
+ cov = double(parse_comma_list(tr_keyword_value(dd, 'cov'), delim=';'))
+ if(keyword_set(cov)) then cov = transpose(cov) $
+ else if(NOT keyword_set(cov)) then cov = cam_oaxis(ods[0])
 
  ;---------------------------------------------------------
  ; Names passed as key8
@@ -98,51 +98,34 @@ pro strcat_get_inputs, dd, env, key, $
  ;---------------------------------------------------------
  ; Get ra/dec limits 
  ;---------------------------------------------------------
- if(keyword_set(all)) then $
+ ra1 = 0d & ra2 = 2d*!dpi * 0.999
+ dec1 = -!dpi/2d * 0.999 & dec2 = -dec1 * 0.999
+
+ if(keyword_set(fov)) then $
   begin
-   ra1 = 0d & ra2 = 2d*!dpi * 0.999
-   dec1 = -!dpi/2d * 0.999 & dec2 = -dec1 * 0.999
+   cam_scale = min(cam_scale(ods[0]))
+   cam_size = cam_size(ods[0])
+
+   radec0 = image_to_radec(ods[0], cov)
+   cam_fov = min(cam_scale*cam_size)
+   field = fov*cam_fov
+
+   ra1 = reduce_angle(radec0[0] + field)
+   ra2 = reduce_angle(radec0[0] - field)
+
+   dec1 = radec0[1] + field
+   dec2 = radec0[1] - field
   end $
- else $
-  begin
-   if(keyword_set(_corners)) then corners = _corners $
-   else if(keyword_set(_radec)) then corners = radec_to_image(ods[0], _radec) $
-   else $
-    begin
-     slop = 1.5
-     nx = (cam_size(ods[0]))[0]
-     ny = (cam_size(ods[0]))[0]
-     xslop = (slop-1d) * nx
-     yslop = (slop-1d) * ny
-
-     x0 = -xslop & x1 = nx + xslop
-     y0 = -yslop & y1 = ny + yslop
-
-     corners = [ [x0, y0],$
-                 [x0, y1], $
-                 [x1, y0], $
-                 [x1, y1] ]
-
-    end
-
-   radec_image_bounds, ods[0], slop=slop, corners=corners, $
-               ramin=ra1, ramax=ra2, decmin=dec1, decmax=dec2
-  end
+ else nv_message, verb=0.1, $
+      'WARNING: No FOV limits set for star catalog search.', $
+       exp=['Without FOV limits, stars will be returned for the entire sky.', $
+            'This may cause the software to run very slowly.']
 
 
  ;-------------------------------------------------------------------
  ; Get camera velocity for stellar aberration 
  ;-------------------------------------------------------------------
  cam_vel = (bod_vel(ods[0]))[0,*]
-
-; if(keyword__set(sund)) then $
-;  begin
-;   vel = (bod_vel(ods[0]))[0,*]
-;   sun_vel = (bod_vel(sund))[0,*]
-;   cam_vel = vel - sun_vel
-;  end $
-; else nv_message, /continue, $
-;        'Observer velocity unknown.  Will not correct for stellar aberration.'
 
 
  status = 0

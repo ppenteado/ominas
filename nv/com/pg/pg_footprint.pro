@@ -35,7 +35,7 @@
 ;	dd:	Data descriptor containing a generic descriptor to use
 ;		if gd not given.
 ;
-;	fov:	 If set, points are computed only within this many camera
+;	clip:	 If set, points are computed only within this many camera
 ;		 fields of view.
 ;
 ;	sample:	 Sampling rate; default is 1 pixel.
@@ -57,7 +57,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_footprint, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, $
+function pg_footprint, cd=cd, bx=bx, dd=dd, gd=gd, clip=clip, $
     sample=sample
 @pnt_include.pro
 
@@ -124,7 +124,7 @@ function pg_footprint, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, $
  ; crop to fov, if desired
  ;  Note, that one image size is applied to all points
  ;------------------------------------------------------
- if(keyword_set(fov)) then $
+ if(keyword_set(clip)) then $
   begin
    pg_crop_points, footprint_ptd, cd=cd[0], slop=slop
    if(keyword_set(cull)) then footprint_ptd = pnt_cull(footprint_ptd)

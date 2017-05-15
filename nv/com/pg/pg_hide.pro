@@ -135,7 +135,7 @@ function pgh_select_by_bounding_box, _cd, bx, point_ptd
  bod_pos = bod_pos(bx)
  cam_pos = bod_pos(cd)
 
- rad = reform(body_size(bx[*,0]) ## make_array(3,val=1d), 1,3,n, /over)
+ rad = reform(body_radius(bx[*,0]) ## make_array(3,val=1d), 1,3,n, /over)
 
  orient = bod_orient(cd)
  xx = orient[0,*,*]

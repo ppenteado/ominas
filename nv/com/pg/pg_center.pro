@@ -36,10 +36,10 @@
 ;	dd:	Data descriptor containing a generic descriptor to use
 ;		if gd not given.
 ;
-;	fov:	 If set points are computed only within this many camera
+;	clip:	 If set points are computed only within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, POINT objects excluded by the fov keyword
+;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
@@ -60,9 +60,9 @@
 ;	
 ;-
 ;=============================================================================
-function pg_center, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, cull=cull
+function pg_center, cd=cd, bx=bx, dd=dd, gd=gd, clip=clip, cull=cull
 
- if(keyword_set(fov)) then slop = (cam_size(cd[0]))[0]*(fov-1) > 1
+ if(keyword_set(clip)) then slop = (cam_size(cd[0]))[0]*(clip-1) > 1
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -138,7 +138,7 @@ function pg_center, cd=cd, bx=bx, dd=dd, gd=gd, fov=fov, cull=cull
  ; crop to fov, if desired
  ;  Note, that one image size is applied to all points
  ;------------------------------------------------------
- if(keyword_set(fov)) then $
+ if(keyword_set(clip)) then $
   begin
    pg_crop_points, center_ptd, cd=cd[0], slop=slop
    if(keyword_set(cull)) then center_ptd = pnt_cull(center_ptd)

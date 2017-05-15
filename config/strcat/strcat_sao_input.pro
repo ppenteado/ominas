@@ -157,6 +157,7 @@ function sao_get_stars, filename, cam_vel=cam_vel, $
  ;---------------------------------------------------------
  ; Search within segment to find RA limits
  ;---------------------------------------------------------
+; *** need to use strcat_radec_regions (see strcat_tycho2_input) ***
    if(end_record-start_record GT 100) then $
    begin
     ra_ptr = ptr(2*i) + lindgen(37)*((ptr(2*i+1)-ptr(2*i))/36)

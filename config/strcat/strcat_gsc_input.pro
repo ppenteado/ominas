@@ -329,6 +329,7 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
  ; If limits are defined, remove stars that fall outside the limits
  ; Limits in deg, Assumes RA's + DEC's in J2000 (B1950 if /b1950)
  ;------------------------------------------------------------------
+; *** need to use strcat_radec_regions (see strcat_tycho2_input) ***
  if(keyword__set(dec1) and keyword__set(dec2)) then $
    begin
     subs = where(DEC_DEG ge dec1 and DEC_DEG le dec2, count)

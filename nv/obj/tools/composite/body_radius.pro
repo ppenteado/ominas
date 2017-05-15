@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       body_size
+;       body_radius
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       body_size(bx)
+;       body_radius(bx)
 ;
 ;
 ; ARGUMENTS:
@@ -42,7 +42,7 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function body_size, bx
+function body_radius, bx
 
  nt = n_elements(bx)
  size = dblarr(nt)
