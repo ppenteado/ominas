@@ -211,6 +211,11 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
       links=(stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>.*<td[^>]*>[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*</td>',/extract,/subexpr))
       lms=reform(links[2,*])
       links=reform(links[1,*])
+      if total(strlen(strtrim(lms,2))) eq 0 then begin
+        links=(stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>([^<]*)</a>(<td[^>]*>)?[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*(</td>)?',/extract,/subexpr))
+        lms=reform(links[4,*])
+        links=reform(links[2,*])        
+      endif
       wla=where(stregex(links,'^(\/|\?)',/bool),/null,count,complement=wlac)
       if ~self.allow_slash then begin
         links=links[wlac]
