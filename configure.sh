@@ -382,6 +382,7 @@ function pkins()
                     fi
                     case $ans in
                     [Yy]*)
+                          $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_remove"
                           pstr="unset NV_TRANSLATORS"
                           unset NV_TRANSLATORS;;
                           #corest=${no};;
@@ -999,6 +1000,22 @@ IDLCMD
 ##        $IDL_DIR/bin/idl paths.pro
 #fi
 
+
+
+writesetting
+if [ -e "$setting" ]; then
+  . $setting
+fi
+
+
+grep -q "source ${OMINAS_DIR}/config/ominas_env_def.sh" ${setting}
+corest=$?
+if [ ${corest} == 0 ] ; then
+  corest=${yes}
+else
+  corest=${no}
+fi
+
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
   
@@ -1017,11 +1034,6 @@ if [ -e idlpathr.sh ]; then
   rm idlpathr.sh
 fi
 
-
-writesetting
-if [ -e "$setting" ]; then
-  . $setting
-fi
 if [ ! -z ${IDL_PATH+x} ]; then
   . $idlpathfile
   printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
