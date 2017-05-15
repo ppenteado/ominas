@@ -30,8 +30,8 @@ endif else begin
     spawn,'eval echo '+loc,res
     loc=res
     if file_test(loc,/directory) then begin
-      print,'~/ominas_data/idlastro already exists, moving it to ',loc.replace('idlastro','idlastro_old')
-      file_move,loc,loc.replace('idlastro','idlastro_old'),/verbose
+      print,'~/ominas_data/idlastro already exists, moving it to ',loc+'_old'
+      spawn,'mv '+loc+' loc'+_old
     endif 
     comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
     print,comm

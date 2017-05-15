@@ -364,6 +364,7 @@ function pkins()
 		#		dstr="DFLAG=false; "
 		#		printf "Demo package will not be installed...\n"
 		#esac
+        echo "bbb"
         if [[ $1 == "ominas_env_def.$shtype" ]]; then
                 if [[ "$2" == "$no" ]]; then
                   printf "Settiing OMINAS Core...\n"
@@ -934,6 +935,8 @@ done
 done
 
 XIDL_DIR=$OMINAS_DIR/util/xidl/
+
+echo "aaaa"
 
 test "$1" == ".*c.*" &&
 for f in ./ominas_env_*.sh
