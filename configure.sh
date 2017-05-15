@@ -383,15 +383,15 @@ function pkins()
                     case $ans in
                     [Yy]*)
                           pstr="unset NV_TRANSLATORS"
-                          unset NV_TRANSLATORS
-                          corest=${no};;
+                          unset NV_TRANSLATORS;;
+                          #corest=${no};;
                     *)
                       return 1 ;;
                     esac
                   fi
                 fi
                 ins_ominas_env_def=${pstr}
-                corest=${yes}
+                #corest=${yes}
 	fi
         if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
           if grep -q ${1} ${setting}; then
@@ -537,9 +537,10 @@ chmod a+rx $setting
 
 echo "#!/usr/bin/env bash" > $setting
 
-if [[ -n "$ins_ominas_env_def" ]]; then
+#if [[ -n "$ins_ominas_env_def" ]]; then
+#if [[ ${corest} == ${yes} ]]; then
   echo "export OMINAS_DIR=$OMINAS_DIR" >> $setting
-fi
+#fi
 echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
 
@@ -698,14 +699,13 @@ fi
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
 corest=`pkst ${OMINAS_DIR}/config/tab/`
-grep -q "source /config/ominas_env_def.sh" ${setting}
+grep -q "source ${OMINAS_DIR}/config/ominas_env_def.sh" ${setting}
 corest=$?
 if [ ${corest} == 0 ] ; then
   corest=${yes}
 else
   corest=${no}
 fi
-echo "aaa ${corest}"
 demost=$no
 DFLAG="false"
 #if [ ! -z $OMINAS_DEMO ]; then
@@ -876,12 +876,16 @@ pr=0
 for num in $ans
 do
   if [ $num == "2" ]; then
-    if [ $DFLAG  == "true" ] && [ ${ominas_auto} == 0 ]; then
+    if [ $DFLAG  == "true" ] && [ ${ominas_auto} == 0 ] ; then
       DFLAG="false"
       demost="NOT CONFIGURED"
     else
       DFLAG="true"
       demost="CONFIGURED"
+    fi
+    if [ ${ominas_auto_u} == 1 ] ; then
+      DFLAG="false"
+      demost="NOT CONFIGURED"
     fi
   fi
 done
@@ -898,8 +902,8 @@ do
 							;;
                 [2])
                                 pr=0
-                                pkins ominas_env_def.sh "${corest}" demo
-                                corest=${yes}
+                                #pkins ominas_env_def.sh "${corest}" demo
+                                #corest=${yes}
                                                         ;;
                 [3])
                                 pr=0
@@ -911,12 +915,12 @@ do
 		[4567])
                                 pr=0
 				pkins ominas_env_def.sh "${corest}" $(($num-4))
-                                corest=${yes}
+                                #corest=${yes}
 				ppkg $(($num-4)) 	;;
 		[89]|10|11|12|13)
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
-                                corest=${yes}
+                                #corest=${yes}
 				dins $(($num-8)) 	;;
                 all)            pr=0;;
                 uall)           pr=0;;
@@ -1002,8 +1006,8 @@ if [ ${corest} == ${yes} ]; then
     rm idlpath.sh
   fi
 else
-  export OMINAS_DIR=''
-  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}'"
+  #export OMINAS_DIR=''
+  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',''"
 fi
 rm paths.pro
 

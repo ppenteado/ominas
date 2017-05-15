@@ -1,10 +1,10 @@
-pro ominas_paths_add,icydir
+pro ominas_paths_add,icydir,ominasdir
 compile_opt idl2,logical_predicate
 path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
 if icydir then begin
   if ~stregex(path,'\+?/.*/ominas_data/icy/lib/?',/bool) then path+=':+'+file_expand_path(icydir+'/lib/')
 endif
-ominasdir=getenv('OMINAS_DIR')
+ominasdir=n_elements(ominasdir) ? ominasdir : getenv('OMINAS_DIR')
 xidldir=getenv('XIDL_DIR')
 if ominasdir then begin
   if ~stregex(path,'\+?'+ominasdir+'/?',/bool) then path+=':+'+ominasdir
