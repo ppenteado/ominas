@@ -46,10 +46,10 @@
 ;	reveal:	 Normally, disks whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
 ;
-;	fov:	 If set reflection points are cropped to within this many camera
+;	clip:	 If set reflection points are cropped to within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, POINT objects excluded by the fov keyword
+;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
@@ -81,7 +81,7 @@
 ;=============================================================================
 function pg_reflection_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
                           nocull=nocull, reveal=reveal, $
-                          fov=fov, cull=cull, all=all, $
+                          clip=clip, cull=cull, all=all, $
                           nosolve=nosolve
 @pnt_include.pro
 
@@ -207,7 +207,7 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
  ; crop to fov, if desired
  ;  Note, that one image size is applied to all points
  ;------------------------------------------------------
- if(keyword_set(fov)) then $
+ if(keyword_set(clip)) then $
   begin
    pg_crop_points, reflection_ptd, cd=cd[0], slop=slop
    if(keyword_set(cull)) then reflection_ptd = pnt_cull(reflection_ptd)

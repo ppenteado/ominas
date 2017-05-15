@@ -77,7 +77,7 @@
 ;-
 ;=============================================================================
 function pg_reflection, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, object_ptd, $
-              reveal=reveal, fov=fov, nocull=nocull, all=all
+              reveal=reveal, clip=clip, nocull=nocull, all=all
 
  if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
 
@@ -96,7 +96,7 @@ function pg_reflection, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, obj
  if(keyword_set(gbx)) then $
    globe_reflection_ptd = $
        pg_reflection_globe(object_ptd, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, $
-               /nocull, reveal=reveal, fov=fov)
+               /nocull, reveal=reveal, clip=clip)
 
  ;----------------------------------
  ; project onto all disks
@@ -104,7 +104,7 @@ function pg_reflection, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, obj
 ;; if(keyword_set(dkx)) then $
 ;;   disk_reflection_ptd = $
 ;;       pg_reflection_disk(object_ptd, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, $
-;;               /nocull, reveal=reveal, fov=fov)
+;;               /nocull, reveal=reveal, clip=clip)
 
 
  ;----------------------------------

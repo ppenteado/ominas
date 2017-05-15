@@ -88,7 +88,6 @@ pro gros_update_form, grim_data, plane, base
 
        if(i LT n_utags) then $
         begin
-;stop
          w = where(data.colors EQ user_colors[i])
 
          grim_set_form_entry, $
@@ -193,13 +192,13 @@ pro gros_update_form, grim_data, plane, base
  ;- - - - - - - - - - - - - - - - - - - - - - -
  ; translator args
  ;- - - - - - - - - - - - - - - - - - - - - - -
- grim_set_form_entry, data.ids, data.tags, 'TRS_CD', plane.trs_cd
- grim_set_form_entry, data.ids, data.tags, 'TRS_PD', plane.trs_pd
- grim_set_form_entry, data.ids, data.tags, 'TRS_RD', plane.trs_rd
- grim_set_form_entry, data.ids, data.tags, 'TRS_SD', plane.trs_sd
- grim_set_form_entry, data.ids, data.tags, 'TRS_STD', plane.trs_std
- grim_set_form_entry, data.ids, data.tags, 'TRS_STD', plane.trs_ard
- grim_set_form_entry, data.ids, data.tags, 'TRS_SUND', plane.trs_sund
+ grim_set_form_entry, data.ids, data.tags, 'CAM_TRS', plane.cam_trs
+ grim_set_form_entry, data.ids, data.tags, 'PLT_TRS', plane.plt_trs
+ grim_set_form_entry, data.ids, data.tags, 'RNG_TRS', plane.rng_trs
+ grim_set_form_entry, data.ids, data.tags, 'STR_TRS', plane.str_trs
+ grim_set_form_entry, data.ids, data.tags, 'STN_TRS', plane.stn_trs
+ grim_set_form_entry, data.ids, data.tags, 'STN_TRS', plane.arr_trs
+ grim_set_form_entry, data.ids, data.tags, 'SUN_TRS', plane.sun_trs
 
 
  widget_control, base, set_uvalue=data
@@ -252,7 +251,7 @@ pro gros_apply_settings, data
    ;-----------------------
    ; fov
    ;-----------------------
-   planes[i].fov = float(grim_parse_form_entry(data.ids, data.tags, 'FOV', /string))
+   planes[i].fov = float(grim_parse_form_entry(data.ids, data.tags, 'FOV', /numeric))
 
    ;-----------------------
    ; max
@@ -313,28 +312,28 @@ pro gros_apply_settings, data
    ;-----------------------
    ; descriptors
    ;-----------------------
-   trs_cd = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'TRS_CD', /string), 2)
-   trs_pd = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'TRS_PD', /string), 2)
-   trs_rd = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'TRS_RD', /string), 2)
-   trs_sd = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'TRS_SD', /string), 2)
-   trs_std = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'TRS_STD', /string), 2)
-   trs_ard = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'TRS_ARD', /string), 2)
-   trs_sund = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'TRS_SUND', /string), 2)
+   cam_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'CAM_TRS', /string), 2)
+   plt_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'PLT_TRS', /string), 2)
+   rng_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'RNG_TRS', /string), 2)
+   str_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'STR_TRS', /string), 2)
+   stn_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'STN_TRS', /string), 2)
+   arr_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'ARR_TRS', /string), 2)
+   sun_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'SUN_TRS', /string), 2)
 
-   planes[i].trs_cd = trs_cd
-   planes[i].trs_pd = trs_pd
-   planes[i].trs_rd = trs_rd
-   planes[i].trs_sd = trs_sd
-   planes[i].trs_std = trs_std
-   planes[i].trs_ard = trs_ard
-   planes[i].trs_sund = trs_sund
+   planes[i].cam_trs = cam_trs
+   planes[i].plt_trs = plt_trs
+   planes[i].rng_trs = rng_trs
+   planes[i].str_trs = str_trs
+   planes[i].stn_trs = stn_trs
+   planes[i].arr_trs = arr_trs
+   planes[i].sun_trs = sun_trs
 
 
    ;-----------------------
@@ -547,13 +546,13 @@ common grim_overlay_settings_block, tops
  ;- - - - - - - - - - - - - - - - - - - - - -
  desc = [desc, $
 	'1, BASE,, COLUMN, TITLE=Translator Arguments, FRAME, TAG=xd_base', $
-	  '0, TEXT,, LABEL_LEFT= Camera :, WIDTH=60, TAG=trs_cd', $
-	  '0, TEXT,, LABEL_LEFT= Planet :, WIDTH=60, TAG=trs_pd', $
-	  '0, TEXT,, LABEL_LEFT= Ring   :, WIDTH=60, TAG=trs_rd', $
-	  '0, TEXT,, LABEL_LEFT= Star   :, WIDTH=60, TAG=trs_sd', $
-	  '0, TEXT,, LABEL_LEFT= Station:, WIDTH=60, TAG=trs_std', $
-	  '0, TEXT,, LABEL_LEFT= Array  :, WIDTH=60, TAG=trs_ard', $
-	  '2, TEXT,, LABEL_LEFT= Sun    :, WIDTH=60, TAG=trs_sund']
+	  '0, TEXT,, LABEL_LEFT= Camera :, WIDTH=60, TAG=cam_trs', $
+	  '0, TEXT,, LABEL_LEFT= Planet :, WIDTH=60, TAG=plt_trs', $
+	  '0, TEXT,, LABEL_LEFT= Ring   :, WIDTH=60, TAG=rng_trs', $
+	  '0, TEXT,, LABEL_LEFT= Star   :, WIDTH=60, TAG=str_trs', $
+	  '0, TEXT,, LABEL_LEFT= Station:, WIDTH=60, TAG=stn_trs', $
+	  '0, TEXT,, LABEL_LEFT= Array  :, WIDTH=60, TAG=arr_trs', $
+	  '2, TEXT,, LABEL_LEFT= Sun    :, WIDTH=60, TAG=sun_trs']
 
  ;- - - - - - - - - - - - - - - - - - - - - -
  ; settings for user overlays

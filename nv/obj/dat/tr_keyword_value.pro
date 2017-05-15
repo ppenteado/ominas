@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Looks up a keyword in the data descriptor stored keyword/value pairs.
+;	Looks up a keyword in the data descriptor-stored keyword/value pairs.
 ;
 ;
 ; CATEGORY:
@@ -62,7 +62,7 @@ pro trkv_match, kv, i, keyword, value=value
  keywords = (*(*kv.keywords_p)[i])
  values = (*(*kv.values_p)[i])
 
- w = where(keywords EQ keyword)
+ w = where(strupcase(keywords) EQ strupcase(keyword))
 
  if(w[0] EQ -1) then return
 

@@ -129,7 +129,7 @@ function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
   end
  
  ;---------------------------------------------------------
- ; Read in the index file into a list of index entries
+ ; Read the index file into a list of index entries
  ; The format for these entries is specified in the
  ; TYCHO-2 guide.pdf, Table 3
  ;---------------------------------------------------------
@@ -140,10 +140,14 @@ function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
  readf, ndx_lun, index, format=format
  close, ndx_lun
  free_lun, ndx_lun
+
  ;---------------------------------------------------------
  ; Find the tycho regions that the scene occupies
  ;---------------------------------------------------------
- reg = where(index.DEmax ge dec1 and index.DEmin le dec2 and index.RAmax ge ra1 and index.RAmin le ra2)
+; reg = where(index.DEmax ge dec1 and index.DEmin le dec2 and index.RAmax ge ra1 and index.RAmin le ra2)
+ reg = strcat_radec_regions( [ra1, ra2]*!dpi/180d, [dec1, dec2]*!dpi/180d, $
+	  index.RAmin*!dpi/180d, index.RAmax*!dpi/180d, $
+	  index.DEmin*!dpi/180d, index.DEmax*!dpi/180d)
 
  ;---------------------------------------------------------
  ; Open the catalog file, known bug: will break if 

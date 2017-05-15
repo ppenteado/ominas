@@ -1009,6 +1009,8 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
 ;   mg = 0.03
 ;   plot, [0], [0], /noerase, /data, pos=[mg,mg, 1.0-mg,1.0-mg]
 
+
+
    ;----------------------------
    ; main window image outline
    ;----------------------------
@@ -1018,6 +1020,21 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
 
    plots, [-0.5,xsize-0.5,xsize-0.5,-0.5,-0.5], $
           [-0.5,-0.5,ysize-0.5,ysize-0.5,-0.5], line=1
+
+
+   ;----------------------------
+   ; optic axis 
+   ;----------------------------
+   cd = *plane.cd_p
+   if(keyword_set(cd)) then $
+    if(cor_class(cd) EQ 'CAMERA') then $
+     begin
+      oaxis = cam_oaxis(cd)
+ 
+      plots, oaxis, psym=1, symsize=4, col=ctred()
+     end
+
+
 
 
    ;----------------------------
@@ -2620,7 +2637,7 @@ end
 ; grim_deactivate_overlay
 ;
 ;=============================================================================
-pro grim_deactivate_overlay, plane, ptd, xds=xds, assoc_xds=assoc_xds, pptd=pptd, $
+pro grim_deactivate_overlay, grim_data, plane, ptd, xds=xds, assoc_xds=assoc_xds, pptd=pptd, $
       no_callback=no_callback
 
  if(NOT keyword_set(*plane.active_overlays_ptdp)) then return
@@ -2659,7 +2676,7 @@ pro grim_deactivate_overlay, plane, ptd, xds=xds, assoc_xds=assoc_xds, pptd=pptd
    for i=0, nxds-1 do $
     begin
      pptd = grim_get_object_overlays(grim_data, plane, xds[i])
-     grim_deactivate_overlay, plane, pptd
+     grim_deactivate_overlay, grim_data, plane, pptd
     end
   end
 
@@ -2669,7 +2686,7 @@ pro grim_deactivate_overlay, plane, ptd, xds=xds, assoc_xds=assoc_xds, pptd=pptd
  ; Note the recursive call.
  ;--------------------------------------------------------------------
 ; if(keyword_set(assoc_xds)) then $
-;   for i=0, n_elements(assoc_xds)-1 do grim_deactivate_overlay, plane, assoc_xds[i]
+;   for i=0, n_elements(assoc_xds)-1 do grim_deactivate_overlay, grim_data, plane, assoc_xds[i]
  
 
  ;-----------------------------------
@@ -2762,7 +2779,7 @@ end
 ; grim_activate_overlay
 ;
 ;=============================================================================
-pro grim_activate_overlay, plane, ptd, xds=xds, pptd=pptd, $
+pro grim_activate_overlay, grim_data, plane, ptd, xds=xds, pptd=pptd, $
       no_callback=no_callback
 
  if(NOT keyword_set(ptd)) then return
@@ -2802,7 +2819,7 @@ pro grim_activate_overlay, plane, ptd, xds=xds, pptd=pptd, $
    for i=0, nxds-1 do $
     begin
      pptd = grim_get_object_overlays(grim_data, plane, xds[i])
-     grim_activate_overlay, plane, pptd
+     grim_activate_overlay, grim_data, plane, pptd
     end
   end
 
@@ -2833,7 +2850,7 @@ pro grim_activate_all_overlays, grim_data, plane
  if(NOT keyword_set(*plane.overlay_ptdps)) then return
 
  n = n_elements(*plane.overlay_ptdps)
- for i=0, n-1 do grim_activate_overlay, plane, *(*plane.overlay_ptdps)[i]
+ for i=0, n-1 do grim_activate_overlay, grim_data, plane, *(*plane.overlay_ptdps)[i]
 
  if(ptr_valid(plane.user_ptd_tlp)) then $
   begin
@@ -2856,7 +2873,7 @@ pro grim_deactivate_all_overlays, grim_data, plane
  if(NOT keyword_set(*plane.overlay_ptdps)) then return
 
  n = n_elements(*plane.overlay_ptdps)
- for i=0, n-1 do grim_deactivate_overlay, plane, *(*plane.overlay_ptdps)[i]
+ for i=0, n-1 do grim_deactivate_overlay, grim_data, plane, *(*plane.overlay_ptdps)[i]
 
  if(ptr_valid(plane.user_ptd_tlp)) then $
   begin
@@ -2874,7 +2891,7 @@ end
 ; grim_invert_active_overlays
 ;
 ;=============================================================================
-pro grim_invert_active_overlays, plane, ptd, xds=xds
+pro grim_invert_active_overlays, grim_data, plane, ptd, xds=xds
 
  if(NOT keyword_set(ptd)) then return
 
@@ -2895,12 +2912,12 @@ pro grim_invert_active_overlays, plane, ptd, xds=xds
  ;---------------------------------------------
  ; deactivate active objects
  ;---------------------------------------------
- if(w[0] NE -1) then grim_deactivate_overlay, plane, ptd[w]
+ if(w[0] NE -1) then grim_deactivate_overlay, grim_data, plane, ptd[w]
 
  ;---------------------------------------------
  ; activate previously inactive objects
  ;---------------------------------------------
- if(ww[0] NE -1) then grim_activate_overlay, plane, ptd[ww]
+ if(ww[0] NE -1) then grim_activate_overlay, grim_data, plane, ptd[ww]
 
  
  ;-----------------------------------------------------
@@ -2918,13 +2935,13 @@ end
 ; grim_invert_all_overlays
 ;
 ;=============================================================================
-pro grim_invert_all_overlays, plane
+pro grim_invert_all_overlays, grim_data, plane
 
  if(NOT keyword_set(*plane.overlay_ptdps)) then return
 
  n = n_elements(*plane.overlay_ptdps)
  for i=0, n-1 do $
-    grim_invert_active_overlays, plane, *(*plane.overlay_ptdps)[i]
+    grim_invert_active_overlays, grim_data, plane, *(*plane.overlay_ptdps)[i]
 
  grim_invert_active_user_overlays, plane
 
@@ -3165,7 +3182,7 @@ d2min = 25
        fn_overlay = active ? 'grim_deactivate_overlay' : 'grim_activate_overlay'
 
 
-   call_procedure, fn_overlay, plane, ptd, xd=xd, pptd=pptd
+   call_procedure, fn_overlay, grim_data, plane, ptd, xd=xd, pptd=pptd
    grim_set_overlay_update_flag, pptd, 1
 
    return, 0
@@ -3350,7 +3367,7 @@ pro grim_activate_by_box, grim_data, plane, cx, cy, deactivate=deactivate
       begin
        ptd = (*ptdp)[ww]
        grim_set_overlay_update_flag, ptd, 1
-       call_procedure, fn_overlay, plane, ptd, xd=xd
+       call_procedure, fn_overlay, grim_data, plane, ptd, xd=xd
       end
     end
 
@@ -3642,7 +3659,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
                        gd = cor_create_gd(gd=gd, cd=gd.md, od=*plane.od_p)
 
    _ptd = call_function(fn, gd=gd, $
-           map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
+           map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
            active_ptd=source_ptd, data=data, $
            npoints=grim_data.npoints)
    _ptd = pnt_cull(_ptd)
@@ -3687,7 +3704,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
   end
 
  ptd = call_function(fn, gd=gd, data=data, $
-          map=grim_test_map(grim_data), fov=plane.fov, hide=plane.hide, $
+          map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
           active_xds=active_xds, active_ptd=*plane.active_overlays_ptdp, $
           npoints=grim_data.npoints)
  ptd = pnt_cull(ptd)

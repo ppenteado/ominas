@@ -2,7 +2,7 @@
 ; grim_compute_planet_center
 ;
 ;===============================================================================
-function grim_compute_planet_center, map=map, fov=fov, hide=hide, $
+function grim_compute_planet_center, map=map, clip=clip, hide=hide, $
                               gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                               data=data, $
                               npoints=npoints
@@ -54,7 +54,7 @@ end
 ; grim_compute_limb
 ;
 ;===============================================================================
-function grim_compute_limb, map=map, fov=fov, hide=hide, $
+function grim_compute_limb, map=map, clip=clip, hide=hide, $
                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                              data=data, $
                              npoints=npoints
@@ -76,7 +76,7 @@ function grim_compute_limb, map=map, fov=fov, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing limbs...'
- limb_ptd = pg_limb(cd=cd, gbx=pds, od=od, fov=fov, npoints=npoints)
+ limb_ptd = pg_limb(cd=cd, gbx=pds, od=od, clip=clip, npoints=npoints)
  grim_message
 
  ;--------------------------------
@@ -139,7 +139,7 @@ end
 ; grim_compute_terminator
 ;
 ;===============================================================================
-function grim_compute_terminator, map=map, fov=fov, hide=hide, $
+function grim_compute_terminator, map=map, clip=clip, hide=hide, $
                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                              data=data, $
                              npoints=npoints
@@ -162,7 +162,7 @@ function grim_compute_terminator, map=map, fov=fov, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing terminators...'
- term_ptd = pg_limb(cd=cd, od=sund, gbx=pds, fov=fov, npoints=npoints)
+ term_ptd = pg_limb(cd=cd, od=sund, gbx=pds, clip=clip, npoints=npoints)
  grim_message
 
  ;--------------------------------
@@ -221,7 +221,7 @@ end
 ; grim_compute_planet_grid
 ;
 ;=============================================================================
-function grim_compute_planet_grid, map=map, fov=fov, hide=hide, $
+function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                              data=data, $
                              npoints=npoints
@@ -243,7 +243,7 @@ function grim_compute_planet_grid, map=map, fov=fov, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing planet grids...'
- grid_ptd = pg_grid(cd=cd, bx=pds, fov=fov, npoints=npoints)
+ grid_ptd = pg_grid(cd=cd, bx=pds, clip=clip, npoints=npoints)
  grim_message
 
  ;--------------------------------
@@ -310,7 +310,7 @@ end
 ; grim_compute_station
 ;
 ;=============================================================================
-function grim_compute_station, map=map, fov=fov, hide=hide, $
+function grim_compute_station, map=map, clip=clip, hide=hide, $
                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                              data=data, npoints=npoints
 
@@ -348,7 +348,7 @@ function grim_compute_station, map=map, fov=fov, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing stations...'
- station_ptd = pg_station(cd=cd, std=stds, bx=bx, fov=fov)
+ station_ptd = pg_station(cd=cd, std=stds, bx=bx, clip=clip)
  grim_message
 
 
@@ -413,7 +413,7 @@ end
 ; grim_compute_array
 ;
 ;=============================================================================
-function grim_compute_array, map=map, fov=fov, hide=hide, $
+function grim_compute_array, map=map, clip=clip, hide=hide, $
                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                              data=data, $
                              npoints=npoints
@@ -451,7 +451,7 @@ function grim_compute_array, map=map, fov=fov, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing planet arrays...'
- array_ptd = pg_array(cd=cd, ard=ards, bx=bx, fov=fov)
+ array_ptd = pg_array(cd=cd, ard=ards, bx=bx, clip=clip)
  grim_message
 
 
@@ -515,7 +515,7 @@ end
 ; grim_compute_star
 ;
 ;===============================================================================
-function grim_compute_star, map=map, fov=fov, hide=hide, $
+function grim_compute_star, map=map, clip=clip, hide=hide, $
                             gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                             data=data, $
                             npoints=npoints
@@ -535,7 +535,7 @@ function grim_compute_star, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  if(NOT keyword_set(sds)) then return, 0
  grim_print, 'Computing stars...'
- star_ptd = pg_center(cd=cd, bx=sds, fov=fov)
+ star_ptd = pg_center(cd=cd, bx=sds, clip=clip)
  grim_message
 
  ;--------------------------------
@@ -613,7 +613,7 @@ end
 ; grim_compute_shadow
 ;
 ;===============================================================================
-function grim_compute_shadow, map=map, fov=fov, hide=hide, $
+function grim_compute_shadow, map=map, clip=clip, hide=hide, $
                      gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                      data=data, $
                      npoints=npoints
@@ -634,7 +634,7 @@ function grim_compute_shadow, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  grim_print, 'Computing shadows...'
  shadow_ptd = pg_shadow(active_ptd, epsilon=1d, /nocull, $
-                                 cd=cd, od=sund, dkx=rd, gbx=pd, fov=fov)
+                                 cd=cd, od=sund, dkx=rd, gbx=pd, clip=clip)
  nshad = n_elements(shadow_ptd)
  grim_message
 
@@ -685,7 +685,7 @@ end
 ; grim_compute_reflection
 ;
 ;===============================================================================
-function grim_compute_reflection, map=map, fov=fov, hide=hide, $
+function grim_compute_reflection, map=map, clip=clip, hide=hide, $
                      gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                      data=data, $
                      npoints=npoints
@@ -705,7 +705,7 @@ function grim_compute_reflection, map=map, fov=fov, hide=hide, $
  ;--------------------------------
  grim_print, 'Computing reflections...'
  reflection_ptd = pg_reflection(active_ptd, /nocull, $
-                         cd=cd, od=sund, dkx=rd, gbx=pd, fov=fov)
+                         cd=cd, od=sund, dkx=rd, gbx=pd, clip=clip)
  nref = n_elements(reflection_ptd)
  grim_message
 
@@ -756,7 +756,7 @@ end
 ; grim_compute_ring
 ;
 ;===============================================================================
-function grim_compute_ring, map=map, fov=fov, hide=hide, $
+function grim_compute_ring, map=map, clip=clip, hide=hide, $
                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                              data=data, $
                              npoints=npoints
@@ -785,7 +785,7 @@ function grim_compute_ring, map=map, fov=fov, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing rings...'
- ring_ptd = pg_disk(cd=cd, dkx=rds, fov=fov, npoints=npoints)
+ ring_ptd = pg_disk(cd=cd, dkx=rds, clip=clip, npoints=npoints)
  grim_message
 
  pg_hide, ring_ptd, cd=cd, bx=pd, hide_ptd, /cat
@@ -843,7 +843,7 @@ end
 ; grim_compute_ring_grid
 ;
 ;===============================================================================
-function grim_compute_ring_grid, map=map, fov=fov, hide=hide, $
+function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
                              data=data, $
                              npoints=npoints
@@ -868,7 +868,7 @@ function grim_compute_ring_grid, map=map, fov=fov, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing ring grids...'
- grid_ptd = pg_grid(cd=cd, bx=rds, fov=fov, npoints=npoints)
+ grid_ptd = pg_grid(cd=cd, bx=rds, clip=clip, npoints=npoints)
  grim_message
 
  pg_hide, grid_ptd, cd=cd, gbx=pd, hide_ptd, /cat

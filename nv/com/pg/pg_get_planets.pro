@@ -63,7 +63,44 @@
 ;			to use instead of those in the translators table.  If
 ;			this keyword is specified, no translators from the 
 ;			table are called, but the translators keywords
-;			from the table are still used.   
+;			from the table are still used.  
+;
+;
+;    Descriptor Select Keywords
+;    --------------------------
+;    Descriptor select keywords are combined with OR logic.  They are implemented
+;    in this routine as described below after the translators have been called,
+;    but they are also added to the translator keywords.  The purpose of sending
+;    then to the translators as well is to give the translators an opportunity
+;    to filter their outputs before potentially generating a huge array of
+;    descriptors that would mostly be filtered out by this routine.   
+;
+;	fov/cov:	Select all planets that fall within this many fields of
+;			view (fov) (+/- 10%) from the center of view (cov).
+;			Default cov is the camera optic axis.
+;
+;	pix:		Select all planets whose apparent size (in pixels) is 
+;			greater than or equal to this value.
+;
+;	radmax:		Select all planets whose radius is greater than or 
+;			equal to this value.
+;
+;	radmin:		Select all planets whose radius is less than or 
+;			equal to this value.
+;
+;	distmax:	Select all planets whose distance is greater than or 
+;			equal to this value.
+;
+;	distmin:	Select all planets whose distance is less than or 
+;			equal to this value.
+;
+;	nlarge:		Select n largest planets.
+;
+;	nsmall:		Select n smallest planets.
+;
+;	nclose:		Select n closst planets.
+;
+;	nfar:		Select n farthest planets.
 ;
 ;
 ; RETURN:
@@ -86,13 +123,58 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, $
+
+
+
+;===========================================================================
+; pggp_select_planets
+;
+;
+;===========================================================================
+pro pggp_select_planets, dd, pd, od=od, select
+
+ ;------------------------------------------------------------------------
+ ; standard body filters
+ ;------------------------------------------------------------------------
+ sel = pg_select_bodies(dd, pd, od=od, select)
+
+ ;------------------------------------------------------------------------
+ ; implement any selections
+ ;------------------------------------------------------------------------
+ if(keyword_set(sel)) then $
+  begin
+   sel = unique(sel)
+
+   w = complement(pd, sel)
+   if(w[0] NE -1) then nv_free, pd[w]
+
+   if(sel[0] EQ -1) then pd = obj_new() $
+   else pd = pd[sel]
+  end
+
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; pg_get_planets
+;
+;===========================================================================
+function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, _extra=select, $
                              override=override, verbatim=verbatim, raw=raw, $
 @plt__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
  ndd = n_elements(dd)
+;;;;select={FOV:1}
+
+ ;-----------------------------------------------
+ ; add selection keywords to translator keywords
+ ;-----------------------------------------------
+ if(keyword_set(select)) then pg_add_selections, trs, select
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -183,6 +265,13 @@ end_keywords
     if(defined(_name)) then name = _name
 
   end
+
+ ;--------------------------------------------------------
+ ; filter planets
+ ;--------------------------------------------------------
+ if(NOT keyword_set(pd)) then return, obj_new()
+ if(keyword_set(select)) then pggp_select_planets, dd, pd, od=od, select
+ if(NOT keyword_set(pd)) then return, obj_new()
 
  ;--------------------------------------------------------
  ; update generic descriptors

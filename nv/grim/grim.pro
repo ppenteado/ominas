@@ -37,14 +37,14 @@
 ;  INPUT:
 ;	Descriptor Keywords
 ;	-------------------
-;	The following keywords replace those already maintained by GRIM.  In the 
-;	case of a single plane, all given descriptors are placed in that plane.
-;	In that case, only one cd, od, or sun are allowed.  For multiple
+;	The following keywords replace objects already maintained by GRIM.  For 
+;	the case of a single plane, all given descriptors are placed in that 
+;	plane.  In that case, only one cd, od, or sund are allowed.  For multiple
 ;	planes, descriptors are assigned to planes by matching their generic
 ;	decsriptor dd fields to the data descriptor for each plane.
 ;
 ;	 cd:	Replaces the current camera descriptor.  This may also be 
-;		a map descriptor, in which case certain of GRIM's functions 
+;		a map descriptor, in which case some of GRIM's functions 
 ;		will not be available.  When using a map descriptor instead 
 ;		of a camera descriptor, you can specify a camera descriptor 
 ;		as the observer descriptor (see the 'od' keyword below) and 
@@ -76,30 +76,37 @@
 ;		generic descriptors.
 ;
 ;
+;	Descriptor Select Keywords
+;	--------------------------
+;	Descriptor select keywords (see pg_get_*) are specified using the
+;	standard prefix corresponding to the descriptor type.  For example, 
+;	the fov keyword to pg_get_planets would be given to grim as plt_fov.  
+;
+;
 ;	Translator Keywords
 ;	-------------------
 ;	The following keywords are passed directly to the translators, which
 ;	are responsible for interpreting their meanings.
 ;
-;	*trs_cd:
+;	*cam_trs:
 ;		String giving translator keywords for the camera descriptors.
 ;
-;	*trs_sd: 
+;	*sun_trs: 
 ;		String giving translator keywords for the sun descriptors.
 ;
-;	*trs_pd: 
+;	*plt_trs: 
 ;		String giving translator keywords for the planet descriptors.
 ;
-; 	*trs_rd: 
+; 	*rng_trs: 
 ;		String giving translator keywords for the ring descriptors.
 ;
-; 	*trs_sd: 
+; 	*str_trs: 
 ;		String giving translator keywords for the star descriptors.
 ;
-; 	*trs_std: 
+; 	*stn_trs: 
 ;		String giving translator keywords for the stations descriptors.
 ;
-; 	*trs_ard: 
+; 	*arr_trs: 
 ;		String giving translator keywords for the array descriptors.
 ;
 ;
@@ -198,9 +205,19 @@
 ;		Retain settings for backing store (see "backing store" in 
 ;		the IDL reference guide).  Defaults to 2.
 ;
-;	*fov:	Controls the number of camera fields of view to crop when
-;		the 'FOV' overlay settings is on.  If set, the FOV overlay
-;		settings is turned on.
+;	*clip:	Controls the number of fields of view in which overlays are 
+;		computed.
+;
+;	*fov:	Controls the number of fields of view in which to request
+;		planet, ring and star descriptors.  Values are as follows:
+;
+; 			 0 : get all descriptors
+;                  	<0 : relative to viewport
+;                 	>0 : relative to image / optic axis
+;
+;		Note that fov > 0 is the same as setting the fov descriptor
+;		select keywords (see above).  Default is 0, but stars operate
+;		best when fov > 0.
 ;
 ;	*hide:	If set, overlays are hidden w.r.t shadows and obstructions.
 ; 		Default is on. 
@@ -557,9 +574,10 @@
 ;
 ;
 ;	 Graphics window: 
-;		The graphics window displays the image associated with the 
+;		The graphics window displays the data associated with the 
 ;		given data descriptor using the current zoom, offset, and 
-;		display order.  The edges of the image are indicated by a dotted line.
+;		display order.  The edges of an image are indicated by a dotted 
+;		line.  The camera optic axis is indicated by a large red cross.
 ;
 ;	 Pixel readout: 
 ;		The cursor position and corresponding data value are are 
@@ -7678,7 +7696,7 @@ pro grim_menu_invert_event, event
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
 
- grim_invert_all_overlays, plane
+ grim_invert_all_overlays, grim_data, plane
 
  grim_refresh, grim_data, /no_image
 end
@@ -9183,7 +9201,8 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
                                               event_pro='grim_guideline_event')
 
  if(NOT plot) then $
-   grim_data.grid_button = widget_button(grim_data.shortcuts_base6, $
+  if(NOT grim_test_map(grim_data)) then $
+    grim_data.grid_button = widget_button(grim_data.shortcuts_base6, $
               resource_name='grim_grid_button', $
               value=grim_grid_bitmap(), /bitmap, /tracking_events, $
                                               event_pro='grim_grid_event')
@@ -9512,8 +9531,6 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
  nplanes = n_elements(planes)
 
  if(grim_data.slave_overlays) then nplanes = 1
-;print, '=========================='
-;help, cor_gd(planes[0].dd)
 
  ;------------------------------------------------------------------
  ; check each plane for initial overlays that have not been cleared
@@ -9758,7 +9775,8 @@ end
 ; grim
 ;
 ;=============================================================================
-pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od, $
+pro grim, arg1, arg2, gd=gd, _extra=select, $
+        cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od, $
 	new=new, xsize=xsize, ysize=ysize, $
 	default=default, previous=previous, restore=restore, activate=activate, $
 	doffset=doffset, no_erase=no_erase, filter=filter, rgb=rgb, visibility=visibility, channel=channel, exit=exit, $
@@ -9769,12 +9787,12 @@ pro grim, arg1, arg2, gd=gd, cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=
 	nhist=nhist, compress=compress, path=path, symsize=symsize, $
 	user_psym=user_psym, workdir=workdir, mode_args=mode_args, $
         save_path=save_path, load_path=load_path, overlays=overlays, pn=pn, $
-	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, hide=hide, $
+	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
 	menu_extensions=menu_extensions, button_extensions=button_extensions, $
 	arg_extensions=arg_extensions, loadct=loadct, max=max, grnum=grnum, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
-	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, $
-        trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, assoc_dd=assoc_dd, $
+	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, $
+        sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_dd=assoc_dd, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
@@ -9794,13 +9812,14 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  grim_constants
 
- grim_rc_settings, rcfile='.ominas/grimrc', $
+ grim_rc_settings, rcfile='.ominas/grimrc', select=select, $
+	cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select, $
 	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
-	fov=fov, menu_extensions=menu_extensions, button_extensions=button_extensions, arg_extensions=arg_extensions, $
-	trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_sund=trs_sund, trs_std=trs_std, trs_ard=trs_ard, $
+	fov=fov, clip=clip, menu_extensions=menu_extensions, button_extensions=button_extensions, arg_extensions=arg_extensions, $
+	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
 	hide=hide, mode_args=mode_args, xzero=xzero, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
@@ -9866,19 +9885,20 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  new = keyword_set(new)
  if(NOT keyword_set(fov)) then fov = 0
+ if(NOT keyword_set(clip)) then clip = 0
  if(NOT defined(hide)) then hide = 1
  if(n_elements(retain) EQ 0) then retain = 2
  if(n_elements(maintain) EQ 0) then maintain = 1
  if(NOT keyword_set(compress)) then compress = ''
  if(NOT keyword_set(extensions)) then extensions = ''
  if(NOT keyword_set(trs)) then trs = ''
- if(NOT keyword_set(trs_cd)) then trs_cd = ''
- if(NOT keyword_set(trs_pd)) then trs_pd = ''
- if(NOT keyword_set(trs_rd)) then trs_rd = ''
- if(NOT keyword_set(trs_sd)) then trs_sd = ''
- if(NOT keyword_set(trs_std)) then trs_std = ''
- if(NOT keyword_set(trs_ard)) then trs_ard = ''
- if(NOT keyword_set(trs_sund)) then trs_sund = ''
+ if(NOT keyword_set(cam_trs)) then cam_trs = ''
+ if(NOT keyword_set(plt_trs)) then plt_trs = ''
+ if(NOT keyword_set(rng_trs)) then rng_trs = ''
+ if(NOT keyword_set(str_trs)) then str_trs = ''
+ if(NOT keyword_set(stn_trs)) then stn_trs = ''
+ if(NOT keyword_set(arr_trs)) then arr_trs = ''
+ if(NOT keyword_set(sun_trs)) then sun_trs = ''
  
  if(NOT keyword_set(title)) then title = ''
  if(NOT keyword_set(xtitle)) then xtitle = ''
@@ -9942,8 +9962,9 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_data = grim_init(dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, type=type, $
        filter=filter, retain=retain, user_callbacks=user_callbacks, $
        user_psym=user_psym, path=path, save_path=save_path, load_path=load_path, $
-       cursor_swap=cursor_swap, fov=fov, hide=hide, $
-       trs_cd=trs_cd, trs_pd=trs_pd, trs_rd=trs_rd, trs_sd=trs_sd, trs_std=trs_std, trs_sund=trs_sund, trs_ard=trs_ard, $
+       cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
+       cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, sun_trs=sun_trs, arr_trs=arr_trs, $
+       cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select, $
        color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        symsize=symsize, nhist=nhist, maintain=maintain, $

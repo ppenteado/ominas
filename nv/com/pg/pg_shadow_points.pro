@@ -44,10 +44,10 @@
 ;		are taken from the corresponding fields of this structure
 ;		instead of from those keywords.
 ;
-;	fov:	 If set shadow points are cropped to within this many camera
+;	clip:	 If set shadow points are cropped to within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, POINT objects excluded by the fov keyword
+;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
@@ -83,7 +83,7 @@
 ;=============================================================================
 pro pg_shadow_points, cd=cd, od=od, bx=bx, gd=gd, object_ptd, shadow_ptd, $
                            nocull=nocull, edge=edge, nosolve=nosolve, $
-                           fov=fov, cull=cull, both=both, backshadow=_backshadow
+                           clip=clip, cull=cull, both=both, backshadow=_backshadow
                            
 @pnt_include.pro
 
@@ -92,7 +92,7 @@ pro pg_shadow_points, cd=cd, od=od, bx=bx, gd=gd, object_ptd, shadow_ptd, $
 
  shad_ptd = pg_shadow(both=both, backshadow=backshadow, $
                        object_ptd, cd=cd, od=od, bx=bx, gd=gd, $
-                       all=all, fov=fov, nocull=NOT keyword_set(cull), $
+                       all=all, clip=clip, nocull=NOT keyword_set(cull), $
                        nosolve=nosolve)
 
  object_flags = pnt_flags(object_ptd)

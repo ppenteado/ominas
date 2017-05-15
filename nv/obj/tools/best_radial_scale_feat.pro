@@ -16,7 +16,7 @@ function best_radial_scale_feat, cd, rd, pd, $
  sma = dsk_sma(rdtest) & sma[0] = max(sma) & dsk_set_sma, rdtest, sma
 
 
- ring_ptd = pg_disk(cd=cd, dkx=rdtest, fov=1)
+ ring_ptd = pg_disk(cd=cd, dkx=rdtest, clip=1)
 
  image_pts = pnt_points(/vis, ring_ptd[0])
  w = in_image(cd, image_pts)

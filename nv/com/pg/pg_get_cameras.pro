@@ -83,12 +83,17 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, $
+function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, _extra=select, $
                           override=override, verbatim=verbatim, default_orient=default_orient, $
                           no_default=no_default, $
 @cam__keywords.include
 @nv_trs_keywords_include.pro
 		end_keywords
+
+ ;-----------------------------------------------
+ ; add selection keywords to translator keywords
+ ;-----------------------------------------------
+ if(keyword_set(select)) then pg_add_selections, trs, select
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given

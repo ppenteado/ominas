@@ -46,10 +46,10 @@
 ;	reveal:	 Normally, disks whose opaque flag is set are ignored.  
 ;		 /reveal suppresses this behavior.
 ;
-;	fov:	 If set shadow points are cropped to within this many camera
+;	clip:	 If set shadow points are cropped to within this many camera
 ;		 fields of view.
 ;
-;	cull:	 If set, POINT objects excluded by the fov keyword
+;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
@@ -87,7 +87,7 @@
 ;=============================================================================
 function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_ptd, $
                            nocull=nocull, both=both, reveal=reveal, $
-                           fov=fov, cull=cull, backshadow=backshadow, all=all, $
+                           clip=clip, cull=cull, backshadow=backshadow, all=all, $
                            epsilon=epsilon
 @pnt_include.pro
 
@@ -258,7 +258,7 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_p
  ; crop to fov, if desired
  ;  Note, that one image size is applied to all points
  ;------------------------------------------------------
- if(keyword_set(fov)) then $
+ if(keyword_set(clip)) then $
   begin
    pg_crop_points, shadow_ptd, cd=cd[0], slop=slop
    if(keyword_set(cull)) then shadow_ptd = pnt_cull(shadow_ptd)

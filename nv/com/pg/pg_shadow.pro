@@ -77,7 +77,7 @@
 ;-
 ;=============================================================================
 function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, object_ptd, $
-              reveal=reveal, fov=fov, nocull=nocull, all=all, $
+              reveal=reveal, clip=clip, nocull=nocull, all=all, $
               both=both, backshadow=backshadow, epsilon=epsilon, $
               nosolve=nosolve
 
@@ -98,7 +98,7 @@ function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, object_
  if(keyword_set(gbx)) then $
    globe_shadow_ptd = $
        pg_shadow_globe(object_ptd, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, $
-               /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow, $
+               /nocull, reveal=reveal, clip=clip, both=both, backshadow=backshadow, $
                nosolve=nosolve, epsilon=epsilon)
 
  ;----------------------------------
@@ -107,7 +107,7 @@ function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, object_
  if(keyword_set(dkx)) then $
    disk_shadow_ptd = $
        pg_shadow_disk(object_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, dd=dd, gd=gd, $
-               /nocull, reveal=reveal, fov=fov, both=both, backshadow=backshadow, epsilon=epsilon)
+               /nocull, reveal=reveal, clip=clip, both=both, backshadow=backshadow, epsilon=epsilon)
 
 
  ;----------------------------------
