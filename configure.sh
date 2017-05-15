@@ -383,13 +383,15 @@ function pkins()
                     case $ans in
                     [Yy]*)
                           pstr="unset NV_TRANSLATORS"
-                          unset NV_TRANSLATORS ;;
+                          unset NV_TRANSLATORS
+                          corest=${no};;
                     *)
                       return 1 ;;
                     esac
                   fi
                 fi
                 ins_ominas_env_def=${pstr}
+                corest=${yes}
 	fi
         if [[ ! $1 == "ominas_env_def.$shtype" ]]; then
           if grep -q ${1} ${setting}; then
@@ -696,6 +698,14 @@ fi
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
 corest=`pkst ${OMINAS_DIR}/config/tab/`
+grep -q "source /config/ominas_env_def.sh" ${setting}
+corest=$?
+if [ ${corest} == 0 ] ; then
+  corest=${yes}
+else
+  corest=${no}
+fi
+echo "aaa ${corest}"
 demost=$no
 DFLAG="false"
 #if [ ! -z $OMINAS_DEMO ]; then
@@ -884,7 +894,7 @@ do
 		[1])            
                                 pr=0
 				pkins ominas_env_def.sh "${corest}" coreu
-                                corest=${yes}
+                                #corest=${yes}
 							;;
                 [2])
                                 pr=0

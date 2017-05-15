@@ -1,4 +1,4 @@
-pro idlastro_download,auto=auto
+pro idlastro_download,auto=auto,ominasdir
 compile_opt idl2,logical_predicate
 auto=keyword_set(auto)
 routs=['cntrd','minmax']
@@ -29,6 +29,10 @@ endif else begin
     loc='~/ominas_data/idlastro'
     spawn,'eval echo '+loc,res
     loc=res
+    if file_test(loc,/directory) then begin
+      print,'~/ominas_data/idlastro already exists, moving it to ',loc.replace('idlastro','idlastro_old')
+      file_move,loc,loc.replace('idlastro','idlastro_old'),/verbose
+    endif 
     comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
     print,comm
     spawn,comm,exit_status=st
@@ -37,7 +41,8 @@ endif else begin
       locl='~/ominas_data/'
       spawn,'eval echo '+locl,res
       locl=res
-      j=pp_wget('https://github.com/wlandsman/IDLAstro/archive/master.zip',localdir=locl)
+      certf=file_expand_path(ominasdir)+'/util/downloader/ca-bundle.crt'
+      j=pp_wget('https://github.com/wlandsman/IDLAstro/archive/master.zip',localdir=locl,ssl_certificate_file=certf)
       j.geturl
       file_unzip,locl+'/master.zip',locl;,/verbose
       loc=locl+'/IDLAstro-master'
