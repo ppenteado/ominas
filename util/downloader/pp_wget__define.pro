@@ -168,6 +168,10 @@ pro pp_wget::geturl
 compile_opt idl2,logical_predicate
 
 if ~file_test(self.ldir,/directory) then begin
+  if file_test(self.ldir,/regular) then begin
+    print,'directory ',self.ldir,' exists as a file. Deleting the file to replace it with directory'
+    file_delete,self.ldir,/verbose
+  endif
   print,'Creating directory ',self.ldir
   file_mkdir,self.ldir
 endif
@@ -212,9 +216,14 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
       lms=reform(links[2,*])
       links=reform(links[1,*])
       if total(strlen(strtrim(lms,2))) eq 0 then begin
-        links=(stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>([^<]*)</a>(<td[^>]*>)?[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*(</td>)?',/extract,/subexpr))
-        lms=reform(links[4,*])
-        links=reform(links[2,*])        
+        links=(stregex(indl,'\[(DIR)?[[:blank:]]*\][[:blank:]]*<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>([^<]*)</a>(<td[^>]*>)?[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*(</td>)?',/extract,/subexpr))
+        lms=reform(links[5,*])
+        w=where(strtrim(links[1,*],2) eq 'DIR',wc)
+        if wc then begin
+          ww=where(~strmatch(links[3,*],'*/'),wwc)
+        endif else wwc=0
+        links=reform(links[3,*])
+        if wwc then links[w[ww]]+='/'
       endif
       wla=where(stregex(links,'^(\/|\?)',/bool),/null,count,complement=wlac)
       if ~self.allow_slash then begin
