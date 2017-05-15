@@ -31,7 +31,7 @@ endif else begin
     loc=res
     if file_test(loc,/directory) then begin
       print,'~/ominas_data/idlastro already exists, moving it to ',loc+'_old'
-      spawn,'mv '+loc+' loc'+_old
+      spawn,'mv '+loc+' '+loc+'_old'
     endif 
     comm='git clone https://github.com/wlandsman/IDLAstro.git '+loc
     print,comm
