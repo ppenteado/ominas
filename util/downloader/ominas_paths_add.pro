@@ -10,7 +10,7 @@ if ominasdir then begin
   if ~stregex(path,'\+?'+ominasdir+'/?',/bool) then path+=':+'+ominasdir
   if ~stregex(path,'\+?'+xidldir+'/?',/bool) then path+=':+'+xidldir
 ;  !path=path
-  idlastro_download,/auto
+  idlastro_download,/auto,ominasdir
 endif
 
 if icydir || ominasdir then begin
