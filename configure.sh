@@ -364,7 +364,6 @@ function pkins()
 		#		dstr="DFLAG=false; "
 		#		printf "Demo package will not be installed...\n"
 		#esac
-        echo "bbb"
         if [[ $1 == "ominas_env_def.$shtype" ]]; then
                 if [[ "$2" == "$no" ]]; then
                   printf "Settiing OMINAS Core...\n"
@@ -936,7 +935,6 @@ done
 
 XIDL_DIR=$OMINAS_DIR/util/xidl/
 
-echo "aaaa"
 
 test "$1" == ".*c.*" &&
 for f in ./ominas_env_*.sh
@@ -1000,7 +998,8 @@ IDLCMD
 #        idlbin=$IDL_DIR/bin/idl
 ##        $IDL_DIR/bin/idl paths.pro
 #fi
-if [ ${corest} == ${yes} ]; then
+
+if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
   
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}'"
@@ -1013,7 +1012,6 @@ else
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',''"
 fi
 rm paths.pro
-
 if [ -e idlpathr.sh ]; then
   #cat idlpathr.sh >> $idlpathfile
   rm idlpathr.sh
