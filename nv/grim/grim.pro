@@ -7696,7 +7696,7 @@ pro grim_menu_invert_event, event
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
 
- grim_invert_all_overlays, plane
+ grim_invert_all_overlays, grim_data, plane
 
  grim_refresh, grim_data, /no_image
 end
@@ -9531,8 +9531,6 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
  nplanes = n_elements(planes)
 
  if(grim_data.slave_overlays) then nplanes = 1
-;print, '=========================='
-;help, cor_gd(planes[0].dd)
 
  ;------------------------------------------------------------------
  ; check each plane for initial overlays that have not been cleared

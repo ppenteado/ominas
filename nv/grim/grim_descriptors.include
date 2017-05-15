@@ -713,7 +713,7 @@ function grim_get_rings, grim_data, plane=plane, names=names
 
  grim_print, grim_data, 'Getting ring descriptors...'
  pd = *plane.pd_p
- if(NOT keyword_set(pd)) then return, !null
+ if(NOT keyword_set(pd)) then return, obj_new()
 
  rd = pg_get_rings(plane.dd, $
          od=*plane.cd_p, pd=pd, name=names, $
@@ -944,7 +944,6 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
        std: std, $
        ard: ard, $
        od: od}
-
 end
 ;=============================================================================
 
