@@ -552,12 +552,15 @@ do
         #if grep -q NV_${Data[$d]}_DATA $setting; then
         if [ -z ${inst[$d]+x} ]  ;then
           #echo "${d}:0 ${inst[$d]}"
-          echo "unset NV_${dat}_DATA" >>$setting
+          echo "unset NV_${dat}_DATA" >>${setting}
         else 
           #echo "$d: ${inst[$d]}"
           #echo "${d}:i ${inst[$d]}"
           
-          echo "export NV_${dat}_DATA=${inst[$d]}" >>$setting
+          echo "export NV_${dat}_DATA=${inst[$d]}" >>${setting}
+          if [ ! -z ${insts[$d]+x} ]  ;then
+            echo ${insts[$d]} >>${setting}
+          fi
         fi
 done
 for ((d=0; d<6; d++));
@@ -569,7 +572,7 @@ do
         else
           #echo "$d: ${ins[$d]}"
           #echo "${d}:i ${ins[$d]}"
-          echo "${ins[$d]}" >>$setting
+          echo "${ins[$d]}" >>${setting}
         fi
 done
 
@@ -717,6 +720,11 @@ fi
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
+declare -a insts=("" "" "" "" "" "")
+insts[2]="source ${OMINAS_DIR}/config/ominas_env_strcat.sh tycho2"
+insts[3]="source ${OMINAS_DIR}/config/ominas_env_strcat.sh sao"
+insts[4]="source ${OMINAS_DIR}/config/ominas_env_strcat.sh gsc"
+insts[5]="source ${OMINAS_DIR}/config/ominas_env_strcat.sh ucac4"
 for ((d=0; d<${#mis[@]}; d++));
 do
 	#mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`

@@ -371,7 +371,7 @@ endif else begin
     iw=pp_wget(self.baseurl+'/'+link,$
       timestamps=self.timestamps,clobber=self.clobber,pattern=self.pattern,$
       recursive=self.recursive,localdir=self.localdir+path_sep()+link+path_sep(),$
-      bdir=self.bdir ? self.bdir+'/'+link : link,xpattern=self.xpattern,absolute=self.absolute)
+      bdir=self.bdir ? self.bdir+'/'+link : link,xpattern=self.xpattern,absolute=self.absolute,lm=self.lm)
     iw.geturl
     print,'Done with directory ',link
   endif else print,'Recursive mode not set, skipping directory ',link
