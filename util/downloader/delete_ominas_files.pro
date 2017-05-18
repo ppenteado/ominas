@@ -13,7 +13,9 @@ if (conf lt 1) then begin
 endif else ans='y'
 if strlowcase(ans) ne 'y' then return
 ps=path_sep()
-odir=(file_search(dir)).replace(ps,'_')
+;odir=(file_search(dir)).replace(ps,'_')
+odir=(file_search(dir))
+odir=strjoin(strsplit(odir,ps,/extract),'_')
 odir=strjoin(strsplit(odir,'_',/extract),'_')
 ts=file_search(['~'+ps+'.ominas'+ps+'timestamps'+ps+odir+'.json',$
 '~'+ps+'.ominas'+ps+'timestamps'+ps+odir+'_*.json'],count=count)
