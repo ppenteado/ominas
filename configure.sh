@@ -153,6 +153,8 @@ else
         idlbin=$IDL_DIR/bin/idl
 fi
 export idlbin
+idlversion=`$idlbin -e 'print,!version.os+strjoin((strsplit(!version.release,".",/extract))[0:1])'`
+export idlversion
 ominassh="$HOME/.ominas/ominas_setup.sh"
 usersh=$setting
 setting=$ominassh
