@@ -58,7 +58,7 @@ function pp_wget::init,baseurl,clobber=clobber,pattern=pattern,$
 recursive=recursive,localdir=localdir,debug=debug,timestamps=timestamps,$
 bdir=bdir,xpattern=xpattern,absolute_paths=absolute,_ref_extra=e,$
 ssl_certificate_file=sslf,splitrows=splitrows,allow_slash=allow_slash,$
-lm=lm,tz=tz
+lm=lm,tz=tz,quiet=quiet
 compile_opt idl2,logical_predicate,hidden
 
 self.clobber=keyword_set(clobber)
@@ -74,7 +74,8 @@ self.pattern=n_elements(pattern) ? pattern : ''
 self.xpattern=n_elements(xpattern) ? xpattern : ''
 self.absolute=keyword_set(absolute)
 self.sslf=n_elements(sslf) ? file_search(sslf) : (file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0]
-print,self.sslf
+self.quiet=keyword_set(quiet)
+if ~self.quiet then print,self.sslf
 self.splitrows=keyword_set(splitrows)
 self.allow_slash=keyword_set(allow_slash)
 self.lm=keyword_set(lm)
@@ -97,7 +98,7 @@ w=where(stregex(statusinfo,'Verbose:[[:blank:]]+Header In:[[:blank:]]+Content-Le
 if count then begin
   tmp=stregex(statusinfo[w[0]],'Content-Length:[[:blank:]]*([[:digit:]]+)',/subexpr,/extract)
   callbackdata.content_length=fix(tmp[1])
-  print,'Content Length: ',pp_readablesize(tmp[1],/string)
+  if ~callbackdata.quiet then print,'Content Length: ',pp_readablesize(tmp[1],/string)
 endif
 w=where(stregex(statusinfo,'Verbose:[[:blank:]]+Header In:[[:blank:]]+Last-Modified:',/bool),count)
 if count then begin
@@ -128,7 +129,7 @@ return,1
 end
 
 pro pp_wget::setproperty,last_modified=last_modified,content_length=content_length,$
-  tz=tz,hlm=hlm
+  tz=tz,hlm=hlm,quiet=quiet
 compile_opt idl2,logical_predicate
 if n_elements(last_modified) then self.last_modified=last_modified
 if n_elements(content_length) then self.content_length=content_length
@@ -139,7 +140,7 @@ end
 
 pro pp_wget::getproperty,local_file_tm=local_file_tm,clobber=clobber,$
   debug=debug,content_length=content_length,local_file_exists=local_file_exists,$
-  timestamps=timestamps,last_modified=last_modified,tz=tz,hlm=hlm
+  timestamps=timestamps,last_modified=last_modified,tz=tz,hlm=hlm,quiet=quiet
 compile_opt idl2,logical_predicate
 if arg_present(local_file_tm) then local_file_tm=self.local_file_tm
 if arg_present(clobber) then clobber=self.clobber
@@ -150,6 +151,7 @@ if arg_present(last_modified) then last_modified=self.last_modified
 if arg_present(tz) then tz=self.tz
 if arg_present(hlm) then hlm=self.hlm
 ;if n_elements(ex) then self.idlneturl::setproperty,_strict_extra=ex
+if arg_present(quiet) then quiet=self.quiet
 end
 
 ;+
@@ -169,7 +171,7 @@ compile_opt idl2,logical_predicate
 
 if ~file_test(self.ldir,/directory) then begin
   if file_test(self.ldir,/regular) then begin
-    print,'directory ',self.ldir,' exists as a file. Deleting the file to replace it with directory'
+    ~self.quiet then print,'directory ',self.ldir,' exists as a file. Deleting the file to replace it with directory'
     file_delete,self.ldir,/verbose
   endif
   print,'Creating directory ',self.ldir
@@ -235,7 +237,7 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
           ;links[w]=strmid(links[w],1)
           lw=stregex(links[w],'^/'+pu.path+'(.*)',/extract,/subexpr)
           links[w]=lw[1,*]
-          print,count
+          ;print,count
         endif
         wf=where(strlen(strtrim(links,2)),/null)
         links=links[wf]
@@ -272,11 +274,11 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
   ;self.iu.setproperty,url_path=up+link,url_port=po
   self.iu.setproperty,url_path=pu.path+link,url_port=po
   if self.pattern && ~stregex(link,self.pattern,/bool) then begin
-    print,'skipping '+link+' because it does not match the specified pattern: '+self.pattern
+    if ~self.quiet then print,'skipping '+link+' because it does not match the specified pattern: '+self.pattern
     return
   endif
   if self.xpattern && stregex(link,self.xpattern,/bool) then begin
-    print,'skipping '+link+' because it matches the specified xpattern: '+self.xpattern
+    if ~self.quiet then print,'skipping '+link+' because it matches the specified xpattern: '+self.xpattern
     return
   endif
   ds=((self.bdir ? (self.bdir+'/') : '')+link)
@@ -323,7 +325,7 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
           ;if (abs(tmrj-tmlj) lt 1d0/1440d0) then begin
           ;for test from server directory listing, test must be more lax, as servers may not inform time zone, so their time might shift by 1h during the year
           if (abs(tmrj-tmlj) le 1d0/24d0+1d0/1440d0) then begin
-            print,'This file is already present locally with same timestamp. Skipping.'
+            if ~self.quiet then print,'This file is already present locally with same timestamp. Skipping.'
             setts=0B
             ng=1B
           endif ;else print,'diff: ',tmrj-tmlj
@@ -367,14 +369,16 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
   endif
 endif else begin
   if self.recursive then begin ; if entry is a directory
-    print,'Entering directory ',link
+    if ~self.quiet then print,'Entering directory ',link
     iw=pp_wget(self.baseurl+'/'+link,$
       timestamps=self.timestamps,clobber=self.clobber,pattern=self.pattern,$
       recursive=self.recursive,localdir=self.localdir+path_sep()+link+path_sep(),$
-      bdir=self.bdir ? self.bdir+'/'+link : link,xpattern=self.xpattern,absolute=self.absolute,lm=self.lm)
+      bdir=self.bdir ? self.bdir+'/'+link : link,xpattern=self.xpattern,absolute=self.absolute,$
+      ssl_certificate_file=self.sslf,splitrows=self.splitrows,allow_slash=self.allow_slash,$
+      lm=self.lm,quiet=self.quiet)
     iw.geturl
-    print,'Done with directory ',link
-  endif else print,'Recursive mode not set, skipping directory ',link
+    if ~self.quiet then print,'Done with directory ',link
+  endif else if ~self.quiet then print,'Recursive mode not set, skipping directory ',link
 endelse
 end
 
@@ -389,5 +393,5 @@ compile_opt idl2,logical_predicate
 !null={pp_wget, inherits idl_object, clobber:0,recursive:0,$
   ldir:'',pattern:'',localdir:'',last_modified:'',local_file_exists:0,local_file_tm:0LL,$
   baseurl:'',iu:obj_new(),timestamps:obj_new(),debug:0,content_length:0LL,bdir:'',$
-  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B,lm:0B,tz:0d0,hlm:''}
+  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B,lm:0B,tz:0d0,hlm:'',quiet:0B}
 end
