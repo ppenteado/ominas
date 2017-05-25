@@ -25,18 +25,16 @@
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
 
+  VIMS_IR      vims_spice_input         vims_spice_output \
+                                                        klist=demo.kernels 
+#                                                       ck_in=auto \
+#                                                       spk_in=auto \
+#                                                       pck_in=auto \
+#                                                       lsk_in=auto \
+#                                                       fk_in=auto \
+#                                                       ik_in=auto \
+#                                                       sck_in=auto \
 
-  VIMS_IR       vims_spice_input         vims_spice_output \
-                                                  klist=cassini.kernels \
-                                                        ck_in=auto \
-                                                        pck_in=auto \
-                                                        lsk_in=auto \
-                                                        fk_in=auto \
-                                                        ik_in=auto \
-                                                        sck_in=auto \
-                                                        xk_in=extra.tpc  \
-                                                        /spk_strict \
-                                                        spk_in=auto
 
 
   CAS_RADAR     cas_radar_input                  -
