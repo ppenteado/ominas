@@ -1,0 +1,649 @@
+KPL/IK
+ 
+ 
+VIMS Instrument Kernel
+==============================================================================
+ 
+   This instrument kernel (I-kernel) contains references to the mounting
+   alignment, internal and FOV geometry for the Cassini Visible and Infrared
+   Mapping Spectrometer (VIMS) instruments.
+ 
+ 
+Version and Date
+----------------------------------------------------------
+ 
+   The TEXT_KERNEL_ID stores version information of loaded project text
+   kernels. Each entry associated with the keyword is a string that consists
+   of four parts: the kernel name, version, entry date, and type. For example,
+   the ISS I-kernel might have an entry as follows:
+ 
+           TEXT_KERNEL_ID += 'CASSINI_ISS V0.0.0 29-SEPTEMBER-1999 IK'
+                                  |          |         |            |
+                                  |          |         |            |
+              KERNEL NAME <-------+          |         |            |
+                                             |         |            V
+                             VERSION <-------+         |       KERNEL TYPE
+                                                       |
+                                                       V
+                                                  ENTRY DATE
+ 
+   VIMS I-Kernel Version:
+ 
+           \begindata
+ 
+           TEXT_KERNEL_ID += 'CASSINI_VIMS V0.6.0 04-OCTOBER-2002 IK'
+ 
+           \begintext
+ 
+   Version 0.6 -- October 4, 2002 -- Lee Elson
+ 
+            --   Radiator FOV reference angle, keyword
+                 INS-82378_FOV_REF_ANGLE, was changed from 90 to 82 degrees in
+                 support of the FR37B2 implementation.
+ 
+   Version 0.5 -- April 23, 2001 -- Scott Turner
+ 
+            --   Updated kernel to utilize new FOV ANGLES specification.
+ 
+   Version 0.4.1 -- April 3, 2001 -- Scott Turner
+ 
+            --   Minor documentation updates for clarity and correctness.
+ 
+   Version 0.4 -- November 17, 2000 -- Scott Turner
+ 
+            --   Added the FOV definition for CASSINI_VIMS_IR_SOL, the IR
+                 channel solar port.
+ 
+            --   The pixel parameters for the CASSINI_VIMS_RAD were added.
+ 
+   Version 0.3 -- September 5, 2000 -- Scott Turner
+ 
+            --   Corrected a few minor mistakes in the documentation
+                 describing the VIMS_RAD FOV.
+ 
+            --   Updated the VIMS_V FOV definition to contain the correct half
+                 angles based on comments in [8].
+ 
+            --   Made a minor adjustment to the VIMS_IR FOV definition to
+                 remove an error in the half angle computation.
+ 
+            --   Corrected the PIXEL_SAMPLES values for both VIMS_IR and
+                 VIMS_V to 64. Also the necessary adjustments were made to
+                 FOV_CENTER_PIXEL.
+ 
+   Version 0.2 -- August 15, 2000 -- Scott Turner
+ 
+            --   Recalculated FOV definitions to improve precision.
+ 
+   Version 0.1 -- June 7, 2000 -- Scott Turner
+ 
+            --   Changed the INS[#]_FOV_CENTER_PIXEL keyword to reflect
+                 changes in the I-kernel SIS.
+ 
+   Version 0.0 -- April 24, 2000 -- Scott Turner
+ 
+            --   Initial Prototype Release for Review.
+ 
+ 
+References
+----------------------------------------------------------
+ 
+            1.   ``Cassini Science Instruments and Investigations'', Revised
+                 Second Printing. Stephen J. Edberg.
+ 
+            2.   ``Kernel Pool Required Reading''
+ 
+            3.   JPL Cassini Project Web Page describing the instruments.
+ 
+            4.   Cassini/NAIF SPICE Workship, November 8-9, 1999.
+ 
+            5.   Email from Jeff Boyer regarding necessary data for footprint
+                 calculations.
+ 
+            6.   Cassini Spacecraft Frames Definition Kernel
+ 
+            7.   CASPER VIMS I-kernel Version 4.2
+ 
+            8.   Email from Rick McCloskey regarding the VIMS_V FOV
+                 definition.
+ 
+            9.   Email from Rick McCloskey regarding the VIMS_IR_SOL FOV
+                 definition.
+ 
+           10.   Email from Diane Conner regarding the Radiator FOV
+ 
+ 
+Contact Information
+----------------------------------------------------------
+ 
+   Direct questions, comments or concerns about the contents of this kernel
+   to:
+ 
+           Lee Elson, NAIF/JPL, (818)-354-4223, Lee.Elson@jpl.nasa.gov
+ 
+ 
+Implementation Notes
+----------------------------------------------------------
+ 
+   This file is used by the SPICE system as follows: programs that make use of
+   this instrument kernel must ``load'' the kernel, normally during program
+   initialization. Loading the kernel associates data items with their names
+   in a data structure called the ``kernel pool''. The SPICELIB routine FURNSH
+   and CSPICE routine furnsh_c load SPICE kernels as shown below:
+ 
+   FORTRAN (SPICELIB)
+ 
+           CALL FURNSH ( 'kernel_name' )
+ 
+   C (CSPICE)
+ 
+           furnsh_c ( "kernel_name" )
+ 
+   In order for a program or subroutine to extract data from the pool, the
+   SPICELIB routines GDPOOL and GIPOOL are used. See [2] for details.
+ 
+   This file was created and may be updated with a text editor or word
+   processor.
+ 
+ 
+Naming Conventions
+----------------------------------------------------------
+ 
+   All names referencing values in this I-kernel start with the characters
+   `INS' followed by the NAIF Cassini spacecraft ID number (-82) followed by a
+   NAIF three digit code for the VIMS instruments. (IR = 370, V = 371).
+ 
+   The remainder of the name is an underscore character followed by the unique
+   name of the data item. For example, the VIMS IR boresight direction in the
+   VIMS IR frame (``CASSINI_VIMS_IR'' -- see [6] ) is specified by:
+ 
+           INS-82730_BORESIGHT
+ 
+   The upper bound on the length of the name of any data item is 32
+   characters.
+ 
+   If the same item is included in more than one file, or if the same item
+   appears more than once within a single file, the latest value supersedes
+   any earlier values.
+ 
+ 
+VIMS description
+----------------------------------------------------------
+ 
+   From [3]:
+ 
+   A spectrometer is an optical instrument that splits the light received from
+   objects into its component wavelengths by means of a prism or -- as in the
+   case of Cassini -- a diffraction grating. The spectrometer then measures
+   the intensities of the individual wavelengths and uses the data to infer
+   the composition and other properties of the objects that emitted the light
+   (e.g., a distant star), that absorbed specific wavelengths of the light as
+   it passed through them (e.g., a planetary atmosphere), or that reflected
+   the light (e.g., a planetary surface). Spectrometers may be sensitive to a
+   variety of wavelengths, from the ultraviolet, through the visible, to the
+   infrared portions of the electromagnetic spectrum.
+ 
+   The Cassini Visible and Infrared Mapping Spectrometer Subsystem (VIMS) will
+   be used to map the surface spatial distribution of the mineral and chemical
+   features of a number of primary and secondary targets. These targets
+   include the Saturnian ring and satellite surfaces, the Saturnian
+   atmosphere, and the atmosphere of Titan.
+ 
+   The VIMS Subsystem is organized into two assemblies: the optical pallet
+   assembly and the main electronics assembly. For more information on these
+   assemblies, see below.
+ 
+   (VIMS)
+ 
+   The optical pallet assembly consists of the following elements: the
+   infrared channel, the visible channel, the visible channel electronics, and
+   the signal processing electronics. The optical pallet has one mechanical
+   interface with the spacecraft, and all electrical interfaces are via the
+   main VIMS electronics. The pallet maintains all alignments internal to the
+   VIMS instrument relative to the spacecraft mounting surface.
+ 
+   The infrared channel (VIMS-IR) is an opto-mechanical subassembly designed
+   to produce multispectral images in the IR range. It consists of a
+   Cassegrain telescope, a conventionally ruled spectrometer grating, and a
+   256-element linear array focal plane assembly cooled to its required
+   operating temperature by a passive radiator. The VIMS-IR will be configured
+   as a "whiskbroom" scanning imager, which means that the optical
+   instrument's instantaneous field of view (IFOV) is a single pixel. A
+   two-dimensional image is created by scanning along a row of pixels,
+   dropping down a row, scanning that row, etc., using a two-axis scanning
+   mirror.
+ 
+   The visible channel (VIMS-V) is an opto-mechanical assembly designed to
+   produce multispectral images in the visible range. It consists of a Shafer
+   telescope, a holographic spectrometer grating, and a silicon CCD area array
+   focal plane detector cooled to its required temperature by a passive
+   radiator. The VIMS-V will be configured as a "pushbroom" imager, which
+   means that the optical instrument's IFOV is an entire line of pixels. This
+   is scanned over the scene with a single-axis scanning mirror to produce a
+   series of contiguous rows, which together form a two-dimensional image.
+ 
+   The visible channel electronics (VCE) support the operation of the VIMS-V
+   and the preprocessing of its data for relay to the signal processing
+   electronics. The signal processing electronics (SPE) support the operation
+   of the VIMS-IR and the preprocessing of its data for relay to the main
+   electronics.
+ 
+   The VIMS main electronics (ME) is a single assembly that synchronizes the
+   visible and IR channel mirror scanning mechanisms and controls the
+   acquisition of data according to the selected operational hardware
+   configuration. The ME serves as the only electronic interface between all
+   elements of the VIMS instrument and the spacecraft, including power, data,
+   command, and telemetry.
+ 
+   During flight operations, the ME will serve as the interface between ground
+   operations (via the spacecraft) and the VIMS Subsystem. During the first
+   180 days after launch, all VIMS decontamination heaters will be on to
+   prevent contamination from outgassing products (i.e., gasses liberated from
+   nearby components). During the cruise phase, VIMS will be turned on once
+   for monitoring of instrument health and performance. At other times, the
+   instrument be off. During these times, decontamination heaters will be used
+   periodically to keep the optics and radiator surfaces clean. At Saturn,
+   VIMS will be used as determined by spacecraft command sequencing to acquire
+   the desired science data.
+ 
+ 
+VIMS Field of View Parameters
+----------------------------------------------------------
+ 
+   The field of view parameters for the two focal planes that constitute the
+   VIMS detectors are:
+ 
+            --   Infrared Channel (IR)
+ 
+            --   Infrared Channel Solar Port (IR_SOL)
+ 
+            --   Visible Channel (V)
+ 
+ 
+           Rectangular FOVs:
+ 
+           --------------  ---------------------  ---------------------
+             Detector           Horizontal              Vertical
+           --------------  ---------------------  ---------------------
+             VIMS_IR        1.833464944 degrees    1.833464944 degrees
+ 
+             VIMS_IR_SOL    1.833464944 degrees    1.833464944 degrees
+ 
+             VIMS_V         1.833464944 degrees    1.833464944 degrees
+           --------------  ---------------------  ---------------------
+ 
+ 
+   The keywords INS[ID]_FOV_FRAME, INS[ID]_FOV_SHAPE, INS[ID]_BORESIGHT, and
+   FOV ANGLES specification keywords defined below are used to describe the
+   instrument field of view. Since the fields of view are rectangular, the
+   INS[ID]_FOV_SHAPE will be 'RECTANGLE'. GETFOV returns four boundary
+   vectors. All FOV boresights lie along the Z-axis.
+ 
+ 
+Infrared Channel (IR) FOV Definition
+ 
+   IR possesses a rectangular field of view, so four boundary corner vectors
+   require visualization. First consider looking down the X-axis in the
+   CASSINI_VIMS_IR frame at the X=0 plane. This permits the computation of the
+   Y components of the boundary corner vectors. In this plane the half angle
+   of note is 0.916732472 degrees. (Note we are arbitrarily choosing a vector
+   that terminates in the Z=1 plane.)
+ 
+ 
+                                  ^ Y
+                                  |  ins
+                                  |
+                                  |        /|
+                                  |      /  |
+                                  |    /    |
+                                  |  /    o |
+                                  |/ 0.917  |
+                                  x--------------->
+                                X  \        |    Z
+                                 ins \      |     ins
+                                       \    |
+                                         \  |
+                                           \|
+ 
+                                  |-- 1.0 --|
+                                                Plane X = 0
+ 
+ 
+   Now from here we see that the Y component of one boundary corner vector is:
+ 
+           Y Component = +/- 1.0 * tan ( 0.916732472 degrees )
+                       = +/- 0.016001365
+ 
+   Since the field of view is square, precisely the same computation holds for
+   the X components. This yields the following FOV definition:
+ 
+   Infrared Channel (IR):
+ 
+           \begindata
+ 
+           INS-82370_FOV_FRAME                 = 'CASSINI_VIMS_IR'
+           INS-82370_FOV_SHAPE                 = 'RECTANGLE'
+           INS-82370_BORESIGHT                 = (
+ 
+                     0.0000000000000000   0.0000000000000000  +1.0000000000000
+ 
+                                                 )
+           INS-82370_FOV_CLASS_SPEC            = 'ANGLES'
+           INS-82370_FOV_REF_VECTOR            = (
+ 
+                     0.0000000000000000  +1.0000000000000000   0.0000000000000
+ 
+                                                 )
+           INS-82370_FOV_REF_ANGLE             = ( 0.916732472 )
+           INS-82370_FOV_CROSS_ANGLE           = ( 0.916732472 )
+           INS-82370_FOV_ANGLE_UNITS           = 'DEGREES'
+ 
+           \begintext
+ 
+ 
+Infrared Channel Solar Port (IR_SOL) FOV Definition
+ 
+   IR_SOL possesses a rectangular field of view, so four boundary corner
+   vectors require visualization. First consider looking down the X-axis in
+   the CASSINI_VIMS_IR_SOL frame at the X=0 plane. This permits the
+   computation of the Y components of the boundary corner vectors. In this
+   plane the half angle of note is 0.916732472 degrees. (Note we are
+   arbitrarily choosing a vector that terminates in the Z=1 plane.)
+ 
+ 
+                                  ^ Y
+                                  |  ins
+                                  |
+                                  |        /|
+                                  |      /  |
+                                  |    /    |
+                                  |  /    o |
+                                  |/ 0.917  |
+                                  x--------------->
+                                X  \        |    Z
+                                 ins \      |     ins
+                                       \    |
+                                         \  |
+                                           \|
+ 
+                                  |-- 1.0 --|
+                                                Plane X = 0
+ 
+ 
+   Now from here we see that the Y component of one boundary corner vector is:
+ 
+           Y Component = +/- 1.0 * tan ( 0.916732472 degrees )
+                       = +/- 0.016001365
+ 
+   Since the field of view is square, precisely the same computation holds for
+   the X components. This results in the following FOV definition:
+ 
+   Infrared Channel Solar Port (IR_SOL):
+ 
+           \begindata
+ 
+           INS-82372_FOV_FRAME                 = 'CASSINI_VIMS_IR_SOL'
+           INS-82372_FOV_SHAPE                 = 'RECTANGLE'
+           INS-82372_BORESIGHT                 = (
+ 
+                     0.0000000000000000   0.0000000000000000  +1.0000000000000
+ 
+                                                 )
+           INS-82372_FOV_CLASS_SPEC            = 'ANGLES'
+           INS-82372_FOV_REF_VECTOR            = (
+ 
+                     0.0000000000000000  +1.0000000000000000   0.0000000000000
+ 
+                                                 )
+           INS-82372_FOV_REF_ANGLE             = ( 0.916732472 )
+           INS-82372_FOV_CROSS_ANGLE           = ( 0.916732472 )
+           INS-82372_FOV_ANGLE_UNITS           = 'DEGREES'
+ 
+           \begintext
+ 
+ 
+Visible Channel (V) FOV Definition
+ 
+   V possesses a rectangular field of view, so four boundary corner vectors
+   require visualization. First consider looking down the X-axis in the
+   CASSINI_VIMS_V frame at the X=0 plane. This permits the computation of the
+   Y components of the boundary corner vectors. In this plane the half angle
+   of note is 0.916732472 degrees. (Note we are arbitrarily choosing a vector
+   that terminates in the Z=1 plane.)
+ 
+ 
+                                  ^ Y
+                                  |  ins
+                                  |
+                                  |        /|
+                                  |      /  |
+                                  |    /    |
+                                  |  /    o |
+                                  |/ 0.917  |
+                                  x--------------->
+                                X  \        |    Z
+                                 ins \      |     ins
+                                       \    |
+                                         \  |
+                                           \|
+ 
+                                  |-- 1.0 --|
+                                                Plane X = 0
+ 
+ 
+   Now from here we see that the Y component of one boundary corner vector is:
+ 
+           Y Component = +/- 1.0 * tan ( 0.916732472 degrees )
+                       = +/- 0.016001365
+ 
+   Since the field of view is square, precisely the same computation holds for
+   the X components. Utilizing the ANGLES FOV specification:
+ 
+   Visible Channel (V):
+ 
+           \begindata
+ 
+           INS-82371_FOV_FRAME                 = 'CASSINI_VIMS_V'
+           INS-82371_FOV_SHAPE                 = 'RECTANGLE'
+           INS-82371_BORESIGHT                 = (
+ 
+                     0.0000000000000000   0.0000000000000000  +1.0000000000000
+ 
+                                                 )
+           INS-82371_FOV_CLASS_SPEC            = 'ANGLES'
+           INS-82371_FOV_REF_VECTOR            = (
+ 
+                     0.0000000000000000  +1.0000000000000000   0.0000000000000
+ 
+                                                 )
+           INS-82371_FOV_REF_ANGLE             = ( 0.916732472 )
+           INS-82371_FOV_CROSS_ANGLE           = ( 0.916732472 )
+           INS-82371_FOV_ANGLE_UNITS           = 'DEGREES'
+ 
+           \begintext
+ 
+   The FOV values for the VIMS radiator are place holders until a time when
+   the real values are provided. FOV_REF_ANGLE has been specified.
+ 
+ 
+VIMS Radiator (RAD):
+ 
+           \begindata
+ 
+           INS-82378_FOV_FRAME                 = 'CASSINI_VIMS_RAD'
+           INS-82378_FOV_SHAPE                 = 'CIRCLE'
+           INS-82378_BORESIGHT                 = (
+ 
+                  0.0000000000000000   0.0000000000000000  +1.0000000000000000
+ 
+                                                 )
+           INS-82378_FOV_CLASS_SPEC            = 'ANGLES'
+           INS-82378_FOV_REF_VECTOR            = (
+ 
+                 +1.0000000000000000   0.0000000000000000  +0.0000000000000001
+ 
+                                                 )
+           INS-82378_FOV_REF_ANGLE             = ( 82.0 )
+           INS-82378_FOV_ANGLE_UNITS           = 'DEGREES'
+ 
+           \begintext
+ 
+ 
+VIMS Pixel Parameters:
+----------------------------------------------------------
+ 
+   These parameters describe the pixel structure associated with the
+   instruments and their fields of views. In some cases this is a
+   generalization of the notion of pixel, in that instead of representing
+   pixels on a CCD they may represent a collection of individual detectors.
+ 
+   Infrared Channel (IR):
+ 
+           \begindata
+ 
+           INS-82370_FOV_CENTER_PIXEL  = ( 31.5, 31.5 )
+           INS-82370_PIXEL_SAMPLES     = ( 64 )
+           INS-82370_PIXEL_LINES       = ( 64 )
+ 
+           \begintext
+ 
+   Infrared Channel Solar Port (IR_SOL):
+ 
+           \begindata
+ 
+           INS-82372_FOV_CENTER_PIXEL  = ( 0, 0 )
+           INS-82372_PIXEL_SAMPLES     = ( 1 )
+           INS-82372_PIXEL_LINES       = ( 1 )
+ 
+           \begintext
+ 
+   Visible Channel (V):
+ 
+           \begindata
+ 
+           INS-82371_FOV_CENTER_PIXEL  = ( 31.5, 31.5 )
+           INS-82371_PIXEL_SAMPLES     = ( 64 )
+           INS-82371_PIXEL_LINES       = ( 64 )
+ 
+           \begintext
+ 
+   Radiator (RAD):
+ 
+           \begindata
+ 
+           INS-82378_FOV_CENTER_PIXEL  = ( 0, 0 )
+           INS-82378_PIXEL_SAMPLES     = ( 1 )
+           INS-82378_PIXEL_LINES       = ( 1 )
+ 
+           \begintext
+ 
+ 
+Instrument Mode Timing
+----------------------------------------------------------
+ 
+   The following values were provided as samples in [5]. The values are
+   defined in [5] as follows:
+ 
+ 
+           ``The initial values for the following keywords are given
+           per instrument number:
+ 
+           INS[instrument number]_[instrument acronym]_MODE_NAME
+           INS[instrument number]_[instrument acronym]_TRIGGER_OFFSET
+           INS[instrument number]_[instrument acronym]_CYCLE_DURATION
+ 
+           INS..._MODE_NAME contains the name of the instrument mode for
+           the INS..._TRIGGER_OFFSET and INS..._CYCLE_DURATION
+           keywords.
+ 
+           INS..._TRIGGER_OFFSET specifies the reference time of the
+           first instrument frame (to be calculated for a footprint)
+           relative to the time of transacting the corresponding TRIGGER
+           command. The units are SFOC duration.
+ 
+           INS..._CYCLE_DURATION specifies the duration between successive
+           instrument frames (from the first one) for the INS..._MODE_NAME.''
+ 
+ 
+ 
+IR Channel Mode Timing
+ 
+   The following values define the instrument modes and timing for the VIMS IR
+   Channel.
+ 
+           \begindata
+ 
+           INS-82370_MODE_NAME      = 'NOMINAL'
+           INS-82370_TRIGGER_OFFSET = '0:01:00.0'
+           INS-82370_CYCLE_DURATION = '0:01:00.0'
+ 
+           \begintext
+ 
+ 
+IR_SOL Channel Mode Timing
+ 
+   The following values define the instrument modes and timing for the VIMS IR
+   Channel Solar Port.
+ 
+           \begindata
+ 
+           INS-82372_MODE_NAME      = 'NOMINAL'
+           INS-82372_TRIGGER_OFFSET = '0:01:00.0'
+           INS-82372_CYCLE_DURATION = '0:01:00.0'
+ 
+           \begintext
+ 
+ 
+V Channel Mode Timing
+ 
+   The following values define the instrument modes and timing for the VIMS V
+   Channel.
+ 
+           \begindata
+ 
+           INS-82371_MODE_NAME      = 'NOMINAL'
+           INS-82371_TRIGGER_OFFSET = '0:01:00.0'
+           INS-82371_CYCLE_DURATION = '0:01:00.0'
+ 
+           \begintext
+ 
+ 
+NAIF ID Code to Name Mapping
+----------------------------------------------------------
+ 
+   The following keywords define names for the corresponding ID Codes. See [4]
+   for details.
+ 
+           \begindata
+ 
+           NAIF_BODY_NAME += ( 'CASSINI_VIMS_IR' )
+           NAIF_BODY_CODE += ( -82370 )
+ 
+           NAIF_BODY_NAME += ( 'CASSINI_VIMS_V' )
+           NAIF_BODY_CODE += ( -82371 )
+ 
+           NAIF_BODY_NAME += ( 'CASSINI_VIMS_IR_SOL' )
+           NAIF_BODY_CODE += ( -82372 )
+ 
+           NAIF_BODY_NAME += ( 'CASSINI_VIMS_RAD' )
+           NAIF_BODY_CODE += ( -82378 )
+ 
+           \begintext
+ 
+ 
+Platform ID
+----------------------------------------------------------
+ 
+   The VIMS instrument is mounted on the Remote Sensing Palette, which is
+   connected to the Cassini Spacecraft body. Therefore the value in the
+   keywords below are -82000.
+ 
+           \begindata
+ 
+           INS-82370_PLATFORM_ID = ( -82000 )
+           INS-82371_PLATFORM_ID = ( -82000 )
+           INS-82372_PLATFORM_ID = ( -82000 )
+           INS-82378_PLATFORM_ID = ( -82000 )
+ 
+           \begintext
+ 
