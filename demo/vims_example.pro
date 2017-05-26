@@ -47,7 +47,7 @@ hdxy['data/CM_1559100372_1_ir_eg.cub']=[-2d0,-2d0]
 hdxy['data/CM_1503358311_1_ir_eg.cub']=[5d0,-1d0]
 hdxy['data/CM_1477456632_1_ir_eg.cub']=[2d0,-3d0]
 hdxy['data/CM_1504754217_1_ir_eg.cub']=[1d0,-2d0]
-files=(hdxy.keys()).toarray()
+files=((hdxy.keys()).toarray())
 n = n_elements(files)
 dd = dat_read(files)
 
@@ -160,18 +160,18 @@ tvim, /list, wnum=ww
 imc=0
 for i=0,n-1 do begin
   grid_ps = pg_grid(gd=gd[i], lat=lat, lon=lon)
-  pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx, /limb
+  pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx;, /limb
   pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx,$
-    od=gd[i].sund, /limb
-  pg_hide, grid_ps, gd=gd[i], /disk
+    od=gd[i].sund;, /limb
+  ;pg_hide, grid_ps, gd=gd[i], /disk
   pg_draw, grid_ps, color=ctblue(),wnum=ww[i]
   plat_ps = pg_grid(gd=gd[i],slon=!dpi/2d,lat=lat,nlon=0)
-  pg_hide, plat_ps[0], cd=gd[i].cd, gbx=gd[0].gbx, /limb
+  pg_hide, plat_ps[0], cd=gd[i].cd, gbx=gd[0].gbx;, /limb
   pg_draw, plat_ps[0], psym=3, $
     plabel=strtrim(round(lat*180d/!dpi),2),$
     /label_p,wnum=ww[i]
   plon_ps = pg_grid(gd=gd[i], slat=0d, lon=lon, nlat=0)
-  pg_hide, plon_ps[0], cd=gd[i].cd, gbx=gd[i].gbx, /limb
+  pg_hide, plon_ps[0], cd=gd[i].cd, gbx=gd[i].gbx;, /limb
   pg_draw, plon_ps[0], psym=3, $
     plabel=strtrim(round(lon*180d/!dpi),2),$
     /label_p,wnum=ww[i]
