@@ -171,7 +171,7 @@ compile_opt idl2,logical_predicate
 
 if ~file_test(self.ldir,/directory) then begin
   if file_test(self.ldir,/regular) then begin
-    ~self.quiet then print,'directory ',self.ldir,' exists as a file. Deleting the file to replace it with directory'
+    if ~self.quiet then print,'directory ',self.ldir,' exists as a file. Deleting the file to replace it with directory'
     file_delete,self.ldir,/verbose
   endif
   print,'Creating directory ',self.ldir
