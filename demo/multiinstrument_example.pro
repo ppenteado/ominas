@@ -136,8 +136,9 @@ ddv = dat_read(files)
 sb=bytarr(nv)
 for i=0,nv-1 do sb[i]=strmatch(files[i],'*.IMG')
 
-gdv = replicate({cd:obj_new(), gbx:obj_new(), dkx:obj_new(), sund:obj_new()}, nv)
-for i=0, nv-1 do gdv[i].cd = pg_get_cameras(ddv[i])
+gdv = replicate({cd:obj_new(), cds:objarr(256),gbx:obj_new(), dkx:obj_new(), sund:obj_new()}, nv)
+for i=0, nv-1 do gdv[i].cds = pg_get_cameras(ddv[i])
+for i=0, nv-1 do gdv[i].cd = gdv[i].cds[0]
 for i=0, nv-1 do gdv[i].gbx = pg_get_planets(ddv[i], od=gdv[i].cd, name='TITAN')
 for i=0, nv-1 do gdv[i].sund = pg_get_stars(ddv[i], od=gdv[i].cd, name='SUN')
 
