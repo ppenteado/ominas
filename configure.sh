@@ -546,6 +546,7 @@ echo "#!/usr/bin/env bash" > $setting
 #fi
 echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
+#echo "export CAM_NFILTERS=256" >> $setting
 
 for ((d=0; d<6; d++));
 do
