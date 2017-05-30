@@ -98,13 +98,14 @@ pro vims_spice_parse_labels, dd, _time, $
   time = dblarr(ndd)
   exposure = dblarr(ndd)
   size = make_array(2,ndd, val=1024)
-  filters = strarr(2,ndd)
+  filters = strarr((dat_dim(dd[0]))[2],ndd)
   target = strarr(ndd)
   oaxis = dblarr(2,ndd)
 
   for i=0, ndd-1 do $
     begin
     label = dat_header(dd[i])
+    llabel=strsplit(label,string(10B),/extract)
     if(keyword_set(label)) then $
       begin
       ttime=vims_spice_time(label,dt=dt,status=status,startjd=startjd,endjd=endjd)
@@ -135,7 +136,7 @@ pro vims_spice_parse_labels, dd, _time, $
       ;-----------------------------------
       ; filters
       ;-----------------------------------
-      filters[*,i] = dat_instrument(dd[i])
+      filters[*,i] = pp_getcubeheadervalue(llabel,'BAND_BIN_CENTER',/not_trimmed)+'_'+pp_getcubeheadervalue(llabel,'BAND_BIN_UNIT',/not_trimmed)
 
       ;-----------------------------------
       ; target
@@ -203,18 +204,6 @@ compile_opt idl2
 
 
  case dat_instrument(dd[0]) of
-        'CAS_ISSNA': $
-          begin
-           inst = -82360l
-           scale = cas_nac_scale() * bin
-           orient_fn = 'cas_cmat_to_orient_iss'
-          end
-        'CAS_ISSWA': $
-          begin
-           inst = -82361l
-           scale = cas_wac_scale() * bin
-           orient_fn = 'cas_cmat_to_orient_iss'
-          end
 	  'VIMS_IR': begin
 	     inst=-82370L
 	     cam_scale=5d-4 ;rad/pix
@@ -263,7 +252,7 @@ compile_opt idl2
 ;		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
 ;                  orient_fn )
 
- return, cas_to_ominas( $
+ cd=cas_to_ominas( $
            spice_cameras(dd, ref, '', '', pos=pos, $
     sc = sc, $
     inst = inst, $
@@ -273,7 +262,7 @@ compile_opt idl2
     cam_scale = make_array(2,ndd, val=cam_scale), $
     cam_oaxis = oaxis, $
     cam_fn_psf = make_array(ndd, val='cas_psf'), $
-    cam_filters = filters, $
+    cam_filters = dat_instrument(dd[0]), $
     cam_size = size, $
     cam_exposure = exposure, $
     cam_fn_focal_to_image = make_array(ndd, val='vims_focal_to_image_linear'), $
@@ -282,7 +271,17 @@ compile_opt idl2
     n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
                   orient_fn )
                   
-  
+  ret=list()
+  foreach ccd,cd,icd do begin
+    cds=objarr((dat_dim(dd[icd]))[2])
+    foreach cdsf,cds,ifi do begin
+      cds[ifi]=nv_clone(ccd)
+      cam_set_filters,cds[ifi],filters[ifi]
+      cor_set_name,cds[ifi],dat_instrument(dd[0])+'_'+(strsplit(filters[ifi],'_',/extract))[0]
+    endforeach
+    ret.add,cds,/extract
+  endforeach
+  ret=ret.toarray()
   ;cams=reform(cam_evolve(ret,times))
   ;for i=0,npixels-1 do fnd.orients[*,*,i]=bod_orient(cams[i])
   ;(*(fn_data[0]))=fnd

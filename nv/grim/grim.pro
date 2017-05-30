@@ -10084,7 +10084,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
     begin
      if(keyword_set(_assoc_dd)) then $
        if(cor_class(cd[i]) EQ 'MAP') then _assoc_dd = planes[i].dd
-     grim_add_descriptor, grim_data, planes[i].cd_p, cd, /one, assoc_dd=_assoc_dd
+     grim_add_descriptor, grim_data, planes[i].cd_p, cd[i], /one, assoc_dd=_assoc_dd
     end
   end
 
