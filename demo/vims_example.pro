@@ -47,7 +47,7 @@ hdxy['data/CM_1559100372_1_ir_eg.cub']=[-2d0,-2d0]
 hdxy['data/CM_1503358311_1_ir_eg.cub']=[5d0,-1d0]
 hdxy['data/CM_1477456632_1_ir_eg.cub']=[2d0,-3d0]
 hdxy['data/CM_1504754217_1_ir_eg.cub']=[1d0,-2d0]
-files=((hdxy.keys()).toarray());[0]
+files=getenv('OMINAS_DIR')+'/demo/'+((hdxy.keys()).toarray());[0]
 n = n_elements(files)
 dd = dat_read(files)
 foreach ddd,dd do dat_set_data,ddd,0.>dat_data(ddd)<0.1
