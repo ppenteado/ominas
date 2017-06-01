@@ -590,7 +590,7 @@ do
         fi
 done
 
-
+#make ominas script
 echo "#!/usr/bin/env bash" > ~/.ominas/ominas
 head -1 ${idlbin} > ~/.ominas/ominas
 asetting=`eval echo ${setting}`
@@ -606,6 +606,25 @@ LDCMD
 fi
 tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idl/g" >> ~/.ominas/ominas
 chmod a+rx ~/.ominas/ominas
+
+#make ominasde script
+
+echo "#!/usr/bin/env bash" > ~/.ominas/ominasde
+head -1 ${idlbin} > ~/.ominas/ominasde
+asetting=`eval echo ${setting}`
+echo ". ${asetting}" >> ~/.ominas/ominasde
+if [ -e "/opt/X11/lib/flat_namespace/" ]; then
+  cat <<LDCMD >> ~/.ominas/ominas
+    if [ "\${DYLD_LIBRARY_PATH}" = "" ]; then
+        DYLD_LIBRARY_PATH="/opt/X11/lib/flat_namespace/"
+    else
+        DYLD_LIBRARY_PATH="/opt/X11/lib/flat_namespace/:\${DYLD_LIBRARY_PATH}"
+    fi
+LDCMD
+fi
+tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idlde/g" >> ~/.ominas/ominasde
+chmod a+rx ~/.ominas/ominasde
+
 echo "done with writing ${setting}"
 
 
@@ -1077,13 +1096,15 @@ if [ ! -z ${IDL_PATH+x} ]; then
   printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
 fi
 #writesetting
-#if grep -q ${setting} ${usersh} ; then
 if grep -q "alias ominas=~/.ominas/ominas" ${usersh} ; then
-  #echo "${usersh} already calls ${setting}"
   echo "${usersh} already sets ominas alias"
 else
-  #echo source $setting >> $usersh
   echo "alias ominas=~/.ominas/ominas" >> ${usersh}
+fi
+if grep -q "alias ominasde=~/.ominas/ominasde" ${usersh} ; then
+  echo "${usersh} already sets ominasde alias"
+else
+  echo "alias ominasde=~/.ominas/ominasde" >> ${usersh}
 fi
 printf "OMINAS configuration was written to $usersh.\n"
 return 0
