@@ -61,7 +61,7 @@
 ;-
 ;-------------------------------------------------------------------------
 
- file = getenv('OMINAS_DIR')+'demo/data/N1350122987_2.IMG'			; Cassini Image
+ file = getenv('OMINAS_DIR')+'/demo/data/N1350122987_2.IMG'			; Cassini Image
 
  dd = dat_read(file, im, label)
 
