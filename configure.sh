@@ -597,15 +597,15 @@ asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominas
 if [ -e "/opt/X11/lib/flat_namespace/" ]; then
   cat <<LDCMD >> ~/.ominas/ominas
-    if [ "$DYLD_LIBRARY_PATH" = "" ]; then
+    if [ "\${DYLD_LIBRARY_PATH}" = "" ]; then
         DYLD_LIBRARY_PATH="/opt/X11/lib/flat_namespace/"
     else
-        DYLD_LIBRARY_PATH="/opt/X11/lib/flat_namespace/:${DYLD_LIBRARY_PATH}"
+        DYLD_LIBRARY_PATH="/opt/X11/lib/flat_namespace/:\${DYLD_LIBRARY_PATH}"
     fi
 LDCMD
 fi
-echo ${idlbin} >> ~/.ominas/ominas
-
+tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idl/g" >> ~/.ominas/ominas
+chmod a+rx ~/.ominas/ominas
 echo "done with writing ${setting}"
 
 
