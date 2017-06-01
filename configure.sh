@@ -137,7 +137,7 @@ fi
 
 
 if [ "$IDL_DIR" = "" ]; then
-        idl=`which idl`
+        idl=`which idl | tail -1`
         idlbin=$idl
         if [ "$idl" = "" ]; then
           read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
@@ -152,6 +152,17 @@ else
         printf "IDL_DIR found, $IDL_DIR, using it\n"
         idlbin=$IDL_DIR/bin/idl
 fi
+bintest=`echo ${idlbin} | grep -c "/bin/bin\."`
+echo "bintest: ${bintest}"
+if [ ${bintest} != 0 ]; then
+  echo "aaa"
+  echo "${idlbin}"
+  idlbin=`dirname ${idlbin}`
+  idlbin=`dirname ${idlbin}`
+  idlbin="${idlbin}/idl"
+  echo ${idlbin}
+  echo "bbb"
+fi 
 export idlbin
 idlversion=`$idlbin -e 'print,!version.os+strjoin((strsplit(!version.release,".",/extract))[0:1])'`
 export idlversion
@@ -580,8 +591,24 @@ do
 done
 
 
+echo "#!/usr/bin/env bash" > ~/.ominas/ominas
+head -1 ${idlbin} > ~/.ominas/ominas
+asetting=`eval echo ${setting}`
+echo ". ${asetting}" >> ~/.ominas/ominas
+if [ -e "/opt/X11/lib/flat_namespace/" ]; then
+  cat <<LDCMD >> ~/.ominas/ominas
+    if [ "$DYLD_LIBRARY_PATH" = "" ]; then
+        DYLD_LIBRARY_PATH="/opt/X11/lib/flat_namespace/"
+    else
+        DYLD_LIBRARY_PATH="/opt/X11/lib/flat_namespace/:${DYLD_LIBRARY_PATH}"
+    fi
+LDCMD
+fi
+echo ${idlbin} >> ~/.ominas/ominas
 
 echo "done with writing ${setting}"
+
+
 
 }
 
