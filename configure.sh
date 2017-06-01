@@ -155,13 +155,9 @@ fi
 bintest=`echo ${idlbin} | grep -c "/bin/bin\."`
 echo "bintest: ${bintest}"
 if [ ${bintest} != 0 ]; then
-  echo "aaa"
-  echo "${idlbin}"
   idlbin=`dirname ${idlbin}`
   idlbin=`dirname ${idlbin}`
   idlbin="${idlbin}/idl"
-  echo ${idlbin}
-  echo "bbb"
 fi 
 export idlbin
 idlversion=`$idlbin -e 'print,!version.os+strjoin((strsplit(!version.release,".",/extract))[0:1])'`
@@ -322,7 +318,7 @@ function dins()
           echo "Auto option selected in the main menu; will download and place the $dat data at ~/ominas_data/${dat}"
           datapath=~/ominas_data/${dat}
           datapath=`eval echo ${datapath}`
-          if ! ./download_$dat.sh ${datapath} -lm ; then
+          if ! ./download_$dat.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
             unset inst[${1}]
             return 1
           fi
@@ -338,7 +334,7 @@ function dins()
                datapath=~/ominas_data/${dat}
              fi
              datapath=`eval echo ${datapath}`
-             if ! ./download_$dat.sh ${datapath} -lm ; then
+             if ! ./download_$dat.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
                unset inst[${1}]
                return 1
              fi ;;
@@ -456,7 +452,7 @@ function pkins()
                         echo "Auto option selected in the main menu; will download and place the $3 kernels at ~/ominas_data/${3}"
                         datapath=~/ominas_data/${3}
                         datapath=`eval echo ${datapath}`
-                        if ! ./download_$2.sh ${datapath} -lm; then
+                        if ! ./download_$2.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
                           unset insp[${4}]
                           unset ins[${4}]
                           return 1
@@ -474,7 +470,7 @@ function pkins()
                               datapath=~/ominas_data/${3}
                             fi
                             datapath=`eval echo ${datapath}`
-                            if ! ./download_$2.sh ${datapath} -lm; then
+                            if ! ./download_$2.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
                               unset insp[${4}]
                               unset ins[${4}]
                               return 1
@@ -744,6 +740,9 @@ printf "OMINAS files located in $OMINAS_DIR\n"
 
 function main() {
 
+if [ -z ${OMINAS_INST_QUIET+x} ]; then
+  OMINAS_INST_QUIET=1
+fi
 
 if [ -e "$setting" ]; then
   . $setting
