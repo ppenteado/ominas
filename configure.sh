@@ -1077,10 +1077,13 @@ if [ ! -z ${IDL_PATH+x} ]; then
   printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
 fi
 #writesetting
-if grep -q ${setting} ${usersh} ; then
-  echo "${usersh} already calls ${setting}"
+#if grep -q ${setting} ${usersh} ; then
+if grep -q "alias ominas=~/.ominas/ominas" ${usersh} ; then
+  #echo "${usersh} already calls ${setting}"
+  echo "${usersh} already sets ominas alias"
 else
-  echo source $setting >> $usersh
+  #echo source $setting >> $usersh
+  echo "alias ominas=~/.ominas/ominas" >> ${usersh}
 fi
 printf "OMINAS configuration was written to $usersh.\n"
 return 0
