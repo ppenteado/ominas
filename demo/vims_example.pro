@@ -85,7 +85,7 @@ for i=0, n-1 do gd[i].sund = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
 
 limb_ps = objarr(n)
 dxy = dblarr(2,n)
-for i=0, n-1 do dxy[*,i] = hdxy[files[i]]
+for i=0, n-1 do dxy[*,i] = hdxy[file_basename(files[i])]
 for i=0, n-1 do for j=0,255 do pg_repoint, dxy[*,i], 0d, cd=gd[i].cds[j]
 for i=0, n-1 do gd[i].cd=gd[i].cds[0]
 ;for i=0, n-1 do limb_ps[i] = pg_limb(gd=gd[i])
