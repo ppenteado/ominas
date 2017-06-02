@@ -546,6 +546,8 @@ fi
 chmod a+rx $setting
 
 echo "#!/usr/bin/env bash" > $setting
+echo "alias ominas=~/.ominas/ominas" >> ${setting}
+echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
 
 #if [[ -n "$ins_ominas_env_def" ]]; then
 #if [[ ${corest} == ${yes} ]]; then
