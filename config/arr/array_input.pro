@@ -105,7 +105,7 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
  ; observer descriptor passed as key1
  ;-----------------------------------------------
  if(keyword_set(key1)) then od = key1
- if(NOT keyword_set(od)) then nv_message, 'No observer.'
+; if(NOT keyword_set(od)) then nv_message, 'No observer.'
 
  ;-----------------------------------------------
  ; primary descriptor passed as key2

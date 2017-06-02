@@ -3,8 +3,18 @@
 ;
 ;
 ;=============================================================================
-function colormap_descriptor, gamma=gamma, shade=shade, $
+function colormap_descriptor, cmd0=cmd0, $
+                      gamma=gamma, shade=shade, $
                       top=top, bottom=bottom, n_colors=n_colors, data=data
+
+ if(keyword_set(cmd0)) then $
+  begin
+   shade = struct_get(cmd0, 'shade')
+   gamma = struct_get(cmd0, 'gamma')
+   n_colors = struct_get(cmd0, 'n_colors')
+   top = struct_get(cmd0, 'top')
+   bottom = struct_get(cmd0, 'bottom')
+  end
 
  cmd = {colormap_descriptor}
 

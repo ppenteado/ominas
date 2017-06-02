@@ -30,7 +30,7 @@
 ;		  the data array.  
 ;
 ;	current:  If set, the current loaded samples are returned.  In this
-;		  case, te sample indices are returned in the "samples"
+;		  case, the sample indices are returned in the "samples"
 ;		  keyword.
 ;
 ;	nd:       If set, the samples input is taken to be an ND coordinate
@@ -89,7 +89,7 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
         AND (NOT keyword_set(_samples)) $
                AND NOT keyword_set(true)) then $
   begin
-   _samples = gridgen(*_dd.dim_p) 
+   _samples = lindgen(dat_n(dd))
    full_array = 1
   end
 

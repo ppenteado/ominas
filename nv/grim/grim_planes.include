@@ -383,7 +383,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
                       render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets, $
-                      overlays=overlays
+                      overlays=overlays, cmd=cmd0
 
   pns = 0
   MAX_OVERLAYS = 128
@@ -658,8 +658,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
     ;--------------------------------------------
     ; create colormap
     ;--------------------------------------------
-    planes[pn].cmd = colormap_descriptor(data=planes[pn].pn, $
-                                n_colors=grim_n_colors(dat_typecode(planes[pn].dd)))
+    planes[pn].cmd = colormap_descriptor(data=planes[pn].pn, cmd0=cmd0, $
+                          n_colors=grim_n_colors(dat_typecode(planes[pn].dd)))
 
     ;--------------------------------------------
     ; create overlay arrays

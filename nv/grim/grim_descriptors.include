@@ -69,65 +69,70 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
   end
 
  ;---------------------------------------------------------------------------
- ; call source routines for overlays that depend on any affected descriptors
+ ; Call source routines for overlays that depend on any affected descriptors.
+ ;
+ ; Planes for which initial overlays have not yet been loaded are ignored
+ ; because those overlays will be computed using the geometry that exists at 
+ ; that time, and hence any dependencies should be automatically accounted for.
  ;---------------------------------------------------------------------------
  for j=0, nplanes-1 do $
-  begin
-   points_ptd = grim_cat_points(grim_data, plane=planes[j])
-   n = n_elements(points_ptd)
+  if(NOT keyword_set(*planes[j].initial_overlays_p)) then $
+   begin
+    points_ptd = grim_cat_points(grim_data, plane=planes[j])
+    n = n_elements(points_ptd)
 
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; build a list of source functions and dependencies
-   ; such that each source function is called only once.
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   name_list = ''
-   dep_list = ptr_new()
-   points_ptd_list = ptr_new()
-   source_points_ptd_list = ptr_new()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ; build a list of source functions and dependencies
+    ; such that each source function is called only once.
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    name_list = ''
+    dep_list = ptr_new()
+    points_ptd_list = ptr_new()
+    source_points_ptd_list = ptr_new()
 
-   if(keyword_set(points_ptd)) then $
-    for i=0, n-1 do if(obj_valid(points_ptd[i])) then $
-     begin
-      dep = cor_udata(points_ptd[i], 'grim_dep')
-      if(keyword_set(dep)) then $
-       begin
-        w = where(dep EQ xd)
-        if(w[0] NE -1) then $
-         begin
-          name = cor_udata(points_ptd[i], 'grim_name')
+    if(keyword_set(points_ptd)) then $
+     for i=0, n-1 do if(obj_valid(points_ptd[i])) then $
+      begin
+       dep = cor_udata(points_ptd[i], 'grim_dep')
+       if(keyword_set(dep)) then $
+        begin
+         w = where(dep EQ xd)
+         if(w[0] NE -1) then $
+          begin
+           name = cor_udata(points_ptd[i], 'grim_name')
 
-          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          ; find any point dependencies
-          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          source_ptd = obj_new()
-          w = nwhere(points_ptd, dep)
-          if(w[0] NE -1) then source_ptd = points_ptd[w]
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+           ; find any point dependencies
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+           source_ptd = obj_new()
+           w = nwhere(points_ptd, dep)
+           if(w[0] NE -1) then source_ptd = points_ptd[w]
 
-          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          ; if first instance of this type of overlay, add a new item
-          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          w = where(name_list EQ name)
-          if(w[0] EQ -1) then $
-           begin
-            name_list = append_array(name_list, name)
-            dep_list = append_array(dep_list, ptr_new(dep))
-            points_ptd_list = append_array(points_ptd_list, ptr_new(points_ptd[i]))
-            source_points_ptd_list = append_array(source_points_ptd_list, ptr_new(source_ptd))
-            if(plane.pn EQ planes[j].pn) then refresh = 1
-           end $
-          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          ; otherwise, add to the existing item
-          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-          else $
-           begin
-            ii = w[0]
-            *dep_list[ii] = append_array(*dep_list[ii], dep)
-            *points_ptd_list[ii] = append_array(*points_ptd_list[ii], points_ptd[i])
-            *source_points_ptd_list[ii] = append_array(*source_points_ptd_list[ii], source_ptd)
-           end 
-         end
-       end
-     end
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+           ; if first instance of this type of overlay, add a new item
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+           w = where(name_list EQ name)
+           if(w[0] EQ -1) then $
+            begin
+             name_list = append_array(name_list, name)
+             dep_list = append_array(dep_list, ptr_new(dep))
+             points_ptd_list = append_array(points_ptd_list, ptr_new(points_ptd[i]))
+             source_points_ptd_list = append_array(source_points_ptd_list, ptr_new(source_ptd))
+             if(plane.pn EQ planes[j].pn) then refresh = 1
+            end $
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+           ; otherwise, add to the existing item
+           ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+           else $
+            begin
+             ii = w[0]
+             *dep_list[ii] = append_array(*dep_list[ii], dep)
+             *points_ptd_list[ii] = append_array(*points_ptd_list[ii], points_ptd[i])
+             *source_points_ptd_list[ii] = append_array(*source_points_ptd_list[ii], source_ptd)
+            end 
+          end
+        end
+      end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - -
    ; get rid of redundant dependencies
@@ -160,7 +165,6 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; Call each source function
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;stop
    for i=0, nn-1 do $
          grim_overlay, grim_data, plane=plane, $
                name_list[i], dep=*dep_list[i], $
