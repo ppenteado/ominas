@@ -107,6 +107,55 @@ end
 
 
 ;=============================================================================
+; grim_test_rgb
+;
+;=============================================================================
+function grim_test_rgb, grim_data, plane
+ planes = grim_get_plane(grim_data, /all)
+ w = where(planes.dd EQ plane.dd)
+ if(n_elements(w) GT 1) then return, 0
+ return, n_elements(dat_dim(plane.dd, /true) EQ 3)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_image
+;
+;=============================================================================
+function grim_get_image, grim_data, plane=plane, abscissa=abscissa, $
+   current=current, sample=sample, channel=channel, nd=nd
+
+ if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
+
+ dim = (dat_dim(plane.dd))[0:1]
+
+ offset = plane.data_offset
+
+ ;--------------------------------------------------------------------
+ ; if rgb plane, then override offset to yield image corresponding
+ ; to specified channel
+ ;--------------------------------------------------------------------
+ if(grim_test_rgb(grim_data, plane)) then $
+  begin
+   true = 0
+   offset = 0
+   if(NOT keyword_set(channel)) then true = 1 $
+   else offset = channel*dim[0]*dim[1]
+  end
+
+ ;--------------------------------------------------------------------
+ ; return image
+ ;--------------------------------------------------------------------
+ return, dat_data(plane.dd, true=true, $
+            sample=sample, current=current, nd=nd, offset=offset, abscissa=abscissa)
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_plane_set_visible
 ;
 ;=============================================================================
@@ -249,7 +298,7 @@ pro grim_crop_plane, grim_data, plane
    size = [xxmax-xxmin+1, yymax-yymin+1]
    data_xy = gridgen(size, p0=[xxmin,yymin])
 
-   im = dat_data(plane.dd, sample=data_xy, /nd)
+   im = grim_get_image(grim_data, plane=plane, sample=data_xy, /nd)
    im = reform(im, size[0], size[1], /over)
 
    ;- - - - - - - - - - - - - - - - - - - - - - 

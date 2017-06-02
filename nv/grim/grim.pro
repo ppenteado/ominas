@@ -2244,7 +2244,7 @@ pro grim_update_xy_label, grim_data, plane, x, y
    p = round(p)
    if((p[0] GE 0) AND (p[0] LT dim[0]) AND $
       (p[1] GE 0) AND (p[1] LT dim[1])) then $
- 				 dn = dat_data(plane.dd, sample=p, /nd)
+               dn = grim_get_image(grim_data, plane=plane, sample=p, /nd)
   end
 
  if(size(dn, /type) EQ 1) then dn = fix(dn)

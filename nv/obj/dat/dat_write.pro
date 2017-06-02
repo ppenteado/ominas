@@ -148,7 +148,7 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    ; write the file
    ;---------------------
    header = dat_header(_dd[i])
-   data = dat_data(_dd[i], abscissa=abscissa)
+   data = dat_data(_dd[i], abscissa=abscissa, /true)
 
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; first transform the data if necessary

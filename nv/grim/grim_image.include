@@ -94,20 +94,6 @@ end
 
 
 ;=============================================================================
-; grim_test_rgb
-;
-;=============================================================================
-function grim_test_rgb, grim_data, plane
- planes = grim_get_plane(grim_data, /all)
- w = where(planes.dd EQ plane.dd)
- if(n_elements(w) GT 1) then return, 0
- return, n_elements(dat_dim(plane.dd, /true) EQ 3)
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_test_single_channel
 ;
 ;=============================================================================
@@ -285,18 +271,11 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
  im = (weight = 0)
  for i=0, nplanes-1 do $
   begin
-   offset = planes[i].data_offset
-
-   ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if rgb plane, then override offset to yield image corresponding
-   ; to specified channel
-   ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(grim_test_rgb(grim_data, planes[i])) then offset = channel*dim[0]*dim[1]
-
    ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
-   _im = dat_data(planes[i].dd, sample=data_xy, offset=offset, abscissa=grid)
+   _im = grim_get_image(grim_data, plane=planes[i], $
+                          channel=channel, sample=data_xy, abscissa=grid)
 
    ; - - - - - - - - - - - - - - -
    ; apply color map

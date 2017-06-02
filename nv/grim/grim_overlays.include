@@ -1055,7 +1055,7 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
    ;----------------------------
    if(grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')) then $
     begin
-     image = dat_data(plane.dd, /current)
+     image = grim_get_image(grim_data, plane=plane, /current)
      outline_pts = image_outline(image)
      plots, outline_pts, psym=3, col=ctyellow()
 

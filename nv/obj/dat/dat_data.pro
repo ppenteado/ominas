@@ -89,7 +89,7 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
         AND (NOT keyword_set(_samples)) $
                AND NOT keyword_set(true)) then $
   begin
-   _samples = lindgen(dat_n(dd))
+   _samples = lindgen(dat_n(_dd))
    full_array = 1
   end
 
@@ -153,7 +153,8 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
  ;-------------------------------------------------------------------------
  if(full_array) then $
   begin
-   data = reform(data, *_dd.dim_p, /over)
+;   data = reform(data, *_dd.dim_p, /over)
+   data = reform(data, dat_dim(_dd), /over)
    if(keyword_set(abscissa)) then abscissa = reform(abscissa, *_dd.dim_p, /over)
   end
 

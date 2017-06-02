@@ -273,8 +273,9 @@ pro grct_update, cmd, all=all, auto=auto
    if(NOT keyword_set(auto)) then planes[i].cmd = cmd $
    else $
     begin
-     test = image_auto_stretch(bytscl(dat_data(planes[i].dd, /current)), $
-							    min=min, max=max)
+     image = grim_get_image(grim_data, plane=planes[i], /current)
+
+     test = image_auto_stretch(bytscl(image),min=min, max=max)
      planes[i].cmd.bottom = min
      planes[i].cmd.top = max
     end
