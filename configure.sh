@@ -103,21 +103,24 @@ trap `/bin/rm -f paths.pro; test $cdflag && (cd $cwd)` \
 # by default (this causes a new file to be made).                        #
 #------------------------------------------------------------------------#
 echo "Detecting .bash_profile..."
-if [ -f ~/.bash_profile ]; then
-	echo ".bash_profile detected!"
-	setting="$HOME/.bash_profile"
-else
-	echo "Not present!"
-	echo "Detecting .bashrc..."
-	if [ -f ~/.bashrc ]; then
-		echo ".bashrc detected!"
-		setting="$HOME/.bashrc"
-	else
-		echo "Not present! Making a new .bash_profile..."
-		touch "$HOME/.bash_profile"
-		setting="$HOME/.bash_profile"
-	fi
+if [ -f ~/.bash_profile ]; then 
+        echo ".bash_profile detected!"
+        psetting="$HOME/.bash_profile"
+else    
+        echo "Not present! Making a new .bash_profile..."
+        touch "$HOME/.bash_profile"
+        psetting="$HOME/.bash_profile"
 fi
+echo "Detecting .bashrc..."
+if [ -f ~/.bashrc ]; then
+	echo ".bashrc detected!"
+	setting="$HOME/.bashrc"
+else
+	echo "Not present! Making a new .bashrc..."
+	touch "$HOME/.bashrc"
+	setting="$HOME/.bashrc"
+fi
+#fi
 if [ ! -z ${IDL_PATH}+x ]; then
   if [ -f ~/.bashrc ]; then
     if grep --quiet IDL_PATH ~/.bashrc; then
@@ -153,7 +156,6 @@ else
         idlbin=$IDL_DIR/bin/idl
 fi
 bintest=`echo ${idlbin} | grep -c "/bin/bin\."`
-echo "bintest: ${bintest}"
 if [ ${bintest} != 0 ]; then
   idlbin=`dirname ${idlbin}`
   idlbin=`dirname ${idlbin}`
@@ -1107,7 +1109,19 @@ if grep -q "alias ominasde=~/.ominas/ominasde" ${usersh} ; then
 else
   echo "alias ominasde=~/.ominas/ominasde" >> ${usersh}
 fi
-printf "OMINAS configuration was written to $usersh.\n"
+printf "OMINAS aliase set in ${usersh}.\n"
+
+if grep -q "alias ominas=~/.ominas/ominas" ${psetting} ; then
+  echo "${psetting} already sets ominas alias"
+else
+  echo "alias ominas=~/.ominas/ominas" >> ${psetting}
+fi
+if grep -q "alias ominasde=~/.ominas/ominasde" ${psetting} ; then
+  echo "${psetting} already sets ominasde alias"
+else
+  echo "alias ominasde=~/.ominas/ominasde" >> ${psetting}
+fi
+printf "OMINAS aliase set in ${psetting}.\n"
 return 0
 }
 echo " "
