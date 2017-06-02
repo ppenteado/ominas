@@ -3655,7 +3655,6 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, data=data) 
  fn = 'grim_compute_' + name
 
-
  ;--------------------------------------------------
  ; if the dependencies are given, then just update
  ;  existing arrays

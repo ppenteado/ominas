@@ -10047,16 +10047,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   end
 
 
- ;----------------------------------------------
- ; compute any initial overlays
- ;----------------------------------------------
- if(keyword_set(overlays)) then $
-    if(NOT keyword_set(delay_overlays)) then $
-                        grim_initial_overlays, grim_data, plane=_plane
-
-
-
-
  ;=========================================================
  ; if new instance, setup initial view
  ;=========================================================
@@ -10190,5 +10180,15 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ; draw initial image
  ;-------------------------
  grim_refresh, grim_data, no_erase=no_erase
+
+
+ ;----------------------------------------------
+ ; compute any initial overlays
+ ;----------------------------------------------
+ if(keyword_set(overlays)) then $
+    if(NOT keyword_set(delay_overlays)) then $
+                        grim_initial_overlays, grim_data, plane=_plane
+
+
 end
 ;=============================================================================
