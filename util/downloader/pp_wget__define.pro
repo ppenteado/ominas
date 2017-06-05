@@ -122,7 +122,7 @@ if count then begin
     if (abs(tmrj-tmlj) lt 1d0/1440d0) then begin
       print,'This file is already present locally with same timestamp. Skipping'
       return,0
-    endif else print,'dif: ',tmrj-tmlj
+    endif ;else print,'dif: ',tmrj-tmlj
   endif
 endif
 return,1
