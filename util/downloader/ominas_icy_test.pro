@@ -9,7 +9,7 @@ endif else begin
   help,/dlm,output=o
   w=where(stregex(o,'icy\.so$',/bool))
   ret=CSPICE_TKVRSN( 'toolkit' ) + ', '+o[w[0]]
-  ret=(stregex(ret,'Path:[[:blank:]]*(/.*/lib/icy\.so)$',/extract,/subexpr))[-1]
+  ret=(stregex(ret,'Path:[[:blank:]]*(/.*)/lib/icy\.so$',/extract,/subexpr))[-1]
   st=0
 endelse
 print,ret
