@@ -17,7 +17,7 @@ endif else begin
   endif else begin
     print,'Install IDLAstro?'
     inst=''
-  read,inst
+    read,inst
   endelse
   if stregex(inst,'y|Y',/bool) then begin
     ;if ~auto then begin
@@ -29,6 +29,7 @@ endif else begin
     loc='~/ominas_data/idlastro'
     spawn,'eval echo '+loc,res
     loc=res
+    if getenv('NV_VERBOSITY') then print,'Installing IDLAstro to ',loc
     if file_test(loc,/directory) then begin
       if file_test(loc+'/.git',/directory) then st=0 else st=1
     endif else begin
@@ -48,6 +49,7 @@ endif else begin
       loc=locl+'/IDLAstro-master'
     endif
     path=getenv('IDL_PATH') ? getenv('IDL_PATH') : pref_get('IDL_PATH')
+    if getenv('NV_VERBOSITY') then print,'idlastro_download: old path=',path
     if ~strmatch(path,'*'+loc+'*') then begin
       path+=':+'+loc+'/pro'
     endif
@@ -55,7 +57,11 @@ endif else begin
       openw,lun,'idlpath.sh',/get_lun,/append
       printf,lun,'export IDL_PATH="'+path+'"'
       free_lun,lun
-    endif else PREF_SET, 'IDL_PATH', path, /COMMIT
+      print,'IDLAstro path set in IDL_PATH: ',path
+    endif else begin
+      PREF_SET, 'IDL_PATH', path, /COMMIT
+      print,'IDLAstro path set in preferences: ',path
+    endelse
   endif
 endelse
 
