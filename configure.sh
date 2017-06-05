@@ -810,10 +810,12 @@ done
 ominas_icytest=`$idlbin -e "!path+=':'+file_expand_path('./util/downloader') & ominas_icy_test" # 2> /dev/null`
 if [ $? == 0 ] ; then
   icyst='CONFIGURED'
+  icypath=${ominas_icytest}
   ominas_icyst=1
 else
   icyst='NOT CONFIGURED'
   ominas_icyst=0
+  icypath=''
 fi
 echo "Icy: ${ominas_icytest}"
 export ominas_icyst
@@ -1078,7 +1080,7 @@ fi
 
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
-  
+  echo "aaa ${icypath}"
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}'"
   if [ -e idlpath.sh ]; then
     cat idlpath.sh >> $idlpathfile
