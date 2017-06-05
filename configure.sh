@@ -1080,7 +1080,6 @@ fi
 
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
-  echo "aaa ${icypath}"
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}'"
   if [ -e idlpath.sh ]; then
     cat idlpath.sh >> $idlpathfile
