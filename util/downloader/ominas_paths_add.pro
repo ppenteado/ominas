@@ -18,8 +18,6 @@ endelse
 if verb then print,'ominas_paths_add: old path=',path
 
 if icydir then begin
-   print,'opath:',path
-   print, stregex(path,'\+?/.*/ominas_data/icy/lib/*',/bool)
   if ~stregex(path,'\+?/.*/ominas_data/icy/lib/*',/bool) then path+=':+'+file_expand_path(icydir+'/lib/')
 endif
 if verb then print,'ominas_paths_add: icydir=',icydir,' ominasdir=',ominasdir
