@@ -647,9 +647,20 @@ if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
   else
     ans="y"
   fi
-  case $ans in
+  case ${ans} in
     [Yy]*)
-           $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/') & ominas_icy_remove & exit"
+           if [ ${ominas_auto_u} != 1 ] ; then
+             read -rp "Do you wish to remove every Icy occurence in your path - not just the one installed by OMINAS - (y/n)[n]?"  ansa
+           else
+             ansa="n"
+           fi
+           case ${ansa} in
+             [Yy]*)
+               removeall=1;;
+             *)
+              removeall=0;;
+           esac
+           $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/') & ominas_icy_remove,all=${removeall} & exit"
            if [ -e idlpathr.sh ]; then 
              source idlpathr.sh
            fi
