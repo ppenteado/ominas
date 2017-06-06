@@ -103,6 +103,12 @@
 ;	-------------------------
 ;	The colormap structure (see colormap_descriptor__define) can be
 ;	be initialized via keywords prefied with 'cmd_', e.g., 'cmd_shade'.
+;	In addition, the following keywords apply to the initial color map:
+;
+;	*auto_stretch:
+;		If set, the color table for each plane is automatically
+;		stretched.  This is identical to using the 'Auto' button
+;		on on the grim color tool.
 ;
 ;
 ;	Translator Keywords
@@ -7803,7 +7809,7 @@ pro grim_crop_event, event
  struct = tag_names(event, /struct)
  if(struct EQ 'WIDGET_TRACKING') then $
   begin
-   if(event.enter) then grim_print, grim_data, 'crop data to view'
+   if(event.enter) then grim_print, grim_data, 'Crop data to view'
    return
   end
 
@@ -9751,7 +9757,7 @@ pro grim, arg1, arg2, gd=gd, _extra=keyvals, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
-	position=position, delay_overlays=delay_overlays, $
+	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
         xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
@@ -9784,7 +9790,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
 	visibility=visibility, channel=channel, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, rgb=rgb, $
-	delay_overlays=delay_overlays
+	delay_overlays=delay_overlays, auto_stretch=auto_stretch
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
 
@@ -10175,6 +10181,11 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
           grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
   end
 
+
+ ;-------------------------
+ ; initial color stretch
+ ;-------------------------
+ if(keyword_set(auto_stretch)) then grim_stretch_plane, grim_data, planes
 
  ;-------------------------
  ; draw initial image

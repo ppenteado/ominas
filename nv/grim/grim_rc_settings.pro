@@ -99,7 +99,7 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
         render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
-        delay_overlays=delay_overlays
+        delay_overlays=delay_overlays, auto_stretch=auto_stretch
 	
 
  ;----------------------------------------------------
@@ -170,6 +170,11 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
                         _hide = grim_rc_value(keywords, value_ps, 'HIDE') $
  else _hide = hide
  if(keyword_set(_hide)) then hide = fix(_hide)
+
+ if(n_elements(auto_stretch) EQ 0) then $
+                        _auto_stretch = grim_rc_value(keywords, value_ps, 'AUTO_STRETCH') $
+ else _auto_stretch = auto_stretch
+ if(keyword_set(_auto_stretch)) then auto_stretch = fix(_auto_stretch)
 
  if(n_elements(xzero) EQ 0) then $
                         _xzero = grim_rc_value(keywords, value_ps, 'XZERO') $

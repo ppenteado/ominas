@@ -268,20 +268,14 @@ pro grct_update, cmd, all=all, auto=auto
  ;--------------------------------------
  planes = grim_get_plane(grim_data, all=all)
  n = n_elements(planes)
- for i=0, n-1 do $
-  begin
-   if(NOT keyword_set(auto)) then planes[i].cmd = cmd $
-   else $
-    begin
-     image = grim_get_image(grim_data, plane=planes[i], /current)
 
-     test = image_auto_stretch(bytscl(image),min=min, max=max)
-     planes[i].cmd.bottom = min
-     planes[i].cmd.top = max
-    end
-   grim_set_plane, grim_data, planes[i], pn=planes[i].pn
-  end
-
+ if(keyword_set(auto)) then grim_stretch_plane, grim_data, planes $
+ else $
+  for i=0, n-1 do $
+   begin
+    planes[i].cmd = cmd
+    grim_set_plane, grim_data, planes[i], pn=planes[i].pn
+   end
 
  grim_set_data, grim_data, grim_data.base
  grim_refresh, grim_data, /no_erase

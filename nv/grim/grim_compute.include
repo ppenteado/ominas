@@ -21,7 +21,7 @@ function grim_compute_planet_center, map=map, clip=clip, hide=hide, $
  center_ptd = pg_center(cd=cd, bx=pds)
  grim_message
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, center_ptd
 end
 ;===============================================================================
@@ -95,7 +95,7 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  ptd = append_array(limb_ptd, hide_ptd_term)
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;===============================================================================
@@ -177,7 +177,7 @@ function grim_compute_terminator, map=map, clip=clip, hide=hide, $
  ptd = term_ptd
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;===============================================================================
@@ -266,7 +266,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  ptd = append_array(grid_ptd, hide_ptd_term)
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;=============================================================================
@@ -369,7 +369,7 @@ function grim_compute_station, map=map, clip=clip, hide=hide, $
  ptd = station_ptd
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;=============================================================================
@@ -472,7 +472,7 @@ function grim_compute_array, map=map, clip=clip, hide=hide, $
  ptd = array_ptd
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;=============================================================================
@@ -562,7 +562,7 @@ function grim_compute_star, map=map, clip=clip, hide=hide, $
  ptd = star_ptd
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;===============================================================================
@@ -652,7 +652,7 @@ function grim_compute_shadow, map=map, clip=clip, hide=hide, $
  ptd = shadow_ptd
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;===============================================================================
@@ -723,7 +723,7 @@ function grim_compute_reflection, map=map, clip=clip, hide=hide, $
  ptd = reflection_ptd
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;===============================================================================
@@ -801,7 +801,7 @@ function grim_compute_ring, map=map, clip=clip, hide=hide, $
  ptd = append_array(ring_ptd, hide_ptd_shad)
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;===============================================================================
@@ -884,7 +884,7 @@ function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
  ptd = append_array(grid_ptd, hide_ptd_shad)
  if(NOT hide) then ptd = append_array(ptd, hide_ptd)
 
- grim_print, 'done', /append
+ grim_print, 'Done', /append
  return, ptd
 end
 ;===============================================================================

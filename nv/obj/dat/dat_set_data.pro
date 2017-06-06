@@ -53,7 +53,7 @@
 ;-
 ;=============================================================================
 pro dat_set_data, dd, _data, update=update, noevent=noevent, $
-       abscissa=_abscissa, sample=sample
+       abscissa=_abscissa, sample=sample, slce=slice
 @core.include
  _dd = cor_dereference(dd)
 
@@ -121,10 +121,8 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
 
    _dd.dap_index = 0
 
-   if(NOT ptr_valid(_dd.dim_p)) then _dd.dim_p = nv_ptr_new(0)
-
    if(keyword_set(_data)) then $
-     if(sample[0] EQ -1) then *_dd.dim_p = size(_data, /dim)
+        if(sample[0] EQ -1) then dat_set_dim, _dd, size(_data, /dim)
   end
 
 

@@ -29,6 +29,8 @@
 ;		  returned.  May be 1D or the same number of dimensions as
 ;		  the data array.  
 ;
+;	offset:	  Amount by which to offset samples.
+;
 ;	current:  If set, the current loaded samples are returned.  In this
 ;		  case, the sample indices are returned in the "samples"
 ;		  keyword.
@@ -73,23 +75,41 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
 
+ dim = dat_dim(_dd)
+ nelm = product(dim)
+
  sampled = 0
  if(NOT keyword_set(offset)) then offset = 0
 
  sample0 = *_dd.sample_p
  if(keyword_set(current)) then if(sample0[0] NE -1) then _samples = sample0
 
+ full_array = 0
+
+
+ ;--------------------------------------------------------------
+ ; compute slice offset
+ ;--------------------------------------------------------------
+ if(ptr_valid(_dd.slice_struct.slice_p)) then $
+  begin
+   offset = dat_slice_offset(_dd)
+   if(NOT keyword_set(_samples)) then $
+    begin
+     _samples = lindgen(nelm)
+     full_array = 1
+    end
+  end
+
  ;-------------------------------------------------------------------------
  ; If there is a sampling function, but no samples are given, then 
  ; generate sampling for the entire data array.  This way the sampling
  ; function always gets called and a sensible result is obtained.
  ;-------------------------------------------------------------------------
- full_array = 0
  if(keyword_set(_dd.sampling_fn) $
         AND (NOT keyword_set(_samples)) $
                AND NOT keyword_set(true)) then $
   begin
-   _samples = lindgen(dat_n(_dd))
+   _samples = lindgen(nelm)
    full_array = 1
   end
 
@@ -113,7 +133,7 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
    samples = round(samples)
    sdim = size(samples, /dim)
    if((n_elements(sdim) NE 1) OR keyword_set(nd)) then $
-                                 samples = nd_to_w(*(_dd.dim_p), samples)
+                                           samples = nd_to_w(dim, samples)
   end
  if(keyword_set(samples)) then samples = samples + offset
 
@@ -153,9 +173,8 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
  ;-------------------------------------------------------------------------
  if(full_array) then $
   begin
-;   data = reform(data, *_dd.dim_p, /over)
-   data = reform(data, dat_dim(_dd), /over)
-   if(keyword_set(abscissa)) then abscissa = reform(abscissa, *_dd.dim_p, /over)
+   data = reform(data, dim, /over)
+   if(keyword_set(abscissa)) then abscissa = reform(abscissa, dim, /over)
   end
 
 
@@ -178,8 +197,7 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
  else $
   begin
    if(keyword_set(samples)) then _abscissa = samples $
-   else _abscissa = lindgen(*_dd.dim_p)
-;;;; _abscissa = w_to_nd(*_dd.dim_p, _abscissa)
+   else _abscissa = lindgen(dim)
   end
 
 

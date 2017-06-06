@@ -109,8 +109,7 @@ end_keywords)
  ;---------------------------------
  ; dimensions
  ;---------------------------------
- self.dim_p = nv_ptr_new(0)
- if(keyword_set(dim)) then *self.dim_p = dim
+ if(keyword_set(dim)) then *self.dim = dim
 
 
  ;-----------------------
@@ -211,7 +210,15 @@ end
 ;	cache:		Max cache size data array.  Used to deterine whether 
 ;			to load / unload data samples.  -1 means infinite.
 ;
-;	dim_p:		Pointer to array giving data dimensions.
+;	dim:		Array giving data dimensions.
+;
+;	slice_struct:	Structure containing array giving coordinates for a 
+;			subarray.  If slice coordinates exist, the dat methods 
+;			act as if the data descriptor contains only this slice of 
+;			data.  Dimensions, min, and max are set accordingly.  
+;			Dimensions of the subarray are the difference between 
+;			the dimensions of the full array and the dimensionality 
+;			of the slice coordinates.
 ;
 ;	typecode:	Data type code.
 ;
@@ -309,12 +316,14 @@ pro ominas_data__define
 	sample_p:		nv_ptr_new(), $	; Pointer to the array of loaded samples
 	order_p:		nv_ptr_new(), $	; Pointer to the sample load order array
 
+	slice_struct:		{dat_slice}, $	; Slice structure
+
 	cache:			0l, $		; Max. cache size for data array (Mb)
 						;  Doesn't apply to maintenance 0
 
 	max:			0d, $		; Maximum data value
 	min:			0d, $		; Minimum data value
-	dim_p:			nv_ptr_new(), $	; data dimensions
+	dim:			lonarr(8), $	; data dimensions
 	typecode:		0b, $		; data type code
 
 	filename:		'', $		; Name of source file.

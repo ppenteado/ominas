@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Replaces the dim value in a data descriptor.
+;	Replaces the dimensions in a data descriptor.
 ;
 ;
 ; CATEGORY:
@@ -18,9 +18,9 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:		Data descriptor.
+;	dd:	Data descriptor.
 ;
-;	dim:	New dim value.
+;	dim:	New dimensions.
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,7 +49,8 @@ pro dat_set_dim, dd, dim, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- *_dd.dim_p = dim
+ _dd.dim = 0
+ _dd.dim = dim
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent
