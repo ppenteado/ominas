@@ -2681,7 +2681,6 @@ pro grim_menu_open_as_rgb_event, event
 ; look at render event to transfer overlays, etc
 ; dd = nv_clone(plane.dd)
 ; dat_set_data, dd, cube
-; dat_set_data_offset, dd, 0
  dd = dat_create_descriptors(1, data=cube)
  dat_set_filetype, dd, dat_filetype(plane.dd)
 
@@ -9639,7 +9638,7 @@ end
 ;
 ;=============================================================================
 pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
-               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb, offsets=offsets
+               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
 
  ;--------------------------------------------
  ; build data descriptors list 
@@ -9671,19 +9670,13 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
    if((ndim LT 3) OR keyword_set(rgb)) then $
     begin
      dd = append_array(dd, _dd[i])
-     offsets = append_array(offsets, [0])
 
 if(keyword_set(rgb)) then dat_set_dim_fn, dd, 'grim_cube_dim_fn'
     end $ 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; 3-D arrays are either rgb or multi-plane
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else $
-    begin
-     dd = append_array(dd, make_array(dim[2], val=_dd[i]))
-     offsets = append_array(offsets, lindgen(dim[2])*dim[0]*dim[1])
-dat_set_dim_fn, dd, 'grim_cube_dim_fn'
-    end 
+   else dd = append_array(dd, dat_slices(_dd[i]))
   end
 
 
@@ -9870,7 +9863,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  ; resolve arguments
  ;=========================================================
- grim_get_args, arg1, arg2, dd=dd, offsets=data_offsets, grnum=grnum, type=type, $
+ grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, $
              nhist=nhist, maintain=maintain, compress=compress, $
              extensions=extensions, rgb=rgb
 
@@ -9932,7 +9925,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        symsize=symsize, nhist=nhist, maintain=maintain, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
-       visibility=visibility, channel=channel, data_offsets=data_offsets, $
+       visibility=visibility, channel=channel, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
        render_pht_min=render_pht_min, overlays=overlays, activate=activate)
 

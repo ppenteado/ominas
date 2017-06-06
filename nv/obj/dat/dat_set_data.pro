@@ -53,7 +53,7 @@
 ;-
 ;=============================================================================
 pro dat_set_data, dd, _data, update=update, noevent=noevent, $
-       abscissa=_abscissa, sample=sample, slce=slice
+       abscissa=_abscissa, sample=sample
 @core.include
  _dd = cor_dereference(dd)
 
@@ -67,6 +67,20 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
  if(keyword_set(_abscissa)) then abscissa = _abscissa
  if(keyword_set(_data)) then data = _data
  if(NOT keyword_set(sample)) then sample = -1
+
+
+; ;--------------------------------------------------------------
+; ; compute slice offset
+; ;--------------------------------------------------------------
+; if(ptr_valid(_dd.slice_struct.slice_p)) then $
+;  begin
+;   offset = dat_slice_offset(_dd)
+;   if(NOT keyword_set(_samples)) then $
+;    begin
+;     _samples = lindgen(nelm)
+;     full_array = 1
+;    end
+;  end
 
 
  ;----------------------------------------------

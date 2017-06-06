@@ -131,7 +131,6 @@ function grim_get_image, grim_data, plane=plane, abscissa=abscissa, $
 
  dim = (dat_dim(plane.dd))[0:1]
 
- offset = plane.data_offset
 
  ;--------------------------------------------------------------------
  ; if rgb plane, then override offset to yield image corresponding
@@ -149,7 +148,7 @@ function grim_get_image, grim_data, plane=plane, abscissa=abscissa, $
  ; return image
  ;--------------------------------------------------------------------
  return, dat_data(plane.dd, true=true, $
-            sample=sample, current=current, nd=nd, offset=offset, abscissa=abscissa)
+            sample=sample, current=current, nd=nd, abscissa=abscissa)
 end
 ;=============================================================================
 
@@ -457,7 +456,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
                       xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
-                      render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets, $
+                      render_sample=render_sample, render_pht_min=render_pht_min, $
                       overlays=overlays, cmd=cmd0
 
   pns = 0
@@ -472,7 +471,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
   if(NOT keyword_set(hide)) then hide = grim_data.def_hide
   if(NOT keyword_set(filter)) then filter = grim_data.def_filter
   if(NOT keyword_set(visibility)) then visibility = 0
-  if(NOT keyword_set(data_offsets)) then data_offsets = lonarr(n_planes)
   if(NOT defined(render_pht_min)) then render_pht_min = 0.02
   if(NOT keyword_set(render_sample)) then render_sample = 1
 
@@ -577,7 +575,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 		dradec		:	dblarr(1,3), $
 		max		:	double(max), $
 		t0		:	0d, $			; last cd time, $
-		data_offset	:	data_offsets[i], $	; offset in data array 
 		initial_overlays_p :	ptr_new(overlays), $
 
 	;---------------

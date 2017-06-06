@@ -29,8 +29,6 @@
 ;		  returned.  May be 1D or the same number of dimensions as
 ;		  the data array.  
 ;
-;	offset:	  Amount by which to offset samples.
-;
 ;	current:  If set, the current loaded samples are returned.  In this
 ;		  case, the sample indices are returned in the "samples"
 ;		  keyword.
@@ -69,7 +67,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_data, dd, samples=_samples, current=current, offset=offset, $
+function dat_data, dd, samples=_samples, current=current, $
                   nd=nd, true=true, noevent=noevent, abscissa=_abscissa
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
@@ -79,7 +77,6 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
  nelm = product(dim)
 
  sampled = 0
- if(NOT keyword_set(offset)) then offset = 0
 
  sample0 = *_dd.sample_p
  if(keyword_set(current)) then if(sample0[0] NE -1) then _samples = sample0
@@ -90,6 +87,7 @@ function dat_data, dd, samples=_samples, current=current, offset=offset, $
  ;--------------------------------------------------------------
  ; compute slice offset
  ;--------------------------------------------------------------
+ offset = 0
  if(ptr_valid(_dd.slice_struct.slice_p)) then $
   begin
    offset = dat_slice_offset(_dd)
