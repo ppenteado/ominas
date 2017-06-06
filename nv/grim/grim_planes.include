@@ -131,7 +131,6 @@ function grim_get_image, grim_data, plane=plane, abscissa=abscissa, $
 
  dim = (dat_dim(plane.dd))[0:1]
 
-
  ;--------------------------------------------------------------------
  ; if rgb plane, then override offset to yield image corresponding
  ; to specified channel
@@ -139,16 +138,15 @@ function grim_get_image, grim_data, plane=plane, abscissa=abscissa, $
  if(grim_test_rgb(grim_data, plane)) then $
   begin
    true = 0
-   offset = 0
    if(NOT keyword_set(channel)) then true = 1 $
-   else offset = channel*dim[0]*dim[1]
+   else slice = channel
   end
 
  ;--------------------------------------------------------------------
  ; return image
  ;--------------------------------------------------------------------
  return, dat_data(plane.dd, true=true, $
-            sample=sample, current=current, nd=nd, abscissa=abscissa)
+          sample=sample, current=current, nd=nd, slice=slice, abscissa=abscissa)
 end
 ;=============================================================================
 

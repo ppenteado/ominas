@@ -29,6 +29,8 @@
 ;		  returned.  May be 1D or the same number of dimensions as
 ;		  the data array.  
 ;
+;	slice:	  Slice coordinates.
+;
 ;	current:  If set, the current loaded samples are returned.  In this
 ;		  case, the sample indices are returned in the "samples"
 ;		  keyword.
@@ -67,7 +69,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_data, dd, samples=_samples, current=current, $
+function dat_data, dd, samples=_samples, current=current, slice=slice, $
                   nd=nd, true=true, noevent=noevent, abscissa=_abscissa
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
@@ -87,16 +89,19 @@ function dat_data, dd, samples=_samples, current=current, $
  ;--------------------------------------------------------------
  ; compute slice offset
  ;--------------------------------------------------------------
- offset = 0
- if(ptr_valid(_dd.slice_struct.slice_p)) then $
+ if(defined(slice)) then offset = dat_slice_offset({slice:slice, dd0:_dd}) $
+ else if(ptr_valid(_dd.slice_struct.slice_p)) then offset = dat_slice_offset(_dd)
+
+ if(defined(offset)) then $
   begin
-   offset = dat_slice_offset(_dd)
    if(NOT keyword_set(_samples)) then $
     begin
      _samples = lindgen(nelm)
      full_array = 1
-    end
-  end
+    end 
+  end $
+ else offset = 0
+
 
  ;-------------------------------------------------------------------------
  ; If there is a sampling function, but no samples are given, then 

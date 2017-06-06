@@ -35,7 +35,7 @@
 ;	available in this mode.  
 ;
 ;	Cubes are handled as multiple image planes unless /rgb is used 
-;	(see below).  All grim plane will contain the same data descriptor,
+;	(see below).  All grim planes will contain the same data array,
 ;	but display only data ranges corresponding to one channel of the cube.
 ;	For /rgb (assuming the cube has three channels), the data are placed 
 ;	on a single image plane with each cube channel assigned the R, G, or B 
@@ -9555,11 +9555,11 @@ end
 
 
 ;=============================================================================
-; grim_cube_dim_fn
+; grim_rgb_dim_fn
 ;
 ;
 ;=============================================================================
-function grim_cube_dim_fn, dd, dat
+function grim_rgb_dim_fn, dd, dat
  return, (dat_dim(dd, /true))[0:1]
 end
 ;=============================================================================
@@ -9670,11 +9670,10 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
    if((ndim LT 3) OR keyword_set(rgb)) then $
     begin
      dd = append_array(dd, _dd[i])
-
-if(keyword_set(rgb)) then dat_set_dim_fn, dd, 'grim_cube_dim_fn'
+     if(keyword_set(rgb)) then dat_set_dim_fn, dd, 'grim_rgb_dim_fn'
     end $ 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; 3-D arrays are either rgb or multi-plane
+   ; 3-D arrays are multi-plane if not rgb
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    else dd = append_array(dd, dat_slices(_dd[i]))
   end
