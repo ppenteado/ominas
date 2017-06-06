@@ -1121,7 +1121,7 @@ if grep -q "alias ominasde=~/.ominas/ominasde" ${usersh} ; then
 else
   echo "alias ominasde=~/.ominas/ominasde" >> ${usersh}
 fi
-printf "OMINAS aliase set in ${usersh}.\n"
+printf "OMINAS aliases set in ${usersh}.\n"
 
 if grep -q "alias ominas=~/.ominas/ominas" ${psetting} ; then
   echo "${psetting} already sets ominas alias"
@@ -1133,7 +1133,7 @@ if grep -q "alias ominasde=~/.ominas/ominasde" ${psetting} ; then
 else
   echo "alias ominasde=~/.ominas/ominasde" >> ${psetting}
 fi
-printf "OMINAS aliase set in ${psetting}.\n"
+printf "OMINAS aliases set in ${psetting}.\n"
 return 0
 }
 echo " "
