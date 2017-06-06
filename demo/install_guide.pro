@@ -12,13 +12,13 @@
 ;
 ;	Requirements
 ;	============
+;	
+;	Currently OMINAS requires IDL 8.2.3 or above, and a bash shell, on Linux or
+;	Mac OS.
+;	
 ;	To process images from a particular mission, that mission's kernels will
-;	need to be downloaded separately from the 
-;	`NAIF website <http://naif.jpl.nasa.gov/pub/naif/>`. A set of kernels can
-;	be obtained using the UNIX wget or rsync commands, as desired.It is 
-;	recommended to download the set of 
-;	`generic_kernels <http://naif.jpl.nasa.gov/pub/naif/generic_kernels/>` to
-;	supplement kernels from other missions.
+;	need to be available. The OMINAS installer can automatically download sets of
+;	kernels for several missions (Cassini, Galileo, Voyager, Dawn).
 ;
 ;	OMINAS makes use of the NAIF Icy Toolkit to process SPICE kernels. The Icy
 ;	toolkit may optionally be obtained manually from 
@@ -46,31 +46,21 @@
 ;
 ;	3. A prompt will appear asking which packages should be installed. The
 ;	user should type the numbers of the desired packages separated by spaces.
-;	If no packages are desired, the default package can be installed by typing
-;	"def". Star catalogs or SEDR data may be configured without installing
-;	packages. If no modifications to the package configuration are desired,
-;	the "no" keyword skips this step.
+;	We recomend, at a minimum, setting up packages 1, 2 and 3 (OMINAS Core, Demo and Icy).
+;	To automatically download and setup all the packages, use the `all` option.
 ;
-;	4. Enter the location of the mission kernel pool for each desired
-;	mission package. If the location is not known, or there is a typo,
-;	the utility will attempt to find the kernel pool automatically by using
-;	the default name in the NAIF archive (e.g., Cassini kernels are stored
-;	in a folder called Cassini).
+;	4. When setting up an individual kernel or data package (selections 4-13),
+;	one can either provide a path for an existing directory containing the required files,
+;	or tell the installer to download them.
 ;
-;	5. The installer will optionally attempt to install the Icy Toolkit from
-;	the internet automatically. If a local copy of Icy is present, its
-;	location may be entered manually or detected automatically. Once Icy
-;	is installed, this step does not need to be performed again if further
-;	modifications to the OMINAS configuration are desired.
-;
-;	6. Test the install of OMINAS has been completed correctly by running the
+;	5. Test the install of OMINAS has been completed correctly by running the
 ;	the following example scripts::
 ;
-;	 idl saturn_example.pro
-;	 idl jupiter_example.pro
+;	 ominas saturn_example.pro
+;	 ominas jupiter_example.pro
 ;
-;	7. A successful Icy installation can be tested with the following IDL
-;	command::
+;	6. A successful Icy installation can be tested with the following IDL
+;	command from within an OMINAS IDL session::
 ;
 ;	 help, 'icy', /dlm
 ;
@@ -82,23 +72,290 @@
 ;	The version of Icy should be printed. If both of these functions return
 ;	successfully, then Icy has been installed correctly.
 ;
-;	Note: Demo
-;	==========
 ;
-;	If the demo configuration is set for OMINAS, no other types of images can
-;	be processed other than the example scripts. To change this setting at a
-;	later point, run the uninstall.sh script to unconfigure OMINAS, then run
-;	configure.sh again, selecting not to configure the demo.
+; Example installationg walkthrough
+; ================================= 
+; 
+; From a fresh account (that never had OMINAS, Icy or any IDL libraries setup
+; before), for the 3 main packages (Core, Demo and Icy)::
+; 
+;   ;[ominas_test_8@cmp ~]$ git clone https://github.com/ppenteado/ominas.git
+;   ;Cloning into 'ominas'...
+;   ;Username for 'https://github.com': ppenteado
+;   ;Password for 'https://ppenteado@github.com':
+;   ;remote: Counting objects: 13377, done.
+;   ;remote: Compressing objects: 100% (85/85), done.
+;   ;remote: Total 13377 (delta 51), reused 71 (delta 34), pack-reused 13258
+;   ;Receiving objects: 100% (13377/13377), 200.48 MiB | 8.10 MiB/s, done.
+;   ;Resolving deltas: 100% (7628/7628), done.
+;   ;Checking connectivity... done.
+;   ;Checking out files: 100% (3479/3479), done.
+;   
+; At this point, a copy of OMINAS will be in a newly-created directory called
+; ominas, under the current directory. Note that if a non-empty ominas directory
+; was already present, git would notice it and refuse to download OMINAS into that
+; directory.
+; 
+;  Now, getting into the ominas directory and running the installer::
 ;
-;	Alternatively, the following information can be changed in the
-;	`~/.bash_profile' or '~/.bashrc' file::
+;   ;[ominas_test_8@cmp ~]$ cd ominas/
+;   ;[ominas_test_8@cmp ominas]$ source configure.sh
+;   ;Detecting .bash_profile...
+;   ;.bash_profile detected!
+;   ;Detecting .bashrc...
+;   ;.bashrc detected!
+;   ;Using IDL at /usr/local/bin/idl
+;   ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;   ;Installation number: XXXXXX.
+;   ;Licensed for use by: XXXXXX
+;   ;
+;   ;Creating ~/.ominas directory
+;   ;Creating ~/ominas_data directory
+;   ;The setup will guide you through the installation of OMINAS
+;   ;OMINAS files located in /home/ominas_test_8/ominas
+;   ;
+;   ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;   ;Installation number: XXXXX.
+;   ;Licensed for use by: XXXXX
+;   ;
+;   ;% Compiled module: OMINAS_ICY_TEST.
+;   ;Icy: Icy not found
+;   ;Current OMINAS configuration settings
+;   ;Required:
+;   ;1) OMINAS Core  . . . . . . . . . . . . .  NOT CONFIGURED
+;   ;Contains the OMINAS code. If you select only one
+;   ;of the other packages, this will be included.
+;   ;Optional packages:
+;   ;2) Demo package . . . . . . . . . . . . .  NOT CONFIGURED
+;   ;Contains the demo scripts and the data required
+;   ;to run then.
+;   ;These files are always present (in ominas/demo),
+;   ;this option is to set up the environment so that
+;   ;the demos can be run.
+;   ;3) SPICE Icy  . . . . . . . . . . . . . .  NOT CONFIGURED
+;   ;Library maintained by JPL's NAIF (Navigation and Ancillary
+;   ;Information Facility, https://naif.jpl.nasa.gov/naif/toolkit.html,
+;   ;required to use spacecraft / planetary kernel files.
+;   ;
+;   ;Mission Packages:
+;   ;Kernels used for each mission's position and
+;   ;pointing data. If you do not already have them,
+;   ;an option to download them from PDS will be provided.
+;   ;If you already have them, you will need to provide
+;   ;the path to your kernel files.
+;   ;Note: the NAIF Generic Kernels (one of the optional
+;   ;data packages) are not required for the missions, they
+;   ;already contain a copy the subset of the generic kernel
+;   ;files they need.
+;   ;4) Cassini . . . . . . . . . . . . . . . . NOT CONFIGURED
+;   ;Subsetted, about 16 GB as of Dec/2016
+;   ;5) Galileo (GLL) . . . . . . . . . . . . . NOT CONFIGURED
+;   ;About 833 MB as of Dec/2016
+;   ;6) Voyager . . . . . . . . . . . . . . . . NOT CONFIGURED
+;   ;About 163 MB as of Dec/2016
+;   ;7) Dawn  . . . . . . . . . . . . . . . . . NOT CONFIGURED
+;   ;Subsetted, about 8 GB as of Jan/2017
+;   ;Data:
+;   ;8) NAIF Generic Kernels . . . . . . . . .  NOT CONFIGURED
+;   ;About 22 GB as of Dec/2016
+;   ;9) SEDR image data . . . . . . . . . . . . NOT CONFIGURED
+;   ;10) TYCHO2 star catalog . . . . . . . . . . NOT CONFIGURED
+;   ;About 161 MB download, 665 MB unpacked
+;   ;11) SAO star catalog . . . . . . . . . . . NOT CONFIGURED
+;   ;About 19 MB download, 70 MB unpacked
+;   ;12) GSC star catalog . . . . . . . . . . . NOT CONFIGURED
+;   ;13) UCAC4 star catalog . . . . . . . . . . NOT CONFIGURED
+;   ;About 8.5 GB download
+;   ;For more information, see
+;   ;https://ppenteado.github.io/ominas_doc/demo/install_guide.html
+;   ;Modify Current OMINAS configuration (Exit/Auto/Uninstall 1 2 ...)?  1 2 3
+;   ;Settiing OMINAS Core...
+;   ;OMINAS requires the NAIF Icy toolkit to process SPICE kernels.
+;   ;Would you like to install Icy from the internet now? [y]
+;   ;http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/PC_Linux_GCC_IDL8.x_64bit/packages/icy.tar.Z ~/ominas_data/icy.tar.Z
+;   ;http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/PC_Linux_GCC_IDL8.x_64bit/packages/icy.tar.Z --localdir=/home/ominas_test_8/ominas_data/
+;   ;
+;   ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;   ;Installation number: XXXXXX.
+;   ;Licensed for use by: XXXXXX
+;   ;
+;   ;% Compiled module: PP_WGETCL.
+;   ;% Compiled module: PP_COMMAND_LINE_ARGS_PARSE.
+;   ;% Loaded DLM: URL.
+;   ;% Compiled module: PP_WGET__DEFINE.
+;   ;util/downloader/ca-bundle.crt
+;   ;% Compiled module: PARSE_URL.
+;   ;downloading http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/PC_Linux_GCC_IDL8.x_64bit/packages/icy.tar.Z
+;   ;% Compiled module: PP_READABLESIZE.
+;   ;Content Length:  276.00000 B
+;   ;% Compiled module: PP_PARSE_DATE.
+;   ;% Compiled module: JULDAY.
+;   ;Content Length:  43.669736 MB
+;   ;% Compiled module: CALDAT.
+;   ;Extracting Icy source files...
+;   ;Compiling Icy...
+;   ;Icy compiled. Log is at ~/.ominas/icy_make.log
+;   ;writing /home/ominas_test_8/.ominas/ominas_setup.sh
+;   ;‘/home/ominas_test_8/.ominas/ominas_setup.sh’ -> ‘/home/ominas_test_8/.ominas/ominas_setup_old.sh’
+;   ;
+;   ;
+;   ;
+;   ;
+;   ;
+;   ;
+;   ;done with writing /home/ominas_test_8/.ominas/ominas_setup.sh
+;   ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;   ;Installation number: XXXXXX.
+;   ;Licensed for use by: XXXXXX
+;   ;
+;   ;% Compiled module: OMINAS_PATHS_ADD.
+;   ;Checking to see if IDL paths need to be changed...
+;   ;% Compiled module: IDLASTRO_DOWNLOAD.
+;   ;% Compiled module: ROUTINE_EXISTS.
+;   ;There are missing IDLAstro routines.
+;   ;Auto installing
+;   ;git clone https://github.com/wlandsman/IDLAstro.git /home/ominas_test_8/ominas_data/idlastro
+;   ;Cloning into '/home/ominas_test_8/ominas_data/idlastro'...
+;   ;remote: Counting objects: 1400, done.
+;   ;remote: Compressing objects: 100% (7/7), done.
+;   ;remote: Total 1400 (delta 1), reused 3 (delta 1), pack-reused 1392
+;   ;Receiving objects: 100% (1400/1400), 11.63 MiB | 4.85 MiB/s, done.
+;   ;Resolving deltas: 100% (556/556), done.
+;   ;Checking connectivity... done.
+;   ;IDLAstro path set in preferences:  <IDL_DEFAULT>:+/home/ominas_test_8/ominas_data/idlastro/pro
+;   ;OMINAS paths set in IDL preferences
+;   ;Icy path set in IDL preferences
+;   ;OMINAS aliase set in /home/ominas_test_8/.bashrc.
+;   ;OMINAS aliase set in /home/ominas_test_8/.bash_profile.
+;   ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;   ;Installation number: 5502667.
+;   ;Licensed for use by: NASA - Jet Propulsion Laboratory
+;   ;
+;   ;% Compiled module: OMINAS_ICY_TEST.
+;   ;% Loaded DLM: ICY.
+;   ;Icy: /home/ominas_test_8/ominas_data/icy/lib/icy.so
+;   ;Current OMINAS configuration settings
+;   ;Required:
+;   ;1) OMINAS Core  . . . . . . . . . . . . .  CONFIGURED
+;   ;Contains the OMINAS code. If you select only one
+;   ;of the other packages, this will be included.
+;   ;Optional packages:
+;   ;2) Demo package . . . . . . . . . . . . .  CONFIGURED
+;   ;Contains the demo scripts and the data required
+;   ;to run then.
+;   ;These files are always present (in ominas/demo),
+;   ;this option is to set up the environment so that
+;   ;the demos can be run.
+;   ;3) SPICE Icy  . . . . . . . . . . . . . .  CONFIGURED
+;   ;Library maintained by JPL's NAIF (Navigation and Ancillary
+;   ;Information Facility, https://naif.jpl.nasa.gov/naif/toolkit.html,
+;   ;required to use spacecraft / planetary kernel files.
+;   ;
+;   ;Mission Packages:
+;   ;Kernels used for each mission's position and
+;   ;pointing data. If you do not already have them,
+;   ;an option to download them from PDS will be provided.
+;   ;If you already have them, you will need to provide
+;   ;the path to your kernel files.
+;   ;Note: the NAIF Generic Kernels (one of the optional
+;   ;data packages) are not required for the missions, they
+;   ;already contain a copy the subset of the generic kernel
+;   ;files they need.
+;   ;4) Cassini . . . . . . . . . . . . . . . . NOT CONFIGURED
+;   ;Subsetted, about 16 GB as of Dec/2016
+;   ;5) Galileo (GLL) . . . . . . . . . . . . . NOT CONFIGURED
+;   ;About 833 MB as of Dec/2016
+;   ;6) Voyager . . . . . . . . . . . . . . . . NOT CONFIGURED
+;   ;About 163 MB as of Dec/2016
+;   ;7) Dawn  . . . . . . . . . . . . . . . . . NOT CONFIGURED
+;   ;Subsetted, about 8 GB as of Jan/2017
+;   ;Data:
+;   ;8) NAIF Generic Kernels . . . . . . . . .  NOT CONFIGURED
+;   ;About 22 GB as of Dec/2016
+;   ;9) SEDR image data . . . . . . . . . . . . NOT CONFIGURED
+;   ;10) TYCHO2 star catalog . . . . . . . . . . NOT CONFIGURED
+;   ;About 161 MB download, 665 MB unpacked
+;   ;11) SAO star catalog . . . . . . . . . . . NOT CONFIGURED
+;   ;About 19 MB download, 70 MB unpacked
+;   ;12) GSC star catalog . . . . . . . . . . . NOT CONFIGURED
+;   ;13) UCAC4 star catalog . . . . . . . . . . NOT CONFIGURED
+;   ;About 8.5 GB download
+;   ;For more information, see
+;   ;https://ppenteado.github.io/ominas_doc/demo/install_guide.html
+;   ;Modify Current OMINAS configuration (Exit/Auto/Uninstall 1 2 ...)?  e
+;   ;Setup has completed. It is recommended to restart your terminal session before using OMINAS.
+;   ;You may want to try some of the tutorials at https://ppenteado.github.io/ominas_doc/demo/
+;   
+;   
+; At this point, one can run a few tests of the enviroment::
+; 
+;   ;[ominas_test_8@cmp ominas]$ which ominas
+;   ;alias ominas='/home/ominas_test_8/.ominas/ominas'
+;   ;~/.ominas/ominas
+;   ;[ominas_test_8@cmp ominas]$ which ominasde
+;   ;alias ominasde='/home/ominas_test_8/.ominas/ominasde'
+;   ;~/.ominas/ominasde
 ;
-;	 DFLAG=true; source <...>
-;	
-;	where <...> is the rest of the line. This line should be changed to::
+; Which shows both ominas and ominasde are defined. Use ominas to start and IDL
+; session in which to use OMINAS, and ominasde to start an IDL DE session in
+; which to use OMINAS.
+; 
+; Now, to check on the ominas_setup file, which sets the environment for the OMINAS
+; core and all currently set packages (in this example, only Core, Demo and Icy are set)::
+; 
+;   ;[ominas_test_8@cmp ominas]$ cat ~/.ominas/ominas_setup.sh
+;   ;#!/usr/bin/env bash
+;   ;alias ominas=~/.ominas/ominas
+;   ;alias ominasde=~/.ominas/ominasde
+;   ;export OMINAS_DIR=/home/ominas_test_8/ominas
+;   ;export DFLAG=true
+;   ;source /home/ominas_test_8/ominas/config/ominas_env_def.sh
+;   ;unset NV_Generic_kernels_DATA
+;   ;unset NV_SEDR_DATA
+;   ;unset NV_TYCHO2_DATA
+;   ;unset NV_SAO_DATA
+;   ;unset NV_GSC_DATA
+;   ;unset NV_UCAC4_DATA
 ;
-;	 DFLAG=false; source <...>
+; Now, to check that the right environment is see from an OMINAS session::
 ;
+;   ;[ominas_test_8@cmp ominas]$ ominas -e 'spawn,"env | grep NV"'
+;   ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;   ;Installation number: XXXXX.
+;   ;Licensed for use by: XXXXX
+;   ;
+;   ;NV_TRANSLATORS=/home/ominas_test_8/ominas/config/tab/translators.tab:/home/ominas_test_8/ominas/demo/data/translators.tab
+;   ;NV_CONFIG=/home/ominas_test_8/ominas/config
+;   ;NV_IO=/home/ominas_test_8/ominas/config/tab/io.tab
+;   ;NV_SPICE=/home/ominas_test_8/ominas/config/spice
+;   ;NV_ORBIT_DATA=/home/ominas_test_8/ominas/config/orb/
+;   ;NV_ARRAY_DATA=/home/ominas_test_8/ominas/config/arr/dat/
+;   ;NV_TRANSFORMS=/home/ominas_test_8/ominas/config/tab/transforms.tab:/home/ominas_test_8/ominas/demo/data/transforms.tab
+;   ;NV_STATION_DATA=/home/ominas_test_8/ominas/config/stn/
+;   ;NV_RING_DATA=/home/ominas_test_8/ominas/config/rings/
+;   ;NV_FTP_DETECT=/home/ominas_test_8/ominas/config/tab/filetype_detectors.tab
+;   ;NV_SPICE_KER=::/home/ominas_test_8/ominas/demo/data
+;   ;NV_INS_DETECT=/home/ominas_test_8/ominas/config/tab/instrument_detectors.tab:/home/ominas_test_8/ominas/demo/data/instrument_detectors.tab
+;   
+; Now, to check that the OMINAS paths show up inside an OMINAS IDL session::
+; 
+;   ;[ominas_test_8@cmp ominas]$ ominas -e 'print,pref_get("IDL_PATH")'
+;   ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;   ;Installation number: XXXXX.
+;   ;Licensed for use by: XXXXX
+;   ;
+;   ;<IDL_DEFAULT>:+/home/ominas_test_8/ominas_data/idlastro/pro:+/home/ominas_test_8/ominas_data/icy/lib:+/home/ominas_test_8/ominas:+/home/ominas_test_8/ominas/util/xidl
+;   ;[ominas_test_8@cmp ominas]$ ominas -e 'print,pref_get("IDL_DLM_PATH")'
+;   ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;   ;Installation number: XXXXX.
+;   ;Licensed for use by: XXXXX
+;   ;
+;   ;<IDL_DEFAULT>:+/home/ominas_test_8/ominas_data/icy/lib
+;
+; With this environment, one can run some demo scripts, such as::
+; 
+;   ;ominas saturn_example
+;   ;ominas jupiter_example
 ;
 ;	Troubleshooting
 ;	===============
@@ -128,39 +385,22 @@
 ;	successfully entered into the environemnt by using the "env" command at
 ;	the terminal prompt. The kernel pool variable names follow a convention
 ;	like so: <MIS>_SPICE_<*K>, where <MIS> is the abbreviated mission name,
-;	and <*K> is the type of kernel. Therefore, for Cassini, the bash command::
+;	and <*K> is the type of kernel. Therefore, for Cassini, the IDL command::
 ;
-;	 env | grep CAS_SPICE
+;	 spawn,"env | grep CAS_SPICE"
 ;
 ;	will list the path to directories containing each type of Cassini kernel.
-;	If the variables are not present, then run the de-configuring utility, in
-;	the ominas folder::
+;	If the variables are not present, the easiest fix might be to run the OMINAS
+;	installer again
 ;
-;	 source uninstall.sh
-;
-;	Then run the configuration utility again. Any custom path name supplied to
-;	the configuration utility must be spelled correctly.
-;
-;	If the kernel environment variables are present, next check that the kernel
-;	list contains the correct kernels. The kernel list file manually specifies
-;	which kernels should be loaded in place of the OMINAS auto-detect
-;	functionaliy. For Cassini, as an example, this file is located in
-;	'ominas/config/cas/cassini.kernels'. At the beginning of this file, after
-;	the header comments, check that the following line is present::
-;
-;	 $CAS_SPICE_LSK/naif00xx.tls
-;
-;	where xx is the number of the most recent leap second kernel file.
-;
-;
-;	If no SPK kernels are loaded, the following error will be returned by Icy::
-;
-;	 % CSPICE_SPKGEO: SPICE(NOLOADEDFILES): [spkgeo_c->SPKGEO->SPKSFS] At least one SPK file needs to be loaded by SPKLEF before
-;                  beginning a search.
-;
-;	The SPK kernels must be loaded from a mission kernel list. If they are not
-;	being loaded correctly, then the kernel list is not being read as expected,
-;	usually this is due to an incorrect kernel list path.
+;	 source configure.sh
+;	 
+;	From the ominas directory. Then, if the Cassini package shows as installed,
+;	select that option at the menu (4), to uninstall it. You will be presented with
+;	the possibility of preserving files the OMINAS installer previously downloaded,
+;	or deleting them. After the uninstallation is complete, you will be returned to
+;	the installer menu, and Cassini should show as not configured. Then select the Cassini
+;	option to set it up again. 
 ;
 ;
 ;	In some cases, a demo script will run and no error will appear to occur,
@@ -173,31 +413,6 @@
 ;	Icy will return the following error::
 ;
 ;	 % CSPICE_PXFORM: SPICE(EMPTYSTRING): [pxform_c] String "from" has length zero.
-;
-;	This error can be corrected by adding the following line to the kernel
-;	list, after the LSK kernel line, in this example for Cassini::
-;
-;	 $CAS_SPICE_FK/cas_iss_vXX.tf
-;
-;	where XX is the most recent FK version.
-;
-;
-;	Occasionally, in the course of modifying the OMINAS configuration without
-;	performing a fresh uninstall and reconfigure, the "load order" of the
-;	packages may be incorrect. When running a demo, the following error may
-;	occur::
-;
-;	 % Illegal variable attribute: POINTS_P.
-;
-;	This can be corrected either by running the uninstall script, and then
-;	the configuration script, or manually by editing the bash_profile or
-;	bashrc for the user account::
-;
-;	 vim ~/.bash_profile
-;	After editing the file to ensure that ominas_env_def.sh is the first file
-;	which is loaded, refresh the profile::
-;	 . ~/.bash_profile
-;
 ;
 ;	If Icy is not installed, and a script is run, something similar to the
 ;	following error may occur::
@@ -216,43 +431,14 @@
 ;	The path variable should appear as a colon-separated list with
 ;	<IDL_DEFAULT> as the first entry. Check that both Icy and OMINAS
 ;	directories are added to the IDL_PATH, and that Icy is added to the
-;	IDL_DLM_PATH. If Icy is not present in the list, it can be added with
-;	these IDL commands::
-;
-;	 path = path + ':+path/to/icy'
-;	 pref_set, 'IDL_PATH', path, /commit
-;	 dlm_path = dlm_path + ':+path/to/icy'
-;	 pref_set, 'IDL_DLM_PATH', dlm_path, /commit
-;
-;	You must exit and restart IDL for these changes to take effect.
-;
-;
-;	When the incorrect kernels are being loaded, an error like this may appear,
-;	this particular error comes from mosaic_example.pro::
-;
-;	 % Variable is undefined: MU0.
-;	 % Execution halted at: PG_PHOTOM_GLOBE   159 path/to/ominas/nv/com/pg/pg_photom_globe.pro
-;	 %                      PG_PHOTOM          99 path/to/ominas/nv/com/pg/pg_photom.pro
-;	 %                      $MAIN$          
-;
-;	This error occurs when the incorrect kernel list is being used. Generally,
-;	when processing a Cassini or other mission image, the demo should be turned
-;	off through the configuration utility. If it is on, the demo kernel list
-;	will be called, along with the demo translator. This setup will prevent
-;	OMINAS from auto-detecting the correct kernels to load for the image.
-;
-;
-;	A simple mistake that might be made can manifest in the following manner::
-;
-;	 -1
-;	 % Variable is undefined: DD.
-;
-;	Note that OMINAS batch scripts must be opened from the directory from 
-;	which they are located.
-;
+;	IDL_DLM_PATH. If either Icy or OMINAS are not present, the best way to fix
+;	it probably is to get back into the OMINAS directory and run the configure.sh
+;	script to uninstall/install the Core, Demo or Icy packages again.
+;	
 ;-
+;==============================================================================
+;
 
 pro install_guide
-;dummy procedure
+print,1
 end
-;==============================================================================
