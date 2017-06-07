@@ -57,8 +57,7 @@ pro dat_unload_data, dd, all=all
   begin
    _dd = cor_dereference(dd[i])
 
-;print, 'unloading'
-   data_archive_free, _dd.data_dap
+   data_archive_free, (*_dd.data_struct_p).data_dap
 
    dds =*nv_state.dds_p
    dds = rm_list_item(dds, 0, only=0)

@@ -60,8 +60,9 @@ pro dat_load_data, dd, sample=sample, data=data
  _dd = cor_dereference(dd)
 _dd.cache = -1				; caching disabled until fully debugged
 
- sample0 = *_dd.sample_p
- if(data_archive_defined(_dd.data_dap, _dd.dap_index)) then $
+ sample0 = *(*_dd.data_struct_p).sample_p
+ if(data_archive_defined((*_dd.data_struct_p).data_dap, $
+                            (*_dd.data_struct_p).dap_index)) then $
                                              if(sample0[0] EQ -1) then return
 
  ;----------------------------------
@@ -86,7 +87,7 @@ _dd.cache = -1				; caching disabled until fully debugged
       begin
        loaded_samples = set_intersection(sample0, requested_samples)
        if(loaded_samples[0] NE -1) then $
-                   samples_to_load = set_difference(loaded_samples, requested_samples)
+              samples_to_load = set_difference(loaded_samples, requested_samples)
       end
      if(samples_to_load[0] EQ -1) then return
     end

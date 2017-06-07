@@ -80,15 +80,14 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
 
  sampled = 0
 
- sample0 = *_dd.sample_p
+ sample0 = *(*_dd.data_struct_p).sample_p
  if(keyword_set(current)) then if(sample0[0] NE -1) then _samples = sample0
-
- full_array = 0
 
 
  ;--------------------------------------------------------------
  ; compute slice offset
  ;--------------------------------------------------------------
+ full_array = 0
  if(defined(slice)) then offset = dat_slice_offset({slice:slice, dd0:_dd}) $
  else if(ptr_valid(_dd.slice_struct.slice_p)) then offset = dat_slice_offset(_dd)
 
@@ -166,8 +165,10 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
    if(defined(kk)) then samples = kk
   end
 
- data = data_archive_get(_dd.data_dap, _dd.dap_index, samples=samples)
- abscissa = data_archive_get(_dd.abscissa_dap, _dd.dap_index, samples=samples)
+ data = data_archive_get((*_dd.data_struct_p).data_dap, $
+                                (*_dd.data_struct_p).dap_index, samples=samples)
+ abscissa = data_archive_get((*_dd.data_struct_p).abscissa_dap, $
+                                 (*_dd.data_struct_p).dap_index, samples=samples)
 
 
  ;-------------------------------------------------------------------------

@@ -25,7 +25,9 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT:  NONE
+;  INPUT:  
+;	copy:	String array giving the names of fields to be copied rather
+;		than cloned.
 ;
 ;  OUTPUT: NONE
 ;
@@ -117,7 +119,7 @@ end
 ; nv_clone
 ;
 ;=============================================================================
-function nv_clone, xd0, noevent=noevent
+function nv_clone, xd0, noevent=noevent, copy=copy
 @core.include
  nv_notify, xd0, type = 1, noevent=noevent
 

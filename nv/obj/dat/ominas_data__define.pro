@@ -46,10 +46,15 @@ end_keywords)
  if(keyword_set(gff)) then *self.gffp = gff
 
  ;-----------------------
+ ; data structure
+ ;-----------------------
+ self.data_struct_p = nv_ptr_new({dat_data_struct})
+
+ ;-----------------------
  ; dh
  ;-----------------------
- self.dhp = nv_ptr_new('')
- if(keyword_set(dh)) then *self.dhp = dh
+ (*self.data_struct_p).dhp = nv_ptr_new('')
+ if(keyword_set(dh)) then *(*self.data_struct_p).dhp = dh
 
  ;-----------------------
  ; file properties
@@ -150,8 +155,8 @@ end_keywords)
  ;-----------------------
  ; data and header
  ;-----------------------
- self.sample_p = nv_ptr_new(-1)
- self.order_p = nv_ptr_new(-1)
+ (*self.data_struct_p).sample_p = nv_ptr_new(-1)
+ (*self.data_struct_p).order_p = nv_ptr_new(-1)
 
  if(defined(data)) then dat_set_data, self, data, abscissa=abscissa
 
@@ -307,14 +312,7 @@ pro ominas_data__define
 
  struct = $
     { ominas_data, inherits ominas_core, $
-	data_dap:		nv_ptr_new(), $	; Pointer to the data archive
-	abscissa_dap:		nv_ptr_new(), $	; Pointer to the abscissa archive
-	header_dap:		nv_ptr_new(), $	; Pointer to the generic header archive
-        dap_index:		0, $		; data archive index
-	dhp:			nv_ptr_new(), $	; Pointer to detached header.
-
-	sample_p:		nv_ptr_new(), $	; Pointer to the array of loaded samples
-	order_p:		nv_ptr_new(), $	; Pointer to the sample load order array
+	data_struct_p:		nv_ptr_new(), $	; Pointer to data structure
 
 	slice_struct:		{dat_slice}, $	; Slice structure
 

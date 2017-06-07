@@ -48,7 +48,7 @@ function dat_dh, dd, noevent=noevent
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
- return, *_dd.dhp
+ return, *(*_dd.data_struct_p).dhp
 end
 ;===========================================================================
 

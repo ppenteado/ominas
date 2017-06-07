@@ -79,17 +79,10 @@ function dat_slices, dd0, slice
 
  for i=0, n-1 do $
   begin
+;   dd[i] = nv_clone(dd0, copy='DATA_STRUCT_P')
    dd[i] = nv_clone(dd0)
    dat_set_slice, dd[i], dd0, slice[*,i], /new
   end
-
-; set dim
-; set min/max
-; compress, maintain, etc.  would apply to full array
-; maybe could get rid of dim_fn
-; slice gets converted to offset in dat_data
-; replace offset keyword in dat_data with slice keyword
-;  need to acount for in dat_set_data
 
  return, dd
 end

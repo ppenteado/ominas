@@ -49,11 +49,11 @@ pro dat_set_nhist, dd, nhist, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- dap = _dd.data_dap
+ dap = (*_dd.data_struct_p).data_dap
  data_archive_set, dap, nhist=nhist
- _dd.data_dap = dap
+ (*_dd.data_struct_p).data_dap = dap
 
- _dd.dap_index = _dd.dap_index < (nhist-1) > 0
+ (*_dd.data_struct_p).dap_index = (*_dd.data_struct_p).dap_index < (nhist-1) > 0
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

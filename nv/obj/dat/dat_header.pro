@@ -53,10 +53,8 @@ function dat_header, dd, noevent=noevent
 
  _dd = cor_dereference(dd)
 
-; if(NOT ptr_valid(_dd.data_dap)) then return, 0
-; if(NOT data_archive_defined(_dd.data_dap, _dd.dap_index)) then dat_load_data, dd
-
- return, data_archive_get(_dd.header_dap, _dd.dap_index)
+ return, data_archive_get((*_dd.data_struct_p).header_dap, $
+                                            (*_dd.data_struct_p).dap_index)
 end
 ;===========================================================================
 

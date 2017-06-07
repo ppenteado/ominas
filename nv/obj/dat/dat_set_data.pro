@@ -88,12 +88,14 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
  ;----------------------------------------------
  if(sample[0] NE -1) then $
   begin
-   sample0 = *_dd.sample_p
+   sample0 = *(*_dd.data_struct_p).sample_p
    if(sample0[0] NE -1) then $
     begin
-     data0 = data_archive_get(_dd.data_dap, _dd.dap_index)
-     abscissa0 = data_archive_get(_dd.abscissa_dap, _dd.dap_index)
-     order0 = *_dd.order_p
+     data0 = data_archive_get((*_dd.data_struct_p).data_dap, $
+                                                 (*_dd.data_struct_p).dap_index)
+     abscissa0 = data_archive_get((*_dd.data_struct_p).abscissa_dap, $
+                                                 (*_dd.data_struct_p).dap_index)
+     order0 = *(*_dd.data_struct_p).order_p
 
      sample = set_union(sample0, sample, ii)
      data = ([data0, data])[ii]
@@ -115,25 +117,27 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
    ; do not archive if maintain > 0
    ;- - - - - - - - - - - - - - - - - - - - - - -
    index = 0
-   if(_dd.maintain GT 0) then index = _dd.dap_index
+   if(_dd.maintain GT 0) then index = (*_dd.data_struct_p).dap_index
 
    dap = 0
-   if(keyword_set(_dd.data_dap)) then dap = _dd.data_dap
+   if(keyword_set((*_dd.data_struct_p).data_dap)) then $
+                                          dap = (*_dd.data_struct_p).data_dap
    data_archive_set, dap, data, index=index
-   _dd.data_dap = dap
+   (*_dd.data_struct_p).data_dap = dap
 
    if(keyword_set(abscissa)) then $
     begin
      dap = 0
-     if(keyword_set(_dd.abscissa_dap)) then dap = _dd.abscissa_dap
+     if(keyword_set((*_dd.data_struct_p).abscissa_dap)) then $
+                                       dap = (*_dd.data_struct_p).abscissa_dap
      data_archive_set, dap, abscissa, index=index
-     _dd.abscissa_dap = dap
+     (*_dd.data_struct_p).abscissa_dap = dap
     end
 
-   if(keyword_set(sample)) then *_dd.sample_p = sample
-   if(keyword_set(order)) then *_dd.order_p = order
+   if(keyword_set(sample)) then *(*_dd.data_struct_p).sample_p = sample
+   if(keyword_set(order)) then *(*_dd.data_struct_p).order_p = order
 
-   _dd.dap_index = 0
+   (*_dd.data_struct_p).dap_index = 0
 
    if(keyword_set(_data)) then $
         if(sample[0] EQ -1) then dat_set_dim, _dd, size(_data, /dim)

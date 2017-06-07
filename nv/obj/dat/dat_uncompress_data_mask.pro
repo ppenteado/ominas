@@ -5,8 +5,10 @@
 pro dat_uncompress_data_mask, _dd
 
  dat = *_dd.compress_data_p
- cdata = data_archive_get(_dd.data_dap, _dd.dap_index)
- cabscissa = data_archive_get(_dd.abscissa_dap, _dd.dap_index)
+ cdata = data_archive_get((*_dd.data_struct_p).data_dap, $
+                                          (*_dd.data_struct_p).dap_index)
+ cabscissa = data_archive_get((*_dd.data_struct_p).abscissa_dap, $
+                                           (*_dd.data_struct_p).dap_index)
 
  s = dat.size
 
@@ -22,9 +24,11 @@ pro dat_uncompress_data_mask, _dd
    if(keyword_set(abscissa)) then abscissa[dat.mask] = cabscissa
   end
 
- data_archive_set, _dd.data_dap, data, index=_dd.dap_index, /noarchive
+ data_archive_set, (*_dd.data_struct_p).data_dap, data, $
+                             index=(*_dd.data_struct_p).dap_index, /noarchive
  if(keyword_set(abscissa)) then $
-     data_archive_set, _dd.abscissa_dap, abscissa, index=_dd.dap_index, /noarchive
+     data_archive_set, (*_dd.data_struct_p).abscissa_dap, abscissa, $
+                              index=(*_dd.data_struct_p).dap_index, /noarchive
 end
 ;=============================================================================
 

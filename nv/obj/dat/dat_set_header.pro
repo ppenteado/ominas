@@ -66,10 +66,10 @@ pro dat_set_header, dd, header, update=update, noevent=noevent
  ;-----------------------------
  ; modify header array 
  ;-----------------------------
- if(keyword_set(_dd.header_dap)) then dap = _dd.header_dap
- data_archive_set, dap, header, index=_dd.dap_index
- _dd.header_dap = dap
- _dd.dap_index = 0
+ if(keyword_set((*_dd.data_struct_p).header_dap)) then dap = (*_dd.data_struct_p).header_dap
+ data_archive_set, dap, header, index=(*_dd.data_struct_p).dap_index
+ (*_dd.data_struct_p).header_dap = dap
+ (*_dd.data_struct_p).dap_index = 0
 
 
  ;--------------------------------------------
