@@ -51,10 +51,24 @@
 
 
 ;=============================================================================
+; nv_clone_match
+;
+;=============================================================================
+function nv_clone_match, copy, tag
+
+ if(NOT keyword_set(copy)) then return, 0
+ w = where(strupcase(copy) EQ tag)
+ return, w[0] NE -1
+end
+;==============================================================================
+
+
+
+;=============================================================================
 ; nv_clone_recurse
 ;
 ;=============================================================================
-pro nv_clone_recurse, xd
+pro nv_clone_recurse, xd, copy=copy
 
  type = size(xd, /type)
  n = n_elements(xd)
@@ -67,7 +81,7 @@ pro nv_clone_recurse, xd
    for i=0, n-1 do if(ptr_valid(xd[i])) then $
     begin
      xd[i] = nv_ptr_new(*xd[i]) 
-     if(NOT nv_protected(*xd[i])) then nv_clone_recurse, *xd[i]
+     if(NOT nv_protected(*xd[i])) then nv_clone_recurse, *xd[i], copy=copy
     end
   end $
  ;----------------------------------------------
@@ -79,12 +93,14 @@ pro nv_clone_recurse, xd
     begin
      ntags = n_tags(xd[i])
      tags = tag_names(xd[i])
+
      for j=0, ntags-1 do if(NOT nv_protected(tags[j])) then $
-      begin
-       val = xd[i].(j)
-       nv_clone_recurse, val
-       xd[i].(j) = val
-      end
+      if(NOT nv_clone_match(copy, tags[j])) then $
+       begin
+        val = xd[i].(j)
+        nv_clone_recurse, val, copy=copy
+        xd[i].(j) = val
+       end
     end
   end $
  ;----------------------------------------------
@@ -98,12 +114,14 @@ pro nv_clone_recurse, xd
 
      ntags = n_tags(_xd)
      tags = tag_names(_xd)
+
      for j=0, ntags-1 do if(NOT nv_protected(tags[j])) then $
-      begin
-       val = _xd.(j)
-       nv_clone_recurse, val
-       _xd.(j) = val
-      end
+      if(NOT nv_clone_match(copy, tags[j])) then $
+       begin
+        val = _xd.(j)
+        nv_clone_recurse, val, copy=copy
+        _xd.(j) = val
+       end
 
      xd[i] = obj_new(obj_class(xd[i]))
      cor_rereference, xd[i], _xd
@@ -124,7 +142,7 @@ function nv_clone, xd0, noevent=noevent, copy=copy
  nv_notify, xd0, type = 1, noevent=noevent
 
  xd = xd0
- nv_clone_recurse, xd
+ nv_clone_recurse, xd, copy=copy
  return, xd
 end
 ;=============================================================================

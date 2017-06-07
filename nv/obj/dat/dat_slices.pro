@@ -79,8 +79,7 @@ function dat_slices, dd0, slice
 
  for i=0, n-1 do $
   begin
-;   dd[i] = nv_clone(dd0, copy='DATA_STRUCT_P')
-   dd[i] = nv_clone(dd0)
+   dd[i] = nv_clone(dd0, copy='DATA_STRUCT_P')
    dat_set_slice, dd[i], dd0, slice[*,i], /new
   end
 
