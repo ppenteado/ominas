@@ -1,23 +1,23 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       xidl_parse_argv
+;       bat_parse_argv
 ;
 ; PURPOSE:
-;       Parses a given xidl argument list.
+;       Parses a given idl argument list.
 ;
 ;	  
 ; CATEGORY:
-;       XIDL
+;       BAT
 ;
 ;
 ; CALLING SEQUENCE:
-;       argv = xidl_parse_argv(argv, keys, val_ps)
+;       argv = bat_parse_argv(argv, keys, val_ps)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	argv:	xidl argument list.
+;	argv:	idl argument list.
 ;
 ;  OUTPUT: 
 ;	keys:	String array giving the names of keywords from any
@@ -32,7 +32,7 @@
 ;
 ; KEYWORDS: 
 ;	special_args:	Returns the names of any arguments ending with '@'.
-;			Those arguments are reomved from the argument list.
+;			Those arguments are removed from the argument list.
 ;
 ; RETURN:
 ;	The trimmed argument list, with all keywords=value pairs and 
@@ -44,11 +44,11 @@
 ;
 ;
 ; MODIFICATION HISTORY:
-;       Written by:     Spitale
+;       Adapted from xidl_parse_argv by:     Spitale 6/2017
 ;
 ;-
 ;=============================================================================
-function xidl_parse_argv, argv, keys, val_ps, special_args=special_args
+function bat_parse_argv, argv, keys, val_ps, special_args=special_args
 
  if(NOT keyword_set(argv[0])) then return, ''
 
@@ -92,33 +92,6 @@ function xidl_parse_argv, argv, keys, val_ps, special_args=special_args
    argv = rm_list_item(argv, w, only='')
    if(NOT keyword_set(argv[0])) then return, ''
   end 
-
- ;--------------------------------------------
- ; Anything containing only one '/', as the
- ; first character, is also a keyword.
- ;--------------------------------------------
-; removed because this is handled in xidl_argv() now...
-; w = where(strmid(argv, 0, 1) EQ '/')
-; if(w[0] NE -1) then $
-;  begin
-;   nw = n_elements(w)
-;   for i=0, nw-1 do $
-;    begin
-;     s = argv[w[i]]
-
-;     p = strnpos(s, '/')
-;     if(p[0] NE -1) then $
-;      if(n_elements(p) EQ 1) then $
-;       begin
-;        keys = append_array(keys, strmid(s, 1, strlen(s)-1))
-;        val_ps = append_array(val_ps, ptr_new('1'))
-;        argv = rm_list_item(argv, w[i], only='')
-;       end
-;    end
-
-;   if(NOT keyword_set(argv[0])) then return, ''
-;  end
-
 
  ;-----------------------------
  ; the rest are regular args

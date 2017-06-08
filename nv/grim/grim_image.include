@@ -528,10 +528,11 @@ pro grim_display_plot, grim_data, plane=plane, doffset=doffset, $
      if(NOT keyword_set(xrange)) then $
        if((plane.xrange[0] NE 0) OR (plane.xrange[1] NE 0)) then xrange = plane.xrange $
      else xrange = [min(xarr), max(xarr)]
+;     else xrange = [dat_min(plane.dd, /ab), dat_max(plane.dd, /ab)]
 
      if(NOT keyword_set(yrange)) then $
        if((plane.yrange[0] NE 0) OR (plane.yrange[1] NE 0)) then yrange = plane.yrange $
-     else yrange = [min(yarr), max(yarr)]
+     else yrange = [dat_min(plane.dd), dat_max(plane.dd)]
 
      if(NOT keyword_set(position)) then $
        if((planes[i].position[0] NE 0) OR (planes[i].position[1] NE 0)) then position = planes[i].position $

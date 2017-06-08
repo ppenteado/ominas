@@ -1,20 +1,21 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       xidl_value
+;       bat_value
 ;
 ; PURPOSE:
 ;       Returns the value associated with a specified keyword in an
-;	xidl argument list, and removes that keyword/value pair from
-;	the argument list.
+;	argument list, and removes that keyword/value pair from
+;	the argument list.  "-" is used instead of "/" to set
+;	a keyword to one.
 ;
 ;	  
 ; CATEGORY:
-;       XIDL
+;       BAT
 ;
 ;
 ; CALLING SEQUENCE:
-;       value = xidl_value(argv, keyword)
+;       value = bat_value(argv, keyword)
 ;
 ;
 ; ARGUMENTS:
@@ -35,11 +36,11 @@
 ;
 ;
 ; MODIFICATION HISTORY:
-;       Written by:     Spitale
+;       Adapted from xidl_value by:     Spitale 6/2017
 ;
 ;-
 ;=============================================================================
-function xidl_value, argv, keyword
+function bat_value, argv, keyword
 
  if(NOT keyword_set(argv[0])) then return, ''
 
@@ -50,6 +51,5 @@ function xidl_value, argv, keyword
 
  argv = rm_list_item(argv, w)
  return, values[w]
-
 end
 ;===============================================================================

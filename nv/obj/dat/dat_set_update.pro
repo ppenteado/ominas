@@ -49,7 +49,7 @@ pro dat_set_update, dd, update, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- _dd.update = update
+ (*_dd.dd0p).update = update
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

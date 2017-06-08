@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE (from the csh prompt):
-;	xidl rim.bat + files <keyvals>
+;	ominas rim.bat -args files <keyvals>
 ;
 ;
 ; ARGUMENTS:
@@ -29,10 +29,10 @@
 ;
 ;
 ; EXAMPLE:
-;	Note that this is intended to be set up as an xidl alias.  In csh, it 
+;	Note that this is intended to be set up as an alias.  In csh, it 
 ;	would be like this:
 ;
-;	alias rim    'xidl rim.bat +'
+;	alias rim    'ominas rim.bat -args'
 ;
 ;	Using that alias, rim can be run from the csh prompt as in this 
 ;	example:
@@ -54,10 +54,10 @@
 ;-
 ;=============================================================================
 !quiet = 1
-___argv = xidl_argv()
+___argv = bat_argv()
 
-___filespecs = xidl_parse_argv(___argv, ___keys, ___val_ps, spec=___spec)
-___filespecs = bat_expand(___filespecs, ___spec)
+___argv = bat_parse_argv(___argv, ___keys, ___val_ps, spec=___spec)
+___filespecs = bat_expand(___argv, ___spec)
 if(keyword_set(___filespecs)) then ___files = findfiles(___filespecs)
 
 call_procedure,'rim',___files,_extra=pp_build_extra(___keys,___val_ps)

@@ -657,18 +657,6 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
    if(w[0] EQ -1) then return
    files = files[w]
 
-   nfiles = n_elements(files)
-   unknown = lonarr(nfiles)
-   for i=0, nfiles-1 do $
-           if(dat_detect_filetype(files[i]) EQ '') then unknown[i] = 1
-
-   w = where(unknown EQ 1)
-   if(w[0] NE -1) then $
-    begin
-     files = rm_list_item(files, w, only='')
-     if(keyword_set(labels)) then labels = rm_list_item(labels, w, only='')
-     if(keyword_set(ids)) then ids = rm_list_item(ids, w)
-    end
    if(NOT keyword_set(files)) then return
 
    split_filename, files, dirs, names

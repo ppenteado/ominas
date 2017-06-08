@@ -57,10 +57,10 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
 @core.include
  _dd = cor_dereference(dd)
 
- if(NOT defined(update)) then update = _dd.update
+ if(NOT defined(update)) then update = (*_dd.dd0p).update
  if(update EQ -1) then return
 
- if(_dd.maintain GT 0) then $
+ if((*_dd.dd0p).maintain GT 0) then $
   nv_message, verb=0.1, $
    'WARNING: Changes to data array may be lost due to the maintainance level.'
 
@@ -88,14 +88,12 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
  ;----------------------------------------------
  if(sample[0] NE -1) then $
   begin
-   sample0 = *(*_dd.data_struct_p).sample_p
+   sample0 = *(*_dd.dd0p).sample_p
    if(sample0[0] NE -1) then $
     begin
-     data0 = data_archive_get((*_dd.data_struct_p).data_dap, $
-                                                 (*_dd.data_struct_p).dap_index)
-     abscissa0 = data_archive_get((*_dd.data_struct_p).abscissa_dap, $
-                                                 (*_dd.data_struct_p).dap_index)
-     order0 = *(*_dd.data_struct_p).order_p
+     data0 = data_archive_get((*_dd.dd0p).data_dap, (*_dd.dd0p).dap_index)
+     abscissa0 = data_archive_get((*_dd.dd0p).abscissa_dap, (*_dd.dd0p).dap_index)
+     order0 = *(*_dd.dd0p).order_p
 
      sample = set_union(sample0, sample, ii)
      data = ([data0, data])[ii]
@@ -117,27 +115,26 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
    ; do not archive if maintain > 0
    ;- - - - - - - - - - - - - - - - - - - - - - -
    index = 0
-   if(_dd.maintain GT 0) then index = (*_dd.data_struct_p).dap_index
+   if((*_dd.dd0p).maintain GT 0) then index = (*_dd.dd0p).dap_index
 
    dap = 0
-   if(keyword_set((*_dd.data_struct_p).data_dap)) then $
-                                          dap = (*_dd.data_struct_p).data_dap
+   if(keyword_set((*_dd.dd0p).data_dap)) then dap = (*_dd.dd0p).data_dap
    data_archive_set, dap, data, index=index
-   (*_dd.data_struct_p).data_dap = dap
+   (*_dd.dd0p).data_dap = dap
 
    if(keyword_set(abscissa)) then $
     begin
      dap = 0
-     if(keyword_set((*_dd.data_struct_p).abscissa_dap)) then $
-                                       dap = (*_dd.data_struct_p).abscissa_dap
+     if(keyword_set((*_dd.dd0p).abscissa_dap)) then $
+                                       dap = (*_dd.dd0p).abscissa_dap
      data_archive_set, dap, abscissa, index=index
-     (*_dd.data_struct_p).abscissa_dap = dap
+     (*_dd.dd0p).abscissa_dap = dap
     end
 
-   if(keyword_set(sample)) then *(*_dd.data_struct_p).sample_p = sample
-   if(keyword_set(order)) then *(*_dd.data_struct_p).order_p = order
+   if(keyword_set(sample)) then *(*_dd.dd0p).sample_p = sample
+   if(keyword_set(order)) then *(*_dd.dd0p).order_p = order
 
-   (*_dd.data_struct_p).dap_index = 0
+   (*_dd.dd0p).dap_index = 0
 
    if(keyword_set(_data)) then $
         if(sample[0] EQ -1) then dat_set_dim, _dd, size(_data, /dim)
@@ -166,9 +163,14 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
  ;----------------------------------------------
  ; update description
  ;----------------------------------------------
- _dd.typecode = size(data, /type)
+ (*_dd.dd0p).typecode = size(data, /type)
  _dd.min = min(data)
  _dd.max = max(data)
+ if(keyword_set(_abscissa)) then $
+  begin
+   _dd.abmin = min(abscissa)
+   _dd.abmax = max(abscissa)
+  end
 
 
  ;----------------------------------------------

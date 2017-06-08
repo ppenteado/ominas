@@ -9,6 +9,8 @@
  if(arg_present(nhist)) then nhist = dat_nhist(_xd, cat=cat, condition=condition, nhist, /noevent
  if(arg_present(min)) then min = dat_min(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(max)) then max = dat_max(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(abmin)) then abmin = dat_min(_xd, cat=cat, condition=condition, /noevent, /abscissa)
+ if(arg_present(abmax)) then abmax = dat_max(_xd, cat=cat, condition=condition, /noevent, /abscissa)
  if(arg_present(maintain)) then maintain = dat_maintain(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(header)) then header = dat_header(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(filename)) then filename = dat_filename(_xd, cat=cat, condition=condition, /noevent)

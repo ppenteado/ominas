@@ -65,7 +65,6 @@
 ;=============================================================================
 function dat_slices, dd0, slice
 
-
  dim0 = dat_dim(dd0)
  ndim0 = n_elements(dim0)
  if(NOT defined(slice)) then slice = lindgen(1,dim0[ndim0-1])
@@ -79,7 +78,7 @@ function dat_slices, dd0, slice
 
  for i=0, n-1 do $
   begin
-   dd[i] = nv_clone(dd0, copy='DATA_STRUCT_P')
+   dd[i] = nv_clone(dd0, protect='DD0P')
    dat_set_slice, dd[i], dd0, slice[*,i], /new
   end
 

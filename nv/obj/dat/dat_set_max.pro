@@ -45,11 +45,12 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_set_max, dd, max, noevent=noevent
+pro dat_set_max, dd, max, noevent=noevent, abscissa=abscissa
 @core.include
  _dd = cor_dereference(dd)
 
- _dd.max = max
+ if(keyword_set(abscissa)) then _dd.abmax = max $
+ else _dd.max = max
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

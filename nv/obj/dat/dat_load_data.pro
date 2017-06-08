@@ -40,7 +40,7 @@
 ;	with integer sampling (e.g. integer zooms in tvim or grim), so it
 ;	may be related to rounding or truncating of indices.  It may also be
 ;	a problem with the set arithmetic.  Caching is currently disabled
-;	(see _dd.cache = -1 below) until it can be fixed.
+;	(see (*_dd.dd0p).cache = -1 below) until it can be fixed.
 ;
 ;
 ; STATUS:
@@ -58,23 +58,22 @@ pro dat_load_data, dd, sample=sample, data=data
 @core.include
 
  _dd = cor_dereference(dd)
-_dd.cache = -1				; caching disabled until fully debugged
+(*_dd.dd0p).cache = -1				; caching disabled until fully debugged
 
- sample0 = *(*_dd.data_struct_p).sample_p
- if(data_archive_defined((*_dd.data_struct_p).data_dap, $
-                            (*_dd.data_struct_p).dap_index)) then $
-                                             if(sample0[0] EQ -1) then return
+ sample0 = *(*_dd.dd0p).sample_p
+ if(data_archive_defined((*_dd.dd0p).data_dap, (*_dd.dd0p).dap_index)) then $
+                                                if(sample0[0] EQ -1) then return
 
  ;----------------------------------
  ; manage loaded data
  ;----------------------------------
- if(_dd.maintain EQ 1) then dat_manage_dd, dd
+ if((*_dd.dd0p).maintain EQ 1) then dat_manage_dd, dd
  if(NOT keyword_set(_dd.input_fn)) then return
 
  ;-------------------------------------------------------------
  ; determine samples such that no loaded samples are reloaded
  ;-------------------------------------------------------------
- if(_dd.cache NE -1) then $
+ if((*_dd.dd0p).cache NE -1) then $
   begin
    if(keyword_set(sample)) then $
     begin
@@ -96,7 +95,7 @@ _dd.cache = -1				; caching disabled until fully debugged
  ; unload older samples if necessary
  ;----------------------------------
 ;   overflow = $
-;         _dat_compute_size(_dd, [loaded_samples, samples_to_load) - _dd.cache
+;         _dat_compute_size(_dd, [loaded_samples, samples_to_load) - (*_dd.dd0p).cache
 ;   if(overflow GT 0) then _dat_unload_samples, _dd, overflow
 
   end
@@ -119,8 +118,8 @@ _dd.cache = -1				; caching disabled until fully debugged
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(data)) then $
   begin
-   if(ptr_valid(_dd.gffp)) then $
-                 data = gff_read(*_dd.gffp, subscripts=samples_to_load) $
+   if(ptr_valid((*_dd.dd0p).gffp)) then $
+        data = gff_read(*(*_dd.dd0p).gffp, subscripts=samples_to_load) $
    else nv_message, 'Cannot load data array.'
   end
 
@@ -140,7 +139,7 @@ _dd.cache = -1				; caching disabled until fully debugged
  ;----------------------------------
  ; set data on descriptor
  ;----------------------------------
- if(_dd.maintain LT 2) then $
+ if((*_dd.dd0p).maintain LT 2) then $
   begin
    nv_suspend_events
    dat_set_data, dd, data, abscissa=abscissa, sample=samples_to_load

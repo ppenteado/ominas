@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE (from the shell prompt):
-;	xidl grim.bat + args <keyvals>
+;	ominas grim.bat -args args <keyvals>
 ;
 ;
 ; ARGUMENTS:
@@ -28,10 +28,10 @@
 ;
 ;
 ; EXAMPLE:
-;	Note that this is intended to be set up as an xidl alias.  In csh, it 
+;	Note that this is intended to be set up as an alias.  In csh, it 
 ;	would be like this:
 ;
-;	alias grim    'xidl grim.bat +'
+;	alias grim    'ominas grim.bat -args'
 ;
 ;	Using that alias, grim can be run from the csh prompt as in this 
 ;	example:
@@ -53,10 +53,10 @@
 ;-
 ;=============================================================================
 !quiet = 1
-___argv = xidl_argv()
+___argv = bat_argv()
 
-___filespecs = xidl_parse_argv(___argv, ___keys, ___val_ps, spec=___spec)
-___filespecs = bat_expand(___filespecs, ___keys, ___val_ps, ___spec)
+___argv = bat_parse_argv(___argv, ___keys, ___val_ps, spec=___spec)
+___filespecs = bat_expand(___argv, ___keys, ___val_ps, ___spec)
 if(keyword_set(___filespecs)) then ___files = findfiles(___filespecs)
 
 if(keyword__set(___files)) then $

@@ -53,8 +53,7 @@ function dat_header, dd, noevent=noevent
 
  _dd = cor_dereference(dd)
 
- return, data_archive_get((*_dd.data_struct_p).header_dap, $
-                                            (*_dd.data_struct_p).dap_index)
+ return, data_archive_get((*_dd.dd0p).header_dap, (*_dd.dd0p).dap_index)
 end
 ;===========================================================================
 

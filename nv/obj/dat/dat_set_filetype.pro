@@ -49,7 +49,7 @@ pro dat_set_filetype, dd, filetype, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- _dd.filetype = filetype
+ (*_dd.dd0p).filetype = filetype
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

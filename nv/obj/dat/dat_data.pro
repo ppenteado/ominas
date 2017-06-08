@@ -80,7 +80,7 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
 
  sampled = 0
 
- sample0 = *(*_dd.data_struct_p).sample_p
+ sample0 = *(*_dd.dd0p).sample_p
  if(keyword_set(current)) then if(sample0[0] NE -1) then _samples = sample0
 
 
@@ -165,10 +165,10 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
    if(defined(kk)) then samples = kk
   end
 
- data = data_archive_get((*_dd.data_struct_p).data_dap, $
-                                (*_dd.data_struct_p).dap_index, samples=samples)
- abscissa = data_archive_get((*_dd.data_struct_p).abscissa_dap, $
-                                 (*_dd.data_struct_p).dap_index, samples=samples)
+ data = data_archive_get((*_dd.dd0p).data_dap, $
+                                (*_dd.dd0p).dap_index, samples=samples)
+ abscissa = data_archive_get((*_dd.dd0p).abscissa_dap, $
+                                 (*_dd.dd0p).dap_index, samples=samples)
 
 
  ;-------------------------------------------------------------------------
@@ -187,9 +187,14 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  ;-------------------------------------------------------------------------
  max = max(data)
  min = min(data)
+ abmax = max(abscissa)
+ abmin = min(abscissa)
 
  if(max GT _dd.max) then _dd.max = max
  if(min LT _dd.min) then _dd.min = min
+
+ if(abmax GT _dd.abmax) then _dd.abmax = abmax
+ if(abmin LT _dd.abmin) then _dd.abmin = abmin
 
  cor_rereference, dd, _dd
 

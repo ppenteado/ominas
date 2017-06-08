@@ -49,7 +49,7 @@ pro dat_set_typecode, dd, typecode, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- _dd.typecode = typecode
+ (*_dd.dd0p).typecode = typecode
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

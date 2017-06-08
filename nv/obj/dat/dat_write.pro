@@ -132,7 +132,7 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    ; get filetype
    ;------------------------------
    if(keyword_set(_filetype)) then filetype = _filetype $
-   else filetype = _dd[i].filetype
+   else filetype = (*_dd[i].dd0p).filetype
    if(filetype EQ '') then nv_message, 'Filetype unavailable.'
 
    ;------------------------------
@@ -188,8 +188,8 @@ pro dat_write, arg1, arg2, nodata=nodata, $
    ;- - - - - - - - - - - - - - - - - - - - - -
    if(NOT keyword_set(override)) then $
     begin
-     if(keyword_set(filespec)) then _dd[i].filename = filename
-     if(keyword_set(filetype)) then _dd[i].filetype = filetype
+     if(keyword_set(filespec)) then (*_dd[i].dd0p).filename = filename
+     if(keyword_set(filetype)) then (*_dd[i].dd0p).filetype = filetype
      if(keyword_set(output_fn)) then _dd[i].output_fn = output_fn
     end
 
