@@ -193,11 +193,6 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  if(max GT _dd.max) then _dd.max = max
  if(min LT _dd.min) then _dd.min = min
 
- if(abmax GT _dd.abmax) then _dd.abmax = abmax
- if(abmin LT _dd.abmin) then _dd.abmin = abmin
-
- cor_rereference, dd, _dd
-
 
  ;-------------------------------------------------------------------------
  ; get abscissa
@@ -208,6 +203,11 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
    if(keyword_set(samples)) then _abscissa = samples $
    else _abscissa = lindgen(dim)
   end
+
+ if(abmax GT _dd.abmax) then _dd.abmax = abmax
+ if(abmin LT _dd.abmin) then _dd.abmin = abmin
+
+ cor_rereference, dd, _dd
 
 
  ;-------------------------------------------------------------------------

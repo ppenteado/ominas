@@ -152,8 +152,6 @@ end_keywords)
   end
  
 
-; self.abmax = long(product(dim))
-; self.abmin = 0
  self.abmax = -1d100
  self.abmin = 1d100
 

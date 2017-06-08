@@ -20,7 +20,9 @@ max=0
 
  n = n_elements(times)
 
- result = tr(dn) & abscissa = tr(rad)
+ result = transpose(dn)
+ abscissa = transpose(rad)
+
  disk_pts = dblarr(n,3)
  disk_pts[*,0] = rad
  disk_pts[*,1] = lon

@@ -166,10 +166,16 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
  (*_dd.dd0p).typecode = size(data, /type)
  _dd.min = min(data)
  _dd.max = max(data)
+
  if(keyword_set(_abscissa)) then $
   begin
    _dd.abmin = min(abscissa)
    _dd.abmax = max(abscissa)
+  end $
+ else $
+  begin
+   _dd.abmin = 0
+   _dd.abmax = long(product(dat_dim(_dd)))
   end
 
 
