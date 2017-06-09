@@ -1688,7 +1688,7 @@ pro grim_write_indexed_arrays, grim_data, plane, name, fname=fname
  else $
   begin
    ff = findfile(fname)
-   if(keyword_set(ff)) then spawn, 'rm -f ' + fname
+   if(keyword_set(ff)) then file_delete, fname, /quiet
   end
 
 end

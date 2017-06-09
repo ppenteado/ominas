@@ -72,7 +72,7 @@ function si_protect_kernels, _kernels, specs
      spec = strmid(spec, 1, strlen(spec)-1)
     end
 
-   match = filematch(kernels, spec)
+   match = stregex(kernels, spec, /boolean)
 
    if(neg) then $
     begin

@@ -1527,7 +1527,7 @@ pro grim_write_user_points, grim_data, plane, fname=_fname
  else $
   begin
    ff = file_search(fname)
-   if(keyword_set(ff)) then spawn, 'rm -f ' + fname
+   if(keyword_set(ff)) then file_delete, fname, /quiet
   end
 
 end
@@ -1563,7 +1563,7 @@ pro grim_write_mask, grim_data, plane, fname=fname
  else $
   begin
    ff = file_search(fname)
-   if(keyword_set(ff)) then spawn, 'rm -f ' + fname
+   if(keyword_set(ff)) then file_delete, fname, /quiet
   end
 
 end
