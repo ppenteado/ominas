@@ -7,9 +7,11 @@
 ;   This script demonstrates reading Cassini RADAR SAR, VIMS and ISS images and
 ;   projecting them onto an orthographical map for display as a RGB composite.
 ;   
-;   The SAR data file, `BIFQI22N068_D045_T003S01_V02.IMG`, must first be
-;   `downloaded from PDS <http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP>`,
-;   then unzipped (the zip file is 202MB).
+;   The SAR data file used, `BIFQI22N068_D045_T003S01_V02.IMG`, is too large (202 MB)
+;   to include with the OMINAS distribution. This script will look for the file
+;   under ~/ominas_data/sar/, and if not found, will download it from 
+;   `PDS<http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP>`,
+;   then unzip it.
 ;
 ;   Setup: The instrument detectors, translators and transforms must contain the
 ;   RADAR, ISS and VIMS definitions, as is included in `demo/data/instrument_detectors.tab`,
@@ -20,12 +22,13 @@
 ;
 ;   This example requires SPICE/Icy to have been setup. It can be run just by doing::
 ;
-;     img='~/radar/BIFQI22N068_D045_T003S01_V02.IMG'
-;     @multiinstrument_example
-;    
-;   from the `demo` directory. Note that you have to set the variable `img` to the
-;   location of your data file.
+;     .run multiinstrument_example
 ;
+;   Troubleshooting: This example uses ISS, VIMS and RADAR data, so each of these
+;   3 might independently fail. If this example fails, it may be helpful to try first
+;   running the 3 individual instrument's example scripts first: jupiter_example.pro (ISS),
+;   vims_example.pro and radar_example.pro, to see which instruments work in your
+;   setup and which do not.
 ;-
 ;=======================================================================
 compile_opt idl2,logical_predicate
@@ -34,10 +37,20 @@ compile_opt idl2,logical_predicate
 ; Read and display SAR file 
 ; -------------------------
 ; 
-;   Cassini RADAR SAR image to read must be set in the variable img, otherwise
-;   this default location is used::
+;   Download the Cassini RADAR SAR image and unzip it, if needed::
 ;
-;     img=n_elements(img) ? img : '~/radar/BIFQI22N068_D045_T003S01_V02.IMG'
+;     ;Download the SAR file, if needed
+;     ldir='~/ominas_data/sar'
+;     spawn,'eval echo '+ldir,res
+;     ldir=res
+;     img=ldir+path_sep()+'BIFQI22N068_D045_T003S01_V02.IMG'
+;     if ~file_test(img,/read) then begin
+;       print,'SAR file needed for the demo not found. Downloading it from PDS...'
+;       p=pp_wget('http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',localdir=ldir)
+;       p.geturl
+;       print,'ZIP file downloaded, decompressing it...'
+;       file_unzip,ldir+path_sep()+'CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',/verbose
+;     endif
 ;     ;Read the file
 ;     dd=dat_read(img)
 ;     
@@ -57,7 +70,18 @@ compile_opt idl2,logical_predicate
 ;-
 ;-------------------------------------------------------------------------
 
-img=n_elements(img) ? img : '~/radar/BIFQI22N068_D045_T003S01_V02.IMG'
+;Download the SAR file, if needed
+ldir='~/ominas_data/sar'
+spawn,'eval echo '+ldir,res
+ldir=res
+img=ldir+path_sep()+'BIFQI22N068_D045_T003S01_V02.IMG'
+if ~file_test(img,/read) then begin
+  print,'SAR file needed for the demo not found. Downloading it from PDS...'
+  p=pp_wget('http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',localdir=ldir)
+  p.geturl
+  print,'ZIP file downloaded, decompressing it...'
+  file_unzip,ldir+path_sep()+'CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',/verbose
+endif
 
 ;Read the file 
 dd=dat_read(img)
@@ -65,7 +89,7 @@ dd=dat_read(img)
 da=dat_data(dd)
 dat_set_data,dd,0d0>da<1d0
 tvim,0d0>da<1d0,zoom=0.05,/order,/new
-write_png,'mis_ex1.png',tvrd()
+;write_png,'mis_ex1.png',tvrd()
 
 
 ;-------------------------------------------------------------------------
@@ -78,7 +102,7 @@ write_png,'mis_ex1.png',tvrd()
 ;       hdxy=hash()
 ;       hdxy['data/CM_1503358311_1_ir_eg.cub']=[5d0,-1d0]
 ;       hdxy['data/W1477456695_6.IMG']=[0d0,0d0]
-;       files=(hdxy.keys()).toarray()
+;       files=getenv('OMINAS_DIR')+'/demo/data/'+(hdxy.keys()).toarray()
 ;       nv = n_elements(files)
 ;       ddv = dat_read(files)
 ;       sb=bytarr(nv)
@@ -95,7 +119,7 @@ write_png,'mis_ex1.png',tvrd()
 ;     
 ;       dxy = dblarr(2,nv)
 ;       limb_psv=objarr(nv)
-;       for i=0, nv-1 do dxy[*,i] = hdxy[files[i]]
+;       for i=0, nv-1 do dxy[*,i] = hdxy[file_basename(files[i])]
 ;       for i=0, nv-1 do pg_repoint, dxy[*,i], 0d, gd=gdv[i]
 ;       for i=0, nv-1 do limb_psv[i] = pg_limb(gd=gdv[i])
 ;       
@@ -128,9 +152,9 @@ write_png,'mis_ex1.png',tvrd()
 ;
 
 hdxy=hash()
-hdxy['data/CM_1503358311_1_ir_eg.cub']=[5d0,-1d0]
-hdxy['data/W1477456695_6.IMG']=[0d0,0d0]
-files=(hdxy.keys()).toarray()
+hdxy['CM_1503358311_1_ir_eg.cub']=[5d0,-1d0]
+hdxy['W1477456695_6.IMG']=[0d0,0d0]
+files=getenv('OMINAS_DIR')+'/demo/data/'+(hdxy.keys()).toarray()
 nv = n_elements(files)
 ddv = dat_read(files)
 sb=bytarr(nv)
@@ -144,7 +168,7 @@ for i=0, nv-1 do gdv[i].sund = pg_get_stars(ddv[i], od=gdv[i].cd, name='SUN')
 
 dxy = dblarr(2,nv)
 limb_psv=objarr(nv)
-for i=0, nv-1 do dxy[*,i] = hdxy[files[i]]
+for i=0, nv-1 do dxy[*,i] = hdxy[file_basename(files[i])]
 for i=0, nv-1 do pg_repoint, dxy[*,i], 0d, gd=gdv[i]
 for i=0, nv-1 do limb_psv[i] = pg_limb(gd=gdv[i])
 
@@ -156,7 +180,7 @@ for i=0,1 do begin
   tvim, (dat_data(ddv[i]))[*,*,sband], $
     zoom=zoom,/order, /new,offset=offset,$
     xsize=600,ysize=600
-  write_png,'mis_ex'+strtrim(i+2,2)+'.png',tvrd()
+  ;write_png,'mis_ex'+strtrim(i+2,2)+'.png',tvrd()
   pg_draw, limb_psv[i]
 endfor
 
@@ -207,7 +231,7 @@ for i=0, nv-1 do dd_phtv[i] = pg_photom(ddv[i], gd=gdv[i], refl_fn='pht_lamb', $
 ;     
 ;   Visualize the result as 3 planes in grim::
 ;   
-;     grim,mds,cd=replicate(mdp,3),overlays=['planet_grid'],/new
+;     grim,mds,cd=replicate(mdp,3),/new;,overlays=['planet_grid']
 ;     
 ;   .. image:: mis_ex4.png
 ;
@@ -243,6 +267,6 @@ for i=0,2 do begin
 endfor
 
 
-grim,mds,cd=replicate(mdp,3),overlays=['planet_grid'],/new
+grim,mds,cd=replicate(mdp,3),/new;,overlays=['planet_grid']
 
 end
