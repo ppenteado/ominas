@@ -17,7 +17,7 @@
 ;
 ;     .run vims_example
 ;
-;   from the `demo` directory.
+;   from within an OMINAS IDL session.
 ;
 ;-
 ;=======================================================================

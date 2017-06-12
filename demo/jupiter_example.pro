@@ -16,9 +16,9 @@
 ;
 ;    This example file can be executed from the UNIX command line using::
 ;
-;     idl jupiter_example.pro
+;     ominas jupiter_example.pro
 ;
-;    or from within IDL using::
+;    or from within an OMINAS IDL session using::
 ;
 ;     @jupiter_example.pro
 ;

@@ -22,7 +22,9 @@
 ;
 ;   There is no need for SPICE/Icy for this example. It can be run just by doing::
 ;
-;     .r radar_example
+;     .run radar_example
+;     
+;   From within an OMINAS IDL session.
 ;    
 ;   
 ;-

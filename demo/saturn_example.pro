@@ -12,9 +12,9 @@
 ;
 ;  	 This example file can be executed from the UNIX command line using::
 ;
-;  	  idl ominas saturn_example
+;  	  ominas ominas saturn_example
 ;
-;  	 or from within IDL using::
+;  	 or from within an OMINAS IDL session using::
 ;
 ;  	  @saturn_example
 ;

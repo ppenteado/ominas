@@ -13,9 +13,9 @@
 ;
 ;    This example file can be executed from the UNIX command line using::
 ;
-;     idl multimission_example.pro
+;     ominas multimission_example.pro
 ;
-;    or from within IDL using::
+;    or from within an OMINAS IDL session using::
 ;
 ;     @multimission_example.pro
 ;-
