@@ -23,6 +23,8 @@
 ;   This example requires SPICE/Icy to have been setup. It can be run just by doing::
 ;
 ;     .run multiinstrument_example
+;     
+;   From within an OMINAS IDL session.
 ;
 ;   Troubleshooting: This example uses ISS, VIMS and RADAR data, so each of these
 ;   3 might independently fail. If this example fails, it may be helpful to try first

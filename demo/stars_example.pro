@@ -17,9 +17,9 @@
 ;
 ; This example file can be executed from the UNIX command line using::
 ;
-;  idl stars_example
+;  ominas stars_example
 ;
-; or from within IDL using::
+; or from within an OMINAS IDL session using::
 ;
 ;  @stars_example
 ;
@@ -52,13 +52,13 @@
 ; Code::
 ;
 ;  ;dd = dat_read('data/c1138223.gem', im, label)           ; VICAR format file
-;  dd = dat_read('data/N1456251768_1.IMG', im, label)       ; Cas ISS-NA image
+;  dd = dat_read(getenv('OMINAS_DIR')+'/demo/data/N1456251768_1.IMG', im, label)    ; Cas ISS-NA image
 ;  tvim, im, zoom=0.75, /order
 ;
 ;-
 ;-------------------------------------------------------------------------
 ;dd = dat_read('data/c1138223.gem', im, label)			; VICAR format file
-dd = dat_read('data/N1456251768_1.IMG', im, label)		; Cas ISS-NA image
+dd = dat_read(getenv('OMINAS_DIR')+'/demo/data/N1456251768_1.IMG', im, label)		; Cas ISS-NA image
 
 tvim, im, zoom=0.75, /order
 
@@ -441,8 +441,10 @@ pg_draw, star_ptd, color=color, psym=psym, plabel=plabels
 ; Code::
 ;
 ;  pg_put_cameras, dd, gd=gd
-;  dat_write, 'data/c1138223_nv.gem', dd
+;  dat_write, getenv('OMINAS_DIR')+'/demo/data/c1138223_nv.gem', dd
+;  
 ;-
 ;-------------------------------------------------------------------------
 pg_put_cameras, dd, gd=gd
-dat_write, 'data/c1138223_nv.gem', dd
+;dat_write, getenv('OMINAS_DIR')+'/demo/data/c1138223_nv.gem', dd
+end

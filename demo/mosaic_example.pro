@@ -14,9 +14,9 @@
 ;   This example file demonstrates how to construct a mosaic using OMINAS.
 ;   This example file can be executed from the UNIX command line using::
 ;
-;  	  idl mosaic_example
+;  	  ominas mosaic_example
 ;
-;   or from within IDL using::
+;   or from within an OMINAS IDL session using::
 ;
 ;  	  @mosaic_example
 ;
