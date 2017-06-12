@@ -38,7 +38,7 @@
 ;
 ;	For Example::
 ;	 
-;     dd = dat_read('data/c3440346.gem', im, label)
+;   dd = dat_read(getenv('OMINAS_DIR')+'/demo/data/c3440346.gem', im, label)
 ;	  ctmod, top=top
 ;	  tvim, im, zoom=0.5, /order, /new, top=top
 ;

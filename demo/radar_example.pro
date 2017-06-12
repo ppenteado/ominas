@@ -7,9 +7,11 @@
 ;   This script demonstrates reading a Cassini RADAR SAR image and projecting it
 ;   onto an orthographical map for display.
 ;   
-;   The data file, `BIFQI22N068_D045_T003S01_V02.IMG`, must first be
-;   `downloaded from PDS <http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP>`,
-;   then unzipped (the zip file is 202MB).
+;   The data file used, `BIFQI22N068_D045_T003S01_V02.IMG`, is too large (202 MB)
+;   to include with the OMINAS distribution. This script will look for the file
+;   under ~/ominas_data/sar/, and if not found, will download it from 
+;   `PDS<http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP>`,
+;   then unzip it.
 ;
 ;   Setup: The instrument detectors, translators and transforms must contain the
 ;   RADAR definitions, as is included in `demo/data/instrument_detectors.tab`,
@@ -20,12 +22,9 @@
 ;
 ;   There is no need for SPICE/Icy for this example. It can be run just by doing::
 ;
-;     img='~/radar/BIFQI22N068_D045_T003S01_V02.IMG'
-;     @radar_example
+;     .r radar_example
 ;    
-;   from the `demo` directory. Note that you have to set the variable `img` to the
-;   location of your data file.
-;
+;   
 ;-
 ;=======================================================================
 compile_opt idl2,logical_predicate
@@ -37,14 +36,38 @@ compile_opt idl2,logical_predicate
 ;   Cassini RADAR SAR image to read must be set in the variable img, otherwise
 ;   this default location is used::
 ;
-;     img=n_elements(img) ? img : '~/radar/BIFQI22N068_D045_T003S01_V02.IMG'
+;     ;Download the file, if needed
+;     ldir='~/ominas_data/sar'
+;     spawn,'eval echo '+ldir,res
+;     ldir=res
+;     img=ldir+path_sep()+'BIFQI22N068_D045_T003S01_V02.IMG'
+;     if ~file_test(img,/read) then begin
+;       print,'SAR file needed for the demo not found. Downloading it from PDS...'
+;       p=pp_wget('http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',localdir=ldir)
+;       p.geturl
+;       print,'ZIP file downloaded, decompressing it...'
+;       file_unzip,ldir+path_sep()+'CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',/verbose
+;     endif
+;     
 ;     ;Read the file
 ;     dd=dat_read(img)
 ;
 ;-
 ;-------------------------------------------------------------------------
 
-img=n_elements(img) ? img : '~/radar/BIFQI22N068_D045_T003S01_V02.IMG'
+;Download the file, if needed
+ldir='~/ominas_data/sar'
+spawn,'eval echo '+ldir,res
+ldir=res
+img=ldir+path_sep()+'BIFQI22N068_D045_T003S01_V02.IMG'
+if ~file_test(img,/read) then begin
+  print,'SAR file needed for the demo not found. Downloading it from PDS...'
+  p=pp_wget('http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',localdir=ldir)
+  p.geturl
+  print,'ZIP file downloaded, decompressing it...'
+  file_unzip,ldir+path_sep()+'BIFQI22N068_D045_T003S01_V02.ZIP',/verbose
+endif
+
 
 ;Read the file 
 dd=dat_read(img)
@@ -103,7 +126,7 @@ tvim,da<4.5,zoom=0.05,/order,/new
 ;
 ;   Visualize the result, now with grim::
 ; 
-;     grim,dd_map,cd=mdp,overlays=['planet_grid']
+;     grim,dd_map,cd=mdp;,overlays=['planet_grid']
 ;   
 ;   .. image:: sar_ex2.png
 ;   
@@ -125,6 +148,6 @@ mdp= pg_get_maps(/over,  $
 
 dd_map=pg_map(dd,md=mdp,cd=mdr,pc_xsize=800,pc_ysize=800)
 
-grim,dd_map,cd=mdp,overlays=['planet_grid']
+grim,dd_map,cd=mdp;,overlays=['planet_grid']
 
-;end
+end

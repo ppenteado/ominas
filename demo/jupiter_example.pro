@@ -53,7 +53,7 @@
 ;   tvim is called to display the image (im) in a new window with the y
 ;   coordinate as top-down::
 ;
-;     file = 'data/N1350122987_2.IMG'
+;     file = getenv('OMINAS_DIR')+'/demo/data/N1350122987_2.IMG'     ; Cassini Image
 ;     dd = dat_read(file, im, label)
 ;     ctmod, top=top
 ;     tvim, im, zoom=0.75, /order, /new, top=top
@@ -110,16 +110,16 @@
 ;-
 ;-------------------------------------------------------------------------
 ;cd = pg_get_cameras(dd, 'klist=my_klist.txt')		; Use personal kernel
-							; list file.
+							                                    ; list file.
 ;;;cd = pg_get_cameras(dd, 'ck_in=./test.bc')		; Load the additional
-							; C-kernel test.bc.
-;cd = pg_get_cameras(dd, 'klist=my_klist.txt, $		; Use personal kernel
+							                                  ; C-kernel test.bc.
+;cd = pg_get_cameras(dd, 'klist=my_klist.txt, $		      ; Use personal kernel
 ;                              ck_in=test.bc;test1.bc')	; list file and load two
-							; additional C-kernels.
+							                                          ; additional C-kernels.
 ;cd = pg_get_cameras(dd, 'ck_in=auto')			; Try to auto-detect
-							; appropriate C-kernels.
+							                              ; appropriate C-kernels.
 cd = pg_get_cameras(dd)					; Use any defaults in 
-							; translators.tab
+							                  ; translators.tab
 
 ;pd = pg_get_planets(dd, od=cd, $
 ;       name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
@@ -127,7 +127,7 @@ cd = pg_get_cameras(dd)					; Use any defaults in
 ; pd = pg_get_planets(dd, od=cd, name=['JUPITER'])
 
 ;pd = pg_get_planets(dd)			; No observer descriptor,
-						;  so no aberration corrections
+						                  ;  so no aberration corrections
 ;;ltcorr, cd, pd, c=pgc_const('c')		; Light-time correction
 ;;stellab, cd, pd, c=pgc_const('c')		; Stellar aberration correction
 ;abcorr, cd, pd, c=pgc_const('c')		; Light-time and stellar ab.
