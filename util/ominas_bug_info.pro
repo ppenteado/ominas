@@ -1,5 +1,20 @@
+; docformat = 'rst'
+;+
+; :Author: Paulo Penteado (Paulo.Penteado@jpl.nasa.gov),
+;-
 
 
+;+
+; :Description:
+;    Prints out the most commonly useful information about the OMINAS environment
+;    for debugging.
+;
+; :Params:
+;    outfile: in, optional, type=string, default=''
+;      If provided, output is written to that file, instead of to the terminal.
+;
+; :Author: Paulo Penteado (`http://www.ppenteado.net <http://www.ppenteado.net>`),
+;-
 pro ominas_bug_info,outfile
 compile_opt idl2,logical_predicate
 outfile=n_elements(outfile) ? outfile : ''
