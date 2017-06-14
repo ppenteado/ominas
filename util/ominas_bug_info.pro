@@ -67,6 +67,6 @@ endif else begin
   printf,lun,sep
 endelse
 
-if outfile then free_lun,outfile
+if outfile then free_lun,lun
 
 end
