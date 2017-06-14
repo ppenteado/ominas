@@ -174,6 +174,7 @@ if [ ! -d "$HOME/.ominas" ]; then
 else
   printf "~/.ominas directory already exists\n"
 fi
+OMINAS_RC=${HOME}/.ominas
 if [ ! -d "$HOME/ominas_data" ]; then
   printf "Creating ~/ominas_data directory\n"
   mkdir $HOME/ominas_data
@@ -556,6 +557,7 @@ echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
 #if [[ ${corest} == ${yes} ]]; then
   echo "export OMINAS_DIR=${OMINAS_DIR}" >> $setting
   echo "export OMINAS_DATA=${OMINAS_DATA}" >> $setting
+  echo "export OMINAS_RC=${OMINAS_RC}" >> $setting
 #fi
 echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
