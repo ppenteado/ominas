@@ -64,6 +64,20 @@ printf,lun,'preferences IDL_DLM_PATH'
 printf,lun,pref_get('IDL_DLM_PATH')
 printf,lun,sep
 
+;OMINAS repo
+printf,lun,''
+printf,lun,'OMINAS repository:'
+catch,err
+if err then begin
+  catch,/cancel
+  printf,lun,'git failed'
+endif else begin
+  spawn,'cd '+getenv('OMINAS_DIR')+' && git log -n 1 --format="%h %aN %ad"',gitlog
+  spawn,'cd '+getenv('OMINAS_DIR')+' && git status',gitstatus
+  printf,lun,gitstatus[0:1],format='(A)'
+  printf,lun,'Last commit:'
+  printf,lun,gitlog,format='(A)'
+endelse
 
 ;Icy
 printf,lun,''
@@ -88,20 +102,7 @@ endif else begin
   printf,lun,sep
 endelse
 
-;OMINAS repo
-printf,lun,''
-printf,lun,'OMINAS repository:'
-catch,err
-if err then begin
-  catch,/cancel
-  printf,lun,'git failed'
-endif else begin
-  spawn,'cd '+getenv('OMINAS_DIR')+' && git log -n 1 --format="%h %aN %ad"',gitlog
-  spawn,'cd '+getenv('OMINAS_DIR')+' && git status',gitstatus
-  printf,lun,gitstatus[0:1],format='(A)'
-  printf,lun,'Last commit:'
-  printf,lun,gitlog,format='(A)'
-endelse
+
 
 if outfile then free_lun,lun
 
