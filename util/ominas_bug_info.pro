@@ -24,7 +24,13 @@ if outfile then openw,lun,outfile,/get_lun else lun=-1
 ;environment
 spawn,'env | grep OMINAS_',ominas_vars
 spawn,'env | grep NV_',nv_vars
-ominas_setup=pp_readtxt(getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh')
+
+count=file_lines(getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh')
+ominas_setup=strarr(count)
+openr,luns,file,/get_lun
+readf,luns,ominas_setup
+free_lun,luns
+;ominas_setup=pp_readtxt(getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh')
 sep='--------------------------------------------------------------------------------'
 
 printf,lun,'OMINAS variables:'
