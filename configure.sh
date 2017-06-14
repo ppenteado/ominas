@@ -180,6 +180,7 @@ if [ ! -d "$HOME/ominas_data" ]; then
 else
   printf "~/ominas_data directory already exists\n"
 fi
+OMINAS_DATA=${HOME}/ominas_data
 if [ ! -e ${setting} ]; then
   echo "#!/usr/bin/env bash" > ${setting} 
 fi
@@ -553,7 +554,8 @@ echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
 
 #if [[ -n "$ins_ominas_env_def" ]]; then
 #if [[ ${corest} == ${yes} ]]; then
-  echo "export OMINAS_DIR=$OMINAS_DIR" >> $setting
+  echo "export OMINAS_DIR=${OMINAS_DIR}" >> $setting
+  echo "export OMINAS_DATA=${OMINAS_DATA}" >> $setting
 #fi
 echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
