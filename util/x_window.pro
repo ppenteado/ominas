@@ -1,5 +1,5 @@
 ;===================================================================================
-; xwindow
+; x_window
 ;
 ;  Like window, but uses a draw widget.  This routine was written to work
 ; around retain problems encountered on some servers.  Graphics windows 
@@ -7,7 +7,7 @@
 ; as draw widgets would.
 ;
 ;===================================================================================
-pro xwindow, free=free, xsize=xsize, ysize=ysize, pixmap=pixmap, retain=retain, $
+pro x_window, free=free, xsize=xsize, ysize=ysize, pixmap=pixmap, retain=retain, $
      title=title, base=base
 
  if(NOT defined(retain)) then retain = 2
