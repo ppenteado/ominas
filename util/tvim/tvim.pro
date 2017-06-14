@@ -685,7 +685,7 @@ common tvim_block, tvd, tvim_top
  if(override_size AND NOT window_exists) then $
   if((NOT keyword_set(no_wset)) AND (NOT keyword__set(nowin))) then $
    begin
-    xwindow, base=base, /free, xsize=wxsize, ysize=wysize, pixmap=pixmap, retain=retain, title=title
+    x_window, base=base, /free, xsize=wxsize, ysize=wysize, pixmap=pixmap, retain=retain, title=title
     window_exists=1
    end
 
@@ -789,7 +789,7 @@ common tvim_block, tvd, tvim_top
 ;      tvysize = round((xmax-xmin+1)*zoom[1]) > 1
       tvysize = round((ymax-ymin+1)*zoom[1]) > 1
 
-      xwindow, base=base, /free, xsize=tvxsize, ysize=tvysize, pixmap=pixmap, title=title
+      x_window, base=base, /free, xsize=tvxsize, ysize=tvysize, pixmap=pixmap, title=title
       window_exists=1
      end
 
