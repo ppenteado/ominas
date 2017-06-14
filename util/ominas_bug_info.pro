@@ -27,7 +27,7 @@ spawn,'env | grep NV_',nv_vars
 
 count=file_lines(getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh')
 ominas_setup=strarr(count)
-openr,luns,file,/get_lun
+openr,luns,getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh',/get_lun
 readf,luns,ominas_setup
 free_lun,luns
 ;ominas_setup=pp_readtxt(getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh')
