@@ -618,7 +618,7 @@ head -1 ${idlbin} > ~/.ominas/ominasde
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominasde
 if [ -e "/opt/X11/lib/flat_namespace/" ]; then
-  cat <<LDCMD >> ~/.ominas/ominas
+  cat <<LDCMD >> ~/.ominas/ominasde
     if [ "\${DYLD_LIBRARY_PATH}" = "" ]; then
         DYLD_LIBRARY_PATH="/opt/X11/lib/flat_namespace/"
     else
