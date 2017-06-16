@@ -36,7 +36,7 @@
 
 function HEADPDS, filename, SILENT=silent, FILE=file, FORMAT=format
     ; error protection:
-    On_error, 2
+    ;On_error, 2
     On_ioerror, SIGNAL
 
     ; check for number of parameters in function call, must be >= 1:
