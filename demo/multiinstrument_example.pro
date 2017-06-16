@@ -79,7 +79,7 @@ ldir=res
 img=ldir+path_sep()+'BIFQI22N068_D045_T003S01_V02.IMG'
 if ~file_test(img,/read) then begin
   print,'SAR file needed for the demo not found. Downloading it from PDS...'
-  p=pp_wget('http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',localdir=ldir)
+  p=pp_wget('http://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DATA/BIDR/BIFQI22N068_D045_T003S01_V02.ZIP',localdir=ldir,/quiet)
   p.geturl
   print,'ZIP file downloaded, decompressing it...'
   file_unzip,ldir+path_sep()+'BIFQI22N068_D045_T003S01_V02.ZIP',/verbose
