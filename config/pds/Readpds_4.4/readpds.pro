@@ -195,7 +195,7 @@ end
 
 function readpds, filename, SILENT = silent, NOSCALE = noscale, HISTOGRAM = histogram
     ; error protection:
-    on_error, 2
+    ;on_error, 2
 
 ;A.Cardesin 24 February 2006
 ; FORCE IDL PATH to look first into the correct directory

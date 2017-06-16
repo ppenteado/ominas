@@ -35,7 +35,7 @@ function get_tags, structure, rootname
 ; as valid structure names from the root structure name,
 ; which can be passed in along with the structure itself.
 
-On_Error, 1
+;On_Error, 1
 
    ; Check parameters.
 

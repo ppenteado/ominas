@@ -1199,7 +1199,7 @@ end
 
 function TBINPDS, fname, label, objindex, SILENT=silent
     ; error protection:
-    ON_ERROR, 2
+    ;ON_ERROR, 2
 
     ; check for number of parameters in function call:
     if (n_params() LT 3) then begin
