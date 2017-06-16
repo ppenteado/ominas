@@ -64,6 +64,15 @@ printf,lun,'preferences IDL_DLM_PATH'
 printf,lun,pref_get('IDL_DLM_PATH')
 printf,lun,sep
 
+;libraries
+printf,lun,''
+printf,lun,sep
+printf,lun,'LD_LIBRARY_PATH:'
+printf,lun,getenv('LD_LIBRARY_PATH')
+printf,lun,'DYLD_LIBRARY_PATH:'
+printf,lun,getenv('DYLD_LIBRARY_PATH')
+printf,lun,sep
+
 ;OMINAS repo
 printf,lun,''
 printf,lun,'OMINAS repository:'
