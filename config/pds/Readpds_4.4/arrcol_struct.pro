@@ -349,7 +349,7 @@ end
 
 function arrcol_struct, label, objindex
     ; error protection:
-    on_error, 1
+    ;on_error, 1
 
     ; check for the number of arguments:
     if (n_params() lt 2) then begin

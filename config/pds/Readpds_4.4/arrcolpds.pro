@@ -134,7 +134,7 @@ end
 
 function arrcolpds, filename, label, objindex, SILENT=silent
     ; error protection:
-    on_error, 1
+    ;on_error, 1
 
     ; check for the number of arguments:
     if (n_params() lt 3) then begin

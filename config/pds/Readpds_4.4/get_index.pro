@@ -39,7 +39,7 @@
 
 function get_index, label, startindex
     ; error protection:
-    on_error, 2
+    ;on_error, 2
    
     ; check number of arguments:
     if (n_params() lt 2) then begin

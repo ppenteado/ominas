@@ -57,7 +57,7 @@ function headpds, input_filename, SILENT = silent, FILE = file, FORMAT = format
     filename=input_filename
 
     ; error protection:
-    on_error, 2
+    ;on_error, 2
     on_ioerror, signal
 
     ; check for number of parameters in function call, must be >= 1:
