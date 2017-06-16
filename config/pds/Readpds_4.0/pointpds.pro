@@ -35,7 +35,7 @@
 
 function POINTPDS, label, fname, objname
     ; error protection:
-    on_error, 2
+    ;on_error, 2
 
     ; initialize structure:
     pointer = create_struct("flag", 1)    

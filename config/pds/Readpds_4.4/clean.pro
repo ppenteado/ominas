@@ -33,7 +33,7 @@
 
 function clean, text, SPACE = space
     ; error protection:
-    on_error, 2
+    ;on_error, 2
 
     ; check for SPACE keyword specification:
     space = keyword_set(space)

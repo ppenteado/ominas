@@ -99,7 +99,7 @@ function COLBIPDS,input_name, label, KEYWDS = keywds, INFO=info, $
 ;
 ;------------------------------------------------------------------------------
 
- On_error,2                    ;Return to user            
+ ;On_error,2                    ;Return to user            
 							
 ; Check for proper input
 

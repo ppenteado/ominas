@@ -33,7 +33,7 @@ function CHECK_AXES, label, objindex
 ;    Written by Puneet Khetarpal [March 16, 2004]
 ;----------------------------------------------------------------------------
    ; error protection:
-   ON_ERROR, 2
+   ;ON_ERROR, 2
 
    if (n_params() LT 2) then begin
       print, "Syntax: result = CHECK_AXES(label, objindex)"

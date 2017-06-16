@@ -110,7 +110,7 @@ function PDSPAR, lbl, name, abort, MVAL=mvalue, COUNT=matches, INDEX = nfound
     abort_return = 1
  endelse
  
- if abort_return then On_error,1 else On_error,2
+; if abort_return then On_error,1 else On_error,2
 
 ;Check for valid header
 

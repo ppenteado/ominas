@@ -679,7 +679,7 @@ end
 
 function qubepds, filename, label, SILENT = silent, NOSCALE = noscale
     ; error protection:
-    on_error, 2
+    ;on_error, 2
 
     ; check for number of parameters in function call:
     if (n_params() lt 2) then begin

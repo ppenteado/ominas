@@ -96,7 +96,7 @@ function ARASCPDS, input_name, label, KEYWDS = keywds, INFO = info, $
 ;       Some sections adapted from TASCPDS.PRO by John D. Koch
 ;
 ;-------------------------------------------------------------------------------
- On_error,2                    ;Return to user            
+ ;On_error,2                    ;Return to user            
   
 ; Check for filename or byte array input
 
