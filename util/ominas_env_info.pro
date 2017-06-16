@@ -15,7 +15,7 @@
 ;
 ; :Author: Paulo Penteado (`http://www.ppenteado.net <http://www.ppenteado.net>`),
 ;-
-pro ominas_bug_info,outfile
+pro ominas_env_info,outfile
 compile_opt idl2,logical_predicate
 outfile=n_elements(outfile) ? outfile : ''
 
