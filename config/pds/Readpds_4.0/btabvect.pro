@@ -42,7 +42,7 @@ function BTABVECT, table, start, bytes, type, elements
 ;       Written by John D. Koch, January,1995
 ;-
 
-  On_error,2                    ;Return to user      got      
+  ;On_error,2                    ;Return to user      got      
 
 ;       Check for filename input
 

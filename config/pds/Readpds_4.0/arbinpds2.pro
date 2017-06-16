@@ -47,7 +47,7 @@ function ARBINPDS2, fname, label, objindex, SILENT=silent
 ;-----------------------------------------------------------------------------
 
    ; error protection---:
-   ON_ERROR, 2
+   ;ON_ERROR, 2
    ON_IOERROR, SIGNAL
 
    ; check for correct number of inputs---:
