@@ -224,7 +224,7 @@ end
 ;function READPDS, filename, SILENT=silent
 function READPDS, filename, label, SILENT=silent, nodata=nodata, dim=dim		; Spitale 3/10/2009
     ; error protection:
-    on_error, 2
+    ;on_error, 2
     params = n_params()
 
     ; check for number of parameters in function call:

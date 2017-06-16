@@ -62,7 +62,7 @@ end
 
 function addeobj, ln, objarr, objcount
     ; error protection:
-    on_error, 2
+    ;on_error, 2
 
     ; initialize structure to be returned:
     struct = create_struct("flag", 1)

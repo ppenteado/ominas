@@ -730,7 +730,7 @@ end
 function IMAGEPDS, fname, label, SILENT=silent, xsize, ysize, nodata=nodata
 									; Spitale 3/10/2009
     ; error protection:
-    ON_ERROR, 2
+    ;ON_ERROR, 2
     On_ioerror, SIGNAL
 
     ; check for number of parameters in function call:

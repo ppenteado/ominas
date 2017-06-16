@@ -48,7 +48,7 @@
 
 function OBTAIN, param, object
     ; error protection:
-    on_error, 2
+    ;on_error, 2
 
     ; initialize variables:
     length = strlen(param)
@@ -127,7 +127,7 @@ end
 
 function SORT_STRUCTURE, object
     ; error protection:
-    on_error, 2
+    ;on_error, 2
 
     ; loop through object index and perform sequential sort:
     for i = 0, object.count-2 do begin
@@ -160,7 +160,7 @@ end
 
 function CHECK_DUPLICATE, param, object
     ; error protection:
-    on_error, 2
+    ;on_error, 2
 
     if (param EQ "ALL") then begin
         for i = 0, object.count-2 do begin
@@ -188,7 +188,7 @@ end
 
 function OBJPDS, label, param
     ; error protection:
-    on_error, 2
+    ;on_error, 2
     
     ; initialize object structure:
     object = create_struct("flag",1)

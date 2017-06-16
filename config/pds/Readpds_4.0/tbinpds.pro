@@ -664,7 +664,7 @@ end
 
 function TBINPDS, fname, label, objindex, SILENT=silent
     ; error protection:
-    ON_ERROR, 2
+    ;ON_ERROR, 2
     on_ioerror, SIGNAL
 
     ; check for number of parameters in function call:

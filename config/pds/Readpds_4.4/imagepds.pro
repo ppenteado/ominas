@@ -700,7 +700,7 @@ end
  
 function imagepds, filename, label, SILENT = silent, NOSCALE = noscale
     ; error protection:
-    on_error, 2
+    ;on_error, 2
     on_ioerror, signal
 
     ; check for the number of parameters in function call:

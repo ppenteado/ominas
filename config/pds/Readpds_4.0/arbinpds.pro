@@ -109,7 +109,7 @@ function ARBINPDS, input_name, label, KEYWDS = keywds, INFO = info, $
 ;                                            array objects.
 ;------------------------------------------------------------------------------
 
-  On_error,2                    ;Return to user            
+  ;On_error,2                    ;Return to user            
 
 ; Check for filename or byte array input
 

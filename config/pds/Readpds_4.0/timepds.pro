@@ -333,7 +333,7 @@ end
 
 function TIMEPDS, label, usr_month, usr_day, DOY = doy, JD = jd
 
-ON_ERROR, 1
+;ON_ERROR, 1
 
 IF n_params() NE 1 AND n_params() NE 3 THEN BEGIN
  print, 'Syntax: result = TIMEPDS(label, month, day, [/DOY, /JD])'
