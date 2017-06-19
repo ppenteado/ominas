@@ -21,7 +21,5 @@
 ;-
 ;=======================================================================
 grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
-                  ['c3440346.gem', $			; Voyager
-                   'N1350122987_2.IMG', $		; Cassini
-                   '2100r.img'])				; Galileo
+                  ['N1350122987_2.IMG','2100r.img','c3440346.gem']
                    
