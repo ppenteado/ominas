@@ -40,3 +40,32 @@
   CAS_RADAR     cas_radar_input                  -
 
   END
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  VGR1_ISS_NA	vgr_spice_input		vgr_spice_output \
+                                                        klist=demo.kernels
+#							ck_in=auto \
+#							spk_in=auto \
+#							pck_in=auto \
+#							lsk_in=auto \
+#							fk_in=auto \
+#							ik_in=auto \
+#							sck_in=auto \
+#							xk_in=extra.tpc 
+
+
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  GLL_SSI	gll_spice_input		gll_spice_output \
+                                                        klist=demo.kernels
+#							ck_in=auto \
+#							spk_in=auto \
+#							pck_in=auto \
+#							lsk_in=auto \
+#							fk_in=auto \
+#							ik_in=auto \
+#							sck_in=auto \
+#							xk_in=extra.tpc 
+

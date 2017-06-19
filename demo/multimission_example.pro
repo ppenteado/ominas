@@ -20,8 +20,8 @@
 ;     @multimission_example.pro
 ;-
 ;=======================================================================
-grim, over='planet_center', files=getenv('OMINAS_DIR')+'/demo/data/'+ $
+grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
                   ['c3440346.gem', $			; Voyager
                    'N1350122987_2.IMG', $		; Cassini
-                   '2100r.img']				; Galileo
+                   '2100r.img'])				; Galileo
                    
