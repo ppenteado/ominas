@@ -72,7 +72,7 @@
 #------------------------------------------------------------------------#
 
 shtype="sh"
-ins_ominas_env_def=''
+ins_ominas_env_def=`grep "ominas_env_def\.sh" ${setting}`
 ins_c_0=''
 inst_SAO=''
 yes="CONFIGURED"
