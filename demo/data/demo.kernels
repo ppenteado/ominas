@@ -59,3 +59,8 @@ $DEMO_SPICE_CK/vgr1_super.bc
 $DEMO_SPICE_SPK/s980326b.bsp
 $DEMO_SPICE_SCK/mk00062a.tsc
 $DEMO_SPICE_CK/ckg01ajh.plt
+
+# used for stars_example
+$DEMO_SPICE_SPK/040909R_SCPSE_01066_04199.bsp
+$DEMO_SPICE_CK/04032_04060ca_ISS.bc
+
