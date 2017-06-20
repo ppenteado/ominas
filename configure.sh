@@ -72,7 +72,7 @@
 #------------------------------------------------------------------------#
 
 shtype="sh"
-ins_ominas_env_def=`grep "ominas_env_def\.sh" ${setting}`
+ins_ominas_env_def='' # `grep "ominas_env_def\.sh" ${setting}`
 ins_c_0=''
 inst_SAO=''
 yes="CONFIGURED"
@@ -185,11 +185,12 @@ OMINAS_DATA=${HOME}/ominas_data
 if [ ! -e ${setting} ]; then
   echo "#!/usr/bin/env bash" > ${setting} 
 fi
-#if [ -e "$setting" ]; then
-#  cp -av $setting $osetting
-#else
-#  touch $osetting
-#fi
+if [ -e "${setting}" ]; then
+  cp -av ${setting} ${osetting}
+  ins_ominas_env_def=`grep "ominas_env_def\.sh" ${setting}` 
+else
+  touch $osetting
+fi
 
 #echo "#!/usr/bin/env bash" > $setting
 
