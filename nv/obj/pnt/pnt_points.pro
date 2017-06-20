@@ -113,7 +113,7 @@ end_keywords)
 
  if(keyword_set(sample)) then $
   begin
-stop
+;stop
    ii = lindgen(_ptd.nv/sample)*sample
    result = result[*,ii]
 ;   segments = 
