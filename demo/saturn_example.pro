@@ -523,7 +523,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;    tvim, im
 ;    pg_draw, cvscan_ptd
 ;    
-;  .. image:: saturn_scan)1.jpeg
+;  .. image:: saturn_scan_1.jpeg
 ;    
 ;-
 ;-------------------------------------------------------------------------
