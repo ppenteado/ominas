@@ -56,23 +56,23 @@ tvim, im, zoom=0.5, /order, /new
 ; Obtaining the descriptors
 ; -------------------------
 ;
-;  	This section obtains the camera descriptor (cd), the planet descriptor
-;  	(pd) and the ring descriptor (rd) for use by the software.  In this
-;  	example, the various elements of these descriptors are overridden with
-;  	values that causes the software not to try to read these values from
-;  	a detached header or through a translator that would access the data
-;  	from the default source.
+;   This section obtains the camera descriptor (cd), the planet descriptor
+;   (pd) and the ring descriptor (rd) for use by the software.  In this
+;   example, the various elements of these descriptors are overridden with
+;   values that causes the software not to try to read these values from
+;   a detached header or through a translator that would access the data
+;   from the default source.
 ;
-;  	Change override to zero to read the data through the translators using
-;  	the Voyager SEDR instead (assuming you have installed the SEDR data 
-;  	files, which are not provided in the default installation)::
-;  	
-;  	  override=1
-;  	  
-;  	Camera descriptor::
-;  	
-;  	  if(override) then $
-;     cd = pg_get_cameras(dd, /over, $
+;   Change override to zero to read the data through the translators using
+;   the Voyager SEDR instead (assuming you have installed the SEDR data 
+;   files, which are not provided in the default installation)::
+;   
+;     override=1
+;     
+;   Camera descriptor::
+;   
+;     if(override) then $
+;       cd = pg_get_cameras(dd, /over, $
 ;       name='VGR1_ISS_NA', $
 ;       orient= $
 ;       [ [-0.177287575, -0.966450211, -0.185857758 ], $
@@ -87,10 +87,9 @@ tvim, im, zoom=0.5, /order, /new
 ;       size=[1000,1000], $
 ;       fn_focal_to_image='cam_focal_to_image_linear', $
 ;       fn_image_to_focal='cam_image_to_focal_linear', $
-;       fi_data=ptr_new() $
-;       )
-; 
-;     Planet descriptor::
+;       fi_data=ptr_new())
+;       
+;   Planet descriptor::
 ; 
 ;       if(override) then $
 ;         pd = pg_get_planets(dd, od=cd, /over, $
@@ -107,7 +106,7 @@ tvim, im, zoom=0.5, /order, /new
 ;         radii=[60268000.,60268000.,54364000.], $
 ;         lora=0.0)
 ;         
-;       Rings descriptor::
+;   Rings descriptor::
 ;       
 ;         if(override) then $
 ;           rd = pg_get_rings(dd, pd=pd, od=cd, /over, $
@@ -125,15 +124,15 @@ tvim, im, zoom=0.5, /order, /new
 ;           sma=tr([75000000.0,136800000.0]), $
 ;           ecc=tr([0.0, 0.0]))
 ;           
-;         Sun (star) descriptor::
-;
+;   Sun (star) descriptor::
+;   
 ;           if(override) then $
 ;             sund = pg_get_stars(dd, od=cd, /over, $
 ;             name='SUN', $
 ;             pos=tr([1.421392d12,4.3105676d10,-4.3613585d10]))
 ;             
-;         If override was not set (and you have the Voyager SEDR data), the above could 
-;         be done with just::
+;   If override was not set (and you have the Voyager SEDR data), the above could 
+;   be done with just::
 ;           
 ;           if(NOT override) then cd = pg_get_cameras(dd)
 ;           if(NOT override) then pd = pg_get_planets(dd, od=cd)
@@ -368,7 +367,9 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;  	It uses pg_hide to set as not visible the points on the grid behind the
 ;  	planet and ring for both objects.  It then uses pg_draw to draw the 
 ;  	planet grid points in blue (ctblue) and the ring grid points in purple
-;  	(ctpurple).  Here is where the example then stops::
+;  	(ctpurple).
+;  	
+;  	Here is where the example then stops::
 ;  	
 ;  	  grid_ptd = pg_grid(gd=gd, bx=pd)
 ;     pg_hide, grid_ptd, gd=gd, bx=pd, /assoc
@@ -398,7 +399,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;-------------------------------------------------------------------------
 ;+
 ; First-cut automatic repointing
-; --------------------------------
+; ------------------------------
 ;
 ;  In this section, pg_farfit is used to automatically calculate a pointing
 ;  correction, by fitting a curve to the planet's limb.
@@ -412,7 +413,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;     edge_ptd = pg_edges(dd, edge=50)
 ;     pg_draw, edge_ptd
 ;     
-;   .. image:: saturn_edge_1.jpeg
+;  .. image:: saturn_edge_1.jpeg
 ;   
 ;  Now, pg_farfit is used to find a x/y offset, by fitting the points in edge_ptd
 ;  (the edges found in the image) to the points that make up the limb, rings and 
@@ -436,7 +437,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;     tvim, im
 ;     pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;     
-;   .. image:: saturn_edge_2.jpeg  
+;  .. image:: saturn_edge_2.jpeg  
 ;    
 ;-
 ;-------------------------------------------------------------------------
@@ -722,29 +723,32 @@ pg_draw, outline_ptd, col=ctgreen()
 ; Plotting ring sector plots
 ; --------------------------
 ;
-;  		Below is the code for four different types of plots using pg_profile_ring.
-;  		Radial (default) and longitudinal (/azimuthal), interpolated (default)
-;  		and binned (/bin).  There is an oversamp keyword which defines the amount
-;  		to oversample (vs. 1 pixel).  In the case of a longitudinal bin scan,
-;  		pixelization can cause some bins to contain very low numbers or none at
-;  		all.  In this example oversamp=0.3 to cause the plot to have larger bins
-;  		to help alleviate this problem.  The calculated profile is then plotted
-;  		in a new window.
-;  		
-;  		Radial scan::
-;  		
-;  		  dd_prof = pg_profile_ring(dd, gd=gd, outline_ptd, dsk_pts=dsk_pts, profile=profile)
-;       window, /free, xs=500, ys=300
-;       plot, dsk_pts[*,0], profile
-;
-;  .. image:: saturn_sector_1.jpeg
-;
+;     Below is the code for four different types of plots using pg_profile_ring.
+;     Radial (default) and longitudinal (/azimuthal), interpolated (default)
+;     and binned (/bin).  There is an oversamp keyword which defines the amount
+;     to oversample (vs. 1 pixel).  In the case of a longitudinal bin scan,
+;     pixelization can cause some bins to contain very low numbers or none at
+;     all.  In this example oversamp=0.3 to cause the plot to have larger bins
+;     to help alleviate this problem.  The calculated profile is then plotted
+;     in a new window.
+;     
+;     Radial scan::
+;     
+;         dd_prof=pg_profile_ring(dd, gd=gd, outline_ptd, dsk_pts=dsk_pts, profile=profile)
+;         window, /free, xs=500, ys=300
+;         plot, dsk_pts[*,0], profile
+;       
+;     .. image:: saturn_sector_2.jpeg
+;     
 ;     Longitudinal scan::
+;     
 ;       dd_prof = pg_profile_ring(dd, gd=gd, outline_ptd, /azimuthal, dsk_pts=dsk_pts, profile=profile)
 ;       window, /free, xs=500, ys=300
 ;       plot, dsk_pts[*,1], profile, /yno
-;
-;  .. image:: saturn_sector_3.jpeg
+;       
+;     .. image:: saturn_sector_3.jpeg
+;     
+;     
 ;-
 ;-------------------------------------------------------------------------
 ; Radial scan
