@@ -1,3 +1,4 @@
+; docformat = 'rst'
 ;=======================================================================
 ;+
 ; MULTI-MISSION EXAMPLE
@@ -18,8 +19,23 @@
 ;    or from within an OMINAS IDL session using::
 ;
 ;     @multimission_example.pro
+;     
+;   Load the 3 images into grim, with planet centers as overlays::
+;   
+;     grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
+;     ['N1350122987_2.IMG','2100r.img','c3440346.gem'])
+;     
+;   The Jupiter observation (from Cassini) looks like:
+;   
+;   .. image:: multimiss_ex_1.png
+;   
+;   And the Ganymede observation (from Galileo) looks like:
+;   
+;   .. image:: multimiss_ex_2.png
+;   
+;   
 ;-
-;=======================================================================
+;-------------------------------------------------------------------------
 grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
-                  ['N1350122987_2.IMG','2100r.img','c3440346.gem']
+                  ['N1350122987_2.IMG','2100r.img','c3440346.gem'])
                    

@@ -568,7 +568,7 @@ pg_hide, plon_ptd[0], cd=cd, bx=pd[0], /assoc
 pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 
 
-dgrid_ptd=pg_grid(gd=gd, bx=rd, frame_bd=pd[0]) & pg_hide, dgrid_ptd, gd=gd, bx=pd
+dgrid_ptd=pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, bx=pd
 pg_draw, dgrid_ptd, color=ctpurple()
 
 ;=========================================================================
