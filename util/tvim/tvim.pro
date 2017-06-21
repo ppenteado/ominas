@@ -81,7 +81,9 @@
 ;
 ;	no_scale:     If set, pixel values are not altered.
 ;
-;            top:     Set the top stretch value to this value.
+;            top:     Set the top stretch value to this value.  If not given,
+;		      tvim, attempts to use the system variable !ct_top, which
+;		      is set by ctmod.
 ;
 ;          erase:     If set, erase the display window before displaying image.
 ;
@@ -501,6 +503,13 @@ pro tvim, arg1, arg2, draw_pixmap=draw_pixmap, $
 	top=top, erase=erase, noplot=noplot, $
 	wnum=_wnum, list=list, pixmap=pixmap, no_wset=no_wset, no_coord=no_coord
 common tvim_block, tvd, tvim_top
+
+ if(NOT keyword_set(top)) then $
+  begin
+   defsysv, 'ct_top', exists=test
+   if(test) then tvim_top = !ct_top
+  end
+
 
  if(keyword__set(__zoom)) then $
   begin

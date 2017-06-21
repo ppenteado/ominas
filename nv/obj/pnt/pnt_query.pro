@@ -1,8 +1,3 @@
-
-
-
-
-
 ;=============================================================================
 ;+
 ; NAME:
@@ -63,7 +58,7 @@
 ;	
 ;-
 ;=============================================================================
-pro pnt_query, xd, condition=condition, noevent=noevent, $
+pro pnt_query, xd, condition=condition, cat=cat, noevent=noevent, $
 @pnt__keywords.include
 @pnt_condition_keywords.include
 end_keywords

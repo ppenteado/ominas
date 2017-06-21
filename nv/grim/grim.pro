@@ -410,6 +410,23 @@
 ;		will cause all of Saturn's rings to load because they are
 ;		required in computing the limb points (for hiding).
 ;
+;		Different results may be obtained using translator keywords, 
+;		because those keywords are evaluated at the translator level.  
+;		For example:
+;
+;			overlays='ring:fn54'
+;
+;		may result in no ring, while:
+;
+;			overlays='ring', trs_rd='name=fn54'
+;
+;		would be more likely to yield a ring.  In the former example,
+;		the specified name is compared against whatever default ring
+;		descriptors are returned by the tranlators, while in the latter
+;		case, the 'name' translator keyword is compared against all
+;		rings available to the translator.
+; 
+;
 ;	*delay_overlays:
 ;		If set, initial overlays (see 'overlays' above) are not computed 
 ;		until the first time they are accessed.  This option can greatly

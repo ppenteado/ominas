@@ -75,60 +75,9 @@ end
 ; ioff_peak
 ;
 ;===============================================================================
-function ___ioff_peak, corr, grid
-width = 10
-sample = 10 
-
- dim0 = size(corr, /dim) 
- dim = dim0 < width
- dim_2 = dim/2
-
- w = where(corr EQ max(corr))
- wxy = w_to_xy(corr, w)
-
- ii = lindgen(dim0)
-
- xmin = wxy[0]-dim_2[0] > 0
- xmax = (wxy[0]+dim_2[0]-1) < (dim0[0]-1)
- ymin = wxy[1]-dim_2[1] > 0
- ymax = (wxy[1]+dim_2[1]-1) < (dim0[0]-1)
- ii = ii[xmin:xmax, ymin:ymax]
- sub = corr[ii]
- gridx = (grid[0,*,*])[ii]
- gridy = (grid[1,*,*])[ii]
-
- nn = width*sample
-
- gridx_interp = congrid(double(gridx), nn, nn, /interp)
- gridy_interp = congrid(double(gridy), nn, nn, /interp)
- sub_interp = smooth(congrid(sub, nn, nn, /interp), width)
- w = where(sub_interp EQ max(sub_interp))
-
- xy = [gridx_interp[w], gridy_interp[w]]
-
-
- return, xy
-end
-;===============================================================================
-
-
-
-;===============================================================================
-; ioff_peak
-;
-;===============================================================================
 function ioff_peak, corr, grid
 width = 10
 sample = 10 
-
-;stop
-model = gauss2dfit(corr, coeff, reform(grid[0,*,0]), reform(grid[1,0,*]), /tilt)
-xy = coeff[4:5]
-return, xy
-
-;cxy = image_centroid(corr)
-;plots, cxy, psym=1, /device, col=ctred()
-
 
  dim0 = size(corr, /dim) 
  dim = dim0 < width
@@ -147,7 +96,7 @@ return, xy
  gridx_interp = gridx_interp[ii]
  gridy_interp = gridy_interp[ii]
  corr_interp = corr_interp[ii]
-stop
+;stop
 ;tvscl, congrid(corr,100,100), /order
 ;tvscl, congrid(corr_interp,100,100), /order
 
@@ -203,8 +152,9 @@ function ioff_correlate, im0, im, mask, _grid, dxy=dxy
 
  dxy = dxy#make_array(ngrid,val=1d)
 
+ dim = size(im, /dim)
  dim0 = size(im0, /dim)
- nn = n_elements(im0)
+ nn0 = n_elements(im0)
 
  ;----------------------------------------------------
  ; set up array for all possible shifts
@@ -214,45 +164,29 @@ function ioff_correlate, im0, im, mask, _grid, dxy=dxy
 
  w = xy_to_w(dim0, grid + dxy)
  ww = where(w LT 0)
- if(ww[0] NE -1) then w[ww] = w[ww] + nn
+ if(ww[0] NE -1) then w[ww] = w[ww] + nn0
 
  jj = w##make_array(dim0[0],val=1l)
  jj = jj[linegen3y(dim0[0], dim0[1], ngrid)]
 
- iii = (ii+jj) mod nn
+ iii = (ii+jj) mod nn0
 
- im_shift = im[iii]
  mask_shift = mask[iii]
  ii = (jj = (iii = 0))
+
 
  ;----------------------------------------------------
  ; mask to im 
  ;----------------------------------------------------
-;;; im_shift = im_shift*mask_shift
-;;; im0_match = im0_match*mask_shift
-
-dim = [max(total(mask,1)), max(total(mask,2))]
-w = where(mask_shift EQ 1)
-im_shift = reform(im_shift[w], dim[0], dim[1], ngrid)
-im0_match = reform(im0_match[w], dim[0], dim[1], ngrid)
-
-
-mean0 = mean(im0_match)
-mean = mean(im_shift)
-
-im0_match = (im0_match-mean0) / total(im0_match) * ngrid 
-im_shift = (im_shift-mean) / total(im_shift) * ngrid 
-;stop
-
-
-
+ w = where(mask_shift EQ 1)
+ im0_match = reform(im0_match[w], dim[0], dim[1], ngrid)
 
 
  ;-----------------------------------------------
  ; compute goodness of fit measure
  ;-----------------------------------------------
-; gof = ioff_variance(im0_match, im_shift)
- gof = ioff_ccorr(im0_match, im_shift)
+ gof = ioff_variance(im0_match, im)
+; gof = ioff_ccorr(im0_match, im)
  gof = total(gof, 1)
  measure = reform(total(gof, 1), grid_dim)
 
@@ -273,21 +207,28 @@ xbin0 = 100
 reduction_factor = 2
 
  ;-------------------------------------------------------------------
- ; fill with zeroes to get im to the same dimensions as im0
+ ; normalize images
  ;-------------------------------------------------------------------
  dim0 = size(_im0, /dim)
  dim = size(_im, /dim)
  
+ mean0 = mean(_im0)
+ mean = mean(_im)
+
+ im0 = bytscl((_im0-mean0)); / sqrt(total((_im0-mean0)^2))
+ im = bytscl((_im-mean)); / sqrt(total((_im-mean)^2))
+
+ im0 = im0/stddev(im0)
+ im = im/stddev(im)
+
+ ;-------------------------------------------------------------------
+ ; construct mask
+ ;-------------------------------------------------------------------
  mask = bytarr(dim0)
  ddim = dim0 - dim
  ddim_2 = ddim/2
  mask[ddim_2[0]:ddim_2[0]+dim[0]-1, ddim_2[1]:ddim_2[1]+dim[1]-1] = 1
- w = where(mask EQ 1)
-
- im0 = _im0
- im = fltarr(dim0)
- im[w] = _im
-
+stop
 
  ;-------------------------------------------------------------------
  ; iterate over correlation scales
@@ -298,7 +239,8 @@ reduction_factor = 2
  ;- - - - - - - - - - - - - - - - - - - - - -
  scale = (double(dim0[0])/double(xbin0))[0] 
 
- bin_dim = dim0/scale
+ bin_dim0 = dim0/scale
+ bin_dim = dim/scale
  grid_dim = (dim0-dim)/scale
 
 
@@ -312,17 +254,16 @@ reduction_factor = 2
    ; contruct correlation grid
    ;- - - - - - - - - - - - - - - - - - - - -
    ngrid = prod(grid_dim)
-stop
-   grid = gridgen(grid_dim, /rec, p0=-grid_dim/2, /double)
+   grid = gridgen(grid_dim, /rec, p0=-grid_dim/2)
 ; grid is still screwed up
 ; print, grid[0,*,0]
 
    ;- - - - - - - - - - - - - - - - - - - - -
    ; bin images
    ;- - - - - - - - - - - - - - - - - - - - -
-   im0_corr = congrid(im0, bin_dim[0], bin_dim[1])
+   im0_corr = congrid(im0, bin_dim0[0], bin_dim0[1])
    im_corr = congrid(im, bin_dim[0], bin_dim[1])
-   mask_corr = congrid(mask, bin_dim[0], bin_dim[1])
+   mask_corr = congrid(mask, bin_dim0[0], bin_dim0[1])
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; correlate images, centering the search grid at the current dxy solution
@@ -339,9 +280,10 @@ stop
    ;- - - - - - - - - - - - - - - - - - - - -
    scale = scale / reduction_factor
    grid_dim = grid_dim / scale*.3 > 5
-   bin_dim = bin_dim * reduction_factor < dim0
+   bin_dim0 = bin_dim0 * reduction_factor < dim0
+   bin_dim = bin_dim * reduction_factor < dim
 
-  endrep until 1;(scale LE 1)
+  endrep until(scale LE 1)
 
 
  return, dxy

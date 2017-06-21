@@ -144,7 +144,7 @@ function pg_render, cd=cd, sund=sund, $
  ;----------------------------------------
  if(NOT keyword_set(image_ptd)) then $
                       image_pts = gridgen(cam_size(cd), /rectangular) $
- else if(size(image_ptd, /type) EQ 10) then image_pts = pnt_points(image_ptd) $
+ else if(size(image_ptd, /type) EQ 11) then image_pts = pnt_points(image_ptd) $
  else image_pts = image_ptd
 
 
