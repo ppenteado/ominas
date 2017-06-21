@@ -73,8 +73,8 @@
 ;	successfully, then Icy has been installed correctly.
 ;
 ;
-; Example installationg walkthrough
-; ================================= 
+; Example installation walkthrough
+; ================================
 ; 
 ; From a fresh account (that never had OMINAS, Icy or any IDL libraries setup
 ; before), for the 3 main packages (Core, Demo and Icy)::
@@ -356,6 +356,104 @@
 ; 
 ;   ;ominas saturn_example
 ;   ;ominas jupiter_example
+;
+;
+;
+;       Testing the environment with ominas_env_info
+;       ============================================
+;
+;       OMINAS includes a utilty script that prints out the most commonly relevant about your OMINAS environment, which can be useful for debugging
+;       (both for yourself, and when you send us questions). It can be run by calling ominas_env_info, from an ominas/ominasde session. If an argument
+;       is provided, it will be the filename where the output will be saved into (as opposed to printing it to the console). One example::
+;
+;         ;[user@cmp ~]$ ominas
+;         ;IDL Version 8.5.1 (linux x86_64 m64). (c) 2015, Exelis Visual Information Solutions, Inc., a subsidiary of Harris Corporation.
+;         ;Installation number: XXXXXX.
+;         ;Licensed for use by: XXXXXX
+;         ;
+;         ;IDL> ominas_env_info,'~/ominas_env_info.txt'
+;
+;       Which produces::
+;
+;         ;OMINAS variables:
+;         ;OMINAS_RC=/home/user/.ominas
+;         ;OMINAS_DEMO=/home/user/ominas/demo
+;         ;OMINAS_DIR=/home/user/ominas
+;         ;OMINAS_DATA=/home/user/ominas_data
+;         ;--------------------------------------------------------------------------------
+;         ;NV variables:
+;         ;NV_TRANSLATORS=/home/user/ominas/config/tab/translators.tab:/home/user/ominas/demo/data/translators.tab
+;         ;NV_CONFIG=/home/user/ominas/config
+;         ;NV_IO=/home/user/ominas/config/tab/io.tab
+;         ;NV_SPICE=/home/user/ominas/config/spice
+;         ;NV_ORBIT_DATA=/home/user/ominas/config/orb/
+;         ;NV_ARRAY_DATA=/home/user/ominas/config/arr/dat/
+;         ;NV_TRANSFORMS=/home/user/ominas/config/tab/transforms.tab:/home/user/ominas/demo/data/transforms.tab
+;         ;NV_STATION_DATA=/home/user/ominas/config/stn/
+;         ;NV_RING_DATA=/home/user/ominas/config/rings/
+;         ;NV_FTP_DETECT=/home/user/ominas/config/tab/filetype_detectors.tab
+;         ;NV_SPICE_KER=::/home/user/ominas/demo/data
+;         ;NV_INS_DETECT=/home/user/ominas/config/tab/instrument_detectors.tab:/home/user/ominas/demo/data/instrument_detectors.tab
+;         ;--------------------------------------------------------------------------------
+;         ;ominas_setup.sh:
+;         ;#!/usr/bin/env bash
+;         ;alias ominas=~/.ominas/ominas
+;         ;alias ominasde=~/.ominas/ominasde
+;         ;export OMINAS_DIR=/home/user/ominas
+;         ;export OMINAS_DATA=/home/user/ominas_data
+;         ;export OMINAS_RC=/home/user/.ominas
+;         ;export DFLAG=true
+;         ;source /home/user/ominas/config/ominas_env_def.sh
+;         ;unset NV_Generic_kernels_DATA
+;         ;unset NV_SEDR_DATA
+;         ;unset NV_TYCHO2_DATA
+;         ;unset NV_SAO_DATA
+;         ;unset NV_GSC_DATA
+;         ;unset NV_UCAC4_DATA
+;         ;--------------------------------------------------------------------------------
+;         ;
+;         ;IDL:
+;         ;** Structure !VERSION, 8 tags, length=104, data length=100:
+;         ;   ARCH            STRING    'x86_64'
+;         ;   OS              STRING    'linux'
+;         ;   OS_FAMILY       STRING    'unix'
+;         ;   OS_NAME         STRING    'linux'
+;         ;   RELEASE         STRING    '8.5.1'
+;         ;   BUILD_DATE      STRING    'Nov 14 2015'
+;         ;   MEMORY_BITS     INT             64
+;         ;   FILE_OFFSET_BITS
+;         ;                   INT             64
+;         ;--------------------------------------------------------------------------------
+;         ;environment IDL_PATH
+;         ;
+;         ;--------------------------------------------------------------------------------
+;         ;environment IDL_DLM_PATH
+;         ;
+;         ;--------------------------------------------------------------------------------
+;         ;preferences IDL_PATH
+;         ;<IDL_DEFAULT>:+/home/user/ominas_data/idlastro/pro:+/home/user/ominas:+/home/user/ominas/util/xidl:+/home/user/ominas_data/icy/lib
+;         ;--------------------------------------------------------------------------------
+;         ;preferences IDL_DLM_PATH
+;         ;<IDL_DEFAULT>:+/home/user/ominas_data/icy/lib
+;         ;--------------------------------------------------------------------------------
+;         ;
+;         ;Icy:
+;         ;--------------------------------------------------------------------------------
+;         ;** ICY - IDL/CSPICE interface from JPL/NAIF (not loaded)
+;         ;    Version: 1.8.0, Build Date: 05-JAN-2017, Source: ed.wright@jpl.nasa.gov
+;         ;    Path: /home/user/ominas_data/icy/lib/icy.so
+;         ;--------------------------------------------------------------------------------
+;         ;CSPICE_N0066
+;         ;--------------------------------------------------------------------------------
+;         ;0 loaded kernels:
+;         ;--------------------------------------------------------------------------------
+;         ;
+;         ;OMINAS repository:
+;         ;On branch master
+;         ;Your branch is up-to-date with 'origin/master'.
+;         ;Last commit:
+;         ;b373f70 Paulo Penteado Wed Jun 14 14:03:42 2017 -0700
+;
 ;
 ;	Troubleshooting
 ;	===============
