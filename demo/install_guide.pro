@@ -359,8 +359,8 @@
 ;
 ;
 ;
-;       Testing the environment with ominas_env_info
-;       ============================================
+; Testing the environment with ominas_env_info
+; ============================================
 ;
 ;       OMINAS includes a utilty script that prints out the most commonly relevant about your OMINAS environment, which can be useful for debugging
 ;       (both for yourself, and when you send us questions). It can be run by calling ominas_env_info, from an ominas/ominasde session. If an argument
