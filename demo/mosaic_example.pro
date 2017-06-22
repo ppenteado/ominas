@@ -338,7 +338,7 @@ pg_put_maps, dd_mosaic, md=md
 dat_write, getenv('OMINAS_DATA')+'/test.mos', dd_mosaic, filetype = 'VICAR'
 
 
-end
+
 
 
 
