@@ -48,15 +48,13 @@
 ;   angle frames of Jupiter.  2000r.img and 2100r.img are Galileo SSI
 ;   images of Ganymede.
 ;
-;   ctmod is called to reserve several colors in the case of an 8-bit display. 
-;
 ;   tvim is called to display the image (im) in a new window with the y
 ;   coordinate as top-down::
 ;
 ;     file = getenv('OMINAS_DIR')+'/demo/data/N1350122987_2.IMG'     ; Cassini Image
 ;     dd = dat_read(file, im, label)
-;     ctmod, top=top
-;     tvim, im, zoom=0.75, /order, /new, top=top
+;     
+;     tvim, im, zoom=0.75, /order, /new
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -65,8 +63,7 @@
 
  dd = dat_read(file, im, label)
 
- ctmod, top=top
- tvim, im, zoom=0.75, /order, /new, top=top
+ tvim, im, zoom=0.75, /order, /new
 
 ;-------------------------------------------------------------------------
 ;+
@@ -90,10 +87,9 @@
 ;   descriptors are taken from the detached header if it exists.  If it doesn't
 ;   exist, then they are obtained through the SPICE kernels.
 ;
-;   The commented lines shows how translator keywords can be passed to 
+;   The commented lines show how translator keywords can be passed to 
 ;   override the keywords given in the translators table.
-; ctmod, top=top
-
+;
 ;-------------------------------------------------------------------------
 ;+
 
@@ -287,10 +283,15 @@ stop
 ;
 ;     edge_ptd = pg_edges(dd, edge=10)                ; Scan image for edges.
 ;     pg_draw, edge_ptd
+;     
+;   .. image:: jupiter_ex_edge.jpeg
+;   
 ;     dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])    ; Try to correlate scanned edges with the computed limb.
 ;     pg_repoint, dxy, 0d, axis=center_ptd[0], gd=gd  ; Change the pointing.
 ;     tvim, im
 ;     pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+;     
+;   .. image:: jupiter_ex_farfit.jpeg
 ;
 ;     center_ptd = pg_center(gd=gd, bx=pd)
 ;     print, 'after automatic repointing, the center was shifted by:', pnt_points(center_ptd[0])-center_o, 'pixels' 
@@ -390,12 +391,11 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;         model=[make_array(nlimb,val=ptr_new(edge_model_nav_limb(zero=lzero)))], $
 ;         mzero=[make_array(nlimb,val=lzero)] )
 ;
-;     ; cvscan_ptd=pg_cvscan(dd, [limb_ptd], edge=30, width=20, $
-;     ;    model=[make_array(nlimb,val=ptr_new(edge_model_atan(10,5, zero=lzero)))], $
-;     ;    mzero=[make_array(nlimb,val=lzero)] )
 ;
 ;     tvim, im
 ;     pg_draw, cvscan_ptd
+;     
+;   .. image:: jupiter_ex_cvscan.jpeg
 ;
 ;   The commented command might be more appropriate for images in which
 ;   the planet disk is quite small.  In that case, we use a different edge
@@ -455,10 +455,10 @@ pg_draw, cvscan_ptd
 ;
 ;-
 ;-------------------------------------------------------------------------
-;region = pg_select(dd)
-;pg_trim, dd, cvscan_ptd, region
-;tvim, im
-;pg_draw, cvscan_ptd
+region = pg_select(dd)
+pg_trim, dd, cvscan_ptd, region
+tvim, im
+pg_draw, cvscan_ptd
 
 ;-------------------------------------------------------------------------
 ;+
@@ -496,6 +496,8 @@ pg_draw, cvscan_ptd
 ;
 ;     tvim, im
 ;     pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
+;     
+;   .. image:: jupiter_ex_cvscan_repoint.jpeg
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -525,7 +527,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;
 ; .. image:: jupiter_lat_lon.jpeg
 ;
-;   This sections calculates a latitude/longitude grid for each planet and a
+;   This section calculates a latitude/longitude grid for each planet and a
 ;   radius/longitude grid for the rings.  By default it draws 12 latitude
 ;   and 12 longitude grid lines.  The longitude grid lines circle the body
 ;   and so on a map they will appear as 24 grid lines.  The ring radius grid
@@ -592,11 +594,9 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;   Map descriptor::
 ;
 ;     md = pg_get_maps(/over, bx=pd[0], $
-;       type='MERCATOR', $  
-;       ;type='MOLLWEIDE', $ 
-;       fn_data=ptr_new(), $
-;       size=[800,400] $
-;       )
+;       type='MERCATOR', $ 
+;       fn_data=ptr_new(),size=[400,200])
+;
 ;
 ; .. image:: jupiter_mercator.jpeg
 ;
@@ -607,11 +607,9 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;     md = pg_get_maps(/over, bx=pd[0], $
 ;       type='STEREOGRAPHIC', $
-;       fn_data=ptr_new(), $
-;       scale=0.5, $
-;       size=[800,800], $
-;       center=[!dpi/2d,0d] $
-;       )
+;       fn_data=ptr_new(),scale=0.5, $
+;       size=[400,400], center=[!dpi/2d,0d])
+;
 ;
 ; .. image:: jupiter_stereographic.jpeg
 ;
@@ -623,11 +621,9 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;     md = pg_get_maps(/over, bx=pd[0], $
 ;       type='ORTHOGRAPHIC', $
 ;       fn_data=ptr_new(), $
-;       size=[800,800], $
-;       center=[!dpi/6d,!dpi] $
-;       ;center=[!dpi/2d,0] $  ; north polar
-;       ;center=[-!dpi/2d,0] $ ; south polar
-;       )
+;       size=[400,400], $
+;       center=[!dpi/6d,!dpi])
+;
 ;
 ; .. image:: jupiter_orthographic.jpeg
 ;
@@ -638,12 +634,9 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;     md = pg_get_maps(/over, bx=pd[0], $
 ;       type='RECTANGULAR', $
-;       /graphic,  $
-;       fn_data=ptr_new(), $
-;       scale=1.0, $
-;       ;center=[0d,!dpi],$
-;       size=[800,400] $
-;       )
+;       /map_graphic,fn_data=ptr_new(),scale=1.0, $
+;       size=[400,200])
+;
 ;
 ; .. image:: jupiter_rectangular.jpeg
 ;
@@ -651,38 +644,30 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;-------------------------------------------------------------------------
 
 md = pg_get_maps(/over, bx=pd[0], $
-	map_type='RECTANGULAR', $
-	/map_graphic,  $
-	map_fn_data=ptr_new(), $
-	map_scale=1.0, $
-;	map_center=[0d,!dpi],$
-;	map_size=[800,400] $
-	map_size=[400,200] $
-	)
+	type='RECTANGULAR', $
+	/map_graphic,fn_data=ptr_new(),scale=1.0, $
+;	center=[0d,!dpi],$
+;	size=[800,400] $
+	size=[400,200])
 
 md = pg_get_maps(/over, bx=pd[0], $
-	map_type='ORTHOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_size=[400,400], $
-	map_center=[!dpi/6d,!dpi] $
-;	map_center=[!dpi/2d,0] $	; north polar
-;	map_center=[-!dpi/2d,0] $	; south polar
-	)
+	type='ORTHOGRAPHIC', $
+	fn_data=ptr_new(), $
+	size=[400,400], $
+	center=[!dpi/6d,!dpi])
+;	center=[!dpi/2d,0] $	; north polar
+;	center=[-!dpi/2d,0] $	; south polar
+	
 
 md = pg_get_maps(/over, bx=pd[0], $
-	map_type='STEREOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_scale=0.5, $
-	map_size=[400,400], $
-	map_center=[!dpi/2d,0d] $
-	)
+	type='STEREOGRAPHIC', $
+	fn_data=ptr_new(),scale=0.5, $
+	size=[400,400], center=[!dpi/2d,0d])
 
 md = pg_get_maps(/over, bx=pd[0], $
-	map_type='MERCATOR', $	
-;	map_type='MOLLWEIDE', $	
-	map_fn_data=ptr_new(), $
- map_size=[400,200] $
-	)
+	type='MERCATOR', $	
+;	type='MOLLWEIDE', $	
+	fn_data=ptr_new(),size=[400,200])
 
 
 ;-------------------------------------------------------------------------
@@ -692,19 +677,19 @@ md = pg_get_maps(/over, bx=pd[0], $
 ;
 ;   Use the pg_map and the map descriptor to project the image onto a map.
 ;   Certain regions, such as rings, could be excluded from the projection
-;   and ounds on the map can be set, if desired::
+;   and bounds on the map can be set, if desired::
 ;
 ;     ;to set projection bounds...
 ;     ;bounds = [-30,30,-180,180]*!dpi/180d
 ;
-;     map = 0
-;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=map, bounds=bounds)
+;     mmap = 0
+;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=mmap, bounds=bounds)
 ;
 ;     ; to exclude areas covered by rings...
 ;     ;dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], gbx=pd[0], $
 ;     ;          hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd), map=map, bounds=bounds)
 ;
-;     tvim, /new, map
+;     tvim, /new, mmap
 ;
 ;   Call pg_grid to calculate a latitude/longitude grid on the map and
 ;   then pg_draw to draw the grid in green.
@@ -737,14 +722,14 @@ md = pg_get_maps(/over, bx=pd[0], $
 ;to set projection bounds...
 ; bounds = [-30,30,-180,180]*!dpi/180d
 
-map = 0
-dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=map, bounds=bounds)
+mmap = 0
+dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=mmap, bounds=bounds)
 
 ; to exclude areas covered by rings...
 ;dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], gbx=pd[0], $
 ;          hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd), map=map, bounds=bounds)
 
-tvim, /new, map
+tvim, /new, mmap
 
 
 
@@ -793,11 +778,9 @@ pg_draw, map_term_ptd, col=ctyellow()
 ;
 ;     md1 = pg_get_maps(/over, bx=pd[0], $
 ;       type='ORTHOGRAPHIC', $
-;       ;type='STEREOGRAPHIC', $
 ;       fn_data=ptr_new(), $
-;       size=[800,800], $
-;       center=[!dpi/6d,!dpi] $
-;       )
+;       size=[400,400], $
+;       center=[!dpi/6d,!dpi])
 ;
 ;     map=0
 ;     dd_map1 = pg_map(dd_map, md=md1, cd=md, map=map1, bounds=bounds)
@@ -808,12 +791,11 @@ pg_draw, map_term_ptd, col=ctyellow()
 ;-
 ;------------------------------------------------
 md1 = pg_get_maps(/over, bx=pd[0], $
-	map_type='ORTHOGRAPHIC', $
-;	map_type='STEREOGRAPHIC', $
-	map_fn_data=ptr_new(), $
-	map_size=[400,400], $
-	map_center=[!dpi/6d,!dpi] $
-	)
+	type='ORTHOGRAPHIC', $
+;	type='STEREOGRAPHIC', $
+	fn_data=ptr_new(), $
+	size=[400,400], $
+	center=[!dpi/6d,!dpi])
 
 map=0
 dd_map1 = pg_map(dd_map, md=md1, cd=md, map=map1, bounds=bounds)
@@ -845,7 +827,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;
 ;     pg_put_rings, dd, od=gd.cd, rd=rd
 ;     pg_put_planets, dd, od=gd.cd, pd=pd
-;     pg_put_cameras, dd, gd=gd
+;     pg_put_cameras, dd, cd=cd
 ;     ; cor_set_udata, cd, 'CK_COMMENT', 'This is a comment.'
 ;     ; pg_put_cameras, dd, gd=gd, 'ck_out=./test.bc'
 ;     ; print, spice_daf_comment('./test.bc')
@@ -856,7 +838,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;---------------------------------------------------------------------------
 pg_put_rings, dd, od=gd.cd, rd=rd
 pg_put_planets, dd, od=gd.cd, pd=pd
-pg_put_cameras, dd, gd=gd
+pg_put_cameras, dd, cd=cd
 ; cor_set_udata, cd, 'CK_COMMENT', 'This is a comment.'
 ; pg_put_cameras, dd, gd=gd, 'ck_out=./test.bc'
 ; print, spice_daf_comment('./test.bc')
@@ -872,12 +854,12 @@ pg_put_stars, dd, sd=sund, od=gd.cd
 ;   the extension '.dh'.  If this file does not already exist, it is created::
 ;
 ;     split_filename, file, dir, name
-;     dat_write, './data/' + name, dd
+;     dat_write, getenv('OMINAS_DATA')+'/' + name, dd
 ;
 ;-
 ;---------------------------------------------------------------------------
 split_filename, file, dir, name
-dat_write, './data/' + name, dd
+dat_write, getenv('OMINAS_DATA')+'/' + name, dd
 
 
 ;---------------------------------------------------------------------------
@@ -895,7 +877,7 @@ dat_write, './data/' + name, dd
 ;     pg_put_maps, dd_map, md=md
 ;
 ;     split_filename, file, dir, name
-;     dat_write, './data/' + name + '.map', dd_map, filetype = 'VICAR'
+;     dat_write, getenv('OMINAS_DATA')+'/' + name + '.map', dd_map, filetype = 'VICAR'
 ;
 ;   To read the new map file, use dat_read just as the image file was read at the
 ;   beginning of this example script.  To read the map descriptor from the
@@ -908,5 +890,5 @@ dat_write, './data/' + name, dd
 pg_put_maps, dd_map, md=md
 
 split_filename, file, dir, name
-dat_write, './data/' + name + '.map', dd_map, filetype = 'VICAR'
+dat_write, getenv('OMINAS_DATA')+'/' + name + '.map', dd_map, filetype = 'VICAR'
 ;end
