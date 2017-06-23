@@ -47,7 +47,7 @@ export NV_SPICE_KER
 NV_INS_DETECT=$NV_CONFIG/tab/instrument_detectors.tab
 export NV_INS_DETECT
 
-if [ $DFLAG = 'true' ]; then
+if [ "${DFLAG}" = 'true' ]; then
     #-----------------------------------------------------------------------------------#
     # DEMO configuration: 																#
     #  This is the default OMINAS configuration.  It is just enough to make the 		#
