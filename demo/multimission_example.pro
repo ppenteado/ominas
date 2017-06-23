@@ -25,7 +25,7 @@
 ;     grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
 ;     ['N1350122987_2.IMG','2100r.img','c3440346.gem'])
 ;     
-;   The Jupiter observation (from Cassini) looks like:
+;   The Jupiter observation (from Cassini, the first one displayed in grim) looks like:
 ;   
 ;   .. image:: multimiss_ex_1.png
 ;   
@@ -33,7 +33,17 @@
 ;   
 ;   .. image:: multimiss_ex_2.png
 ;   
+;   (that image is in the second plane in grim: use the
+;    Plane->next menu option, or click the black double right-arrow button on the left
+;    side of the top toolbar to switch planes)
 ;   
+;   And the Saturn observation (from Voyager) looks like:
+;   
+;   .. image:: multimiss_ex_3.png;
+;   
+;   (that image is in the third plane in grim: use the
+;    Plane->next menu option, or click the black double right-arrow button on the left
+;    side of the top toolbar to switch planes)
 ;-
 ;-------------------------------------------------------------------------
 grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
