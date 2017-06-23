@@ -49,7 +49,9 @@ $DEMO_SPICE_CK/05213_05243ca_ISS.bc
 
 # used for multimission_example.pro
 $DEMO_SPICE_SPK/vgr1_sat337.bsp
-$DEMO_SPICE_SPK/de403s.bsp
+$DEMO_SPICE_SPK/voyager_1.ST+1991_a54418u.merged.bsp
+#$DEMO_SPICE_SPK/de403s.bsp
+$DEMO_SPICE_SPK/sat337.bsp
 $DEMO_SPICE_SCK/vg100019.tsc
 $DEMO_SPICE_IK/vg1_issna_v02.ti
 $DEMO_SPICE_FK/vg1_v02.tf
