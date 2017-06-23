@@ -47,6 +47,7 @@ export NV_SPICE_KER
 NV_INS_DETECT=$NV_CONFIG/tab/instrument_detectors.tab
 export NV_INS_DETECT
 
+echo "DFLAG=${DFLAG}"
 if [ "${DFLAG}" = 'true' ]; then
     #-----------------------------------------------------------------------------------#
     # DEMO configuration: 																#
