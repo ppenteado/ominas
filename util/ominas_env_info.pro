@@ -24,6 +24,7 @@ if outfile then openw,lun,outfile,/get_lun else lun=-1
 ;environment
 spawn,'env | grep OMINAS_',ominas_vars
 spawn,'env | grep NV_',nv_vars
+spawn,'env | grep _SPICE_',spice_vars
 
 count=file_lines(getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh')
 ominas_setup=strarr(count)
@@ -36,8 +37,14 @@ sep='---------------------------------------------------------------------------
 printf,lun,'OMINAS variables:'
 printf,lun,ominas_vars,format='(A)'
 printf,lun,sep
+printf,lun,'Demo variables:'
+printf,lun,'DFLAG='+getenv('DFLAG'),format='(A)'
+printf,lun,sep
 printf,lun,'NV variables:'
 printf,lun,nv_vars,format='(A)'
+printf,lun,sep
+printf,lun,'SPICE variables:'
+printf,lun,spice_vars,format='(A)'
 printf,lun,sep
 printf,lun,'ominas_setup.sh:'
 printf,lun,ominas_setup,format='(A)'
