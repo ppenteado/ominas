@@ -58,6 +58,8 @@ printf,lun,''
 printf,lun,'IDL:'
 printf,lun,version,format='(A)'
 printf,lun,sep
+printf,lun,'IDL_DIR:'+pref_get('IDL_DIR')
+printf,lun,sep
 printf,lun,'environment IDL_PATH'
 printf,lun,getenv('IDL_PATH')
 printf,lun,sep
