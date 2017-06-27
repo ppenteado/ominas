@@ -90,9 +90,10 @@ function pg_renderfit, dd, cd=cd, sund=sund, bx=bx, show=show, fov=fov
  ;------------------------------------ 
  ; find offset
  ;------------------------------------
- dxy = image_offset(im0, im)
+ dxy0 = image_offset(im0, im, dxy=(size-size0)/2)
+ dxy = dxy0 + grid_pts[*,0,0]
 
 
- return, dxy
+ return, -dxy
 end
 ;=============================================================================

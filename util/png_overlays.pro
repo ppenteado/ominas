@@ -12,13 +12,13 @@ pro png_overlays, fname, im, size, overlay_pro, data
  set_plot, 'Z' 
  device, set_resolution=[size,size]
 
- ctmod, top=top
+ ctmod
  zoom = size/float(sim[1])
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; display image
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- tvim, shift(rotate(im, 7), [0,1]), z=zoom, top=top, /nowin
+ tvim, shift(rotate(im, 7), [0,1]), z=zoom, /nowin
  tvim, im, /noplot, /order, z=zoom, /nowin
 
 

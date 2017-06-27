@@ -121,7 +121,6 @@ function ioff_peak, corr, grid
 width = 10
 sample = 10 
 
-;stop
 model = gauss2dfit(corr, coeff, reform(grid[0,*,0]), reform(grid[1,0,*]), /tilt)
 xy = coeff[4:5]
 return, xy
@@ -147,7 +146,7 @@ return, xy
  gridx_interp = gridx_interp[ii]
  gridy_interp = gridy_interp[ii]
  corr_interp = corr_interp[ii]
-stop
+;stop
 ;tvscl, congrid(corr,100,100), /order
 ;tvscl, congrid(corr_interp,100,100), /order
 
@@ -268,7 +267,7 @@ end
 ;
 ;
 ;===============================================================================
-function image_offset, _im0, _im
+function ___image_offset, _im0, _im
 xbin0 = 100
 reduction_factor = 2
 
@@ -312,8 +311,8 @@ reduction_factor = 2
    ; contruct correlation grid
    ;- - - - - - - - - - - - - - - - - - - - -
    ngrid = prod(grid_dim)
-stop
    grid = gridgen(grid_dim, /rec, p0=-grid_dim/2, /double)
+;stop
 ; grid is still screwed up
 ; print, grid[0,*,0]
 
@@ -341,10 +340,92 @@ stop
    grid_dim = grid_dim / scale*.3 > 5
    bin_dim = bin_dim * reduction_factor < dim0
 
-  endrep until 1;(scale LE 1)
+  endrep until(scale LE 1)
 
 
  return, dxy
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; image_offset
+;
+;
+;===============================================================================
+function image_offset, _im0, im, dxy=dxy0, xbin0=xbin0
+
+ _dim0 = size(_im0, /dim)
+ im0 = _im0
+
+ if(NOT keyword_set(xbin0)) then xbin0 = 100
+ if(NOT keyword_set(dxy0)) then dxy0 = [0,0]
+
+ dim = size(im, /dim)
+ dim0 = size(im0, /dim)
+ aspect = dim[0]/dim[1]
+
+ ;-------------------------------------------------------------------
+ ; iterate up to full resolution
+ ;-------------------------------------------------------------------
+ dxy = dxy0
+ xbin = xbin0
+ x0 = 0 & y0 = 0
+ repeat $
+  begin
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; compute scale
+   ;- - - - - - - - - - - - - - - - - - - - -
+   scale = (double(dim[0])/double(xbin))[0] > 1
+   scale_2 = scale/2
+
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; bin images
+   ;- - - - - - - - - - - - - - - - - - - - -
+   bin_dim0 = fix(dim0/scale)
+   bin_dim = fix(dim/scale)
+
+   im0_corr = congrid(im0, bin_dim0[0], bin_dim0[1])
+   im_corr = congrid(im, bin_dim[0], bin_dim[1])
+
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; correlate images
+   ;- - - - - - - - - - - - - - - - - - - - -
+   corr = correlate_images(im0_corr, im_corr, size=size)
+   if(NOT keyword_set(scratch)) then scratch = 4*size
+
+   ;- - - - - - - - - - - - - - - - - - - - -  
+   ; find peak offset
+   ;- - - - - - - - - - - - - - - - - - - - -
+   peak_xy = peak_interp_2d(corr)
+   peak_xy0 = peak_xy*scale + [x0,y0]			; peak wrt _im0
+
+
+tvscl, congrid(corr,100,100)
+dim_corr = size(corr, /dim)
+plots, peak_xy*100./dim_corr[0], /device, psym=1, col=ctred()
+;stop
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; trim reference image to region around most recent solution
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   x0 = fix(peak_xy0[0]-scale_2) > 0 
+   x1 = fix(peak_xy0[0]+dim[0]+scale_2) < _dim0[0]-1
+   y0 = fix(peak_xy0[1]-scale_2) > 0 
+   y1 = fix(peak_xy0[1]+dim[1]+scale_2) < _dim0[1]-1
+   im0 = _im0[x0:x1, y0:y1]
+   dim0 = size(im0, /dim)
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; compute new bin size to stay within scratch limit
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   xbin = fix(sqrt(aspect*scratch/product(dim0-dim))) < dim[0]
+
+  endrep until(scale EQ 1)
+
+
+ return, peak_xy0
 end
 ;===============================================================================
 

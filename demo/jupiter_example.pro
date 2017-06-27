@@ -54,8 +54,8 @@
 ;
 ;     file = 'data/N1350122987_2.IMG'
 ;     dd = dat_read(file, im, label)
-;     ctmod, top=top
-;     tvim, im, zoom=0.75, /order, /new, top=top
+;     ctmod
+;     tvim, im, zoom=0.75, /order, /new
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -64,8 +64,8 @@
 
  dd = dat_read(file, im, label)
 
- ctmod, top=top
- tvim, im, zoom=0.75, /order, /new, top=top
+ ctmod
+ tvim, im, zoom=0.75, /order, /new
 
 ;-------------------------------------------------------------------------
 ;+
@@ -91,7 +91,6 @@
 ;
 ;   The commented lines shows how translator keywords can be passed to 
 ;   override the keywords given in the translators table.
-; ctmod, top=top
 
 ;-------------------------------------------------------------------------
 ;+

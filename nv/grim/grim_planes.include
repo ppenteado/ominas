@@ -528,7 +528,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 
 
   window, /free, /pix, xs=1, ys=1	; necessary to allocate color table
-  ctmod, top=top
+  ctmod
 
   ;---------------------
   ; planes

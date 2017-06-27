@@ -39,8 +39,8 @@
 ;	For Example::
 ;	 
 ;     dd = dat_read('data/c3440346.gem', im, label)
-;	  ctmod, top=top
-;	  tvim, im, zoom=0.5, /order, /new, top=top
+;	  ctmod
+;	  tvim, im, zoom=0.5, /order, /new
 ;
 ;	Blah blah
 ; 
@@ -51,8 +51,8 @@
 !quiet = 1
 
 dd = dat_read('data/c3440346.gem', im, label)
-ctmod, top=top
-tvim, im, zoom=0.5, /order, /new, top=top
+ctmod
+tvim, im, zoom=0.5, /order, /new
 
 ;-------------------------------------------------------------------------
 ;+

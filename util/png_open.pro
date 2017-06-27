@@ -3,8 +3,8 @@
 ;
 ; This is how it's intended to be used, but it hasn't been tested...
 ;  png_open, image, 500, zimage
-;  ctmod, top=top
-;  tvim, zim, top=top, /nowin, /order
+;  ctmod
+;  tvim, zim, /nowin, /order
 ;  png_close, filename
 ;
 ;=============================================================================
