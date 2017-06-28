@@ -1,5 +1,5 @@
 OMINAS Geometry Library
-======================
+=======================
 
  The OMINAS object library implements an object-oriented description of various
  geometrical objects to be used by higher level programs.  A specific

@@ -47,7 +47,7 @@ function dat_update, dd, noevent=noevent
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
- return, _dd.update
+ return, (*_dd.dd0p).update
 end
 ;===========================================================================
 

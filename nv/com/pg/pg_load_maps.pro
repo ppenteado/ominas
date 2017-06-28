@@ -34,7 +34,9 @@
 ;
 ;
 ; ENVIRONMENT VARIABLES:
-;	PG_MAPS:	Sets the map directory; overrides the dir keyword.
+;	PG_MAPS:
+;		Sets the map directory; overrides the dir keyword.  Maps are 
+;		organized into subdirectories named for each body.  
 ;
 ;
 ; RETURN: 

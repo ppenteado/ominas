@@ -50,7 +50,7 @@ function body_radius, bx
  gbx = cor_select(bx, 'GLOBE', ind=ii, /class)
  if(keyword_set(gbx)) then size[ii] = (glb_radii(bx))[0,ii]
 
- dkx = cor_select(bx, 'DISK', ind=ii)
+ dkx = cor_select(bx, 'DISK', ind=ii, /class)
  if(keyword_set(dkx)) then size[ii] = $
                   (dsk_sma(dkx))[0,1,ii] * (1d + (dsk_ecc(dkx))[0,1,ii])
 

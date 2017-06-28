@@ -169,7 +169,6 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, _extra=select, $
 		end_keywords
 
  ndd = n_elements(dd)
-;;;;select={FOV:1}
 
  ;-----------------------------------------------
  ; add selection keywords to translator keywords

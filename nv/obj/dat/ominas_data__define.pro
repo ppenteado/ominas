@@ -20,42 +20,47 @@ end_keywords)
  if(keyword_set(_nhist)) then nhist = fix(_nhist)
 
  ;-----------------------
+ ; data structure
+ ;-----------------------
+ self.dd0p = nv_ptr_new({dat_dd0_struct})
+
+ ;-----------------------
  ; filename
  ;-----------------------
- if(keyword_set(filename)) then self.filename = filename
+ if(keyword_set(filename)) then (*self.dd0p).filename = filename
 
  ;-----------------------
  ; maintain
  ;-----------------------
- if(keyword_set(maintain)) then self.maintain = maintain
+ if(keyword_set(maintain)) then (*self.dd0p).maintain = maintain
 
  ;-----------------------
  ; compress
  ;-----------------------
- if(keyword_set(compress)) then self.compress = compress
+ if(keyword_set(compress)) then (*self.dd0p).compress = compress
 
  ;-----------------------
  ; typecode
  ;-----------------------
- if(keyword_set(typecode)) then self.typecode = typecode
+ if(keyword_set(typecode)) then (*self.dd0p).typecode = typecode
 
  ;-----------------------
  ; gff
  ;-----------------------
- self.gffp = nv_ptr_new(0)
- if(keyword_set(gff)) then *self.gffp = gff
+ (*self.dd0p).gffp = nv_ptr_new(0)
+ if(keyword_set(gff)) then *(*self.dd0p).gffp = gff
 
  ;-----------------------
  ; dh
  ;-----------------------
- self.dhp = nv_ptr_new('')
- if(keyword_set(dh)) then *self.dhp = dh
+ (*self.dd0p).dhp = nv_ptr_new('')
+ if(keyword_set(dh)) then *(*self.dd0p).dhp = dh
 
  ;-----------------------
  ; file properties
  ;-----------------------
- if(keyword_set(filetype)) then self.filetype = filetype $
- else self.filetype = dat_detect_filetype(/default)
+ if(keyword_set(filetype)) then (*self.dd0p).filetype = filetype $
+ else (*self.dd0p).filetype = dat_detect_filetype(/default)
  if(keyword_set(input_fn)) then self.input_fn = input_fn
  if(keyword_set(output_fn)) then self.output_fn = output_fn
  if(keyword_set(keyword_fn)) then self.keyword_fn = keyword_fn
@@ -109,15 +114,14 @@ end_keywords)
  ;---------------------------------
  ; dimensions
  ;---------------------------------
- self.dim_p = nv_ptr_new(0)
- if(keyword_set(dim)) then *self.dim_p = dim
+ if(keyword_set(dim)) then *self.dim = dim		;;;;;
 
 
  ;-----------------------
  ; cache size
  ;-----------------------
- if(keyword_set(cache)) then self.cache = cache $
- else self.cache = dat_cache()
+ if(keyword_set(cache)) then (*self.dd0p).cache = cache $
+ else (*self.dd0p).cache = dat_cache()
 
 
  ;---------------------------------
@@ -148,11 +152,24 @@ end_keywords)
   end
  
 
+ self.abmax = -1d100
+ self.abmin = 1d100
+
+ if(defined(abmin)) then self.abmin = abmin
+ if(defined(abmax)) then self.abmax = abmax
+
+ if(defined(abscissa)) then $
+  begin
+   self.abmax = max(abscissa)
+   self.abmin = min(abscissa)
+  end
+ 
+
  ;-----------------------
  ; data and header
  ;-----------------------
- self.sample_p = nv_ptr_new(-1)
- self.order_p = nv_ptr_new(-1)
+ (*self.dd0p).sample_p = nv_ptr_new(-1)
+ (*self.dd0p).order_p = nv_ptr_new(-1)
 
  if(defined(data)) then dat_set_data, self, data, abscissa=abscissa
 
@@ -203,15 +220,26 @@ end
 ;
 ;	dhp:		Pointer to detached header.
 ;
-;
 ;	max:		Maximum data value.
 ;
 ;	min:		Minimum data value.
 ;
+;	abmax:		Maximum abscissa value.
+;
+;	abmin:		Minimum abscissa value.
+;
 ;	cache:		Max cache size data array.  Used to deterine whether 
 ;			to load / unload data samples.  -1 means infinite.
 ;
-;	dim_p:		Pointer to array giving data dimensions.
+;	dim:		Array giving data dimensions.
+;
+;	slice_struct:	Structure containing array giving coordinates for a 
+;			subarray.  If slice coordinates exist, the dat methods 
+;			act as if the data descriptor contains only this slice of 
+;			data.  Dimensions, min, and max are set accordingly.  
+;			Dimensions of the subarray are the difference between 
+;			the dimensions of the full array and the dimensionality 
+;			of the slice coordinates.
 ;
 ;	typecode:	Data type code.
 ;
@@ -295,30 +323,83 @@ end
 ;	
 ;-
 ;=============================================================================
-pro ominas_data__define
+
+
+
+;=============================================================================
+; dat_dd0_struct__define
+;
+;=============================================================================
+pro dat_dd0_struct__define
 
 
  struct = $
-    { ominas_data, inherits ominas_core, $
+    { dat_dd0_struct, $
 	data_dap:		nv_ptr_new(), $	; Pointer to the data archive
 	abscissa_dap:		nv_ptr_new(), $	; Pointer to the abscissa archive
 	header_dap:		nv_ptr_new(), $	; Pointer to the generic header archive
         dap_index:		0, $		; data archive index
 	dhp:			nv_ptr_new(), $	; Pointer to detached header.
-
 	sample_p:		nv_ptr_new(), $	; Pointer to the array of loaded samples
 	order_p:		nv_ptr_new(), $	; Pointer to the sample load order array
+
+	filename:		'', $		; Name of source file.
+	filetype:		'', $		; Filetype string
+	typecode:		0b, $		; data type code
+
+	gffp:			nv_ptr_new(), $	; GFF pointer
 
 	cache:			0l, $		; Max. cache size for data array (Mb)
 						;  Doesn't apply to maintenance 0
 
+	compress:		'', $		; Data compression function suffix
+	compress_data_p:	nv_ptr_new(), $
+
+	maintain:		0b, $		; Data maintenance mode:
+						;  0: load initially
+						;  1: load when needed; retain
+						;     only ndd data descriptor
+						;     arrays in memory.
+						;  2: Load when needed, but
+						;     do not retain.
+
+	update:			0 $		; Data update mode:
+						; -1: Locked; applies to data, header,
+						;     and udata.
+						;  0: Normal
+						;  1: Clone a new descriptor 
+						;     and leave original dd
+						;     unchanged.
+    }
+
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; ominas_data__define
+;
+;===========================================================================
+pro ominas_data__define
+
+
+ struct = $
+    { ominas_data, inherits ominas_core, $
+	dd0p:			nv_ptr_new(), $	; Pointer to basic data descriptor
+						; fields.  This allows these fields
+						; to apply to any slices of this
+						; data descriptor.
+
+	slice_struct:		{dat_slice}, $	; Slice structure
+
 	max:			0d, $		; Maximum data value
 	min:			0d, $		; Minimum data value
-	dim_p:			nv_ptr_new(), $	; data dimensions
-	typecode:		0b, $		; data type code
+	abmax:			0d, $		; Maximum abscissa value
+	abmin:			0d, $		; Minimum abscissa value
+	dim:			lonarr(8), $	; data dimensions
 
-	filename:		'', $		; Name of source file.
-	filetype:		'', $		; Filetype string
 	input_transforms_p:	nv_ptr_new(), $	; Input transform function
 	output_transforms_p:	nv_ptr_new(), $	; Output transform function
 	input_fn:		'', $		; Function to read file
@@ -336,35 +417,11 @@ pro ominas_data__define
 	sampling_fn:		'', $		; Optional sampling function.
 	dim_fn:			'', $		; Optional dimension function.
 
-	gffp:			nv_ptr_new(), $	; GFF pointer
-
-;	segment:		{nv_seg_struct}, $
-
-	compress:		'', $		; Data compression function suffix
-	compress_data_p:	nv_ptr_new(), $
-
-	maintain:		0b, $		; Data maintenance mode:
-						;  0: load initially
-						;  1: load when needed; retain
-						;     only ndd data descriptor
-						;     arrays in memory.
-						;  2: Load when needed, but
-						;     do not retain.
-
-	update:			0, $		; Data update mode:
-						; -1: Locked; applies to data, header,
-						;     and udata.
-						;  0: Normal
-						;  1: Clone a new descriptor 
-						;     and leave original dd
-						;     unchanged.
-
 	sibling_dd_h:		0l $		; Handle giving dd spawned as a result
 						;  of writing to this descriptor
 						;  while update = 1.
 						;  Handle is used to protect that dd
 						;  from nv_free.
-
     }
 
 

@@ -1,4 +1,72 @@
 ;=============================================================================
+;+
+; NAME:
+;	GRIM_COLORTOOL
+;
+;
+; PURPOSE:
+;	Tool for adjusting colors in GRIM.
+;
+;
+; CATEGORY:
+;	NV/GRIM
+;
+;
+; CALLING SEQUENCE:
+;	
+;	grim_colortool
+;
+;
+; ARGUMENTS: NONE
+;
+;
+; KEYWORDS: NONE
+;
+;
+; OPERATION:
+;	Color table plot:
+;		Displays a plot of the current color table, with a color
+;		bar at the bottom.
+;
+;	Stretch Top slider:
+;		Controls the top value for the color table stretch.
+;
+;	Stretch Bottom slider:
+;		Controls the bottom value for the color table stretch.
+;
+;	Gamma slider:
+;		Controls the gamma value for the color table stretch.
+;
+;	Shade slider:
+;		Vertial slider on the left side of the tool controlling the 
+;		total brightness.
+;
+;	Color table droplist:
+;		Selects IDL color table.
+;
+;	Auto button:
+;		Performs an automatic stretch.
+;
+;	All button:
+;		If set (or activated), the current color table is applied
+;		to all GRIM planes.  If 'Auto' is pressed while 'All' is
+;		on, the automatic stretch is performed independently for
+;		each plane.
+;
+;
+; SEE ALSO:
+;	grim
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale 
+;	
+;-
+;=============================================================================
+
+
+
+;=============================================================================
 ; grct_slider_to_gamma
 ;
 ;
@@ -103,10 +171,13 @@ end
 ;=============================================================================
 pro grct_plot, data
 
- n_colors = data.cmd.n_colors
+ grim_data = grim_get_data(/primary)
+ plane = grim_get_plane(grim_data)
+
+ n_colors = plane.cmd.n_colors
 
  wset, data.wnum
- colormap = compute_colormap(data.cmd)
+ colormap = compute_colormap(plane.cmd)
  colormap = congrid(colormap, 100) * 255 / n_colors
 
  ctmod, top=top, visual=visual
@@ -168,42 +239,84 @@ end
 
 
 ;=============================================================================
+; grct_update
+;
+;=============================================================================
+pro grct_update, cmd, all=all, auto=auto
+
+ grim_data = grim_get_data(/primary)
+ if(NOT keyword_set(grim_data)) then return
+
+ ctmod, visual=visual
+
+ ;--------------------------------------
+ ; detect color table change
+ ;--------------------------------------
+ tvlct, r, g, b, /get
+ w = where([r, g, b] - $
+           [*grim_data.tv_rp, *grim_data.tv_gp, *grim_data.tv_bp] NE 0)
+ if((w[0] NE -1) AND (visual NE 24)) then $
+  begin
+   *grim_data.tv_rp = r
+   *grim_data.tv_gp = g
+   *grim_data.tv_bp = b
+   return
+  end
+
+ ;--------------------------------------
+ ; update cmd
+ ;--------------------------------------
+ planes = grim_get_plane(grim_data, all=all)
+ n = n_elements(planes)
+
+ if(keyword_set(auto)) then grim_stretch_plane, grim_data, planes $
+ else $
+  for i=0, n-1 do $
+   begin
+    planes[i].cmd = cmd
+    grim_set_plane, grim_data, planes[i], pn=planes[i].pn
+   end
+
+ grim_set_data, grim_data, grim_data.base
+ grim_refresh, grim_data, /no_erase
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_colortool_event
 ;
 ;
 ;=============================================================================
 pro grim_colortool_event, event
 
- widget_control, event.top, get_uvalue = data
+ grim_data = grim_get_data(/primary)
+ plane = grim_get_plane(grim_data)
+
+ widget_control, event.top, get_uvalue=data, /hourglass
 
  struct = tag_names(event, /struct)
- callback = 0
+ update = 0
+ auto = 0
+
+ all = widget_info(data.all_button, /button_set)
+
+ cmd = grct_widget_to_descriptor(data, plane.cmd)
+
 
  ;---------------------------
  ; 'All' button
  ;---------------------------
- if(event.id EQ data.all_button) then $
-  begin
-   if(data.all) then data.all = 0 $
-   else data.all = 1
-   callback = 1
-  end $
+ if(event.id EQ data.all_button) then update = 1 $
 
  ;---------------------------
  ; 'Auto' button
  ;---------------------------
  else if(event.id EQ data.auto_button) then $
   begin
-   test = image_eq(bytscl(dat_data(data.dd, /current)), $
-                                    frac=0.99999, low=1, min=min, max=max)
-   top = float(max)/256 * 100
-   bottom = float(min)/256 * 100
-
-   widget_control, data.top_slider, set_value=top
-   widget_control, data.bottom_slider, set_value=bottom
-   data.cmd = grct_widget_to_descriptor(data, data.cmd)
-
-   callback = 1
+   auto = 1
+   update = 1
   end $
 
  ;---------------------------
@@ -222,7 +335,7 @@ pro grim_colortool_event, event
   begin
    loadct, event.index, /silent
    ctmod, top=top, visual=visual
-   callback = 1
+   update = 1
   end $
 
  ;---------------------------
@@ -238,22 +351,19 @@ pro grim_colortool_event, event
  ;---------------------------
  else $
   begin
-   cmd = grct_widget_to_descriptor(data, data.cmd)
-   data.cmd = cmd
    grct_plot, data
 
    if(event.id EQ data.gamma_slider) then grct_print_gamma, data
 
-   if(struct NE 'WIDGET_SLIDER') then callback = 1 $
-   else if(NOT event.drag) then callback = 1
+   if(struct NE 'WIDGET_SLIDER') then update = 1 $
+   else if(NOT event.drag) then update = 1
   end
 
 
  ;-------------------------------------
- ; notify callback routine
+ ; update color table
  ;-------------------------------------
- if(callback) then $
-       call_procedure, data.callback, data.cmd, data.cb_data, all=data.all
+ if(update) then grct_update, cmd, all=all, auto=auto
 
 
  widget_control, event.top, set_uvalue=data
@@ -267,15 +377,14 @@ end
 ;
 ;
 ;=============================================================================
-pro grim_colortool_change, base, cmd
+pro grim_colortool_change, base
+
+ grim_data = grim_get_data(/primary)
+ plane = grim_get_plane(grim_data)
 
  widget_control, base, get_uvalue=data
 
- data.cmd = cmd
-
- widget_control, base, set_uvalue=data
-
- grct_descriptor_to_widget, data, data.cmd
+ grct_descriptor_to_widget, data, plane.cmd
  grct_plot, data
  grct_print_gamma, data
 
@@ -292,9 +401,11 @@ end
 pro grct_primary_notify, data_p
 
  grim_data = grim_get_data(/primary)
+ plane = grim_get_plane(grim_data)
+
  if(grim_data.type EQ 'plot') then return
 
- grim_colortool_change, (*data_p).base, grim_get_cmds(grim_data)
+ grim_colortool_change, (*data_p).base
 
 end
 ;=============================================================================
@@ -306,12 +417,15 @@ end
 ;
 ;
 ;=============================================================================
-pro grim_colortool, cmd, dd, callback=callback, cb_data=cb_data
+pro grim_colortool
 common grim_colortool_block, base
+
+ grim_data = grim_get_data(/primary)
+ plane = grim_get_plane(grim_data)
 
  if(xregistered('grim_colortool')) then $
   begin
-   grim_colortool_change, base, cmd
+   grim_colortool_change, base
    return
   end
 
@@ -378,7 +492,6 @@ common grim_colortool_block, base
  		; widgets
 		;-------------------
 		base		:	base, $
-		dd		: 	dd, $
 		ct_droplist	:	ct_droplist, $
 		all_button	:	all_button, $
 		auto_button	:	auto_button, $
@@ -390,22 +503,18 @@ common grim_colortool_block, base
 		shade_slider	:	shade_slider, $
 		done_button	:	done_button, $
 		wnum		:	wnum, $
-		all		:	0, $
-		callback	:	callback, $
-		cb_data		:	cb_data, $
 
 		;-------------------
  		; book-keeping
 		;-------------------
-		data_p		:	nv_ptr_new(), $
-		cmd		:	cmd $
+		data_p		:	nv_ptr_new() $
 	     }
 
  data.data_p = nv_ptr_new(data)
 
  widget_control, base, set_uvalue = data
 
- grct_descriptor_to_widget, data, cmd
+ grct_descriptor_to_widget, data, plane.cmd
  grct_plot, data
 
  grim_add_primary_callback, 'grct_primary_notify', data.data_p

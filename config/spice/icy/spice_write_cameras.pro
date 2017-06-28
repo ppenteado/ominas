@@ -12,7 +12,7 @@ pro spice_write_cameras, dd, ref, ck_file, cd, $
  ;-------------------------------
  ; remove ck file if it exists
  ;-------------------------------
- fdelete, ck_file
+ file_delete, ck_file, /quiet
 
  ;-------------------------------
  ; extract cd fields
@@ -27,9 +27,6 @@ pro spice_write_cameras, dd, ref, ck_file, cd, $
  cam_avel = (bod_avel(cd))[0,*]
 
  cam_name = (dat_instrument(dd))[0]
-
-; spawn, 'echo ' + ck_file, ck_file
-; ck_file = ck_file[0]
 
  comment = cor_udata(cd, 'CK_COMMENT')
  if(NOT keyword_set(comment)) then comment = ' '

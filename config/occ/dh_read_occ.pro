@@ -15,13 +15,14 @@ max=0
                      sample=sample, nodata=nodata, $
                      time_offset=time_offset, time_units=time_units, $
                      times=times, dn=dn, rad=rad, lon=lon, dim=_dim, type=type
- dim = [2,_dim[1]]
+ dim = _dim[1]
  if(keyword_set(nodata)) then return, 0
 
  n = n_elements(times)
 
-; result = [times, dn]
- result = [rad, dn]
+ result = transpose(dn)
+ abscissa = transpose(rad)
+
  disk_pts = dblarr(n,3)
  disk_pts[*,0] = rad
  disk_pts[*,1] = lon

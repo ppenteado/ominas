@@ -48,7 +48,7 @@ function dat_filename, dd, noevent=noevent
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
 
- return, _dd.filename
+ return, (*_dd.dd0p).filename
 end
 ;===========================================================================
 

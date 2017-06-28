@@ -24,6 +24,11 @@
 ;
 ;       top:  New top of lookup table available to image display.
 ;
+;
+;  SIDE EFFECTS:
+;	The system variable !ct_top is set to the value of the 'top' output 
+;	above.
+;
 ;-
 ;========================================================================
 pro ctmod, visual=visual, top=top, _r, _g, _b, bw=bw, color=color, ct=ct
@@ -107,6 +112,8 @@ pro ctmod, visual=visual, top=top, _r, _g, _b, bw=bw, color=color, ct=ct
  n = n_elements(r)
 ; top = n-10
  top = n1 - 2
+
+ defsysv, '!ct_top', top 
 
 end
 ;========================================================================

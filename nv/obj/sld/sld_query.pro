@@ -29,6 +29,20 @@
 ;  INPUT: 
 ;	<keywords>:	CAMERA object fields to set.
 ;
+;	condition:	Structure specifing a mask and a condition with which to
+;			match flag values.  The structure must contain the fields
+;			MASK and STATE.  MASK is a bitmask to test against
+;			the flags field of the POINT object, and STATE
+;			is either PS_TRUE and PS_FALSE.  Note that in this case, 
+;			the values will be returned as a list, with no separation 
+;			into nv and nt dimensions.
+;
+;	cat:		If set, arrays from mulitple input objets are 
+;			concatenated.
+;
+;	<condition>:	All of the predefined conditions (e.g. /visible) are 
+;			accepted; see pnt_condition_keywords.include.
+;
 ;	noevent:	If set, no event is generated.
 ;
 ;  OUTPUT: NONE
@@ -44,7 +58,7 @@
 ;	
 ;-
 ;=============================================================================
-pro sld_query, xd, noevent=noevent, $
+pro sld_query, xd, condition=condition, cat=cat, noevent=noevent, $
 @sld__keywords.include
 end_keywords
 

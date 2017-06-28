@@ -49,7 +49,7 @@ function dat_compress, dd, noevent=noevent
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
- return, _dd.compress
+ return, (*_dd.dd0p).compress
 end
 ;===========================================================================
 

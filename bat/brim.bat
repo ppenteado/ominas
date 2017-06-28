@@ -54,11 +54,11 @@
 ;-
 ;=============================================================================
 !quiet = 1
-___argv = xidl_argv()
+___argv = bat_argv()
 
-___filespecs = xidl_parse_argv(___argv, ___keys, ___val_ps, spec=___spec)
-___filespecs = bat_expand(___filespecs, ___spec)
+___argv = bat_parse_argv(___argv, ___keys, ___val_ps, spec=___spec)
+___filespecs = bat_expand(___argv, ___spec)
 if(keyword_set(___filespecs)) then ___files = findfiles(___filespecs)
 
-call_procedure,'brim',___files,_extra=pp_build_extra(___keys,___val_ps)
+call_procedure, 'brim',___files,_extra=pp_build_extra(___keys,___val_ps)
 

@@ -69,7 +69,7 @@ pro grim_add_user_points, grnum=grnum, user_ptd, tag, update=update, $
 
  tlp = plane.user_ptd_tlp
  if(keyword_set(update)) then $
-                        if((tag_list_match(tlp, tag))[0] EQ -1) then return
+              if((tag_list_match(tlp, tag))[0] EQ -1) then return
 
  tag_list_set, tlp, tag, user_struct, new=new, index=index
  plane.user_ptd_tlp = tlp

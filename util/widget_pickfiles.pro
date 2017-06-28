@@ -120,28 +120,12 @@ end
 ;=============================================================================
 pro wpf_get_dirs, data
 
-
  ;-------------------------------
  ; get directories
  ;-------------------------------
- spawn, ['/bin/sh', '-c', 'ls -laL ' + data.path + ' 2> /dev/null'], $
-              /noshell, files
-
- if(NOT keyword__set(files)) then return
- 
- w = where(strmid(files, 0, 1) EQ 'd')
-
- ndir = n_elements(w)
- dirs = strarr(ndir)
- for i=0, ndir-1 do $
-  begin
-;   words = strsplit(strcompress(files[w[i]]), ' ', /extract)
-   words = str_nsplit(strcompress(files[w[i]]), ' ')
-   nwords = n_elements(words)
-;   dirs[i] = words[8] + '/'
-   dirs[i] = words[nwords-1] + '/'
-  end
-
+ dirs = file_search(data.path + '/*', /test_dir)
+ dirs = str_flip(str_nnsplit(str_flip(dirs), '/'))
+ dirs = append_array('..', dirs) + '/' 
 
  ;-------------------------------
  ; set list widget

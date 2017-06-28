@@ -1,21 +1,21 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       xidl_argv
+;       bat_argv
 ;
 ; PURPOSE:
-;       Returns an argument from the xidl argument list. Arguments are expanded
+;       Returns a shell argument list. Arguments are expanded
 ;	according to standard shell rules.  "-" is used instead of "/" to set
 ;	a keyword to one.  Arrays are specified as comma-dilineated lists
 ;	with no white space.
 ;
 ;
 ; CATEGORY:
-;       XIDL
+;       BAT
 ;
 ;
 ; CALLING SEQUENCE:
-;       arg = xidl_argv(i)
+;       arg = bat_argv(i)
 ;
 ;
 ; ARGUMENTS:
@@ -39,12 +39,13 @@
 ;
 ;
 ; MODIFICATION HISTORY:
-;       Written by:     Spitale
+;       Adapted from xidl_argv by:     Spitale 6/2017
 ;
 ;-
 ;=============================================================================
-function xidl_argv, i
- common xidl_block, argv
+function bat_argv, i
+
+ argv = command_line_args()
 
  if(n_elements(argv) EQ 0) then return, ''
 

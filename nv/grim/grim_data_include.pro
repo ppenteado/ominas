@@ -16,7 +16,7 @@ end
 function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
            retain=retain, user_callbacks=user_callbacks, $
            user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, $
-           cursor_swap=cursor_swap, $
+           cursor_swap=cursor_swap, cmd=cmd, $
            path=path, save_path=save_path, load_path=load_path, fov=fov, clip=clip, $
            cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
            sun_trs=sun_trs, hide=hide, type=type, $
@@ -28,7 +28,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
-           render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets, $
+           render_sample=render_sample, render_pht_min=render_pht_min, $
            overlays=overlays, activate=activate
 @grim_block.include
 
@@ -290,8 +290,8 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
   grim_add_planes, grim_data, dd, $
      xrange=xrange, yrange=yrange, position=position, xtitle=xtitle, ytitle=ytitle, max=max, $
                     color=color, thick=thick, visibility=visibility, channel=channel, $
-                       render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets, $
-                          overlays=overlays
+                       render_sample=render_sample, render_pht_min=render_pht_min, $
+                          overlays=overlays, cmd=cmd
 
  ;----------------------
  ; common block
@@ -709,7 +709,7 @@ pro grim_sync_planes, grim_data, norefresh=norefresh
      if(_grim_data.n_planes NE 1) then $
       begin
        grim_jump_to_plane, _grim_data, pn, /nosync 
-       grim_refresh, _grim_data, /use_pixmap
+       grim_refresh, _grim_data
       end
   end
 

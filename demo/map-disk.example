@@ -13,8 +13,8 @@
 ;-------------------------------
 file = '~/casIss/1460/N1460002670_1.IMG'
 dd = dat_read(file, im)
-ctmod, top=top
-tvim, im, zoom=0.5, /order, /new, top=top
+ctmod
+tvim, im, zoom=0.5, /order, /new
 
 
 ;---------------------------------------

@@ -57,7 +57,6 @@ common spice_klist_block, klist_last, _inlines
    nset = n_elements(setlines)
    set = strcompress(strmid(setlines, 3, 1000), /remove_all)
    for i=0, nset-1 do setenv, set[i]
-;   for i=0, nset-1 do spawn, 'set ' + set[i]
    inlines = rm_list_item(inlines, wset, only='')
   end
 
