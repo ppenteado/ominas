@@ -561,7 +561,7 @@ echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
   echo "export OMINAS_RC=${OMINAS_RC}" >> $setting
 #fi
 echo "export DFLAG=${DFLAG}" >> $setting
-echo $ins_ominas_env_def >> $setting
+#echo $ins_ominas_env_def >> $setting
 #echo "export CAM_NFILTERS=256" >> $setting
 
 for ((d=0; d<6; d++));
@@ -582,6 +582,8 @@ do
           fi
         fi
 done
+echo $ins_ominas_env_def >> $setting
+
 for ((d=0; d<6; d++));
 do
         #echo "$d: ${insp[$d]}"
@@ -594,6 +596,7 @@ do
           echo "${ins[$d]}" >>${setting}
         fi
 done
+
 
 #make ominas script
 echo "#!/usr/bin/env bash" > ~/.ominas/ominas
