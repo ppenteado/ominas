@@ -717,5 +717,7 @@ pro grim_sync_planes, grim_data, norefresh=norefresh
 end
 ;=============================================================================
 
-
+pro grim_data_include
+a=!null
+end
 
