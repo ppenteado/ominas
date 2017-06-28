@@ -97,8 +97,8 @@ fi
 #  kernels.                                                                         #
 #-----------------------------------------------------------------------------------#
 
-if ! [ -z ${1+x} ]; then
-	pool=$1
+if ! [ -z ${NV_Generic_kernels_DATA+x} ]; then
+	pool=${NV_Generic_kernels_DATA}
 	if ! [ -d "${pool}/pck" ]; then pool="${pool}/kernels"; fi
 	GEN_SPICE_PCK=${pool}/pck/
 	export GEN_SPICE_PCK
