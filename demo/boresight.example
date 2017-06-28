@@ -23,7 +23,7 @@ file_wac = './data/w1354897340.1'
 dd_nac = dat_read(file_nac, im_nac)
 dd_wac = dat_read(file_wac, im_wac)
 
-ctmod, top=top
+ctmod
 tvim, im_nac, zoom=0.45, /order, /new
 w_nac = !d.window
 

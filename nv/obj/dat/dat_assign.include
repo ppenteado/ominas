@@ -9,6 +9,8 @@
  if(defined(nhist)) then dat_set_nhist, _xd, nhist, /noevent
  if(defined(min)) then dat_set_min, _xd, min, /noevent
  if(defined(max)) then dat_set_max, _xd, max, /noevent
+ if(defined(abmin)) then dat_set_min, _xd, min, /noevent, /abscissa
+ if(defined(abmax)) then dat_set_max, _xd, max, /noevent, /abscissa
  if(defined(maintain)) then dat_set_maintain, _xd, maintain, /noevent
  if(defined(header)) then dat_set_header, _xd, header, /noevent
  if(defined(filename)) then dat_set_filename, _xd, filename, /noevent

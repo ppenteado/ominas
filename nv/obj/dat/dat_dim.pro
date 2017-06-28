@@ -51,9 +51,10 @@ function dat_dim, dd, true=true, noevent=noevent
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
 
- if(NOT ptr_valid(_dd.dim_p)) then return, 0
+ w = where(_dd.dim NE 0)
+ if(w[0] EQ -1) then return, 0
 
- if(keyword_set(true) OR (NOT keyword_set(_dd.dim_fn))) then return, *_dd.dim_p
+ if(keyword_set(true) OR (NOT keyword_set(_dd.dim_fn))) then return, _dd.dim[w]
 
  return, call_function(_dd.dim_fn, dd, dat_dim_data(dd))
 end

@@ -107,6 +107,78 @@ end
 
 
 ;=============================================================================
+; grim_test_rgb
+;
+;=============================================================================
+function grim_test_rgb, grim_data, plane
+ planes = grim_get_plane(grim_data, /all)
+ w = where(planes.dd EQ plane.dd)
+ if(n_elements(w) GT 1) then return, 0
+ return, n_elements(dat_dim(plane.dd, /true) EQ 3)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_image
+;
+;=============================================================================
+function grim_get_image, grim_data, plane=plane, abscissa=abscissa, $
+   current=current, sample=sample, channel=channel, nd=nd
+
+ if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
+
+ dim = (dat_dim(plane.dd))[0:1]
+
+ ;--------------------------------------------------------------------
+ ; if rgb plane, then override offset to yield image corresponding
+ ; to specified channel
+ ;--------------------------------------------------------------------
+ if(grim_test_rgb(grim_data, plane)) then $
+  begin
+   true = 0
+   if(NOT keyword_set(channel)) then true = 1 $
+   else slice = channel
+  end
+
+ ;--------------------------------------------------------------------
+ ; return image
+ ;--------------------------------------------------------------------
+ return, dat_data(plane.dd, true=true, $
+          sample=sample, current=current, nd=nd, slice=slice, abscissa=abscissa)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_stretch_plane
+;
+;=============================================================================
+pro grim_stretch_plane, grim_data, planes
+
+ n = n_elements(planes)
+
+ if(n GT 1) then grim_print, 'Auto stretching all planes...'
+
+ for i=0, n-1 do $
+  begin
+   image = grim_get_image(grim_data, plane=planes[i], /current)
+
+   test = image_auto_stretch(bytscl(image), min=min, max=max)
+   planes[i].cmd.bottom = min
+   planes[i].cmd.top = max
+   grim_set_plane, grim_data, planes[i], pn=planes[i].pn
+  end
+
+ if(n GT 1) then  grim_print, 'Done', /append
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_plane_set_visible
 ;
 ;=============================================================================
@@ -249,7 +321,7 @@ pro grim_crop_plane, grim_data, plane
    size = [xxmax-xxmin+1, yymax-yymin+1]
    data_xy = gridgen(size, p0=[xxmin,yymin])
 
-   im = dat_data(plane.dd, sample=data_xy, /nd)
+   im = grim_get_image(grim_data, plane=plane, sample=data_xy, /nd)
    im = reform(im, size[0], size[1], /over)
 
    ;- - - - - - - - - - - - - - - - - - - - - - 
@@ -382,8 +454,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
                       xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
-                      render_sample=render_sample, render_pht_min=render_pht_min, data_offsets=data_offsets, $
-                      overlays=overlays
+                      render_sample=render_sample, render_pht_min=render_pht_min, $
+                      overlays=overlays, cmd=cmd0
 
   pns = 0
   MAX_OVERLAYS = 128
@@ -397,7 +469,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
   if(NOT keyword_set(hide)) then hide = grim_data.def_hide
   if(NOT keyword_set(filter)) then filter = grim_data.def_filter
   if(NOT keyword_set(visibility)) then visibility = 0
-  if(NOT keyword_set(data_offsets)) then data_offsets = lonarr(n_planes)
   if(NOT defined(render_pht_min)) then render_pht_min = 0.02
   if(NOT keyword_set(render_sample)) then render_sample = 1
 
@@ -457,7 +528,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 
 
   window, /free, /pix, xs=1, ys=1	; necessary to allocate color table
-  ctmod, top=top
+  ctmod
 
   ;---------------------
   ; planes
@@ -502,7 +573,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 		dradec		:	dblarr(1,3), $
 		max		:	double(max), $
 		t0		:	0d, $			; last cd time, $
-		data_offset	:	data_offsets[i], $	; offset in data array 
 		initial_overlays_p :	ptr_new(overlays), $
 
 	;---------------
@@ -658,8 +728,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
     ;--------------------------------------------
     ; create colormap
     ;--------------------------------------------
-    planes[pn].cmd = colormap_descriptor(data=planes[pn].pn, $
-                                n_colors=grim_n_colors(dat_typecode(planes[pn].dd)))
+    planes[pn].cmd = colormap_descriptor(data=planes[pn].pn, cmd0=cmd0, $
+                          n_colors=grim_n_colors(dat_typecode(planes[pn].dd)))
 
     ;--------------------------------------------
     ; create overlay arrays

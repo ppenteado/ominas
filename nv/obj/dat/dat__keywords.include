@@ -2,6 +2,8 @@
 	filename=filename, $
 	min=min, $
 	max=max, $
+	amin=amin, $
+	amax=amax, $
 	dim=dim, $
 	cache=cache, $
 	typecode=typecode, $

@@ -49,7 +49,7 @@ pro dat_set_gff, dd, gff, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- *_dd.gffp = gff
+ *(*_dd.dd0p).gffp = gff
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

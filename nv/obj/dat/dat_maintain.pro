@@ -47,8 +47,8 @@
 function dat_maintain, dd, noevent=noevent
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
- __dd = cor_dereference(dd)
- return, __dd.maintain
+ _dd = cor_dereference(dd)
+ return, (*_dd.dd0p).maintain
 end
 ;===========================================================================
 

@@ -116,7 +116,6 @@ function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
                         color=color, psym=psym, tlab=tlab, tshade=tshade, $
                         symsize=symsize, shade=shade, tfill=tfill, genre=genre, fast=fast
 
-
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
  grim_initial_overlays, grim_data, plane=plane
 
@@ -168,7 +167,20 @@ function grim_get_active_overlays, grim_data, plane=plane, type, $
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- active_indices = (inactive_indices = -1)
+ active_indices = -1
+
+
+ ;-------------------------------------------------------------------------
+ ; if initial overlays exist and have not yet been computed for this
+ ; plane and overlays are not to be initially activated, then there
+ ; are no active overlays.  In that case, only continue if indices for 
+ ; inactive overlays are requested.
+ ;-------------------------------------------------------------------------
+; if(NOT arg_present(inactive_indices)) then $
+;      if(keyword_set(plane.initial_overlays_p)) then $
+;                          if(NOT grim_data.activate) then return, 0
+
+ inactive_indices = -1
 
  ;-------------------------------------------
  ; determine which arrays to use
@@ -186,7 +198,6 @@ function grim_get_active_overlays, grim_data, plane=plane, type, $
 
  if(keyword_set(*plane.active_overlays_ptdp)) then $
   begin
-;;;;   w = nwhere(ptd, *plane.active_overlays_ptdp)
    w = nwhere(*plane.active_overlays_ptdp, ptd)
    ww = where(w NE -1)
    if(ww[0] NE -1) then $
@@ -740,7 +751,9 @@ pro grim_draw_user_overlays, grim_data, plane, inactive_color
  if(keyword_set(xmap)) then $
   begin
    xmap = bytscl(xmap, max=512)			;;;;;;;;;;;;;;;;
-   for i=1, 3 do tv, byte((fix(smooth(xmap[*,*,i-1],3)) + fix(tvrd(0,0, !d.x_size,!d.y_size, i)))<255), 0,0, i 
+   for i=1, 3 do $
+           tv, byte((fix(smooth(xmap[*,*,i-1],3)) + $
+                     fix(tvrd(0,0, !d.x_size,!d.y_size, i)))<255), 0,0, i 
   end
 
 end
@@ -1042,7 +1055,7 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
    ;----------------------------
    if(grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')) then $
     begin
-     image = dat_data(plane.dd, /current)
+     image = grim_get_image(grim_data, plane=plane, /current)
      outline_pts = image_outline(image)
      plots, outline_pts, psym=3, col=ctyellow()
 
@@ -1675,7 +1688,7 @@ pro grim_write_indexed_arrays, grim_data, plane, name, fname=fname
  else $
   begin
    ff = findfile(fname)
-   if(keyword_set(ff)) then spawn, 'rm -f ' + fname
+   if(keyword_set(ff)) then file_delete, fname, /quiet
   end
 
 end
@@ -3641,7 +3654,6 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
 
  ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, data=data) 
  fn = 'grim_compute_' + name
-
 
  ;--------------------------------------------------
  ; if the dependencies are given, then just update

@@ -49,7 +49,7 @@ pro dat_set_maintain, dd, maintain, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- _dd.maintain = maintain
+ (*_dd.dd0p).maintain = maintain
 
  if(maintain EQ 2) then dat_unload_data, _dd
 

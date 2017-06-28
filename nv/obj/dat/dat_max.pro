@@ -44,10 +44,12 @@
 ;	
 ;-
 ;=============================================================================
-function dat_max, dd, noevent=noevent
+function dat_max, dd, noevent=noevent, abscissa=abscissa
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
+
+ if(keyword_set(abscissa)) then return, _dd.abmax
  return, _dd.max
 end
 ;===========================================================================

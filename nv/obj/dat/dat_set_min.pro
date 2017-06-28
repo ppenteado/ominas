@@ -45,11 +45,12 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_set_min, dd, min, noevent=noevent
+pro dat_set_min, dd, min, noevent=noevent, abscissa=abscissa
 @core.include
  _dd = cor_dereference(dd)
 
- _dd.min = min
+ if(keyword_set(abscissa)) then _dd.abmin = min $
+ else _dd.min = min
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

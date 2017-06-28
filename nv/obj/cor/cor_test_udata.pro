@@ -51,6 +51,6 @@ function cor_test_udata, crd, name, noevent=noevent
  nv_notify, crd, type = 1, noevent=noevent
  _crd = cor_dereference(crd)
 
- return, _cor_test_udata, _crd, name
+ return, _cor_test_udata(_crd, name)
 end
 ;=============================================================================

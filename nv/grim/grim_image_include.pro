@@ -94,20 +94,6 @@ end
 
 
 ;=============================================================================
-; grim_test_rgb
-;
-;=============================================================================
-function grim_test_rgb, grim_data, plane
- planes = grim_get_plane(grim_data, /all)
- w = where(planes.dd EQ plane.dd)
- if(n_elements(w) GT 1) then return, 0
- return, n_elements(dat_dim(plane.dd, /true) EQ 3)
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_test_single_channel
 ;
 ;=============================================================================
@@ -285,18 +271,11 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
  im = (weight = 0)
  for i=0, nplanes-1 do $
   begin
-   offset = planes[i].data_offset
-
-   ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if rgb plane, then override offset to yield image corresponding
-   ; to specified channel
-   ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(grim_test_rgb(grim_data, planes[i])) then offset = channel*dim[0]*dim[1]
-
    ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
-   _im = dat_data(planes[i].dd, sample=data_xy, offset=offset, abscissa=grid)
+   _im = grim_get_image(grim_data, plane=planes[i], $
+                          channel=channel, sample=data_xy, abscissa=grid)
 
    ; - - - - - - - - - - - - - - -
    ; apply color map
@@ -530,12 +509,8 @@ pro grim_display_plot, grim_data, plane=plane, doffset=doffset, $
  planes = grim_visible_planes(grim_data, current=current, plane=plane)
  nplanes = n_elements(planes)
 
-
  for i=0, nplanes-1 do $
   begin
-; need to sample here instead of getting entire array...
-   yarr = dat_data(planes[i].dd, abscissa=xarr)
-
    ;---------------------------------------
    ; set view unless forced
    ;---------------------------------------
@@ -548,11 +523,11 @@ pro grim_display_plot, grim_data, plane=plane, doffset=doffset, $
 
      if(NOT keyword_set(xrange)) then $
        if((plane.xrange[0] NE 0) OR (plane.xrange[1] NE 0)) then xrange = plane.xrange $
-     else xrange = [min(xarr), max(xarr)]
+     else xrange = [dat_min(plane.dd, /ab), dat_max(plane.dd, /ab)]
 
      if(NOT keyword_set(yrange)) then $
        if((plane.yrange[0] NE 0) OR (plane.yrange[1] NE 0)) then yrange = plane.yrange $
-     else yrange = [min(yarr), max(yarr)]
+     else yrange = [dat_min(plane.dd), dat_max(plane.dd)]
 
      if(NOT keyword_set(position)) then $
        if((planes[i].position[0] NE 0) OR (planes[i].position[1] NE 0)) then position = planes[i].position $
@@ -561,18 +536,19 @@ pro grim_display_plot, grim_data, plane=plane, doffset=doffset, $
 
    parm = planes[i].parm
 
+
    ;-----------------------------------------------------------------------
    ; if /entire, set ranges so that entire image is displayed
    ;-----------------------------------------------------------------------
    if(keyword_set(entire)) then $
     begin 
-     xrange = [min(xarr), max(xarr)]
-     yrange = [min(yarr), max(yarr)]
+     xrange = [dat_min(plane.dd, /ab), dat_max(plane.dd, /ab)]
+     yrange = [dat_min(plane.dd), dat_max(plane.dd)]
     end
 
 
    ;---------------------
-   ; display plot(s)
+   ; set color
    ;---------------------
    if(NOT keyword_set(no_color)) then $
     begin
@@ -590,16 +566,44 @@ pro grim_display_plot, grim_data, plane=plane, doffset=doffset, $
      dy = doffset[1]
     end
 
-   if(i GT 0) then erase = 0
 
-   tvgr, wnum, xarr, yarr, xrange=xrange, yrange=yrange, no_wset=no_wset, $
+   ;---------------------------------------
+   ; set view
+   ;---------------------------------------
+; need to sample here instead of getting entire array...
+   if(i GT 0) then erase = 0
+   tvgr, wnum, 0, 0, xrange=xrange, yrange=yrange, no_wset=no_wset, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, position=position, dx=dx, dy=dy, $
        entire=entire, erase=erase, no_coord=no_coord, $
        xtitle=plane.xtitle, ytitle=plane.ytitle, $
-       title=plane.title, thick=parm.thick, nsum=parm.nsum, color=color, $
-       psym=parm.psym, symsize=parm.symsize;, nodraw=nodraw
+       title=plane.title, thick=parm.thick, nsum=parm.nsum
 
+
+   ;---------------------------------------
+   ; get data array
+   ;---------------------------------------
+
+   ;- - - - - - - - - - - - - - - - - - - - 
+   ; sampling
+   ;- - - - - - - - - - - - - - - - - - - - 
+   xdev = lindgen(1,!d.x_size)
+   nx = n_elements(xdev)
+   axis = [xdev, make_array(1,nx, val=0)]
+   xdat = transpose((convert_coord(/device, /to_data, axis))[0,*])
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; Alough this can greatly peed up the plotting, it is not ideal 
+   ; because it causes the full array to be read rather than just the 
+   ; samples needed to display it in the current view
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   yarr = dat_data(planes[i].dd, abscissa=xarr)
+   ydat = interpol(yarr, xarr, xdat)
+
+   ;---------------------
+   ; display plot(s)
+   ;---------------------
+   tvgr, wnum, xdat, ydat
   end
 
  ;----------------------------

@@ -48,7 +48,7 @@ function dat_gff, dd, noevent=noevent
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
- return, *_dd.gffp
+ return, *(*_dd.dd0p).gffp
 end
 ;===========================================================================
 

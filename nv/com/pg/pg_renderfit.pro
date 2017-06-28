@@ -51,7 +51,7 @@
 ; STATUS:
 ;	Some bugs.  One problem is that the current search grid wraps pixels
 ;	instead of truncating them.  This causes problems for images where
-;	a large body is not entirly ithing the FOV.
+;	a large body is not entirly within the FOV.
 ;
 ;
 ; NOTES:
@@ -68,7 +68,9 @@
 ;	
 ;-
 ;=============================================================================
-function pg_renderfit, dd, cd=cd, sund=sund, bx=bx, show=show
+function pg_renderfit, dd, cd=cd, sund=sund, bx=bx, show=show, fov=fov
+ 
+ if(NOT keyword_set(fov)) then fov = 2d
 
  ;------------------------------------ 
  ; get input image
@@ -78,15 +80,20 @@ function pg_renderfit, dd, cd=cd, sund=sund, bx=bx, show=show
  ;------------------------------------ 
  ; render scene
  ;------------------------------------ 
- dd0 = pg_render(cd=cd, sund=sund, bx=bx, show=show)
+ size0 = cam_size(cd)
+ size = size0 * fov
+ grid_pts = gridgen(size, p0=size0/2, /center, /rectangular)
+
+ dd0 = pg_render(cd=cd, sund=sund, bx=bx, show=show, image_ptd=grid_pts)
  im0 = dat_data(dd0)
 
  ;------------------------------------ 
  ; find offset
- ;------------------------------------ 
- dxy = image_offset(im0, im)
+ ;------------------------------------
+ dxy0 = image_offset(im0, im, dxy=(size-size0)/2)
+ dxy = dxy0 + grid_pts[*,0,0]
 
 
- return, dxy
+ return, -dxy
 end
 ;=============================================================================

@@ -22,14 +22,17 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	grnum:	GRIM window number.  If not given, the most recently accessed
-;		grim instance is used.
+;	arg:	GRIM window number.  Or GRIM data struture.  If not given, the 
+;		most recently accessed grim instance is used.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
 ;  INPUT:
+;	plane:	Grim plane structure; instead of giving pn.  Note all planes
+;		must belong to the same grim instance.
+;
 ;	pn:	Plane numer(s) to access.  If not given, then current plane
 ;		is used.
 ;
@@ -128,7 +131,7 @@
 ;	
 ;-
 ;=============================================================================
-pro ingrid, grnum, gd=_gd, $
+pro ingrid, arg, plane=planes, gd=_gd, $
          dd=_dd, cd=_cd, pd=_pd, rd=_rd, sd=_sd, std=_std, ard=_ard, sund=_sund, od=_od, $
          limb_ptd=_limb_ptd, ring_ptd=_ring_ptd, star_ptd=_star_ptd, station_ptd=_station_ptd, array_ptd=_array_ptd, term_ptd=_term_ptd, $
          plgrid_ptd=_plgrid_ptd, center_ptd=_center_ptd, object_ptd=_object_ptd, $
@@ -147,126 +150,127 @@ pro ingrid, grnum, gd=_gd, $
 				; repeated keywords with "active_" in front
 				; of their names.  That would be simpler.
 
+ arg_type = size(arg, /type)
+ if(arg_type EQ 8) then grim_data = arg $
+ else if(arg_type NE 0) then grnum = arg
+
  if(defined(grnum)) then $
                      grim_data = grim_get_data(grim_grnum_to_top(grnum)) $
  else grim_data = grim_get_data(/primary)
 
+ if(NOT keyword_set(grim_data)) then grim_data = grim_get_data(planes[0])
+
  _grnum = grim_data.grnum
 
- if(NOT defined(pn)) then pn = grim_data.pn
- if(pn LT 0) then pn = grim_data.pn
- if(pn[0] LT 0) then pn = grim_data.pn
- if(keyword_set(all)) then $
+ 
+ if(NOT keyword_set(planes)) then $
   begin
-   planes = grim_get_plane(grim_data, /all)
-   pn = planes.pn
+   if(keyword_set(all)) then planes = grim_get_plane(grim_data, /all) $
+   else planes = grim_get_plane(grim_data)
   end
+ nplanes = n_elements(planes)
 
- npn = n_elements(pn)
 
- for i=0, npn-1 do $
+ for i=0, nplanes-1 do $
   begin
-   plane = grim_get_plane(grim_data, pn=pn[i])
-   if(plane.pn NE -1) then $
-    begin
-     if(arg_present(_dd)) then dd = append_array(dd, plane.dd)
+   plane = planes[i]
+   if(arg_present(_dd)) then dd = append_array(dd, plane.dd)
 
-     if(arg_present(_cd)) then cd = append_array(cd, *plane.cd_p)
-     if(arg_present(_pd)) then pd = append_array(pd, tr(*plane.pd_p))
-     if(arg_present(_rd)) then rd = append_array(rd, tr(*plane.rd_p))
-     if(arg_present(_sd)) then sd = append_array(sd, tr(*plane.sd_p))
-     if(arg_present(_std)) then std = append_array(std, tr(*plane.std_p))
-     if(arg_present(_ard)) then ard = append_array(ard, tr(*plane.ard_p))
-     if(arg_present(_sund)) then sund = append_array(sund, *plane.sund_p)
-     if(arg_present(_od)) then od = append_array(od, *plane.od_p)
+   if(arg_present(_cd)) then cd = append_array(cd, *plane.cd_p)
+   if(arg_present(_pd)) then pd = append_array(pd, tr(*plane.pd_p))
+   if(arg_present(_rd)) then rd = append_array(rd, tr(*plane.rd_p))
+   if(arg_present(_sd)) then sd = append_array(sd, tr(*plane.sd_p))
+   if(arg_present(_std)) then std = append_array(std, tr(*plane.std_p))
+   if(arg_present(_ard)) then ard = append_array(ard, tr(*plane.ard_p))
+   if(arg_present(_sund)) then sund = append_array(sund, *plane.sund_p)
+   if(arg_present(_od)) then od = append_array(od, *plane.od_p)
 
-     if(arg_present(_active_pd)) then $
-        active_pd = append_array(active_pd, grim_get_active_xds(plane, 'planet'))
-     if(arg_present(_active_rd)) then $
-        active_rd = append_array(active_rd, grim_get_active_xds(plane, 'ring'))
-     if(arg_present(_active_sd)) then $
-        active_sd = append_array(active_sd, grim_get_active_xds(plane, 'star'))
-     if(arg_present(_active_std)) then $
-        active_std = append_array(active_std, grim_get_active_xds(plane, 'station'))
-     if(arg_present(_active_ard)) then $
-        active_ard = append_array(active_ard, grim_get_active_xds(plane, 'station'))
+   if(arg_present(_active_pd)) then $
+      active_pd = append_array(active_pd, grim_get_active_xds(plane, 'planet'))
+   if(arg_present(_active_rd)) then $
+      active_rd = append_array(active_rd, grim_get_active_xds(plane, 'ring'))
+   if(arg_present(_active_sd)) then $
+      active_sd = append_array(active_sd, grim_get_active_xds(plane, 'star'))
+   if(arg_present(_active_std)) then $
+      active_std = append_array(active_std, grim_get_active_xds(plane, 'station'))
+   if(arg_present(_active_ard)) then $
+      active_ard = append_array(active_ard, grim_get_active_xds(plane, 'station'))
 
-     if(arg_present(_active_limb_ptd)) then $
-        _active_limb_ptd = append_array(active_limb_ptd, $
-                          grim_get_active_overlays(grim_data, 'limb'))
-     if(arg_present(_active_ring_ptd)) then $
-        _active_ring_ptd = append_array(active_ring_ptd, $
-                          grim_get_active_overlays(grim_data, 'ring'))
-     if(arg_present(_active_star_ptd)) then $
-        _active_star_ptd = append_array(active_star_ptd, $
-                          grim_get_active_overlays(grim_data, 'star'))
-     if(arg_present(_active_term_ptd)) then $
-        _active_term_ptd = append_array(active_term_ptd, $
-                          grim_get_active_overlays(grim_data, 'terminator'))
-     if(arg_present(_active_plgrid_ptd)) then $
-        _active_plgrid_ptd = append_array(active_plgrid_ptd, $
-                          grim_get_active_overlays(grim_data, 'planet_grid'))
-     if(arg_present(_active_center_ptd)) then $
-        _active_center_ptd = append_array(active_center_ptd, $
-                          grim_get_active_overlays(grim_data, 'planet_center'))
-     if(arg_present(_active_shadow_ptd)) then $
-        _active_shadow_ptd = append_array(active_shadow_ptd, $
-                          grim_get_active_overlays(grim_data, 'shadow'))
-     if(arg_present(_active_reflection_ptd)) then $
-        _active_reflection_ptd = append_array(active_reflection_ptd, $
-                          grim_get_active_overlays(grim_data, 'reflection'))
-     if(arg_present(_active_station_ptd)) then $
-        _active_station_ptd = append_array(active_station_ptd, $
-                          grim_get_active_overlays(grim_data, 'station'))
-     if(arg_present(_active_array_ptd)) then $
-        _active_array_ptd = append_array(active_array_ptd, $
-                          grim_get_active_overlays(grim_data, 'array'))
+   if(arg_present(_active_limb_ptd)) then $
+      _active_limb_ptd = append_array(active_limb_ptd, $
+   			grim_get_active_overlays(grim_data, 'limb'))
+   if(arg_present(_active_ring_ptd)) then $
+      _active_ring_ptd = append_array(active_ring_ptd, $
+   			grim_get_active_overlays(grim_data, 'ring'))
+   if(arg_present(_active_star_ptd)) then $
+      _active_star_ptd = append_array(active_star_ptd, $
+   			grim_get_active_overlays(grim_data, 'star'))
+   if(arg_present(_active_term_ptd)) then $
+      _active_term_ptd = append_array(active_term_ptd, $
+   			grim_get_active_overlays(grim_data, 'terminator'))
+   if(arg_present(_active_plgrid_ptd)) then $
+      _active_plgrid_ptd = append_array(active_plgrid_ptd, $
+   			grim_get_active_overlays(grim_data, 'planet_grid'))
+   if(arg_present(_active_center_ptd)) then $
+      _active_center_ptd = append_array(active_center_ptd, $
+   			grim_get_active_overlays(grim_data, 'planet_center'))
+   if(arg_present(_active_shadow_ptd)) then $
+      _active_shadow_ptd = append_array(active_shadow_ptd, $
+   			grim_get_active_overlays(grim_data, 'shadow'))
+   if(arg_present(_active_reflection_ptd)) then $
+      _active_reflection_ptd = append_array(active_reflection_ptd, $
+   			grim_get_active_overlays(grim_data, 'reflection'))
+   if(arg_present(_active_station_ptd)) then $
+      _active_station_ptd = append_array(active_station_ptd, $
+   			grim_get_active_overlays(grim_data, 'station'))
+   if(arg_present(_active_array_ptd)) then $
+      _active_array_ptd = append_array(active_array_ptd, $
+   			grim_get_active_overlays(grim_data, 'array'))
 
-     if(arg_present(_active_xd)) then $
-                    active_xd = append_array(active_xd, *plane.active_xd_p)
+   if(arg_present(_active_xd)) then $
+   		  active_xd = append_array(active_xd, *plane.active_xd_p)
 
-     if(arg_present(_limb_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'limb'))) then $
-                  limb_ptd = append_array(limb_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'limb')))
-     if(arg_present(_ring_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'ring'))) then $
-                  ring_ptd = append_array(ring_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'ring')))
-     if(arg_present(_star_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'star'))) then $
-                  star_ptd = append_array(star_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'star'))) 
-     if(arg_present(_term_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'terminator'))) then $
-                  term_ptd = append_array(term_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'terminator'))) 
-     if(arg_present(_plgrid_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_grid'))) then $
-                  plgrid_ptd = append_array(plgrid_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_grid'))) 
-     if(arg_present(_center_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_center'))) then $
-                  center_ptd = append_array(center_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_center'))) 
-     if(arg_present(_shadow_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'shadow'))) then $
-                  shadow_ptd = append_array(shadow_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'shadow'))) 
-     if(arg_present(_reflection_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'reflection'))) then $
-                  reflection_ptd = append_array(reflection_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'reflection'))) 
-     if(arg_present(_object_ptd)) then $
-        object_ptd = append_array(object_ptd, grim_cat_points(grim_data))
-     if(arg_present(_station_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'station'))) then $
-                  station_ptd = append_array(station_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'station'))) 
-     if(arg_present(_array_ptd)) then $
-      if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'array'))) then $
-                  array_ptd = append_array(array_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'array'))) 
+   if(arg_present(_limb_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'limb'))) then $
+   		limb_ptd = append_array(limb_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'limb')))
+   if(arg_present(_ring_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'ring'))) then $
+   		ring_ptd = append_array(ring_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'ring')))
+   if(arg_present(_star_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'star'))) then $
+   		star_ptd = append_array(star_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'star'))) 
+   if(arg_present(_term_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'terminator'))) then $
+   		term_ptd = append_array(term_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'terminator'))) 
+   if(arg_present(_plgrid_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_grid'))) then $
+   		plgrid_ptd = append_array(plgrid_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_grid'))) 
+   if(arg_present(_center_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_center'))) then $
+   		center_ptd = append_array(center_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_center'))) 
+   if(arg_present(_shadow_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'shadow'))) then $
+   		shadow_ptd = append_array(shadow_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'shadow'))) 
+   if(arg_present(_reflection_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'reflection'))) then $
+   		reflection_ptd = append_array(reflection_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'reflection'))) 
+   if(arg_present(_object_ptd)) then $
+      object_ptd = append_array(object_ptd, grim_cat_points(grim_data))
+   if(arg_present(_station_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'station'))) then $
+   		station_ptd = append_array(station_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'station'))) 
+   if(arg_present(_array_ptd)) then $
+    if(ptr_valid(grim_get_overlay_ptdp(grim_data, plane=plane, 'array'))) then $
+   		array_ptd = append_array(array_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'array'))) 
 
-     if(arg_present(_tie_ptd)) then $
-                    tie_ptd = append_array(tie_ptd, *plane.tiepoint_ptdp)
+   if(arg_present(_tie_ptd)) then $
+   		  tie_ptd = append_array(tie_ptd, *plane.tiepoint_ptdp)
 
-     if(arg_present(_curve_ptd)) then $
-                  curve_ptd = append_array(curve_ptd, *plane.curve_ptdp)
-    end
+   if(arg_present(_curve_ptd)) then $
+   		curve_ptd = append_array(curve_ptd, *plane.curve_ptdp)
   end
  
- if(npn NE 1) then $
+ if(nplanes NE 1) then $
   begin
    if(keyword_set(pd)) then pd = transpose(pd)
    if(keyword_set(rd)) then rd = transpose(rd)

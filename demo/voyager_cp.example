@@ -27,8 +27,8 @@ zoom = 0.75
 
 dd = dat_read('./data/c3440346.img', im, label)
 
-ctmod, top=top
-tvim, im, zoom=zoom, /order, /new, top=top
+ctmod
+tvim, im, zoom=zoom, /order, /new
 
 ;========================================================================
 ; Get a camera descriptor.  

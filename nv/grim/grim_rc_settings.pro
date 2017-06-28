@@ -40,7 +40,7 @@ end
 ; grim_rc_selections
 ;
 ;=============================================================================
-pro grim_rc_selections, keywords, value_ps, select, $
+pro grim_rc_selections, keywords, value_ps, keyvals, $
     cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
     str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select 
 
@@ -49,13 +49,13 @@ pro grim_rc_selections, keywords, value_ps, select, $
  ;------------------------------------------------------------
  if(keyword_set(select)) then $
   begin
-   cam_select = struct_extract(select, 'CAM_')
-   plt_select = struct_extract(select, 'PLT_')
-   rng_select = struct_extract(select, 'RNG_')
-   str_select = struct_extract(select, 'STR_')
-   sun_select = struct_extract(select, 'SUN_')
-   stn_select = struct_extract(select, 'STN_')
-   arr_select = struct_extract(select, 'ARR_')
+   cam_select = struct_extract(keyvals, 'CAM_')
+   plt_select = struct_extract(keyvals, 'PLT_')
+   rng_select = struct_extract(keyvals, 'RNG_')
+   str_select = struct_extract(keyvals, 'STR_')
+   sun_select = struct_extract(keyvals, 'SUN_')
+   stn_select = struct_extract(keyvals, 'STN_')
+   arr_select = struct_extract(keyvals, 'ARR_')
   end
 
  ;------------------------------------------------------------------------
@@ -82,8 +82,11 @@ end
 ; grim_rc_settings
 ;
 ;=============================================================================
-pro grim_rc_settings, rcfile=rcfile, select=select, $
-	cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select, $
+pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
+	cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
+	str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
+	sun_select=sun_select, $
+	cmd=cmd, $
 	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, npoints=npoints, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
@@ -96,7 +99,7 @@ pro grim_rc_settings, rcfile=rcfile, select=select, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
         render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
-        delay_overlays=delay_overlays
+        delay_overlays=delay_overlays, auto_stretch=auto_stretch
 	
 
  ;----------------------------------------------------
@@ -135,12 +138,19 @@ pro grim_rc_settings, rcfile=rcfile, select=select, $
    end
  keywords = strupcase(keywords)
 
+
  ;----------------------------------------------------
  ; handle descriptor selection keywords
  ;----------------------------------------------------
- grim_rc_selections, keywords, value_ps, select, $
+ grim_rc_selections, keywords, value_ps, keyvals, $
     cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
     str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select
+
+
+ ;----------------------------------------------------
+ ; handle colormap keywords
+ ;----------------------------------------------------
+ cmd = struct_extract(keyvals, 'CMD_')
 
 
  ;----------------------------------------------------
@@ -160,6 +170,11 @@ pro grim_rc_settings, rcfile=rcfile, select=select, $
                         _hide = grim_rc_value(keywords, value_ps, 'HIDE') $
  else _hide = hide
  if(keyword_set(_hide)) then hide = fix(_hide)
+
+ if(n_elements(auto_stretch) EQ 0) then $
+                        _auto_stretch = grim_rc_value(keywords, value_ps, 'AUTO_STRETCH') $
+ else _auto_stretch = auto_stretch
+ if(keyword_set(_auto_stretch)) then auto_stretch = fix(_auto_stretch)
 
  if(n_elements(xzero) EQ 0) then $
                         _xzero = grim_rc_value(keywords, value_ps, 'XZERO') $

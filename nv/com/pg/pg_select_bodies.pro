@@ -32,9 +32,9 @@ function pg_select_bodies, dd, bx, od=od, select
    mpix = theta/cam_scale
   end
 
- ;------------------------------------------------------------------------ 
+ ;----------------------------------------------------------------------------- 
  ; fov -- select all bodies that fall within this many fovs (+/- 10%)
- ;------------------------------------------------------------------------
+ ;-----------------------------------------------------------------------------
  fov = struct_get(select, 'fov')
  if(keyword_set(fov)) then $
   if(keyword_set(cd)) then $

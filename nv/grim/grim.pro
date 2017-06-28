@@ -26,9 +26,21 @@
 ; 			data descriptors (object)
 ;			file specification (string)
 ; 			grnum (scalar)
-; 			image (2d array)
 ; 			plot (1d array)
+; 			image (2d array)
 ; 			cube (3d array)
+;
+;	Plots are displayed as graphs whose abscissa are the array index, unless
+;	an abscissa is present in the data descriptor.  Many functions are not 
+;	available in this mode.  
+;
+;	Cubes are handled as multiple image planes unless /rgb is used 
+;	(see below).  All grim planes will contain the same data array,
+;	but display only data ranges corresponding to one channel of the cube.
+;	For /rgb (assuming the cube has three channels), the data are placed 
+;	on a single image plane with each cube channel assigned the R, G, or B 
+;	color channel.
+;	
 ;
 ;  OUTPUT: NONE
 ;
@@ -37,11 +49,15 @@
 ;  INPUT:
 ;	Descriptor Keywords
 ;	-------------------
-;	The following keywords replace objects already maintained by GRIM.  For 
+;	The following inputs replace objects already maintained by GRIM.  For 
 ;	the case of a single plane, all given descriptors are placed in that 
-;	plane.  In that case, only one cd, od, or sund are allowed.  For multiple
-;	planes, descriptors are assigned to planes by matching their generic
-;	decsriptor dd fields to the data descriptor for each plane.
+;	plane.  In that case, only one cd, od, or sund are allowed.  For a cube,
+;	cd and od must have either one element, or the same number of elements 
+;	as the number of channels in the cube, and are assigned one-to-one to 
+;	the grim planes.  In this case, all other decriptors are assigned to all 
+;	planes.  For multiple images, descriptors are assigned to planes by 
+;	matching their generic decsriptor dd fields (or assoc_dd if given) to 
+;	the data descriptor for each plane.  
 ;
 ;	 cd:	Replaces the current camera descriptor.  This may also be 
 ;		a map descriptor, in which case some of GRIM's functions 
@@ -81,6 +97,18 @@
 ;	Descriptor select keywords (see pg_get_*) are specified using the
 ;	standard prefix corresponding to the descriptor type.  For example, 
 ;	the fov keyword to pg_get_planets would be given to grim as plt_fov.  
+;
+;
+;	Initial Colormap Keywords
+;	-------------------------
+;	The colormap structure (see colormap_descriptor__define) can be
+;	be initialized via keywords prefied with 'cmd_', e.g., 'cmd_shade'.
+;	In addition, the following keywords apply to the initial color map:
+;
+;	*auto_stretch:
+;		If set, the color table for each plane is automatically
+;		stretched.  This is identical to using the 'Auto' button
+;		on on the grim color tool.
 ;
 ;
 ;	Translator Keywords
@@ -225,7 +253,7 @@
 ;	 no_erase: 
 ;		If set, GRIM does not erase the draw window.  When called.
 ;
-;	*rgb: If set, grim interprets a 3-plane cube as a 3-channel image
+;	*rgb:	If set, grim interprets a 3-plane cube as a 3-channel image
 ;               to be displayed on a single plane.
 ;
 ;	*channel: 
@@ -382,9 +410,34 @@
 ;		will cause all of Saturn's rings to load because they are
 ;		required in computing the limb points (for hiding).
 ;
+;		Different results may be obtained using translator keywords, 
+;		because those keywords are evaluated at the translator level.  
+;		For example:
+;
+;			overlays='ring:fn54'
+;
+;		may result in no ring, while:
+;
+;			overlays='ring', trs_rd='name=fn54'
+;
+;		would be more likely to yield a ring.  In the former example,
+;		the specified name is compared against whatever default ring
+;		descriptors are returned by the tranlators, while in the latter
+;		case, the 'name' translator keyword is compared against all
+;		rings available to the translator.
+; 
+;
 ;	*delay_overlays:
 ;		If set, initial overlays (see 'overlays' above) are not computed 
-;		until the first time a plane is made current.
+;		until the first time they are accessed.  This option can greatly
+;		improve performance in cases where a large number of image planes
+;		are loaded with initial overlays, particularly if it is not
+;		expected that all planes will necesarily be viewed or otherwise
+;		accessed.  Typically this option will cause overlays to be
+;		computed only for the initially visible planes, with other
+;		planes loading overlays only as they are made visible.  However, 
+;		there may be other cirumstances that can cause initial overlays 
+;		to be loaded without actually viewing a plane.
 ; 
 ;	*activate: 
 ;		If set, inital overlay are activated.
@@ -962,27 +1015,6 @@ end
 
 
 ;=============================================================================
-; grim_get_cmds
-;
-;=============================================================================
-function grim_get_cmds, grim_data, all=all
-
- if(keyword_set(all)) then $
-  begin
-   planes = grim_get_plane(grim_data, /all)
-   cmds = reform(planes.cmd)
-   cmds.data = planes.pn
-   return, cmds
-  end
-
- plane = grim_get_plane(grim_data)
- return, plane.cmd
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_set_ct
 ;
 ;=============================================================================
@@ -1415,64 +1447,10 @@ end
 ; grim_modify_colors
 ;
 ;=============================================================================
-pro grim_modify_colors_callback, cmd, cb_data, all=all
-
- grim_data = grim_get_data(/primary)
- if(NOT keyword_set(grim_data)) then return
-
- ctmod, visual=visual
-
- ;--------------------------------------
- ; detect color table change
- ;--------------------------------------
- tvlct, r, g, b, /get
- w = where([r, g, b] - $
-           [*grim_data.tv_rp, *grim_data.tv_gp, *grim_data.tv_bp] NE 0)
- if((w[0] NE -1) AND (visual NE 24)) then $
-  begin
-   *grim_data.tv_rp = r
-   *grim_data.tv_gp = g
-   *grim_data.tv_bp = b
-   return
-  end
-
- ;--------------------------------------
- ; update cmd
- ;--------------------------------------
- if(keyword_set(all)) then $
-  begin
-   _cmds = grim_get_cmds(grim_data, /all)
-   n = n_elements(_cmds)
-   for i=0, n-1 do $
-    begin
-     pn = _cmds[i].data
-     plane = grim_get_plane(grim_data, pn=pn)
-     plane.cmd = cmd
-     plane.cmd.data = pn
-     grim_set_plane, grim_data, plane, pn=pn
-    end
-  end $
- else $
-  begin
-   pn = cmd.data
-   plane = grim_get_plane(grim_data, pn=pn)
-   plane.cmd = cmd
-   grim_set_plane, grim_data, plane, pn=pn
-  end
-
- grim_set_data, grim_data, grim_data.base
- grim_refresh, grim_data, /no_erase
-end
-;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 pro grim_modify_colors, grim_data
 
  ctmod, top=top
-
- plane = grim_get_plane(grim_data)
-
- cmds = grim_get_cmds(grim_data)
- grim_colortool, cmds, plane.dd, callback='grim_modify_colors_callback', cb_data=0
-
+ grim_colortool
 
 end
 ;=============================================================================
@@ -1566,7 +1544,7 @@ pro grim_write_user_points, grim_data, plane, fname=_fname
  else $
   begin
    ff = file_search(fname)
-   if(keyword_set(ff)) then spawn, 'rm -f ' + fname
+   if(keyword_set(ff)) then file_delete, fname, /quiet
   end
 
 end
@@ -1602,7 +1580,7 @@ pro grim_write_mask, grim_data, plane, fname=fname
  else $
   begin
    ff = file_search(fname)
-   if(keyword_set(ff)) then spawn, 'rm -f ' + fname
+   if(keyword_set(ff)) then file_delete, fname, /quiet
   end
 
 end
@@ -2289,7 +2267,7 @@ pro grim_update_xy_label, grim_data, plane, x, y
    p = round(p)
    if((p[0] GE 0) AND (p[0] LT dim[0]) AND $
       (p[1] GE 0) AND (p[1] LT dim[1])) then $
- 				 dn = dat_data(plane.dd, sample=p, /nd)
+               dn = grim_get_image(grim_data, plane=plane, sample=p, /nd)
   end
 
  if(size(dn, /type) EQ 1) then dn = fix(dn)
@@ -2720,7 +2698,6 @@ pro grim_menu_open_as_rgb_event, event
 ; look at render event to transfer overlays, etc
 ; dd = nv_clone(plane.dd)
 ; dat_set_data, dd, cube
-; dat_set_data_offset, dd, 0
  dd = dat_create_descriptors(1, data=cube)
  dat_set_filetype, dd, dat_filetype(plane.dd)
 
@@ -6882,7 +6859,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Reverses the current display order. 
+;	Opens grim_colortool. 
 ;
 ;
 ; CATEGORY:
@@ -7848,7 +7825,7 @@ pro grim_crop_event, event
  struct = tag_names(event, /struct)
  if(struct EQ 'WIDGET_TRACKING') then $
   begin
-   if(event.enter) then grim_print, grim_data, 'crop data to view'
+   if(event.enter) then grim_print, grim_data, 'Crop data to view'
    return
   end
 
@@ -9595,11 +9572,11 @@ end
 
 
 ;=============================================================================
-; grim_cube_dim_fn
+; grim_rgb_dim_fn
 ;
 ;
 ;=============================================================================
-function grim_cube_dim_fn, dd, dat
+function grim_rgb_dim_fn, dd, dat
  return, (dat_dim(dd, /true))[0:1]
 end
 ;=============================================================================
@@ -9678,7 +9655,7 @@ end
 ;
 ;=============================================================================
 pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
-               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb, offsets=offsets
+               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
 
  ;--------------------------------------------
  ; build data descriptors list 
@@ -9710,19 +9687,12 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
    if((ndim LT 3) OR keyword_set(rgb)) then $
     begin
      dd = append_array(dd, _dd[i])
-     offsets = append_array(offsets, [0])
-
-if(keyword_set(rgb)) then dat_set_dim_fn, dd, 'grim_cube_dim_fn'
+     if(keyword_set(rgb)) then dat_set_dim_fn, dd, 'grim_rgb_dim_fn'
     end $ 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; 3-D arrays are either rgb or multi-plane
+   ; 3-D arrays are multi-plane if not rgb
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   else $
-    begin
-     dd = append_array(dd, make_array(dim[2], val=_dd[i]))
-     offsets = append_array(offsets, lindgen(dim[2])*dim[0]*dim[1])
-dat_set_dim_fn, dd, 'grim_cube_dim_fn'
-    end 
+   else dd = append_array(dd, dat_slices(_dd[i]))
   end
 
 
@@ -9775,7 +9745,7 @@ end
 ; grim
 ;
 ;=============================================================================
-pro grim, arg1, arg2, gd=gd, _extra=select, $
+pro grim, arg1, arg2, gd=gd, _extra=keyvals, $
         cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od, $
 	new=new, xsize=xsize, ysize=ysize, $
 	default=default, previous=previous, restore=restore, activate=activate, $
@@ -9796,7 +9766,7 @@ pro grim, arg1, arg2, gd=gd, _extra=select, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
-	position=position, delay_overlays=delay_overlays, $
+	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
         xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
@@ -9812,8 +9782,10 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  grim_constants
 
- grim_rc_settings, rcfile='.ominas/grimrc', select=select, $
-	cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select, $
+ grim_rc_settings, rcfile='.ominas/grimrc', keyvals=keyvals, $
+	cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
+	str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
+	sun_select=sun_select, cmd=cmd, $
 	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
@@ -9827,7 +9799,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
 	visibility=visibility, channel=channel, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, rgb=rgb, $
-	delay_overlays=delay_overlays
+	delay_overlays=delay_overlays, auto_stretch=auto_stretch
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
 
@@ -9907,7 +9879,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  ; resolve arguments
  ;=========================================================
- grim_get_args, arg1, arg2, dd=dd, offsets=data_offsets, grnum=grnum, type=type, $
+ grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, $
              nhist=nhist, maintain=maintain, compress=compress, $
              extensions=extensions, rgb=rgb
 
@@ -9965,11 +9937,11 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
        cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, sun_trs=sun_trs, arr_trs=arr_trs, $
        cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select, $
-       color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
+       cmd=cmd, color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        symsize=symsize, nhist=nhist, maintain=maintain, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
-       visibility=visibility, channel=channel, data_offsets=data_offsets, $
+       visibility=visibility, channel=channel, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
        render_pht_min=render_pht_min, overlays=overlays, activate=activate)
 
@@ -10044,6 +10016,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;  If assoc_dd given as argument, use those instead.  
  ;   In that case, if a map descriptor given, associate cd with dd
  ;   instead of assoc_dd since dd will be the corresponding map.
+ ;  If a cube, cd and od are assigned to planes one-to-one, and all other
+ ;  descriptors are assigned to all planes
  ;======================================================================
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(pd)) then pd = dat_gd(gd, dd=dd, /pd)
@@ -10057,7 +10031,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  grim_data = grim_get_data()
  planes = grim_get_plane(grim_data, /all)
  nplanes = n_elements(planes)
-;ncd = n_elements(cd)
 
  for i=0, nplanes-1 do $
   begin
@@ -10087,16 +10060,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
      grim_add_descriptor, grim_data, planes[i].cd_p, cd[i], /one, assoc_dd=_assoc_dd
     end
   end
-
-
- ;----------------------------------------------
- ; compute any initial overlays
- ;----------------------------------------------
- if(keyword_set(overlays)) then $
-    if(NOT keyword_set(delay_overlays)) then $
-                        grim_initial_overlays, grim_data, plane=_plane
-
-
 
 
  ;=========================================================
@@ -10229,8 +10192,23 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
 
  ;-------------------------
+ ; initial color stretch
+ ;-------------------------
+ if(keyword_set(auto_stretch)) then grim_stretch_plane, grim_data, planes
+
+ ;-------------------------
  ; draw initial image
  ;-------------------------
  grim_refresh, grim_data, no_erase=no_erase
+
+
+ ;----------------------------------------------
+ ; compute any initial overlays
+ ;----------------------------------------------
+ if(keyword_set(overlays)) then $
+    if(NOT keyword_set(delay_overlays)) then $
+                        grim_initial_overlays, grim_data, plane=_plane
+
+
 end
 ;=============================================================================

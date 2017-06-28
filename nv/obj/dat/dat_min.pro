@@ -44,10 +44,12 @@
 ;	
 ;-
 ;=============================================================================
-function dat_min, dd, noevent=noevent
+function dat_min, dd, noevent=noevent, abscissa=abscissa
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
+
+ if(keyword_set(abscissa)) then return, _dd.abmin
  return, _dd.min
 end
 ;===========================================================================
