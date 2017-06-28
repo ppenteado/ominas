@@ -277,9 +277,9 @@ stop
 ; First-cut Automatic repointing
 ; ------------------------------
 ;
-; Refine the pointing of the spacecraft by using pg_farfit, which searches
-; the whole image for a pattern matching the edges calculated using the 
-; descriptors::
+;   Refine the pointing of the spacecraft by using pg_farfit, which searches
+;   the whole image for a pattern matching the edges calculated using the 
+;   descriptors::
 ;
 ;     edge_ptd = pg_edges(dd, edge=10)                ; Scan image for edges.
 ;     pg_draw, edge_ptd
@@ -375,7 +375,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 
 
 
-;=========================================================================
+;-------------------------------------------------------------------------
 ;+
 ; Scan the edge to find the limb and use it to correct the pointing using least-squares.
 ; --------------------------------------------------------------------------------------
@@ -390,8 +390,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;     cvscan_ptd=pg_cvscan(dd, gd=gd, [limb_ptd[0]], edge=30, width=80, $
 ;         model=[make_array(nlimb,val=ptr_new(edge_model_nav_limb(zero=lzero)))], $
 ;         mzero=[make_array(nlimb,val=lzero)] )
-;
-;
+;     
 ;     tvim, im
 ;     pg_draw, cvscan_ptd
 ;     
