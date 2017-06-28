@@ -613,7 +613,7 @@ done
 
 #make ominas script
 echo "#!/usr/bin/env bash" > ~/.ominas/ominas
-head -1 ${idlbin} > ~/.ominas/ominas
+#head -1 ${idlbin} > ~/.ominas/ominas
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominas
 if [ -e "/opt/X11/lib/flat_namespace/" ]; then
@@ -631,7 +631,7 @@ chmod a+rx ~/.ominas/ominas
 #make ominasde script
 
 echo "#!/usr/bin/env bash" > ~/.ominas/ominasde
-head -1 ${idlbin} > ~/.ominas/ominasde
+#head -1 ${idlbin} > ~/.ominas/ominasde
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominasde
 if [ -e "/opt/X11/lib/flat_namespace/" ]; then
