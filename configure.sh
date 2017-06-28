@@ -174,6 +174,19 @@ if [ ! -d "$HOME/.ominas" ]; then
 else
   printf "~/.ominas directory already exists\n"
 fi
+if [ ! -d "$HOME/.ominas/config" ]; then
+  printf "Creating ~/.ominas/config directory\n"
+  mkdir $HOME/.ominas/config
+  cp -av config/ominas_env_def.sh $HOME/.ominas/config/
+  cp -av config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
+  for mis in  cas dawn gll vgr 
+  do
+    cp -av config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
+  done
+else
+  printf "~/.ominas/config directory already exists\n"
+fi
+
 OMINAS_RC=${HOME}/.ominas
 if [ ! -d "$HOME/ominas_data" ]; then
   printf "Creating ~/ominas_data directory\n"
@@ -382,12 +395,12 @@ function pkins()
                 if [[ "$2" == "$no" ]]; then
                   printf "Settiing OMINAS Core...\n"
                 fi
-                pstr=". ${OMINAS_DIR}/config/$1"
+                pstr=". ${OMINAS_RC}/config/$1"
                 if [[ "$3" == "coreu" ]] ; then
                   if [ ${ominas_auto} == 1 ] ; then
                     return 1
                   fi
-#                pstr=". ${OMINAS_DIR}/config/$1"
+#                pstr=". ${OMINAS_RC}/config/$1"
                   if grep -q $1 ${setting}; then
                     if [ ${ominas_auto_u} != 1 ] ; then
                       read -rp "Would you like to uninstall the OMINAS core (y/n)[n]? " ans
@@ -462,7 +475,7 @@ function pkins()
                           unset ins[${4}]
                           return 1
                         fi
-                        pstr="${dstr}. ${OMINAS_DIR}/config/$1 ${datapath}"
+                        pstr="${dstr}. ${OMINAS_RC}/config/$1 ${datapath}"
                       else
                         read -rp "Do you need to download the $3 kernels from PDS? [y]" ansk
                         if [[ -z "${ansk// }" ]]; then
@@ -480,7 +493,7 @@ function pkins()
                               unset ins[${4}]
                               return 1
                             fi
-                            pstr="${dstr}. ${OMINAS_DIR}/config/$1 ${datapath}";;
+                            pstr="${dstr}. ${OMINAS_RC}/config/$1 ${datapath}";;
                           *)
 			    read -rp "Please enter the location of your existing $3 kernel pool: [~/ominas_data/${3}]" datapath
                             if [ -z ${datapath} ] ; then
@@ -491,11 +504,11 @@ function pkins()
 			    	#setdir $2
                                 echo ""
 			    fi
-			    pstr="${dstr}. ${OMINAS_DIR}/config/$1 ${datapath}";;
+			    pstr="${dstr}. ${OMINAS_RC}/config/$1 ${datapath}";;
                         esac
                       fi
 #		*)
-#			pstr="${dstr}. ${OMINAS_DIR}/config/$1"
+#			pstr="${dstr}. ${OMINAS_RC}/config/$1"
 #	  esac
           ins[${4}]=${pstr}
           insp[${4}]=${datapath}
@@ -719,6 +732,7 @@ case $ans in
 				#ext "icy.tar"
                                 echo "Extracting Icy source files..."
                                 tar -xzf "icy.tar.Z"
+                                rm icy.tar.Z
 				cd icy
 				icypath=$PWD
                                 echo "Compiling Icy..."
@@ -774,7 +788,7 @@ fi
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
 corest=`pkst ${OMINAS_DIR}/config/tab/`
-grep -q ". ${OMINAS_DIR}/config/ominas_env_def.sh" ${setting}
+grep -q ". ${OMINAS_RC}/config/ominas_env_def.sh" ${setting}
 corest=$?
 if [ ${corest} == 0 ] ; then
   corest=${yes}
@@ -792,16 +806,16 @@ fi
 declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
 declare -a insts=("" "" "" "" "" "")
-insts[2]=". ${OMINAS_DIR}/config/ominas_env_strcat.sh tycho2"
-insts[3]=". ${OMINAS_DIR}/config/ominas_env_strcat.sh sao"
-insts[4]=". ${OMINAS_DIR}/config/ominas_env_strcat.sh gsc"
-insts[5]=". ${OMINAS_DIR}/config/ominas_env_strcat.sh ucac4"
+insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
+insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
+insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
+insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
 for ((d=0; d<${#mis[@]}; d++));
 do
 	#mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
-        if grep -q "${OMINAS_DIR}/config/ominas_env_${mis[$d]}" $setting; then
+        if grep -q "${OMINAS_RC}/config/ominas_env_${mis[$d]}" $setting; then
           mstatus[$d]=$yes
-          tmp=`grep "${OMINAS_DIR}/config/ominas_env_${mis[$d]}" $setting`
+          tmp=`grep "${OMINAS_RC}/config/ominas_env_${mis[$d]}" $setting`
           read -r -a tmps <<< ${tmp}
           insp[$d]=${tmps[2]}
           ins[$d]=${tmp}
@@ -1089,7 +1103,7 @@ if [ -e "$setting" ]; then
 fi
 
 
-grep -q ". ${OMINAS_DIR}/config/ominas_env_def.sh" ${setting}
+grep -q ". ${OMINAS_RC}/config/ominas_env_def.sh" ${setting}
 corest=$?
 if [ ${corest} == 0 ] ; then
   corest=${yes}
