@@ -42,6 +42,7 @@
 ;-
 ;=============================================================================
 function cor_init_state
+@nv_block.common
 
  state = {core_state_struct}
  

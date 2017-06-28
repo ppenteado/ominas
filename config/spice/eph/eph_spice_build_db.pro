@@ -198,9 +198,11 @@ function eph_spice_build_db, _kpath, type, nocheck=nocheck
  ;---------------------------------------------------------
  ; compare database files with found files
  ;---------------------------------------------------------
+ new_db = 1
  if(NOT keyword_set(db_files)) then wnew = lindgen(n_all) $
  else $
   begin
+   new_db = 0
    jj = value_locate(db_files, all_files)        ; find all_files within db_files
    kk = value_locate(all_files, db_files)        ; find db_files within all_files
 
@@ -248,8 +250,22 @@ function eph_spice_build_db, _kpath, type, nocheck=nocheck
  n_new = n_elements(wnew)
  if(n_new GT 0) then $
   begin
+
+   verb = 'Updating' & explanation = ''
+   if(new_db) then $
+    begin
+     verb = 'Creating'
+     explanation = $
+        ['This database expedites the search for the appropriate kernels.', $
+         'It is only updated when kernels are added or deleted from the kernel', $
+         'directory.  The initial creation may take a minute or two.']
+    end
+
+   verb = new_db ? 'Creating' : 'Updating'
+   nv_message, /con, verb + ' ' + strupcase(type) + ' kernel database...', $
+    explanation=explanation
+
    new_files = all_files[wnew]
-   nv_message, /con, 'Updating ' + strupcase(type) + ' kernel database...'
 
    ;---------------------------------------------------
    ; read timestamps files
