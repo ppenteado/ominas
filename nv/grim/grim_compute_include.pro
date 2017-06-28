@@ -920,7 +920,9 @@ function grim_shade_ring_grid, data, ptd
 end
 ;===============================================================================
 
-
+pro grim_compute_include
+a=!null
+end
 
 
 

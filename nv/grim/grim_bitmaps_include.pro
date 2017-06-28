@@ -1154,5 +1154,7 @@ function grim_guideline_bitmap
 end
 ;=============================================================================
 
-
+pro grim_bitmaps_include
+a=!null
+end
 

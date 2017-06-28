@@ -1184,5 +1184,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
 end
 ;=============================================================================
 
-
+pro grim_image_include
+a=!null
+end
 

@@ -473,3 +473,6 @@ function grim_compare, x1, x2
 end
 ;=============================================================================
 
+pro grim_util_include
+a=!null
+end

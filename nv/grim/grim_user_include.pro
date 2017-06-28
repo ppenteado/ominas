@@ -519,5 +519,7 @@ pro grim_invert_active_user_overlays, plane
 end
 ;=============================================================================
 
-
+pro grim_user_include
+a=!null
+end
 

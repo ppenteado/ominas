@@ -676,5 +676,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 end
 ;=============================================================================
 
-
+pro grim_planes_include
+a=!null
+end
 

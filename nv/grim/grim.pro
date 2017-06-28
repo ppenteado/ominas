@@ -753,15 +753,15 @@
 ;-
 ;=============================================================================
 
-@grim_bitmaps.include
-@grim_util.include
-@grim_planes.include
-@grim_data.include
-@grim_user.include
-@grim_compute.include
-@grim_overlays.include
-@grim_descriptors.include
-@grim_image.include
+@grim_bitmaps_include.pro
+@grim_util_include.pro
+@grim_planes_include.pro
+@grim_data_include.pro
+@grim_user_include.pro
+@grim_compute_include.pro
+@grim_overlays_include.pro
+@grim_descriptors_include.pro
+@grim_image_include.pro
 
 ;=============================================================================
 ; grim_constants
