@@ -44,7 +44,6 @@ pro strcat_get_inputs, dd, env, key, $
 
  nbright = long(tr_keyword_value(dd, 'nbright'))
 
-
  ;---------------------------------------------------------
  ; Star catalog path
  ;---------------------------------------------------------
