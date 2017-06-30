@@ -1,4 +1,4 @@
-pro ominas_paths_remove
+pro ominas_paths_remove,orc=orc
 compile_opt idl2,logical_predicate
 print,'Checking to see if deletions are necessary in IDL paths...'
 path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
@@ -23,7 +23,7 @@ if odir then begin
   endif
   if cdir then begin
     if getenv('IDL_PATH') then begin
-      openw,lun,'idlpathro.sh',/get_lun
+      openw,lun,orc+'/idlpath.sh',/get_lun
       printf,lun,'export IDL_PATH="'+np+'"'
       free_lun,lun
       print,'OMINAS path removed from IDL_PATH'
@@ -38,7 +38,7 @@ if xdir then begin
   if nwc then begin
     np=strjoin(dps[wc],':')
     if getenv('IDL_PATH') then begin
-      openw,lun,'idlpathro.sh',/get_lun,/append
+      openw,lun,orc+'/idlpath.sh',/get_lun,/append
       printf,lun,'export IDL_PATH="'+np+'"'
       free_lun,lun
       print,'OMINAS path removed from IDL_PATH'
