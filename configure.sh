@@ -92,7 +92,7 @@ test $DIR != $PWD &&
 	cd $DIR;
 	cdflag=true)
 
-trap `/bin/rm -f paths.pro; test $cdflag && (cd $cwd)` \
+trap `test $cdflag && (cd $cwd)` \
     EXIT
 
 # SETTINGS FILE DETECTION -----------------------------------------------#
@@ -177,11 +177,11 @@ fi
 if [ ! -d "$HOME/.ominas/config" ]; then
   printf "Creating ~/.ominas/config directory\n"
   mkdir $HOME/.ominas/config
-  cp -av config/ominas_env_def.sh $HOME/.ominas/config/
-  cp -av config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
+  cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
+  cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
   for mis in  cas dawn gll vgr 
   do
-    cp -av config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
+    cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
   done
 else
   printf "~/.ominas/config directory already exists\n"
@@ -199,6 +199,7 @@ if [ ! -e ${setting} ]; then
   echo "#!/usr/bin/env bash" > ${setting} 
 fi
 if [ -e "${setting}" ]; then
+  rm -f ${osetting}
   cp -av ${setting} ${osetting}
   ins_ominas_env_def=`grep "ominas_env_def\.sh" ${setting}` 
 else
@@ -557,6 +558,7 @@ function writesetting() {
 
 echo "writing "$setting
 if [ -e "$setting" ]; then
+  rm -f ${osetting}
   cp -av $setting $osetting
 else
   touch $osetting
@@ -732,7 +734,7 @@ case $ans in
 				#ext "icy.tar"
                                 echo "Extracting Icy source files..."
                                 tar -xzf "icy.tar.Z"
-                                rm icy.tar.Z
+                                rm -f icy.tar.Z
 				cd icy
 				icypath=$PWD
                                 echo "Compiling Icy..."
@@ -784,6 +786,8 @@ fi
 if [ -e "$setting" ]; then
   . $setting
 fi
+
+export OMINAS_DIR=$DIR
 
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
@@ -1029,8 +1033,6 @@ done
 
 done
 
-XIDL_DIR=$OMINAS_DIR/util/xidl/
-
 
 test "$1" == ".*c.*" &&
 for f in ./ominas_env_*.sh
@@ -1051,29 +1053,30 @@ done
 #else
 #  icyflag=false
 #fi
-cat <<IDLCMD >paths.pro
-flag='$icyflag'
-path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
-;IF STRPOS(path, '$icypath') EQ -1 AND flag EQ 'true' THEN path=path+':+$icypath/lib/'
-IF STRPOS(path, '$OMINAS_DIR') EQ -1 THEN path=path+':+$OMINAS_DIR'
-IF STRPOS(path, '$XIDL_DIR') EQ -1 THEN path=path+':+$XIDL_DIR'
-if getenv('IDL_PATH') then begin &\$ 
-  openw,lun,'idlpath.sh',/get_lun &\$ 
-  printf,lun,'export IDL_PATH="'+path+'"' &\$ 
-  free_lun,lun &\$ 
-endif else PREF_SET, 'IDL_PATH', path, /COMMIT
-dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PATH')
-;IF STRPOS(dlm_path, '$icypath') EQ -1 AND flag EQ 'true' THEN dlm_path=dlm_path+':+$icypath/lib/'
-;if getenv('IDL_DLM_PATH') then begin &\$
-;  openw,lun,'idlpath.sh',/get_lun,/append &\$ 
-;  printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"' &\$ 
-;  free_lun,lun &\$ 
-;endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
-PRINT, '$OMINAS_DIR added to IDL_PATH'
-!path+=':$OMINAS_DIR/util/:$OMINAS_DIR/util/downloader/'
-idlastro_download,/auto
-EXIT
-IDLCMD
+#cat <<IDLCMD >paths.pro
+#flag='$icyflag'
+#path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
+#;IF STRPOS(path, '$icypath') EQ -1 AND flag EQ 'true' THEN path=path+':+$icypath/lib/'
+#IF STRPOS(path, '/home/spitale/ominas') EQ -1 THEN begin &$
+# path=path+':+/home/spitale/ominas' &$
+# if getenv('IDL_PATH') then begin &$ 
+#   openw,lun,'idlpath.sh',/get_lun &$ 
+#   printf,lun,'export IDL_PATH="'+path+'"' &$ 
+#   free_lun,lun &$ 
+# endif else PREF_SET, 'IDL_PATH', path, /COMMIT &$
+#endif else file_delete, 'idlpath.sh'
+#dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PATH')
+#;IF STRPOS(dlm_path, '$icypath') EQ -1 AND flag EQ 'true' THEN dlm_path=dlm_path+':+$icypath/lib/'
+#;if getenv('IDL_DLM_PATH') then begin &\$
+#;  openw,lun,'idlpath.sh',/get_lun,/append &\$ 
+#;  printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"' &\$ 
+#;  free_lun,lun &\$ 
+#;endif else PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
+#PRINT, '$OMINAS_DIR added to IDL_PATH'
+#!path+=':$OMINAS_DIR/util/:$OMINAS_DIR/util/downloader/'
+#idlastro_download,/auto
+#EXIT
+#IDLCMD
 
 #if [ "$IDL_DIR" = "" ]; then
 #        idl=`which idl`
@@ -1116,16 +1119,16 @@ if [ "${corest}" == "${yes}" ]; then
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}'"
   if [ -e idlpath.sh ]; then
     cat idlpath.sh >> $idlpathfile
-    rm idlpath.sh
+    rm -f idlpath.sh
   fi
 else
   #export OMINAS_DIR=''
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',''"
 fi
-rm paths.pro
+#rm -f paths.pro
 if [ -e idlpathr.sh ]; then
   #cat idlpathr.sh >> $idlpathfile
-  rm idlpathr.sh
+  rm -f idlpathr.sh
 fi
 
 if [ ! -z ${IDL_PATH+x} ]; then
