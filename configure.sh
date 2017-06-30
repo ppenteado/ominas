@@ -733,10 +733,10 @@ case $ans in
                                 echo "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" "~/ominas_data/icy.tar.Z"
                                 #curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" > ~/ominas_data/icy.tar.Z
                                 ldir=`eval echo ~/ominas_data/`
-                                ./pp_wget "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" --localdir=${ldir}
+                                ./pp_wget "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" --localdir=${OMINAS_TMP}
                                 owd=$PWD
 				#cd ..
-                                cd ~/ominas_data/
+                                cd ${OMINAS_TMP} #~/ominas_data/
 				cdflag=true
 				#ext "icy.tar.Z"
 				#ext "icy.tar"
