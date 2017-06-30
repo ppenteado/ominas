@@ -581,6 +581,7 @@ echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
   echo "export OMINAS_DATA=${OMINAS_DATA}" >> ${setting}
   echo "export OMINAS_RC=${OMINAS_RC}" >> ${setting}
   echo "export OMINAS_TMP=${OMINAS_TMP}" >> ${setting}
+  echo "if [ ! -w ${OMINAS_TMP} ]; then mkdir -p ${OMINAS_TMP}; fi" >> ${setting}
 #fi
 echo "export DFLAG=${DFLAG}" >> $setting
 #echo $ins_ominas_env_def >> $setting
@@ -867,7 +868,7 @@ export ominas_icyst
 
 OMINAS_TMP=`$idlbin -e "print,filepath('_${USER}_ominas',/tmp)" 2> /dev/null`
 #OMINAS_TMP="${OMINAS_RC}/tmp"
-if [ ! -w ${OMINAS_TMP} ]; then
+if [ ! -w "${OMINAS_TMP}" ]; then
   mkdir -p ${OMINAS_TMP}
 fi
 echo "OMINAS_TMP=${OMINAS_TMP}"
