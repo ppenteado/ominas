@@ -1,16 +1,17 @@
-Useful OMINAS aliases					Spitale; 5/2005
---------------------
- This directory contains IDL batch files that allow the user to run some
- OMINAS programs directly from the unix command line.  Arguments are passed
- through a utility called xidl and the batch files are run as follows:
+OMINAS batch files
+------------------
+ OMINAS provides several IDL batch files that allow the user to run some
+ OMINAS programs directly from the unix command line.  The batch files are 
+ run as follows:
 
- % csh [xidl directory]/xidl.csh ominas [name].bat [args]
+ % ominas <name>.bat -args [args]
 
- The user will likely wish to create the following aliases:
+ The user will likely wish to create the following aliases (or let the
+ installer do it):
 
- alias xidl '[xidl directory]/xidl.csh'
- alias grim 'xidl grim.bat'
- etc.
+	alias grim              'idl grim.bat -args'
+	alias brim              'idl brim.bat -args'
+	alias rim               'idl rim.bat -args'
 
  Command-line arguments are separated into direct arguments and keyword-value
  pairs.  Keyword-value pairs are designed to parse like IDL keyword arguments:
@@ -39,13 +40,13 @@ Useful OMINAS aliases					Spitale; 5/2005
   1) To open a group of images in grim and ovlerlay saturn's limb and 
      terminator, type:
 
-     % grim 'N1489*.IMG' over=limbs:saturn,terms:saturn
+     % grim 'N1489*.IMG' over=limb:saturn,term:saturn
 
 
   2) Same as above, except reading the filenames from a file and different
      view parameters:
 
-     % grim files.txt@ over=limbs:saturn,terms:saturn z=0.5 /order
+     % grim files.txt@ over=limb:saturn,term:saturn z=0.5 /order
 
 
  See each batch file for a complete description of its usage.

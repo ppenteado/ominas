@@ -37,7 +37,7 @@ Data objects
 			     / b0 --> longitude = 0
 
 
- -  position vector
+ - position vector
 	The position vector is inherited from BODY.  It gives the position of
 	the star center with respect to the inertial coordinate system.
 
