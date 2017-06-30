@@ -58,4 +58,12 @@ Data objects
 
 
 
+Coordinate Transformation Variations
+------------------------------------
+Methods are provided to transform between adjacent coordinate systems, e.g., 
+inertial<-->body, body<-->radec.  The basic methods transform pure vectors (i.e.,
+they perform rotations).  However, two alternate forms are provided to transform
+position and velocity vectors.  Those variants include a translation in addition
+to the rotation.  They are identical; separate methods are provided for clarity.
+
 

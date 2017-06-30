@@ -1,4 +1,0 @@
-OMINAS Command Interfaces
-========================
-
-At present, there is a single OMINAS command interface, called PG.

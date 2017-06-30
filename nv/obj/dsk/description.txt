@@ -6,8 +6,6 @@ DISK Object Class
  edges are keplarian ellipses, but this may be generalized in the future.  
  It is an immediate subclass of SOLID.
 
-[[discuss frame_bd]]
-
 
 Coordinate systems
 ------------------
@@ -41,6 +39,11 @@ Data objects
 			       /        b1
 			      /
 			     / b0 -> periapse
+
+ - frame descriptor
+	DISK parameters involving out-of-plane require a BODY descriptor to 
+	establish the reference node, implemented as the 'frame_bd' keyword
+	argument to the reevant methods.
 
 
  - position vector

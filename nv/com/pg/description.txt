@@ -1,5 +1,5 @@
 PG User Interface to OMINAS
-==========================
+===========================
  PG is a user interface to OMINAS that is based around the IDL command line.  It 
  is intended as a low-level, command-based interface providing the greatest 
  amount of flexibility at the expense of some amount of user-friendliness.  As 
@@ -32,7 +32,8 @@ function pg_example, gd=gd, cd=cd, gbx=gbx
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
- pgs_gd, gd, cd=cd, gbx=gbx
+ if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
 
 
  ;-----------------------------------
@@ -46,9 +47,9 @@ function pg_example, gd=gd, cd=cd, gbx=gbx
  ;---------------------------------------------------------
  ; perform some operation for each object for all times
  ;---------------------------------------------------------
- result_ps = replicate({pg_points_struct}, n_objects)	; points struct's for
-							;  result
- for i=0, n_objects-1 do $				; loop over objects
+ result_ptd = objarr(n_objects)			; points descriptors for
+						;  result
+ for i=0, n_objects-1 do $			; loop over objects
   begin
 
 
@@ -56,29 +57,26 @@ function pg_example, gd=gd, cd=cd, gbx=gbx
                i.e., do something with cd and gbx[i]
 
 
-   result_ps[i] = $					; store the result
-          pgs_set_points( result_ps[i], $
-		points = image_points, $
-		vectors = inertial_pts )
+   result_ptd[i] = pnt_create_descriptors(name = cor_name(gbx[i]), $
+                          desc=desc, $
+                          gd={gbx:gbx[i], cd:cd[0]}, $
+                          assoc_xd = gbx[i], $
+                          points = points, $
+                          flags = flags, $
+                          vectors = inertial_pts)	; store the result
   end
 
 
- return, result_ps
+ return, result_ptd
 end
 ;=============================================================================
 
 
- The arguments to this program consist of one or more object descriptors, a
- camera descriptor, and a 'generic descriptor'.  By convention, these arguments
- appear as keywords in the argument list.  The program file is prepended by a
- documentation header, which is based on the file:
-
-	 $OMINAS_DIR/util/exd/exd_template.txt.  
-
- The format of this template should be followed as closely as possible.  
- $OMINAS_DIR/doc_ominas.bat can be used to extract the documentation from the 
- file and bind it with documentation for other programs.
-
+ The arguments to this program consist of one or more object descriptors (in this
+ case GLOBEs), a camera descriptor, and a 'generic descriptor'.  By convention, 
+ these arguments appear as keywords in the argument list.  The program file is 
+ prepended by a documentation header, which can be parsed and included in the
+ OMINAS documentation.  
 
  Descriptor Arguments
 
@@ -88,25 +86,22 @@ end
   example, the object descriptor argument is gbx, meaning a descriptor of any
   subclass of GLOBE.  Naming conventions for other descriptor arguments are 
   discussed below.  The output of the above program is an array of 
-  pg_points_struct (see below), one for each given object descriptor (gbx in 
-  this example).  The array of image points associated with each pg_points_struct 
+  POINT objets (see below), one for each given object descriptor (gbx in 
+  this example).  The array of image points associated with each POINT 
   will have dimensions (2,nv,nt), and the inertial vectors (if there are any) 
   will have dimensions (nv,3,nt), where nv is the number of vectors or points 
   and nt is the number of timesteps (see the object library description for 
-  more detail).  Dealing with multiple timesteps can be a pain; don't worry 
-  about it unless you really want to.
+  more detail).  
 
   For some PG programs, there may be additional object descriptor arguments. 
-  For example, pg_limb accepts an argument describing the object whose 
+  For example, PG_LIMB accepts an argument describing the object whose 
   limb is being computed as well as an argument describing the observer
-  with respect to which the limb is being computed.  In that case, the output
-  array of points structures is two-dimensional with element [i,j] corresponding
-  to the limb of object i as seen from observer j.  Note also that for purposes
+  with respect to which the limb is being computed.  Note that for purposes
   of computing the result, the observer is not in general the same as the
   camera, although that is the default.  If, for example, a star descriptor is
   given as the observer argument, then the result is a terminator.  This
   multi-application ability is highly desirable and is a by-product of the 
-  object-oriented structure of the NV object library. 
+  object-oriented structure of the OMINAS object library. 
 
   It is conventional for a PG program of this type to accept a single camera
   descriptor, which describes the transformations necessary to compute image
@@ -119,7 +114,7 @@ end
   types of imaging descriptors in the future without altering the PG code.
 
 
- Generic Descriptor
+ Generic Descriptors
 
   All PG programs that accept object descriptors as arguments also accept a
   structure called a generic descriptor.  A generic descriptor is a structure
@@ -129,116 +124,56 @@ end
   The program does not care about any other fields that might be contained in
   the generic descriptor.  The descriptor keywords are used only if no generic
   descriptor is given, or if a particular descriptor is not present in the
-  generic descriptor.  The intent is to reduce the number of parameters to each
-  program.  For convenience, the routine pgs_gd is provided for dereferencing
-  generic descriptor fields.
+  generic descriptor.  The generic descriptor is usefu for reduceing the number 
+  of parameters to each program when calling from the command line.  
 
+  The generic descriptor is also a means for storing all of the geometry 
+  describing a scene.  The PG_GET_* programs each add their descriptors to the
+  generic descriptor stored in the data descriptor, so the scene information 
+  is always available.  The data descriptor is also added to the generic 
+  descriptor in each geometry descriptor.
 
- Descriptor Naming Conventions
-
-  The following naming convention is used for descriptor arguments to all
-  PG programs, as well as generic descriptor tag names:
-
-	gd  :	Generic descriptor.
-	od  :	Observer descriptor.
-	cd  :	CAMERA descriptor.  Some programs which accept a camera
-		descriptor will also accept a map descriptor for this argument.
-	md  :	MAP descriptor.
-	pd  :	PLANET descriptor.
-	rd  :	RING descriptor.
-	sd  :	STAR descriptor.
-	bd  :	BODY descriptor.
-	gbd :	GLOBE descriptor.
-	dkd :	DISK descriptor.
-	crd :	CORE descriptor.
-	sund:	STAR descriptor for the sun or other illumination source.
-	bx  :	Descriptor for arbitrary subclass of BODY.
-	gbx :	Descriptor for arbitrary subclass of GLOBE.
-	dkx :	Descriptor for arbitrary subclass of DISK.
-
-
-
- Points Structure
-
-  The points structure, pg_points_struct, is used to pass data points and
-  associated information between PG programs.  A single points structure
-  contains an array of image points and their corresponding inertial vectors, if
-  applicable.  In addition, there is a flag and an array of arbitrary user data
-  for each point.
-
-  The fields of the points structure are private and are not accessed
-  directly by PG programs.  A number of routines are provided for this purpose,
-  the most basic being pgs_points and pgs_set_points.  pgs_points takes a single
-  points structure as input and return arrays of image points, inertial vectors,
-  flags, and user data.  pgs_set_points takes a single points structure and
-  arrays of image points, inertial vectors, flags, and user data as input and
-  returns a new points structure.  The calls are as follows:
-
-	test_ps = pgs_set_points(test_ps, $
-	                         points=points, $
-	                         vectors=vectors, $
-	                         flags=flags, $
-	                         data=data, $
-	                         tags=tags)
-
-	pgs_points, test_ps, points=points, $
-	                     vectors=vectors, $
-	                     flags=flags, $
-	                     data=data, $
-	                     tags=tags
-
-  The points array is (2,nv,nt) and the vectors array is (nv,3,nt), where nv is
-  the number of points or vectors and nt is the number of timesteps.  There is
-  a one-to-one correspondence between image points and inertial vectors.
-
-  The flags array is long (nv,nt), with one flag word for each point. 
-  This allows for 32 1-bit flags per point.  The flag masks are defined in
-  pgs_include.pro.  Currently, the only flag mask is PGS_INVISIBLE_MASK.
-
-  The data array and tags are determined by the program.  Generally, the data
-  array is (nv,nd) or (nv,nt,nd), where nd is the number of different
-  data values per point.  The tags array is generally a string array (nd), 
-  whose purpose is to allow other programs to find these output values
-  without requiring the user to deal with long argument lists.
-
-  There is no special routine for creating points structures.  As shown in 
-  the example above, an array of points structures can be created using the
-  IDL replicate function:
-
-		test_ps = replicate({pg_points_struct}, n).
-
+  Finally, the generic descriptor provides a means for associating a set of 
+  descriptors with a given data set.  For example, when multiple data descriptors
+  are input to PG_GET_CAMERAS, there is no constraint on the ordering of the
+  output camera descriptors.  Those output descriptors may be matched to their
+  corresponding data descritors by looking at their generic dscriptors.
 
 
 Display Issues
 --------------
- PG provides a routine, pg_draw, that accesses the points structure and
- displays the image points using the IDL plots routine in data coordinates. 
- However, if desired, the user may also dereference the points structure
- manually using pg_points or pgs_points and use plots directly.
-
- The most basic way of displaying images in OMINAS is to use the tvim program, 
- which is supplied as part of the utilities package.  tvim displays images 
- using IDL's tvscl routine, but also maintains a corresponding data coordinate 
- system, which allows pg_draw or plots to overlay points correctly.  Moreover, 
- the two routines tvmove and tvzoom can be used to manipulate the display 
- parameters.  See the the tvim documentation for more information.
-
+ The most basic way of displaying images in OMINAS is to use the TVIM program, 
+ which is supplied as part of the utilities package.  TVIM displays images 
+ using IDL's TVSCL routine, but it additionally maintains a data coordinate 
+ system that allows points arrays (i.e., 2 x nv xnt arrays) to be plotted 
+ correctly using PLOTS.  PG also provides a program, PG_DRAW, that displays 
+ either point arrays or POINT objects.  Images and plots ma also be displayed 
+ and manipulated using GRIM, the graphical interface to ominas.  
+ 
 
 Manipulating Object Descriptors
 -------------------------------
  PG provides routines for obtaining various objects from the object library. 
- The routines are named pg_get_[]s, where [] is the name of the object class.
- For example, pg_get_cameras obtains camera descriptors.  These routines allow
- all or some the of fields of the object descriptor to be overridden. 
- Parameters that are not overridden are obtained from the translators using
- nv_get_value.  Similarly, PG provides routines named pg_set_[]s, to output object descriptors
- through the translators using nv_set_value.  
+ The routines are named PG_GET_<class>s, where <class> is the name of the object 
+ class.  For example, PG_GET_CAMERAS obtains camera descriptors.  These routines 
+ allow all or some the of fields of the object descriptor to be overridden. 
+ Parameters that are not overridden are obtained via the translators using
+ DAT_GET_VALUE.  Similarly, PG provides routines named PG_SET_<class>s, to output
+ object descriptors through the translators using DAT_SET_VALUE.  
 
- The user should ALWAYS use these routines to obtain descriptor information.
- To obtain data from a new source (say, a new star catalog), you should write
- a translator for that source and put its name in the translators table (see
- nv_description.txt).
+ The PG_GET/SET programs are the means by which the PG library isolates data
+ analysis code from geometry sources via the DAT_GET/SET_VALUE mechanism, which
+ was the foremost motivation for bothering to write OMINAS.  Therefore, the user 
+ should ALWAYS, NO EXCEPTIONS use these routines to obtain geometry descriptors.  
+ To obtain data from a new source (say, a new star catalog), you should write a 
+ translator for that source and put its name in the translators table 
+ (see dat/description.txt).
 
 
-
-
+Error handling
+--------------
+ Error handling in OMINAS is done via NV_MESSAGE.  By default, NV_MESSAGE 
+ halts execution and prints a caller-supplied message, along with the name of
+ the calling program.  An expanded explanation may be provided, and various
+ levels of versbosity may be specified to control the priority of warning 
+ messages. 
