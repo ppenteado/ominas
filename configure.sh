@@ -415,6 +415,7 @@ function pkins()
                     case $ans in
                     [Yy]*)
                           $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_remove,orc='${OMINAS_RC}'"
+                          . "${OMINAS_RC}/idlpath.sh"
                           pstr="unset NV_TRANSLATORS"
                           unset NV_TRANSLATORS;;
                           #corest=${no};;
@@ -690,9 +691,10 @@ if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
               removeall=0;;
            esac
            $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/') & ominas_icy_remove,all=${removeall},orc='${OMINAS_RC}' & exit"
-           if [ -e idlpathr.sh ]; then 
-             source idlpathr.sh
-           fi
+           . "${OMINAS_RC}/idlpath.sh"
+#           if [ -e idlpathr.sh ]; then 
+#             source idlpathr.sh
+#           fi
            ominas_icyst=0
            icypath=''
            return 1;; 
@@ -1133,6 +1135,7 @@ fi
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
+  . "${OMINAS_RC}/idlpath.sh"
 #  if [ -e idlpath.sh ]; then
 #    cat idlpath.sh >> $idlpathfile
 #    rm -f idlpath.sh
@@ -1140,6 +1143,7 @@ if [ "${corest}" == "${yes}" ]; then
 else
   #export OMINAS_DIR=''
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
+  . "${OMINAS_RC}/idlpath.sh"
 fi
 #rm -f paths.pro
 #if [ -e idlpathr.sh ]; then
