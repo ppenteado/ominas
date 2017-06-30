@@ -1,19 +1,12 @@
-OMINAS Geometry Library
-=======================
+OMINAS Object Library
+=====================
 
  The OMINAS object library implements an object-oriented description of various
  geometrical objects to be used by higher level programs.  A specific
  object, e.g., "CAMERA", is built as a subclass of a more general object, like
- "BODY". Information about a particular object is stored in a structure 
+ "BODY". Information about a particular object is stored in an IDL object 
  referred to as an object descriptor (e.g., camera descriptor, planet
- descriptor).  The object descriptor may only be accessed directly by
- subroutines known as that class's "methods".  Higher level routines must use
- the methods to access the information in the structure.  This setup provides
- modularity and isolates the library code, making it easier to modify without
- breaking existing high level programs.  It also ensures consistency among the
- various fields in the structure.  Another advantage with using an object-
- oriented approach is that the functionality of a given class can be 
- automatically applied to any of its subclasses.
+ descriptor).  
 
  One of the primary drivers in the object library is speed.  Unless carefully
  written, IDL code can be extremely slow.  Routines in the object library use
@@ -28,20 +21,48 @@ OMINAS Geometry Library
  the IDL object type was relatively new, so structures offered a more stable 
  data type, allowing OMINAS to remain backward compatible to IDL 5.3.  
 
- In the current implementation of OMINAS, the object descriptor is a pointer
- to a structure.  This allows different programs to operate on the same 
- physical descriptor, but it forces the object library routines to 
- perform a loop to dereference an array of descriptors (i.e., convert between
- arrays of pointers and arrays of structures).  The dereferencing is performed 
- using the nv_dereference and nv_rereference routines.  Object library routines 
- typically perform that conversion once on the inputs, and then again on the 
- outputs.  In between, they operate directly on the object structures.
+ In the current implementation of OMINAS, the object descriptor is a true IDL 
+ object.  This allows various programs to operate on the same 
+ stack object, but it forces the object library routines to perform a loop to 
+ dereference an array of descriptors (i.e., convert between
+ arrays of pointers and arrays of structures), so that internal operations can
+ be performed efficiently.  The dereferencing is performed using the 
+ nv_dereference and nv_rereference routines.  Object methods typically perform 
+ that conversion once on the inputs, and then again on the outputs.  In between, 
+ they operate directly on the object structures.
  
- The primary drawback with OMINAS' object scheme is that it is left to the 
+ Although the object library is based on IDL objects, the methods are implemented 
+ as regular IDL procedures and functions rather than object methods because IDL
+ object methods cannot operate on arrays of objects.  In other words, in the 
+ call "xd.method()", xd must be a scalar.  That constraint is too restrictive
+ for OMINAS because it forces external loops to be used, preventing more
+ effiecient internal vectorized operations.  Also, it would force the user to 
+ write loops on the command line.  For example:
+
+ 	IDL> for i=0, n_elements(xd)-1 do print, xd.name()
+
+			vs
+
+ 	IDL> print, cor_name(xd)
+
+ The obvious drawback with OMINAS' method scheme is that it is left to the 
  programmer to respect the object-oriented rules of the library, whereas 
  IDL objects leave the programmer no choice.  The importance of working 
  within the object-oriented framework cannot be overstressed.  Its compromise 
  can only end in sadness and pain.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -52,36 +73,22 @@ Object Descriptors
 
 
  struct = $
-    { camera_descriptor, $
-	bd:		 nv_ptr_new(), $	; Ptr to body descriptor
-	class:		 '', $			; Name of descriptor class
-
-	scale:		 dblarr(2), $		; Camera scale in each direction
+    { ominas_camera, inherits ominas_body, $
+	scale:		 dblarr(2), $		; camera scale in each direction
 						; (radians/pixel)
-	oaxis:		 dblarr(2), $		; Image coordinates of optical
+	oaxis:		 dblarr(2), $		; image coordinates of optical
 						; axis
 	size:		 dblarr(2), $		; Image size, pixels
-	exposure:	 0d, $			; Exposure duration; body time
+	exposure:	 0d, $			; exposure duration; body time
 						; is specified at center of this
 						; interval
 	filters:	strarr(nfilt), $	; Filter names
-	fn_filter:	'', $			; Filter function
 
 	fn_psf:		'', $			; Point-spread fn.
 
-	fn_focal_to_image:   '', $		; User procedures to tranform
-	fn_image_to_focal:   '', $		; between focal and image
-	fn_data_p:	 nv_ptr_new() $		; Data for functions
+	fn_focal_to_image:   '', $		; user procedures to tranform
+	fn_image_to_focal:   '' $		; between focal and image
     }
-
-
- For a subclass, the class descriptor for the immediate superclass must be the
- first field.  The tag name of this field is arbitrary.  The next field must
- always contain a string giving the name of the class and have the tag name
- "class".  Any further fields are specific to the class.  This example
- defines a class descriptor for the CAMERA class, which is a subclass of BODY.  
- Note that a given class may have at most one immediate superclass. 
-
 
 
 Methods
@@ -91,6 +98,10 @@ Methods
  and higher level programs.  In the object library, all of the methods
  associated with a given class reside in the same directory.  The following
  paragraphs describe some common types of methods used in the library.
+
+
+
+
 
 
  Init methods

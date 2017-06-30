@@ -2,9 +2,8 @@ CAMERA Object Class
 ===================
 						  
  The CAMERA object class describes instruments that produce raster images.
- Linear, radial and polynomial distortion models are built in, but any 
- distortion model may be specified (actually the polynomial distortion model 
- is currently incomplete).  CAMERA is an immediate subclass of BODY.
+ Linear, radial, and polynomial distortion models are built in, but any 
+ distortion model may be specified.  CAMERA is an immediate subclass of BODY.
 
 
 Coordinate systems
@@ -13,8 +12,8 @@ Coordinate systems
 	Cartesian coordinate system used as the celestial reference frame.
 
  - Body
-	Cartesian coordinate system centered on and fixed to the body.  This
-	coordinate system is inherited from BODY.
+	Cartesian coordinate system centered on and fixed to the body.  
+	Inherited from BODY.
 
  - Focal Plane
 	Cartesian coordinate system specifying locations in the

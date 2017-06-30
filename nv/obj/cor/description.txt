@@ -1,12 +1,9 @@
 CORE Object Class
 =================
 
- The CORE object class is the superclass of all other object classes.
- The lowest-level fields of this class (sn and idp) are handled by nv/sys.  
- The reason for that cross functionality is that data descriptors (which are 
- not gemetric objects, and are part of nv/sys) also require that level of 
- management.  
-
+ The CORE object class is the superclass of all other object classes.  In 
+ addition to storing some fundamental properties like "name", CORE manages
+ the task list, user data arrays, and the generic descriptor.
 
 
 Data objects
@@ -24,8 +21,10 @@ Data objects
 	removed from the list.
 
 
- - User data
+ - user data
 	The core descriptor maintains a list of user-generated named
 	data objects.
 
+ - generic desscriptor
+	Structure containing references to all assciated descriptors.
 
