@@ -58,6 +58,7 @@ endif else begin
       printf,lun,'export IDL_PATH="'+path+'"'
       free_lun,lun
       print,'IDLAstro path set in IDL_PATH: ',path
+      setenv,'IDL_PATH='+path
     endif else begin
       PREF_SET, 'IDL_PATH', path, /COMMIT
       print,'IDLAstro path set in preferences: ',path
