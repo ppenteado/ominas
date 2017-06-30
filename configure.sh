@@ -793,7 +793,7 @@ if [ -e "$setting" ]; then
   . $setting
 fi
 
-export OMINAS_DIR=$DIR
+export OMINAS_DIR=${DIR}
 
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
@@ -1117,8 +1117,8 @@ done
 
 
 writesetting
-if [ -e "$setting" ]; then
-  . $setting
+if [ -e "${setting}" ]; then
+  . ${setting}
 fi
 
 
@@ -1147,10 +1147,10 @@ fi
 #  rm -f idlpathr.sh
 #fi
 
-if [ ! -z ${IDL_PATH+x} ]; then
-  . $idlpathfile
-  printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
-fi
+#if [ ! -z ${IDL_PATH+x} ]; then
+#  . $idlpathfile
+#  printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
+#fi
 #writesetting
 if grep -q "alias ominas=~/.ominas/ominas" ${usersh} ; then
   echo "${usersh} already sets ominas alias"
