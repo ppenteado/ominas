@@ -35,7 +35,7 @@ if icydir || ominasdir then begin
     printf,lun,'export IDL_PATH="'+path+'"' 
     free_lun,lun
     print,'OMINAS paths added to IDL_PATH'
-    setenv,'IDL_PATH="'+path+'"'
+    setenv,'IDL_PATH='+path+''
   endif else begin
     PREF_SET, 'IDL_PATH', path, /COMMIT
     print,'OMINAS paths set in IDL preferences'
@@ -51,7 +51,7 @@ if getenv('IDL_DLM_PATH') then begin
   printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"'
   free_lun,lun
   print,'Icy path added to IDL_DLM_PATH'
-  setenv,'IDL_DLM_PATH="'+dlm_path+'"'
+  setenv,'IDL_DLM_PATH='+dlm_path+''
 endif else begin
   PREF_SET, 'IDL_DLM_PATH', dlm_path, /COMMIT
   print,'Icy path set in IDL preferences'
