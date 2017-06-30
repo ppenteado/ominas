@@ -118,13 +118,19 @@ end
 ; ri_system
 ;
 ;=============================================================================
-pro ri_system, dkd
+pro ri_system, dkd, inner=inner, outer=outer
 
  sma = (dsk_sma(dkd))[0,0,*]
  ecc = (dsk_ecc(dkd))[0,0,*]
  q = sma*(1d - ecc)
- w = where(q EQ min(q))
- dkd = dkd[w]
+ q0 = keyword_set(inner) ? min(q) : max(q)
+
+ w = where(q EQ q0)
+ dkd = dkd[w[0]]
+
+ sma = dsk_sma(dkd) & sma[0] = q0 & dsk_set_sma, dkd, sma
+ ecc = dsk_ecc(dkd) & ecc[0] = 0 & dsk_set_ecc, dkd, ecc
+
  cor_set_name, dkd, 'MAIN_RING_SYSTEM'
 
 end
@@ -369,12 +375,12 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
        if(xx_trough[0] NE -1) then dkd_trough[xx_trough] = dkd_trough[xx_trough]
 
        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-       ; if /system, make one descriptor encompassing entire ring system
+       ; if /system, we want one descriptor encompassing entire ring system
        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        if(keyword_set(system)) then $
         begin
-         ri_system, dkd_inner
-         ri_system, dkd_outer
+         ri_system, dkd_inner, /inner
+         ri_system, dkd_outer, /outer
         end
 
        ;- - - - - - - - - - - - - - - - - - - - -

@@ -11,7 +11,7 @@
 ;-------------------------------
 ; load image
 ;-------------------------------
-file = '~/casIss/1460/N1460002670_1.IMG'
+file = './data/N1460002670_1.IMG'
 dd = dat_read(file, im)
 ctmod
 tvim, im, zoom=0.5, /order, /new

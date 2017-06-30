@@ -44,7 +44,6 @@ pro strcat_get_inputs, dd, env, key, $
 
  nbright = long(tr_keyword_value(dd, 'nbright'))
 
-
  ;---------------------------------------------------------
  ; Star catalog path
  ;---------------------------------------------------------
@@ -116,7 +115,7 @@ pro strcat_get_inputs, dd, env, key, $
    dec1 = radec0[1] + field
    dec2 = radec0[1] - field
   end $
- else nv_message, verb=0.1, $
+ else nv_message, /con, $
       'WARNING: No FOV limits set for star catalog search.', $
        exp=['Without FOV limits, stars will be returned for the entire sky.', $
             'This may cause the software to run very slowly.']
