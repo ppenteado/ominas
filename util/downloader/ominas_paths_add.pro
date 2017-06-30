@@ -5,7 +5,7 @@ print,'Checking to see if IDL paths need to be changed...'
 
 ominasdir=n_elements(ominasdir) ? ominasdir : getenv('OMINAS_DIR')
 if ominasdir then begin
-  idlastro_download,/auto,ominasdir
+  idlastro_download,/auto,ominasdir,orc=orc
 endif
 
 if getenv('IDL_PATH') then begin

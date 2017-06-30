@@ -1121,19 +1121,19 @@ fi
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
-  if [ -e idlpath.sh ]; then
-    cat idlpath.sh >> $idlpathfile
-    rm -f idlpath.sh
-  fi
+#  if [ -e idlpath.sh ]; then
+#    cat idlpath.sh >> $idlpathfile
+#    rm -f idlpath.sh
+#  fi
 else
   #export OMINAS_DIR=''
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
 fi
 #rm -f paths.pro
-if [ -e idlpathr.sh ]; then
-  #cat idlpathr.sh >> $idlpathfile
-  rm -f idlpathr.sh
-fi
+#if [ -e idlpathr.sh ]; then
+#  #cat idlpathr.sh >> $idlpathfile
+#  rm -f idlpathr.sh
+#fi
 
 if [ ! -z ${IDL_PATH+x} ]; then
   . $idlpathfile

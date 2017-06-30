@@ -1,4 +1,4 @@
-pro idlastro_download,auto=auto,ominasdir
+pro idlastro_download,auto=auto,ominasdir,orc=orc
 compile_opt idl2,logical_predicate
 auto=keyword_set(auto)
 routs=['cntrd','minmax']
@@ -54,7 +54,7 @@ endif else begin
       path+=':+'+loc+'/pro'
     endif
     if getenv('IDL_PATH') then begin
-      openw,lun,'idlpath.sh',/get_lun,/append
+      openw,lun,orc+'/idlpath.sh',/get_lun,/append
       printf,lun,'export IDL_PATH="'+path+'"'
       free_lun,lun
       print,'IDLAstro path set in IDL_PATH: ',path
