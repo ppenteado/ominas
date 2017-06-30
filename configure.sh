@@ -1118,10 +1118,10 @@ done
 
 
 
-#writesetting
-#if [ -e "${setting}" ]; then
-#  . ${setting}
-#fi
+writesetting
+if [ -e "${setting}" ]; then
+  . ${setting}
+fi
 
 
 grep -q ". ${OMINAS_RC}/config/ominas_env_def.sh" ${setting}
