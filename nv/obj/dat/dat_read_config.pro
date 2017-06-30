@@ -83,7 +83,12 @@ pro dat_read_config, env, table_p, filenames_p, continue=continue, status=status
  ; concatenate all files
  ;----------------------------------
  n = n_elements(filenames)
- for i=0, n-1 do lines = append_array(lines, read_txt_file(filenames[i]))
+ for i=0, n-1 do $
+  begin
+   s = read_txt_file(filenames[i], status=status)
+   if(status EQ 0) then lines = append_array(lines, s) $
+   else nv_message, /con, 'Not found: ' + filenames[i]
+  end
 
  w = where(lines NE '')
  if(w[0] EQ -1) then return
