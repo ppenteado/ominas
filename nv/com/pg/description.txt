@@ -114,7 +114,7 @@ end
   types of imaging descriptors in the future without altering the PG code.
 
 
- Generic Descriptor
+ Generic Descriptors
 
   All PG programs that accept object descriptors as arguments also accept a
   structure called a generic descriptor.  A generic descriptor is a structure
@@ -138,36 +138,6 @@ end
   are input to PG_GET_CAMERAS, there is no constraint on the ordering of the
   output camera descriptors.  Those output descriptors may be matched to their
   corresponding data descritors by looking at their generic dscriptors.
-
-
- Descriptor Naming Conventions
-
-  The following naming convention is used for descriptor arguments to all
-  PG programs, as well as generic descriptor tag names:
-
-	gd   :	Generic descriptor.
-	dd   :	DATA descriptor.
-	ptd  :	POINT descriptor.
-	od   : 	Observer descriptor.
-	cd   :	CAMERA descriptor.  Some programs which accept a camera
-		descriptor will also accept a map descriptor for this argument.
-	md   :	MAP descriptor.
-	pd   :	PLANET descriptor.
-	rd   :	RING descriptor.
-	sd   :	STAR descriptor.
-	bd   :	BODY descriptor.
-	sld  :	SOLID descriptor.
-	gbd  :	GLOBE descriptor.
-	dkd  :	DISK descriptor.
-	crd  :	CORE descriptor.
-	std  :	STATION descriptor.
-	ard  :	ARRAY descriptor.
-	sund :	STAR descriptor for the sun or other illumination source.
-	xd   :	Arbitrary descriptor (note sme older programs use 'od' ("object
-		descriptor") this purpose.  These should be changed to 'xd'.
-
-  For arbitrary subclasses, the 'd' is replaced with 'x'; e.g., 'bx' refers
-  to any sublass BODY.
 
 
 Display Issues
@@ -200,5 +170,10 @@ Manipulating Object Descriptors
  (see dat/description.txt).
 
 
-
-
+Error handling
+--------------
+ Error handling in OMINAS is done via NV_MESSAGE.  By default, NV_MESSAGE 
+ halts execution and prints a caller-supplied message, along with the name of
+ the calling program.  An expanded explanation may be provided, and various
+ levels of versbosity may be specified to control the priority of warning 
+ messages. 

@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Builds a class tree for te given descriptor.
+;	Builds a class tree for the given descriptor.
 ;
 ;
 ; CATEGORY:
