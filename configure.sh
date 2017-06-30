@@ -1118,10 +1118,10 @@ done
 
 
 
-writesetting
-if [ -e "${setting}" ]; then
-  . ${setting}
-fi
+#writesetting
+#if [ -e "${setting}" ]; then
+#  . ${setting}
+#fi
 
 
 grep -q ". ${OMINAS_RC}/config/ominas_env_def.sh" ${setting}
@@ -1144,6 +1144,11 @@ else
   #export OMINAS_DIR=''
   $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
   . "${OMINAS_RC}/idlpath.sh"
+fi
+
+writesetting
+if [ -e "${setting}" ]; then
+  . ${setting}
 fi
 #rm -f paths.pro
 #if [ -e idlpathr.sh ]; then
