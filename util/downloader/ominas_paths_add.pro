@@ -1,4 +1,4 @@
-pro ominas_paths_add,icydir,ominasdir
+pro ominas_paths_add,icydir,ominasdir,orc=orc
 compile_opt idl2,logical_predicate
 verb=getenv('NV_VERBOSITY')
 print,'Checking to see if IDL paths need to be changed...'
@@ -31,7 +31,7 @@ endif
 
 if icydir || ominasdir then begin
   if getenv('IDL_PATH') then begin 
-    openw,lun,'idlpath.sh',/get_lun 
+    openw,lun,orc+'/idlpath.sh',/get_lun 
     printf,lun,'export IDL_PATH="'+path+'"' 
     free_lun,lun
     print,'OMINAS paths added to IDL_PATH'
@@ -46,7 +46,7 @@ dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PAT
 if icydir then begin
   if ~stregex(dlm_path,'\+?/.*/ominas_data/icy/lib/*',/bool) then dlm_path+=':+'+file_expand_path(icydir+'/lib/')
 if getenv('IDL_DLM_PATH') then begin
-  openw,lun,'idlpath.sh',/get_lun,/append
+  openw,lun,orc+'/idlpath.sh',/get_lun,/append
   printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"'
   free_lun,lun
   print,'Icy path added to IDL_DLM_PATH'

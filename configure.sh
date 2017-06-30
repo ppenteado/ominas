@@ -187,14 +187,14 @@ else
   printf "~/.ominas/config directory already exists\n"
 fi
 
-OMINAS_RC=${HOME}/.ominas
+export OMINAS_RC=${HOME}/.ominas
 if [ ! -d "$HOME/ominas_data" ]; then
   printf "Creating ~/ominas_data directory\n"
   mkdir $HOME/ominas_data
 else
   printf "~/ominas_data directory already exists\n"
 fi
-OMINAS_DATA=${HOME}/ominas_data
+export OMINAS_DATA=${HOME}/ominas_data
 if [ ! -e ${setting} ]; then
   echo "#!/usr/bin/env bash" > ${setting} 
 fi
@@ -204,6 +204,9 @@ if [ -e "${setting}" ]; then
   ins_ominas_env_def=`grep "ominas_env_def\.sh" ${setting}` 
 else
   touch $osetting
+fi
+if [ ! -e ${OMINAS_RC}/idlpath.sh ]; then
+  touch ${OMINAS_RC}/idlpath.sh
 fi
 
 #echo "#!/usr/bin/env bash" > $setting
@@ -565,7 +568,8 @@ else
 fi
 chmod a+rx $setting
 
-echo "#!/usr/bin/env bash" > $setting
+echo "#!/usr/bin/env bash" > ${setting}
+cat ${OMINAS_RC}/idlpath.sh >> ${setting}
 echo "alias ominas=~/.ominas/ominas" >> ${setting}
 echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
 
@@ -1116,14 +1120,14 @@ fi
 
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
-  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}'"
+  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
   if [ -e idlpath.sh ]; then
     cat idlpath.sh >> $idlpathfile
     rm -f idlpath.sh
   fi
 else
   #export OMINAS_DIR=''
-  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',''"
+  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
 fi
 #rm -f paths.pro
 if [ -e idlpathr.sh ]; then
