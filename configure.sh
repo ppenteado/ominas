@@ -188,12 +188,13 @@ else
 fi
 
 export OMINAS_RC=${HOME}/.ominas
-if [ ! -d "$HOME/ominas_data" ]; then
+if [ ! -d "${HOME}/ominas_data" ]; then
   printf "Creating ~/ominas_data directory\n"
-  mkdir $HOME/ominas_data
+  mkdir ${HOME}/ominas_data
 else
   printf "~/ominas_data directory already exists\n"
 fi
+
 export OMINAS_DATA=${HOME}/ominas_data
 if [ ! -e ${setting} ]; then
   echo "#!/usr/bin/env bash" > ${setting} 
@@ -413,7 +414,7 @@ function pkins()
                     fi
                     case $ans in
                     [Yy]*)
-                          $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_remove"
+                          $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_remove,orc='${OMINAS_RC}'"
                           pstr="unset NV_TRANSLATORS"
                           unset NV_TRANSLATORS;;
                           #corest=${no};;
@@ -575,9 +576,10 @@ echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
 
 #if [[ -n "$ins_ominas_env_def" ]]; then
 #if [[ ${corest} == ${yes} ]]; then
-  echo "export OMINAS_DIR=${OMINAS_DIR}" >> $setting
-  echo "export OMINAS_DATA=${OMINAS_DATA}" >> $setting
-  echo "export OMINAS_RC=${OMINAS_RC}" >> $setting
+  echo "export OMINAS_DIR=${OMINAS_DIR}" >> ${setting}
+  echo "export OMINAS_DATA=${OMINAS_DATA}" >> ${setting}
+  echo "export OMINAS_RC=${OMINAS_RC}" >> ${setting}
+  echo "export OMINAS_TMP=${OMINAS_TMP}" >> ${setting}
 #fi
 echo "export DFLAG=${DFLAG}" >> $setting
 #echo $ins_ominas_env_def >> $setting
@@ -687,7 +689,7 @@ if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
              *)
               removeall=0;;
            esac
-           $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/') & ominas_icy_remove,all=${removeall} & exit"
+           $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/') & ominas_icy_remove,all=${removeall},orc='${OMINAS_RC}' & exit"
            if [ -e idlpathr.sh ]; then 
              source idlpathr.sh
            fi
@@ -848,7 +850,7 @@ do
 done
 #export inst
 #$idlbin -e 'exit,status=strmatch(pref_get("IDL_DLM_PATH"),"*icy/lib*")'
-ominas_icytest=`$idlbin -e "!path+=':'+file_expand_path('./util/downloader') & ominas_icy_test" # 2> /dev/null`
+ominas_icytest=`$idlbin -e "!path+=':'+file_expand_path('./util/downloader') & ominas_icy_test"  2> /dev/null`
 if [ $? == 0 ] ; then
   icyst='CONFIGURED'
   icypath=${ominas_icytest}
@@ -860,8 +862,18 @@ else
 fi
 echo "Icy: ${ominas_icytest}"
 export ominas_icyst
+
+OMINAS_TMP=`$idlbin -e "print,filepath('_${USER}_ominas',/tmp)" 2> /dev/null`
+#OMINAS_TMP="${OMINAS_RC}/tmp"
+if [ ! -w ${OMINAS_TMP} ]; then
+  mkdir -p ${OMINAS_TMP}
+fi
+echo "OMINAS_TMP=${OMINAS_TMP}"
+export OMINAS_TMP
+
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
+=============================================================================
 	Current OMINAS configuration settings
 Required:
 	1) OMINAS Core  . . . . . . . . . . . . .  $corest

@@ -1,4 +1,4 @@
-pro ominas_icy_remove,all=all
+pro ominas_icy_remove,all=all,orc=orc
 compile_opt idl2,logical_predicate
 path=getenv('IDL_PATH') ? getenv('IDL_PATH') : PREF_GET('IDL_PATH')
 dps=strsplit(path,':',/extract)
@@ -11,7 +11,7 @@ if nwc then begin
   np=strjoin(dps[wc],':')
   print,'Setting IDL_PATH to ',np
   if getenv('IDL_PATH') then begin
-    openw,lun,'idlpathr.sh',/get_lun
+    openw,lun,orc+'/idlpath.sh',/get_lun
     printf,lun,'export IDL_PATH="'+np+'"'
     free_lun,lun
     print,'Icy path removed from IDL_PATH'
@@ -31,7 +31,7 @@ if nwc then begin
   ndp=strjoin(dps[wc],':')
   print,'Setting IDL_DLM_PATH to ',ndp
   if getenv('IDL_DLM_PATH') then begin
-    openw,lun,'idlpathr.sh',/get_lun,/append
+    openw,lun,orc+'/idlpath.sh',/get_lun,/append
       printf,lun,'export IDL_DLM_PATH="'+ndp+'"'
     free_lun,lun
     print,'Icy path removed from IDL_DLM_PATH'
