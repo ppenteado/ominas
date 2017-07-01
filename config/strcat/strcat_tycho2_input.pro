@@ -145,7 +145,6 @@ function tycho2_get_stars, dd, filename, cam_vel=cam_vel, $
  ; Find the tycho regions that the scene occupies
  ;---------------------------------------------------------
 ; reg = where(index.DEmax ge dec1 and index.DEmin le dec2 and index.RAmax ge ra1 and index.RAmin le ra2)
-stop
  reg = strcat_radec_regions( [ra1, ra2]*!dpi/180d, [dec1, dec2]*!dpi/180d, $
 	  index.RAmin*!dpi/180d, index.RAmax*!dpi/180d, $
 	  index.DEmin*!dpi/180d, index.DEmax*!dpi/180d)
