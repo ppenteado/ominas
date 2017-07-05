@@ -33,7 +33,7 @@
 ; Read and display image
 ; ----------------------
 ;
-; .. image:: jupiter_load.jpeg
+; .. image:: graphics/jupiter_load.jpeg
 ;
 ;   This first section uses dat_read to read in the image and then displays 
 ;   the image using tvim.  
@@ -256,7 +256,7 @@ plabels=[cor_name(pd), $
 ; Draw the limb, ring and planet center
 ; -------------------------------------
 ;
-; .. image:: jupiter_limb_initial.jpeg
+; .. image:: graphics/jupiter_limb_initial.jpeg
 ;
 ; This section draws the objects in the object array (center, limb, ring,
 ; and terminator) with the colors and plot symbols and labels defined earlier::
@@ -284,14 +284,14 @@ stop
 ;     edge_ptd = pg_edges(dd, edge=10)                ; Scan image for edges.
 ;     pg_draw, edge_ptd
 ;     
-;   .. image:: jupiter_ex_edge.jpeg
+;   .. image:: graphics/jupiter_ex_edge.jpeg
 ;   
 ;     dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])    ; Try to correlate scanned edges with the computed limb.
 ;     pg_repoint, dxy, 0d, axis=center_ptd[0], gd=gd  ; Change the pointing.
 ;     tvim, im
 ;     pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;     
-;   .. image:: jupiter_ex_farfit.jpeg
+;   .. image:: graphics/jupiter_ex_farfit.jpeg
 ;
 ;     center_ptd = pg_center(gd=gd, bx=pd)
 ;     print, 'after automatic repointing, the center was shifted by:', pnt_points(center_ptd[0])-center_o, 'pixels' 
@@ -394,7 +394,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;     tvim, im
 ;     pg_draw, cvscan_ptd
 ;     
-;   .. image:: jupiter_ex_cvscan.jpeg
+;   .. image:: graphics/jupiter_ex_cvscan.jpeg
 ;
 ;   The commented command might be more appropriate for images in which
 ;   the planet disk is quite small.  In that case, we use a different edge
@@ -496,7 +496,7 @@ pg_draw, cvscan_ptd
 ;     tvim, im
 ;     pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;     
-;   .. image:: jupiter_ex_cvscan_repoint.jpeg
+;   .. image:: graphics/jupiter_ex_cvscan_repoint.jpeg
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -524,7 +524,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ; Draw planet and ring latitude/longitude grid
 ; --------------------------------------------
 ;
-; .. image:: jupiter_lat_lon.jpeg
+; .. image:: graphics/jupiter_lat_lon.jpeg
 ;
 ;   This section calculates a latitude/longitude grid for each planet and a
 ;   radius/longitude grid for the rings.  By default it draws 12 latitude
@@ -597,7 +597,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;       fn_data=ptr_new(),size=[400,200])
 ;
 ;
-; .. image:: jupiter_mercator.jpeg
+; .. image:: graphics/jupiter_mercator.jpeg
 ;
 ; Stereographic
 ; ~~~~~~~~~~~~~
@@ -610,7 +610,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;       size=[400,400], center=[!dpi/2d,0d])
 ;
 ;
-; .. image:: jupiter_stereographic.jpeg
+; .. image:: graphics/jupiter_stereographic.jpeg
 ;
 ; Orthographic
 ; ~~~~~~~~~~~~
@@ -624,7 +624,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;       center=[!dpi/6d,!dpi])
 ;
 ;
-; .. image:: jupiter_orthographic.jpeg
+; .. image:: graphics/jupiter_orthographic.jpeg
 ;
 ; Rectangular
 ; ~~~~~~~~~~~
@@ -637,7 +637,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;       size=[400,200])
 ;
 ;
-; .. image:: jupiter_rectangular.jpeg
+; .. image:: graphics/jupiter_rectangular.jpeg
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -785,7 +785,7 @@ pg_draw, map_term_ptd, col=ctyellow()
 ;     dd_map1 = pg_map(dd_map, md=md1, cd=md, map=map1, bounds=bounds)
 ;     tvim, /new, map1
 ;
-; .. image:: jupiter_rectangular_to_ortho.jpeg
+; .. image:: graphics/jupiter_rectangular_to_ortho.jpeg
 ;
 ;-
 ;------------------------------------------------

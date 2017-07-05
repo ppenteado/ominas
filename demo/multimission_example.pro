@@ -27,11 +27,11 @@
 ;     
 ;   The Jupiter observation (from Cassini, the first one displayed in grim) looks like:
 ;   
-;   .. image:: multimiss_ex_1.png
+;   .. image:: graphics/multimiss_ex_1.png
 ;   
 ;   And the Ganymede observation (from Galileo) looks like:
 ;   
-;   .. image:: multimiss_ex_2.png
+;   .. image:: graphics/multimiss_ex_2.png
 ;   
 ;   (that image is in the second plane in grim: use the
 ;    Plane->next menu option, or click the black double right-arrow button on the left
@@ -39,7 +39,7 @@
 ;   
 ;   And the Saturn observation (from Voyager) looks like:
 ;   
-;   .. image:: multimiss_ex_3.png
+;   .. image:: graphics/multimiss_ex_3.png
 ;   
 ;   (that image is in the third plane in grim: use the
 ;    Plane->next menu option, or click the black double right-arrow button on the left
