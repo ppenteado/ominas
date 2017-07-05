@@ -742,13 +742,13 @@ case $ans in
                                 ./pp_wget "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" --localdir=${OMINAS_TMP}
                                 owd=$PWD
 				#cd ..
-                                cd ${OMINAS_TMP} #~/ominas_data/
+                                cd ~/ominas_data/
 				cdflag=true
 				#ext "icy.tar.Z"
 				#ext "icy.tar"
                                 echo "Extracting Icy source files..."
-                                tar -xzf "icy.tar.Z"
-                                rm -f icy.tar.Z
+                                tar -xzf "${OMINAS_TMP}/icy.tar.Z"
+                                rm -f "${OMINAS_TMP}/icy.tar.Z"
 				cd icy
 				icypath=$PWD
                                 echo "Compiling Icy..."
