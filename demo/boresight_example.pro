@@ -1,16 +1,16 @@
 ;=======================================================================
-;                            BORESIGHT.EXAMPLE
+;                            BORESIGHT_EXAMPLE.PRO
 ;
 ;  This example file navigates a narrow-angle image using a wide-angle
 ;  image.
 ;
 ;  This example file can be executed from the UNIX command line using
 ;
-;  	idl minas boresight.example
+;  	ominas boresight_example.pro
 ;
 ;  or from within IDL using
 ;
-;  	@boresight.example
+;  	@boresight_example
 ;
 ;=======================================================================
 
