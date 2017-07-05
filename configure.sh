@@ -561,6 +561,11 @@ function setdir() {
 
 function writesetting() {
 
+echo "#!/usr/bin/env bash" > ~/.ominas/ominasrc
+echo "alias ominas=~/.ominas/ominas" >> ~/.ominas/ominasrc
+echo "alias ominasde=~/.ominas/ominasde" >> ~/.ominas/ominasrc
+echo ". ~/.ominas/idlpath.sh" >> ~/.ominas/ominasrc
+
 echo "writing "$setting
 if [ -e "$setting" ]; then
   rm -f ${osetting}
@@ -1162,29 +1167,46 @@ fi
 #  printf "IDL PATH/IDL_DLM_PATH were written to $idlpathfile.\n"
 #fi
 #writesetting
-if grep -q "alias ominas=~/.ominas/ominas" ${usersh} ; then
+
+
+
+if grep -q "[^#]*\. ~/.ominas/ominasrc" ${usersh} ; then
   echo "${usersh} already sets ominas alias"
 else
-  echo "alias ominas=~/.ominas/ominas" >> ${usersh}
+  echo ". ~/.ominas/ominasrc" >> ${usersh}
 fi
-if grep -q "alias ominasde=~/.ominas/ominasde" ${usersh} ; then
-  echo "${usersh} already sets ominasde alias"
-else
-  echo "alias ominasde=~/.ominas/ominasde" >> ${usersh}
-fi
-printf "OMINAS aliases set in ${usersh}.\n"
 
-if grep -q "alias ominas=~/.ominas/ominas" ${psetting} ; then
+
+if grep -q "[^#]*\. ~/.ominas/ominasrc" ${psetting} ; then
   echo "${psetting} already sets ominas alias"
 else
-  echo "alias ominas=~/.ominas/ominas" >> ${psetting}
+  echo ". ~/.ominas/ominasrc" >> ${psetting}
 fi
-if grep -q "alias ominasde=~/.ominas/ominasde" ${psetting} ; then
-  echo "${psetting} already sets ominasde alias"
-else
-  echo "alias ominasde=~/.ominas/ominasde" >> ${psetting}
-fi
-printf "OMINAS aliases set in ${psetting}.\n"
+
+#if grep -q "alias ominas=~/.ominas/ominas" ${usersh} ; then
+#  echo "${usersh} already sets ominas alias"
+#else
+#  echo "alias ominas=~/.ominas/ominas" >> ${usersh}
+#fi
+#if grep -q "alias ominasde=~/.ominas/ominasde" ${usersh} ; then
+#  echo "${usersh} already sets ominasde alias"
+#else
+#  echo "alias ominasde=~/.ominas/ominasde" >> ${usersh}
+#fi
+#printf "OMINAS aliases set in ${usersh}.\n"
+
+#if grep -q "alias ominas=~/.ominas/ominas" ${psetting} ; then
+#  echo "${psetting} already sets ominas alias"
+#else
+#  echo "alias ominas=~/.ominas/ominas" >> ${psetting}
+#fi
+#if grep -q "alias ominasde=~/.ominas/ominasde" ${psetting} ; then
+#  echo "${psetting} already sets ominasde alias"
+#else
+#  echo "alias ominasde=~/.ominas/ominasde" >> ${psetting}
+#fi
+#printf "OMINAS aliases set in ${psetting}.\n"
+
 return 0
 }
 echo " "
