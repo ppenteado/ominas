@@ -66,7 +66,7 @@ compile_opt idl2,logical_predicate
 ;
 ;     tvim,0d0>da<1d0,zoom=0.05,/order,/new
 ;
-;   .. image:: mis_ex1.png
+;   .. image:: graphics/mis_ex1.png
 ;
 ;
 ;-
@@ -91,7 +91,7 @@ dd=dat_read(img)
 da=dat_data(dd)
 dat_set_data,dd,0d0>da<1d0
 tvim,0d0>da<1d0,zoom=0.05,/order,/new
-;write_png,'mis_ex1.png',tvrd()
+;write_png,'graphics/mis_ex1.png',tvrd()
 
 
 ;-------------------------------------------------------------------------
@@ -138,9 +138,9 @@ tvim,0d0>da<1d0,zoom=0.05,/order,/new
 ;         pg_draw, limb_psv[i]
 ;       endfor
 ;       
-;     .. image:: mis_ex2.png
+;     .. image:: graphics/mis_ex2.png
 ;     
-;     .. image:: mis_ex3.png
+;     .. image:: graphics/mis_ex3.png
 ;
 ;     Correct the illumination with a Lambertian function::
 ;     
@@ -182,7 +182,7 @@ for i=0,1 do begin
   tvim, (dat_data(ddv[i]))[*,*,sband], $
     zoom=zoom,/order, /new,offset=offset,$
     xsize=600,ysize=600
-  ;write_png,'mis_ex'+strtrim(i+2,2)+'.png',tvrd()
+  ;write_png,'graphics/mis_ex'+strtrim(i+2,2)+'.png',tvrd()
   pg_draw, limb_psv[i]
 endfor
 
@@ -235,7 +235,7 @@ for i=0, nv-1 do dd_phtv[i] = pg_photom(ddv[i], gd=gdv[i], refl_fn='pht_lamb', $
 ;   
 ;     grim,mds,cd=replicate(mdp,3),/new;,overlays=['planet_grid']
 ;     
-;   .. image:: mis_ex4.png
+;   .. image:: graphics/mis_ex4.png
 ;
 ;   
 ;-

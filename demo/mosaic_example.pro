@@ -58,8 +58,8 @@
 ;     for i=0, n-1 do tvim, dat_data(dd[i]), zoom=zoom, /order, /new
 ;     tvim, /list, wnum=ww
 ;
-;   .. image:: mosaic_ex_im_1.png
-;   .. image:: mosaic_ex_im_2.png
+;   .. image:: graphics/mosaic_ex_im_1.png
+;   .. image:: graphics/mosaic_ex_im_2.png
 ;   
 ;   Get camera, planets, rings and sun objects::
 ;   
@@ -146,8 +146,8 @@ for i=0, n-1 do limb_ptd[i] = pg_limb(gd=gd[i])
 ;     for i=0, n-1 do limb_ptd[i] = pg_limb(gd=gd[i])
 ;     for i=0, n-1 do  pg_draw, limb_ptd[i], wnum=ww[i]
 ;     
-;   .. image:: mosaic_ex_im_3.png
-;   .. image:: mosaic_ex_im_4.png
+;   .. image:: graphics/mosaic_ex_im_3.png
+;   .. image:: graphics/mosaic_ex_im_4.png
 ;
 ;   
 ;   See jup_cassini.example and dione.example for examples
@@ -187,8 +187,8 @@ for i=0, n-1 do  pg_draw, limb_ptd[i], wnum=ww[i]
 ;     
 ;     for i=0, n-1 do tvim, dat_data(dd_pht[i]), ww[i]
 ;
-;   .. image:: mosaic_ex_im_5.png
-;   .. image:: mosaic_ex_im_6.png
+;   .. image:: graphics/mosaic_ex_im_5.png
+;   .. image:: graphics/mosaic_ex_im_6.png
 ;
 ;-
 ;----------------------------------------------------------------------
@@ -232,8 +232,8 @@ for i=0, n-1 do tvim, dat_data(dd_pht[i]), ww[i]
 ;   
 ;     for i=0, n-1 do tvim, dat_data(dd_map[i]), /new
 ;     
-;   .. image:: mosaic_ex_proj_1.png
-;   .. image:: mosaic_ex_proj_2.png
+;   .. image:: graphics/mosaic_ex_proj_1.png
+;   .. image:: graphics/mosaic_ex_proj_2.png
 ;
 ;-
 ;------------------------------------------------------------------------------
@@ -312,7 +312,7 @@ for i=0, n-1 do tvim, dat_data(dd_map[i]), /new
 ;       wt='emm', comb='sum', data={x:5, emm0:cos(85d*!dpi/180d)})
 ;     tvim, mosaic, /new
 ;
-;   .. image:: mosaic_ex_map.png
+;   .. image:: graphics/mosaic_ex_map.png
 ;-
 ;----------------------------------------------------------------------
 dd_mosaic = pg_mosaic(dd_map, mosaic=mosaic, $
