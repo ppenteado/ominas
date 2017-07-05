@@ -1,5 +1,5 @@
 ;=======================================================================
-;                            GRIM.EXAMPLE
+;                            GRIM_EXAMPLE.PRO
 ;
 ;  This example file demonstrates one way to use the graphical
 ;  interface to ominas.  Here, we use grim in a manner very similar 
@@ -10,11 +10,11 @@
 ;
 ;  This example file can be executed from the UNIX command line using
 ;
-;  	idl grim.example
+;  	ominas grim_example.pro
 ;
 ;  or from within IDL using
 ;
-;  	@grim.example
+;  	@grim_example
 ;
 ;  After the example stops, later code samples in this file may be executed by
 ;  pasting them onto the IDL command line.

@@ -1,5 +1,5 @@
 ;=======================================================================
-;                            MAP-GLOBE.EXAMPLE
+;                            MAP-GLOBE_EXAMPLE.PRO
 ;
 ;  This example demonstrates various map projections on a globe 
 ;  using Cassini images and kernels that area not provided in the 

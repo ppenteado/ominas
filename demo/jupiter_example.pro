@@ -20,7 +20,7 @@
 ;
 ;    or from within an OMINAS IDL session using::
 ;
-;     @jupiter_example.pro
+;     @jupiter_example
 ;
 ;    After the example stops, later code samples in this file may be executed by
 ;    pasting them onto the IDL command line.

@@ -1,5 +1,5 @@
 ;==================================================================================
-; tiepoints.example
+; tiepoints_example.pro
 ;
 ;  Correct the pointing of one or more images based on the pointing of a 
 ;  reference image using tiepoints.
