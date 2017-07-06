@@ -33,7 +33,7 @@ end_keywords)
  if(keyword_set(fn_body_to_inertial)) then $
    self.fn_body_to_inertial=decrapify(fn_body_to_inertial[ii])
 
-;;; if(keyword_set(fi_data)) then cam_set_fi_data, cd0, fi_data[ii]
+;;; if(keyword_set(fi_data)) then cam_set_fi_data, cd0, fi_data[ii], /noevent
 
  return, 1
 end

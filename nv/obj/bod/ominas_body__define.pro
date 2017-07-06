@@ -34,7 +34,7 @@ end_keywords)
  if(keyword_set(fn_inertial_to_body)) then $
                           self.fn_inertial_to_body=decrapify(fn_inertial_to_body[ii]) $
  else self.fn_inertial_to_body = decrapify('bod_inertial_to_body_default')
-;;; if(keyword_set(ib_data)) then bod_set_ib_data, bd0, ib_data
+;;; if(keyword_set(ib_data)) then bod_set_ib_data, bd0, ib_data, /noevent
 
  return, 1
 end
