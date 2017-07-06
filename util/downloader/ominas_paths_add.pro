@@ -31,11 +31,25 @@ endif
 
 if icydir || ominasdir then begin
   if getenv('IDL_PATH') then begin 
+    nl=file_lines(orc+'/idlpath.sh')
+    if nl then begin
+      pathr=strarr(nl)
+      openr,lun,orc+'/idlpath.sh',/get_lun
+      readf,lun,pathr
+      free_lun,lun
+    endif else pathr=['']
+    pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=',/bool),/null)]
+    dtmp='+'+ominasdir
+    if icydir then begin
+      dtmp+=':+'+file_expand_path(icydir+'/lib/')
+      pathline='if [ `echo $IDL_PATH | grep "'+ominasdir+'" |  grep -co "'+file_expand_path(icydir+'/lib/')+'"` == 0 ]; then']
+    endif else pathline='if [ `echo $IDL_PATH | grep -co "'+ominasdir+'"` == 0 ]; then']    
+    pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+dtmp+'"'
+    pathline+=';fi'
+    pathr=[pathr,pathline]
     openw,lun,orc+'/idlpath.sh',/get_lun 
     ;printf,lun,'export IDL_PATH="'+path+'"'
-    dtmp='+'+ominasdir
-    if icydir then dtmp+=':+'+file_expand_path(icydir+'/lib/')
-    printf,lun,'export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+dtmp+'"' 
+    printf,lun,pathr,format='(A0)'
     free_lun,lun
     print,'OMINAS paths added to IDL_PATH'
     setenv,'IDL_PATH='+path+''
@@ -50,9 +64,22 @@ dlm_path=getenv('IDL_DLM_PATH') ? getenv('IDL_DLM_PATH') : PREF_GET('IDL_DLM_PAT
 if icydir then begin
   if ~stregex(dlm_path,'\+?/.*/ominas_data/icy/lib/*',/bool) then dlm_path+=':+'+file_expand_path(icydir+'/lib/')
 if getenv('IDL_DLM_PATH') then begin
-  openw,lun,orc+'/idlpath.sh',/get_lun,/append
+  nl=file_lines(orc+'/idlpath.sh')
+  if nl then begin
+    pathr=strarr(nl)
+    openr,lun,orc+'/idlpath.sh',/get_lun
+    readf,lun,pathr
+    free_lun,lun
+  endif else pathr=['']
+  pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=',/bool),/null)]
+  pathline='if [ `echo $IDL_DLM_PATH | grep -co "'+file_expand_path(icydir+'/lib/')+'"` == 0 ]; then']
+  pathline+='  export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+file_expand_path(icydir+'/lib/')+'"']
+  pathline+=';fi'
+  pathr=[pathr,pathline]
+  openw,lun,orc+'/idlpath.sh',/get_lun
   ;printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"'
-  printf,lun,'export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+file_expand_path(icydir+'/lib/')+'"'
+  ;printf,lun,'export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+file_expand_path(icydir+'/lib/')+'"'
+  printf,lun,pathr,format='(A0)'
   free_lun,lun
   print,'Icy path added to IDL_DLM_PATH'
   setenv,'IDL_DLM_PATH='+dlm_path+''
