@@ -38,15 +38,21 @@ if icydir || ominasdir then begin
       readf,lun,pathr
       free_lun,lun
     endif else pathr=['']
-    pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=',/bool),/null)]
-    dtmp='+'+ominasdir
+    if ominasdir then begin
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+ominasdir,/bool),/null)]
+      dtmp='+'+ominasdir
+      pathline='if [ `echo $IDL_PATH | grep -co "'+ominasdir+'"` == 0 ]; then '
+      pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+ominasdir+'"; fi'
+      pathr=[pathr,pathline]
+    endif
     if icydir then begin
-      dtmp+=':+'+file_expand_path(icydir+'/lib/')
-      pathline='if [ `echo $IDL_PATH | grep "'+ominasdir+'" |  grep -co "'+file_expand_path(icydir+'/lib/')+'"` == 0 ]; then '
-    endif else pathline='if [ `echo $IDL_PATH | grep -co "'+ominasdir+'"` == 0 ]; then '
-    pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+dtmp+'"'
-    pathline+=';fi'
-    pathr=[pathr,pathline]
+      eicydir=file_expand_path(icydir+'/lib/')
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+eicydir,/bool),/null)]
+      dtmp+=':+'+eicydir
+      pathline='if [ `echo $IDL_PATH | grep -co "'+eicydir+'"` == 0 ]; then '
+      pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+eicydir+'"; fi'
+      pathr=[pathr,pathline]
+    endif
     openw,lun,orc+'/idlpath.sh',/get_lun 
     ;printf,lun,'export IDL_PATH="'+path+'"'
     printf,lun,pathr,format='(A0)'
@@ -71,9 +77,9 @@ if getenv('IDL_DLM_PATH') then begin
     readf,lun,pathr
     free_lun,lun
   endif else pathr=['']
-  pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=',/bool),/null)]
-  pathline='if [ `echo $IDL_DLM_PATH | grep -co "'+file_expand_path(icydir+'/lib/')+'"` == 0 ]; then '
-  pathline+='  export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+file_expand_path(icydir+'/lib/')+'"'
+  pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=[^#]*'+eicydir,/bool),/null)]
+  pathline='if [ `echo $IDL_DLM_PATH | grep -co "'+eicydir+'"` == 0 ]; then '
+  pathline+='  export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+eicydir+'"'
   pathline+=';fi'
   pathr=[pathr,pathline]
   openw,lun,orc+'/idlpath.sh',/get_lun
