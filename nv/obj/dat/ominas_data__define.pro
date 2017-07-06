@@ -179,7 +179,7 @@ end_keywords)
 
  _header = ''
  if(keyword_set(header)) then _header = header
- dat_set_header, self, _header
+ dat_set_header, self, _header, /noevent
 
 
  return, 1

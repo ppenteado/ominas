@@ -47,6 +47,7 @@ function nv_init_state
  ; check for proper startup environment
  ;-------------------------------------------------------------------
  if(NOT keyword_set(getenv('OMINAS_DIR'))) then $
+;   stop, 'OMINAS not configured; did you start IDL using the "ominas" command?'
   begin
    print, 'OMINAS not configured; did you start IDL using the "ominas" command?'
    ;This point is only reached if one tried to use OMINAS routines while the
