@@ -195,6 +195,17 @@ else
   printf "~/ominas_data directory already exists\n"
 fi
 
+for f in grimrc Xdefaults-grim 
+do
+  if [ ! -e ${OMINAS_RC}/${f} ]; then
+    echo "Copying default ${f} to ${OMINAS_RC}"
+    cp -avn config/${f} ${OMINAS_RC}/
+  else
+    echo "${f} already exists in ${OMINAS_RC}, not changing it"
+  fi
+done
+
+
 export OMINAS_DATA=${HOME}/ominas_data
 if [ ! -e ${setting} ]; then
   echo "#!/usr/bin/env bash" > ${setting} 
@@ -563,8 +574,12 @@ function writesetting() {
 
 echo "#!/usr/bin/env bash" > ~/.ominas/ominasrc
 echo "alias ominas=~/.ominas/ominas" >> ~/.ominas/ominasrc
-echo "alias ominasde=~/.ominas/ominasde" >> ~/.ominas/ominasrc
+echo "alias ominasdie=~/.ominas/ominasde" >> ~/.ominas/ominasrc
 echo ". ~/.ominas/idlpath.sh" >> ~/.ominas/ominasrc
+echo 'alias brim="ominas brim.bat -args "' >> ~/.ominas/ominasrc
+echo 'alias grim="ominas grim.bat -args "' >> ~/.ominas/ominasrc
+echo 'alias rim="ominas rim.bat -args "' >> ~/.ominas/ominasrc
+
 
 echo "writing "$setting
 if [ -e "$setting" ]; then
@@ -577,8 +592,12 @@ chmod a+rx $setting
 
 echo "#!/usr/bin/env bash" > ${setting}
 cat ${OMINAS_RC}/idlpath.sh >> ${setting}
-echo "alias ominas=~/.ominas/ominas" >> ${setting}
-echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
+echo "xrdb -merge ${OMINAS_RC}/Xdefaults-grim" >> ${setting}
+#echo "alias ominas=~/.ominas/ominas" >> ${setting}
+#echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
+#echo 'alias brim="ominas brim.bat -args "' >> ${setting}
+#echo 'alias grim="ominas grim.bat -args "' >> ${setting}
+#echo 'alias rim="ominas rim.bat -args "' >> ${setting}
 
 #if [[ -n "$ins_ominas_env_def" ]]; then
 #if [[ ${corest} == ${yes} ]]; then
@@ -589,7 +608,7 @@ echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
   echo "if [ ! -w ${OMINAS_TMP} ]; then mkdir -p ${OMINAS_TMP}; fi" >> ${setting}
 #fi
 echo "export DFLAG=${DFLAG}" >> $setting
-#echo $ins_ominas_env_def >> $setting
+echo $ins_ominas_env_def >> $setting
 #echo "export CAM_NFILTERS=256" >> $setting
 
 for ((d=0; d<6; d++));
@@ -610,7 +629,7 @@ do
           fi
         fi
 done
-echo $ins_ominas_env_def >> $setting
+#echo $ins_ominas_env_def >> $setting
 
 for ((d=0; d<6; d++));
 do
@@ -1040,6 +1059,8 @@ do
                                 pr=0
 				pkins ominas_env_def.sh "${corest}" $(($num-4))
                                 #corest=${yes}
+                                DFLAG="false"
+                                demost="NOT CONFIGURED"
 				ppkg $(($num-4)) 	;;
 		[89]|10|11|12|13)
                                 pr=0

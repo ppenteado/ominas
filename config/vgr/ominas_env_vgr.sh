@@ -30,9 +30,11 @@ if ! [ -z ${1+x} ]; then
     export VGR_SPICE_FK
     VGR_SPICE_IK=${pool}/ik/
     export VGR_SPICE_IK
-    VGR_SPICE_LSK=${pool}/lsk/
+#    VGR_SPICE_LSK=${pool}/lsk/
+    VGR_SPICE_LSK=${pool}/../Generic_kernels/lsk/
     export VGR_SPICE_LSK
-    VGR_SPICE_PCK=${pool}/pck/
+#    VGR_SPICE_PCK=${pool}/pck/
+    VGR_SPICE_PCK=${pool}/../Generic_kernels/pck/
     export VGR_SPICE_PCK
     VGR_SPICE_SCK=${pool}/$sclk/
     export VGR_SPICE_SCK
