@@ -82,12 +82,11 @@ function pg_load_maps, dir, md=md, bx=bx, dd=dd
 
  names = cor_name(bx)
 
- w = nwhere(strupcase(names), strupcase(name))
+ w = nwhere(strupcase(name), strupcase(names))
  if(w[0] EQ -1) then return, 0
 
  dirs = dirs[w]
  files = file_search(dirs + '/*.*')
-
 
  ;------------------------------------------------------------------
  ; load map files
