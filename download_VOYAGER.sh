@@ -44,8 +44,7 @@ echo "Downloading cks"
 #"([[:digit:]]{5}_[[:digit:]]{5}(r[[:alnum:]])|([[:alnum:]]{2}_ISS))(\.bc$)|(bc\.lbl$)"
 
 #generic lsk and pck, because these are empty in Voyager
-baseurl="http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/"
-#standard download (full, nonrecursive) directories
+baseurl="http://naif.jpl.nasa.gov/pub/naif/generic_kernels/"
 dirs=( lsk pck )
 
 #location for timestamps files
