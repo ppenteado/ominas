@@ -56,7 +56,7 @@ if nwc then begin
     ;printf,lun,'export IDL_DLM_PATH="'+ndp+'"'
     free_lun,lun
     print,'Icy path removed from IDL_DLM_PATH'
-    setenv,'IDL_PATH='+ndp
+    setenv,'IDL_DLM_PATH='+ndp
   endif else begin
     pref_set,'IDL_DLM_PATH',ndp,/commit
     print,'Icy path removed from IDL DLM preferences'
