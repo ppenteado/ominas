@@ -33,7 +33,9 @@ if icydir || ominasdir then begin
   if getenv('IDL_PATH') then begin 
     openw,lun,orc+'/idlpath.sh',/get_lun 
     ;printf,lun,'export IDL_PATH="'+path+'"'
-    printf,lun,'export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+ominasdir+'"' 
+    dtmp='+'+ominasdir
+    if icydir then dtmp+=':+'+file_expand_path(icydir+'/lib/')
+    printf,lun,'export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+dtmp+'"' 
     free_lun,lun
     print,'OMINAS paths added to IDL_PATH'
     setenv,'IDL_PATH='+path+''
@@ -50,7 +52,7 @@ if icydir then begin
 if getenv('IDL_DLM_PATH') then begin
   openw,lun,orc+'/idlpath.sh',/get_lun,/append
   ;printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"'
-  printf,lun,'export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}'+file_expand_path(icydir+'/lib/')+'"'
+  printf,lun,'export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+file_expand_path(icydir+'/lib/')+'"'
   free_lun,lun
   print,'Icy path added to IDL_DLM_PATH'
   setenv,'IDL_DLM_PATH='+dlm_path+''
