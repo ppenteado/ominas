@@ -55,7 +55,8 @@ endif else begin
     endif
     if getenv('IDL_PATH') then begin
       openw,lun,orc+'/idlpath.sh',/get_lun,/append
-      printf,lun,'export IDL_PATH="'+path+'"'
+      ;printf,lun,'export IDL_PATH="'+path+'"'
+      printf,lun,'export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+loc+'/pro"'
       free_lun,lun
       print,'IDLAstro path set in IDL_PATH: ',path
       setenv,'IDL_PATH='+path+''
