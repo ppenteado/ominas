@@ -31,10 +31,8 @@ for i=0, ndd-1 do pd[i] = pg_get_planets(dd[i], od=cd[i], name=['ENCELADUS'])
 ;  to ingrid is the grim window number shown in the title bar of each grim 
 ;  window.  
 ;-------------------------------------------------------------------------
-grim, /new, dd[0], cd=cd[0], pd=pd[0]
-stop
 for i=0, ndd-1 do grim, /new, dd[i], cd=cd[i], pd=pd[i], over='limb', /order, z=0.75
-
+stop
 
 
 ;-------------------------------------------------------------------------

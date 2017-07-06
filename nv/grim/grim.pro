@@ -2139,7 +2139,6 @@ function grim_render_sampling_fn, dd, source_image_pts_sample, source_image_pts_
 
  render_image_pts_grid = gridgen(rdim, /rec, /double)
 
-help, render_image_pts_grid, source_image_pts_grid, source_image_pts_sample
  xx = interpol(render_image_pts_grid[0,*,0], source_image_pts_grid[0,*,0], source_image_pts_sample[0,*])
  yy = interpol(render_image_pts_grid[1,0,*], source_image_pts_grid[1,0,*], source_image_pts_sample[1,*])
 

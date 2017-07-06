@@ -333,7 +333,8 @@ end
 ;=============================================================================
 pro grim_mark_descriptor, xd, val
  nv_suspend_events
- for i=0, n_elements(xd)-1 do if(keyword_set(xd[i])) then cor_set_udata, xd[i], 'grim_status', val
+ for i=0, n_elements(xd)-1 do if(keyword_set(xd[i])) then $
+                cor_set_udata, xd[i], 'grim_status', val, /noevent
  nv_resume_events
 end
 ;=============================================================================
@@ -507,7 +508,7 @@ function grim_get_cameras, grim_data, plane=plane
    if(keyword_set(cd)) then $
 	       grim_add_descriptor, grim_data, plane.od_p, cd, /one
   end
- cor_set_udata, plane.dd, 'GRIM_CAM_TRS', plane.cam_trs
+ cor_set_udata, plane.dd, 'GRIM_CAM_TRS', plane.cam_trs, /noevent
 
  return, *plane.cd_p
 end
@@ -567,7 +568,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
    else pd = pd[w]
   end
 
- cor_set_udata, plane.dd, 'GRIM_PLT_NAMES', names
+ cor_set_udata, plane.dd, 'GRIM_PLT_NAMES', names, /noevent
 
  if(keyword_set(pd[0])) then grim_add_descriptor, grim_data, plane.pd_p, pd
  
@@ -629,8 +630,8 @@ function grim_get_sun, grim_data, plane=plane
    sund = str_create_descriptors(1, gbd=pd)
   end
 
- cor_set_udata, plane.dd, 'GRIM_SUN_NAME', name
- cor_set_udata, plane.dd, 'GRIM_SUN_TRS', plane.sun_trs
+ cor_set_udata, plane.dd, 'GRIM_SUN_NAME', name, /noevent
+ cor_set_udata, plane.dd, 'GRIM_SUN_TRS', plane.sun_trs, /noevent
 
  if(keyword_set(sund)) then grim_add_descriptor, grim_data, plane.sund_p, sund, /one
 
@@ -676,8 +677,8 @@ function grim_get_stars, grim_data, plane=plane, names=names
  grim_print, grim_data, 'Getting star descriptors...'
  sd = pg_get_stars(plane.dd, od=*plane.cd_p, $
                  trs, name=names, fov=fov, cov=cov, _extra=grim_data.str_select)
- cor_set_udata, plane.dd, 'GRIM_STR_NAMES', names
- cor_set_udata, plane.dd, 'GRIM_STR_TRS', trs
+ cor_set_udata, plane.dd, 'GRIM_STR_NAMES', names, /noevent
+ cor_set_udata, plane.dd, 'GRIM_STR_TRS', trs, /noevent
 
  if(keyword_set(sd[0])) then grim_add_descriptor, grim_data, plane.sd_p, sd
 
@@ -722,8 +723,8 @@ function grim_get_rings, grim_data, plane=plane, names=names
  rd = pg_get_rings(plane.dd, $
          od=*plane.cd_p, pd=pd, name=names, $
                    plane.rng_trs, fov=fov, cov=cov, _extra=grim_data.rng_select)
- cor_set_udata, plane.dd, 'GRIM_RNG_NAMES', names
- cor_set_udata, plane.dd, 'GRIM_RNG_TRS', plane.rng_trs
+ cor_set_udata, plane.dd, 'GRIM_RNG_NAMES', names, /noevent
+ cor_set_udata, plane.dd, 'GRIM_RNG_TRS', plane.rng_trs, /noevent
 
  if(keyword_set(rd)) then grim_add_descriptor, grim_data, plane.rd_p, rd
 
@@ -766,8 +767,8 @@ function grim_get_stations, grim_data, plane=plane, names=names
  std = pg_get_stations(plane.dd, $
 		   od=*plane.cd_p, bx=bx, name=names, $
                           plane.stn_trs, _extra=grim_data.stn_select)
- cor_set_udata, plane.dd, 'GRIM_STN_NAMES', names
- cor_set_udata, plane.dd, 'GRIM_STN_TRS', plane.stn_trs
+ cor_set_udata, plane.dd, 'GRIM_STN_NAMES', names, /noevent
+ cor_set_udata, plane.dd, 'GRIM_STN_TRS', plane.stn_trs, /noevent
 
  if(keyword_set(std)) then grim_add_descriptor, grim_data, plane.std_p, std
 
@@ -810,8 +811,8 @@ function grim_get_arrays, grim_data, plane=plane, names=names
  ard = pg_get_arrays(plane.dd, $
 		   od=*plane.cd_p, bx=bx, name=names, $
                          plane.arr_trs, _extra=grim_data.arr_select)
- cor_set_udata, plane.dd, 'GRIM_ARR_NAMES', names
- cor_set_udata, plane.dd, 'GRIM_ARR_TRS', plane.arr_trs
+ cor_set_udata, plane.dd, 'GRIM_ARR_NAMES', names, /noevent
+ cor_set_udata, plane.dd, 'GRIM_ARR_TRS', plane.arr_trs, /noevent
 
  if(keyword_set(ard)) then grim_add_descriptor, grim_data, plane.ard_p, ard
 
