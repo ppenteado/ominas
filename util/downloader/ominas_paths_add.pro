@@ -39,17 +39,17 @@ if icydir || ominasdir then begin
       free_lun,lun
     endif else pathr=['']
     if ominasdir then begin
-      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+ominasdir,/bool),/null)]
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+ominasdir+'/?(:|$)',/bool),/null)]
       dtmp='+'+ominasdir
-      pathline='if [ `echo $IDL_PATH | grep -co "'+ominasdir+'"` == 0 ]; then '
+      pathline='if [ `echo $IDL_PATH | grep -Eco "'+ominasdir+'/?(:|$)"` == 0 ]; then '
       pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+ominasdir+'"; fi'
       pathr=[pathr,pathline]
     endif
     if icydir then begin
       eicydir=file_expand_path(icydir+'/lib/')
-      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+eicydir,/bool),/null)]
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+eicydir+'/?(:|$)',/bool),/null)]
       dtmp+=':+'+eicydir
-      pathline='if [ `echo $IDL_PATH | grep -co "'+eicydir+'"` == 0 ]; then '
+      pathline='if [ `echo $IDL_PATH | grep -Eco "'+eicydir+'/?(:|$)"` == 0 ]; then '
       pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+eicydir+'"; fi'
       pathr=[pathr,pathline]
     endif
@@ -77,8 +77,8 @@ if getenv('IDL_DLM_PATH') then begin
     readf,lun,pathr
     free_lun,lun
   endif else pathr=['']
-  pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=[^#]*'+eicydir,/bool),/null)]
-  pathline='if [ `echo $IDL_DLM_PATH | grep -co "'+eicydir+'"` == 0 ]; then '
+  pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=[^#]*'+eicydir+'/?(:|$)',/bool),/null)]
+  pathline='if [ `echo $IDL_DLM_PATH | grep -Eco "'+eicydir+'/?(:|$)"` == 0 ]; then '
   pathline+='  export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+eicydir+'"'
   pathline+=';fi'
   pathr=[pathr,pathline]
