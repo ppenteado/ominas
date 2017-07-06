@@ -62,7 +62,7 @@ endif else begin
         free_lun,lun
       endif else pathr=['']
       pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=',/bool),/null)]
-      pathline='if [ `echo $IDL_PATH | grep -co "'+loc+'/pro"` == 0 ]; then; '
+      pathline='if [ `echo $IDL_PATH | grep -co "'+loc+'/pro"` == 0 ]; then '
       pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+loc+'/pro"'
       pathline+=';fi'
       pathr=[pathr,pathline]

@@ -42,8 +42,8 @@ if icydir || ominasdir then begin
     dtmp='+'+ominasdir
     if icydir then begin
       dtmp+=':+'+file_expand_path(icydir+'/lib/')
-      pathline='if [ `echo $IDL_PATH | grep "'+ominasdir+'" |  grep -co "'+file_expand_path(icydir+'/lib/')+'"` == 0 ]; then; '
-    endif else pathline='if [ `echo $IDL_PATH | grep -co "'+ominasdir+'"` == 0 ]; then; '
+      pathline='if [ `echo $IDL_PATH | grep "'+ominasdir+'" |  grep -co "'+file_expand_path(icydir+'/lib/')+'"` == 0 ]; then '
+    endif else pathline='if [ `echo $IDL_PATH | grep -co "'+ominasdir+'"` == 0 ]; then '
     pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+dtmp+'"'
     pathline+=';fi'
     pathr=[pathr,pathline]
@@ -72,7 +72,7 @@ if getenv('IDL_DLM_PATH') then begin
     free_lun,lun
   endif else pathr=['']
   pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=',/bool),/null)]
-  pathline='if [ `echo $IDL_DLM_PATH | grep -co "'+file_expand_path(icydir+'/lib/')+'"` == 0 ]; then; '
+  pathline='if [ `echo $IDL_DLM_PATH | grep -co "'+file_expand_path(icydir+'/lib/')+'"` == 0 ]; then '
   pathline+='  export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+file_expand_path(icydir+'/lib/')+'"'
   pathline+=';fi'
   pathr=[pathr,pathline]
