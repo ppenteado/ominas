@@ -321,9 +321,6 @@ Cloning, Copying, and freeing descriptors
 
 Other Sublibraries 
 ------------------
- Class Library 
-  The class library contains routines that provide utilities that apply to
-  all classes, such as class_extract and class_insert.
 
  Tools Library 
   The tools library contains routines that perform higher-level functions

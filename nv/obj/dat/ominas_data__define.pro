@@ -171,10 +171,10 @@ end_keywords)
  (*self.dd0p).sample_p = nv_ptr_new(-1)
  (*self.dd0p).order_p = nv_ptr_new(-1)
 
- if(defined(data)) then dat_set_data, self, data, abscissa=abscissa
+ if(defined(data)) then dat_set_data, self, data, abscissa=abscissa, /noevent
 
 
- dat_set_nhist, self, nhist
+ dat_set_nhist, self, nhist, /noevent
 
 
  _header = ''

@@ -46,6 +46,7 @@
 ;    side of the top toolbar to switch planes)
 ;-
 ;-------------------------------------------------------------------------
+!quiet = 1
 grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
                   ['N1350122987_2.IMG','2100r.img','c3440346.gem'])
                    

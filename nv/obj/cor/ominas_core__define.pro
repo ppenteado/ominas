@@ -45,7 +45,7 @@ end_keywords
  self.tag = 'CRD'
  if(keyword_set(name)) then self.name = decrapify(name[ii])
 
- if(keyword_set(udata)) then cor_set_udata, self, uname, udata	;;;;
+ if(keyword_set(udata)) then cor_set_udata, self, uname, udata, /noevent	;;;;
 
 ; self.__protect__gdp = nv_ptr_new(0)
 ; if(keyword_set(gd)) then *self.__protect__gdp = cor_create_gd(gd[ii], /explicit)
