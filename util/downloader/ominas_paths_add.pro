@@ -24,7 +24,7 @@ if verb then print,'ominas_paths_add: icydir=',icydir,' ominasdir=',ominasdir
 xidldir=getenv('XIDL_DIR')
 if ominasdir then begin
   if ~stregex(path,'\+?'+ominasdir+'/*(:.+)?$',/bool) then path+=':+'+ominasdir
-  if ~stregex(path,'\+?'+xidldir+'/*(:.+)?$',/bool) then path+=':+'+xidldir
+  ;if ~stregex(path,'\+?'+xidldir+'/*(:.+)?$',/bool) then path+=':+'+xidldir
 ;  !path=path
 ;  idlastro_download,/auto,ominasdir
 endif
@@ -32,7 +32,8 @@ endif
 if icydir || ominasdir then begin
   if getenv('IDL_PATH') then begin 
     openw,lun,orc+'/idlpath.sh',/get_lun 
-    printf,lun,'export IDL_PATH="'+path+'"' 
+    ;printf,lun,'export IDL_PATH="'+path+'"'
+    printf,lun,'export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+ominasdir+'"' 
     free_lun,lun
     print,'OMINAS paths added to IDL_PATH'
     setenv,'IDL_PATH='+path+''
@@ -48,7 +49,8 @@ if icydir then begin
   if ~stregex(dlm_path,'\+?/.*/ominas_data/icy/lib/*',/bool) then dlm_path+=':+'+file_expand_path(icydir+'/lib/')
 if getenv('IDL_DLM_PATH') then begin
   openw,lun,orc+'/idlpath.sh',/get_lun,/append
-  printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"'
+  ;printf,lun,'export IDL_DLM_PATH="'+dlm_path+'"'
+  printf,lun,'export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}'+file_expand_path(icydir+'/lib/')+'"'
   free_lun,lun
   print,'Icy path added to IDL_DLM_PATH'
   setenv,'IDL_DLM_PATH='+dlm_path+''
