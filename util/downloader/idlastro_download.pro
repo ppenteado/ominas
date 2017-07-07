@@ -54,12 +54,24 @@ endif else begin
       path+=':+'+loc+'/pro'
     endif
     if getenv('IDL_PATH') then begin
-      openw,lun,orc+'/idlpath.sh',/get_lun,/append
+      nl=file_lines(orc+'/idlpath.sh')
+      if nl then begin
+        pathr=strarr(nl)
+        openr,lun,orc+'/idlpath.sh',/get_lun
+        readf,lun,pathr
+        free_lun,lun
+      endif else pathr=['']
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+loc+'/pro/?(:|$)',/bool),/null)]
+      pathline='if [ `echo $IDL_PATH | grep -Eco "'+loc+'/pro/?(:|$)"` == 0 ]; then '
+      pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+loc+'/pro"; fi'
+      pathr=[pathr,pathline]
+      openw,lun,orc+'/idlpath.sh',/get_lun
       ;printf,lun,'export IDL_PATH="'+path+'"'
-      printf,lun,'export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+loc+'/pro"'
+      printf,lun,pathr,format='(A0)'
+      ;printf,lun,'export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+loc+'/pro"'
       free_lun,lun
       print,'IDLAstro path set in IDL_PATH: ',path
-      setenv,'IDL_PATH='+path+''
+      setenv,'IDL_PATH='+path
     endif else begin
       PREF_SET, 'IDL_PATH', path, /COMMIT
       print,'IDLAstro path set in preferences: ',path
