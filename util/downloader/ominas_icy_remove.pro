@@ -9,7 +9,7 @@ endif else begin
   w=where(stregex(dps,'\+?/.*/icy/lib/?',/bool),count,complement=wc,ncomplement=nwc)
   fpath='/icy/lib/?'
 endelse
-openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh'
+openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh',/get_lun
 printf,lun,' '
 free_lun,lun
 if nwc then begin
@@ -30,7 +30,7 @@ if nwc then begin
     print,'Icy path removed from IDL_PATH'
     setenv,'IDL_PATH='+np
 
-    openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh',/append
+    openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh',/append,/get_lun
     printf,lun,'export IDL_PATH="'+np+'"'
     free_lun,lun
 
@@ -64,7 +64,7 @@ if nwc then begin
     free_lun,lun
     print,'Icy path removed from IDL_DLM_PATH'
     setenv,'IDL_DLM_PATH='+ndp
-    openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh',/append
+    openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh',/append,/get_lun
     printf,lun,'export IDL_DLM_PATH="'+ndp+'"'
     free_lun,lun
   endif else begin

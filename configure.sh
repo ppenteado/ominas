@@ -717,6 +717,7 @@ if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
            esac
            $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/') & ominas_icy_remove,all=${removeall},orc='${OMINAS_RC}' & exit"
            . "${OMINAS_TMP}/idlpathr.sh"
+           rm -f "${OMINAS_TMP}/idlpathr.sh"
            . "${OMINAS_RC}/idlpath.sh"
 #           if [ -e idlpathr.sh ]; then 
 #             source idlpathr.sh
