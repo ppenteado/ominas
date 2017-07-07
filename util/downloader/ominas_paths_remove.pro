@@ -21,18 +21,28 @@ if odir then begin
     np=strjoin(dps[wc],':')
     cdir=1B
   endif
-  if cdir then begin
+  ;if cdir then begin
     if getenv('IDL_PATH') then begin
+      nl=file_lines(orc+'/idlpath.sh')
+      if nl then begin
+        pathr=strarr(nl)
+        openr,lun,orc+'/idlpath.sh',/get_lun
+        readf,lun,pathr
+        free_lun,lun
+      endif else pathr=['']
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+loc+'/?(:|$)',/bool),/null)]
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+odir+'/?(:|$)',/bool),/null)]
       openw,lun,orc+'/idlpath.sh',/get_lun
-      printf,lun,'export IDL_PATH="'+np+'"'
+      ;printf,lun,'export IDL_PATH="'+np+'"'
+      printf,lun,pathr,format='(A0)'
       free_lun,lun
       print,'OMINAS path removed from IDL_PATH'
-      setenv,'IDL_PATH='+np+''
+      setenv,'IDL_PATH='+np
     endif else begin
       pref_set,'IDL_PATH',np,/commit
       print,'OMINAS path removed from IDL preferences'
     endelse
-  endif
+  ;endif
 endif
 if xdir then begin
   w=where(stregex(dps,'\+?'+xdir+'/?',/bool),count,complement=wc,ncomplement=nwc)
