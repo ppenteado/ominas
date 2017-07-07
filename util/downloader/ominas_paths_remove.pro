@@ -37,7 +37,7 @@ if odir then begin
       printf,lun,pathr,format='(A0)'
       free_lun,lun
       print,'OMINAS path removed from IDL_PATH'
-      setenv,'IDL_PATH='+np+''
+      setenv,'IDL_PATH='+np
     endif else begin
       pref_set,'IDL_PATH',np,/commit
       print,'OMINAS path removed from IDL preferences'

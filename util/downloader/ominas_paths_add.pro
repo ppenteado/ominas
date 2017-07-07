@@ -42,7 +42,7 @@ if icydir || ominasdir then begin
       pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+ominasdir+'/?(:|$)',/bool),/null)]
       dtmp='+'+ominasdir
       pathline='if [ `echo $IDL_PATH | grep -Eco "'+ominasdir+'/?(:|$)"` == 0 ]; then '
-      pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+ominasdir+'"; fi'
+      pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+ominasdir+'"; fi'
       pathr=[pathr,pathline]
     endif
     if icydir then begin
@@ -50,7 +50,7 @@ if icydir || ominasdir then begin
       pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+eicydir+'/?(:|$)',/bool),/null)]
       dtmp+=':+'+eicydir
       pathline='if [ `echo $IDL_PATH | grep -Eco "'+eicydir+'/?(:|$)"` == 0 ]; then '
-      pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}'+eicydir+'"; fi'
+      pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+eicydir+'"; fi'
       pathr=[pathr,pathline]
     endif
     openw,lun,orc+'/idlpath.sh',/get_lun 
