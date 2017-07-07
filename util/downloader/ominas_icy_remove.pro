@@ -9,6 +9,9 @@ endif else begin
   w=where(stregex(dps,'\+?/.*/icy/lib/?',/bool),count,complement=wc,ncomplement=nwc)
   fpath='/icy/lib/?'
 endelse
+openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh'
+printf,lun,' '
+free_lun,lun
 if nwc then begin
   np=strjoin(dps[wc],':')
   print,'Setting IDL_PATH to ',np
@@ -26,7 +29,11 @@ if nwc then begin
     free_lun,lun
     print,'Icy path removed from IDL_PATH'
     setenv,'IDL_PATH='+np
-    print,'export IDL_PATH="'+np+'"'
+
+    openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh',/append
+    printf,lun,'export IDL_PATH="'+np+'"'
+    free_lun,lun
+
   endif else begin
     pref_set,'IDL_PATH',np,/commit
     print,'Icy path removed from IDL preferences'
@@ -51,14 +58,15 @@ if nwc then begin
       free_lun,lun
     endif else pathr=['']
     pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=[^#]*'+fpath+'/?(:|$)',/bool),/null)]
-    
     openw,lun,orc+'/idlpath.sh',/get_lun
     printf,lun,pathr,format='(A0)'
     ;printf,lun,'export IDL_DLM_PATH="'+ndp+'"'
     free_lun,lun
     print,'Icy path removed from IDL_DLM_PATH'
     setenv,'IDL_DLM_PATH='+ndp
-    print,'export IDL_DLM_PATH="'+ndp+'"'
+    openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh',/append
+    printf,lun,'export IDL_DLM_PATH="'+ndp+'"'
+    free_lun,lun
   endif else begin
     pref_set,'IDL_DLM_PATH',ndp,/commit
     print,'Icy path removed from IDL DLM preferences'
