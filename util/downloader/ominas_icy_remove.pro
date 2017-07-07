@@ -26,6 +26,7 @@ if nwc then begin
     pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+fpath+'/?(:|$)',/bool),/null)]
     openw,lun,orc+'/idlpath.sh',/get_lun
     ;printf,lun,'export IDL_PATH="'+np+'"'
+    printf,lun,pathr,format='(A0)'
     free_lun,lun
     print,'Icy path removed from IDL_PATH'
     setenv,'IDL_PATH='+np
