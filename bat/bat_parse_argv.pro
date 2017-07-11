@@ -22,7 +22,7 @@
 ;  OUTPUT: 
 ;	keys:	String array giving the names of keywords from any
 ;		keyword=value pairs.  Also, any argument containing a single
-;		'/' as its first character is considered to be a keyword
+;		'-' as its first character is considered to be a keyword
 ;		whose value is set to '1'.
 ;
 ;	val_ps:	Array of pointers, one for each keyword, giving the values
