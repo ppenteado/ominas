@@ -63,17 +63,6 @@ function body_to_image_pos, cd, bx, v, inertial=inertial, valid=valid
 	 return, cam_focal_to_image(cd, $
 		   cam_body_to_focal(cd, $
 		     bod_inertial_to_body_pos(cd, inertial)))
-;	 fn=cam_fn_body_to_image(cd)
-;	 if fn then rimage=call_function(fn, cd, bx, v) else begin
-;	   inertial = bod_body_to_inertial_pos(bx, v)
-;	   bodinertial=bod_inertial_to_body_pos(cd, inertial)
-;	   focal=cam_body_to_focal(cd,bodinertial)
-;	   rimage=cam_focal_to_image(cd,focal)
-;	 endelse
-;	 return,rimage
-;;	 return, cam_focal_to_image(cd, $
-;;		   cam_body_to_focal(cd, $
-;;		     bod_inertial_to_body_pos(cd, inertial)))
 	end
 
   else :
