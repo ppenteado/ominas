@@ -46,6 +46,11 @@
 ;			descriptor of a given name for each input data 
 ;			descriptor.  /tr_nosort disables this action.
 ;
+;	tr_order:	If set (and tr_nosort not set), dat_get_value selects 
+;			the latest of any duplicately named descriptors instead
+;			of the earliest.
+;
+;
 ;  OUTPUT: 
 ;	status:		0 if at least one translator call was successful, 
 ;			-1 otherwise.
@@ -92,15 +97,18 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ;--------------------------------------------
  ; build translators list
  ;--------------------------------------------
-; need to group dd based on instrument... 
-if(NOT keyword_set(tr_override)) then begin
-   if(NOT ptr_valid(_dd[0].input_translators_p)) then begin
+; need to group dd based on instrument...
+ if(NOT keyword_set(tr_override)) then $
+  begin
+   if(NOT ptr_valid(_dd[0].input_translators_p)) then $
+    begin
      nv_message, /con, name='dat_get_value', $
 	    'No input translator available for '+keyword+'.'
      return, 0
-   endif
+    end
    translators = *_dd[0].input_translators_p
- endif else translators = str_nsplit(tr_override, ',')
+  end $
+ else translators = str_nsplit(tr_override, ',')
  n = n_elements(translators)
 
 
@@ -110,7 +118,8 @@ if(NOT keyword_set(tr_override)) then begin
  nv_suspend_events
  nv_message, verb=0.9, 'Data descriptor ' + cor_name(dd)
 
- for i=0, n-1 do begin
+ for i=0, n-1 do $
+  begin
    nv_message, verb=0.9, 'Calling translator ' + translators[i]
 
    _dd.last_translator = [i,0]#make_array(ndd, val=1)
@@ -125,29 +134,38 @@ if(NOT keyword_set(tr_override)) then begin
    ;--------------------------------------
    ; add values to list
    ;--------------------------------------
-   if(stat EQ 0) then begin
+   if(stat EQ 0) then $
+    begin
      dat_set_gd, dd, xd=xd
      xds = append_array(xds, xd)
+     sort_names = append_array(sort_names, $
+               cor_name(xd) + '-' + str_pad(strtrim(i,2), 4, c='0', align=1))
      if(keyword_set(tr_first)) then i=n
-   endif else nv_message, verb=0.9, 'No value.' 
- endfor
+    end $
+   else nv_message, verb=0.9, 'No value.' 
+  end 
  nxds = n_elements(xds)
 
  ;----------------------------------------------------------------
  ; sort xds: remove descriptors with duplicate names, keeping
- ; the earliest returned versions
+ ; the earliest (or latest if /tr_order) returned versions
  ;----------------------------------------------------------------
  result = 0
- if(keyword_set(xds)) then begin
+ if(keyword_set(xds)) then $
+  begin
    status = 0
-   if(NOT keyword_set(tr_nosort)) then for i=0, ndd-1 do begin
+   if(NOT keyword_set(tr_nosort)) then $
+    for i=0, ndd-1 do $
+     begin
       w = where(cor_gd(xds, /dd) EQ dd[i])
       nw = n_elements(w)
-      if(w[0] NE -1) then begin
-        w = rotate(w,2)		; uniq chooses highest index, so this assures
-				; that earliest xd gets selected
+      if(w[0] NE -1) then $
+       begin
+        if(NOT keyword_set(tr_order)) then w = rotate(w,2)		
+				; uniq chooses highest index, so this ensures
+				; that earliest xd gets selected unless /tr_order
         names = cor_name(xds[w])
-        ss = sort(names)
+	ss = sort(sort_names)
         uu = uniq(names[ss])
 
         ii = lindgen(nxds)
@@ -155,10 +173,10 @@ if(NOT keyword_set(tr_override)) then begin
         ii = ii[sort(ii)]
 
         result = append_array(result, xds[ii])
-      endif
-    endfor
-   endif else result = xds
- ;endif
+       end
+     end $
+    else result = xds
+  end
 
  nv_resume_events
  return, result
