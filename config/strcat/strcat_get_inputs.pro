@@ -68,6 +68,7 @@ pro strcat_get_inputs, dd, env, key, $
  ; fov and cov 
  ;---------------------------------------------------------
  fov = double(tr_keyword_value(dd, 'fov'))
+ if(NOT keyword_set(fov)) then fov = 1
 
  cov = double(parse_comma_list(tr_keyword_value(dd, 'cov'), delim=';'))
  if(keyword_set(cov)) then cov = transpose(cov) $

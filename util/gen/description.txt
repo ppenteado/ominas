@@ -1,5 +1,0 @@
-gen Subscript Generation Package
-================================
-
- These routines construct arrays of subscripts to facilitate various massive 
- array operations.  

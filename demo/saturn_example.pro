@@ -63,9 +63,7 @@ tvim, im, zoom=0.5, /order, /new
 ;   a detached header or through a translator that would access the data
 ;   from the default source.
 ;
-;   Change override to zero to read the data through the translators using
-;   the Voyager SEDR instead (assuming you have installed the SEDR data 
-;   files, which are not provided in the default installation)::
+;   Change override to zero to read the data through the translators instead::
 ;   
 ;     override=1
 ;     
@@ -131,8 +129,7 @@ tvim, im, zoom=0.5, /order, /new
 ;             name='SUN', $
 ;             pos=tr([1.421392d12,4.3105676d10,-4.3613585d10]))
 ;             
-;   If override was not set (and you have the Voyager SEDR data), the above could 
-;   be done with just::
+;   If override was not set, the above could be done with just::
 ;           
 ;           if(NOT override) then cd = pg_get_cameras(dd)
 ;           if(NOT override) then pd = pg_get_planets(dd, od=cd)
