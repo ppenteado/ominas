@@ -58,7 +58,7 @@ function pp_wget::init,baseurl,clobber=clobber,pattern=pattern,$
 recursive=recursive,localdir=localdir,debug=debug,timestamps=timestamps,$
 bdir=bdir,xpattern=xpattern,absolute_paths=absolute,_ref_extra=e,$
 ssl_certificate_file=sslf,splitrows=splitrows,allow_slash=allow_slash,$
-lm=lm,tz=tz,quiet=quiet
+lm=lm,tz=tz,quiet=quiet,ftpw=ftpw,mdonly=mdonly
 compile_opt idl2,logical_predicate,hidden
 
 self.clobber=keyword_set(clobber)
@@ -80,6 +80,8 @@ self.splitrows=keyword_set(splitrows)
 self.allow_slash=keyword_set(allow_slash)
 self.lm=keyword_set(lm)
 self.tz=n_elements(tz) ? tz : 0d0
+self.ftpw=n_elements(ftpw) ? ftpw :  (!version.release lt '8.4')
+self.mdonly=n_elements(mdonly) ? mdonly : 0B
 ;if n_elements(e) then self.extra=ptr_new(e)
 
 return,1
@@ -97,8 +99,13 @@ if callbackdata.debug then print,statusinfo
 w=where(stregex(statusinfo,'Verbose:[[:blank:]]+Header In:[[:blank:]]+Content-Length:',/bool),count)
 if count then begin
   tmp=stregex(statusinfo[w[0]],'Content-Length:[[:blank:]]*([[:digit:]]+)',/subexpr,/extract)
-  callbackdata.content_length=fix(tmp[1])
+  callbackdata.content_length=long64(tmp[1])
   if ~callbackdata.quiet then print,'Content Length: ',pp_readablesize(tmp[1],/string)
+  if callbackdata.mdonly eq 1 then begin
+    print,'Skipping download'
+    callbackdata.mdata={size:long64(tmp[1])}
+    return,0
+  endif
 endif
 w=where(stregex(statusinfo,'Verbose:[[:blank:]]+Header In:[[:blank:]]+Last-Modified:',/bool),count)
 if count then begin
@@ -122,25 +129,27 @@ if count then begin
     if (abs(tmrj-tmlj) lt 1d0/1440d0) then begin
       print,'This file is already present locally with same timestamp. Skipping'
       return,0
-    endif ;else print,'dif: ',tmrj-tmlj
+    endif else print,'dif: ',tmrj-tmlj
   endif
 endif
 return,1
 end
 
 pro pp_wget::setproperty,last_modified=last_modified,content_length=content_length,$
-  tz=tz,hlm=hlm,quiet=quiet
+  tz=tz,hlm=hlm,quiet=quiet,mdata=mdata
 compile_opt idl2,logical_predicate
 if n_elements(last_modified) then self.last_modified=last_modified
 if n_elements(content_length) then self.content_length=content_length
 if n_elements(tz) then self.tz=tz
 if n_elements(hlm) then self.hlm=hlm
+if n_elements(mdata) then self.mdata=ptr_new(mdata)
 ;if n_elements(ex) then self.idlneturl::setproperty,_strict_extra=ex
 end
 
 pro pp_wget::getproperty,local_file_tm=local_file_tm,clobber=clobber,$
   debug=debug,content_length=content_length,local_file_exists=local_file_exists,$
-  timestamps=timestamps,last_modified=last_modified,tz=tz,hlm=hlm,quiet=quiet
+  timestamps=timestamps,last_modified=last_modified,tz=tz,hlm=hlm,quiet=quiet,$
+  mdonly=mdonly,mdata=mdata
 compile_opt idl2,logical_predicate
 if arg_present(local_file_tm) then local_file_tm=self.local_file_tm
 if arg_present(clobber) then clobber=self.clobber
@@ -152,6 +161,8 @@ if arg_present(tz) then tz=self.tz
 if arg_present(hlm) then hlm=self.hlm
 ;if n_elements(ex) then self.idlneturl::setproperty,_strict_extra=ex
 if arg_present(quiet) then quiet=self.quiet
+if arg_present(mdonly) then mdonly=self.mdonly
+if arg_present(mdata) then mdata=*self.mdata
 end
 
 ;+
@@ -166,7 +177,7 @@ end
 ;
 ; :Author: Paulo Penteado (`http://www.ppenteado.net <http://www.ppenteado.net>`)
 ;-
-pro pp_wget::geturl
+pro pp_wget::geturl,listonly=listonly
 compile_opt idl2,logical_predicate
 
 if ~file_test(self.ldir,/directory) then begin
@@ -180,14 +191,19 @@ endif
 
 
 pu=parse_url(self.baseurl)
-if ptr_valid(self.extra) then begin
+if (strlowcase(pu.scheme) eq 'ftp') && (self.ftpw) then begin
+ self.iu=pp_ftp(url=self.baseurl,verbose=~self.quiet,debug=self.debug,callback_data=self,$
+ callback_function='pp_wget_callback')
+endif else begin
+ if ptr_valid(self.extra) then begin
   self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
     url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,$
     ftp_connection_mode=0,_strict_extra=*self.extra,ssl_certificate_file=self.sslf)
-endif else begin
+ endif else begin
   self.iu=idlneturl(url_host=pu.host,url_scheme=pu.scheme,url_port=pu.port,url_path=pu.path,$
     url_query=pu.query,/verbose,callback_function='pp_wget_callback',callback_data=self,$
     ftp_connection_mode=0,ssl_certificate_file=self.sslf)    
+ endelse
 endelse
 
 if strmatch(self.baseurl,'*/') then begin ;if url is a directory
@@ -197,6 +213,10 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
     inds=(strsplit(ind,/extract)).toarray()
     links=inds[*,-1]
     lm=inds[*,-4]+' '+inds[*,-3]+' '+inds[*,-2]
+    if arg_present(listonly) then begin
+      listonly=links
+      return
+    endif
     foreach link,links,il do self.retrieve,link,lm=lm[il],/skip_missing
   endif else begin
     ind=self.iu.get(/string_array)
@@ -214,10 +234,20 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
       indl=ind[w];lines with links
       ;links=reform((stregex(indl,'<a[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))[1,*])
 ;      links=(stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>',/extract,/subexpr))
-      links=(stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>.*<td[^>]*>[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*</td>',/extract,/subexpr))
-      lms=reform(links[2,*])
-      links=reform(links[1,*])
-      if total(strlen(strtrim(lms,2))) eq 0 then begin
+      ;links=(stregex(indl,'<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>.*<td[^>]*>[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*</td>',/extract,/subexpr))     re1='<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>.*<td[^>]*>[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*</td>'
+      re1='<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>.*<td[^>]*>[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*</td>'
+      links=stregex(indl,re1,/boolean)
+      if total(links,/integer) eq 0 then begin
+        re2='<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>.*<td[^>]*>[[:blank:]]*([[:alnum:] :-]{10,19})[[:blank:]]*</td>'
+        links=stregex(indl,re2,/extract,/subexpr)
+        lms=reform(links[2,*])
+        links=reform(links[1,*])
+      endif else begin
+        links=stregex(indl,re1,/extract,/subexpr)
+        lms=reform(links[2,*])
+        links=reform(links[1,*])
+      endelse
+      if total(strlen(strtrim(lms,2)),/integer) eq 0 then begin
         links=(stregex(indl,'\[(DIR)?[[:blank:]]*\][[:blank:]]*<a[^>]*[[:blank:]]+href[[:blank:]]*="([^"]+)"[^>]*>([^<]*)</a>(<td[^>]*>)?[[:blank:]]*([[:alnum:] :-]{10,17})[[:blank:]]*(</td>)?',/extract,/subexpr))
         lms=reform(links[5,*])
         w=where(strtrim(links[1,*],2) eq 'DIR',wc)
@@ -243,6 +273,10 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
         links=links[wf]
         lms=lms[wf]
       endelse
+      if arg_present(listonly) then begin
+        listonly=links
+        return
+      endif
       foreach link,links,il do begin
         if self.lm then self.retrieve,link,/skip_missing,lm=lms[il] $
           else self.retrieve,link,/skip_missing
@@ -375,7 +409,7 @@ endif else begin
       recursive=self.recursive,localdir=self.localdir+path_sep()+link+path_sep(),$
       bdir=self.bdir ? self.bdir+'/'+link : link,xpattern=self.xpattern,absolute=self.absolute,$
       ssl_certificate_file=self.sslf,splitrows=self.splitrows,allow_slash=self.allow_slash,$
-      lm=self.lm,quiet=self.quiet)
+      lm=self.lm,quiet=self.quiet,ftpw=self.ftpw,mdonly=self.mdonly)
     iw.geturl
     if ~self.quiet then print,'Done with directory ',link
   endif else if ~self.quiet then print,'Recursive mode not set, skipping directory ',link
@@ -393,5 +427,6 @@ compile_opt idl2,logical_predicate
 !null={pp_wget, inherits idl_object, clobber:0,recursive:0,$
   ldir:'',pattern:'',localdir:'',last_modified:'',local_file_exists:0,local_file_tm:0LL,$
   baseurl:'',iu:obj_new(),timestamps:obj_new(),debug:0,content_length:0LL,bdir:'',$
-  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B,lm:0B,tz:0d0,hlm:'',quiet:0B}
+  xpattern:'',absolute:0,extra:ptr_new(),sslf:'',splitrows:0B,allow_slash:0B,lm:0B,$
+  tz:0d0,hlm:'',quiet:0B,ftpw:0B,mdonly:0B,mdata:ptr_new()}
 end
