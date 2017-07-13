@@ -1,0 +1,5 @@
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+
+ JUNO_EPO_CAMERA     juno_epo_input		-
