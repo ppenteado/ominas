@@ -5,7 +5,8 @@
 ;
 ;
 ; PURPOSE:
-;	Performs a light-travel-time correction.
+;	Performs a light-travel-time correction on objects for which the 
+;	correction has not already been performed.
 ;
 ;
 ; CATEGORY:
@@ -48,11 +49,23 @@
 ;
 ;-
 ;=============================================================================
-pro ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate, invert=invert
+pro ltcorr, obs_bx, _targ_bx, c=c, epsilon=epsilon, iterate=iterate, invert=invert
 
  if(NOT keyword_set(epsilon)) then epsilon = 1d-7
  if(NOT keyword_set(iterate)) then epsilon = 1d100
 
+ ;-------------------------------------------------------------------------
+ ; select targets for which the correction as not already been performed
+ ;-------------------------------------------------------------------------
+ ab = bod_aberration(_targ_bx, 'LT')
+ val = keyword_set(invert) ? 1:0
+ w = where(ab EQ val)
+ if(w[0] EQ -1) then return
+ targ_bx = _targ_bx[w]
+
+ ;--------------------------------------------------
+ ; perform corrections
+ ;--------------------------------------------------
  nt = n_elements(targ_bx)
 
  t = make_array(nt, val=bod_time(obs_bx))
@@ -85,52 +98,10 @@ pro ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate, invert=inver
    w = where(abs(dt) GT epsilon)
   end
 
+ ;--------------------------------------------------
+ ; record that corrections have been performed
+ ;--------------------------------------------------
+ bod_set_aberration, targ_bx, 'LT', unset=val
+
 end
 ;=============================================================================
-
-
-;=============================================================================
-function ltcorr, obs_bx, targ_bx, c=c, epsilon=epsilon, iterate=iterate, copy=copy
-
- if(NOT keyword_set(epsilon)) then epsilon = 1d-7
- if(NOT keyword_set(iterate)) then epsilon = 1d100
-
- nt = n_elements(targ_bx)
-
- t = make_array(nt, val=bod_time(obs_bx))
- pos = bod_pos(obs_bx) ## make_array(nt, val=1d)
-
- targ_bxt = objarr(nt)
-
- done = 0
- w = lindgen(nt)
- while(NOT done) do $
-  begin
-   ;-------------------------------------------------------------------
-   ; compare current center-to-center light time to actual time offset
-   ;-------------------------------------------------------------------
-   range = v_mag(pos - transpose(bod_pos(targ_bx)))
-   ltime = range/c
-   dt = (t - bod_time(targ_bx)) - ltime
-
-   ;------------------
-   ; adjust targets 
-   ;------------------
-   if(w[0] NE -1) then $
-    begin
-     nw = n_elements(w)
-     for i=0, nw-1 do targ_bxt[w[i]] = cor_evolve(targ_bx[w[i]], dt[w[i]], copy=copy)
-     nv_free, targ_bx[w]
-     targ_bx[w] = targ_bxt[w]
-    end $
-   else done = 1
-
-   w = where(abs(dt) GT epsilon)
-  end
-
-
- return, targ_bxt
-end
-;=============================================================================
-
-
