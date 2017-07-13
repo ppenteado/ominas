@@ -12,6 +12,7 @@ if [ "${idlversion}" \< "linux84" ]; then
 else
   ldp=""
 fi
+ldp=""
 #if [ "$IDL_DIR" = "" ]; then
 #        idl=`which idl`
 #        if [ "$idl" = "" ]; then
