@@ -8,8 +8,8 @@
 ;	INterface to GRIm Data -- command-line access to GRIM data.
 ;	The returned descriptors allow direct access to the memory images of
 ;	GRIM's descriptor set.  Therefore changes made from the command line
-;	affect the descriptors that GRIM is using.  Moreover, GRIM monitors
-;	those descriptors and updates itself whenever a change occurs.  
+;	affect the descriptors that GRIM is using.  GRIM monitors those 
+;	descriptors and updates itself whenever a change occurs.  
 ;
 ;
 ; CATEGORY:
@@ -17,12 +17,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	ingrid, grnum, gd=gd
+;	ingrid, arg, <xd>=<xd>
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	arg:	GRIM window number.  Or GRIM data struture.  If not given, the 
+;	arg:	GRIM window number or GRIM data struture.  If not given, the 
 ;		most recently accessed grim instance is used.
 ;
 ;  OUTPUT: NONE
@@ -30,7 +30,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	plane:	Grim plane structure; instead of giving pn.  Note all planes
+;	plane:	Grim plane structure(s) instead of giving pn.  Note all planes
 ;		must belong to the same grim instance.
 ;
 ;	pn:	Plane numer(s) to access.  If not given, then current plane
@@ -113,9 +113,9 @@
 ;
 ;
 ; KNOWN ISSUES:
-;	This procedure (though brilliant) has unresolved issues, is unreliable, 
-;	behaves irrationally, is overly complicated, and has periodic breakdowns 
-;	for no externally apparent reason.
+;	This procedure has unresolved issues, is unreliable, behaves 
+;	irrationally, is overly complicated, and has periodic breakdowns for 
+;	no externally apparent reason.
 ;
 ;
 ; STATUS:

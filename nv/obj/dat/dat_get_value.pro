@@ -165,6 +165,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
 				; uniq chooses highest index, so this ensures
 				; that earliest xd gets selected unless /tr_order
         names = cor_name(xds[w])
+        sort_names = sort_names[w]
 	ss = sort(sort_names)
         uu = uniq(names[ss])
 
