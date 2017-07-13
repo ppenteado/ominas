@@ -112,6 +112,11 @@ function strcat_input, cat, dd, keyword, n_obj=n_obj, dim=dim, values=values, st
   end
 
  ;--------------------------------------------------------
+ ; Note that light time is included in catalog states
+ ;--------------------------------------------------------
+ bod_set_aberration, sd, 'LT'
+
+ ;--------------------------------------------------------
  ; Apply brightness threshold to data
  ;--------------------------------------------------------
  if(keyword__set(nbright) AND keyword__set(mags) AND keyword__set(_sd)) then $
