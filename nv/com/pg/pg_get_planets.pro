@@ -250,7 +250,7 @@ end_keywords)
    if(keyword_set(od) AND (NOT keyword_set(raw))) then $
     for i=0, ndd-1 do $
      begin
-      w = where(cor_gd(pd,/ dd) EQ dd[i])
+      w = where(cor_gd(pd, /dd) EQ dd[i])
       if(w[0] NE -1) then abcorr, od[i], pd[w], c=pgc_const('c')
      end
 

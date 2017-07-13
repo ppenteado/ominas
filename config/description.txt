@@ -1,2 +1,0 @@
-OMINAS Configurations
-====================
