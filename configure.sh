@@ -574,7 +574,7 @@ function writesetting() {
 
 echo "#!/usr/bin/env bash" > ~/.ominas/ominasrc
 echo "alias ominas=~/.ominas/ominas" >> ~/.ominas/ominasrc
-echo "alias ominasdie=~/.ominas/ominasde" >> ~/.ominas/ominasrc
+echo "alias ominasde=~/.ominas/ominasde" >> ~/.ominas/ominasrc
 echo ". ~/.ominas/idlpath.sh" >> ~/.ominas/ominasrc
 echo 'alias brim="ominas brim.bat -args "' >> ~/.ominas/ominasrc
 echo 'alias grim="ominas grim.bat -args "' >> ~/.ominas/ominasrc
