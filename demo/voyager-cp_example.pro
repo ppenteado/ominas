@@ -1,9 +1,6 @@
 ;=======================================================================
 ;                            VOYAGER-CP_EXAMPLE.PRO
 ;  
-;  The example requires the voyager SEDR files, which are not supplied 
-;  in the default OMINAS installation.
-;
 ;  This example file demonstrates the use of OMINAS for Voyager image 
 ;  geometric corrections using control points.  Compared with the 
 ;  polynomial approach, this method is probably more precise (it forces 
@@ -33,7 +30,7 @@ tvim, im, zoom=zoom, /order, /new
 ;========================================================================
 ; Get a camera descriptor.  
 ;
-; Because the image has not yet been corrected, the SEDR translator 
+; Because the image has not yet been corrected, the translator 
 ; returns a camera descriptor that approximates the camera transformation 
 ; using a linear scale.
 ; 
