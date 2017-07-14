@@ -3,7 +3,15 @@ compile_opt idl2,logical_predicate
 verb=getenv('NV_VERBOSITY')
 print,'Checking to see if IDL paths need to be changed...'
 
+;if verb then begin
+;  print,'ominas_paths_add called with '
+;  help,icydir,ominasdir,orc
+;endif
 ominasdir=n_elements(ominasdir) ? ominasdir : getenv('OMINAS_DIR')
+;if verb then begin
+;  print,'ominas_paths_add running with '
+;  help,icydir,ominasdir,orc
+;endif
 if ominasdir then begin
   idlastro_download,/auto,ominasdir,orc=orc
 endif
@@ -38,8 +46,9 @@ if icydir || ominasdir then begin
       readf,lun,pathr
       free_lun,lun
     endif else pathr=['']
+    dtmp=''
     if ominasdir then begin
-      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+ominasdir+'/?(:|$)',/bool),/null)]
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+ominasdir+'/?(:|")',/bool),/null)]
       dtmp='+'+ominasdir
       pathline='if [ `echo $IDL_PATH | grep -Eco "'+ominasdir+'/?(:|$)"` == 0 ]; then '
       pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+ominasdir+'"; fi'
@@ -47,7 +56,7 @@ if icydir || ominasdir then begin
     endif
     if icydir then begin
       eicydir=file_expand_path(icydir+'/lib/')
-      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+eicydir+'/?(:|$)',/bool),/null)]
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+eicydir+'/?(:|")',/bool),/null)]
       dtmp+=':+'+eicydir
       pathline='if [ `echo $IDL_PATH | grep -Eco "'+eicydir+'/?(:|$)"` == 0 ]; then '
       pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+eicydir+'"; fi'
@@ -77,7 +86,7 @@ if getenv('IDL_DLM_PATH') then begin
     readf,lun,pathr
     free_lun,lun
   endif else pathr=['']
-  pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=[^#]*'+eicydir+'/?(:|$)',/bool),/null)]
+  pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=[^#]*'+eicydir+'/?(:|")',/bool),/null)]
   pathline='if [ `echo $IDL_DLM_PATH | grep -Eco "'+eicydir+'/?(:|$)"` == 0 ]; then '
   pathline+='  export IDL_DLM_PATH="${IDL_DLM_PATH:+$IDL_DLM_PATH:}+'+eicydir+'"'
   pathline+=';fi'

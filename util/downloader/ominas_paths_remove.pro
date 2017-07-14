@@ -13,7 +13,7 @@ if odir then begin
     cdir=1B
   endif else np=path
   dps=strsplit(np,':',/extract)
-  loc='~/ominas_data/idlastro'
+  loc='~/ominas_data/idlastro/pro'
   spawn,'eval echo '+loc,res
   loc=res 
   w=where(stregex(dps,'\+?'+loc+'/?',/bool),count,complement=wc,ncomplement=nwc)
@@ -30,8 +30,8 @@ if odir then begin
         readf,lun,pathr
         free_lun,lun
       endif else pathr=['']
-      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+loc+'/?(:|$)',/bool),/null)]
-      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+odir+'/?(:|$)',/bool),/null)]
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+loc+'/?(:|")',/bool),/null)]
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+odir+'/?(:|")',/bool),/null)]
       openw,lun,orc+'/idlpath.sh',/get_lun
       ;printf,lun,'export IDL_PATH="'+np+'"'
       printf,lun,pathr,format='(A0)'
@@ -49,7 +49,7 @@ if xdir then begin
   if nwc then begin
     np=strjoin(dps[wc],':')
     if getenv('IDL_PATH') then begin
-      openw,lun,orc+'/idlpath.sh',/get_lun,/append
+      openw,lun,getenv('OMINAS_TMP')+'/idlpathr.sh',/get_lun,/append
       printf,lun,'export IDL_PATH="'+np+'"'
       free_lun,lun
       print,'OMINAS path removed from IDL_PATH'
