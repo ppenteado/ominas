@@ -94,13 +94,6 @@ function pg_get_arrays, dd, trs, od=od, bx=bx, ard=_ard, _extra=select, $
  ;-----------------------------------------------
  ; call translators
  ;-----------------------------------------------
-
- ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if names requested, the force tr_first
- ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;; if(keyword_set(name)) then tr_first = 1
-;tr_first = 1
-
  ard = dat_get_value(dd, 'ARR_DESCRIPTORS', key1=od, key2=bx, key4=_ard, key6=primary, $$
                              key8=name, trs=trs, $
 @nv_trs_keywords_include.pro

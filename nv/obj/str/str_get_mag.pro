@@ -55,11 +55,14 @@
 function str_get_mag, sd
 @core.include
 
+ pc = const_get('parsec')
+ Lsun = const_get('Lsun')
+
  n_str = n_elements(sd)
- dist_parsec = v_mag(bod_pos(sd))/3.085678d+16
+ dist_parsec = v_mag(bod_pos(sd))/pc
  dist_parsec = reform(dist_parsec, n_str, /overwrite)
  return, 5.d*alog10(dist_parsec) - 5.d + $
-         4.83d - 2.5d*alog10(str_lum(sd)/3.826d+26)
+         4.83d - 2.5d*alog10(str_lum(sd)/Lsun)
 end
 ;===========================================================================
 

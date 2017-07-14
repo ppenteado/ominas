@@ -1,9 +1,9 @@
 ;============================================================================
-; pgc_set_units
+; const_set_units
 ;
 ;============================================================================
-function pgc_set_units, units
-@pgc_block.common
+function const_set_units, units
+@const_block.common
 
  units = units
 

@@ -449,9 +449,9 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
  ; only sometimes know Spectral type... what the heck
  ; use formula Mv = 4.83 - 2.5*log(L/Lsun) and since
  ; distance is 10pc mv = Mv
- ; Lum is expressed in J/sec (Lsun = 3.826e+26 J/sec)
  ;-------------------------------------------------------
- lum = 3.826d+26 * 10.d^( (4.83d0-double(Mag))/2.5d ) 
+ Lsun = const_get('Lsun')
+ lum = Lsun * 10.d^( (4.83d0-double(Mag))/2.5d ) 
 
  _sd = str_create_descriptors( n, $
         name=name, $
