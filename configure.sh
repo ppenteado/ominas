@@ -205,6 +205,9 @@ do
   fi
 done
 
+if [ ! -e ${OMINAS_RC}/ominas_postsetup.sh ]; then
+  touch ${OMINAS_RC}/ominas_postsetup.sh
+fi
 
 export OMINAS_DATA=${HOME}/ominas_data
 if [ ! -e ${setting} ]; then
@@ -650,7 +653,7 @@ do
           echo "${ins[$d]}" >>${setting}
         fi
 done
-
+echo ". ~/.ominas/ominas_postsetup.sh" >> ${setting}
 
 #make ominas script
 echo "#!/usr/bin/env bash" > ~/.ominas/ominas
