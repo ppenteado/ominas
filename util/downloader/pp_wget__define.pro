@@ -73,7 +73,13 @@ self.ldir=ldir+path_sep()
 self.pattern=n_elements(pattern) ? pattern : ''
 self.xpattern=n_elements(xpattern) ? xpattern : ''
 self.absolute=keyword_set(absolute)
-self.sslf=n_elements(sslf) ? file_search(sslf) : (file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0]
+;self.sslf=n_elements(sslf) ? file_search(sslf) : (file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0]
+if n_elements(sslf) then self.sslf=file_search(sslf) else begin
+  if (!version.release ge '8.4') then self.sslf=(file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0] else begin
+     ft=file_dirname((file_which('pp_wget__define.pro'))[0],/mark_directory)+'ca-bundle.crt'
+     self.sslf=file_test(ft,/read) ? ft : (file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0]
+   endelse
+endelse
 self.quiet=keyword_set(quiet)
 if ~self.quiet then print,self.sslf
 self.splitrows=keyword_set(splitrows)
