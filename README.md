@@ -19,3 +19,8 @@ https://ppenteado.github.io/ominas_doc/demo/
 For the full documentation on how OMINAS works, see the user guide:
 
 https://ppenteado.github.io/ominas_doc/user_guide
+
+### API Documentation
+The documentation for individual OMINAS routines is at
+
+https://ppenteado.github.io/ominas_doc/nv/
