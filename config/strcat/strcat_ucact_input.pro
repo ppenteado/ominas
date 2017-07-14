@@ -538,10 +538,9 @@ function ucact_get_stars, dd, filename, cam_vel=cam_vel, $
  ; Calculate "luminosity" from visual Magnitude using the 
  ; Sun as a model. If distance is unknown, lum will be 
  ; incorrect, but the magnitudes will work out.
- ; Lum is expressed in J/sec (Lsun = 3.826e+26 J/sec)
  ;---------------------------------------------------------
- pc = 3.085678e+16			                  ; 1 parsec (m)
- Lsun = 3.826d+26			                    ; W
+ pc = const_get('parsec')
+ Lsun = const_get('Lsun')
  m = stars.mag - 5d*alog10(dist/pc) + 5d
  lum = Lsun * 10.d^( (4.83d0-m)/2.5d ) 
 

@@ -4,7 +4,7 @@
 ;==============================================================================
 nv_message, /anonymous, /con, $
   "WARNING: mks.include is obsolete.  " + $
-      "You should obtain constants using pgc_const('mks') instead."
+      "You should obtain constants using const_get('mks') instead."
 
 
 const_G 	=	6.670d-11	; Gravitational constant J m/kg2

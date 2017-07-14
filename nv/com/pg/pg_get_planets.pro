@@ -208,12 +208,6 @@ end_keywords)
    ;-----------------------------------------------
    ; call translators
    ;-----------------------------------------------
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if names requested, the force tr_first
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;   if(keyword_set(name)) then tr_first = 1	; is this really necessary?
-
    pd = dat_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
                                 key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
@@ -251,7 +245,7 @@ end_keywords)
     for i=0, ndd-1 do $
      begin
       w = where(cor_gd(pd, /dd) EQ dd[i])
-      if(w[0] NE -1) then abcorr, od[i], pd[w], c=pgc_const('c')
+      if(w[0] NE -1) then abcorr, od[i], pd[w], c=const_get('c')
      end
 
    ;-------------------------------------------------------------------

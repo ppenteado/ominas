@@ -252,13 +252,6 @@ end_keywords)
    ;-----------------------------------------------
    ; call translators
    ;-----------------------------------------------
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if names requested, the force tr_first
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;   if(keyword_set(name)) then tr_first = 1
-;   if(NOT keyword__set(od)) then nv_message,'No observer descriptor.'
-
    sd=dat_get_value(dd, 'STR_DESCRIPTORS', key1=od, key4=_sd, $
                  key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro
@@ -297,8 +290,7 @@ end_keywords)
     for i=0, ndd-1 do $
      begin
       w = where(cor_gd(sd, /dd) EQ dd[i])
-;      if(w[0] NE -1) then stellab, od[i], sd[w], c=pgc_const('c')
-      if(w[0] NE -1) then abcorr, od[i], sd[w], c=pgc_const('c')
+      if(w[0] NE -1) then abcorr, od[i], sd[w], c=const_get('c')
      end
 
    ;-------------------------------------------------------------------
