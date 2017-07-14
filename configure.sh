@@ -865,10 +865,10 @@ fi
 declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
 declare -a insts=("" "" "" "" "" "")
-insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
-insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
-insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
-insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
+insts[2]=". ${OMINAS_RC}/config/strcat/ominas_env_strcat.sh tycho2"
+insts[3]=". ${OMINAS_RC}/config/strcat/ominas_env_strcat.sh sao"
+insts[4]=". ${OMINAS_RC}/config/strcat/ominas_env_strcat.sh gsc"
+insts[5]=". ${OMINAS_RC}/config/strcat/ominas_env_strcat.sh ucac4"
 for ((d=0; d<${#mis[@]}; d++));
 do
 	#mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
