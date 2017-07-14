@@ -820,6 +820,7 @@ esac
 }
 
 printf "The setup will guide you through the installation of OMINAS\n"
+printf "More help is in the Install Guide, at https://ppenteado.github.io/ominas_doc/demo/install_guide.html\n"
 
 #if ! grep -q "OMINAS_DIR=.*; export OMINAS_DIR" ${setting}; then
 # NOTE: OMINAS is available in repository form. Extraction is no longer needed
@@ -1263,3 +1264,4 @@ done
 
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
 printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas_doc/demo/\n"
+printf "For documentation on how OMINAS works, see the User Guide at https://ppenteado.github.io/ominas_doc/user_guide\n"
