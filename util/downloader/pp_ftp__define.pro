@@ -72,7 +72,7 @@ end
 
 function pp_ftp::getftpdirlist
 compile_opt idl2,logical_predicate
-fd=file_dirname(self.path)
+fd=self.path;file_dirname(self.path)
 if ~(strmid(fd,0,1) eq '/') then fd='/'+fd
 if self.pwd ne fd then self.cd,fd
 
