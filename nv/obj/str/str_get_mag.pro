@@ -25,7 +25,11 @@
 ;
 ;
 ; KEYWORDS:
-;         NONE
+;  INPUT: 
+;	od:	Observer descriptor.  If not given, the absolute magnitude is
+;		returned.
+;
+;  OUTPUT: NONE
 ;
 ; RETURN:
 ;       An array (nt) of magnitues.
@@ -48,23 +52,27 @@
 ;       Written by:     Haemmerle, 5/1998
 ;	Modified by:	Haemmerle, 12/2000
 ; 	Adapted by:	Spitale, 5/2016
+;       Modified by:    Haemmerle, 7/2017
 ;
 ;
 ;-
 ;=============================================================================
-function str_get_mag, sd
+function str_get_mag, sd, od=od
 @core.include
 
  pc = const_get('parsec')
  Lsun = const_get('Lsun')
 
+ abs = 4.83d - 2.5d*alog10(str_lum(sd)/Lsun)
+ if(NOT keyword_set(od)) then return, abs
+
  n_str = n_elements(sd)
- dist_parsec = v_mag(bod_pos(sd))/pc
+
+ dist_parsec = v_mag(bod_pos(sd)-bod_pos(make_array(n_str, val=od)))/pc
  dist_parsec = reform(dist_parsec, n_str, /overwrite)
- return, 5.d*alog10(dist_parsec) - 5.d + $
-         4.83d - 2.5d*alog10(str_lum(sd)/Lsun)
+
+ corr = 5.d*alog10(dist_parsec) - 5.d
+
+ return, abs + corr
 end
 ;===========================================================================
-
-
-
