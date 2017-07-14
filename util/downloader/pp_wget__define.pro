@@ -110,10 +110,11 @@ endif
 w=where(stregex(statusinfo,'Verbose:[[:blank:]]+Header In:[[:blank:]]+Last-Modified:',/bool),count)
 if count then begin
   olm=callbackdata.last_modified
-  callbackdata.last_modified=statusinfo[w[0]]
+  sinfom=stregex(statusinfo[w[0]],'Last-Modified:[[:blank:]]+(.*)',/subexpr,/extract)
+  callbackdata.last_modified=sinfom[1]
   if (~callbackdata.clobber) && callbackdata.local_file_exists then begin
     tml=callbackdata.local_file_tm
-    tmr=(stregex(statusinfo[w[0]],'Last-Modified:[[:blank:]]+(.*)',/subexpr,/extract))[1]
+    tmr=sinfom[1]
     tmrj=pp_parse_date(tmr)
     tmlj=julday(1,1,1970)-0.5d0+tml/86400d0
     if olm then begin ;if server provided a timestamp with directory listing
@@ -217,7 +218,9 @@ if strmatch(self.baseurl,'*/') then begin ;if url is a directory
       listonly=links
       return
     endif
-    foreach link,links,il do self.retrieve,link,lm=lm[il],/skip_missing
+    foreach link,links,il do begin
+      self.retrieve,link,lm=lm[il],/skip_missing
+    endforeach
   endif else begin
     ind=self.iu.get(/string_array)
     if self.splitrows then begin
