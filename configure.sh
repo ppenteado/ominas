@@ -205,6 +205,9 @@ do
   fi
 done
 
+if [ ! -e ${OMINAS_RC}/ominas_postsetup.sh ]; then
+  touch ${OMINAS_RC}/ominas_postsetup.sh
+fi
 
 export OMINAS_DATA=${HOME}/ominas_data
 if [ ! -e ${setting} ]; then
@@ -373,7 +376,11 @@ function dins()
                return 1
              fi ;;
            *)
-	     read -rp "Please enter the path to $dat (if not known, press enter): " datapath
+	     read -rp "Please enter the path to $dat [~/ominas_data/${dat}]: " datapath
+             if [ -z ${datapath} ] ; then
+               datapath=~/ominas_data/${dat}
+             fi
+             datapath=`eval echo ${datapath}`
           esac 
         fi
         datapath=`eval echo ${datapath}`
@@ -574,7 +581,7 @@ function writesetting() {
 
 echo "#!/usr/bin/env bash" > ~/.ominas/ominasrc
 echo "alias ominas=~/.ominas/ominas" >> ~/.ominas/ominasrc
-echo "alias ominasdie=~/.ominas/ominasde" >> ~/.ominas/ominasrc
+echo "alias ominasde=~/.ominas/ominasde" >> ~/.ominas/ominasrc
 echo ". ~/.ominas/idlpath.sh" >> ~/.ominas/ominasrc
 echo 'alias brim="ominas brim.bat -args "' >> ~/.ominas/ominasrc
 echo 'alias grim="ominas grim.bat -args "' >> ~/.ominas/ominasrc
@@ -592,7 +599,10 @@ chmod a+rx $setting
 
 echo "#!/usr/bin/env bash" > ${setting}
 cat ${OMINAS_RC}/idlpath.sh >> ${setting}
-echo "xrdb -merge ${OMINAS_RC}/Xdefaults-grim" >> ${setting}
+echo "#The following line, to load the new Xdefaults definition, is commented to avoid problems in systems where xrdb is not available." >> ${setting}
+echo "#If you would like to enable it, copy this line to you ~/.bashrc  /  ~/.bash_profile" >> ${setting}
+echo "#Uncommenting that line here n ominas_setup.sh is not recommended, as this file will be overwritten the next time you use configure.sh" >> ${setting}
+echo "#xrdb -merge ${OMINAS_RC}/Xdefaults-grim" >> ${setting}
 #echo "alias ominas=~/.ominas/ominas" >> ${setting}
 #echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
 #echo 'alias brim="ominas brim.bat -args "' >> ${setting}
@@ -643,7 +653,7 @@ do
           echo "${ins[$d]}" >>${setting}
         fi
 done
-
+echo ". ~/.ominas/ominas_postsetup.sh" >> ${setting}
 
 #make ominas script
 echo "#!/usr/bin/env bash" > ~/.ominas/ominas
