@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       pgc_const
+;       const_get
 ;
 ;
 ; PURPOSE:
@@ -10,11 +10,11 @@
 ;
 ;
 ; CATEGORY:
-;       NV/PGC
+;       UTIL/CONST
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = pgc_const(name, units=units)
+;       result = const_get(name, units=units)
 ;
 ;
 ; ARGUMENTS:
@@ -29,8 +29,8 @@
 ;  INPUT:
 ;       units:	String giving the name of the unit system.  If not given,
 ;		first the comomn block is checked for any unit system
-;		set using pgc_set_units.  If no unit system exists, then
-;		the environment variable PGC_UNITS is checked.  If still no
+;		set using const_set_units.  If no unit system exists, then
+;		the environment variable CONST_UNITS is checked.  If still no
 ;		unit system ecists, then it defaults to 'mks'.
 ;
 ;  OUTPUT:
@@ -38,8 +38,8 @@
 ;
 ;
 ; ENVIRONMENT VARIABLES:
-;       PGC_UNITS:    	Selects the unit system to use if one has not been set 
-;			using pgc_set_units.
+;       CONST_UNITS:    Selects the unit system to use if one has not been set 
+;			using const_set_units.
 ;
 ;
 ; RETURN:
@@ -55,7 +55,7 @@
 ;
 ;
 ; COMMON BLOCKS:
-;       pgc_block:     Stores the name of the software-selected unit system.
+;       const_block:     Stores the name of the software-selected unit system.
 ;
 ;
 ; STATUS:
@@ -63,7 +63,7 @@
 ;
 ;
 ; SEE ALSO:
-;       pgc_set_units, mks_const
+;       const_set_units, const_mks
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -71,11 +71,11 @@
 ;
 ;-
 ;=============================================================================
-function pgc_const, name, units=units
+function const_get, name, units=units
 
- if(NOT keyword_set(units)) then units = pgc_get_units()
+ if(NOT keyword_set(units)) then units = const_get_units()
 
- result = call_function(strlowcase(units) + '_' + 'const', name)
+ result = call_function('const' + '_' + strlowcase(units), name)
 
  return, result
 end

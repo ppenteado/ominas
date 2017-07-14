@@ -101,7 +101,6 @@ function eph_spice_kernel_detect, dd, kpath, type, $
    valid = where(data.first NE -1, count)
 
    nv_message, verb=0.9, 'Number of valid kernels = ' + strtrim(count,2)
-   nv_message, /verbose, 'Valid indexes = ' + strtrim(valid,2)
   end $
  else $
   begin
@@ -123,7 +122,6 @@ function eph_spice_kernel_detect, dd, kpath, type, $
    valid = where((data.first LT after_time) AND (data.last GT before_time), nvalid)
 
    nv_message, verb=0.9, 'Number of valid kernels including given time = ' + strtrim(nvalid,2)
-   nv_message, /verbose, 'Valid indexes = ' + strtrim(valid,2)
  end
 
  if(nvalid EQ 0) then return, ''

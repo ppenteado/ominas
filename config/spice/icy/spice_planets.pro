@@ -70,7 +70,7 @@ function spice_planets, dd, ref, $
      plt_phase_parm = plt_phase_parm[*,w]
      plt_albedo = plt_albedo[w]
 
-     plt_mass = plt_gm / (pgc_const('G')/1d9) 
+     plt_mass = plt_gm / (const_get('G')/1d9) 
      ww = where(plt_rref EQ 0)
      if(ww[0] NE -1) then plt_rref[ww] = plt_radii[0,ww]
 

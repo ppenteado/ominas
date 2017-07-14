@@ -142,13 +142,6 @@ function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, _extra=select, $
    ;-----------------------------------------------
    ; call translators
    ;-----------------------------------------------
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if names requested, the force tr_first
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;   if(keyword_set(name)) then tr_first = 1
-;tr_first = 1
-
    cd = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cd, key3=default_orient, $
                              key7=time, key8=name, trs=trs, $
 @nv_trs_keywords_include.pro

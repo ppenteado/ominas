@@ -47,8 +47,8 @@
 ;			descriptor.  /tr_nosort disables this action.
 ;
 ;	tr_order:	If set (and tr_nosort not set), dat_get_value selects 
-;			the latest of any duplicately named descriptors instead
-;			of the earliest.
+;			the latest of any duplicately named output descriptors 
+;			instead of the earliest.
 ;
 ;
 ;  OUTPUT: 
@@ -117,6 +117,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ;----------------------------------------------------------------
  nv_suspend_events
  nv_message, verb=0.9, 'Data descriptor ' + cor_name(dd)
+ nv_message, verb=0.9, 'Keyword ' + keyword
 
  for i=0, n-1 do $
   begin
@@ -136,6 +137,8 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    ;--------------------------------------
    if(stat EQ 0) then $
     begin
+     nv_message, verb=0.9, 'Returned descriptors: ' + $
+                                           str_comma_list([cor_name(xd)])
      dat_set_gd, dd, xd=xd
      xds = append_array(xds, xd)
      sort_names = append_array(sort_names, $
