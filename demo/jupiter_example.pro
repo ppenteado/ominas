@@ -124,9 +124,6 @@ cd = pg_get_cameras(dd)					; Use any defaults in
 
 ;pd = pg_get_planets(dd)			; No observer descriptor,
 						                  ;  so no aberration corrections
-;;ltcorr, cd, pd, c=pgc_const('c')		; Light-time correction
-;;stellab, cd, pd, c=pgc_const('c')		; Stellar aberration correction
-;abcorr, cd, pd, c=pgc_const('c')		; Light-time and stellar ab.
 						;  corections
 
 pd = pg_get_planets(dd, od=cd)
