@@ -1,11 +1,20 @@
-For OMINAS istallation and documentation information, open the following
-file with your browser:
+# OMINAS
+
+Open-source Multiple INstrument Analysis Software
+
+## Installation
+
+See the Install Guide at 
 
 https://ppenteado.github.io/ominas_doc/demo/install_guide.html
 
-Some tutorials are available from the main documentation page:
+## Tutorials
+
+For help on using the demos, to test OMINAS functionality, see
 
 https://ppenteado.github.io/ominas_doc/demo/
+
+## Documentation
 
 For the full documentation on how OMINAS works, see the user guide:
 
