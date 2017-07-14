@@ -38,10 +38,12 @@ mons='('+strjoin(mona,')|(')+')'
 f1s='('+wkds+'),? +([[:digit:]]{1,2}) +('+mons+') +([[:digit:]]+) +([[:digit:]]{1,2}):([[:digit:]]{1,2}):([[:digit:]]{1,2})'
 f2s='('+mons+') +([[:digit:]]{1,2}) +([[:digit:]]{4})'
 f3s='([[:digit:]]{1,2})-('+mons+')-([[:digit:]]{4}) ([[:digit:]]{1,2}):([[:digit:]]{1,2})'
+f4s='[[:digit:]]{14}' ;FTP format
 
 f1=stregex(dstr,f1s,/bool,/fold_case)
 f2=stregex(dstr,f2s,/bool,/fold_case)
 f3=stregex(dstr,f3s,/bool,/fold_case)
+f4=stregex(dstr,f4s,/bool,/fold_case)
 
 foreach ds,dstr,ids do begin
   case 1 of
@@ -73,6 +75,15 @@ foreach ds,dstr,ids do begin
     h=fix(dss[16])
     m=fix(dss[17])
     s=0d0
+    ret[ids]=julday(mon,day,yr,h,m,s)
+  end
+  f4[ids]: begin
+    yr=strmid(ds,0,4)
+    mon=strmid(ds,4,2)
+    day=strmid(ds,6,2)
+    h=strmid(ds,8,2)
+    m=strmid(ds,10,2)
+    s=strmid(ds,12,2)
     ret[ids]=julday(mon,day,yr,h,m,s)
   end
   else:
