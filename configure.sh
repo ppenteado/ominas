@@ -688,6 +688,11 @@ if [ -e "/opt/X11/lib/flat_namespace/" ]; then
 LDCMD
 fi
 tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idlde/g" >> ~/.ominas/ominasde
+if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
+  ldp="LD_PRELOAD=${OMINAS}/util/downloader/libcurl.so.4"
+  cat ~/.ominas/ominasde | sed -e "s/exec /${ldp} /g" > ~/.ominas/ominasde_tmp
+  mv -f ~/.ominas/ominasde_tmp ~/.ominas/ominasde
+fi
 chmod a+rx ~/.ominas/ominasde
 
 echo "done with writing ${setting}"

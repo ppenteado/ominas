@@ -7,13 +7,11 @@ fi
 if [ "${idlversion}" == "" ]; then
   idlversion="z"
 fi
-if [ "${idlversion}" \< "linux84" ]; then
+ldp=""
+if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
   #ldp="./util/downloader/idl_url.so ./util/downloader/libcurl.so.4"
   ldp="./util/downloader/libcurl.so.4"
-else
-  ldp=""
 fi
-
 #if [ "$IDL_DIR" = "" ]; then
 #        idl=`which idl`
 #        if [ "$idl" = "" ]; then
