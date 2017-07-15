@@ -1,65 +1,68 @@
 ;===============================================================================
 ; docformat = 'rst'
 ;+
-; Input translator for GSC star catalog.
 ;
-; Returns
-; =======
-;   Star descriptor containing all the stars found.  The Sp part of
-;   the star descriptor does not contain the Spectral type since this
-;   is not available.  Instead it contains the GSC class of the object::
-;    0 - star
-;    1 - galaxy
-;    2 - blend or member of incorrectly resolved blend.
-;    3 - non-star
-;    5 - potential artifact
+;        Input translator for Tycho-1 star catalog.
 ;
-;   (Note that code 1 is used only for a few  hand-entered errata;
-;   galaxies successfully processed by the software have a 
-;   classification of 3 [non-stellar].  Also code 4 is never used.)  
+; Usage
+; =====
+; This routine is called via `dat_get_value`, which is used to read the
+; translator table. In particular, the specific translator for the scene
+; to be processed should contain the following line::
+;
+;      -   strcat_tycho_input     -       /j2000    # or /b1950 if desired
+;
+; For the star catalog translator system to work properly, only one type
+; of catalog may be used at a time for a particular instrument.
+; The version of the TYCHO catalog that this translator expects can be
+; obtained from the original CD's. The catalog data is grouped into 
+; approx 10,000 separate regions in numbered files in 24 separate 
+; subdirectories. Each star has a data record of 16 bytes.Two identifying
+; numbers: TYCHO_ID_1 and TYCHO_ID_2, RA_DEG and DEC_DEG (degrees), 
+; RApm and DECpm (milliarcseconds/year), and MAG (Visual Magnitude). 
+; The real values (RA_DEG, DEC_DEG, RApm, DECpm, and MAG) are in XDR,
+; the GSC_ID and CLASS are network-order short integers.
+;
 ;
 ; Restrictions
 ; ============
-;
+; 
 ; Since the distance to stars are not given in the GSC catalog, the
 ; position vector magnitude is set as 10 parsec and the luminosity
 ; is calculated from the visual magnitude and the 10 parsec distance.
 ;
-;	This translator does not correct for proper motion.
-;
 ;
 ; Procedure
 ; =========
-;
+; 
 ; Stars are found in a square area in RA and DEC around a given
 ; or calculated center.  The star descriptor is filled with stars
-; that fit in this area.  If B1950 is selected, input ods orient 
-;	matrix is assumed to be B1950 also, if not, input is assumed to be
-;	J2000, like the catalog.  
-;
-; :Private:
+; that fit in this area.  If B1950 is selected, input RA, DEC and/or
+;	ods orient matrix is assumed to be B1950 also, if not, input is
+;	assumed to be J2000, like the catalog.  
 ;
 ; :Categories:
-;   nv, config
+; nv, config
 ;
 ; :History:
-;    Written by:     Vance Haemmerle, 3/2000 (pg_get_stars_gsc.pro)
+;       Written by:     Vance Haemmerle, 3/2000
 ;
-;    Modified:       Spitale 9/2001 - changed to strcat_gsc_input.pro
+;       Modified:       Tiscareno, 8/2000
+;
+;	      Modified:	      Haemmerle, 12/2000
+;
+;       Modified:       Spitale 9/2001
 ;
 ;-
 ;===============================================================================
-
 
 ;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
-;
-; gsc_fzone:  Determine the Declination zone of a GSC region
 ;-
 ;===============================================================================
-function gsc_fzone, declow, dechi
+function tycho_fzone, declow, dechi
 
   dec = (declow + dechi) / 2.0
   zone = fix (dec / (90./12.)) + 1
@@ -69,20 +72,13 @@ function gsc_fzone, declow, dechi
 
   return, zone
 end
-;===============================================================================
 
-
-
-
-;==============================================================================
 ;+
 ; :Private:
 ; :Hidden:
-;
-; gsc_initzd: Initialize GSC directory names
+; Initialize zone directory names for TYCHO catalog
 ;-
-;==============================================================================
-pro gsc_initzd, zdir
+pro tycho_initzd, zdir
 
   zdir(0)  = 'N0000'
   zdir(1)  = 'N0730'
@@ -115,46 +111,61 @@ end
 
 
 
-;==============================================================================
+;===============================================================================
 ;+
 ; :Private:
 ; :Hidden:
-;
 ; Search the index table to find the region identifiers whose coordinate
 ; limits overlap the specified field. Save list of paths to gsc files for
 ; these regions.
+; :Params:
+;   ra1 : in, required, type=double
+;      lower bound in right ascension of scene in hours
+;   ra2 : in, required, type=double
+;      upper bound in right ascension of scene in hours
+;   dec1 : in, required, type=double
+;      lower bound in declination of scene in degrees
+;   dec2 : in, required, type=double
+;      upper bound in declination of scene in degrees
+;      
+; :Keywords:
+;    path_tycho : in, required, type=string, default='NV_TYCHO_DATA'
+;       Sets the path to look for catalog files. Uses the value of
+;       the NV_TYCHO_DATA environment variable by default.
+;       
+; :Returns:
+;    Table to store regions found (to search for guide stars)
+;    
 ;-
-;==============================================================================
-function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
+function tycho_get_regions, ra1, ra2, dec1, dec2, path_tycho=path_tycho
 
   ; Initialize the directory name for each zone
   zdir = strarr(24)
-  gsc_initzd, zdir
+  tycho_initzd, zdir
   rows = 9537
   num_regions = 0
 
-  if(NOT keyword__set(path_gsc)) then path_gsc = getenv('NV_GSC_DATA')
-  region_file = path_gsc + "/" + "regions.index"
+  region_file = path_tycho + "/" + "regions.index"
   if(!VERSION.OS eq 'vms') then $
    begin
-    len = strlen(path_gsc)
-    lastchar = strmid(path_gsc,len-1,1)
+    len = strlen(path_tycho)
+    lastchar = strmid(path_tycho,len-1,1)
     if(lastchar eq ']' or lastchar eq ':') then $
-      region_file = path_gsc + "regions.index"
+      region_file = path_tycho + "regions.index"
     if(lastchar eq '.') then region_file = $
-     strmid(path_gsc,0,len-1) + "]" + "regions.index"
+     strmid(path_tycho,0,len-1) + "]" + "regions.index"
    end
 
   get_lun, lun
   openr, lun, region_file
-  gsc_region_table = assoc(lun,{gsc_region})
+  tycho_region_table = assoc(lun,{tycho_region})
 
   region_list = ''
   for row = 0, rows-1 do begin
-    ; For each row in the gsc_region_table
-    region_table = gsc_region_table[row]
+    ; For each row in the tycho_region_table
+    region_table = tycho_region_table[row]
 
-    ; Declination range of the GS region
+    ; Declination range of the Tycho/GSC region
     ; Note:  southern dechi and declow are reversed
     dechi = region_table.DEC_HI
     byteorder, dechi, /XDRTOF
@@ -165,7 +176,7 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
       goto,next
     endif
 
-    ; Limit of GS region closer to equator
+    ; Limit of Tycho/GSC region closer to equator
     declow = region_table.DEC_LO
     byteorder, declow, /XDRTOF
 
@@ -176,7 +187,7 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
       ; South
       if (declow le dec1) then goto, next
     endif else begin
-      ; Lower limit of GS region ON equator
+      ; Lower limit of Tycho/GSC region ON equator
       if (dechi gt 0) then begin
         ; North
         if (dechi lt dec1 or declow gt dec2) then goto, next
@@ -186,7 +197,7 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
       endif
     endelse
 
-    ; Right ascension range of the GS region
+    ; Right ascension range of the Tycho/GSC region
     if (ra1 lt ra2) then begin
       ; 0 R.A. not in region
 
@@ -217,22 +228,22 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
     byteorder, regnum, /NTOHS
 
     ; Zone number => directory name
-    zone = gsc_fzone (declow, dechi)
+    zone = tycho_fzone (declow, dechi)
 
     ; Build the file name
     root = string(format='(i4.4,".str")',regnum)
 
-    path = string(format='(a,"/",a,"/")',path_gsc,zdir(zone-1))
+    path = string(format='(a,"/",a,"/")',path_tycho,zdir(zone-1))
     if(!VERSION.OS eq 'vms') then $
      begin
-      len = strlen(path_gsc)
-      lastchar = strmid(path_gsc,len-1,1)
+      len = strlen(path_tycho)
+      lastchar = strmid(path_tycho,len-1,1)
       if(lastchar eq ']') then path = $
-       strmid(path_gsc,0,len-1) + "." + zdir(zone-1) + "]"
+       strmid(path_tycho,0,len-1) + "." + zdir(zone-1) + "]"
       if(lastchar eq ':') then path = $
-       path_gsc + "[" + zdir(zone-1) + "]"
+       path_tycho + "[" + zdir(zone-1) + "]"
       if(lastchar eq '.') then path = $
-       path_gsc + zdir(zone-1) + "]"
+       path_tycho + zdir(zone-1) + "]"
      end
 
     if(num_regions eq 0) then region_list = path+root $
@@ -255,36 +266,70 @@ end
 ;+
 ; :Private:
 ; :Hidden:
+; Ingests a set of records from the TYCHO-2 star catalog and generates star 
+; descriptors for each star within a specified scene.
 ;
-; Given a GSC region filename, load the stars that fit within
-; region (ra1 - ra2) and (dec1 - dec2) into a star descriptor.
+; :Returns:
+;   array of star descriptors
+;
+; :Params:
+;   dd : in, required, type="data descriptor"
+;      data descriptor
+;   filename : in, required, type=string
+;      name of index file, or regions file
+;  
+; :Keywords:
+;   b1950 : in, optional, type=string
+;      if set, coordinates are output wrt b1950
+;   ra1 : in, required, type=double
+;      lower bound in right ascension of scene
+;   ra2 : in, required, type=double
+;      upper bound in right ascension of scene
+;   dec1 : in, required, type=double
+;      lower bound in declination of scene
+;   dec2 : in, required, type=double
+;      upper bound in declination of scene
+;   faint : in, optional, type=double
+;      stars with magnitudes fainter than this will not be returned
+;   bright : in, optional, type=double
+;      stars with magnitudes brighter than this will not be returned
+;   nbright : in, optional, type=double
+;      if set, selects only the n brightest stars
+;   names : in, optional, type="string array"
+;      if set, will return only the stars with the expected names
+;   mag : out, required, type=double
+;      magnitude of returned stars
+;   jtime : in, optional, type=double
+;      Years since 1950 (the epoch of catalog) for precession
+;      and proper motion correction. If not given, it is taken
+;      from the object descriptor bod_time, which is assumed to
+;      be seconds past 2000, unless keyword /b1950 is set
 ;-
 ;===============================================================================
-function gsc_get_stars, filename, cam_vel=cam_vel, $
-         b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
-         faint=faint, bright=bright, nbright=nbright, $
-         noaberr=noaberr, names=names, mag=mag, jtime=jtime
-       
+function tycho_get_stars, filename, b1950=b1950, $
+         jtime=jtime, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
+         faint=faint, bright=bright, names=names, mag=mag
+
  f = findfile(filename)
  if(f[0] eq '') then $
   begin
-   print, 'gsc_get_stars: File does not exist - ',filename
+   print, 'tycho_get_stars: File does not exist - ',filename
    return, ''
   end
 
  ;----------------------------------------------
  ; Open file, expected name ends with "nnnn.str"
- ; where nnnn is the gsc region
+ ; where nnnn is the Tycho/GSC region
  ;----------------------------------------------
  start = strpos(filename,'.str') - 4
- gsc_region = strmid(filename,start,4)
- openr, gsc_unit, filename, /get_lun
- info = fstat(gsc_unit)
- nstars = info.size/16
- stars = replicate({gsc_record},nstars)
- readu, gsc_unit, stars
- close, gsc_unit
- free_lun, gsc_unit
+ tycho_region = strmid(filename,start,4)
+ openr, tycho_unit, filename, /get_lun
+ info = fstat(tycho_unit)
+ nstars = info.size/24
+ stars = replicate({tycho_record},nstars)
+ readu, tycho_unit, stars
+ close, tycho_unit
+ free_lun, tycho_unit
 
  ;-------------------------------------
  ; select within magnitude limits
@@ -316,17 +361,21 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
  ;-------------------------
  RA_DEG = stars.RA_DEG
  DEC_DEG = stars.DEC_DEG
+ RApm = stars.RApm
+ DECpm = stars.DECpm
  Mag = stars.MAG
- ID = stars.GSC_ID
- CLASS = stars.CLASS
+ ID_1 = stars.TYCHO_ID_1
+ ID_2 = stars.TYCHO_ID_2
  byteorder, RA_DEG, /XDRTOF
  byteorder, DEC_DEG, /XDRTOF
+ byteorder, RApm, /XDRTOF
+ byteorder, DECpm, /XDRTOF
  byteorder, Mag, /XDRTOF
- byteorder, ID, /NTOHS
- byteorder, CLASS, /NTOHS
+ byteorder, ID_1, /NTOHS
+ byteorder, ID_2, /NTOHS
 
  ;------------------------------------------------------------------
- ; If limits are defined, remove stars that fall outside the limits
+ ; If limits are defined, remove stars which fall outside the limits
  ; Limits in deg, Assumes RA's + DEC's in J2000 (B1950 if /b1950)
  ;------------------------------------------------------------------
 ; *** need to use strcat_radec_regions (see strcat_tycho2_input) ***
@@ -336,10 +385,11 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
     if(count eq 0) then return, ''
     RA_DEG = RA_DEG[subs]
     DEC_DEG = DEC_DEG[subs]
+    RApm = RApm[subs]
+    DECpm = DECpm[subs]
     Mag = Mag[subs]
-    ID = ID[subs]
-    CLASS = CLASS[subs]
-    stars = stars[subs]
+    ID_1 = ID_1[subs]
+    ID_2 = ID_2[subs]
    end
 
  if(keyword__set(ra1) and keyword__set(ra2)) then $
@@ -356,29 +406,18 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
     if(count eq 0) then return, ''
     RA_DEG = RA_DEG[subs]
     DEC_DEG = DEC_DEG[subs]
+    RApm = RApm[subs]
+    DECpm = DECpm[subs]
     Mag = Mag[subs]
-    ID = ID[subs]
-    CLASS = CLASS[subs]
-    stars = stars[subs]
+    ID_1 = ID_1[subs]
+    ID_2 = ID_2[subs]
    end
 
  RA = RA_DEG*!DPI/180d0
  DEC = DEC_DEG*!DPI/180d0
- gsc_id = STRING(ID+100000)
- gsc_id = strmid(strtrim(gsc_id,2),1,5) 
- Name = "GSC " + gsc_region + " " + gsc_id
- Sp = strtrim(STRING(CLASS),2)
-
- ;-----------------------------------------------------------
- ; if desired, select only nbright brightest stars
- ;-----------------------------------------------------------
- if(keyword__set(nbright)) then $
-  begin
-   mag = stars.mag
-   byteorder, mag, /XDRTOF
-   w = strcat_nbright(mag, nbright)
-   stars = stars[w]
-  end
+ tycho_id = STRING(ID_1+100000)
+ tycho_id = strmid(strtrim(tycho_id,2),1,5)
+ Name = 'TYC ' + tycho_region + '-' + tycho_id + '-' + strtrim(ID_2,2)
 
  ;-------------------------------------
  ; select named stars
@@ -395,7 +434,8 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
  ; Fill star descriptors
  ;----------------------
  n = n_elements(Name)
- print, 'Total of ',n,' stars out of ',nstars,' in GSC region ',gsc_region
+ print, 'Total of ',n,' stars out of ',nstars,' in Tycho/GSC region ', $
+	tycho_region
  if(n eq 0) then return, ''
 
  ;-----------------------------
@@ -409,6 +449,7 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
  time = make_array(n,value=0d)
  radii = make_array(3,n,value=1d)
  lora = make_array(n, value=0d)
+ sp = make_array(n, value=0d)
 
  ;--------------------------------------------------------
  ; Apply proper motion to star 
@@ -418,22 +459,28 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
  RA = RA + ((double(RApm)*JTIME/3.6e6)*!DTOR) / cos(DEC)
  DEC = DEC + (double(DECpm)*JTIME/3.6e6)*!DTOR
 
- ;---------------------------------------------------------------
- ; Correct for stellar aberration if camera velocity is available
- ;---------------------------------------------------------------
- if NOT keyword__set(noaberr) AND keyword__set(cam_vel) then $
-   str_aberr_radec, RA, DEC, cam_vel, RA, DEC
-
 
  ;-----------------------------------------------------
  ; Calculate position vector, use distance as 10 parsec 
  ; to have apparent magnitude = absolute magnitude
  ;-----------------------------------------------------
  dist = 3.085678d+17 ; 10pc in meters
- pos = make_array(3,n,value=0d)
- pos[0,*] = cos(RA)*cos(DEC)*dist
- pos[1,*] = sin(RA)*cos(DEC)*dist
- pos[2,*] = sin(DEC)*dist
+ radec = transpose([transpose([RA]), transpose([DEC]), transpose([dist])])
+ pos = transpose(bod_radec_to_body(bod_inertial(), radec))
+
+; pos = make_array(3,n,value=0d)
+; pos[0,*] = cos(RA)*cos(DEC)*dist
+; pos[1,*] = sin(RA)*cos(DEC)*dist
+; pos[2,*] = sin(DEC)*dist
+
+ ;---------------------------------------------------
+ ; compute skyplane velocity from proper motion 
+ ;---------------------------------------------------
+ radec_vel = transpose([transpose([RApm]/86400d/365.25d/3600d*!dpi/180d), $
+             transpose([DECpm]/86400d/365.25d/3600d*!dpi/180d), dblarr(1,n)])
+ vel = bod_radec_to_body_vel(bod_inertial(), radec, radec_vel)
+
+
 
  ;-----------------------------------------------------
  ; Precess J2000 to B1950 if wanted
@@ -441,6 +488,10 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
  if(keyword__set(b1950)) then pos = $
   transpose(b1950_to_j2000(transpose(pos),/reverse))
  pos = reform(pos,1,3,n)
+
+ if(keyword_set(b1950)) then vel = $
+  transpose(b1950_to_j2000(transpose(vel),/reverse))
+ vel = reform(vel,1,3,n)
 
  ;-------------------------------------------------------
  ; Calculate "luminosity" from visual Magnitude
@@ -467,7 +518,8 @@ function gsc_get_stars, filename, cam_vel=cam_vel, $
 
  return, _sd
 end
-;=============================================================================
+;===============================================================================
+
 
 
 
@@ -477,19 +529,97 @@ end
 ; :Hidden:
 ;-
 ;===============================================================================
-function strcat_gsc_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function _strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
 
- return, strcat_input('gsc', dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+ return, strcat_input('tycho', dd, keyword, n_obj=n_obj, dim=dim, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )
 
 end
-;=============================================================================
+;===============================================================================
 
 
 
+
+;===============================================================================
+;+
+; :Private:
+; :Hidden:
+;-
+;===============================================================================
+function strcat_tycho_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+	end_keywords
+
+
+ status = -1
+ if(keyword NE 'STR_DESCRIPTORS') then return, ''
+
+ ;-----------------------------------------------
+ ; get inputs
+ ;-----------------------------------------------
+ strcat_get_inputs, dd, 'NV_TYCHO_DATA', 'path_tycho', $
+	b1950=b1950, j2000=j2000, jtime=jtime, $
+	path=path_tycho, names=names, $
+	ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
+	faint=faint, bright=bright, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+	end_keywords
+  if(NOT keyword__set(path_tycho)) then return, ''
+ 
+
+ status=0
+ n_obj=0
+ dim = [1]
+
+ ;---------------------------
+ ; Get GSC regions to read in
+ ;---------------------------
+ ra1 = ra1*180d/!dpi
+ ra2 = ra2*180d/!dpi
+ dec1 = dec1*180d/!dpi
+ dec2 = dec2*180d/!dpi
+
+ regions = tycho_get_regions(ra1, ra2, dec1, dec2, path_tycho=path_tycho)
+ nregions = n_elements(regions)
+ if(nregions eq 1 AND regions[0] eq '') then $
+                                nv_message, 'No Tycho/GSC regions found.'
+ nv_message, verb=0.2, 'Number of Tycho/GSC regions found: ', nregions
+
+ ;--------------------------
+ ; Loop on Tycho/GSC regions
+ ;--------------------------
+ first = 1
+ for i=0,nregions-1 do $
+  begin
+   _sd = tycho_get_stars(regions[i], cam_vel=cam__vel, jtime=jtime, $
+		ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, b1950=b1950, $
+		faint=faint, bright=bright, names=names)
+   if(keyword__set(_sd)) then $
+    begin
+      if(first eq 1) then $
+        begin
+         sd = _sd
+         first = 0
+        end $
+       else sd = [sd, _sd]
+    end
+  end
+
+ n_obj = n_elements(sd)
+print, 'Total Tycho-2 stars found: ',n_obj
+
+ status = -1
+ if(n_obj EQ 0) then return, ''
+
+ status = 0
+ return, sd
+end
+;===============================================================================

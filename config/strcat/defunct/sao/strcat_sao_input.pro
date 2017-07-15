@@ -82,9 +82,6 @@ end
 ;      name of index file, or regions file
 ;
 ; :Keywords:
-;   cam_vel : in, optional, type=double
-;      camera velocity from scene data, used to correct for stellar
-;      aberration
 ;   b1950 : in, optional, type=string
 ;      if set, coordinates are output wrt b1950
 ;   ra1 : in, required, type=double
@@ -101,8 +98,6 @@ end
 ;      stars with magnitudes brighter than this will not be returned
 ;   nbright : in, optional, type=double
 ;      if set, selects only the n brightest stars
-;   noaberr : in, optional, type=string
-;      if set, stellar aberration will not be calculated
 ;   names : in, optional, type="string array"
 ;      if set, will return only the stars with the expected names
 ;   mag : out, required, type=double
@@ -114,10 +109,10 @@ end
 ;      be seconds past 2000, unless keyword /b1950 is set
 ;-
 ;===============================================================================
-function sao_get_stars, filename, cam_vel=cam_vel, $
+function sao_get_stars, filename, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
-         noaberr=noaberr, names=names, mag=mag, jtime=jtime
+         names=names, mag=mag, jtime=jtime
 
  ra1 = ra1 * !dpi/180d
  ra2 = ra2 * !dpi/180d
@@ -256,12 +251,6 @@ function sao_get_stars, filename, cam_vel=cam_vel, $
      _RA = _RA + (double(_RApm)*JTIME/240.D0)*!DTOR 
      _DEC = _DEC + (double(_DECpm)*JTIME/3600.D0)*!DTOR
 
- ;---------------------------------------------------------
- ; Correct for stellar aberration if camera velocity
- ; is available
- ;---------------------------------------------------------
-     if keyword__set(cam_vel) then $
-      str_aberr_radec, _RA, _DEC, cam_vel, _RA, _DEC 
    end
 
  ;---------------------------------------------------------
@@ -400,7 +389,7 @@ function strcat_sao_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, sta
 @nv_trs_keywords1_include.pro
 	end_keywords
 
- return, strcat_input('sao', dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+ return, strcat_input(dd, keyword, 'sao', n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )

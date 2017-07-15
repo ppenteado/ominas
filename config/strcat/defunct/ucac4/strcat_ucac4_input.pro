@@ -54,8 +54,16 @@
 ; :Hidden:
 ;-
 ;===============================================================================
+
+
+
+
+;===============================================================================
+; ucac4_get_regions
+;
+;===============================================================================
 function ucac4_get_regions, ra1, ra2, dec1, dec2, path_ucac4=path_ucac4
- return, path_ucac4 + 'u4index.asc'	; there's only one "region" file
+ return, path_ucac4 + '/u4index.asc'	; there's only one "region" file
 end
 ;===============================================================================
 
@@ -79,9 +87,6 @@ end
 ;      name of index file, or regions file
 ;
 ; :Keywords:
-;   cam_vel : in, optional, type=double
-;      camera velocity from scene data, used to correct for stellar
-;      aberration
 ;   b1950 : in, optional, type=string
 ;      if set, coordinates are output wrt b1950
 ;   ra1 : in, required, type=double
@@ -98,8 +103,6 @@ end
 ;      stars with magnitudes brighter than this will not be returned
 ;   nbright : in, optional, type=double
 ;      if set, selects only the n brightest stars
-;   noaberr : in, optional, type=string
-;      if set, stellar aberration will not be calculated
 ;   names : in, optional, type="string array"
 ;      if set, will return only the stars with the expected names
 ;   mag : out, required, type=double
@@ -111,10 +114,10 @@ end
 ;      be seconds past 2000, unless keyword /b1950 is set
 ;-
 ;===============================================================================
-function ucac4_get_stars, dd, filename, cam_vel=cam_vel, $
+function ucac4_get_stars, dd, filename, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
-         noaberr=noaberr, names=names, mag=mag, jtime=jtime
+         names=names, mag=mag, jtime=jtime
 
  print, filename
  f = file_search(filename)
@@ -150,7 +153,7 @@ function ucac4_get_stars, dd, filename, cam_vel=cam_vel, $
    z_fname = 'z' + string(zmin + i, format='(I03)')
    z_strs = last - first
    z_recs = replicate({ucac4_record}, z_strs)
-   openr, zone, getenv('NV_UCAC4_DATA') + z_fname, /get_lun
+   openr, zone, getenv('NV_UCAC4_DATA') + '/' + z_fname, /get_lun
    point_lun, zone, first * rec_bytes
    readu, zone, z_recs
    recs = [recs, z_recs]
@@ -313,20 +316,25 @@ function ucac4_get_stars, dd, filename, cam_vel=cam_vel, $
  ; mag=stars_mag, px=stars_px, sp=stars_sp, num=stars_num, $
  ; epochra=stars_epochra, epochdec=stars_epochdec
 
+ mas_deg = 3600000d
+
+
+; see http://ad.usno.navy.mil/ucac/readme_u4v5...
  nstars = n_elements(recs)
  stars = replicate({ucac4_star}, nstars)
- stars.ra = recs.ra / 3600000d                           ; mas -> deg 
- stars.dec = (recs.spd / 3600000d) - 90d                 ; mas above south pole -> deg declination
+ stars.ra = recs.ra / mas_deg                           ; mas -> deg 
+ stars.dec = (recs.spd / mas_deg) - 90d                 ; mas above south pole -> deg declination
  cosdec = cos(stars.dec * (!dpi / 180d)) * (180d / !dpi) 
- stars.rapm = recs.pmrac / (cosdec * 3600000d)  ; pmRA * cos(dec) [mas/yr] -> pmRA [deg/yr]
- stars.decpm = recs.pmdc / 3600000d
- stars.mag = stars_mag
- stars.px = stars_px
- stars.sp = recs.objt
- stars.num = stars_num
- stars.epochra = stars_epochra
- stars.epochdec = stars_epochdec
+ stars.rapm = recs.pmrac / (cosdec * mas_deg)  ; pmRA * cos(dec) [mas/yr] -> pmRA [deg/yr]
+ stars.decpm = recs.pmdc / mas_deg
+ stars.mag = recs.apasm[1]/1000
 
+;;;		 stars.px = stars_px	;; look up in hipsupl.dat
+;;;		 stars.sp = recs.objt	;; not in record
+ stars.num = recs.pts_key		;;; some are zero
+;;; stars.epochra = recs.cepra
+;;; stars.epochdec = recs.cepdc
+ href = recs.rnm			;;; for look-up in hipsupl.dat
 
  ;------------------------------------------------------------------
  ; If limits are defined, remove stars that fall outside the limits
@@ -433,15 +441,6 @@ function ucac4_get_stars, dd, filename, cam_vel=cam_vel, $
  radii = make_array(3,n,value=1d)
  lora = make_array(n, value=0d)
 
- ;---------------------------------------------------------------
- ; Correct for stellar aberration if camera velocity is available
- ;---------------------------------------------------------------
-; if((NOT keyword__set(noaberr)) AND keyword__set(cam_vel)) then $
-;  begin
-;   str_aberr_radec, stars.ra, stars.dec, cam_vel, ra, dec
-;   stars.ra = ra & stars.dec = dec
-;  end
-
 
  ;--------------------------------------------------------------------
  ; Calculate position vector, use a very large distance unless 
@@ -529,7 +528,7 @@ function strcat_ucac4_input, dd, keyword, values=values, status=status, $
  ndd = n_elements(dd)
  for i=0, ndd-1 do $
   begin
-  _sd = strcat_input('ucac4', dd[i], keyword, values=values, status=status, $
+  _sd = strcat_input(dd[i], keyword, 'ucac4', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords )

@@ -190,7 +190,7 @@
 ;
 ;
 ; RETURN:
-;	Data associated with the requested keyword.
+;	Descriptors associated with the requested keyword.
 ;
 ;
 ; STATUS:

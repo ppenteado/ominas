@@ -1,8 +1,67 @@
-;===============================================================================
-; strcat_common_input
+;=============================================================================
+;+
+; NAME:
+;	strcat_common_input
 ;
 ;
-;===============================================================================
+; PURPOSE:
+;	Translator for star common names.  Proper names are used if available;
+;	Bayer names otherwise.  Reads the stream of prior translator outputs
+;	and replaces names for any stars for which common names can be found.
+;
+;
+; CATEGORY:
+;	NV/CONFIG
+;
+;
+; CALLING SEQUENCE:
+;	result = strcat_common_input(dd, keyword)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	dd:		Data descriptor.
+;
+;	keyword:	If not 'STR_DESCRIPTORS', the function returns null.
+;
+;  OUTPUT:
+;	NONE
+;
+;
+; KEYWORDS:
+;  INPUT: 
+;	values:		Array of descriptors returned by upstream translators.
+;
+;
+;  OUTPUT:
+;	status:		Zero if valid data is returned.
+;
+;
+;  TRANSLATOR KEYWORDS: NONE
+;
+;
+;
+; FILES:
+;	$OMINAS_DIR/config/strcat/stars.txt:		
+;			File relating proper and Bayer names to various catalog 
+;			numbering schemes.
+;
+;
+; RETURN:
+;	Array of star descriptors with name fields replaced by common name
+;	if available.
+;
+;
+; STATUS:
+;	Complete
+;
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2017
+;	
+;-
+;=============================================================================
 function strcat_common_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
@@ -27,14 +86,14 @@ function strcat_common_input, dd, keyword, values=values, status=status, $
 
  ;---------------------------------------------------------
  ; Find proper names. Star names are found via an 
- ; internal document that is cross indexed with several 
+ ; internal document that is cross-indexed with several 
  ; catalogs. 
  ;---------------------------------------------------------
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; find and read proper-name file
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- file = file_search(getenv('OMINAS_DIR')+'/config/strcat/stars.txt')
+ file = file_search(getenv('OMINAS_DIR')+'/config/strcat/common/stars.txt')
  linarr = read_txt_table(file, delim='|', /raw, /all)
  table_cat = strtrim(linarr[0,*], 2)
  linarr = linarr[1:*,*]

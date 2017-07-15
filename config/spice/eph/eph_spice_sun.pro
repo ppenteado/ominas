@@ -26,6 +26,7 @@ function eph_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
 		name=cor_name(pd), $
 		orient=bod_orient(pd), $
 		avel=bod_avel(pd), $
+		sp=make_array(1,ndd, val='G2'), $
 		pos=bod_pos(pd), $
 		lum=make_array(1,ndd, val=const_get('Lsun')), $
 		mass=make_array(1,ndd, val=const_get('Msun')), $

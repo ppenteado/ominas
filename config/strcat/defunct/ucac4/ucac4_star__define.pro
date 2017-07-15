@@ -14,6 +14,7 @@ struct = $
     decpm:      float(0), $
     mag:        float(0), $
     px:         0, $
+    sp:         0b, $
     epochra:    float(0), $
     epochdec:   float(0) $
   }
