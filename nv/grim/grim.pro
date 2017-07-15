@@ -4565,7 +4565,6 @@ pro grim_menu_plane_propagate_tiepoints_help_event, event
 end
 ;----------------------------------------------------------------------------
 pro grim_menu_plane_propagate_tiepoints_event, event
-@mks.include
 
  widget_control, /hourglass
 
