@@ -3652,7 +3652,22 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  if(grim_data.slave_overlays) then plane = grim_get_plane(grim_data, pn=0)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, data=data) 
+
+ ;-----------------------------------------------------------------------
+ ;  If the given name gives no result, then if there is an 's' at the 
+ ;  end, remove it and try a second time
+ ;-----------------------------------------------------------------------
+ for i=0,1 do $
+  begin
+   ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, data=data) 
+   if(keyword_set(ptdp)) then break
+
+   if(strmid(name, strlen(name)-1, 1) EQ 's') then $
+    begin
+     name = strmid(name, 0, strlen(name)-1)
+     ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, data=data) 
+    end
+  end
  fn = 'grim_compute_' + name
 
  ;--------------------------------------------------

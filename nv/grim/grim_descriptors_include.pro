@@ -870,9 +870,14 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
+
+ ;-----------------------------------------------------------------------
+ ; get dependiencies
+ ;-----------------------------------------------------------------------
  junk = grim_get_overlay_ptdp(grim_data, name, plane=plane, $
                                                    class=class, dep=dep)
  dep = append_array(dep, class)
+ if(NOT keyword_set(dep)) then return
 
  if(NOT keyword_set(obj_name)) then obj_name = ''
 
