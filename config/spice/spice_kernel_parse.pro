@@ -117,7 +117,11 @@ function spice_kernel_parse, dd, prefix, type, ext=ext, time=_time, $
       begin
        if(strpos(_k_in[i], '/') EQ -1) then _k_in[i] = kpath[j] + _k_in[i]
        ff = file_search(_k_in[i])
-       if(keyword_set(ff)) then explicit = append_array(explicit, ff) ;$
+       if(keyword_set(ff)) then explicit = append_array(explicit, ff) $
+       else $
+        nv_message, 'Not found: ' + _k_in[i], $
+         exp = ['This kernel was explicitly requested, but it cannot be found in the', $
+                'directory.']             
       end
     end
 
