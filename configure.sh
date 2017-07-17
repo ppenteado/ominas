@@ -177,15 +177,28 @@ fi
 if [ ! -d "$HOME/.ominas/config" ]; then
   printf "Creating ~/.ominas/config directory\n"
   mkdir $HOME/.ominas/config
-  cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
-  cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
-  for mis in  cas dawn gll vgr 
-  do
-    cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
-  done
 else
   printf "~/.ominas/config directory already exists\n"
 fi
+if [ ! -e "$HOME/.ominas/config/ominas_env_def.sh" ]; then
+  cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
+else
+  printf "$HOME/.ominas/config/ominas_env_def.sh already exists\n"
+fi
+if [ ! -e "$HOME/.ominas/config/ominas_env_strcat.sh" ]; then
+  cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
+else
+  printf "$HOME/.ominas/config/ominas_env_strcat.sh already exists\n"
+fi
+for mis in  cas dawn gll vgr 
+do
+  if [ ! -e "$HOME/.ominas/config/ominas_env_$mis.sh" ]; then
+    cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
+  else
+    printf "$HOME/.ominas/config/ominas_env_$mis.sh already exists\n"
+  fi
+done
+
 
 export OMINAS_RC=${HOME}/.ominas
 if [ ! -d "${HOME}/ominas_data" ]; then
