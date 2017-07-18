@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	vgr_spice_input
+;	vgr_iss_spice_input
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = vgr_spice_input(dd, keyword)
+;	result = vgr_iss_spice_input(dd, keyword)
 ;
 ;
 ; ARGUMENTS:
@@ -69,7 +69,7 @@
 ;
 ;
 ; SEE ALSO:
-;	vgr_spice_output
+;	vgr_iss_spice_output
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -80,10 +80,10 @@
 
 
 ;===========================================================================
-; vgr_spice_parse_labels
+; vgr_iss_spice_parse_labels
 ;
 ;===========================================================================
-pro vgr_spice_parse_labels, dd, _time, $
+pro vgr_iss_spice_parse_labels, dd, _time, $
      exposure=exposure, size=size, filters=filters, oaxis=oaxis, scale=scale, $
      target=target
 
@@ -107,7 +107,7 @@ pro vgr_spice_parse_labels, dd, _time, $
      ;-----------------------------------
      ; time
      ;-----------------------------------
-     if(NOT keyword_set(_time)) then time[i] = vgr_spice_time(label)
+     if(NOT keyword_set(_time)) then time[i] = vgr_iss_spice_time(label)
 
      ;-----------------------------------
      ; exposure time
@@ -130,7 +130,7 @@ pro vgr_spice_parse_labels, dd, _time, $
  
      if((geom)) then $
       begin
-       scale[*,i] = vgr_pixel_scale(name, /geom)
+       scale[*,i] = vgr_iss_pixel_scale(name, /geom)
        size[0,i] = 1000d
        size[1,i] = 1000d
       end $
@@ -141,7 +141,7 @@ pro vgr_spice_parse_labels, dd, _time, $
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      else $
       begin
-       scale[*,i] = vgr_pixel_scale(name)
+       scale[*,i] = vgr_iss_pixel_scale(name)
 ;       scale = scale / 0.85d			; just a guess!!
        size[0,i] = 800d
        size[1,i] = 800d
@@ -172,10 +172,10 @@ end
 
 
 ;===========================================================================
-; vgr_spice_cameras
+; vgr_iss_spice_cameras
 ;
 ;===========================================================================
-function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
+function vgr_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
         n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
  ndd = n_elements(dd)
@@ -190,7 +190,7 @@ function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
  orient_fn = 'vgr_cmat_to_orient_iss'
 
 
- vgr_spice_parse_labels, dd, time, $
+ vgr_iss_spice_parse_labels, dd, time, $
     exposure=exposure, size=size, filters=filters, oaxis=oaxis, scale=scale
 
 
@@ -204,7 +204,7 @@ function vgr_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		cam_time = time, $
 		cam_scale = scale, $
 		cam_oaxis = oaxis, $
-		cam_fn_psf = make_array(ndd, val='vgr_psf'), $
+		cam_fn_psf = make_array(ndd, val='vgr_iss_psf'), $
 		cam_size = size, $
 		cam_exposure = exposure, $
 		cam_fn_focal_to_image = make_array(ndd, val='cam_focal_to_image_linear'), $
@@ -219,14 +219,14 @@ end
 
 
 ;===========================================================================
-; vgr_spice_planets
+; vgr_iss_spice_planets
 ;
 ;===========================================================================
-function vgr_spice_planets, dd, ref, time=time, planets=planets, $
+function vgr_iss_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- vgr_spice_parse_labels, dd, time, target=target
+ vgr_iss_spice_parse_labels, dd, time, target=target
 
  return, eph_spice_planets(dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
@@ -239,13 +239,13 @@ end
 
 
 ;===========================================================================
-; vgr_spice_sun
+; vgr_iss_spice_sun
 ;
 ;===========================================================================
-function vgr_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
+function vgr_iss_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
                    status=status, time=time, constants=constants, obs=obs
 
- vgr_spice_parse_labels, dd, time
+ vgr_iss_spice_parse_labels, dd, time
 
  return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
                     status=status, time=time, constants=constants, obs=obs)
@@ -256,17 +256,17 @@ end
 
 
 ;===========================================================================
-; vgr_spice_input.pro
+; vgr_iss_spice_input.pro
 ;
 ;
 ;===========================================================================
-function vgr_spice_input, dd, keyword, values=values, status=status, $
+function vgr_iss_spice_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
 
- return, spice_input(dd, keyword, 'vgr', values=values, status=status, $
+ return, spice_input(dd, keyword, 'vgr', 'iss', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)
