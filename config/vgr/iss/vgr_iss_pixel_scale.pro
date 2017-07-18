@@ -1,8 +1,8 @@
 ;=============================================================================
-; vgr_pixel_scale
+; vgr_iss_pixel_scale
 ;
 ;=============================================================================
-function vgr_pixel_scale, cam, geom=geom
+function vgr_iss_pixel_scale, cam, geom=geom
 
  scale = 9.2454750d-06				  ; 84.. = pixels/mm
 
