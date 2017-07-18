@@ -1,10 +1,10 @@
 ;==============================================================================
-; vgr_psf
+; vgr_iss_psf
 ;
 ;  This is made up...
 ;
 ;==============================================================================
-function vgr_psf, cd, x, y
+function vgr_iss_psf, cd, x, y
 
  if((NOT keyword_set(x)) AND (NOT keyword_set(y))) then default = 1 $
  else if(NOT keyword_set(y)) then y = dblarr(n_elements(x))
