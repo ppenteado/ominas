@@ -1,11 +1,11 @@
 ;=============================================================================
 ;++
 ; NAME:
-;	cas_iss_orient_to_cmat
+;	cas_cmat_to_orient
 ;
 ;
 ; PURPOSE:
-;	Converts an OMINAS camera orientation matrix to a Cassini ISS C matrix.
+;	Converts a Cassini ISS C matrix to an OMINAS camera orientation matrix.
 ;
 ;
 ; CATEGORY:
@@ -13,12 +13,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = cas_orient_to_cmat(cmat)
+;	result = cas_cmat_to_orient(cmat)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	orient:		OMINAS camera orientation matrix.
+;	cmat:	Cassini C matrix
 ;
 ;  OUTPUT:
 ;	NONE
@@ -33,7 +33,7 @@
 ;
 ;
 ; RETURN:
-;	Cassini C matrix.
+;	OMINAS camera orientation matrix.
 ;
 ;
 ; PROCEDURE:
@@ -64,7 +64,7 @@
 ;
 ;
 ; SEE ALSO:
-;	cas_cmat_to_orient
+;	cas_orient_to_cmat
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -72,19 +72,22 @@
 ;	
 ;-
 ;=============================================================================
-function cas_iss_orient_to_cmat, orient
+function cas_cmat_to_orient, cmat
 
- s = size(orient)
+ s = size(cmat)
  if(s[0] EQ 2) then n = 1 $
  else n = s[3]
 
- cmat = dblarr(3,3,n, /nozero)
+ orient = dblarr(3,3,n, /nozero)
 
-; ominas to cmat (according to Cassini NAC diagram):
- cmat[*,0,*] =  orient[0,*,*]
- cmat[*,1,*] =  orient[2,*,*] 
- cmat[*,2,*] =  orient[1,*,*]
+; cmat to ominas (according to Cassini NAC diagram):
+ orient[0,*,*] =  cmat[*,0,*]
+ orient[1,*,*] =  cmat[*,2,*]
+ orient[2,*,*] =  cmat[*,1,*]
 
- return, cmat
+
+
+
+ return, orient
 end
 ;=============================================================================

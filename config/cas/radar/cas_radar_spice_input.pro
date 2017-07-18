@@ -206,15 +206,13 @@ function cas_radar_spice_cameras, dd, ref, pos=pos, constants=constants, $
  sc = -82l
  plat = -82000l
 
-inst = -82810;   ;;;;82 810--814
+inst = -82813;   ;;;;82 810--814
 ; each data file contains all 5 beams: -82810 - -82814
-; -->return 5 cds?
+; --> return 5 cds?  use middle beam (3)?
  
  cas_radar_spice_parse_labels, dd, time, target=target
-stop
 
-
- orient_fn = 'cas_iss_cmat_to_orient'
+ orient_fn = 'cas_cmat_to_orient'
 
 
  return, cas_to_ominas( $
