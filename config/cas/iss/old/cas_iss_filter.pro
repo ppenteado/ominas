@@ -1,18 +1,17 @@
 ;==============================================================================
-; cas_reverse_lut
+; cas_iss_filter
 ;
 ;==============================================================================
-function cas_reverse_lut
+function cas_iss_filter, cd, i, lambda, default=default
 
- lut = cas_lut()
- reverse_lut = intarr(4096)
+; if(keyword_set(default)) then lambda = ...
 
- for i=0, 254 do reverse_lut[lut[i]:lut[i+1]-1] = i
- reverse_lut[0] = 1
- reverse_lut[4095] = 255
+; filter = cam_filters(cd, i)
+; inst = cor_name(cd)
 
-; reverse_lut[lut] = bindgen(256)
+; file =...
 
- return, reverse_lut
+
+ return, 0
 end
 ;==============================================================================

@@ -21,7 +21,7 @@ end
 ; spice_kernel_parse
 ;
 ;=============================================================================
-function spice_kernel_parse, dd, prefix, type, ext=ext, time=_time, $
+function spice_kernel_parse, dd, prefix, inst, type, ext=ext, time=_time, $
                        explicit=explicit, strict=strict, all=all
 
  if(keyword_set(_time)) then time = _time[0]

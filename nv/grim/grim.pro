@@ -4334,13 +4334,13 @@ pro grim_menu_plane_coregister_event, event
    begin
     dd[i] = planes[i].dd
     cd[i] = *planes[i].cd_p
-    bx[i] = (*planes[i].active_xd_p)[0]
+    bx[i] = (*planes[i].active_xd_p)[0]		; Is this a good assumption?
    end
 
  w = where(obj_valid(dd))
- if(w[0] EQ -1)then $
+ if(n_elements(w) LT 2) then $
   begin
-   grim_message, 'There are no active overlays.'
+   grim_message, 'There must be active overlays on at least two planes.'
    return
   end
 
@@ -4351,9 +4351,10 @@ pro grim_menu_plane_coregister_event, event
  ;------------------------------------------------
  ; recenter image
  ;------------------------------------------------
- nv_suspend_events
+; we don't want one event for every registration here....
+; nv_suspend_events;, /flush
  pg_coregister, dd, cd=cd, bx=bx
- nv_resume_events
+; nv_resume_events;, /flush
 
  grim_refresh, grim_data
 end

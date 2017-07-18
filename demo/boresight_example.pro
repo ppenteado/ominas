@@ -82,7 +82,7 @@ pg_draw, limb_ps_wac
 ;  to correct for misalignments between the cameras.
 ; 
 ;=======================================================================
-pg_repoint, gd=gd_nac, bore_cd=cd_wac, bore_rot=cas_mx_wac_to_nac()
+pg_repoint, gd=gd_nac, bore_cd=cd_wac, bore_rot=cas_iss_mx_wac_to_nac()
 
 limb_ps_nac = pg_limb(gd=gd_nac) 
 tvim, w_nac, im_nac

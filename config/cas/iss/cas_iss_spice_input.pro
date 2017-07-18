@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	cas_spice_input
+;	cas_iss_spice_input
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = cas_spice_input(dd, keyword)
+;	result = spice_input(dd, keyword)
 ;
 ;
 ; ARGUMENTS:
@@ -69,7 +69,7 @@
 ;
 ;
 ; SEE ALSO:
-;	cas_spice_output
+;	cas_iss_spice_output
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -80,10 +80,10 @@
 
 
 ;===========================================================================
-; cas_spice_parse_labels
+; cas_iss_spice_parse_labels
 ;
 ;===========================================================================
-pro cas_spice_parse_labels, dd, _time, $
+pro cas_iss_spice_parse_labels, dd, _time, $
      exposure=exposure, size=size, filters=filters, oaxis=oaxis, target=target
 
  ndd = n_elements(dd)
@@ -103,7 +103,7 @@ pro cas_spice_parse_labels, dd, _time, $
      ;-----------------------------------
      ; time
      ;-----------------------------------
-     if(NOT keyword_set(_time)) then time[i] = cas_spice_time(label)
+     if(NOT keyword_set(_time)) then time[i] = cas_iss_spice_time(label)
 
      ;-----------------------------------
      ; exposure time
@@ -144,10 +144,10 @@ end
 
 
 ;===========================================================================
-; cas_spice_cameras
+; cas_iss_spice_cameras
 ;
 ;===========================================================================
-function cas_spice_cameras, dd, ref, pos=pos, constants=constants, $
+function cas_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
          n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
  ndd = n_elements(dd)
@@ -155,7 +155,7 @@ function cas_spice_cameras, dd, ref, pos=pos, constants=constants, $
  sc = -82l
  plat = -82000l
 
- cas_spice_parse_labels, dd, time, $
+ cas_iss_spice_parse_labels, dd, time, $
        exposure=exposure, size=size, filters=filters, oaxis=oaxis
 
  bin = 1024./size[0]
@@ -164,14 +164,14 @@ function cas_spice_cameras, dd, ref, pos=pos, constants=constants, $
 	'CAS_ISSNA': $
 	  begin
 	   inst = -82360l
-	   scale = cas_nac_scale() * bin
-	   orient_fn = 'cas_cmat_to_orient_iss'
+	   scale = cas_iss_nac_scale() * bin
+	   orient_fn = 'cas_iss_cmat_to_orient'
 	  end
 	'CAS_ISSWA': $
 	  begin
 	   inst = -82361l
-	   scale = cas_wac_scale() * bin
-	   orient_fn = 'cas_cmat_to_orient_iss'
+	   scale = cas_iss_wac_scale() * bin
+	   orient_fn = 'cas_iss_cmat_to_orient'
 	  end
  endcase
 
@@ -184,7 +184,7 @@ function cas_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		cam_time = time, $
 		cam_scale = make_array(2,ndd, val=scale), $
 		cam_oaxis = oaxis, $
-		cam_fn_psf = make_array(ndd, val='cas_psf'), $
+		cam_fn_psf = make_array(ndd, val='cas_iss_psf'), $
 		cam_filters = filters, $
 		cam_size = size, $
 		cam_exposure = exposure, $
@@ -200,14 +200,14 @@ end
 
 
 ;===========================================================================
-; cas_spice_planets
+; cas_iss_spice_planets
 ;
 ;===========================================================================
-function cas_spice_planets, dd, ref, time=time, planets=planets, $
+function cas_iss_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- cas_spice_parse_labels, dd, time, target=target
+ cas_iss_spice_parse_labels, dd, time, target=target
 
  return, eph_spice_planets(dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
@@ -220,13 +220,13 @@ end
 
 
 ;===========================================================================
-; cas_spice_sun
+; cas_iss_spice_sun
 ;
 ;===========================================================================
-function cas_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
+function cas_iss_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
                                    status=status, time=time, obs=obs
 
- cas_spice_parse_labels, dd, time
+ cas_iss_spice_parse_labels, dd, time
 
  return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
             status=status, time=time, constants=constants, obs=obs)
@@ -237,16 +237,16 @@ end
 
 
 ;===========================================================================
-; cas_spice_input.pro
+; cas_iss_spice_input.pro
 ;
 ;
 ;===========================================================================
-function cas_spice_input, dd, keyword, values=values, status=status, $
+function cas_iss_spice_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
- return, spice_input(dd, keyword, 'cas', values=values, status=status, $
+ return, spice_input(dd, keyword, 'cas', 'iss', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)

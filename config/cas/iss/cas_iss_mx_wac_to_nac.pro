@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       cas_mx_wac_to_nac
+;       cas_iss_mx_wac_to_nac
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = cas_mx_wac_to_nac()
+;       result = cas_iss_mx_wac_to_nac()
 ;
 ;
 ; ARGUMENTS: NONE
@@ -34,11 +34,11 @@
 ;                       
 ;-
 ;=============================================================================
-function cas_mx_wac_to_nac
+function cas_iss_mx_wac_to_nac
 
- scale = cas_nac_scale()
+ scale = cas_iss_nac_scale()
 
- hx = (580.3d - 511.5)*scale		; these numbers from cas_wac_to_nac.pro
+ hx = (580.3d - 511.5)*scale		; these numbers from cas_iss_wac_to_nac.pro
  hy = -(404.2d - 511.5)*scale
 
  Rx = [ [cos(hx), -sin(hx), 0d], $

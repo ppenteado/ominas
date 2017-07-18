@@ -1,15 +1,15 @@
 ;==============================================================================
-; cas_relut
+; cas_iss_relut
 ;
 ;==============================================================================
-function cas_relut, image, label, force=force
+function cas_iss_relut, image, label, force=force
 
  if(NOT keyword_set(label)) then force = 1
 
  ;----------------------------------------------------------
  ; determine whether conversion is necessary 
  ;----------------------------------------------------------
- if(NOT keyword_set(force)) then if(NOT cas_query_lut(label)) then return, image
+ if(NOT keyword_set(force)) then if(NOT cas_iss_query_lut(label)) then return, image
  if(size(image, /type) EQ 1) then return, image    ; if byte, then already 
                                                    ;  lutted
 
