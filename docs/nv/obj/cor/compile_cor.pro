@@ -1,0 +1,14 @@
+.rnew cor_abbrev.pro
+.rnew cor_add_task.pro
+.rnew cor_copy_descriptor.pro
+.rnew core_descriptor__define.pro
+.rnew cor_create_descriptors.pro
+.rnew cor_name.pro
+.rnew cor_replicate.pro
+.rnew cor_select.pro
+.rnew cor_set_name.pro
+.rnew cor_set_udata.pro
+.rnew cor_tasks.pro
+.rnew cor_test_udata.pro
+.rnew cor_udata.pro
+.rnew cor_user.pro
