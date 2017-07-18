@@ -3,7 +3,8 @@
 #Usage:
 #./download_SAO.sh /directory/to/place/catalog
 
-
+OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+wget=${OWNDIR}/pp_wget
 echo "This script wiill download the SAO catalog from CDS (ftp://cdsarc.u-strasbg.fr/pub/cats/I/131A) and prepare its files for use. As of January/2017, this adds to 19 MB of download, and 70 MB of disk space after unpacking."
 
 if [ -z ${ominas_auto+x} ] || [ ${ominas_auto} == 0 ] ; then
@@ -22,7 +23,7 @@ mkdir -p ~/.ominas/timestamps/SAO
 ts=`eval echo "~/.ominas/timestamps/"`
 
 
-./pp_wget "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
+${wget} "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
 
 
 echo "Downloads done, unpacking files..."

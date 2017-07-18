@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 echo $@
-cf='./util/downloader/ca-bundle.crt'
+OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cf='${OWNDIR}/ca-bundle.crt'
 if [ -z ${idlversion+x} ]; then
   idlversion="z"
 fi
@@ -9,8 +10,8 @@ if [ "${idlversion}" == "" ]; then
 fi
 ldp=""
 if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
-  #ldp="./util/downloader/idl_url.so ./util/downloader/libcurl.so.4"
-  ldp="./util/downloader/libcurl.so.4"
+  #ldp="${OWNDIR}/idl_url.so ${OWNDIR}/libcurl.so.4"
+  ldp="${OWNDIR}/libcurl.so.4"
 fi
 #if [ "$IDL_DIR" = "" ]; then
 #        idl=`which idl`
@@ -19,14 +20,14 @@ fi
 #          IDL_DIR="$idldir"
 #          export IDL_DIR
 #          printf "Using IDL from $IDL_DIR\n"
-#          LD_PRELOAD=$ldp  $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
+#          LD_PRELOAD=$ldp  $IDL_DIR/bin/idl -e '!path+=":${OWNDIR}"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
 #        else
 #          printf "Using IDL at $idl\n"
-#          LD_PRELOAD=$ldp  $idl -e '!path+=":./util/downloader"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
+#          LD_PRELOAD=$ldp  $idl -e '!path+=":${OWNDIR}"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
 #        fi
 #else
 #        printf "IDL_DIR found, $IDL_DIR, using it\n"
-#        LD_PRELOAD=$ldp  $IDL_DIR/bin/idl -e '!path+=":./util/downloader"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
+#        LD_PRELOAD=$ldp  $IDL_DIR/bin/idl -e '!path+=":${OWNDIR}"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
 #fi
 
 if [ -z ${idlbin+x} ]; then
@@ -48,4 +49,4 @@ if [ -z ${idlbin+x} ]; then
   fi
 fi
 echo $ldp
-LD_PRELOAD=$ldp $idlbin -e '!path+=":./util/downloader"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
+LD_PRELOAD=$ldp $idlbin -e '!path+=":${OWNDIR}"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
