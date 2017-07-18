@@ -167,13 +167,13 @@ function cas_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
 	  begin
 	   inst = -82360l
 	   scale = cas_iss_nac_scale() * bin
-	   orient_fn = 'cas_iss_cmat_to_orient'
+	   orient_fn = 'cas_cmat_to_orient'
 	  end
 	'CAS_ISSWA': $
 	  begin
 	   inst = -82361l
 	   scale = cas_iss_wac_scale() * bin
-	   orient_fn = 'cas_iss_cmat_to_orient'
+	   orient_fn = 'cas_cmat_to_orient'
 	  end
  endcase
 
