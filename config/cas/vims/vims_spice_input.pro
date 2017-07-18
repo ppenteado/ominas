@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	NAIF/SPICE input translator for Cassini. 
+;	NAIF/SPICE input translator for Cassini VIMS. 
 ;
 ;
 ; CATEGORY:
@@ -75,16 +75,13 @@
 ; SEE ALSO:
 ;	cas_spice_output
 ;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 10/2002
 ;	
 ;-
 ;=============================================================================
 
 
 ;===========================================================================
-; cas_spice_parse_labels
+; vims_spice_parse_labels
 ;
 ;===========================================================================
 pro vims_spice_parse_labels, dd, _time, $
@@ -155,7 +152,7 @@ end
 ;=============================================================================
 
 ;===========================================================================
-; cas_spice_cameras
+; vims_spice_cameras
 ;
 ;===========================================================================
 function vims_spice_cameras, dd, ref, pos=pos, constants=constants, $
@@ -174,35 +171,6 @@ compile_opt idl2
  bin = 1
  
  
- 
- 
-; label = dat_header(dd)
-;
-; if(NOT keyword_set(time)) then $
-;  begin
-;   time = vims_spice_time(label, dt=dt, status=status)
-;   if(status NE 0) then return, ptr_new()
-;   time = spice_str2et(time)
-;   cam_time = time + dt
-;  end $
-; else cam_time = time
-;
-; bin = 1
-; cam_nx = (cam_ny = 64d)
-; if(keyword_set(label)) then $
-;  begin
-;   close_time=vims_spice_time(label,dt=dt,status=status,startjd=startjd,endjd=endjd)
-;   cam_exposure=2d0*dt
-;   cam_nx=fix(pp_get_label_value(label,'SWATH_LENGTH'))
-;   cam_ny=fix(pp_get_label_value(label,'SWATH_WIDTH'))
-;  end
-;
-; cam_oaxis = [(cam_nx - 1.), (cam_ny - 1.)]/2. + [-3.,+3.]
-
-
-
-
-
  case dat_instrument(dd[0]) of
 	  'VIMS_IR': begin
 	     inst=-82370L
@@ -228,29 +196,6 @@ compile_opt idl2
 	   end
  endcase
 
- ;filters = vicgetpar(label, 'FILTER_NAME')
-; filters=cam_name
-
-; ret= cas_to_ominas( $
-;           spice_cameras(dd, ref, '', '', pos=pos, $
-;		sc = sc, $
-;		inst = inst, $
-;		plat = plat, $
-;		orient = orient, $
-;		cam_time = cam_time, $
-;		cam_scale = cam_scale, $
-;		cam_oaxis = cam_oaxis, $
-;		cam_fn_psf = 'cas_psf', $
-;		cam_filters = filters, $
-;		cam_size = [cam_nx, cam_ny], $
-;		cam_exposure = cam_exposure, $
-;		cam_fn_focal_to_image = 'vims_focal_to_image_linear', $
-;		cam_fn_image_to_focal = 'vims_image_to_focal_linear', $
-;		;cam_fn_body_to_image='vims_body_to_image',$
-;    ;            cam_fn_body_to_inertial='vims_body_to_inertial',$
-;		cam_fi_data = fn_data,$;[nv_ptr_new()], $
-;		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
-;                  orient_fn )
 
  cd=cas_to_ominas( $
            spice_cameras(dd, ref, '', '', pos=pos, $
@@ -302,7 +247,7 @@ end
 
 
 ;===========================================================================
-; cas_spice_planets
+; vims_spice_planets
 ;
 ;===========================================================================
 function vims_spice_planets, dd, ref, time=time, planets=planets, $
@@ -347,7 +292,7 @@ end
 
 
 ;===========================================================================
-; cas_spice_sun
+; vims_spice_sun
 ;
 ;===========================================================================
 function vims_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
@@ -381,7 +326,7 @@ end
 
 
 ;===========================================================================
-; cas_spice_input.pro
+; vims_spice_input.pro
 ;
 ;
 ;===========================================================================

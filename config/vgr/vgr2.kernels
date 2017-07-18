@@ -1,0 +1,26 @@
+###############################################################################
+# vgr2_ck.kernels
+#
+###############################################################################
+
+$VGR_SPICE_CK/vg2_jup_qmw_na.bc
+$VGR_SPICE_CK/vg2_jup_qmw_wa.bc
+$VGR_SPICE_CK/vg2_sat_qmw_na.bc
+$VGR_SPICE_CK/vg2_sat_qmw_wa.bc
+$VGR_SPICE_CK/vgr2_super_v2.bc
+#$VGR_SPICE_CK/vg2_nep_version1_type1_iss_sedr.bc
+
+###############################################################################
+# vgr2_spk.kernels
+#
+###############################################################################
+
+$VGR_SPICE_SPK/sat337.bsp
+
+
+$VGR_SPICE_SPK/vgr2_jup230.bsp
+$VGR_SPICE_SPK/vgr2_sat337.bsp
+$VGR_SPICE_SPK/vgr2_ura083.bsp
+$VGR_SPICE_SPK/vgr2_nep081.bsp
+$VGR_SPICE_SPK/Voyager_2.m05016u.merged.bsp
+$VGR_SPICE_SPK/voyager_2.ST+1992_m05208u.merged.bsp

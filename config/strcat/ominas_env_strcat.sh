@@ -12,5 +12,5 @@
 OMINAS_STRCAT=${OMINAS_DIR}/config/strcat
 export OMINAS_STRCAT
 
-NV_TRANSLATORS=${NV_TRANSLATORS}:${OMINAS_STRCAT}/tab/translators-common.tab:${OMINAS_STRCAT}/tab/translators-${1}.tab
+NV_TRANSLATORS=${NV_TRANSLATORS}:${OMINAS_STRCAT}/tab/translators-${1}.tab:${OMINAS_STRCAT}/tab/translators-common.tab
 export NV_TRANSLATORS
