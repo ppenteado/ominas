@@ -1,10 +1,10 @@
 ;==============================================================================
-; gll_psf
+; gll_ssi_psf
 ;
 ;  This is made up...
 ;
 ;==============================================================================
-function gll_psf, cd, x, y
+function gll_ssi_psf, cd, x, y
 
  if((NOT keyword_set(x)) AND (NOT keyword_set(y))) then default = 1 $
  else if(NOT keyword_set(y)) then y = dblarr(n_elements(x))

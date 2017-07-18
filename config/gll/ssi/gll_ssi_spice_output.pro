@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	gll_spice_output
+;	gll_ssi_spice_output
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE(only to be called by nv_xx_value):
-;	gll_spice_output, dd, keyword, value
+;	gll_ssi_spice_output, dd, keyword, value
 ;
 ;
 ; ARGUMENTS:
@@ -52,7 +52,7 @@
 ;
 ;
 ; SEE ALSO:
-;	gll_spice_input
+;	gll_ssi_spice_input
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -63,21 +63,21 @@
 
 
 ;===========================================================================
-; gll_spice_write_cameras
+; gll_ssi_spice_write_cameras
 ;
 ;===========================================================================
-pro gll_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
+pro gll_ssi_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
                                       n_obj=n_obj, dim=dim, status=status
 
  cam_name = dat_instrument(dd)
  if(cam_name EQ 'GLL_SSI') then inst=-82360l			;!!
- fn = 'gll_orient_to_cmat_ssi'
+ fn = 'gll_ssi_orient_to_cmat'
 
 
  sc = -82l							;!!
  plat = -82000l							;!!
 
- spice_write_cameras, dd, ref, ck_file, gll_from_ominas(value, orient_fn), $
+ spice_write_cameras, dd, ref, ck_file, gll_ssi_ominas(value, orient_fn), $
 		sc = sc, $
 		inst = inst, $
 		plat = plat, status=status
@@ -88,7 +88,7 @@ end
 
 
 ;===========================================================================
-; gll_spice_output.pro
+; gll_ssi_spice_output.pro
 ;
 ; NAIF/SPICE output translator for Galileo
 ;
@@ -97,7 +97,7 @@ end
 ;
 ;
 ;===========================================================================
-pro gll_spice_output, dd, keyword, value, status=status, $
+pro gll_ssi_spice_output, dd, keyword, value, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords

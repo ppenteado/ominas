@@ -1,8 +1,8 @@
 ;===========================================================================
-; gll_spice_time
+; gll_ssi_spice_time
 ;
 ;===========================================================================
-function gll_spice_time, label, dt=dt, string=close_time
+function gll_ssi_spice_time, label, dt=dt, string=close_time
 
  dt = 0d
 

@@ -56,10 +56,10 @@ end
 
 
 ;==============================================================================
-; cas_radar_maps
+; cas_radar_spice_maps
 ;
 ;==============================================================================
-function cas_radar_maps,dd, status=status
+function cas_radar_spice_maps, dd, status=status
 
 status = 0
 compile_opt idl2,logical_predicate
@@ -160,19 +160,101 @@ end
 
 
 ;===========================================================================
-; cas_radar_input.pro
+; cas_radar_spice_parse_labels
+;
+;===========================================================================
+pro cas_radar_spice_parse_labels, dd, _time, target=target
+
+ ndd = n_elements(dd)
+
+ time = dblarr(ndd)
+ target = strarr(ndd)
+
+ for i=0, ndd-1 do $
+  begin
+   label = dat_header(dd[i])
+   if(keyword_set(label)) then $
+    begin
+     ;-----------------------------------
+     ; time
+     ;-----------------------------------
+     if(NOT keyword_set(_time)) then time[i] = cas_radar_spice_time(label)
+
+     ;-----------------------------------
+     ; target
+     ;-----------------------------------
+     target[i] = pdspar(label, 'TARGET_NAME')
+    end
+  end
+
+ if(NOT keyword_set(_time)) then _time = time
+
+end 
+;=============================================================================
+
+
+
+;===========================================================================
+; cas_radar_spice_cameras
+;
+;===========================================================================
+function cas_radar_spice_cameras, dd, ref, pos=pos, constants=constants, $
+         n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
+
+ ndd = n_elements(dd)
+
+ sc = -82l
+ plat = -82000l
+
+inst = -82810;   ;;;;82 810--814
+; each data file contains all 5 beams: -82810 - -82814
+; -->return 5 cds?
+ 
+ cas_radar_spice_parse_labels, dd, time, target=target
+stop
+
+
+ orient_fn = 'cas_iss_cmat_to_orient'
+
+
+ return, cas_to_ominas( $
+           spice_cameras(dd, ref, '', '', pos=pos, $
+		sc = sc, $
+		inst = inst, $
+		plat = plat, $
+		orient = orient, $
+		cam_time = time, $
+;		cam_scale = make_array(2,ndd, val=scale), $
+;		cam_oaxis = oaxis, $
+;		cam_fn_psf = make_array(ndd, val='cas_iss_psf'), $
+;		cam_filters = filters, $
+;		cam_size = size, $
+;		cam_exposure = exposure, $
+;		cam_fn_focal_to_image = make_array(ndd, val='cam_focal_to_image_linear'), $
+;		cam_fn_image_to_focal = make_array(ndd, val='cam_image_to_focal_linear'), $
+;		cam_fi_data = [ptrarr(ndd)], $
+		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
+                  orient_fn )
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; cas_radar_spice_input.pro
 ;
 ;
 ;===========================================================================
-function cas_radar_input, dd, keyword, values=values, status=status, $
+function cas_radar_spice_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
- if(keyword EQ 'MAP_DESCRIPTORS') then return, cas_radar_maps(dd, status=status)
+ if(keyword EQ 'MAP_DESCRIPTORS') then return, cas_radar_spice_maps(dd, status=status)
 
-; return, spice_input(dd, keyword, 'cas', 'radar', values=values, status=status, $
- return, spice_input(dd, keyword, 'cas', values=values, status=status, $
+ return, spice_input(dd, keyword, 'cas', 'radar', values=values, status=status, $
+; return, spice_input(dd, keyword, 'cas', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)

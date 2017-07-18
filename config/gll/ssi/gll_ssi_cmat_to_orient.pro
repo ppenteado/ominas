@@ -1,7 +1,7 @@
 ;=============================================================================
 ;++
 ; NAME:
-;	gll_cmat_to_orient_ssi
+;	gll_ssi_cmat_to_orient
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = gll_cmat_to_orient(cmat)
+;	result = gll_ssi_cmat_to_orient(cmat)
 ;
 ;
 ; ARGUMENTS:
@@ -49,7 +49,7 @@
 ;	
 ;-
 ;=============================================================================
-function gll_cmat_to_orient_ssi, cmat
+function gll_ssi_cmat_to_orient, cmat
 
  s = size(cmat)
  if(s[0] EQ 2) then n = 1 $
