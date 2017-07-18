@@ -57,7 +57,6 @@ pro dat_header_value, dd, keyword, get=get, set=set, noevent=noevent
  ;--------------------------------------------
  ; read
  ;--------------------------------------------
-print, _dd.keyword_fn
  if(arg_present(get)) then call_procedure, _dd.keyword_fn, header, keyword, get=get
 
 

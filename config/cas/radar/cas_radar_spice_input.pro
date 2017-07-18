@@ -214,7 +214,6 @@ inst = -82813;   ;;;;82 810--814
 
  orient_fn = 'cas_cmat_to_orient'
 
-
  return, cas_to_ominas( $
            spice_cameras(dd, ref, '', '', pos=pos, $
 		sc = sc, $
@@ -222,17 +221,45 @@ inst = -82813;   ;;;;82 810--814
 		plat = plat, $
 		orient = orient, $
 		cam_time = time, $
-;		cam_scale = make_array(2,ndd, val=scale), $
-;		cam_oaxis = oaxis, $
-;		cam_fn_psf = make_array(ndd, val='cas_iss_psf'), $
-;		cam_filters = filters, $
-;		cam_size = size, $
-;		cam_exposure = exposure, $
-;		cam_fn_focal_to_image = make_array(ndd, val='cam_focal_to_image_linear'), $
-;		cam_fn_image_to_focal = make_array(ndd, val='cam_image_to_focal_linear'), $
-;		cam_fi_data = [ptrarr(ndd)], $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
                   orient_fn )
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; cas_radar_spice_planets
+;
+;===========================================================================
+function cas_radar_spice_planets, dd, ref, time=time, planets=planets, $
+                            n_obj=n_obj, dim=dim, status=status, $ 
+                            targ_list=targ_list, constants=constants, obs=obs
+
+ cas_radar_spice_parse_labels, dd, time, target=target
+
+ return, eph_spice_planets(dd, ref, time=time, planets=planets, $
+                            n_obj=n_obj, dim=dim, status=status, $ 
+                            targ_list=targ_list, $
+                            target=target, constants=constants, obs=obs)
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; cas_radar_spice_sun
+;
+;===========================================================================
+function cas_radar_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
+                                   status=status, time=time, obs=obs
+
+ cas_radar_spice_parse_labels, dd, time
+
+ return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
+            status=status, time=time, constants=constants, obs=obs)
 
 end
 ;===========================================================================
