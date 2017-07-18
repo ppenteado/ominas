@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	gll_spice_input
+;	gll_ssi_spice_input
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = gll_spice_input(dd, keyword)
+;	result = gll_ssi_spice_input(dd, keyword)
 ;
 ;
 ; ARGUMENTS:
@@ -69,7 +69,7 @@
 ;
 ;
 ; SEE ALSO:
-;	gll_spice_output
+;	gll_ssi_spice_output
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -80,10 +80,10 @@
 
 
 ;===========================================================================
-; gll_spice_parse_labels
+; gll_ssi_spice_parse_labels
 ;
 ;===========================================================================
-pro gll_spice_parse_labels, dd, _time, $
+pro gll_ssi_spice_parse_labels, dd, _time, $
       exposure=exposure, size=size, filters=filters, oaxis=oaxis, scale=scale, $
       target=target
 
@@ -105,7 +105,7 @@ pro gll_spice_parse_labels, dd, _time, $
      ;------------------------------
      ; time
      ;------------------------------
-     if(NOT keyword_set(_time)) then time[i] = gll_spice_time(label)
+     if(NOT keyword_set(_time)) then time[i] = gll_ssi_spice_time(label)
 
      ;------------------------------
      ; exposure time
@@ -152,10 +152,10 @@ end
 
 
 ;===========================================================================
-; gll_spice_cameras
+; gll_ssi_spice_cameras
 ;
 ;===========================================================================
-function gll_spice_cameras, dd, ref, pos=pos, constants=constants, $
+function gll_ssi_spice_cameras, dd, ref, pos=pos, constants=constants, $
           n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
  ndd = n_elements(dd)
@@ -169,9 +169,9 @@ function gll_spice_cameras, dd, ref, pos=pos, constants=constants, $
  sc = -77l
  plat = 0l
  inst= -77001l
- orient_fn = 'gll_cmat_to_orient_ssi'
+ orient_fn = 'gll_ssi_cmat_to_orient'
 
- gll_spice_parse_labels, dd, time, $
+ gll_ssi_spice_parse_labels, dd, time, $
     exposure=exposure, size=size, filters=filters, oaxis=oaxis, scale=scale
 
 
@@ -184,7 +184,7 @@ function gll_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		cam_time = time, $
 		cam_scale = scale, $
 		cam_oaxis = oaxis, $
-		cam_fn_psf = make_array(ndd, val='gll_psf'), $
+		cam_fn_psf = make_array(ndd, val='gll_ssi_psf'), $
 		cam_size = size, $
 		cam_exposure = exposure, $
 		cam_fn_focal_to_image = make_array(ndd, val='cam_focal_to_image_linear'), $
@@ -199,14 +199,14 @@ end
 
 
 ;===========================================================================
-; gll_spice_planets
+; gll_ssi_spice_planets
 ;
 ;===========================================================================
-function gll_spice_planets, dd, ref, time=time, planets=planets, $
+function gll_ssi_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- gll_spice_parse_labels, dd, time, target=target
+ gll_ssi_spice_parse_labels, dd, time, target=target
 
  return, eph_spice_planets(dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
@@ -219,13 +219,13 @@ end
 
 
 ;===========================================================================
-; gll_spice_sun
+; gll_ssi_spice_sun
 ;
 ;===========================================================================
-function gll_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
+function gll_ssi_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
                    status=status, time=time, constants=constants, obs=obs
 
- gll_spice_parse_labels, dd, time
+ gll_ssi_spice_parse_labels, dd, time
 
  return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
              status=status, time=time, constants=constants, obs=obs)
@@ -236,17 +236,17 @@ end
 
 
 ;===========================================================================
-; gll_spice_input.pro
+; gll_ssi_spice_input.pro
 ;
 ;
 ;===========================================================================
-function gll_spice_input, dd, keyword, values=values, status=status, $
+function gll_ssi_spice_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
 
- return, spice_input(dd, keyword, 'gll', values=values, status=status, $
+ return, spice_input(dd, keyword, 'gll', 'ssi', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)
