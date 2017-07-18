@@ -1,11 +1,11 @@
 ;===========================================================================
-; cas_spice_time
+; cas_iss_spice_time
 ;
 ;  Returns ET of center of observation
 ;  dt returns offset applied from shutter close
 ;
 ;===========================================================================
-function cas_spice_time, label, dt=dt, string=close_time
+function cas_iss_spice_time, label, dt=dt, string=close_time
 
  close_time = vicgetpar(label, 'IMAGE_TIME')
  if(NOT keyword_set(close_time)) then return, -1d100

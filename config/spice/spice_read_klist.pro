@@ -4,10 +4,13 @@
 ;
 ;===========================================================================
 function spice_read_klist, dd, klist, ck_out=ck_out, $
-             time=_time, prefix=prefix, notime=notime, extension=extension
+             time=_time, prefix=prefix, inst=inst, notime=notime, extension=extension
 common spice_klist_block, klist_last, _inlines
 
- fn_spice_time = prefix + '_spice_time'
+ inst_prefix = prefix
+ if(keyword_set(inst)) then inst_prefix = inst_prefix + '_' + inst
+
+ fn_spice_time = inst_prefix + '_spice_time'
  ndd = n_elements(dd)
 
  if(NOT keyword_set(notime)) then $

@@ -1,10 +1,10 @@
 ;==============================================================================
-; cas_query_lut
+; cas_iss_query_lut
 ;
 ;  Adapted from code contributed by Daren Wilson.
 ;
 ;==============================================================================
-function cas_query_lut, label
+function cas_iss_query_lut, label
 
  q = vicgetpar(label, 'DATA_CONVERSION_TYPE')
  if(size(q, /type) EQ 2) then q = vicgetpar(label, 'CONVERSION_TYPE')

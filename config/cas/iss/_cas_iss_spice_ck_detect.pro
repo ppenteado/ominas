@@ -31,10 +31,10 @@ end
 
 
 ;=============================================================================
-; cas_spice_ck_components
+; cas_iss_spice_ck_components
 ;
 ;=============================================================================
-pro cas_spice_ck_components, all_names, format, ii=ii, $
+pro cas_iss_spice_ck_components, all_names, format, ii=ii, $
    jd_start=jd_start, jd_stop=jd_stop, type=_type, version=_version, desc=desc
 
  jd_start = (jd_stop = (_type = (_version = (_desc = ''))))
@@ -117,7 +117,7 @@ end
 
 
 ;=============================================================================
-; cas_spice_ck_detect
+; cas_iss_spice_ck_detect
 ;
 ; Only kernels whose filenames match the standard convention and whose 
 ; coverage dates are within djd days of the given image are returned.
@@ -128,7 +128,7 @@ end
 ; 12/2006: kernels whose names contain the image name are also matched.
 ;
 ;=============================================================================
-function cas_spice_ck_detect, dd, ckpath, sc=sc, djd=djd, time=time, $
+function cas_iss_spice_ck_detect, dd, ckpath, sc=sc, djd=djd, time=time, $
                                                all=all, strict=strict
  if(NOT keyword_set(djd)) then djd = 1d			; days, +/-
 
@@ -160,7 +160,7 @@ function cas_spice_ck_detect, dd, ckpath, sc=sc, djd=djd, time=time, $
  ;--------------------------------------------------
  ; extract components for each date convention
  ;--------------------------------------------------
- cas_spice_ck_components, all_names, 'yymmdd', ii=_ii, $
+ cas_iss_spice_ck_components, all_names, 'yymmdd', ii=_ii, $
    jd_start=_jd_start, jd_stop=_jd_stop, type=_type, version=_version, desc=_desc
  jd_start = append_array(jd_start, _jd_start)
  jd_stop = append_array(jd_stop, _jd_stop)
@@ -169,7 +169,7 @@ function cas_spice_ck_detect, dd, ckpath, sc=sc, djd=djd, time=time, $
  desc = append_array(desc, _desc)
  ii = append_array(ii, _ii)
 
- cas_spice_ck_components, all_names, 'yydoy', ii=_ii, $
+ cas_iss_spice_ck_components, all_names, 'yydoy', ii=_ii, $
     jd_start=_jd_start, jd_stop=_jd_stop, type=_type, version=_version, desc=_desc
  jd_start = append_array(jd_start, _jd_start)
  jd_stop = append_array(jd_stop, _jd_stop)
@@ -302,7 +302,7 @@ end
 
 
 ;=============================================================================
-; cas_spice_ck_detect
+; cas_iss_spice_ck_detect
 ;
 ; Only kernels whose filenames match the standard convention and whose 
 ; coverage dates are within djd days of the given image are returned.
@@ -313,9 +313,9 @@ end
 ; 12/2006: kernels whose names contain the image name are also matched.
 ;
 ;=============================================================================
-function ____cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
+function ____cas_iss_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
                              all=all, strict=strict
-;common cas_spice_ck_block, all_files, all_names_block, ckpath_block, $
+;common cas_iss_spice_ck_block, all_files, all_names_block, ckpath_block, $
 ;      jd_start_block, jd_stop_block, type_block, version_block, desc_block, ii_block
 
  if(NOT keyword_set(djd)) then djd = 1d			; days, +/-
@@ -327,9 +327,9 @@ function ____cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
  ;--------------------------------
  ; get image jd
  ;--------------------------------
-; if(NOT keyword_set(time)) then jd = spice_str2jed(cas_spice_time(label)) $
+; if(NOT keyword_set(time)) then jd = spice_str2jed(cas_iss_spice_time(label)) $
 ; else jd = spice_et2jed(time)
- if(NOT keyword_set(time)) then time = cas_spice_time(label)
+ if(NOT keyword_set(time)) then time = cas_iss_spice_time(label)
  jd = spice_et2jed(time)
 
  jd = jd[0]
@@ -362,7 +362,7 @@ function ____cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
    ;--------------------------------------------------
    ; extract components for each date convention
    ;--------------------------------------------------
-   cas_spice_ck_components, all_names, 'yymmdd', ii=_ii, $
+   cas_iss_spice_ck_components, all_names, 'yymmdd', ii=_ii, $
      jd_start=_jd_start, jd_stop=_jd_stop, type=_type, version=_version, desc=_desc
    jd_start_block = append_array(jd_start_block, _jd_start)
    jd_stop_block = append_array(jd_stop_block, _jd_stop)
@@ -371,7 +371,7 @@ function ____cas_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
    desc_block = append_array(desc_block, _desc)
    ii_block = append_array(ii_block, _ii)
 
-   cas_spice_ck_components, all_names, 'yydoy', ii=_ii, $
+   cas_iss_spice_ck_components, all_names, 'yydoy', ii=_ii, $
       jd_start=_jd_start, jd_stop=_jd_stop, type=_type, version=_version, desc=_desc
    jd_start_block = append_array(jd_start_block, _jd_start)
    jd_stop_block = append_array(jd_stop_block, _jd_stop)

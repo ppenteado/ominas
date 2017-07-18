@@ -19,11 +19,11 @@ end
 
 
 ;==============================================================================
-; cas_psf
+; cas_iss_psf
 ;
 ;
 ;==============================================================================
-function cas_psf, cd, x, y
+function cas_iss_psf, cd, x, y
 
  if((NOT keyword_set(x)) AND (NOT keyword_set(y))) then default = 1 $
  else if(NOT keyword_set(y)) then y = dblarr(n_elements(x))

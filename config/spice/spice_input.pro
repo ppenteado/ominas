@@ -369,10 +369,13 @@
 ; si_manage_kernels
 ;
 ;=============================================================================
-pro si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
+pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
                              constants=constants, time=time, status=status
  status = 0
 ;;; need to give dirs in error messages
+
+ inst_prefix = prefix
+ if(keyword_set(inst)) then inst_prefix = inst_prefix + '_' + inst
 
  ;-----------------------------------------------------------------
  ; if data descriptor already kernel list, load those kernels
@@ -464,17 +467,17 @@ pro si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; first, look for lsk and sck files in the klist
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   lsk_in = spice_read_klist(dd, klist, prefix=prefix, /notime, ext='tls')
-   sck_in = spice_read_klist(dd, klist, prefix=prefix, /notime, ext='tsc')
+   lsk_in = spice_read_klist(dd, klist, prefix=prefix, inst=inst, /notime, ext='tls')
+   sck_in = spice_read_klist(dd, klist, prefix=prefix, inst=inst, /notime, ext='tsc')
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; otherwise, check for lsk and sck keywords
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(NOT keyword_set(lsk_in)) then $
-     lsk_in = spice_kernel_parse(dd, prefix, 'lsk', ext='tls', $
+     lsk_in = spice_kernel_parse(dd, prefix, inst, 'lsk', ext='tls', $
 	      exp=lsk_exp, strict=lsk_strict, all=lsk_all, time=time)
    if(NOT keyword_set(sck_in)) then $
-     sck_in = spice_kernel_parse(dd, prefix, 'sck', ext='tsc', $
+     sck_in = spice_kernel_parse(dd, prefix, inst, 'sck', ext='tsc', $
 	      exp=sck_exp, strict=sck_strict, all=sck_all, time=time)
 
    if(NOT keyword_set(lsk_in)) then nv_message, 'No leap-second kernels.'
@@ -503,7 +506,7 @@ pro si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
    ;  Kernels are read from this file and inserted into the kernel list
    ;  in front of the kernels input using translator keywords.  
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   k_in = spice_read_klist(dd, klist, time=time, prefix=prefix)
+   k_in = spice_read_klist(dd, klist, time=time, prefix=prefix, inst=inst)
   end
 
 
@@ -516,20 +519,20 @@ pro si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
  ck_in = ''
  if(NOT keyword_set(pos) AND (NOT keyword_set(od))) then $
    if(NOT keyword_set(constants)) then $
-     ck_in = spice_kernel_parse(dd, prefix, 'ck', ext='bc', $
+     ck_in = spice_kernel_parse(dd, prefix, inst, 'ck', ext='bc', $
 	       exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
 
  if(NOT keyword_set(constants)) then $
-   spk_in = spice_kernel_parse(dd, prefix, 'spk', ext='bsp', $
+   spk_in = spice_kernel_parse(dd, prefix, inst, 'spk', ext='bsp', $
         	exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
 
- pck_in = spice_kernel_parse(dd, prefix, 'pck', ext='tpc', $
+ pck_in = spice_kernel_parse(dd, prefix, inst, 'pck', ext='tpc', $
 		  exp=pck_exp, strict=pck_strict, all=pck_all, time=time)
- fk_in = spice_kernel_parse(dd, prefix, 'fk', ext='tf', $
+ fk_in = spice_kernel_parse(dd, prefix, inst, 'fk', ext='tf', $
 		  exp=fk_exp, strict=fk_strict, all=fk_all, time=time)
- ik_in = spice_kernel_parse(dd, prefix, 'ik', ext='ti', $
+ ik_in = spice_kernel_parse(dd, prefix, inst, 'ik', ext='ti', $
 		  exp=ik_exp, strict=ik_strict, all=ik_all, time=time)
- xk_in = spice_kernel_parse(dd, prefix, 'xk', $
+ xk_in = spice_kernel_parse(dd, prefix, inst, 'xk', $
 		  exp=xk_exp, strict=xk_strict, all=xk_all, time=time)
 
 
@@ -575,9 +578,12 @@ end
 ; si_get
 ;
 ;=============================================================================
-function si_get, dd, keyword, prefix, od=od, time=__time, status=status
+function si_get, dd, keyword, prefix, inst, od=od, time=__time, status=status
 
  if(keyword_set(__time)) then time = __time
+
+ inst_prefix = prefix
+ if(keyword_set(inst)) then inst_prefix = inst_prefix + '_' + inst
 
  ;-----------------------------------------------
  ; translator arguments
@@ -676,8 +682,8 @@ function si_get, dd, keyword, prefix, od=od, time=__time, status=status
  ; manage kernels unless /nokernels
  ;---------------------------------------------------------------
  if(NOT keyword_set(nokernels)) then $
-     si_manage_kernels, dd, prefix=prefix, pos=pos, reload=reload, $
-                            constants=constants, time=time, status=status
+     si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
+                                 constants=constants, time=time, status=status
  if(status NE 0) then return, !null
 
 
@@ -694,7 +700,7 @@ function si_get, dd, keyword, prefix, od=od, time=__time, status=status
   ;  Construct a descriptor for the relevant camera.
   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   'CAM_DESCRIPTORS': $
-	result = call_function(prefix + '_spice_cameras', time=time, pos=pos, $
+	result = call_function(inst_prefix + '_spice_cameras', time=time, pos=pos, $
                       constants=constants, dd, ref, n_obj=n_obj, dim=dim, $
                       status=status, orient=orient, obs=obs)
 
@@ -708,7 +714,7 @@ function si_get, dd, keyword, prefix, od=od, time=__time, status=status
 	begin
          names0 = ''
          if(keyword_set(names)) then names0 = names
-	 result = call_function(prefix + '_spice_planets', dd, ref, $
+	 result = call_function(inst_prefix + '_spice_planets', dd, ref, $
                      time=time, targ_list=targ_list, constants=constants, $
 	             n_obj=n_obj, dim=dim, status=status, planets=names, obs=obs)
 	 if(NOT keyword_set(result)) then status = -1 $
@@ -742,7 +748,7 @@ function si_get, dd, keyword, prefix, od=od, time=__time, status=status
           end 
 
 	 if(status NE -1) then $
-                result = call_function(prefix + '_spice_sun', dd, ref, $
+                result = call_function(inst_prefix + '_spice_sun', dd, ref, $
 	                       time=time, constants=constants, $
 	                       n_obj=n_obj, dim=dim, status=status, obs=obs)
 	end
@@ -778,7 +784,7 @@ end
 ; spice_input
 ;
 ;=============================================================================
-function spice_input, dd, keyword, prefix, values=values, status=status, $
+function spice_input, dd, keyword, prefix, inst, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
@@ -852,7 +858,7 @@ common spice_input_block, last_prefix
  ;-----------------------------------------------
  for i=0, ndd-1 do $
       result = append_array(result, si_get(dd[i], $
-                         keyword, prefix, od=od[i], time=time, status=status))
+                      keyword, prefix, inst, od=od[i], time=time, status=status))
 
  return, result
 end

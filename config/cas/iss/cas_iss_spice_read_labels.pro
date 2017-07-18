@@ -90,10 +90,10 @@ end
 
 
 ;=============================================================================
-; cas_spice_read_labels
+; cas_iss_spice_read_labels
 ;
 ;=============================================================================
-function cas_spice_read_labels, files
+function cas_iss_spice_read_labels, files
 
  nfiles = n_elements(files)
  data = replicate({csrl_label_struct}, nfiles)

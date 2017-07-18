@@ -1,5 +1,5 @@
 ;==============================================================================
-; cas_delut
+; cas_iss_delut
 ;
 ;  Adapted from cassimg__twelvebit.pro, which was contributed by Daren Wilson.
 ;
@@ -11,21 +11,21 @@
 ;  into the full 12bit range 0-4095 in a near exponential relationship
 ;
 ;==============================================================================
-function cas_delut, image, label, force=force
+function cas_iss_delut, image, label, force=force
 
  if(NOT keyword_set(label)) then force = 1
 
  ;----------------------------------------------------------
  ; determine whether conversion is necessary 
  ;----------------------------------------------------------
- if(NOT keyword_set(force)) then if(NOT cas_query_lut(label)) then return, image
+ if(NOT keyword_set(force)) then if(NOT cas_iss_query_lut(label)) then return, image
  if(size(image, /type) NE 1) then return, image    ; if not byte, then already 
                                                    ;  de-lutted
 
  ;-----------------------
  ; Get the lookup table
  ;-----------------------
- lut = cas_lut()
+ lut = cas_iss_lut()
 
  ;--------------------------
  ; apply the lookup table

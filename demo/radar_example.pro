@@ -151,6 +151,9 @@ mdp= pg_get_maps(/over,  $
 
 dd_map=pg_map(dd,md=mdp,cd=mdr,pc_xsize=800,pc_ysize=800)
 
-grim,dd_map,cd=mdp;,overlays=['planet_grid']
+
+;cd = pg_get_cameras(dd)
+;pd = pg_get_planets(dd, od=cd)
+grim,dd_map,cd=mdp;, od=cd, pd=pd, ,overlays=['planet_grid']
 
 end

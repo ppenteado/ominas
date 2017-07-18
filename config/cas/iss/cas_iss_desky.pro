@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	cas_desky
+;	cas_iss_desky
 ;
 ;
 ; PURPOSE:
@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = cas_desky(image, sample)
+;	result = cas_iss_desky(image, sample)
 ;
 ;
 ; ARGUMENTS:
@@ -66,7 +66,7 @@
 ;	
 ;-
 ;=============================================================================
-function cas_desky, image, sample, tol=tol, maxsig=maxsig, width=width, $
+function cas_iss_desky, image, sample, tol=tol, maxsig=maxsig, width=width, $
                                skip=skip, smooth=smooth
 
  si = size(image)

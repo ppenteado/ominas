@@ -1,4 +1,4 @@
-FUNCTION cas_blocklowfreq, humin,                  $
+FUNCTION cas_iss_blocklowfreq, humin,                  $
                 fwidth=fwidth, order=order,             $
                 tf=tf
                 

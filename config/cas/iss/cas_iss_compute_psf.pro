@@ -1,9 +1,9 @@
 ;==============================================================================
-; cas_compute_psf
+; cas_iss_compute_psf
 ;
 ;
 ;==============================================================================
-function cas_compute_psf, cd, x, y, default=default, onedim=onedim
+function cas_iss_compute_psf, cd, x, y, default=default, onedim=onedim
 
  if(keyword_set(default)) then $
   begin

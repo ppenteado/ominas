@@ -1,8 +1,8 @@
 ;===========================================================================
-; cas_wac_scale
+; cas_iss_wac_scale
 ;
 ;===========================================================================
-function cas_wac_scale
+function cas_iss_wac_scale
 
 return, 59.749d-6			; SSR paper
  return, 5.9654807e-05

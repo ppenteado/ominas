@@ -1,8 +1,8 @@
 ;=============================================================================
-; cas_format_comment
+; cas_iss_format_comment
 ;
 ;=============================================================================
-function cas_format_comment, od
+function cas_iss_format_comment, od
 
  if(cor_isa(od[0]), 'CAMERA')) then $
         return, 'cam_orient <==> CASSINI C-matrix; lengths in km'

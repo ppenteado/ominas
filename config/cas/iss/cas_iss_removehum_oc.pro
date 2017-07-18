@@ -1,4 +1,4 @@
-FUNCTION cas_removehum_oc, noisyimg, bpa,  skip_presmooth=skip_presmooth,  $
+FUNCTION cas_iss_removehum_oc, noisyimg, bpa,  skip_presmooth=skip_presmooth,  $
                 dccoupled=dccoupled,    hum=hum
 
 ; Remove the 2Hz Noise (aka "hum") from an image using overclocked pixel values
@@ -8,7 +8,7 @@ FUNCTION cas_removehum_oc, noisyimg, bpa,  skip_presmooth=skip_presmooth,  $
 ; Example:
 ;
 ;       img = read_image('FantasticImageOfIapetus1234.IMG', label, bpa=bpa)
-;       clean_img = cas_removehum_oc(img, bpa)
+;       clean_img = cas_iss_removehum_oc(img, bpa)
 ;
 ; INPUT
 ;
@@ -40,7 +40,7 @@ h=(size(img))[2]
 if s ne h then begin
         print, 'Binary prefix array height ',  s,  $
                     ' differs from image height ', h, '- cannot proceed'
-        print, 'Did you supply the bpa arg to cas_removehum_oc?'
+        print, 'Did you supply the bpa arg to cas_iss_removehum_oc?'
         hum=0
         return ,noisyimg
 end
@@ -75,7 +75,7 @@ if not keyword__set(skip_presmooth) then begin
 endif
 
 if not keyword__set(dccoupled)  then begin
-        hum=cas_blocklowfreq(hum, fwidth=fwidth)
+        hum=cas_iss_blocklowfreq(hum, fwidth=fwidth)
 endif
 
 

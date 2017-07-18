@@ -1,5 +1,5 @@
 ;==============================================================================
-; cas_delut
+; cas_radar_transform
 ;
 ;  Adapted from cassimg__twelvebit.pro, which was contributed by Daren Wilson.
 ;

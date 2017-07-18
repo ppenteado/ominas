@@ -1,4 +1,7 @@
-
+;==============================================================================
+; cas_radar_planets
+;
+;==============================================================================
 function cas_radar_planets,dd
 compile_opt idl2,logical_predicate
 
@@ -10,7 +13,6 @@ compile_opt idl2,logical_predicate
   endt=strtrim(endt[0],2)
   
   
-  
   ret=eph_spice_planets(dd, ref, time=plt_time, planets=planets, $
     n_obj=n_obj, dim=dim, status=status, $
     targ_list=targ_list, $
@@ -19,7 +21,14 @@ compile_opt idl2,logical_predicate
   return,ret
 
 end
+;==============================================================================
 
+
+
+;==============================================================================
+; cas_radar_lonlattolinesample
+;
+;==============================================================================
 function cas_radar_lonlattolinesample,lon,lat,line_offset=line_off,sample_offset=sample_off,$
   mapres=mapres
 compile_opt idl2,logical_predicate
@@ -27,7 +36,14 @@ line=line_off+lon*mapres+1
 sample=sample_off+lat*mapres+1
 return,transpose([[line],[sample]])
 end
+;==============================================================================
 
+
+
+;==============================================================================
+; cas_radar_linesampletolonlat
+;
+;==============================================================================
 function cas_radar_linesampletolonlat,line,sample,line_offset=line_off,sample_offset=sample_off,$
   mapres=mapres
 compile_opt idl2,logical_predicate
@@ -35,8 +51,17 @@ lon=(line-1-line_off)/(mapres*1d0)
 lat=(sample-1-sample_off)/(mapres*1d0)
 return,transpose([[lon],[lat]])
 end
+;==============================================================================
 
-function cas_radar_maps,dd
+
+
+;==============================================================================
+; cas_radar_maps
+;
+;==============================================================================
+function cas_radar_maps,dd, status=status
+
+status = 0
 compile_opt idl2,logical_predicate
 
 dat_header_value,dd,'LINES',get=lines
@@ -98,9 +123,15 @@ status=0
 return,ret
   
 end
+;==============================================================================
 
 
-function cas_radar_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, $
+
+;==============================================================================
+; cas_radar_input
+;
+;==============================================================================
+function __cas_radar_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, $
 status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
@@ -122,6 +153,29 @@ status=status, $
  dim=[n_obj]
  values=0
  return, ret
+
+end
+;==============================================================================
+
+
+
+;===========================================================================
+; cas_radar_input.pro
+;
+;
+;===========================================================================
+function cas_radar_input, dd, keyword, values=values, status=status, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+	end_keywords
+
+ if(keyword EQ 'MAP_DESCRIPTORS') then return, cas_radar_maps(dd, status=status)
+
+; return, spice_input(dd, keyword, 'cas', 'radar', values=values, status=status, $
+ return, spice_input(dd, keyword, 'cas', values=values, status=status, $
+@nv_trs_keywords_include.pro
+@nv_trs_keywords1_include.pro
+	end_keywords)
 
 end
 ;===========================================================================

@@ -52,7 +52,7 @@
 ;     files = getenv('OMINAS_DIR')+'/demo/data/'+['n1350122987.2','/n1351469359.2']
 ;     n = n_elements(files)
 ;
-;     dd = dat_read(files, input_transform='cas_delut')
+;     dd = dat_read(files)
 ;     
 ;     zoom = 0.3
 ;     for i=0, n-1 do tvim, dat_data(dd[i]), zoom=zoom, /order, /new
@@ -88,7 +88,7 @@
 files = getenv('OMINAS_DIR')+'/demo/data/'+['n1350122987.2','/n1351469359.2']
 n = n_elements(files)
 
-dd = dat_read(files, input_transform='cas_delut')
+dd = dat_read(files)
 
 ;---------------------------------------------------
 ; display images and keep track of window numbers

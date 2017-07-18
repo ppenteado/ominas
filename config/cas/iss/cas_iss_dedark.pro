@@ -1,11 +1,11 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	cas_debias
+;	cas_iss_dedark
 ;
 ;
 ; PURPOSE:
-;	To remove horizontal banding in Cassini images
+;	To remove horizontal banding and dark current in Cassini images
 ;
 ;
 ; CATEGORY:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = debias(image, label, bpa)
+;	result = cas_iss_dedark(image, label, bpa)
 ;
 ;
 ; ARGUMENTS:
@@ -25,12 +25,8 @@
 ;	bpa:    Binary prefix bytes from read_vicar
 ;
 ;  OUTPUT:
-;	bias:	Bias calculated	
+;	bias:	Bias/dark calculated	
 ;
-;
-; KEYWORDS:
-;  INPUT:
-;	average: Use average of overclocked pixels
 ;
 ;
 ; RETURN:
@@ -38,7 +34,7 @@
 ;
 ;
 ; PROCEDURE:
-;	This routine applies a digital filter to the overclocked 
+;	This routine applies a digital filter to the extended
 ;	pixel value found in the Binary prefix array (bpa) and then
 ;	subtracts this from the image.
 ;
@@ -53,11 +49,11 @@
 ;	
 ;-
 ;=============================================================================
-function cas_debias, image, label, bpa, bias=bias, average=average
+function cas_iss_dedark, image, label, bpa, bias=bias
 
-;---------------------------
-; Extract overclocked pixels
-;---------------------------
+;------------------------
+; Extract extended pixels
+;------------------------
  format = vicgetpar(label,'FORMAT')
  sb=size(bpa)
  if(sb[0] NE 2 OR sb[1] NE 24) then $
@@ -67,8 +63,8 @@ function cas_debias, image, label, bpa, bias=bias, average=average
    end $
   else $
    begin
-    overclock = bpa[23,*] 
-    if(format eq 'HALF') then overclock = overclock + 256*bpa[22,*]
+    extended = bpa[21,*] 
+    if(format eq 'HALF') then extended = extended + 256*bpa[20,*]
    end
   
 ;------------------------------------------
@@ -88,30 +84,12 @@ function cas_debias, image, label, bpa, bias=bias, average=average
 ;---------------------
 ; Create bias template
 ;---------------------
-  if(convert EQ 'TABLE') then overclock = cas_reverse_lut(overclock)
-; fix first two pixels if necessary
-  if(overclock[0] GT 1.3*overclock[2]) then overclock[0] = overclock[2]
-  if(overclock[0] LT 0.7*overclock[2]) then overclock[0] = overclock[2]
-  if(overclock[1] GT 1.3*overclock[2]) then overclock[1] = overclock[2]
-  if(overclock[1] LT 0.7*overclock[2]) then overclock[1] = overclock[2]
-  result = moment(overclock)
-  for i=3,n_elements(overclock)-2 do $
-   begin
-    if(overclock[i] GT 1.3*result[0]) then overclock[i] = ( overclock[i-1] + $
-                                           overclock[i+1]) /2.
-    if(overclock[i] LT 0.7*result[0]) then overclock[i] = ( overclock[i-1] + $
-                                           overclock[i+1]) /2.
-   end
-  overclock = float(overclock)
-  n_pixels = n_elements(overclock)
-  overclock = reform(overclock, n_pixels, /overwrite)
-  if(keyword__set(average)) then $
-   begin
-    ave = total(overclock)/n_pixels
-    bias = [replicate(ave, n_pixels)]
-   end $
-  else $
-   bias = convol(overclock, filter, /edge_truncate)
+  if(convert EQ 'TABLE') then extended = cas_reverse_lut(extended)
+  if(extended[0] GT 2*extended[1]) then extended[0] = extended[1]
+  extended = float(extended)
+  n_pixels = n_elements(extended)
+  extended = reform(extended, n_pixels, /overwrite)
+  bias = convol(extended, filter, /edge_truncate)
 
 ;--------------
 ; Subtract bias

@@ -1,4 +1,4 @@
-FUNCTION cas_removehum, noisyimg, mask=mask,  bpa=bpa,   oc=oc, ext=ext,  $
+FUNCTION cas_iss_removehum, noisyimg, mask=mask,  bpa=bpa,   oc=oc, ext=ext,  $
                 fwidth=fwidth, dccoupled=dccoupled,  hum=hum
 ;
 ; Remove the 2Hz noise (aka "hum") from an image using signal extracted
@@ -83,7 +83,7 @@ hum = convol(hum, sg, /edge_t)
 
         
 if not keyword__set(dccoupled)  then begin
-        hum=cas_blocklowfreq(hum, fwidth=fwidth)
+        hum=cas_iss_blocklowfreq(hum, fwidth=fwidth)
 endif
 
 

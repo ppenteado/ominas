@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	cas_spice_output
+;	cas_iss_spice_output
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE(only to be called by nv_xx_value):
-;	cas_spice_output, dd, keyword, value
+;	cas_iss_spice_output, dd, keyword, value
 ;
 ;
 ; ARGUMENTS:
@@ -74,12 +74,12 @@ pro cas_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
 	'CAS_ISSNA': $
 	  begin
 	   inst=-82360l
-	   orient_fn = 'cas_orient_to_cmat_iss'
+	   orient_fn = 'cas_iss_orient_to_cmat'
 	  end
 	'CAS_ISSWA': $
 	  begin
 	   inst=-82361l
-	   orient_fn = 'cas_orient_to_cmat_iss'
+	   orient_fn = 'cas_iss_orient_to_cmat'
 	  end
  endcase
 
@@ -98,7 +98,7 @@ end
 
 
 ;===========================================================================
-; cas_spice_output.pro
+; cas_iss_spice_output.pro
 ;
 ; NAIF/SPICE output translator for Cassini
 ;
@@ -107,7 +107,7 @@ end
 ;
 ;
 ;===========================================================================
-pro cas_spice_output, dd, keyword, value, status=status, $
+pro cas_iss_spice_output, dd, keyword, value, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords

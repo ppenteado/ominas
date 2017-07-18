@@ -1,7 +1,7 @@
 ;=============================================================================
 ;++
 ; NAME:
-;	cas_cmat_to_orient_iss
+;	cas_iss_cmat_to_orient
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = cas_cmat_to_orient(cmat)
+;	result = cas_iss_cmat_to_orient(cmat)
 ;
 ;
 ; ARGUMENTS:
@@ -72,7 +72,7 @@
 ;	
 ;-
 ;=============================================================================
-function cas_cmat_to_orient_iss, cmat
+function cas_iss_cmat_to_orient, cmat
 
  s = size(cmat)
  if(s[0] EQ 2) then n = 1 $
