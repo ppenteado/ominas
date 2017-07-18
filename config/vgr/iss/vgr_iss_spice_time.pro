@@ -1,8 +1,8 @@
 ;===========================================================================
-; vgr_spice_time
+; vgr_iss_spice_time
 ;
 ;===========================================================================
-function vgr_spice_time, label, dt=dt, string=close_time
+function vgr_iss_spice_time, label, dt=dt, string=close_time
 
  scet = vicar_vgrkey(label, 'SCET')
  p = strpos(strupcase(scet), 'UNKNOWN')

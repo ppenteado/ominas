@@ -50,10 +50,10 @@
 # Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  VGR1_ISS_NA	vgr_spice_input		vgr_spice_output klist=vgr_demo.kernels
-  VGR1_ISS_WA	vgr_spice_input		vgr_spice_output klist=vgr_demo.kernels
-  VGR2_ISS_NA	vgr_spice_input		vgr_spice_output klist=vgr_demo.kernels
-  VGR2_ISS_WA	vgr_spice_input		vgr_spice_output klist=vgr_demo.kernels
+  VGR1_ISS_NA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
+  VGR1_ISS_WA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
+  VGR2_ISS_NA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
+  VGR2_ISS_WA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
 
 
 # Instrument	Input			Output		Keyword arguments

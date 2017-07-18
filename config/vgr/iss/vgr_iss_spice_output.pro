@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	vgr_spice_output
+;	vgr_iss_spice_output
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE(only to be called by nv_xx_value):
-;	vgr_spice_output, dd, keyword, value
+;	vgr_iss_spice_output, dd, keyword, value
 ;
 ;
 ; ARGUMENTS:
@@ -52,7 +52,7 @@
 ;
 ;
 ; SEE ALSO:
-;	vgr_spice_input
+;	vgr_iss_spice_input
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -63,10 +63,10 @@
 
 
 ;===========================================================================
-; vgr_spice_write_cameras
+; vgr_iss_spice_write_cameras
 ;
 ;===========================================================================
-pro vgr_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
+pro vgr_iss_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
                                       n_obj=n_obj, dim=dim, status=status
 
  sc_name = vgr_parse_inst(dat_instrument(dd), cam=cam_name)
@@ -92,7 +92,7 @@ end
 
 
 ;===========================================================================
-; vgr_spice_output.pro
+; vgr_iss_spice_output.pro
 ;
 ; NAIF/SPICE output translator for Voyager
 ;
@@ -101,7 +101,7 @@ end
 ;
 ;
 ;===========================================================================
-pro vgr_spice_output, dd, keyword, value, status=status, $
+pro vgr_iss_spice_output, dd, keyword, value, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
