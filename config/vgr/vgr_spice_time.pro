@@ -14,7 +14,7 @@ function vgr_spice_time, label, dt=dt, string=close_time
  dt = -0.5d*exposure
  
  ret=spice_str2et(close_time) + dt
- nv_message,verb=0.91,'close_time='+strtrim(close_time,2)+' et='+strtrim(ret,2)
+ nv_message,verb=0.91,'close_time='+strtrim(close_time,2)+' et='+strtrim(string(ret,format='(F20.3)'),2)
  return, ret
 end
 ;===========================================================================
