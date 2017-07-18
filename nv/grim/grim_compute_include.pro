@@ -243,6 +243,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing planet grids...'
+stop
  grid_ptd = pg_grid(cd=cd, bx=pds, clip=clip, npoints=npoints)
  grim_message
 

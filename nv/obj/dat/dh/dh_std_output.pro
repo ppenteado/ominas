@@ -181,11 +181,10 @@ pro dh_std_output, dd, keyword, value, status=status, $
  n = n_elements(ods)
  for i=0, n-1 do dhso_put, dd, dh, _ods[i], prefix, obj=i
 
-
  ;--------------------------
  ; modify detached header
  ;--------------------------
- dh_set, dd, dh
+ dat_set_dh, dd, dh
 
 end
 ;===========================================================================
