@@ -3,7 +3,8 @@
 #Usage:
 #./download_TYCHO2.sh /directory/to/place/catalog
 
-
+OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+wget=${OWNDIR}/pp_wget
 echo "This script wiill download the Tycho 2 catalog from CDS (ftp://cdsarc.u-strasbg.fr/pub/cats/I/259) and prepare its files for use. As of January/2017, this adds to 161 MB of download, and 665 MB of disk space after unpacking."
 
 
@@ -23,7 +24,7 @@ baseurl="ftp://cdsarc.u-strasbg.fr/pub/cats/I/259"
 mkdir -p ~/.ominas/timestamps/
 ts=`eval echo "~/.ominas/timestamps/"`
 
-./pp_wget "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
+${wget} "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
 
 
 echo "Downloads done, unpacking files..."

@@ -3,7 +3,8 @@
 #Usage:
 #./download_SEDR.sh /directory/to/place/catalog
 
-
+OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+wget=${OWNDIR}/pp_wget
 echo "SEDR data download not yet implemented"
 
 #read -rp "Continue? " ans
@@ -20,5 +21,5 @@ mkdir -p ~/.ominas/timestamps/SEDR
 ts=`eval echo "~/.ominas/timestamps/"`
 
 mkdir -p ${1}
-#./pp_wget "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
+#${wget} "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
 

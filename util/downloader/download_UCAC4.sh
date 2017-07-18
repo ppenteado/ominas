@@ -3,7 +3,8 @@
 #Usage:
 #./download_UCAC4.sh /directory/to/place/catalog
 
-
+OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+wget=${OWNDIR}/pp_wget
 echo "This script wiill download the UCAC4 catalog from CDS (ftp://cdsarc.u-strasbg.fr/pub/cats/more/UCAC4/u4b/) and prepare its files for use. As of January/2017, this adds to 8.5 GB"
 
 if [ -z ${ominas_auto+x} ] || [ ${ominas_auto} == 0 ] ; then
@@ -25,7 +26,7 @@ mkdir -p ~/.ominas/timestamps/UCAC4
 ts=`eval echo "~/.ominas/timestamps/"`
 
 
-./pp_wget "${baseurli}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
-./pp_wget "${baseurlb}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
+${wget} "${baseurli}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
+${wget} "${baseurlb}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
 
 
