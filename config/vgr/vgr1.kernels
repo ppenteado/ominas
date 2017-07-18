@@ -1,0 +1,25 @@
+###############################################################################
+# vgr1_ck.kernels
+#
+###############################################################################
+
+$VGR_SPICE_CK/vg1_jup_qmw_na.bc
+$VGR_SPICE_CK/vg1_jup_qmw_wa.bc
+$VGR_SPICE_CK/vg1_sat_qmw_na.bc
+$VGR_SPICE_CK/vg1_sat_qmw_wa.bc
+$VGR_SPICE_CK/vgr1_super_v2.bc
+
+###############################################################################
+# vgr1_spk.kernels
+#
+###############################################################################
+
+$VGR_SPICE_SPK/sat337.bsp
+
+
+$VGR_SPICE_SPK/vgr1_jup230.bsp
+$VGR_SPICE_SPK/vgr1_sat337.bsp
+$VGR_SPICE_SPK/Voyager_1.a54206u_V0.2_merged.bsp
+$VGR_SPICE_SPK/voyager_1.ST+1991_a54418u.merged.bsp
+
+
