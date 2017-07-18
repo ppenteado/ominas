@@ -1,0 +1,1 @@
+.rnew dred.pro

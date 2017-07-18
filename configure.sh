@@ -987,7 +987,7 @@ Data:
            About 19 MB download, 70 MB unpacked
        12) GSC star catalog  . . . . . . . . . . . ${dstatus[4]}
 For more information, see
-https://ppenteado.github.io/ominas_doc/demo/install_guide.html
+https://ppenteado.github.io/ominas/demo/install_guide.html
 PKGS
 
 pr=1
@@ -1279,5 +1279,5 @@ while [ 1 ]; do
 done
 
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
-printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas_doc/demo/\n"
-printf "For documentation on how OMINAS works, see the User Guide at https://ppenteado.github.io/ominas_doc/user_guide\n"
+printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas/demo/\n"
+printf "For documentation on how OMINAS works, see the User Guide at https://ppenteado.github.io/ominas/user_guide\n"
