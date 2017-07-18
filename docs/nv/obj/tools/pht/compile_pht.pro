@@ -1,0 +1,11 @@
+.rnew pht_angles.pro
+.rnew pht_lunar_lambert.pro
+.rnew pht_lunar.pro
+.rnew pht_minneart.pro
+.rnew pht_phase_corr.pro
+.rnew pht_phase_henyey_greenstein.pro
+.rnew pht_phase_isotropic.pro
+.rnew pht_refl_corr.pro
+.rnew pht_refl_lunar_lambert.pro
+.rnew pht_refl_lunar.pro
+.rnew pht_refl_minneart.pro
