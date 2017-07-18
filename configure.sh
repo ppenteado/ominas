@@ -877,12 +877,16 @@ if grep -q "export DFLAG=true" $setting; then
 fi
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
-declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
+#declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
+declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" "UCAC4")
 declare -a insts=("" "" "" "" "" "")
 insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
-insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
-insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
-insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
+#insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
+#insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
+#insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
+insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
+insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
+insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
 for ((d=0; d<${#mis[@]}; d++));
 do
 	#mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
@@ -973,16 +977,15 @@ Mission Packages:
 	7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
            Subsetted, about 8 GB as of Jan/2017
 Data:
-        8) NAIF Generic Kernels . . . . . . . . .  ${dstatus[0]}
+        8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
            About 22 GB as of Dec/2016
-	9) SEDR image data . . . . . . . . . . . . ${dstatus[1]}
-       10) TYCHO2 star catalog . . . . . . . . . . ${dstatus[2]}
+        9) Tycho2 star catalog . . . . . . . . . . ${dstatus[2]}
            About 161 MB download, 665 MB unpacked
-       11) SAO star catalog . . . . . . . . . . . ${dstatus[3]}
-           About 19 MB download, 70 MB unpacked
-       12) GSC star catalog . . . . . . . . . . . ${dstatus[4]}
-       13) UCAC4 star catalog . . . . . . . . . . ${dstatus[5]}
+       10) UCAC4 star catalog  . . . . . . . . . . ${dstatus[5]}
            About 8.5 GB download
+       11) SAO star catalog  . . . . . . . . . . . ${dstatus[3]}
+           About 19 MB download, 70 MB unpacked
+       12) GSC star catalog  . . . . . . . . . . . ${dstatus[4]}
 For more information, see
 https://ppenteado.github.io/ominas_doc/demo/install_guide.html
 PKGS
