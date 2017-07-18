@@ -578,7 +578,7 @@ end
 ; si_get
 ;
 ;=============================================================================
-function si_get, dd, keyword, prefix, inst, od=od, time=__time, status=status
+function si_get, dd, keyword, prefix, inst, od=od, time=__time, names=names, status=status
 
  if(keyword_set(__time)) then time = __time
 
@@ -858,7 +858,8 @@ common spice_input_block, last_prefix
  ;-----------------------------------------------
  for i=0, ndd-1 do $
       result = append_array(result, si_get(dd[i], $
-                      keyword, prefix, inst, od=od[i], time=time, status=status))
+                      keyword, prefix, inst, od=od[i], $
+                        time=time, names=names, status=status))
 
  return, result
 end
