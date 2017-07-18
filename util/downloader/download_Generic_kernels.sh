@@ -3,7 +3,8 @@
 #Usage:
 #./download_GENERIC.sh /directory/to/place/kernels
 
-
+OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+wget=${OWNDIR}/pp_wget
 echo "This script wiill download all kernels from the PDS Galileo archive ("\
 "http://naif.jpl.nasa.gov/pub/naif/generic_kernels/. As of December/2016, this adds to 22GB."
 
@@ -27,13 +28,13 @@ ts=`eval echo "~/.ominas/timestamps/"`
 
 for dir in "${dirs[@]}"
 do
- ./pp_wget "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts --recursive $@ "
+ ${wget} "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts --recursive $@ "
 done
 
 #special treatment directories (spk and ck, which are large)
 
 #echo "Downloading pcks"
-#./pp_wget "${baseurl}pck/ --localdir=${1}/pck/ --absolute --timestamps=$ts $@ "
+#${pp_wget} "${baseurl}pck/ --localdir=${1}/pck/ --absolute --timestamps=$ts $@ "
 
 echo "Downloading spks"
 
@@ -41,5 +42,5 @@ dirs=(asteroids comets lagrange_point planets satellites stations)
 
 for dir in "${dirs[@]}"
 do
-  ./pp_wget "${baseurl}spk/${dir} --localdir=${1}/spk/${dir} $@ --absolute --timestamps=$ts " # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
+  ${pp_wget} "${baseurl}spk/${dir} --localdir=${1}/spk/${dir} $@ --absolute --timestamps=$ts " # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
 done
