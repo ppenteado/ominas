@@ -12,8 +12,10 @@ function vgr_spice_time, label, dt=dt, string=close_time
 
  close_time = vgr_scet_to_image_time(scet)
  dt = -0.5d*exposure
-
- return, spice_str2et(close_time) + dt
+ 
+ ret=spice_str2et(close_time) + dt
+ nv_message,verb=0.91,'close_time='+strtrim(close_time,2)+' et='+strtrim(ret,2)
+ return, ret
 end
 ;===========================================================================
 

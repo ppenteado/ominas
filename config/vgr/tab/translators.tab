@@ -2,8 +2,9 @@
 # string	translator		translator
 #------------------------------------------------------------------------------
   VGR1_ISS_NA	vgr_spice_input		vgr_spice_output \
-							ck_in=auto \
-							spk_in=auto \
+                                                        klist=vgr1.kernels \
+							#ck_in=auto \
+							#spk_in=auto \
 							pck_in=auto \
 							lsk_in=auto \
 							fk_in=auto \
@@ -12,8 +13,9 @@
 							xk_in=extra.tpc 
 
   VGR1_ISS_WA	vgr_spice_input		vgr_spice_output \
-							ck_in=auto \
-							spk_in=auto \
+                                                        klist=vgr1.kernels \
+							#ck_in=auto \
+							#spk_in=auto \
 							pck_in=auto \
 							lsk_in=auto \
 							fk_in=auto \
@@ -22,8 +24,9 @@
 							xk_in=extra.tpc 
 
   VGR2_ISS_NA	vgr_spice_input		vgr_spice_output \
-							ck_in=auto \
-							spk_in=auto \
+                                                        klist=vgr2.kernels \
+							#ck_in=auto \
+							#spk_in=auto \
 							pck_in=auto \
 							lsk_in=auto \
 							fk_in=auto \
@@ -32,8 +35,9 @@
 							xk_in=extra.tpc 
 
   VGR2_ISS_WA	vgr_spice_input		vgr_spice_output \
-							ck_in=auto \
-							spk_in=auto \
+                                                        klist=vgr2.kernels \
+							#ck_in=auto \
+							#spk_in=auto \
 							pck_in=auto \
 							lsk_in=auto \
 							fk_in=auto \
