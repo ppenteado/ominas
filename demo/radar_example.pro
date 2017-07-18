@@ -90,7 +90,7 @@ dd=dat_read(img)
 ; 
 ;     tvim,da<4.5,zoom=0.05,/order,/new
 ;  
-;   .. image:: sar_ex1.png
+;   .. image:: graphics/sar_ex1.png
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -131,7 +131,7 @@ tvim,da<4.5,zoom=0.05,/order,/new
 ; 
 ;     grim,dd_map,cd=mdp;,overlays=['planet_grid']
 ;   
-;   .. image:: sar_ex2.png
+;   .. image:: graphics/sar_ex2.png
 ;   
 ;-
 ;-------------------------------------------------------------------------

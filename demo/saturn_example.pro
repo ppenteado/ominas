@@ -26,7 +26,7 @@
 ; Image read and display
 ; ----------------------
 ;
-;	.. image:: saturn_load.jpeg
+;	.. image:: graphics/saturn_load.jpeg
 ;
 ;	This first section uses dat_read to read in the image.  The image file
 ;   c3440346.gem is a Voyager VICAR format file where the image has had
@@ -334,7 +334,7 @@ nring = n_elements(ring_ptd)
 ; Drawing the limb, ring and planet center
 ; ----------------------------------------
 ;
-;	.. image:: saturn_limb.jpeg
+;	.. image:: graphics/saturn_limb.jpeg
 ;
 ;
 ; This section draws the objects in the object structure (center, limb
@@ -354,7 +354,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ; Draw planet and ring latitude/longitude grid
 ; --------------------------------------------
 ;
-;	.. image:: saturn_grid.jpeg
+;	.. image:: graphics/saturn_grid.jpeg
 ;
 ;   This sections calculates a latitude/longitude grid for the planet and a
 ;  	radius/longitude grid for the rings.  By default it draws 12 latitude
@@ -410,7 +410,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;     edge_ptd = pg_edges(dd, edge=50)
 ;     pg_draw, edge_ptd
 ;     
-;  .. image:: saturn_edge_1.jpeg
+;  .. image:: graphics/saturn_edge_1.jpeg
 ;   
 ;  Now, pg_farfit is used to find a x/y offset, by fitting the points in edge_ptd
 ;  (the edges found in the image) to the points that make up the limb, rings and 
@@ -434,7 +434,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;     tvim, im
 ;     pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;     
-;  .. image:: saturn_edge_2.jpeg  
+;  .. image:: graphics/saturn_edge_2.jpeg  
 ;    
 ;-
 ;-------------------------------------------------------------------------
@@ -521,7 +521,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;    tvim, im
 ;    pg_draw, cvscan_ptd
 ;    
-;  .. image:: saturn_scan_1.jpeg
+;  .. image:: graphics/saturn_scan_1.jpeg
 ;    
 ;-
 ;-------------------------------------------------------------------------
@@ -548,7 +548,7 @@ pg_draw, cvscan_ptd
 ;    tvim, im
 ;    pg_draw, cvscan_ptd
 ;
-;  .. image:: saturn_scan_2.jpeg
+;  .. image:: graphics/saturn_scan_2.jpeg
 ;-
 ;-------------------------------------------------------------------------
 pg_threshold, cvscan_ptd, min=[0.8, 1.0, 0.8], max=[1.2, 1.0, 1.2], /rel
@@ -659,7 +659,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;    dgrid_ptd = pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, bx=pd
 ;    pg_draw, dgrid_ptd, color=ctpurple()
 ;
-;  .. image:: saturn_latlon.jpeg
+;  .. image:: graphics/saturn_latlon.jpeg
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -701,7 +701,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;    outline_ptd = pg_ring_sector(gd=gd, rad=rad, lon=lon, slope=slope)
 ;    pg_draw, outline_ptd, col=ctgreen()
 ;    
-;  .. image:: saturn_sector_1.jpeg
+;  .. image:: graphics/saturn_sector_1.jpeg
 ;    
 ;    
 ;-
@@ -735,7 +735,7 @@ pg_draw, outline_ptd, col=ctgreen()
 ;         window, /free, xs=500, ys=300
 ;         plot, dsk_pts[*,0], profile
 ;       
-;     .. image:: saturn_sector_2.jpeg
+;     .. image:: graphics/saturn_sector_2.jpeg
 ;     
 ;     Longitudinal scan::
 ;     
@@ -743,7 +743,7 @@ pg_draw, outline_ptd, col=ctgreen()
 ;       window, /free, xs=500, ys=300
 ;       plot, dsk_pts[*,1], profile, /yno
 ;       
-;     .. image:: saturn_sector_3.jpeg
+;     .. image:: graphics/saturn_sector_3.jpeg
 ;     
 ;     
 ;-
