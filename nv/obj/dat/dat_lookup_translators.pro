@@ -211,6 +211,9 @@ pro dat_lookup_translators, instrument, $
                 input_keyvals, output_keyvals)
  endrep until status EQ -1
 
+ nv_message, verb=0.9, 'Built translators table for ' + instrument
+ nv_message, verb=0.9, 'Input translators: ' + str_comma_list(input_translators)
+ nv_message, verb=0.9, 'Output translators: ' + str_comma_list(output_translators)
 
 
 end
