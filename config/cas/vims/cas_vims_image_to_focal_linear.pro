@@ -49,7 +49,7 @@
 ;	
 ;-
 ;===========================================================================
-function vims_image_to_focal_linear, cd, v
+function cas_vims_image_to_focal_linear, cd, v
 @core.include
 
  _cd = cor_dereference(cd)

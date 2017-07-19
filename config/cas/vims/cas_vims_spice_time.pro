@@ -1,8 +1,8 @@
 ;===========================================================================
-; vims_spice_time
+; cas_vims_spice_time
 ;
 ;===========================================================================
-function vims_spice_time, label, dt=dt, status=status,startjd=startjd,endjd=endjd
+function cas_vims_spice_time, label, dt=dt, status=status,startjd=startjd,endjd=endjd
 
  status = 0
 

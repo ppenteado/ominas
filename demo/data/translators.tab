@@ -25,7 +25,7 @@
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
 
-  VIMS_IR      vims_spice_input         vims_spice_output \
+  VIMS_IR      cas_vims_spice_input         cas_vims_spice_output \
                                                         klist=cas_demo.kernels 
 #                                                       ck_in=auto \
 #                                                       spk_in=auto \
