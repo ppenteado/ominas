@@ -26,7 +26,7 @@
 							xk_in=extra.tpc  \
 							/spk_strict
 
-  VIMS_IR       vims_spice_input         vims_spice_output \
+  VIMS_IR       cas_vims_spice_input         cas_vims_spice_output \
 #                                                  klist=cassini.kernels \
                                                         ck_in=auto \
                                                         pck_in=auto \

@@ -41,13 +41,10 @@
 ;	Complete
 ;
 ;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 1/1998
-; 	Adapted by:	Spitale, 5/2016
 ;	
 ;-
 ;===========================================================================
-function vims_inertial_to_body_pos, bd, v
+function cas_vims_inertial_to_body_pos, bd, v
 @core.include
  _bd = cor_dereference(bd)
 

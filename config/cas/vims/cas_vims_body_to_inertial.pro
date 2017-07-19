@@ -36,16 +36,11 @@
 ;	Array (nv,3,nt) of column vectors in the bx inertial frame.
 ;
 ;
-; STATUS:
-;	Complete
 ;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 1/1998
 ;	
 ;-
 ;=============================================================================
-function vims_body_to_inertial, bd, v,camvecs
+function cas_vims_body_to_inertial, bd, v,camvecs
 @core.include
  _bd = cor_dereference(bd)
 
