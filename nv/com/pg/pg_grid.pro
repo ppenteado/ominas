@@ -128,7 +128,10 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
 
  for i=0, n_objects-1 do $
   begin
-   ranges = get_surface_ranges(cd, bx[i,0])
+   bxi = 0
+   if(keyword_set(bx)) then bxi = bx[i,0]
+
+   ranges = get_surface_ranges(cd, bxi)
    dranges = ranges[1,*]-ranges[0,*]
 
    if(n_elements(_lat) EQ 0) then $

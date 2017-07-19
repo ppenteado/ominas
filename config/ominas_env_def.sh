@@ -106,5 +106,5 @@ export NV_ORBIT_DATA=$OMINAS_DIR/config/orb/
 # This variable points to the location of the station catalogs, which are
 # provided in the default OMINAS installation.
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
-export NV_STATION_DATA=$OMINAS_DIR/config/stn/
+export NV_STATION_DATA=$OMINAS_DIR/config/stn/dat/
 

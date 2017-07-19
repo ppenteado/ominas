@@ -155,6 +155,6 @@ dd_map=pg_map(dd,md=mdp,cd=mdr,pc_xsize=800,pc_ysize=800)
 cd = pg_get_cameras(dd)
 pd = pg_get_planets(dd, od=cd)
 sund = pg_get_stars(dd, od=cd, name='SUN')
-grim,dd_map,cd=mdp, od=cd, sund=sund, pd=pd[0], overlays=['planet_grid']
+grim, dd_map, cd=mdp, od=cd, sund=sund, pd=pd[0], overlays=['planet_grid']
 
 end
