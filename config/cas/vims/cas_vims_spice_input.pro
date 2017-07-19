@@ -81,10 +81,10 @@
 
 
 ;===========================================================================
-; vims_spice_parse_labels
+; cas_vims_spice_parse_labels
 ;
 ;===========================================================================
-pro vims_spice_parse_labels, dd, _time, $
+pro cas_vims_spice_parse_labels, dd, _time, $
   exposure=exposure, size=size, filters=filters, oaxis=oaxis, target=target,$
   endjd=endjd,startjd=startjd
   
@@ -105,7 +105,7 @@ pro vims_spice_parse_labels, dd, _time, $
     llabel=strsplit(label,string(10B),/extract)
     if(keyword_set(label)) then $
       begin
-      ttime=vims_spice_time(label,dt=dt,status=status,startjd=startjd,endjd=endjd)
+      ttime=cas_vims_spice_time(label,dt=dt,status=status,startjd=startjd,endjd=endjd)
       ;-----------------------------------
       ; time
       ;-----------------------------------
@@ -152,10 +152,10 @@ end
 ;=============================================================================
 
 ;===========================================================================
-; vims_spice_cameras
+; cas_vims_spice_cameras
 ;
 ;===========================================================================
-function vims_spice_cameras, dd, ref, pos=pos, constants=constants, $
+function cas_vims_spice_cameras, dd, ref, pos=pos, constants=constants, $
          n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
 compile_opt idl2
@@ -164,7 +164,7 @@ compile_opt idl2
  sc = -82l
  plat = -82000l
 
- vims_spice_parse_labels, dd, time, $
+ cas_vims_spice_parse_labels, dd, time, $
        exposure=exposure, size=size, filters=filters, oaxis=oaxis,$
        endjd=endjd,startjd=startjd
 
@@ -206,12 +206,12 @@ compile_opt idl2
     cam_time = time, $
     cam_scale = make_array(2,ndd, val=cam_scale), $
     cam_oaxis = oaxis, $
-    cam_fn_psf = make_array(ndd, val='cas_psf'), $
+    cam_fn_psf = make_array(ndd, val='cas_iss_psf'), $
     cam_filters = dat_instrument(dd[0]), $
     cam_size = size, $
     cam_exposure = exposure, $
-    cam_fn_focal_to_image = make_array(ndd, val='vims_focal_to_image_linear'), $
-    cam_fn_image_to_focal = make_array(ndd, val='vims_image_to_focal_linear'), $
+    cam_fn_focal_to_image = make_array(ndd, val='cas_vims_focal_to_image_linear'), $
+    cam_fn_image_to_focal = make_array(ndd, val='cas_vims_image_to_focal_linear'), $
     cam_fi_data = [ptrarr(ndd)], $
     n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
                   orient_fn )
@@ -247,10 +247,10 @@ end
 
 
 ;===========================================================================
-; vims_spice_planets
+; cas_vims_spice_planets
 ;
 ;===========================================================================
-function vims_spice_planets, dd, ref, time=time, planets=planets, $
+function cas_vims_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
@@ -260,7 +260,7 @@ compile_opt idl2
 
  if(NOT keyword_set(time)) then $
   begin
-   time = vims_spice_time(label, dt=dt, status=status)
+   time = cas_vims_spice_time(label, dt=dt, status=status)
    if(status NE 0) then return, ptr_new()
    time = spice_str2et(time)
    plt_time = time + dt
@@ -292,10 +292,10 @@ end
 
 
 ;===========================================================================
-; vims_spice_sun
+; cas_vims_spice_sun
 ;
 ;===========================================================================
-function vims_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
+function cas_vims_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
                                    status=status, time=time, obs=obs
 
 compile_opt idl2
@@ -304,7 +304,7 @@ compile_opt idl2
 
  if(NOT keyword__set(time)) then $
   begin
-   time = vims_spice_time(label, dt=dt, status=status)
+   time = cas_vims_spice_time(label, dt=dt, status=status)
    if(status NE 0) then return, ptr_new()
    time = spice_str2et(time)
    sun_time = time + dt
@@ -326,18 +326,18 @@ end
 
 
 ;===========================================================================
-; vims_spice_input.pro
+; cas_vims_spice_input.pro
 ;
 ;
 ;===========================================================================
-function vims_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
+function cas_vims_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 compile_opt idl2
 ;key7=vims_spice_time(nv_header(dd))
-key7=vims_spice_time(dat_header(dd))
- return, spice_input(dd, keyword, 'vims', values=values, status=status, $
+key7=cas_vims_spice_time(dat_header(dd))
+ return, spice_input(dd, keyword, 'cas','vims', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)

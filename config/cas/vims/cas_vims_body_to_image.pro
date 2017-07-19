@@ -1,8 +1,8 @@
-function vims_body_to_image,cd,bx,v
+function cas_vims_body_to_image,cd,bx,v
 compile_opt idl2,logical_predicate
 
 	   inertial = bod_body_to_inertial_pos(bx, v)
-	   bodinertials=vims_inertial_to_body_pos(cd, inertial)
+	   bodinertials=cas_vims_inertial_to_body_pos(cd, inertial)
 	   focals=list()
 	   rimages=list()
 	   foreach bodi,bodinertials do begin
