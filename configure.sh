@@ -953,6 +953,7 @@ if [ ! -w "${OMINAS_TMP}" ]; then
 fi
 echo "OMINAS_TMP=${OMINAS_TMP}"
 export OMINAS_TMP
+if [ ${OMINAS_INST_QUIET} == "1" ]; then
 
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
@@ -997,6 +998,55 @@ Data:
            About 22 GB as of Dec/2016
         9) Tycho2 star catalog . . . . . . . . . . ${dstatus[2]}
            About 161 MB download, 665 MB unpacked
+For more information, see
+https://ppenteado.github.io/ominas/demo/install_guide.html
+PKGS
+
+else
+
+# Print the configuration list with all statuses to stdout
+cat <<PKGS
+=============================================================================
+        Current OMINAS configuration settings
+Required:
+        1) OMINAS Core  . . . . . . . . . . . . .  $corest
+           Contains the OMINAS code. If you select only one 
+           of the other packages, this will be included.
+Optional packages:
+        2) Demo package . . . . . . . . . . . . .  $demost
+           Contains the demo scripts and the data required 
+           to run then.
+           These files are always present (in ominas/demo), 
+           this option is to set up the environment so that
+           the demos can be run.
+        3) SPICE Icy  . . . . . . . . . . . . . .  $icyst
+           Library maintained by JPL's NAIF (Navigation and Ancillary
+           Information Facility, https://naif.jpl.nasa.gov/naif/toolkit.html,
+           required to use spacecraft / planetary kernel files.
+
+Mission Packages:
+           Kernels used for each mission's position and 
+           pointing data. If you do not already have them,
+           an option to download them from PDS will be provided.
+           If you already have them, you will need to provide
+           the path to your kernel files.
+           Note: the NAIF Generic Kernels (one of the optional 
+           data packages) are not required for the missions, they
+           already contain a copy the subset of the generic kernel
+           files they need.
+        4) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
+           Subsetted, about 16 GB as of Dec/2016
+        5) Galileo (GLL) . . . . . . . . . . . . . ${mstatus[1]}
+           About 833 MB as of Dec/2016
+        6) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
+           About 163 MB as of Dec/2016
+        7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
+           Subsetted, about 8 GB as of Jan/2017
+Data:
+        8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
+           About 22 GB as of Dec/2016
+        9) Tycho2 star catalog . . . . . . . . . . ${dstatus[2]}
+           About 161 MB download, 665 MB unpacked
        10) UCAC4 star catalog  . . . . . . . . . . ${dstatus[5]}
            About 8.5 GB download
        11) SAO star catalog  . . . . . . . . . . . ${dstatus[3]}
@@ -1005,6 +1055,10 @@ Data:
 For more information, see
 https://ppenteado.github.io/ominas/demo/install_guide.html
 PKGS
+
+
+
+fi
 
 pr=1
 while [ $pr == 1 ]; do
