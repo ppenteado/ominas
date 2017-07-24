@@ -630,11 +630,27 @@ echo "#xrdb -merge ${OMINAS_RC}/Xdefaults-grim" >> ${setting}
   echo "export OMINAS_TMP=${OMINAS_TMP}" >> ${setting}
   echo "if [ ! -w ${OMINAS_TMP} ]; then mkdir -p ${OMINAS_TMP}; fi" >> ${setting}
 #fi
+
+#Generic Kernels must come first
+
+        d=0
+        dat=${Data[$d]}
+        if [ -z ${inst[$d]+x} ]  ;then
+          echo "unset NV_${dat}_DATA" >>${setting}
+        else
+          echo "export NV_${dat}_DATA=${inst[$d]}" >>${setting}
+          if [ ! -z ${insts[$d]+x} ]  ;then
+            echo ${insts[$d]} >>${setting}
+          fi
+        fi
+
+
+
 echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
 #echo "export CAM_NFILTERS=256" >> $setting
 
-for ((d=0; d<6; d++));
+for ((d=1; d<6; d++));
 do
         dat=${Data[$d]}
         #echo "$d: ${inst[$d]}"

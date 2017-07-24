@@ -42,5 +42,5 @@ dirs=(asteroids comets lagrange_point planets satellites stations)
 
 for dir in "${dirs[@]}"
 do
-  ${pp_wget} "${baseurl}spk/${dir} --localdir=${1}/spk/${dir} $@ --absolute --timestamps=$ts " # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
+  ${wget} "${baseurl}spk/${dir} --localdir=${1}/spk/${dir} $@ --absolute --timestamps=$ts " # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
 done
