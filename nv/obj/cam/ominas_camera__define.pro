@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_camera::init, ii, crd=crd0, bd=bd0, cd=cd0, $
-@cam__keywords.include
+@cam__keywords_tree.include
 end_keywords
 @core.include
  
  void = self->ominas_body::init(ii, crd=crd0, bd=bd0, $
-@bod__keywords.include
+@bod__keywords_tree.include
 end_keywords)
  if(keyword_set(cd0)) then struct_assign, cd0, self
 

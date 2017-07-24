@@ -19,7 +19,7 @@ function cas_iss_compute_psf, cd, x, y, default=default, onedim=onedim
 
  inst = cor_name(cd)
  case inst of 
-  'CAS_ISSNA' : $
+  'CAS_ISS_NA' : $
 	begin
 	 ; from SSR paper...
 ;	 sig_a = 1.3d / 2.354
@@ -36,7 +36,7 @@ function cas_iss_compute_psf, cd, x, y, default=default, onedim=onedim
 	 sig_b = 0.662233
 	 theta = 0.00432408
 	end
-  'CAS_ISSWA' :  $
+  'CAS_ISS_WA' :  $
 	begin
 ;	 ; from SSR paper...
 ;	 sig_a = 1.8d / 2.354

@@ -71,7 +71,7 @@
 ;-
 ;=============================================================================
 pro pg_put_rings, dd, trs, rd=_rd, ods=ods, $
-@rng__keywords.include
+@rng__keywords_tree.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -83,7 +83,7 @@ pro pg_put_rings, dd, trs, rd=_rd, ods=ods, $
 
  if(defined(name)) then _name = name & name = !null
  rng_assign, rd, /noevent, $
-@rng__keywords.include
+@rng__keywords_tree.include
 end_keywords
  if(defined(_name)) then name = _name
 

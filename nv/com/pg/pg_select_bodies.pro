@@ -1,9 +1,86 @@
-;===========================================================================
-; pg_select_bodies
+;=============================================================================
+;+
+; NAME:
+;	pg_select_bodies
 ;
 ;
-;===========================================================================
-function pg_select_bodies, dd, bx, od=od, select
+; PURPOSE:
+;	Selects bodies based on given criteria.  
+;
+;
+; CATEGORY:
+;	NV/PG
+;
+;
+; CALLING SEQUENCE:
+;	result = pg_select_bodies(bx, select, od=od)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	bx:	Array of descriptors.
+;
+;	select:	Structure containing the seletion keywords and values.
+;
+;  OUTPUT: NONE
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	od:		Observer descriptor; some selections require a
+;			CAMERA, others will work with any subclass of BODY.
+;			
+;	Descriptor Select Keywords
+;	--------------------------
+;	Descriptor select keywords are combined with OR logic.  
+;
+;	  fov/cov:	Select all planets that fall within this many fields of
+;			view (fov) (+/- 10%) from the center of view (cov).
+;			Default cov is the camera optic axis.
+;
+;	  pix:		Select all planets whose apparent size (in pixels) is 
+;			greater than or equal to this value.
+;
+;	  radmax:	Select all planets whose radius is greater than or 
+;			equal to this value.
+;
+;	  radmin:	Select all planets whose radius is less than or 
+;			equal to this value.
+;
+;	  distmax:	Select all planets whose distance is greater than or 
+;			equal to this value.
+;
+;	  distmin:	Select all planets whose distance is less than or 
+;			equal to this value.
+;
+;	  *nlarge:	Select n largest planets.
+;
+;	  *nsmall:	Select n smallest planets.
+;
+;	  *nclose:	Select n closst planets.
+;
+;	  *nfar:	Select n farthest planets.
+;
+;
+; RETURN:
+;	Array of subscripts for the descriptors in bx corresponding to the 
+;	specified criteria.  !null if no selection criteria were applied.
+;
+;
+; SEE ALSO:
+; 	pg_cull_bodies
+;
+;
+; STATUS:
+;	Starred keywords are not yet implemented.
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2017
+;	
+;-
+;=============================================================================
+function pg_select_bodies, bx, od=od, _extra=select
 
  n = n_elements(bx)
  if(cor_class(od) EQ 'CAMERA') then cd = od

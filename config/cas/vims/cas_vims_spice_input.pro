@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	vims_spice_input
+;	cas_vims_spice_input
 ;
 ;
 ; PURPOSE:
@@ -172,7 +172,7 @@ compile_opt idl2
  
  
  case dat_instrument(dd[0]) of
-	  'VIMS_IR': begin
+	  'CAS_VIMS_IR': begin
 	     inst=-82370L
 	     cam_scale=5d-4 ;rad/pix
 	     orient_fn = 'cas_cmat_to_orient_vims'
@@ -188,7 +188,7 @@ compile_opt idl2
 	     fnd={t0:startjd,times:times,orients:orients,inds:inds,poss:poss,vels:vels}
 	     fn_data=[ptr_new(fnd)]
 	   end
-	   'VIMS_VIS': begin
+	   'CAS_VIMS_VIS': begin
 	     inst=-82371L
 	     cam_scale=5d-4 ;rad/pix
 	     orient_fn = 'cas_cmat_to_orient_vims'
@@ -255,7 +255,6 @@ function cas_vims_spice_planets, dd, ref, time=time, planets=planets, $
                             targ_list=targ_list, constants=constants, obs=obs
 
 compile_opt idl2
- ;label = nv_header(dd)
  label = dat_header(dd)
 
  if(NOT keyword_set(time)) then $
@@ -281,7 +280,7 @@ compile_opt idl2
    if((strpos(strupcase(obs_id), 'OPNAV'))[0] NE -1) then target = target_desc
   end
 
- return, eph_spice_planets(dd, ref, time=plt_time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=plt_time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
                             target=target, constants=constants, obs=obs)
@@ -299,7 +298,6 @@ function cas_vims_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants,
                                    status=status, time=time, obs=obs
 
 compile_opt idl2
- ;label = nv_header(dd)
  label = dat_header(dd)
 
  if(NOT keyword__set(time)) then $
@@ -311,7 +309,7 @@ compile_opt idl2
   end $
  else sun_time = time
  
- return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
+ return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
             status=status, time=sun_time, constants=constants, obs=obs)
 
 end
@@ -335,8 +333,8 @@ function cas_vims_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values,
 @nv_trs_keywords1_include.pro
 	end_keywords
 compile_opt idl2
-;key7=vims_spice_time(nv_header(dd))
-key7=cas_vims_spice_time(dat_header(dd))
+
+;;;key7=cas_vims_spice_time(dat_header(dd))
  return, spice_input(dd, keyword, 'cas','vims', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro

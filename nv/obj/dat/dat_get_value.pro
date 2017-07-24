@@ -139,7 +139,6 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
     begin
      nv_message, verb=0.9, 'Returned descriptors: ' + $
                                            str_comma_list([cor_name(xd)])
-     dat_set_gd, dd, xd=xd
      xds = append_array(xds, xd)
      sort_names = append_array(sort_names, $
                cor_name(xd) + '-' + str_pad(strtrim(i,2), 4, c='0', align=1))

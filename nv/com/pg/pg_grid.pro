@@ -134,29 +134,35 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
    ranges = get_surface_ranges(cd, bxi)
    dranges = ranges[1,*]-ranges[0,*]
 
-   if(n_elements(_lat) EQ 0) then $
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; generate latitides if not given
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(NOT defined(_lat)) then $
     begin
-     if(n_elements(nlat) EQ 0) then nlat = 12
+     if(NOT defined(nlat)) then nlat = 12
 
      if(nlat NE 0) then $  
        lat = dindgen(nlat+1)/nlat*dranges[0] + ranges[0,0] + flat
     end $
    else lat = _lat
 
-   if(n_elements(_lon) EQ 0) then $
-    begin
-     if(n_elements(nlon) EQ 0) then nlon = 24
-
-     if(nlon NE 0) then $  
-       lon = dindgen(nlon+1)/nlon*dranges[1] + ranges[0,1] + flon
-    end $
-   else lon = _lon
-
    if(keyword_set(lat)) then $
     begin
      lat = reduce_range(lat, ranges[0,0], ranges[1,0], /inclusive)
      __lat = lat
     end
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; generate longitudes if not given
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(NOT defined(_lon)) then $
+    begin
+     if(NOT defined(nlon)) then nlon = 24
+
+     if(nlon NE 0) then $  
+               lon = dindgen(nlon+1)/nlon*dranges[1] + ranges[0,1] + flon
+    end $
+   else lon = _lon
 
    if(keyword_set(lon)) then $
     begin
@@ -193,11 +199,15 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
      end
     end
 
-   scan_lat = dindgen(nplat)/(nplat-1)*scan_dranges[0] + scan_ranges[0,0]
-   scan_lon = dindgen(nplon)/(nplon-1)*scan_dranges[1] + scan_ranges[0,1]
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; generate map points along each lat and lon circle 
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(defined(slat)) then scan_lat = slat $
+   else scan_lat = dindgen(nplat)/(nplat-1)*scan_dranges[0] + scan_ranges[0,0]
 
-   if(defined(slat)) then scan_lat = slat
-   if(defined(slon)) then scan_lon = slon
+   if(defined(slon)) then scan_lon = slon $
+   else scan_lon = dindgen(nplon)/(nplon-1)*scan_dranges[1] + scan_ranges[0,1]
+
 
    scan_lat = reduce_range(scan_lat, ranges[0,0], ranges[1,0], /inclusive)
    scan_lon = reduce_range(scan_lon, ranges[0,1], ranges[1,1], /inclusive)
@@ -210,40 +220,32 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
     begin
      grid_pts_map = map_get_grid_points(lat=lat, lon=lon, $
                                         scan_lat=scan_lat, scan_lon=scan_lon)
-;     for j=0, nlat+nlon-1 do $
-j=0
-      begin
-       ii = lindgen(npoints) + j*npoints
-;       _grid_pts_map = grid_pts_map[*,ii]
-_grid_pts_map = grid_pts_map
-
-       flags = bytarr(n_elements(_grid_pts_map[0,*]))
-       points = map_to_image(cd, cd, xd, _grid_pts_map, valid=valid, body=grid_pts)
-       inertial_pts = 0
-       if(keyword_set(bx)) then $
-        if(keyword_set(grid_pts)) then $
-         inertial_pts = bod_body_to_inertial_pos(xd, grid_pts)
+     flags = bytarr(n_elements(grid_pts_map[0,*]))
+     points = map_to_image(cd, cd, xd, grid_pts_map, valid=valid, body=grid_pts)
+     inertial_pts = 0
+     if(keyword_set(bx)) then $
+      if(keyword_set(grid_pts)) then $
+       inertial_pts = bod_body_to_inertial_pos(xd, grid_pts)
  
-       if(keyword__set(valid)) then $
-        begin
-         invalid = complement(points[0,*], valid)
-         if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-        end
-
-       ;-----------------------------------
-       ; store grid
-       ;-----------------------------------
-       _grid_ptd = pnt_create_descriptors(name = cor_name(xd), $
-        		 desc = 'globe_grid', $
-        		 gd = gd_input, $
-        		 assoc_xd = xd, $
-        		 points = points, $
-        		 flags = flags, $
-        		 vectors = inertial_pts)
-       if(keyword_set(bx)) then $
-         if(NOT bod_opaque(bx[i,0])) then pnt_set_flags, _grid_ptd, hide_flags
-       grid_ptd = append_array(grid_ptd, _grid_ptd)
+     if(keyword__set(valid)) then $
+      begin
+       invalid = complement(points[0,*], valid)
+       if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
       end
+
+     ;-----------------------------------
+     ; store grid
+     ;-----------------------------------
+     _grid_ptd = pnt_create_descriptors(name = cor_name(xd), $
+     		       desc = 'globe_grid', $
+     		       gd = gd_input, $
+     		       assoc_xd = xd, $
+     		       points = points, $
+     		       flags = flags, $
+     		       vectors = inertial_pts)
+     if(keyword_set(bx)) then $
+       if(NOT bod_opaque(bx[i,0])) then pnt_set_flags, _grid_ptd, hide_flags
+     grid_ptd = append_array(grid_ptd, _grid_ptd)
     end
   end
 

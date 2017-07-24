@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro rng_assign, xd, noevent=noevent, $
-@rng__keywords.include
+@rng__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

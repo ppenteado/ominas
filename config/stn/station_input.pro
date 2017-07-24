@@ -154,12 +154,11 @@ function station_input, dd, keyword, prefix, values=values, status=status, $
      if(continue) then $
       begin
        ndat = n_elements(dat)
-       _stds = stn_create_descriptors(ndat, gd=make_array(ndat, val=cor_gd(xd[i])))
+       _stds = stn_create_descriptors(ndat, gd=make_array(ndat, val=cor_create_gd(cor_gd(xd[i]), xd0=xd[i])))
 
        pos_surf = transpose([transpose([dat.lat]), transpose([dat.lon]), transpose([dat.alt])])
 
        cor_set_name, _stds, dat.name
-       stn_set_primary, _stds, xd[i]
        stn_set_surface_pt, _stds, reform(transpose(pos_surf), 1,3,ndat,/over)
       end
     end

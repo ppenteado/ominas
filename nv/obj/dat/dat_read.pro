@@ -153,7 +153,10 @@ function drd_read, _filename, data, header, $
  ;---------------------------------
  ; read detached header
  ;---------------------------------
- dh = dh_read(dh_fname(filename))
+ dh_fname = dh_fname(filename)
+ dh = dh_read(dh_fname)
+ if(NOT dh_validate(dh)) then $
+                  nv_message, /con, 'Invalid detached header: ' + dh_fname
 
  ;---------------------------------
  ; use base filename as id string
@@ -374,8 +377,21 @@ function dat_read, filespec, data, header, $
  if(NOT keyword_set(maintain)) then maintain = 0
  nodata = keyword_set(nodata)
 
- filenames = file_search(filespec)
 
+ ;----------------------------------------------------------
+ ; expand file specification; return if no files found
+ ;----------------------------------------------------------
+ filenames = file_search(filespec)
+ if(NOT keyword_set(filenames)) then  $
+  begin
+   nv_message, /con, 'No files.'
+   return, !null
+  end
+
+
+ ;----------------------------------------------------------
+ ; read each file
+ ;----------------------------------------------------------
  for i=0, n_elements(filenames)-1 do $
    dd = append_array(dd, $
           drd_read(filenames[i], data, header, $

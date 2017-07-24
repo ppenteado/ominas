@@ -163,13 +163,13 @@ function cas_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
  bin = 1024./size[0]
 
  case dat_instrument(dd[0]) of
-	'CAS_ISSNA': $
+	'CAS_ISS_NA': $
 	  begin
 	   inst = -82360l
 	   scale = cas_iss_nac_scale() * bin
 	   orient_fn = 'cas_cmat_to_orient'
 	  end
-	'CAS_ISSWA': $
+	'CAS_ISS_WA': $
 	  begin
 	   inst = -82361l
 	   scale = cas_iss_wac_scale() * bin
@@ -211,7 +211,7 @@ function cas_iss_spice_planets, dd, ref, time=time, planets=planets, $
 
  cas_iss_spice_parse_labels, dd, time, target=target
 
- return, eph_spice_planets(dd, ref, time=time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
                             target=target, constants=constants, obs=obs)
@@ -230,7 +230,7 @@ function cas_iss_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, 
 
  cas_iss_spice_parse_labels, dd, time
 
- return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
+ return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
             status=status, time=time, constants=constants, obs=obs)
 
 end

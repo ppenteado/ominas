@@ -1057,7 +1057,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
   begin
    beta = ''
    if(grim_data.beta) then beta = '(beta)'
-   title = 'grim' + beta + ' ' + strtrim(grim_data.grnum,2) + $
+   title = 'grim' + beta + ' ' + strtrim(grim_data.grn,2) + $
            ';  plane ' + strtrim(grim_data.pn,2) + ' of ' + $
            strtrim(grim_data.n_planes,2) + ';  ' + $
            grim_title(plane)

@@ -1,31 +1,4 @@
 ;==============================================================================
-; cas_radar_planets
-;
-;==============================================================================
-function cas_radar_planets,dd
-compile_opt idl2,logical_predicate
-
-  dat_header_value,dd,'TARGET_NAME',get=target
-  dat_header_value,dd,'START_TIME',get=startt
-  dat_header_value,dd,'END_TIME',get=endt
-  target=strtrim(target[0],2)
-  startt=strtrim(startt[0],2)
-  endt=strtrim(endt[0],2)
-  
-  
-  ret=eph_spice_planets(dd, ref, time=plt_time, planets=planets, $
-    n_obj=n_obj, dim=dim, status=status, $
-    targ_list=targ_list, $
-    target=target, constants=constants, obs=obs)
-
-  return,ret
-
-end
-;==============================================================================
-
-
-
-;==============================================================================
 ; cas_radar_lonlattolinesample
 ;
 ;==============================================================================
@@ -102,7 +75,7 @@ center=reverse(center)
 units=reverse(units)
   
 ret=map_create_descriptors(name='CAS_RADAR',$
-    type='RECTANGULAR', $
+    projection='RECTANGULAR', $
     size=[lines,samples], $
     origin=origin, $
     pole=pole,$
@@ -122,38 +95,6 @@ status=0
   
 return,ret
   
-end
-;==============================================================================
-
-
-
-;==============================================================================
-; cas_radar_input
-;
-;==============================================================================
-function __cas_radar_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, $
-status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
-	end_keywords
-
-  funs=hash()
-  funs['PLT_DESCRIPTORS']='cas_radar_planets'
-  funs['MAP_DESCRIPTORS']='cas_radar_maps'
- 
-
-  ret=call_function(funs[keyword],dd);,n_obj=n_obj, dim=dim, values=values, status=status, $
-	  ;@nv_trs_keywords_include.pro
-	;@nv_trs_keywords1_include.pro
-	;end_keywords)
-
-
- status=0
- n_obj=n_elements(dd)
- dim=[n_obj]
- values=0
- return, ret
-
 end
 ;==============================================================================
 
@@ -239,7 +180,7 @@ function cas_radar_spice_planets, dd, ref, time=time, planets=planets, $
 
  cas_radar_spice_parse_labels, dd, time, target=target
 
- return, eph_spice_planets(dd, ref, time=time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
                             target=target, constants=constants, obs=obs)
@@ -258,7 +199,7 @@ function cas_radar_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants
 
  cas_radar_spice_parse_labels, dd, time
 
- return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
+ return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
             status=status, time=time, constants=constants, obs=obs)
 
 end

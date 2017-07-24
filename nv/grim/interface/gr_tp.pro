@@ -3,10 +3,10 @@
 ;
 ;
 ;==============================================================================;
-pro gr_tp, ptd, pn=pn, grnum=grnum
+pro gr_tp, ptd, pn=pn, grn=grn
 
- if(keyword__set(grnum)) then $
-                     grim_data = grim_get_data(grim_grnum_to_top(grnum)) $
+ if(keyword__set(grn)) then $
+                     grim_data = grim_get_data(grim_grn_to_top(grn)) $
  else grim_data = grim_get_data(/primary)
 
  refresh = 0

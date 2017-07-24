@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro stn_assign, xd, noevent=noevent, $
-@stn__keywords.include
+@stn__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

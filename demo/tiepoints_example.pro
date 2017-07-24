@@ -27,8 +27,8 @@ for i=0, ndd-1 do pd[i] = pg_get_planets(dd[i], od=cd[i], name=['ENCELADUS'])
 ;-------------------------------------------------------------------------
 ; select tiepoints manually
 ;  Use the tiepoints cursor mode to select tiepoints in each grim window.
-;  When finished, ingrid is used to get the tiepoints.  Note the first argument
-;  to ingrid is the grim window number shown in the title bar of each grim 
+;  When finished, grift is used to get the tiepoints.  Note the first argument
+;  to grift is the grim window number shown in the title bar of each grim 
 ;  window.  
 ;-------------------------------------------------------------------------
 for i=0, ndd-1 do grim, /new, dd[i], cd=cd[i], pd=pd[i], over='limb', /order, z=0.75
@@ -38,11 +38,11 @@ stop
 ;-------------------------------------------------------------------------
 ; get tiepoints from grim
 ;-------------------------------------------------------------------------
-ptdp = ptrarr(ndd)
+ptd = list(len=2)
 for i=0, ndd-1 do $
  begin &$
-  ingrid, i, tie_ptd=ptd &$
-  ptdp[i] = ptr_new(ptd) &$
+  grift, i, tie_ptd=_ptd &$
+  ptd[i] = _ptd &$
  end
 
 ;------------------------------------------------------------------------
@@ -57,7 +57,7 @@ for i=0, ndd-1 do $
 body_pts = 0
 for i=0, ndd-1 do $
  begin &$
-  tie_ptd = pg_tiepoints(cd=cd[i], bx=pd[i], *ptdp[i], body_pts=body_pts) &$
+  tie_ptd = pg_tiepoints(cd=cd[i], bx=pd[i], ptd[i], body_pts=body_pts) &$
   if(i GT 0) then $
    begin &$
     tpcoeff = pg_ptscan_coeff(tie_ptd, fix=[2]) &$

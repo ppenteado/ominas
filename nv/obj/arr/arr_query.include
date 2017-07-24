@@ -2,7 +2,6 @@
 ;  implemented as a .include because arg_present does not propogate to 
 ;  lower-level calls
 
- if(arg_present(primary)) then primary = arr_primary(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(surface_pts)) then surface_pts = arr_surface_pts(_xd, cat=cat, condition=condition, /noevent)
 
 @cor_query.include

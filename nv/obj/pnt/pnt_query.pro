@@ -59,7 +59,7 @@
 ;-
 ;=============================================================================
 pro pnt_query, xd, condition=condition, cat=cat, noevent=noevent, $
-@pnt__keywords.include
+@pnt__keywords_tree.include
 @pnt_condition_keywords.include
 end_keywords
 

@@ -1,7 +1,7 @@
 # Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  CAS_ISSNA	cas_iss_spice_input	cas_iss_spice_output \
+  CAS_ISS_NA	cas_iss_spice_input	cas_iss_spice_output \
 #			                          klist=cassini.kernels \
 						  spk_in=auto \
 							ck_in=auto \
@@ -14,7 +14,7 @@
 							/spk_strict
 
 
-  CAS_ISSWA	cas_iss_spice_input	cas_iss_spice_output \
+  CAS_ISS_WA	cas_iss_spice_input	cas_iss_spice_output \
 #			                          klist=cassini.kernels \
 						  spk_in=auto \
 							ck_in=auto \
@@ -26,7 +26,7 @@
 							xk_in=extra.tpc  \
 							/spk_strict
 
-  VIMS_IR       cas_vims_spice_input         cas_vims_spice_output \
+  CAS_VIMS_IR	cas_vims_spice_input	cas_vims_spice_output \
 #                                                  klist=cassini.kernels \
                                                         ck_in=auto \
                                                         pck_in=auto \

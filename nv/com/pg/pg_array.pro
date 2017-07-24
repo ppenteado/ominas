@@ -104,7 +104,7 @@ function pg_array, cd=cd, ard=ard, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, $
      xd = 0
      if(keyword_set(bx)) then $
       begin
-       w = where(arr_primary(ard[i,j]) EQ bx[*,j])
+       w = where(get_primary(ard[i,j]) EQ bx[*,j])
 
        if(w[0] NE -1) then $
         begin

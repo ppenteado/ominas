@@ -138,11 +138,11 @@ end
 ; nv_clone
 ;
 ;=============================================================================
-function nv_clone, xd0, noevent=noevent, protect=protect
+function nv_clone, xd_0, noevent=noevent, protect=protect
 @core.include
- nv_notify, xd0, type = 1, noevent=noevent
+ nv_notify, xd_0, type = 1, noevent=noevent
 
- xd = xd0
+ xd = xd_0
  nv_clone_recurse, xd, protect=protect
  return, xd
 end

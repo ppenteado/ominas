@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro glb_assign, xd, noevent=noevent, $
-@glb__keywords.include
+@glb__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

@@ -1,5 +1,4 @@
-@cor__keywords.include
-type=type, $
+projection=projection, $
 fn_data=fn_data, $
 size=size, $
 origin=origin, $

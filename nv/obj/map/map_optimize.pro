@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function map_optimize, md=md0, $
-	type=type, size=size, origin=origin, $
+	projection=projection, size=size, origin=origin, $
 	latmin=latmin, lonmin=lonmin, radmin=radmin
 
 
@@ -19,7 +19,7 @@ function map_optimize, md=md0, $
 
  if(keyword_set(md0)) then md = nv_clone(md0) $
  else md = map_create_descriptors(1, $
-			type=type, $
+			projection=projection, $
 			size=size, $
 			scale=scale, $
 			origin=origin, $

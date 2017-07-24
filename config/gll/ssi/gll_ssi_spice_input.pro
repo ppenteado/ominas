@@ -208,7 +208,7 @@ function gll_ssi_spice_planets, dd, ref, time=time, planets=planets, $
 
  gll_ssi_spice_parse_labels, dd, time, target=target
 
- return, eph_spice_planets(dd, ref, time=time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
                             target=target, constants=constants, obs=obs)
@@ -227,7 +227,7 @@ function gll_ssi_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
 
  gll_ssi_spice_parse_labels, dd, time
 
- return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
+ return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
              status=status, time=time, constants=constants, obs=obs)
 
 end

@@ -59,7 +59,7 @@
 ;-
 ;=============================================================================
 pro rng_query, xd, condition=condition, cat=cat, noevent=noevent, $
-@rng__keywords.include
+@rng__keywords_tree.include
 end_keywords
 
  nv_notify, xd, type = 1, noevent=noevent

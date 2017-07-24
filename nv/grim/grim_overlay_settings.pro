@@ -467,7 +467,7 @@ common grim_overlay_settings_block, tops
  ; settings form widget
  ;-----------------------------------------------
  base = widget_base(/column, $
-       title = 'Overlay Settings - grim ' + strtrim(grim_data.grnum,2));, /tlb_size_events)
+       title = 'Overlay Settings - grim ' + strtrim(grim_data.grn,2));, /tlb_size_events)
 
  blank = '0'
  colors = ['red', $

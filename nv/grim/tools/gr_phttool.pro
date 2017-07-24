@@ -207,7 +207,7 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
  outline_ptd = nv_clone(limb_ptd[0])
  flags = pnt_flags(outline_ptd) & flags[*] = NOT PTD_MASK_INVISIBLE & pnt_set_flags, outline_ptd, flags
 
- ingrid, dd=dd, cd=cd, sund=sund, active_pd=pd
+ grift, dd=dd, cd=cd, sund=sund, active_pd=pd
 
  if(NOT keyword_set(cd)) then $
   begin
@@ -249,7 +249,7 @@ pro grpht_apply_correction_all, grim_data, data, phtd
 
  for i=0, nplanes-1 do $
   begin
-   ingrid, pn=i, dd=dd, cd=cd, sund=sund, active_pd=pd, active_limb_ptd=limb_ptd
+   grift, pn=i, dd=dd, cd=cd, sund=sund, active_pd=pd, active_limb_ptd=limb_ptd
    apply = 1
 
    ;---------------------------

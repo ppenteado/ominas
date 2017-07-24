@@ -334,7 +334,7 @@ function grim_compute_station, map=map, clip=clip, hide=hide, $
  if(keyword_set(bx)) then $
   begin
    for i=0, n_elements(stds)-1 do $
-     if((where(cor_name(stn_primary(stds[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
+     if((where(cor_name(get_primary(stds[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
    stds = stds[select]
   end
  nstd = n_elements(stds)
@@ -437,7 +437,7 @@ function grim_compute_array, map=map, clip=clip, hide=hide, $
  if(keyword_set(bx)) then $
   begin
    for i=0, n_elements(ards)-1 do $
-     if((where(cor_name(arr_primary(ards[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
+     if((where(cor_name(get_primary(ards[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
    ards = ards[select]
   end
  nard = n_elements(ards)

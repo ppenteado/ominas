@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function ominas_point::init, ii, crd=crd0, ptd=ptd0, $
-@pnt__keywords.include
+@pnt__keywords_tree.include
 end_keywords
 @core.include
  

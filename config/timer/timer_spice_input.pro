@@ -186,7 +186,7 @@ function timer_spice_planets, dd, ref, time=time, planets=planets, $
    if((strpos(strupcase(obs_id), 'OPNAV'))[0] NE -1) then target = target_desc
   end
 
- return, eph_spice_planets(dd, ref, time=plt_time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=plt_time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
                             target=target, constants=constants, obs=obs)
@@ -214,7 +214,7 @@ function timer_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
   end $
  else sun_time = time
  
- return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
+ return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
               status=status, time=sun_time, constants=constants, obs=obs)
 
 end

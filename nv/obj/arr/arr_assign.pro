@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro arr_assign, xd, noevent=noevent, $
-@arr__keywords.include
+@arr__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

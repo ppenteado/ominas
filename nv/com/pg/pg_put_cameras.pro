@@ -71,7 +71,7 @@
 ;-
 ;=============================================================================
 pro pg_put_cameras, dd, trs, cd=_cd, $
-@cam__keywords.include
+@cam__keywords_tree.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -83,7 +83,7 @@ pro pg_put_cameras, dd, trs, cd=_cd, $
 
  if(defined(name)) then _name = name & name = !null
  cam_assign, cd, /noevent, $
-@cam__keywords.include
+@cam__keywords_tree.include
 end_keywords
  if(defined(_name)) then name = _name
 

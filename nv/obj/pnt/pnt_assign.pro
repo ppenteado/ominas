@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro pnt_assign, xd, noevent=noevent, $
-@pnt__keywords.include
+@pnt__keywords_tree.include
 end_keywords
 ;timer, t=_t
 

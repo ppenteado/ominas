@@ -56,7 +56,7 @@
 ;-
 ;=============================================================================
 function str_create_descriptors, n, crd=_crd0, bd=_bd0, sld=_sld0, gbd=_gbd0, sd=_sd0, $
-@str__keywords.include
+@str__keywords_tree.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -71,7 +71,7 @@ end_keywords
    if(keyword_set(_sd0)) then sd0 = _sd0[i]
 
    sd[i] = ominas_star(i, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, sd=sd0, $
-@str__keywords.include
+@str__keywords_tree.include
 end_keywords)
 
   end

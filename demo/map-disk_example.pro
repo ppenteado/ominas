@@ -55,14 +55,14 @@ map_size = [1200,300]
 
 
 ;md = pg_get_maps(/over, bx=rd[0], $
-;	type='ORTHOGRAPHIC_DISK', $ 
+;	projection='ORTHOGRAPHIC_DISK', $ 
 ;	center = [  !dpi/6d, $  		    ; center latitude 
 ;	    	    !dpi], $			    ; center longitude
 ;	size=[400,400] $
 ;	) 
 
 md = pg_get_maps(/over, bx=rd[0], $
-	type='RECTANGULAR_DISK', $  
+	projection='RECTANGULAR_DISK', $  
 	center = [  mean(sma), $		    ; center radius 
 	    	    !dpi], $			    ; center longitude
 	size=map_size $
@@ -74,7 +74,7 @@ map_set_units, md, map_units_disk(md, $
 
 dd_map = pg_map(dd, md=md, cd=cd, bx=rd, gd=gd, map=map, $
             hide_fn='pm_rm_globe', hide_data_p=ptr_new(pd))
-tvim, /new, map, title=map_type(md) + ' PROJECTION'
+tvim, /new, map, title=map_projection(md) + ' PROJECTION'
 
 
 ;------------------------------------------------------------------
@@ -105,7 +105,7 @@ bod_set_orient, _cd, [xx,yy,zz]
 
 
 _dd = pg_map(dd_map, md=_cd, cd=md, bx=rd, gd=gd, map=_im)
-tvim, /new, z=0.5, _im, title=map_type(md) + ' TO CAMERA PROJECTION'
+tvim, /new, z=0.5, _im, title=map_projection(md) + ' TO CAMERA PROJECTION'
 
 
 ;-------------------------------------------------------------------

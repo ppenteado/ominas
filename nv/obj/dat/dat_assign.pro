@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro dat_assign, xd, noevent=noevent, $
-@dat__keywords.include
+@dat__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

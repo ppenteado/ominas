@@ -71,7 +71,7 @@
 ;-
 ;=============================================================================
 pro pg_put_stations, dd, trs, std=_std, ods=ods, $
-@stn__keywords.include
+@stn__keywords_tree.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -83,7 +83,7 @@ pro pg_put_stations, dd, trs, std=_std, ods=ods, $
 
  if(defined(name)) then _name = name & name = !null
  stn_assign, std, /noevent, $
-@stn__keywords.include
+@stn__keywords_tree.include
 end_keywords
  if(defined(_name)) then name = _name
 

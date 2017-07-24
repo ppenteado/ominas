@@ -156,8 +156,9 @@
 ;			operates very reliably, but very inefficiently using
 ;			this option.
 ;
-;	constants:	If set, only kernels containing constants are loaded.
-;			Only those quantities are filled in.
+;	constants:	If set, only kernels containing constants are loaded
+;			and only those quantities are filled in.  This keyword 
+;			is assumed if there no time is available.
 ;
 ;	targets:	Name of text file listing the targets to be requested
 ;			from the kernel pool.  If not given, the name of the
@@ -366,19 +367,55 @@
 
 
 ;=============================================================================
+; si_get_kernels
+;
+;=============================================================================
+function si_get_kernels, dd, time, exclusive=exclusive, $
+      klist, desc, prefix, inst, name, ext, all, strict, exp=exp, $
+      optional=optional
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; first, look for kernel files in the klist
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ kl_in = spice_read_klist(dd, klist, prefix=prefix, inst=inst, /notime, ext=ext)
+ if(keyword_set(exclusive)) then if(keyword_set(kl_in)) then return, kl_in
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; otherwise, check for keywords
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ kw_in = spice_kernel_parse(dd, prefix, inst, name, ext=ext, $
+                               exp=exp, strict=strict, all=all, time=time)
+ if(keyword_set(exclusive)) then if(keyword_set(kw_in)) then return, kw_in
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; concatenate results
+ ;  Keyword kernels appear after kernel list kernels, so they take 
+ ;  precedence
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ k_in = append_array(kl_in, kw_in)
+
+ if(NOT keyword_set(optional)) then $
+   if(NOT keyword_set(k_in)) then nv_message, 'No ' + desc + ' kernels.'
+
+ return, k_in
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; si_manage_kernels
 ;
 ;=============================================================================
 pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
                              constants=constants, time=time, status=status
  status = 0
-;;; need to give dirs in error messages
 
  inst_prefix = prefix
  if(keyword_set(inst)) then inst_prefix = inst_prefix + '_' + inst
 
  ;-----------------------------------------------------------------
- ; if data descriptor already kernel list, load those kernels
+ ; if data descriptor already has kernel list, load that pool
  ;-----------------------------------------------------------------
  kernel_pool = cor_udata(dd, 'SPICE_KERNEL_POOL')
  if(keyword_set(kernel_pool)) then $
@@ -386,7 +423,6 @@ pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
    spice_load, kernel_pool, /pool
    return
   end
-
 
  ;-----------------------------------------------
  ; translator arguments
@@ -441,51 +477,52 @@ pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
  protect = tr_keyword_value(dd, 'protect')
 
 
- ;-----------------------
+ ;+++++++++++++++++++++++++++++++++++
  ; manage kernel pool
- ;-----------------------
+ ;+++++++++++++++++++++++++++++++++++
+
+ ;---------------------------------------------------------------------------
+ ; Check for time in dd if not already given.  /string is used to prevent 
+ ; lsks from being used since those aren't loaded yet.
+ ; If still no time, then assume /constants.
+ ;---------------------------------------------------------------------------
+ if(NOT defined(time)) then $
+  begin
+   test = spice_time(dd, prefix=prefix, inst=inst, /string, stat=stat)  
+   if(stat NE 0) then constants = 1
+  end
+
+ ;---------------------------------------------------------------------------
+ ; get the kernel list file
+ ;---------------------------------------------------------------------------
+ klist = tr_keyword_value(dd, 'klist')
+ if(keyword_set(klist)) then $
+  if(strpos(klist, '/') EQ -1) then $
+   begin
+    kpath = spice_get_kpath('NV_SPICE_KER', klist)
+    klist = kpath + '/' + klist
+   end
+
+ ;---------------------------------------------------------------------------
+ ; time-dependent kernels
+ ;---------------------------------------------------------------------------
  if(NOT keyword_set(constants)) then $
   begin
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; Handle LS and SC kernels first.
+   ; Handle time (LS and SC) kernels first.
    ;  LS kernels are needed so that times can be compared in the kernel 
    ;   list file.
    ;  SC kernels are needed for the ck and spk auto detect functions
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   lsk_in = si_get_kernels(dd, time, klist, /exclusive, $
+     'leap-second', prefix, inst, 'lsk', 'tls', lsk_all, lsk_strict, exp=lsk_exp)
+
+   if(keyword_set(inst)) then $
+     sck_in = si_get_kernels(dd, time, klist, /exclusive, $
+     'spacecraft clock', prefix, inst, 'sck', 'tsc', sck_all, sck_strict, exp=sck_exp)
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; load the kernel list file
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   klist = tr_keyword_value(dd, 'klist')
-   if(keyword_set(klist)) then $
-    if(strpos(klist, '/') EQ -1) then $
-     begin
-      kpath = spice_get_kpath('NV_SPICE_KER', klist)
-      klist = kpath + '/' + klist
-     end
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; first, look for lsk and sck files in the klist
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   lsk_in = spice_read_klist(dd, klist, prefix=prefix, inst=inst, /notime, ext='tls')
-   sck_in = spice_read_klist(dd, klist, prefix=prefix, inst=inst, /notime, ext='tsc')
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; otherwise, check for lsk and sck keywords
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(NOT keyword_set(lsk_in)) then $
-     lsk_in = spice_kernel_parse(dd, prefix, inst, 'lsk', ext='tls', $
-	      exp=lsk_exp, strict=lsk_strict, all=lsk_all, time=time)
-   if(NOT keyword_set(sck_in)) then $
-     sck_in = spice_kernel_parse(dd, prefix, inst, 'sck', ext='tsc', $
-	      exp=sck_exp, strict=sck_strict, all=sck_all, time=time)
-
-   if(NOT keyword_set(lsk_in)) then nv_message, 'No leap-second kernels.'
-   if(NOT keyword_set(constants)) then $
-       if(NOT keyword_set(sck_in)) then nv_message, 'No spacecraft clock kernels.'
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; load lsk if found
+   ; load time kernels if found
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    k_in = lsk_in
    if(keyword_set(sck_in)) then k_in = [k_in, sck_in]
@@ -498,54 +535,43 @@ pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
      lsk_reverse=lsk_reverse, sck_reverse=sck_reverse
    spice_load, k_to_load
 
-   if(defined(time)) then $
-       if(size(time, /type) EQ 7) then time = spice_str2et(time) 
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; now that lsks are loaded, we can try to get an ephemeris time
+   ; from the data descriptor
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(NOT defined(time)) then time = spice_time(dd, prefix=prefix, inst=inst)
+   if(size(time, /type) EQ 7) then time = spice_str2et(time) 
 
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-   ; kernel list file
-   ;  Kernels are read from this file and inserted into the kernel list
-   ;  in front of the kernels input using translator keywords.  
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   k_in = spice_read_klist(dd, klist, time=time, prefix=prefix, inst=inst)
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; other time-dependent kernels
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   fk_in = si_get_kernels(dd, time, klist, /optional, $
+       'frame', prefix, inst, 'fk', 'tf', fk_all, fk_strict, exp=fk_exp)
+
+   if(NOT keyword_set(pos) AND (NOT keyword_set(od))) then $
+     ck_in = si_get_kernels(dd, time, klist, /optional, $
+       'C', prefix, inst, 'ck', 'bc', ck_all, ck_strict, exp=ck_exp)
+
+   spk_in = si_get_kernels(dd, time, klist, $
+       'SP', prefix, inst, 'spk', 'bsp', spk_all, spk_strict, exp=spk_exp)
   end
 
+ ;---------------------------------------------------------------------------
+ ; time-independent kernels
+ ;---------------------------------------------------------------------------
+ pck_in = si_get_kernels(dd, time, klist, $
+       'PC', prefix, inst, 'pck', 'tpc', pck_all, pck_strict, exp=pck_exp)
 
- ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; kernel input keywords
- ;  Each type of kernel may be specified using a keyword named as <type>_in; 
- ;  e.g., "ck_in".  These kernels are appended to the kernel list after those 
- ;  read from the kernel list file, so they take precedence.
- ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ck_in = ''
- if(NOT keyword_set(pos) AND (NOT keyword_set(od))) then $
-   if(NOT keyword_set(constants)) then $
-     ck_in = spice_kernel_parse(dd, prefix, inst, 'ck', ext='bc', $
-	       exp=ck_exp, strict=ck_strict, all=ck_all, time=time)
+ if(keyword_set(inst)) then $
+    ik_in = si_get_kernels(dd, time, klist, /optional, $
+       'instrument', prefix, inst, 'ik', 'ti', ik_all, ik_strict, exp=ik_exp)
 
- if(NOT keyword_set(constants)) then $
-   spk_in = spice_kernel_parse(dd, prefix, inst, 'spk', ext='bsp', $
-        	exp=spk_exp, strict=spk_strict, all=spk_all, time=time)
-
- pck_in = spice_kernel_parse(dd, prefix, inst, 'pck', ext='tpc', $
-		  exp=pck_exp, strict=pck_strict, all=pck_all, time=time)
- fk_in = spice_kernel_parse(dd, prefix, inst, 'fk', ext='tf', $
-		  exp=fk_exp, strict=fk_strict, all=fk_all, time=time)
- ik_in = spice_kernel_parse(dd, prefix, inst, 'ik', ext='ti', $
-		  exp=ik_exp, strict=ik_strict, all=ik_all, time=time)
+ ;---------------------------------------------------------------------------
+ ; extra kernels; keyword-only
+ ;---------------------------------------------------------------------------
  xk_in = spice_kernel_parse(dd, prefix, inst, 'xk', $
 		  exp=xk_exp, strict=xk_strict, all=xk_all, time=time)
 
-
- all_kernels = ''
- if(keyword_set(k_in)) then all_kernels = append_array(all_kernels, k_in)
- if(keyword_set(ck_in)) then all_kernels = append_array(all_kernels, ck_in)
- if(keyword_set(spk_in)) then all_kernels = append_array(all_kernels, spk_in)
- if(keyword_set(pck_in)) then all_kernels = append_array(all_kernels, pck_in)
- if(keyword_set(fk_in)) then all_kernels = append_array(all_kernels, fk_in)
- if(keyword_set(ik_in)) then all_kernels = append_array(all_kernels, ik_in)
- if(keyword_set(sck_in)) then all_kernels = append_array(all_kernels, sck_in)
- if(keyword_set(lsk_in)) then all_kernels = append_array(all_kernels, lsk_in)
- if(keyword_set(xk_in)) then all_kernels = append_array(all_kernels, xk_in)
 
  ;-----------------------------------------------------------------
  ; Determine kernels to load / unload.  If no kernels specified, 
@@ -553,7 +579,7 @@ pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
  ;-----------------------------------------------------------------
  spice_sort_kernels, all_kernels, $
    reload=reload, reverse=reverse, protect=protect, $
-   k_in=k_in, ck_in=ck_in, spk_in=spk_in, pck_in=pck_in, $
+   ck_in=ck_in, spk_in=spk_in, pck_in=pck_in, $
    fk_in=fk_in, ik_in=ik_in, sck_in=sck_in, lsk_in=lsk_in, xk_in=xk_in, $
    ck_exp=ck_exp, spk_exp=spk_exp, pck_exp=pck_exp, $
    fk_exp=fk_exp, ik_exp=ik_exp, sck_exp=sck_exp, lsk_exp=lsk_exp, xk_exp=xk_exp, $
@@ -562,9 +588,9 @@ pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
    fk_reverse=fk_reverse, ik_reverse=ik_reverse, sck_reverse=sck_reverse, $
    lsk_reverse=lsk_reverse, xk_reverse=xk_reverse, strict_priority=strict_priority
 
- ;-----------------------------------------
+ ;+++++++++++++++++++++++++++++++
  ; load/unload kernels
- ;-----------------------------------------
+ ;+++++++++++++++++++++++++++++++
  spice_load, kernels_to_load, uk_in=kernels_to_unload
 ;  spice_cull
 
@@ -630,7 +656,7 @@ function si_get, dd, keyword, prefix, inst, od=od, time=__time, names=names, sta
  ; constants
  ;- - - - - - - - - - - - - - - - - - -
  constants = fix(tr_keyword_value(dd, 'constants'))
- if(keyword_set(constants)) then time = -1
+ if(keyword_set(constants)) then time = -1		; this doesn't seem right
 
  ;- - - - - - - - - - - - - - - - - - -
  ; name
@@ -807,7 +833,7 @@ common spice_input_block, last_prefix
  if(NOT spice_test()) then $
   begin
    nv_message, /con, $
-     'Aborting because the NAIF/SPICE interface not installed.'
+     'Aborting because the NAIF/SPICE interface is not installed.'
    status = -1
    return, 0
   end

@@ -52,7 +52,7 @@ map_pts_p = map_pts_p[0:10]
  ;-------------------------------------------------
  ; create a planet descriptor for Earth
  ;-------------------------------------------------
- dd = dat_create_descriptors(1, inst='CAS_ISSNA')
+ dd = dat_create_descriptors(1, inst='CAS_ISS_NA')
  pd = pg_get_planets(dd, '/constants', name='EARTH')
 
 

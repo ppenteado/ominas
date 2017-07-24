@@ -59,7 +59,7 @@
 ;-
 ;=============================================================================
 pro stn_query, xd, condition=condition, cat=cat, noevent=noevent, $
-@stn__keywords.include
+@stn__keywords_tree.include
 end_keywords
 
  nv_notify, xd, type = 1, noevent=noevent

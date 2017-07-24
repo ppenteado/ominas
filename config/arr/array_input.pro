@@ -162,10 +162,9 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
          ;- - - - - - - - - - - - - - - - - - - - - - - -
          ; construct descriptors
          ;- - - - - - - - - - - - - - - - - - - - - - - -
-         _ards = arr_create_descriptors(gd=cor_gd(xd[i]))
+         _ards = arr_create_descriptors(gd=cor_create_gd(cor_gd(xd[i]), xd0=xd[i]))
 
          cor_set_name, _ards, name
-         arr_set_primary, _ards, xd[i]
          arr_set_surface_pts, _ards, dat
         end
        ards = append_array(ards, _ards)

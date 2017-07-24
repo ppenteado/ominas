@@ -13,20 +13,23 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_get_rings(dd, od=od)
-;	result = pg_get_rings(dd, od=od, trs)
+;	result = pg_get_rings(arg1, arg2)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:	data descriptor
+;	arg1:	Data descriptor or transient translator argument.  In the
+;		latter case, a string containing keywords and values to be 
+;		passed directly to the translators as if they appeared as 
+;		arguments in the translators table.  Keywords passed using 
+;		this mechanism take precedence over keywords appearing in 
+;		the translators table.  If no data descriptor is given, 
+;		one may be constructed using DATA keywords (see below).  The
+;		newly created data descriptor is freed unless this argument
+;		is an undefined named variable, in which case the new
+;		descriptor is returned in this variable.
 ;
-;	trs:	String containing keywords and values to be passed directly
-;		to the translators as if they appeared as arguments in the
-;		translators table.  These arguments are passed to every
-;		translator called, so the user should be aware of possible
-;		conflicts.  Keywords passed using this mechanism take 
-;		precedence over keywords appearing in the translators table.
+;	arg2:	Transient translator argument, if present.
 ;
 ;  OUTPUT: NONE
 ;
@@ -44,12 +47,6 @@
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
-;	rng_*:		All ring override keywords are accepted.  See
-;			ring_keywords.include.
-;
-;			If name is specified, then only descriptors with
-;			those names are returned.
-;
 ;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
@@ -59,6 +56,28 @@
 ;			this keyword is specified, no translators from the 
 ;			table are called, but the translators keywords
 ;			from the table are still used.   
+;
+;
+;	RING Keywords
+;	---------------
+;	All RING override keywords are accepted.  See rng__keywords.include.  
+;	If 'name' is specified, then only descriptors with those names are 
+;	returned.
+;
+;	DATA Keywords
+;	-------------
+;	All DATA override keywords are accepted.  See dat__keywords.include.  
+;
+;	Descriptor Select Keywords
+;	--------------------------
+;	Descriptor select keywords are combined with OR logic.  They are 
+;	implemented in this routine after the translators have been called, 
+;	but they are also added to the translator keywords.  The purpose of 
+;	sending then to the translators as well is to give the  translators 
+;	an opportunity to filter their outputs before potentially  generating 
+;	a huge array of descriptors that would mostly be filtered out by this 
+;	routine.  Named bodies are exempted.  See pg_select_bodies for a 
+;	description of the standard keywords. 
 ;
 ;
 ; RETURN:
@@ -74,11 +93,6 @@
 ;	only descriptors corresponding to those names will be returned.
 ;	
 ;
-;
-; SEE ALSO:
-;	xx, xx, xx
-;
-;
 ; MODIFICATION HISTORY:
 ; 	Written by:	Spitale, 1998
 ;	Modified:	Spitale, 8/2001
@@ -93,26 +107,17 @@
 ;
 ;
 ;===========================================================================
-pro pggr_select_rings, dd, rd, od=od, select
+pro pggr_select_rings, rd, od=od, name=name, _extra=select
 
  ;------------------------------------------------------------------------
  ; standard body filters
  ;------------------------------------------------------------------------
- sel = pg_select_bodies(dd, rd, od=od, select)
+ sel = pg_select_bodies(rd, od=od, _extra=select)
 
  ;------------------------------------------------------------------------
  ; implement any selections
  ;------------------------------------------------------------------------
- if(keyword_set(sel)) then $
-  begin
-   sel = unique(sel)
-
-   w = complement(rd, sel)
-   if(w[0] NE -1) then nv_free, rd[w]
-
-   if(sel[0] EQ -1) then rd = obj_new() $
-   else rd = rd[sel]
-  end
+ pg_cull_bodies, rd, sel, name=name
 
 
 end
@@ -124,11 +129,19 @@ end
 ; pg_get_rings
 ;
 ;===========================================================================
-function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, _extra=select, $
+function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=select, $
                       override=override, verbatim=verbatim, $
-@rng__keywords.include
-@nv_trs_keywords_include.pro
-		end_keywords
+                              @rng__keywords_tree.include
+                              @dat__keywords.include
+                              @nv_trs_keywords_include.pro
+                              end_keywords
+
+ ;------------------------------------------------------------------------
+ ; sort out arguments
+ ;------------------------------------------------------------------------
+ pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+                          @dat__keywords.include
+                          end_keywords
 
  ;-----------------------------------------------
  ; add selection keywords to translator keywords
@@ -148,12 +161,12 @@ function pg_get_rings, dd, trs, rd=_rd, pd=pd, od=od, _extra=select, $
   begin
    n = n_elements(name)
 
-   if(keyword_set(dd)) then gd = dd
+   if(keyword_set(dd)) then gd = cor_create_gd(dd, gd=gd)
    rd = rng_create_descriptors(n, $
-@rng__keywords.include
-end_keywords)
-   gd = !null
+                            @rng__keywords_tree.include
+                            end_keywords)
 
+   if(keyword_set(free)) then nv_free, dd
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get ring descriptors from the translators
@@ -165,8 +178,15 @@ end_keywords)
    ;-----------------------------------------------
    rd = dat_get_value(dd, 'RNG_DESCRIPTORS', key1=pd, key2=od, key4=_rd, $
                             key7=time, key8=name, trs=trs, $
-@nv_trs_keywords_include.pro
-	end_keywords)
+                              @nv_trs_keywords_include.pro
+                              end_keywords)
+
+   ;------------------------------------------------------------------------
+   ; Free dd if pg_sort_args determined that it will not be used outside 
+   ; this function.  Note that the object ID is not lost will still appear
+   ; in the gd.
+   ;------------------------------------------------------------------------
+   if(keyword_set(free)) then nv_free, dd
 
    if(NOT keyword__set(rd)) then return, obj_new()
 
@@ -199,25 +219,24 @@ end_keywords)
    ;-------------------------------------------------------------------
    if(defined(name)) then _name = name & name = !null
    rng_assign, rd, /noevent, $
-@rng__keywords.include
-end_keywords
+                       @rng__keywords_tree.include
+                       end_keywords
     if(defined(_name)) then name = _name
-
   end
-
 
  ;--------------------------------------------------------
  ; filter rings
  ;--------------------------------------------------------
  if(NOT keyword_set(rd)) then return, obj_new()
- if(keyword_set(select)) then pggr_select_rings, dd, rd, od=od, select
+ if(keyword_set(select)) then $
+            pggr_select_rings, rd, od=od, name=name, _extra=select
  if(NOT keyword_set(rd)) then return, obj_new()
 
  ;--------------------------------------------------------
  ; update generic descriptors
  ;--------------------------------------------------------
- if(keyword_set(dd)) then dat_set_gd, dd, gd, pd=pd, od=od
- dat_set_gd, rd, gd, pd=pd, od=od
+ if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, rd=rd, pd=pd, od=od, /noevent
+ dat_set_gd, rd, gd, pd=pd, od=od, /noevent
 
  return, rd
 end

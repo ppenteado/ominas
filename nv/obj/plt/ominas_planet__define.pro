@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_planet::init, ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, pd=pd0, $
-@plt__keywords.include
+@plt__keywords_tree.include
 end_keywords
 @core.include
  
  void = self->ominas_globe::init(ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, $
-@glb__keywords.include
+@glb__keywords_tree.include
 end_keywords)
  if(keyword_set(pd0)) then struct_assign, pd0, self
 
