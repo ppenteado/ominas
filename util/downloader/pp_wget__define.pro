@@ -74,7 +74,7 @@ self.pattern=n_elements(pattern) ? pattern : ''
 self.xpattern=n_elements(xpattern) ? xpattern : ''
 self.absolute=keyword_set(absolute)
 ;self.sslf=n_elements(sslf) ? file_search(sslf) : (file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0]
-if n_elements(sslf) then self.sslf=file_search(sslf) else begin
+if (n_elements(sslf)) && (sslf) then self.sslf=file_search(sslf) else begin
   if (!version.release ge '8.4') then self.sslf=(file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0] else begin
      ft=file_dirname((file_which('pp_wget__define.pro'))[0],/mark_directory)+'ca-bundle.crt'
      self.sslf=file_test(ft,/read) ? ft : (file_search(filepath('',subdir='bin')+'*/ca-bundle.crt'))[0]
