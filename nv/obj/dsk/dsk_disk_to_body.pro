@@ -64,7 +64,7 @@ function dsk_disk_to_body, dkd, v
  ;------------------------------------------
  ; apply radial scale
  ;------------------------------------------
- result[*,0,*] = dsk_apply_scale(dkd, result[*,0,*], /inverse)
+ result[*,0,*] = dsk_apply_radial_scale(dkd, result[*,0,*], /inverse)
 
  return, result
 end

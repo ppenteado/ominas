@@ -1,4 +1,3 @@
-@cor__keywords.include
 fn_body_to_inertial=fn_body_to_inertial, $
 fn_inertial_to_body=fn_inertial_to_body, $
 ib_data_=ib_data, $

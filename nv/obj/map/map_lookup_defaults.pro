@@ -12,13 +12,13 @@ function map_lookup_defaults, md0
  _md.pole.lat=!values.d_nan
  _md.pole.lon=!values.d_nan
  _md.pole.rot=!values.d_nan
-; type = _md0[0].type
- type = map_match_type(_md0[0].type)
+; projection = _md0[0].projection
+ projection = map_match_projection(_md0[0].projection)
 
  ;---------------------------------
  ; disk polar projection
  ;---------------------------------
- w = where(type EQ 'OBLIQUE_DISK')
+ w = where(projection EQ 'OBLIQUE_DISK')
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d
@@ -30,7 +30,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; rectangular projection
  ;---------------------------------
- w = where(type EQ 'RECTANGULAR')
+ w = where(projection EQ 'RECTANGULAR')
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d
@@ -42,7 +42,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; rectangular disk projection
  ;---------------------------------
- w = where(type EQ 'RECTANGULAR_DISK')
+ w = where(projection EQ 'RECTANGULAR_DISK')
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d
@@ -54,7 +54,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; equatorial disk projection
  ;---------------------------------
- w = where(strmatch(type,'*RING'))
+ w = where(strmatch(projection,'*RING'))
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d
@@ -66,7 +66,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; mercator projection
  ;---------------------------------
- w = where(type EQ 'MERCATOR')
+ w = where(projection EQ 'MERCATOR')
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d
@@ -77,7 +77,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; orthographic projection
  ;---------------------------------
- w = where(type EQ 'ORTHOGRAPHIC')
+ w = where(projection EQ 'ORTHOGRAPHIC')
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d
@@ -88,7 +88,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; stereographic projection
  ;---------------------------------
- w = where(type EQ 'STEREOGRAPHIC')
+ w = where(projection EQ 'STEREOGRAPHIC')
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d
@@ -99,7 +99,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; mollweide projection
  ;---------------------------------
- w = where(type EQ 'MOLLWEIDE')
+ w = where(projection EQ 'MOLLWEIDE')
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d
@@ -110,7 +110,7 @@ function map_lookup_defaults, md0
  ;---------------------------------
  ; sinusoidal projection
  ;---------------------------------
- w = where(type EQ 'SINUSOIDAL')
+ w = where(projection EQ 'SINUSOIDAL')
  if(w[0] NE -1) then $
   begin
    _md[w].scale = 1d

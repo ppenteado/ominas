@@ -1,4 +1,3 @@
-@bod__keywords.include
 fn_focal_to_image=fn_focal_to_image, $
 fn_image_to_focal=fn_image_to_focal, $
 fi_data=fi_data, scale=scale, oaxis=oaxis, exposure=exposure, $

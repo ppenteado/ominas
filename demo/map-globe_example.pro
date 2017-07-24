@@ -55,13 +55,13 @@ pg_draw, limb_ptd
 ; RECTANGULAR
 ;- - - - - - - - - -
 md1 = pg_get_maps(/over, bx=pd, $
-	type='RECTANGULAR', $
+	projection='RECTANGULAR', $
 	/graphic,  $
 	size=[400,200] $
 	)
 dd_map1 = pg_map(dd, md=md1, gd=gd, bx=pd, map=map1, $
             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
-tvim, /new, map1, title=map_type(md1) + ' PROJECTION'
+tvim, /new, map1, title=map_projection(md1) + ' PROJECTION'
 
 
 
@@ -69,21 +69,21 @@ tvim, /new, map1, title=map_type(md1) + ' PROJECTION'
 ; ORTHOGRAPHIC
 ;- - - - - - - - - -
 md2 = pg_get_maps(/over, bx=pd, $
-	type='ORTHOGRAPHIC', $
+	projection='ORTHOGRAPHIC', $
 	fn_data=ptr_new(), $
 	size=[400,400], $
 	center=[-!dpi/6d,0d] $
 	)
 dd_map2 = pg_map(dd, md=md2, gd=gd, bx=pd, map=map2, $
             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
-tvim, /new, map2, title=map_type(md2) + ' PROJECTION'
+tvim, /new, map2, title=map_projection(md2) + ' PROJECTION'
 
 
 ;- - - - - - - - - -
 ; STEREOGRAPHIC
 ;- - - - - - - - - -
 md3 = pg_get_maps(/over, bx=pd, $
-	type='STEREOGRAPHIC', $
+	projection='STEREOGRAPHIC', $
 	fn_data=ptr_new(), $
 	scale=0.5, $
 	size=[400,400], $
@@ -91,20 +91,20 @@ md3 = pg_get_maps(/over, bx=pd, $
 	)
 dd_map3 = pg_map(dd, md=md3, gd=gd, bx=pd, map=map3, $
             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
-tvim, /new, map3, title=map_type(md3) + ' PROJECTION'
+tvim, /new, map3, title=map_projection(md3) + ' PROJECTION'
 
 
 ;- - - - - - - - - -
 ; MERCATOR
 ;- - - - - - - - - -
 md4 = pg_get_maps(/over, bx=pd, $
-	type='MERCATOR', $  
+	projection='MERCATOR', $  
 	fn_data=ptr_new(), $
 	size=[400,200] $
 	)
 dd_map4 = pg_map(dd, md=md4, gd=gd, bx=pd, map=map4, $
             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
-tvim, /new, map4, title=map_type(md4) + ' PROJECTION'
+tvim, /new, map4, title=map_projection(md4) + ' PROJECTION'
 
 
 
@@ -112,14 +112,14 @@ tvim, /new, map4, title=map_type(md4) + ' PROJECTION'
 ; transform from one projection to another
 ;------------------------------------------------
 _md1 = pg_get_maps(/over, bx=pd, $
-	type='ORTHOGRAPHIC', $
+	projection='ORTHOGRAPHIC', $
 	fn_data=ptr_new(), $
 	size=[400,400], $
 	center=[-!dpi/8d,0d] $
 	)
 
 _dd_map1 = pg_map(dd_map1, md=_md1, cd=md1, map=_map1)
-tvim, /new, _map1, title=map_type(md1) + ' TO ' + map_type(_md1) + ' PROJECTION'
+tvim, /new, _map1, title=map_projection(md1) + ' TO ' + map_projection(_md1) + ' PROJECTION'
 
 
 
@@ -151,7 +151,7 @@ bod_set_orient, _cd, [xx,yy,zz]
 
 
 _dd = pg_map(dd_map1, md=_cd, cd=md1, gbx=pd, map=_im)
-tvim, /new, z=0.5, _im, title=map_type(md1) + ' TO CAMERA PROJECTION'
+tvim, /new, z=0.5, _im, title=map_projection(md1) + ' TO CAMERA PROJECTION'
 
 
 ;--------------------------------------------------------------------

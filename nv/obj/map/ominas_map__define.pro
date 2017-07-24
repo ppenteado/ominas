@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function ominas_map::init, ii, crd=crd0, md=md0, $
-@map__keywords.include
+@map__keywords_tree.include
 end_keywords
 @core.include
  
@@ -16,19 +16,19 @@ end_keywords)
  self.tag = 'MD'
 
  ;----------------------------------------------------------------------
- ; default size and type are [0,0] and 'NONE' respectively
+ ; default size and projection are [0,0] and 'NONE' respectively
  ;----------------------------------------------------------------------
  if(keyword_set(size)) then self.size = size[*,ii] $
  else size = lonarr(2)
- if(keyword_set(type)) then self.type = decrapify(type[ii]) $
- else type = 'NONE'
+ if(keyword_set(projection)) then self.projection = decrapify(projection[ii]) $
+ else projection = 'NONE'
 
 
  if(keyword_set(units)) then self.units = units[*,ii] $
  else self.units = [1d,1d]
 
  ;----------------------------------------------------------------------
- ; other defaults depend on projection type
+ ; other defaults depend on projection 
  ;----------------------------------------------------------------------
  _md0 = map_lookup_defaults(self)
 
@@ -94,11 +94,12 @@ end
 ;		Methods: map_core
 ;
 ;
-;	type:	String giving the map type, e.g., RECTANGULAR, 
+;	projection:	
+;		String giving the map projection, e.g., RECTANGULAR, 
 ;		ORTHOGRAPHIC.  Map transformation functions are named
-;		map_image_to_map_<type> and map_map_to_image_<type>.
+;		map_image_to_map_<projection> and map_map_to_image_<projection>.
 ;
-;		Methods: map_type, map_set_type
+;		Methods: map_projection, map_set_projection
 ;
 ;
 ;	units:	2-element array (lat,lon) to converts map radians to other
@@ -162,7 +163,7 @@ pro ominas_map__define
 
  struct = $
     { ominas_map, inherits ominas_core, $
-	type:		  '', $			; Name of map projection type
+	projection:		  '', $		; Name of map projection 
 	units:	 	  [1d,1d],$		; Converts map radians to other
 						;  units (map radians/unit).
 	size:		  lonarr(2), $		; [x,y] size of map in pixels

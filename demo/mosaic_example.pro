@@ -81,11 +81,10 @@
 ;-------------------------------
 ; load files
 ;-------------------------------
-;files = ['./data/n1350122987.2', $
-;         './data/n1351469359.2', $
-;         './data/n1351523119.2', $
-;         './data/n1352037683.2']
-files = getenv('OMINAS_DIR')+'/demo/data/'+['n1350122987.2','/n1351469359.2']
+files = ['n1351469359.2', $
+         'n1351523119.2', $
+         'n1352037683.2']
+files = getenv('OMINAS_DIR')+'/demo/data/'+files
 n = n_elements(files)
 
 dd = dat_read(files)
@@ -100,7 +99,7 @@ tvim, /list, wnum=ww
 
 
 ;---------------------------------------
-; get ancillary info for each image
+; get geometry info for each image
 ;---------------------------------------
 _gd = {cd:obj_new(), gbx:obj_new(), dkx:obj_new(), sund:obj_new()}
 gd = replicate(_gd, n)
@@ -194,7 +193,7 @@ for i=0, n-1 do  pg_draw, limb_ptd[i], wnum=ww[i]
 ;----------------------------------------------------------------------
 dd_pht = objarr(n)
 for i=0, n-1 do dd_pht[i] = pg_photom(dd[i], gd=gd[i], $
-    refl_fn='pht_refl_minneart',refl_parm=[0.9d], outline=limb_ptd[i]) 
+    refl_fn='pht_refl_minneart',refl_parm=[0.6d], outline=limb_ptd[i]) 
 
 for i=0, n-1 do tvim, dat_data(dd_pht[i]), ww[i]
 
@@ -218,7 +217,7 @@ for i=0, n-1 do tvim, dat_data(dd_pht[i]), ww[i]
 ;     
 ;     md = pg_get_maps(/over, gbx = pd1, $
 ;       name='JUPITER',$
-;       type='RECTANGULAR', $
+;       projection='RECTANGULAR', $
 ;       fn_data=ptr_new(), $
 ;       size=[map_xsize,map_ysize], $
 ;       origin=[map_xsize,map_ysize]/2 )
@@ -243,15 +242,15 @@ map_ysize = 400
 
 md = pg_get_maps(/over, gbx = pd1, $
 	name='JUPITER',$
-	type='RECTANGULAR', $
+	projection='RECTANGULAR', $
 	fn_data=ptr_new(), $
 	size=[map_xsize,map_ysize], $
 	origin=[map_xsize,map_ysize]/2 )
 
 ;md = pg_get_maps(/over, gbx=pd1, $
 ;	name='JUPITER',$
-;	type='ORTHOGRAPHIC', $
-;;	type='STEREOGRAPHIC', $
+;	projection='ORTHOGRAPHIC', $
+;;	projection='STEREOGRAPHIC', $
 ;	fn_data=ptr_new(), $
 ;;	center=[!dpi/2d,0], $	    ; polar
 ;	center=[!dpi/4d,0], $
@@ -261,8 +260,8 @@ md = pg_get_maps(/over, gbx = pd1, $
 
 ;md = pg_get_maps(/over, gbx=pd1, $
 ;	name='JUPITER',$
-;;	type='MOLLWEIDE', $
-;	type='MERCATOR', $
+;;	projection='MOLLWEIDE', $
+;	projection='MERCATOR', $
 ;	fn_data=ptr_new(), $
 ;	size=[map_xsize,map_ysize], $
 ;	origin=[map_xsize,map_ysize]/2 $
@@ -316,7 +315,7 @@ for i=0, n-1 do tvim, dat_data(dd_map[i]), /new
 ;-
 ;----------------------------------------------------------------------
 dd_mosaic = pg_mosaic(dd_map, mosaic=mosaic, $
-               wt='emm', comb='sum', data={x:5, emm0:cos(85d*!dpi/180d)})
+               wt='emm', comb='sum', data={x:5, emm0:cos(75d*!dpi/180d)})
 tvim, mosaic, /new
 
 

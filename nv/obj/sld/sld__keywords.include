@@ -1,3 +1,2 @@
-@bod__keywords.include
 opacity=opacity, mass=mass, GM=GM, refl_fn=refl_fn, refl_parm=refl_parm, $
 phase_fn=phase_fn, phase_parm=phase_parm, albedo=albedo, $

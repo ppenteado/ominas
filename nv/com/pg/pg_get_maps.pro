@@ -13,20 +13,23 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_get_maps(dd)
-;	result = pg_get_maps(dd, trs)
+;	result = pg_get_maps(arg1, arg2)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:	data descriptor
+;	arg1:	Data descriptor or transient translator argument.  In the
+;		latter case, a string containing keywords and values to be 
+;		passed directly to the translators as if they appeared as 
+;		arguments in the translators table.  Keywords passed using 
+;		this mechanism take precedence over keywords appearing in 
+;		the translators table.  If no data descriptor is given, 
+;		one may be constructed using DATA keywords (see below).  The
+;		newly created data descriptor is freed unless this argument
+;		is an undefined named variable, in which case the new
+;		descriptor is returned in this variable.
 ;
-;	trs:	String containing keywords and values to be passed directly
-;		to the translators as if they appeared as arguments in the
-;		translators table.  These arguments are passed to every
-;		translator called, so the user should be aware of possible
-;		conflicts.  Keywords passed using this mechanism take 
-;		precedence over keywords appearing in the translators table.
+;	arg2:	Transient translator argument, if present.
 ;
 ;  OUTPUT: NONE
 ;
@@ -38,15 +41,6 @@
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
-;	map_*:		All map override keywords are accepted.  See
-;			map_keywords.include.
-;
-;			If name is specified, then only descriptors with
-;			those names are returned.
-;
-;			If /override and name is not specified, then
-;			the name is taken from the core descriptor.
-;
 ;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
@@ -56,6 +50,17 @@
 ;			this keyword is specified, no translators from the 
 ;			table are called, but the translators keywords
 ;			from the table are still used.   
+;
+;
+;	MAP Keywords
+;	---------------
+;	All MAP override keywords are accepted.  See map__keywords.include.  
+;	If 'name' is specified, then only descriptors with those names are 
+;	returned.
+;
+;	DATA Keywords
+;	-------------
+;	All DATA override keywords are accepted.  See dat__keywords.include.  
 ;
 ;
 ; RETURN:
@@ -78,12 +83,19 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_maps, dd, trs, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=select, $
+function pg_get_maps, arg1, arg2, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=select, $
                         override=override, verbatim=verbatim, $
-@map__keywords.include
-@nv_trs_keywords_include.pro
-		end_keywords
+                              @map__keywords_tree.include
+                              @dat__keywords.include
+                              @nv_trs_keywords_include.pro
+                              end_keywords
 
+ ;------------------------------------------------------------------------
+ ; sort out arguments
+ ;------------------------------------------------------------------------
+ pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+                          @dat__keywords.include
+                          end_keywords
 
  ;-----------------------------------------------
  ; add selection keywords to translator keywords
@@ -137,12 +149,12 @@ function pg_get_maps, dd, trs, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=select, $
      name = cor_name(bx)
     end
 
-   if(keyword_set(dd)) then gd = dd
+   if(keyword_set(dd)) then gd = cor_create_gd(dd, gd=gd)
    md = map_create_descriptors(n, $
-@map__keywords.include
-end_keywords)
-   gd = !null
+                  @map__keywords_tree.include
+                  end_keywords)
 
+   if(keyword_set(free)) then nv_free, dd
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get map descriptors from the translators
@@ -150,8 +162,15 @@ end_keywords)
  else $
   begin
    md = dat_get_value(dd, 'MAP_DESCRIPTORS', key1=ods, key4=_md, key8=name, trs=trs, $
-@nv_trs_keywords_include.pro
-	end_keywords)
+                              @nv_trs_keywords_include.pro
+                              end_keywords)
+
+   ;------------------------------------------------------------------------
+   ; Free dd if pg_sort_args determined that it will not be used outside 
+   ; this function.  Note that the object ID is not lost will still appear
+   ; in the gd.
+   ;------------------------------------------------------------------------
+   if(keyword_set(free)) then nv_free, dd
 
 ;   if(NOT keyword__set(md)) then md=map_create_descriptors(1)
    if(NOT keyword__set(md)) then return, obj_new()
@@ -185,8 +204,8 @@ end_keywords)
    ;-------------------------------------------------------------------
    if(defined(name)) then _name = name & name = !null
    map_assign, md, /noevent, $
-@map__keywords.include
-end_keywords
+                    @map__keywords_tree.include
+                    end_keywords
     if(defined(_name)) then name = _name
 
   end
@@ -195,8 +214,9 @@ end_keywords
  ;--------------------------------------------------------
  ; update generic descriptors
  ;--------------------------------------------------------
- if(keyword_set(dd)) then dat_set_gd, dd, gd, gbx=gbx, dkx=dkx, bx=bx
- dat_set_gd, md, gd, gbx=gbx, dkx=dkx, bx=bx
+ if((obj_valid(dd))[0]) then $
+              dat_set_gd, dd, gd, md=md, gbx=gbx, dkx=dkx, bx=bx, /noevent
+ dat_set_gd, md, gd, gbx=gbx, dkx=dkx, bx=bx, /noevent
 
  return, md
 end

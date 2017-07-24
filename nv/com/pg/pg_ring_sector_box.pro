@@ -123,7 +123,7 @@ end
 
 
 pro test
-ingrid, dd=dd, cd=cd, pd=pd, rd=rd
+grift, dd=dd, cd=cd, pd=pd, rd=rd
 
 outline_ptd = pg_ring_sector_box()
 outline_ptd = pg_ring_sector_box(tr([tr([0,0]),tr([1023,1023])]))

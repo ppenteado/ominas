@@ -2,7 +2,6 @@
 ;  implemented as a .include because arg_present does not propogate to 
 ;  lower-level calls
 
- if(defined(primary)) then stn_set_primary, _xd, primary, /noevent
  if(defined(surface_pt)) then stn_set_surface_pt, _xd, surface_pt, /noevent
 
 @bod_assign.include

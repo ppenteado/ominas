@@ -39,7 +39,8 @@
 ;	ecc:	Array (ndv+1 x 2 x n) giving the eccentricities and derivatives
 ;		for each edge.
 ;
-;	scale:	Array (2 x n) giving radial scale coefficients.
+;	radial_scale:	
+;		Array (2 x n) giving radial scale coefficients.
 ;
 ;	nm:	Integer giving the number of radial harmonics in the ring
 ;		shape.
@@ -109,7 +110,7 @@
 ;-
 ;=============================================================================
 function dsk_create_descriptors, n, crd=_crd0, bd=_bd0, sld=_sld0, dkd=_dkd0, $
-@dsk__keywords.include
+@dsk__keywords_tree.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -124,7 +125,7 @@ end_keywords
    if(keyword_set(_dkd0)) then dkd0 = _dkd0[i]
 
    dkd[i] = ominas_disk(i, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
-@dsk__keywords.include
+@dsk__keywords_tree.include
 end_keywords)
 
   end

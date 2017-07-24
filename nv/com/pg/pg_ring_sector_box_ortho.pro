@@ -119,7 +119,7 @@ end
 
 
 pro test
-ingrid, dd=dd, cd=cd, pd=pd, rd=rd
+grift, dd=dd, cd=cd, pd=pd, rd=rd
 
 outline_ptd = pg_ring_sector_box_ortho()
 outline_ptd = pg_ring_sector_box_ortho(tr([tr([0,0]),tr([1023,1023])]))

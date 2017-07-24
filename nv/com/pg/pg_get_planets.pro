@@ -13,20 +13,23 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_get_planets(dd, od=od)
-;	result = pg_get_planets(dd, od=od, trs)
+;	result = pg_get_planets(arg1, arg2, od=od)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:	data descriptor
+;	arg1:	Data descriptor or transient translator argument.  In the
+;		latter case, a string containing keywords and values to be 
+;		passed directly to the translators as if they appeared as 
+;		arguments in the translators table.  Keywords passed using 
+;		this mechanism take precedence over keywords appearing in 
+;		the translators table.  If no data descriptor is given, 
+;		one may be constructed using DATA keywords (see below).  The
+;		newly created data descriptor is freed unless this argument
+;		is an undefined named variable, in which case the new
+;		descriptor is returned in this variable.
 ;
-;	trs:	String containing keywords and values to be passed directly
-;		to the translators as if they appeared as arguments in the
-;		translators table.  These arguments are passed to every
-;		translator called, so the user should be aware of possible
-;		conflicts.  Keywords passed using this mechanism take 
-;		precedence over keywords appearing in the translators table.
+;	arg2:	Transient translator argument, if present.
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,12 +52,6 @@
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
-;	plt_*:		All planet override keywords are accepted.  See
-;			planet_keywords.include.  
-;
-;			If name is specified, then only descriptors with
-;			those names are returned. 
-;
 ;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
@@ -66,41 +63,26 @@
 ;			from the table are still used.  
 ;
 ;
-;    Descriptor Select Keywords
-;    --------------------------
-;    Descriptor select keywords are combined with OR logic.  They are implemented
-;    in this routine as described below after the translators have been called,
-;    but they are also added to the translator keywords.  The purpose of sending
-;    then to the translators as well is to give the translators an opportunity
-;    to filter their outputs before potentially generating a huge array of
-;    descriptors that would mostly be filtered out by this routine.   
+;	PLANET Keywords
+;	---------------
+;	All PLANET override keywords are accepted.  See plt__keywords.include.  
+;	If 'name' is specified, then only descriptors with those names are 
+;	returned.
 ;
-;	fov/cov:	Select all planets that fall within this many fields of
-;			view (fov) (+/- 10%) from the center of view (cov).
-;			Default cov is the camera optic axis.
+;	DATA Keywords
+;	-------------
+;	All DATA override keywords are accepted.  See dat__keywords.include.  
 ;
-;	pix:		Select all planets whose apparent size (in pixels) is 
-;			greater than or equal to this value.
-;
-;	radmax:		Select all planets whose radius is greater than or 
-;			equal to this value.
-;
-;	radmin:		Select all planets whose radius is less than or 
-;			equal to this value.
-;
-;	distmax:	Select all planets whose distance is greater than or 
-;			equal to this value.
-;
-;	distmin:	Select all planets whose distance is less than or 
-;			equal to this value.
-;
-;	nlarge:		Select n largest planets.
-;
-;	nsmall:		Select n smallest planets.
-;
-;	nclose:		Select n closst planets.
-;
-;	nfar:		Select n farthest planets.
+;	Descriptor Select Keywords
+;	--------------------------
+;	Descriptor select keywords are combined with OR logic.  They are 
+;	implemented in this routine after the translators have been called, 
+;	but they are also added to the translator keywords.  The purpose of 
+;	sending then to the translators as well is to give the  translators 
+;	an opportunity to filter their outputs before potentially  generating 
+;	a huge array of descriptors that would mostly be filtered out by this 
+;	routine.  Named bodies are exempted.  See pg_select_bodies for a 
+;	description of the standard keywords. 
 ;
 ;
 ; RETURN:
@@ -131,26 +113,17 @@
 ;
 ;
 ;===========================================================================
-pro pggp_select_planets, dd, pd, od=od, select
+pro pggp_select_planets, pd, od=od, name=name, _extra=select
 
  ;------------------------------------------------------------------------
  ; standard body filters
  ;------------------------------------------------------------------------
- sel = pg_select_bodies(dd, pd, od=od, select)
+ sel = pg_select_bodies(pd, od=od, _extra=select)
 
  ;------------------------------------------------------------------------
  ; implement any selections
  ;------------------------------------------------------------------------
- if(keyword_set(sel)) then $
-  begin
-   sel = unique(sel)
-
-   w = complement(pd, sel)
-   if(w[0] NE -1) then nv_free, pd[w]
-
-   if(sel[0] EQ -1) then pd = obj_new() $
-   else pd = pd[sel]
-  end
+ pg_cull_bodies, pd, sel, name=name
 
 
 end
@@ -162,11 +135,19 @@ end
 ; pg_get_planets
 ;
 ;===========================================================================
-function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, _extra=select, $
+function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=select, $
                              override=override, verbatim=verbatim, raw=raw, $
-@plt__keywords.include
-@nv_trs_keywords_include.pro
-		end_keywords
+                              @plt__keywords_tree.include
+                              @dat__keywords.include
+                              @nv_trs_keywords_include.pro
+                              end_keywords
+
+ ;------------------------------------------------------------------------
+ ; sort out arguments
+ ;------------------------------------------------------------------------
+ pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+                          @dat__keywords_tree.include
+                          end_keywords
 
  ndd = n_elements(dd)
 
@@ -193,12 +174,12 @@ function pg_get_planets, dd, trs, pd=_pd, od=od, sd=sd, _extra=select, $
   begin
    n = n_elements(name)
 
-   if(keyword_set(dd)) then gd = dd
+   if(keyword_set(dd)) then gd = cor_create_gd(dd, gd=gd)
    pd = plt_create_descriptors(n, $
-@plt__keywords.include
-end_keywords)
-   gd = !null
+               @plt__keywords_tree.include
+               end_keywords)
 
+   if(keyword_set(free)) then nv_free, dd
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get planet descriptors from the translators
@@ -210,8 +191,15 @@ end_keywords)
    ;-----------------------------------------------
    pd = dat_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
                                 key7=time, key8=name, trs=trs, $
-@nv_trs_keywords_include.pro
-	end_keywords)
+                                  @nv_trs_keywords_include.pro
+                                  end_keywords)
+
+   ;------------------------------------------------------------------------
+   ; Free dd if pg_sort_args determined that it will not be used outside 
+   ; this function.  Note that the object ID is not lost will still appear
+   ; in the gd.
+   ;------------------------------------------------------------------------
+   if(keyword_set(free)) then nv_free, dd
 
    if(NOT keyword_set(pd)) then return, obj_new()
    n = n_elements(pd)
@@ -253,24 +241,24 @@ end_keywords)
    ;-------------------------------------------------------------------
    if(defined(name)) then _name = name & name = !null
    plt_assign, pd, /noevent, $
-@plt__keywords.include
-end_keywords
+                @plt__keywords_tree.include
+                end_keywords
     if(defined(_name)) then name = _name
-
   end
 
  ;--------------------------------------------------------
  ; filter planets
  ;--------------------------------------------------------
  if(NOT keyword_set(pd)) then return, obj_new()
- if(keyword_set(select)) then pggp_select_planets, dd, pd, od=od, select
+ if(keyword_set(select)) then $
+                pggp_select_planets, pd, od=od, name=name, _extra=select
  if(NOT keyword_set(pd)) then return, obj_new()
 
  ;--------------------------------------------------------
  ; update generic descriptors
  ;--------------------------------------------------------
- if(keyword_set(dd)) then dat_set_gd, dd, gd, od=od, sd=sd
- dat_set_gd, pd, gd, od=od, sd=sd
+ if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, pd=pd, od=od, sd=sd, /noevent
+ dat_set_gd, pd, gd, od=od, sd=sd, /noevent
 
  return, pd
 end

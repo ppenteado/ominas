@@ -12,7 +12,7 @@ pro _map_lookup_transformations, _md, fn_map_to_image, fn_image_to_map
 
  for i=0, n-1 do $
   begin
-   case _md[i].type of
+   case _md[i].projection of
     'RECTANGULAR' : $
 	begin
 	 fn_map_to_image[i] = 'map_map_to_image_rectangular'

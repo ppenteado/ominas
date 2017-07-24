@@ -5,8 +5,8 @@
 function cas_psf, inst
 
  case inst of
-  'CAS_ISSNA' :	return, 1.3d
-  'CAS_ISSWA' :	return, 1.8d
+  'CAS_ISS_NA' :	return, 1.3d
+  'CAS_ISS_WA' :	return, 1.8d
  endcase
 
 end

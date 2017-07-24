@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro sld_assign, xd, noevent=noevent, $
-@sld__keywords.include
+@sld__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

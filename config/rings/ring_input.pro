@@ -341,7 +341,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
 
            dkds = append_array(dkds, dkd_peak[j])
            primaries = append_array(primaries, pds[i])
-           gd = append_array(gd, cor_gd(pds[i]))
+           gd = append_array(gd, cor_create_gd(cor_gd(pds[i]), xd0=pds[i]))
            ppds = append_array(ppds, pds[i])
           end
 
@@ -355,7 +355,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
 
            dkds = append_array(dkds, dkd_trough[j])
            primaries = append_array(primaries, pds[i])
-           gd = append_array(gd, cor_gd(pds[i]))
+           gd = append_array(gd, cor_create_gd(cor_gd(pds[i]), xd0=pds[i]))
            ppds = append_array(ppds, pds[i])
           end
         end
@@ -392,7 +392,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
          ndkd = n_elements(dkd)
          dkds = append_array(dkds, dkd)
          primaries = append_array(primaries, make_array(n_elements(dkd), val=pds[i]))
-         gd = append_array(gd, make_array(ndkd, val=cor_gd(pds[i])))
+         gd = append_array(gd, make_array(ndkd, val=cor_create_gd(cor_gd(pds[i]), xd0=pds[i])))
          ppds = append_array(ppds, make_array(n_elements(dkd), val=pds[i]))
         end
       end
@@ -435,14 +435,14 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  for i=0, n_obj-1 do $
   dkdts[i] = rng_evolve(dkds[i], bod_time(ppds[i]) - bod_time(dkds[i]))
  nv_free, dkdx
-
+;stop
+; apply to other edge types, other translators
 
  ;------------------------------------------------------------------
  ; make ring descriptors
  ;------------------------------------------------------------------
  rds = rng_create_descriptors(n_obj, $
 		gd=gd, $
-		primary=primaries, $
 		name=cor_name(dkdts), $
 		opaque=bod_opaque(dkdts), $
 		orient=bod_orient(dkdts), $

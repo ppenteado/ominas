@@ -1,0 +1,17 @@
+pd = pg_get_planets()
+pd = pg_get_planets(inst='CAS_ISS_NA')
+pd = pg_get_planets(time=3d7)  				; need de430 in gn/spk dir
+pd = pg_get_planets(name='SATURN')
+pd = pg_get_planets(inst='CAS_ISS_NA', time=3d7)	; need de430 in gn/spk dir
+pd = pg_get_planets(inst='CAS_ISS_NA', name='SATURN')
+pd = pg_get_planets(time=3d7, name='MOON') 		; need de430 in gn/spk dir
+
+cd = pg_get_cameras(inst='CAS_ISS_NA')
+cd = pg_get_cameras(inst='CAS_ISS_NA', time=5*3.5d7)	
+
+
+
+grim ~/projects/maps/enceladus/EN_120828_DLR_south_equator.vic \
+   over=planet_grid,station,array
+
+

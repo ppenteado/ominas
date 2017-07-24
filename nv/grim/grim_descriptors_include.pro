@@ -314,9 +314,9 @@ pro grim_rm_descriptor, grim_data, plane=plane, xdp, xd
   end
 
  ;--------------------------------------------------------
- ; free descriptors
+ ; free descriptors, only if originally created via GRIM
  ;--------------------------------------------------------
- nv_free, xd
+ if(keyword_set(cor_udata(xd, 'grim_status'))) then nv_free, xd
 
  ;--------------------------------------------------------
  ; cull dd generic descriptor
@@ -397,37 +397,57 @@ end
 ;
 ;=============================================================================
 pro grim_add_descriptor, grim_data, xdp, _xd, one=one, $
-                         noregister=noregister, assoc_dd=assoc_dd
+                               noregister=noregister, assoc_xd=assoc_xd
 @grim_constants.common
-
 
  if(NOT keyword_set(_xd)) then return
  plane = grim_get_plane(grim_data)
 
- xd = _xd
+ ;----------------------------------------------------------
+ ; select associated descriptors 
+ ;----------------------------------------------------------
+ xd = cor_associate_gd(_xd, assoc_xd)
+ if(NOT keyword_set(xd)) then return
 
- ;----------------------------------------------------------
- ; if assoc_dd given, consider only associated descriptors 
- ;----------------------------------------------------------
- if(keyword_set(assoc_dd)) then $
+ ;------------------------------------------------------------------------
+ ; Cull descriptors such that names are unique.  Remove older
+ ; duplicates (unless they are the same object), so new ones replace them. 
+ ; If only one descriptor allowed, force remove.
+ ;------------------------------------------------------------------------
+ if(keyword_set(one)) then xd = xd[0]
+ if(keyword_set(*xdp)) then $
   begin
-   _assoc_dd = cor_gd(xd, /dd)
-   w = where(_assoc_dd EQ assoc_dd)
-   if(w[0] EQ -1) then return
-   xd = xd[w]
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; Determine which descriptors duplicate existing ones by name.
+   ; Record the indices of the originals for removal
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   old_names = cor_name(*xdp)
+   new_names = cor_name(xd)
+
+   names = [old_names, new_names]
+   sort_names = [old_names+'-0', new_names+'-1']
+   
+   ss = sort(sort_names)
+   uu = uniq(names[ss])
+
+   w = complement(names, ss[uu])
+   if(w[0] NE -1) then xdx = (*xdp)[w]
   end
 
- ;-----------------------------------------------------------------------
- ; remove any descriptors to be replaced.
- ; if only one descriptor allowed, force remove
- ;-----------------------------------------------------------------------
- if(keyword_set(one)) then xd = xd[0] $
- else $
+ ;------------------------------------------------------------------------
+ ; Remove delicates.  Check that any descriptors to remove are not 
+ ; actually the same object as the new one.  If so, do nothing with them.
+ ;------------------------------------------------------------------------
+ if(keyword_set(xdx)) then $
   begin
-   w = where(cor_name(xd) EQ cor_name(*xdp))
-   if(w[0] NE -1) then rm_xd = xd[w]
+   ww = nwhere(xdx, xd, rev=ii)
+   xdx = rm_list_item(xdx, ww, only=obj_new())   
+   xd = rm_list_item(xd, ii, only=obj_new())   
+   if(keyword_set(xdx)) then $
+                   grim_rm_descriptor, grim_data, plane=plane, xdp, xdx
   end
- grim_rm_descriptor, grim_data, plane=plane, xdp, rm_xd
+ if(NOT keyword_set(xd)) then return
+
 
  ;-----------------------------------------------------------------------
  ; add descriptors and register
@@ -666,6 +686,14 @@ function grim_get_stars, grim_data, plane=plane, names=names
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
  if(NOT keyword_set(*plane.sd_p)) then load = 1
 
+ tvim, /silent, get=tvd
+ _tvd = cor_udata(plane.dd, 'GRIM_STR_TVD')
+ if(keyword_set(_tvd)) then $
+  begin
+   if(total(_tvd.zoom - tvd.zoom) GT 0) then load = 1
+   if(total(_tvd.offset - tvd.offset) GT 0) then load = 1
+  end
+
  if(NOT load) then return, get_object_by_name(*plane.sd_p, names)
 
 
@@ -679,6 +707,7 @@ function grim_get_stars, grim_data, plane=plane, names=names
                  trs, name=names, fov=fov, cov=cov, _extra=grim_data.str_select)
  cor_set_udata, plane.dd, 'GRIM_STR_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_STR_TRS', trs, /noevent
+ cor_set_udata, plane.dd, 'GRIM_STR_TVD', tvd, /noevent
 
  if(keyword_set(sd[0])) then grim_add_descriptor, grim_data, plane.sd_p, sd
 

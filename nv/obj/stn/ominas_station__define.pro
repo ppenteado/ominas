@@ -3,19 +3,18 @@
 ;
 ;=============================================================================
 function ominas_station::init, ii, crd=crd0, bd=bd0, std=std0, $
-@stn__keywords.include
+@stn__keywords_tree.include
 end_keywords
 @core.include
  
  void = self->ominas_body::init(ii, crd=crd0, bd=bd0,  $
-@bod__keywords.include
+@bod__keywords_tree.include
 end_keywords)
  if(keyword_set(bd0)) then struct_assign, bd0, self
 
  self.abbrev = 'STN'
  self.tag = 'STD'
 
- if(keyword__set(primary)) then self.__PROTECT__primary_xd = decrapify(primary[ii])
  if(keyword__set(surface_pt)) then self.surface_pt = decrapify(surface_pts[*,*,ii])
 
 
@@ -49,10 +48,6 @@ end
 ;		Methods: stn_body, stn_set_body
 ;
 ;
-;	primary:	Primary body descriptor.
-;
-;			Methods: stn_primary, stn_set_primary
-;
 ;	surface_pt:	Vector giving the surface coordinates of the 
 ;			stations location on the primary.  This 
 ;			is redundant with the location of bd, but it 
@@ -77,8 +72,7 @@ pro ominas_station__define
 
  struct = $
     { ominas_station, inherits ominas_body, $
-	surface_pt:	 dblarr(1,3), $		; Surface coords of location.
-        __PROTECT__primary_xd:     obj_new() $	; primary pd
+	surface_pt:	 dblarr(1,3) $		; Surface coords of location.
     }
 
 end

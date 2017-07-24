@@ -36,9 +36,11 @@ function spice_kernel_parse, dd, prefix, inst, type, ext=ext, time=_time, $
  def = 'spice_' + strlowcase(type) + '_detect'
 
  fn = prefix + '_' + def
- if(NOT routine_exists(fn)) then fn = 'eph_' + def
+ if(NOT routine_exists(fn)) then fn = 'gen_' + def
  
- sc = call_function(prefix + '_spice_sc', dd)
+ scfn = prefix + '_spice_sc'
+ sc = 0
+ if(routine_exists(scfn)) then sc = call_function(scfn, dd)
 
  ;---------------------------------------
  ; Get raw kernel keyword value

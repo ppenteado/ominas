@@ -5,7 +5,7 @@
  if(arg_present(sma)) then sma = dsk_sma(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(ecc)) then ecc = dsk_ecc(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(dap)) then dap = dsk_dap(_xd, cat=cat, condition=condition, /noevent)
- if(arg_present(scale)) then scale = dsk_scale(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(radial_scale)) then radial_scale = dsk_radial_scale(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(nm)) then nm = dsk_nm(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(m)) then m = dsk_m(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(em)) then em = dsk_em(_xd, cat=cat, condition=condition, /noevent)

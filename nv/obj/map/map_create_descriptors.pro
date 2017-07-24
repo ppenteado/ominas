@@ -29,7 +29,7 @@
 ;
 ;	crd:	Core descriptor(s) to pass to cor_create_descriptors.
 ;
-;	type:	Array (1 x n) of strings giving the map types.
+;	projection:	Array (1 x n) of strings giving the map projections.
 ;
 ;	units:	Array (2 x n) giving the map units.
 ;
@@ -70,7 +70,7 @@
 ;-
 ;=============================================================================
 function map_create_descriptors, n, crd=_crd0, md=_md0, $
-@map__keywords.include
+@map__keywords_tree.include
 end_keywords
  if(NOT keyword_set(n)) then n = 1
 
@@ -81,7 +81,7 @@ end_keywords
    if(keyword_set(_md0)) then md0 = _md0[i]
 
    md[i] = ominas_map(i, crd=crd0, md=md0, $
-@map__keywords.include
+@map__keywords_tree.include
 end_keywords)
 
   end

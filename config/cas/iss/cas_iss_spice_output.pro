@@ -71,12 +71,12 @@ pro cas_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
 
  cam_name = dat_instrument(dd)
  case cam_name of
-	'CAS_ISSNA': $
+	'CAS_ISS_NA': $
 	  begin
 	   inst=-82360l
 	   orient_fn = 'cas_iss_orient_to_cmat'
 	  end
-	'CAS_ISSWA': $
+	'CAS_ISS_WA': $
 	  begin
 	   inst=-82361l
 	   orient_fn = 'cas_iss_orient_to_cmat'

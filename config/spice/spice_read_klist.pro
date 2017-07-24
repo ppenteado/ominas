@@ -4,25 +4,15 @@
 ;
 ;===========================================================================
 function spice_read_klist, dd, klist, ck_out=ck_out, $
-             time=_time, prefix=prefix, inst=inst, notime=notime, extension=extension
+             time=time, prefix=prefix, inst=inst, notime=notime, extension=extension
 common spice_klist_block, klist_last, _inlines
+
+ if(NOT keyword_set(klist)) then return,''
 
  inst_prefix = prefix
  if(keyword_set(inst)) then inst_prefix = inst_prefix + '_' + inst
 
- fn_spice_time = inst_prefix + '_spice_time'
  ndd = n_elements(dd)
-
- if(NOT keyword_set(notime)) then $
-  begin
-   if(NOT defined(_time)) then $
-    for i=0, ndd-1 do $
-      et = append_array(et, call_function(fn_spice_time, dat_header(dd[i]))) $
-    else et = _time
-    _time = et
-  end
-
- if(NOT keyword_set(klist)) then return,''
 
  ;--------------------------------------------
  ; read input file
@@ -106,7 +96,7 @@ common spice_klist_block, klist_last, _inlines
      et_start = spice_str2et(start_times)
      et_stop = spice_str2et(stop_times)
 
-     w = where((et_start LT min(et)) AND (et_stop GT max(et)))
+     w = where((et_start LT min(time)) AND (et_stop GT max(time)))
      if(w[0] NE -1) then time_lines = inlines[wstart[w[0]]+1:wstop[w[0]]-1]
     end
 

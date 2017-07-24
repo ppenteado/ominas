@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro bod_assign, xd, noevent=noevent, $
-@bod__keywords.include
+@bod__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

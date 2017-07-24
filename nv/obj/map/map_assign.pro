@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro map_assign, xd, noevent=noevent, $
-@map__keywords.include
+@map__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

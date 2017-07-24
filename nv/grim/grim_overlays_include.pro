@@ -310,6 +310,7 @@ function grim_get_active_xds, plane, class, $
   'ring' :  xd_p = plane.rd_p
   'star' :  xd_p = plane.sd_p
   'station' :  xd_p = plane.std_p
+  'array' :  xd_p = plane.ard_p
  endcase
 
  if(NOT keyword_set(*xd_p)) then return, 0
@@ -476,7 +477,7 @@ end
 ;=============================================================================
 pro grim_call_activation_callbacks, plane, ptd, arg
 
- grim_data = grim_get_data(grnum=plane.grnum)
+ grim_data = grim_get_data(grn=plane.grn)
  grim_call_callbacks, *grim_data.act_callbacks_p, $
                            *grim_data.act_callbacks_data_pp, {ptd:ptd, arg:arg}
 
@@ -1302,9 +1303,10 @@ end
 pro grim_add_points, grim_data, ptd, plane=plane, $
          name=name, cd=cd, data=data
 
-
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
  n = n_elements(ptd)
+
+ if(NOT keyword_set(cd)) then cd = *plane.cd_p
 
 
  ;--------------------------------------------------------------------
@@ -2377,7 +2379,7 @@ pro grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _plane, _ptdp
  ;------------------------------------------
  ; add points
  ;------------------------------------------
- label = strtrim(grim_data.grnum,2) + '.' + $
+ label = strtrim(grim_data.grn,2) + '.' + $
                      strtrim(plane.pn,2) + '.' + $
                             strtrim(cor_udata(ptd, 'GRIM_INDEXED_ARRAY_LABEL'),2)
  if(keyword_set(_pts)) then $
@@ -3053,7 +3055,7 @@ end
 ; grim_remove_by_point
 ;
 ;=============================================================================
-function grim_remove_by_point, plane, p0, clicks=clicks, user=user
+function grim_remove_by_point, grim_data, plane, p0, clicks=clicks, user=user
 
 d2min = 25
 
@@ -3277,7 +3279,7 @@ end
 ; grim_remove_by_box
 ;
 ;=============================================================================
-pro grim_remove_by_box, plane, cx, cy, stat=stat, user=user
+pro grim_remove_by_box, grim_data, plane, cx, cy, stat=stat, user=user
 
  stat = 1
 
@@ -3453,14 +3455,14 @@ end
 ; grim_remove_overlays
 ;
 ;=============================================================================
-pro grim_remove_overlays, plane, p0, clicks=clicks, stat=stat, user=user
+pro grim_remove_overlays, grim_data, plane, p0, clicks=clicks, stat=stat, user=user
 
 d2min = 9
 
  ;---------------------------------------------
  ; select overlay under initial cursor point
  ;---------------------------------------------
- stat = grim_remove_by_point(plane, p0, clicks=clicks, user=user)
+ stat = grim_remove_by_point(grim_data, plane, p0, clicks=clicks, user=user)
 
  ;-----------------------------------------------------------------------------
  ; if nothing selected by the initial click, get user-defined box on image
@@ -3482,7 +3484,7 @@ d2min = 9
    box = 1
    if(d2 LE d2min) then box = 0
 
-   if(box) then grim_remove_by_box, plane, cx, cy, stat=stat, user=user
+   if(box) then grim_remove_by_box, grim_data, plane, cx, cy, stat=stat, user=user
   end
 
 end
@@ -3648,7 +3650,6 @@ end
 pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=source_ptd, $
                                    obj_name=obj_name, temp=temp
 
-
  if(grim_data.slave_overlays) then plane = grim_get_plane(grim_data, pn=0)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
@@ -3714,7 +3715,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; make sure relevant descriptors are loaded
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
- grim_load_descriptors, grim_data, name, plane=plane, $
+ grim_load_descriptors, grim_data, name, plane=plane, obj_name=obj_name, $
        cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, gd=gd
  if(NOT keyword_set(cd)) then return
 

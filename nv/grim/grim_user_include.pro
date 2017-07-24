@@ -28,7 +28,7 @@ end
 ; grim_add_user_points
 ;
 ;=============================================================================
-pro grim_add_user_points, grnum=grnum, user_ptd, tag, update=update, $
+pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
                   color=color, shade_fn=shade_fn, psym=psym, thick=thick, line=line, symsize=symsize, $
                   shade_threshold=shade_threshold, graphics_fn=graphics_fn, xgraphics=xgraphics, nodraw=nodraw, inactive=inactive, $
                   no_refresh=no_refresh, plane=plane
@@ -38,8 +38,8 @@ pro grim_add_user_points, grnum=grnum, user_ptd, tag, update=update, $
  if(NOT keyword_set(shade_fn)) then shade_fn = ''
  if(NOT keyword_set(shade_threshold)) then shade_threshold = 0d
 
- if(NOT defined(grnum)) then if(keyword_set(plane)) then grnum = plane.grnum
- grim_data = grim_get_data(grnum=grnum)
+ if(NOT defined(grn)) then if(keyword_set(plane)) then grn = plane.grn
+ grim_data = grim_get_data(grn=grn)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
  pn = plane.pn
@@ -126,13 +126,13 @@ end
 ; grim_update_user_points
 ;
 ;=============================================================================
-pro grim_update_user_points, plane=plane, grnum=grnum, user_ptd, tag, $
+pro grim_update_user_points, plane=plane, grn=grn, user_ptd, tag, $
                   color=color, shade_fn=shade_fn, psym=psym, thick=thick, line=line, symsize=symsize, $
                   shade_threshold=shade_threshold, graphics_fn=graphics_fn, xgraphics=xgraphics, nodraw=nodraw, $
                   no_refresh=no_refresh
 
- if(NOT keyword_set(grnum)) then if(keyword_set(plane)) then grnum = plane.grnum
- grim_data = grim_get_data(grnum=grnum)
+ if(NOT keyword_set(grn)) then if(keyword_set(plane)) then grn = plane.grn
+ grim_data = grim_get_data(grn=grn)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
  if(NOT keyword_set(plane.user_ptd_tlp)) then return
@@ -169,11 +169,11 @@ end
 ; grim_rm_user_points
 ;
 ;=============================================================================
-pro grim_rm_user_points, grim_data, tag, plane=plane, grnum=grnum
+pro grim_rm_user_points, grim_data, tag, plane=plane, grn=grn
 
  if(NOT keyword_set(plane)) then $
   begin
-   grim_data = grim_get_data(grnum=grnum)
+   grim_data = grim_get_data(grn=grn)
    plane = grim_get_plane(grim_data)
   end
 
@@ -209,7 +209,7 @@ end
 ; grim_get_user_ptd
 ;
 ;=============================================================================
-function grim_get_user_ptd, grnum=grnum, tag, prefix=prefix, $
+function grim_get_user_ptd, grn=grn, tag, prefix=prefix, $
            plane=plane, color=color, shade_fn=shade_fn, $
            xgraphics=xgraphics, graphics_fn=graphics_fn, $
            shade_threshold=shade_threshold, psym=psym, thick=thick, $
@@ -220,7 +220,7 @@ function grim_get_user_ptd, grnum=grnum, tag, prefix=prefix, $
 
  if(NOT keyword_set(plane)) then $
   begin
-   grim_data = grim_get_data(grnum=grnum)
+   grim_data = grim_get_data(grn=grn)
    plane = grim_get_plane(grim_data)
   end
 

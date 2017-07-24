@@ -1,7 +1,7 @@
 # instrument	input			output		keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  CAS_ISSNA	cas_iss_spice_input	cas_iss_spice_output \
+  CAS_ISS_NA	cas_iss_spice_input	cas_iss_spice_output \
 							klist=cas_demo.kernels \
 #							ck_in=auto \
 #							spk_in=auto \
@@ -13,7 +13,7 @@
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
 
-  CAS_ISSWA	cas_iss_spice_input	cas_iss_spice_output \
+  CAS_ISS_WA	cas_iss_spice_input	cas_iss_spice_output \
 							klist=cas_demo.kernels \
 #							ck_in=auto \
 #							spk_in=auto \
@@ -25,7 +25,7 @@
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
 
-  VIMS_IR      cas_vims_spice_input         cas_vims_spice_output \
+  CAS_VIMS_IR	cas_vims_spice_input	cas_vims_spice_output \
                                                         klist=cas_demo.kernels 
 #                                                       ck_in=auto \
 #                                                       spk_in=auto \

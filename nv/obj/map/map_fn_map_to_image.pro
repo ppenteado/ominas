@@ -49,6 +49,6 @@ function map_fn_map_to_image, md, noevent=noevent
 @core.include
  nv_notify, md, type = 1, noevent=noevent
  _md = cor_dereference(md)
- return, 'map_map_to_image_' + _md.type
+ return, 'map_map_to_image_' + _md.projection
 end
 ;===========================================================================

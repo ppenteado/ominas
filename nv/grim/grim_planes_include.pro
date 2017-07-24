@@ -557,7 +557,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	; bookkeeping
 	;---------------
 		pn		:	-1, $
-		grnum		:	grim_data.grnum, $
+		grn		:	grim_data.grn, $
 		filter		:	filter, $
 		load_path	:	load_path, $
 		save_path	:	save_path, $

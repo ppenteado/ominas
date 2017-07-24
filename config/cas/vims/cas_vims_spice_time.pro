@@ -2,11 +2,14 @@
 ; cas_vims_spice_time
 ;
 ;===========================================================================
-function cas_vims_spice_time, label, dt=dt, status=status,startjd=startjd,endjd=endjd
+function cas_vims_spice_time, label, dt=dt, string=string, status=status,startjd=startjd,endjd=endjd
 
- status = 0
+ status = -1
 
  start_time=pp_get_label_value(label,'START_TIME')
+ if(NOT keyword_set(start_time)) then return, -1d100
+ status = 0
+
  close_time=pp_get_label_value(label,'STOP_TIME')
  ;close_time = vicgetpar(label, 'IMAGE_TIME')
  if(strmid(close_time,strlen(close_time)-1,1) EQ 'Z') then $
