@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 echo $@
 OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cf='${OWNDIR}/ca-bundle.crt'
+cf="${OWNDIR}/ca-bundle.crt"
 if [ -z ${idlversion+x} ]; then
   idlversion="z"
 fi
