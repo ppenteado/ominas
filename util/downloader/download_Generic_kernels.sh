@@ -19,7 +19,8 @@ fi
 
 baseurl="http://naif.jpl.nasa.gov/pub/naif/generic_kernels/"
 #standard download (full, nonrecursive) directories
-dirs=(fk lsk pck stars)
+dirs=(fk lsk pck stars spk)
+
 
 #location for timestamps files
 mkdir -p ~/.ominas/timestamps/GENERIC
@@ -28,7 +29,7 @@ ts=`eval echo "~/.ominas/timestamps/"`
 
 for dir in "${dirs[@]}"
 do
- ${wget} "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts --recursive $@ "
+ ${wget} "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts --recursive --xpattern=a_old_versions $@ "
 done
 
 #special treatment directories (spk and ck, which are large)
@@ -36,11 +37,11 @@ done
 #echo "Downloading pcks"
 #${pp_wget} "${baseurl}pck/ --localdir=${1}/pck/ --absolute --timestamps=$ts $@ "
 
-echo "Downloading spks"
+#echo "Downloading spks"
 
-dirs=(asteroids comets lagrange_point planets satellites stations)
+#dirs=(asteroids comets lagrange_point planets satellites stations)
 
-for dir in "${dirs[@]}"
-do
-  ${wget} "${baseurl}spk/${dir} --localdir=${1}/spk/${dir} $@ --absolute --timestamps=$ts " # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
-done
+#for dir in "${dirs[@]}"
+#do
+#  ${wget} "${baseurl}spk/${dir} --localdir=${1}/spk/${dir} $@ --absolute --timestamps=$ts " # --xpattern=(\.bsp$)|(\.bsp\.lbl$)"
+#done
