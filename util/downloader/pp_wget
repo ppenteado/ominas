@@ -49,4 +49,4 @@ if [ -z ${idlbin+x} ]; then
   fi
 fi
 echo $ldp
-LD_PRELOAD=$ldp $idlbin -e '!path+=":${OWNDIR}"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
+LD_PRELOAD=$ldp $idlbin -e '!path+=":'"${OWNDIR}"'"& pp_wgetcl' -args --ssl_certificate_file=$cf $@
