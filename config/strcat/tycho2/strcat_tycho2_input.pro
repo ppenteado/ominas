@@ -116,6 +116,12 @@ function tycho2_get_stars, dd, filename, $
          faint=faint, bright=bright, nbright=nbright, $
          names=names, mag=mag, jtime=jtime
 
+ ;---------------------------------------------------------
+ ; check whether catalog falls within brightness limits
+ ;---------------------------------------------------------
+ if(keyword_set(faint)) then if(faint LT -1.5) then return, ''
+ if(keyword_set(bright)) then if(bright GT 12) then return, ''
+
  ndx_f = file_search(filename)
  if(ndx_f[0] eq '') then $
   begin
@@ -139,8 +145,7 @@ function tycho2_get_stars, dd, filename, $
  ;---------------------------------------------------------
  ; Find the tycho regions that the scene occupies
  ;---------------------------------------------------------
-; reg = where(index.DEmax ge dec1 and index.DEmin le dec2 and index.RAmax ge ra1 and index.RAmin le ra2)
- reg = strcat_radec_regions( [ra1, ra2]*!dpi/180d, [dec1, dec2]*!dpi/180d, $
+ reg = strcat_radec_regions([ra1, ra2]*!dpi/180d, [dec1, dec2]*!dpi/180d, $
 	  index.RAmin*!dpi/180d, index.RAmax*!dpi/180d, $
 	  index.DEmin*!dpi/180d, index.DEmax*!dpi/180d)
 
@@ -213,23 +218,12 @@ function tycho2_get_stars, dd, filename, $
 
  ;---------------------------------------------------------
  ; If limits are defined, remove stars that fall outside
- ; the limits. Limits in deg, Assumes RA's + DEC's in 
- ; J2000 (B1950 if /b1950)
+ ; the limits. 
  ;---------------------------------------------------------
- if(keyword_set(dec1) AND keyword_set(dec2)) then $
-  begin
-   subs = where((stars.dec GE dec1) AND (stars.dec LE dec2), count)
-   if(count EQ 0) then return, ''
-   stars = stars[subs]
-  end
-
-
- if(keyword_set(ra1) AND keyword_set(ra2)) then $
-  begin
-   subs = where((stars.ra GE ra1) AND (stars.ra LE ra2), count)
-   if(count EQ 0) then return, ''
-   stars = stars[subs]
-  end
+ w = strcat_radec_select([ra1, ra2]*!dpi/180d, [dec1, dec2]*!dpi/180d, $
+	                             stars.ra*!dpi/180d, stars.dec*!dpi/180d)
+ if(w[0] EQ -1) then return, ''
+ stars = stars[w]
 
  ;--------------------------------------------------------
  ; Apply proper motion to stars
@@ -257,12 +251,26 @@ function tycho2_get_stars, dd, filename, $
    stars = stars[w]
   end
 
- name = 'TYC ' + stars.num
-
+ ;---------------------------------------------------------
+ ; apply brightness thresholds
+ ;---------------------------------------------------------
+ if(keyword_set(faint)) then $
+  begin
+   w = where(stars.mag LE faint)
+   if(w[0] EQ -1) then return, ''
+   stars = stars[w]
+  end
+ if(keyword_set(bright)) then $
+  begin
+   w = where(stars.mag GE bright)
+   if(w[0] EQ -1) then return, ''
+   stars = stars[w]
+  end
 
  ;---------------------------------------------------------
  ; Select explicitly named stars
  ;---------------------------------------------------------
+ name = 'TYC ' + stars.num
  if(keyword_set(names)) then $
   begin
    w = where(names EQ name)

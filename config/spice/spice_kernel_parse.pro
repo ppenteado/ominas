@@ -55,6 +55,7 @@ function spice_kernel_parse, dd, prefix, inst, type, ext=ext, time=_time, $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; get path specific to this translator
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+; kpath = subdirs(getenv(env)) + '/'
  kpath = getenv(env)
  w = where(kpath NE '')
  if(w[0] EQ -1) then $
