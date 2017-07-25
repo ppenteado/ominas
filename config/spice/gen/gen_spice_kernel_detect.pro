@@ -91,6 +91,7 @@ function gen_spice_kernel_detect, dd, kpath, type, $
  ; Get kernel database 
  ;--------------------------------
  data = gen_spice_build_db(kpath, type)
+ if(NOT keyword_set(data)) then return,''
 
  ;------------------------
  ; Get appropriate kernels
