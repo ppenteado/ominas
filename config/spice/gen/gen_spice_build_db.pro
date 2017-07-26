@@ -177,12 +177,17 @@ function gen_spice_build_db, _kpath, type, nocheck=nocheck
  ;-------------------------------------
  ; get all filenames
  ;-------------------------------------
- all_files = file_search(kpath + '/*')
+;;;;
+ all_files = file_search(kpath + '/*', /test_regular)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; filter out some common extensions that we know are not kernel files
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  split_filename, all_files, dir, name, ext
+
+ w = where(ext NE '')
+ if(w[0] EQ -1) then return, db
+ all_files = all_files[w]
 
  w = where(ext NE 'lbl')
  if(w[0] EQ -1) then return, db

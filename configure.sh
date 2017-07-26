@@ -1347,7 +1347,7 @@ while [ 1 ]; do
   fi
   
 done
-
+. ~/.ominas/ominasrc
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
 printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas/demo/\n"
 printf "For documentation on how OMINAS works, see the User Guide at https://ppenteado.github.io/ominas/user_guide\n"
