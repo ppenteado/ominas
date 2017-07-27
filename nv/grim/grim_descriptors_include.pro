@@ -165,6 +165,9 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; Call each source function
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;stop
+;i=3
+;print, *dep_list[i]		; some bad object references in here
    for i=0, nn-1 do $
          grim_overlay, grim_data, plane=plane, $
                name_list[i], dep=*dep_list[i], $
@@ -419,13 +422,15 @@ pro grim_add_descriptor, grim_data, xdp, _xd, one=one, $
   begin
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; Determine which descriptors duplicate existing ones by name.
-   ; Record the indices of the originals for removal
+   ; Record the indices of the new ones for removal.
+   ; Removing originals would cause a problem if any other
+   ; objects have them as dependencies.
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    old_names = cor_name(*xdp)
    new_names = cor_name(xd)
 
    names = [old_names, new_names]
-   sort_names = [old_names+'-0', new_names+'-1']
+   sort_names = [new_names+'-0', old_names+'-1']
    
    ss = sort(sort_names)
    uu = uniq(names[ss])
@@ -550,7 +555,8 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ;----------------------------------------------------------------------------
  load = 0
  _names = cor_udata(plane.dd, 'GRIM_PLT_NAMES')
- if(NOT grim_compare(_names, names)) then load = 1
+ if(keyword_set(names)) then $
+       if(NOT grim_compare(_names, names)) then load = 1
  _trs = cor_udata(plane.dd, 'GRIM_PLT_TRS')
  if(NOT grim_compare(_trs, plane.plt_trs)) then load = 1
  mark = grim_demark_descriptor(*plane.pd_p)
@@ -678,7 +684,7 @@ function grim_get_stars, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
- _names = cor_udata(plane.dd, 'GRIM_STR_NAMES')
+ if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_STR_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
  _trs = cor_udata(plane.dd, 'GRIM_STR_TRS')
  if(NOT grim_compare(_trs, trs)) then load = 1
@@ -730,7 +736,8 @@ function grim_get_rings, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
- _names = cor_udata(plane.dd, 'GRIM_RNG_NAMES')
+ if(keyword_set(names)) then $
+           _names = cor_udata(plane.dd, 'GRIM_RNG_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
  _trs = cor_udata(plane.dd, 'GRIM_RNG_TRS')
  if(NOT grim_compare(_trs, plane.rng_trs)) then load = 1
@@ -777,7 +784,8 @@ function grim_get_stations, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
- _names = cor_udata(plane.dd, 'GRIM_STN_NAMES')
+ if(keyword_set(names)) then $
+           _names = cor_udata(plane.dd, 'GRIM_STN_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
  _trs = cor_udata(plane.dd, 'GRIM_STN_TRS')
  if(NOT grim_compare(_trs, plane.stn_trs)) then load = 1
@@ -821,7 +829,8 @@ function grim_get_arrays, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
- _names = cor_udata(plane.dd, 'GRIM_ARR_NAMES')
+ if(keyword_set(names)) then $
+           _names = cor_udata(plane.dd, 'GRIM_ARR_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
  _trs = cor_udata(plane.dd, 'GRIM_ARR_TRS')
  if(NOT grim_compare(_trs, plane.arr_trs)) then load = 1
