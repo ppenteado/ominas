@@ -484,6 +484,8 @@ function pkins()
                      #echo "${insp}"
                      #export insp
                      #export ins
+                     DFLAG="false"
+                     demost="NOT CONFIGURED"
                      return 1 ;;
 
                     *)
@@ -1090,7 +1092,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 7 8 9 10 11 12"
+    ans="1 2 3 4 5 6 7 8 9"
   else
     ans="all"
   fi
@@ -1116,7 +1118,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 7 8 9 10 11 12 2 1"
+    ans="3 4 5 6 7 8 9 2 1"
   else
     ans="uall"
   fi
@@ -1168,8 +1170,8 @@ do
                                 pr=0
 				pkins ominas_env_def.sh "${corest}" $(($num-4))
                                 #corest=${yes}
-                                DFLAG="false"
-                                demost="NOT CONFIGURED"
+                                #DFLAG="false"
+                                #demost="NOT CONFIGURED"
 				ppkg $(($num-4)) 	;;
 		[89]|10|11|12)
                                 pr=0
