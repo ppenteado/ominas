@@ -243,7 +243,7 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=select, $
    plt_assign, pd, /noevent, $
                 @plt__keywords_tree.include
                 end_keywords
-    if(defined(_name)) then name = _name
+   if(defined(_name)) then name = _name
   end
 
  ;--------------------------------------------------------

@@ -271,7 +271,8 @@
 ;
 ;                Default is 0.
 ;
-;	*max:	Maximum data value to scale to when displaying images.  
+;	*maxdat:	
+;		Maximum data value to scale to when displaying images.  
 ;		Values larger than this are set to the maximum color table 
 ;		index.  If not set, the maximum value in the data set is used.  
 ;		In cases where the data array is being subsampled, this value 
@@ -2033,12 +2034,16 @@ end
 ; grim_exit
 ;
 ;=============================================================================
-pro grim_exit, grim_data
+pro grim_exit, grim_data, grn=grn
 
-  if(NOT keyword_set(grim_data)) then grim_data = grim_get_data()
-  if(NOT keyword_set(grim_data)) then return
-  widget_control, grim_data.base, /destroy
+ if(NOT keyword_set(grim_data)) then grim_data = grim_get_data()
+ if(NOT defined(grn)) then grn = grim_data.grn
 
+ for i=0, n_elements(grn)-1 do $
+  begin
+   grim_data = grim_get_data(grn=grn[i])
+   if(keyword_set(grim_data)) then widget_control, grim_data.base, /destroy
+  end
 end
 ;=============================================================================
 
@@ -9657,8 +9662,11 @@ end
 ; 	cube (3d array)
 ;
 ;=============================================================================
-pro grim_get_args, arg1, arg2, dd=dd, grn=grn, type=type, xzero=xzero, nhist=nhist, $
-               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
+pro grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, xzero=xzero, $
+;               maintain=maintain, compress=compress, nhist=nhist, 
+               overlays=overlays, extensions=extensions, rgb=rgb, $
+               @dat__keywords_tree.include
+               end_keywords
 
  ;--------------------------------------------
  ; build data descriptors list 
@@ -9666,6 +9674,19 @@ pro grim_get_args, arg1, arg2, dd=dd, grn=grn, type=type, xzero=xzero, nhist=nhi
  grim_get_arg, arg1, dd=_dd, grn=grn, extensions=extensions
  grim_get_arg, arg2, dd=_dd, grn=grn, extensions=extensions
 
+
+ ;--------------------------------------------
+ ; if no data descriptors, create one 
+ ;--------------------------------------------
+;stop
+;;;need trs
+ if(NOT keyword_set(_dd)) then $
+  if(keyword_set(overlays)) then $
+   begin
+    pg_sort_args, dd, trs=trs, $
+		       @dat__keywords_tree.include
+		       end_keywords
+   end
 
  ;--------------------------------------------
  ; process data descriptors 
@@ -9748,21 +9769,22 @@ end
 ; grim
 ;
 ;=============================================================================
-pro grim, arg1, arg2, gd=gd, _extra=keyvals, $
+pro grim, arg1, arg2, _extra=keyvals, $
         cd=_cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=_od, $
 	new=new, xsize=xsize, ysize=ysize, no_refresh=no_refresh, $
 	default=default, previous=previous, restore=restore, activate=activate, $
 	doffset=doffset, no_erase=no_erase, filter=filter, rgb=rgb, visibility=visibility, channel=channel, exit=exit, $
-	zoom=zoom, rotate=rotate, order=order, offset=offset, retain=retain, maintain=maintain, $
+	zoom=zoom, rotate=rotate, order=order, offset=offset, retain=retain, $
+;        gd=gd, nhist=nhist, compress=compress, maintain=maintain, $
 	mode_init=mode_init, modal=modal, xzero=xzero, frame=frame, $
 	refresh_callbacks=refresh_callbacks, refresh_callback_data_ps=refresh_callback_data_ps, $
 	plane_callbacks=plane_callbacks, plane_callback_data_ps=plane_callback_data_ps, $
-	nhist=nhist, compress=compress, path=path, symsize=symsize, $
+	maxdat=maxdat, path=path, symsize=symsize, $
 	user_psym=user_psym, workdir=workdir, mode_args=mode_args, $
         save_path=save_path, load_path=load_path, overlays=overlays, pn=pn, $
 	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
 	menu_extensions=menu_extensions, button_extensions=button_extensions, $
-	arg_extensions=arg_extensions, loadct=loadct, max=max, grn=grn, $
+	arg_extensions=arg_extensions, loadct=loadct, grn=grn, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, $
         sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_xd=assoc_xd, $
@@ -9772,14 +9794,16 @@ pro grim, arg1, arg2, gd=gd, _extra=keyvals, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
-        xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
+        xtitle=xtitle, ytitle=ytitle, psym=psym, title=title, $
+        @dat__keywords_tree.include
+        end_keywords
 common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 @grim_block.include
 @grim_constants.common
 
  if(keyword_set(exit)) then $
   begin
-   grim_exit
+   grim_exit, grn=grn
    return
   end
 
@@ -9797,7 +9821,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
 	hide=hide, mode_args=mode_args, xzero=xzero, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
-        activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
+        activate=activate, frame=frame, compress=compress, loadct=loadct, maxdat=maxdat, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
 	visibility=visibility, channel=channel, render_sample=render_sample, $
@@ -9882,9 +9906,11 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  ; resolve arguments
  ;=========================================================
- grim_get_args, arg1, arg2, dd=dd, grn=grn, type=type, $
-             nhist=nhist, maintain=maintain, compress=compress, $
-             extensions=extensions, rgb=rgb
+ grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, $
+;             nhist=nhist, maintain=maintain, compress=compress, $
+             overlays=overlays, extensions=extensions, rgb=rgb, $
+             @dat__keywords_tree.include
+             end_keywords
 
 ; if(keyword_set(rendering)) then ....
 
@@ -9943,7 +9969,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        cmd=cmd, color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        symsize=symsize, nhist=nhist, maintain=maintain, $
-       compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
+       compress=compress, extensions=extensions, max=maxdat, beta=beta, npoints=npoints, $
        visibility=visibility, channel=channel, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
        render_pht_min=render_pht_min, overlays=overlays, activate=activate)

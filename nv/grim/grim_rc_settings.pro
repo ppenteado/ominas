@@ -95,7 +95,7 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, sun_trs=sun_trs, $
 	filetype=filetype, hide=hide, mode_args=mode_args, xzero=xzero, rgb=rgb, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
-        activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
+        activate=activate, frame=frame, compress=compress, loadct=loadct, maxdat=maxdat, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
         render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
@@ -105,14 +105,19 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
  ;----------------------------------------------------
  ; return if no resource file
  ;----------------------------------------------------
- rcname = getenv('HOME') + '/' + rcfile
+ defsysv, '!grimrc', exists=exists
+ if(exists) then rcname = !grimrc $
+ else rcname = getenv('HOME') + '/' + rcfile
+ if(NOT keyword_set(rcname)) then return
+
  fname = file_search(rcname)
  if(NOT keyword_set(fname)) then $
   begin
-   nv_message, verb=0.5, $
-    'Resource file not found: ' + rcname +'.  Proceeding without it.'
+   nv_message, verb=0.5, 'GRIM resource file not found: ' + rcname +'.'
    return
   end
+
+
 
  ;----------------------------------------------------
  ; read file and strip comments
@@ -376,10 +381,10 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
  else _loadct = loadct
  if(keyword_set(_loadct)) then loadct = fix(_loadct)
 
- if(n_elements(max) EQ 0) then $
-                        _max = grim_rc_value(keywords, value_ps, 'MAX') $
- else _max = max
- if(keyword_set(_max)) then max = double(_max)
+ if(n_elements(maxdat) EQ 0) then $
+                        _maxdat = grim_rc_value(keywords, value_ps, 'MAXDAT') $
+ else _maxdat = maxdat
+ if(keyword_set(_maxdat)) then maxdat = double(_maxdat)
 
  if(n_elements(extensions) EQ 0) then $
                  _extensions = grim_rc_value(keywords, value_ps, 'EXTENSIONS') $

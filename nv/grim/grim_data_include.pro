@@ -322,6 +322,7 @@ end
 ;=============================================================================
 function grim_grn_to_top, grn
 common grn_block, tops
+ if(grn GE n_elements(tops)) then return, 0
  return, tops[grn]
 end
 ;=============================================================================

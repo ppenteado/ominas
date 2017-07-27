@@ -48,10 +48,7 @@ pro map_set_projection, md, projection, noevent=noevent
 @core.include
  _md = cor_dereference(md)
 
- _md.projection=projection
- _map_lookup_transformations, _md, fn_map_to_image, fn_image_to_map
- _md.fn_map_to_image = decrapify(fn_map_to_image)
- _md.fn_image_to_map = decrapify(fn_image_to_map)
+ _md.projection = projection
 
  cor_rereference, md, _md
  nv_notify, md, type = 0, noevent=noevent

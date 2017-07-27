@@ -77,6 +77,7 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
 
  dim = dat_dim(_dd)
  nelm = product(dim)
+ if(nelm EQ 0) then return, !null
 
  sampled = 0
 
