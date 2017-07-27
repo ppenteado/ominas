@@ -47,6 +47,10 @@ $DEMO_SPICE_CK/05232_05233ra.bc
 $DEMO_SPICE_CK/05232_05237ra.bc
 $DEMO_SPICE_CK/05213_05243ca_ISS.bc
 
+#used for cas_radar_example.pro
+$DEMO_SPICE_SPK//050209AP_SCPSE_05040_05049.bsp
+$DEMO_SPICE_CK/05046_05046pa_itl_0.5mrad.bc
+
 # used for multimission_example.pro
 $DEMO_SPICE_SPK/vgr1_sat337.bsp
 $DEMO_SPICE_SPK/voyager_1.ST+1991_a54418u.merged.bsp
