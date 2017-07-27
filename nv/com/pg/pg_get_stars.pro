@@ -120,12 +120,12 @@
 ;
 ;
 ;===========================================================================
-pro pggs_select_stars, sd, od=od, name=name, _extra=select
+pro pggs_select_stars, sd, od=od, name=name, _extra=keyvals
 
  ;------------------------------------------------------------------------
  ; standard body filters
  ;------------------------------------------------------------------------
- sel = pg_select_bodies(sd, od=od, _extra=select)
+ sel = pg_select_bodies(sd, od=od, prefix='str', _extra=keyvals)
 
  ;------------------------------------------------------------------------
  ; filters specific to stars
@@ -136,7 +136,7 @@ pro pggs_select_stars, sd, od=od, name=name, _extra=select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  ; faint -- faintest magnitude to select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- faint = struct_get(select, 'faint')
+ faint = extra_value(keyvals, 'faint', 'str')
  if(keyword_set(faint)) then $
   begin
    w = where(mag LE faint)
@@ -146,7 +146,7 @@ pro pggs_select_stars, sd, od=od, name=name, _extra=select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  ; bright -- brightest magnitude to select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- bright = struct_get(select, 'bright')
+ bright = extra_value(keyvals, 'bright', 'str')
  if(keyword_set(bright)) then $
   begin
    w = where(mag GE bright)
@@ -156,7 +156,7 @@ pro pggs_select_stars, sd, od=od, name=name, _extra=select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  ; nbright -- number of brightest stars to select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- nbright = struct_get(select, 'nbright')
+ nbright = extra_value(keyvals, 'nbright', 'str')
  if(keyword_set(nbright)) then $
   if(n GT nbright) then $ 
    begin
@@ -181,7 +181,7 @@ end
 ; pg_get_stars
 ;
 ;===========================================================================
-function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=select, $
+function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=keyvals, $
                      override=override, verbatim=verbatim, raw=raw, $
                               @str__keywords_tree.include
                               @dat__keywords.include
@@ -197,10 +197,11 @@ function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=select, $
 
  ndd = n_elements(dd)
 
- ;-----------------------------------------------
- ; add selection keywords to translator keywords
- ;-----------------------------------------------
- if(keyword_set(select)) then pg_add_selections, trs, select
+ ;---------------------------------------------------------------------
+ ; add selection keywords to translator keywords and filter out any
+ ; prefixed keywords that don't apply
+ ;---------------------------------------------------------------------
+ if(keyword_set(keyvals)) then pg_add_selections, trs, keyvals, 'STR'
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -292,8 +293,8 @@ function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=select, $
  ; filter stars
  ;--------------------------------------------------------
  if(NOT keyword_set(sd)) then return, obj_new()
- if(keyword_set(select)) then $
-                  pggs_select_stars, sd, od=od, name=name, _extra=select
+ if(keyword_set(keyvals)) then $
+                  pggs_select_stars, sd, od=od, name=name, _extra=keyvals
  if(NOT keyword_set(sd)) then return, obj_new()
 
 

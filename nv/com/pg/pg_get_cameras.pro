@@ -91,7 +91,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=select, $
+function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
                           override=override, verbatim=verbatim, default_orient=default_orient, $
                           no_default=no_default, $
                               @cam__keywords_tree.include
@@ -106,10 +106,11 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=select, $
                           @dat__keywords.include
                           end_keywords
 
- ;-----------------------------------------------
- ; add selection keywords to translator keywords
- ;-----------------------------------------------
- if(keyword_set(select)) then pg_add_selections, trs, select
+ ;---------------------------------------------------------------------
+ ; add selection keywords to translator keywords and filter out any
+ ; prefixed keywords that don't apply
+ ;---------------------------------------------------------------------
+ if(keyword_set(keyvals)) then pg_add_selections, trs, keyvals, 'CAM'
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given

@@ -44,10 +44,40 @@
 ;	
 ;-
 ;=============================================================================
-function dat_parse_keyvals, keyvals, keywords=keywords
+
+
+
+;=============================================================================
+; dat_parse_keyvals_extra
+;
+;=============================================================================
+function dat_parse_keyvals_extra, lines
+
+ nlines = n_elements(lines)
+
+ for i=0, nlines-1 do $
+  begin
+   dat_parse_keyval, lines[i], keyword, value
+   keyval = append_struct(keyval, create_struct(keyword, value))
+  end
+
+ return, keyval
+end
+;=============================================================================
+
+
+
+
+;=============================================================================
+; dat_parse_keyvals
+;
+;=============================================================================
+function dat_parse_keyvals, keyvals, keywords=keywords, extra=extra
 @core.include
 
  if(NOT keyword_set(keyvals)) then return, ''
+
+ if(keyword_set(extra)) then return, dat_parse_keyvals_extra(keyvals)
 
  s = size(keyvals)
  ntran = s[1]
@@ -60,7 +90,7 @@ function dat_parse_keyvals, keyvals, keywords=keywords
  for i=0, ntran-1 do $
   begin
    w = where(keyvals[i,*] NE '')
- 
+
    if(w[0] NE -1) then $
     begin
      nkey = n_elements(w)
@@ -70,7 +100,6 @@ function dat_parse_keyvals, keyvals, keywords=keywords
       begin
        dat_parse_keyval, keyvals[i,j], keyword, value
        keywords = append_array(keywords, keyword)
-
        (*(*kv.keywords_p)[i])[j] = keyword
        (*(*kv.values_p)[i])[j] = value
       end

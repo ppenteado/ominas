@@ -150,15 +150,17 @@ pro graft, arg, $
      else : user_ptd = append_array(user_ptd, object_ptd[i])
     endcase
   end
+ xds = unique(xds)
 
  ;------------------------------
  ; add descriptors to grim
  ;------------------------------
- gd = cor_create_gd(xds)
- sund = cor_dereference_gd(gd, name='SUN') 	; this stinks; another reason to
-						; stop treating the sun specially
-						; in grim
- grim, gd=gd, sund=sund, /no_refresh
+ ww = where(cor_name(xds) EQ 'SUN', compl=w)	; this stinks; another reason to
+ gd = cor_create_gd(xds[w])			; stop treating the sun specially
+; sund = cor_dereference_gd(gd, name='SUN') 	; in grim
+					
+ if(ww[0] NE -1) then sund = xds[ww]
+ grim, gd=gd, sund=xds[ww], /no_refresh
 
  ;------------------------------
  ; add object points to grim

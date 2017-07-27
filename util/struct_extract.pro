@@ -2,7 +2,7 @@
 ; struct_extract
 ;
 ;===========================================================================
-function struct_extract, struct, prefix, rem=rem_struct
+function struct_extract, struct, prefix, rem=rem_struct, retain=retain
 
  if(NOT keyword_set(struct)) then return, !null
 
@@ -12,6 +12,7 @@ function struct_extract, struct, prefix, rem=rem_struct
  w = where(strmid(tags, 0, len) EQ prefix, complement=ww)
  if(w[0] EQ -1) then return, !null
 
+ if(keyword_set(retain)) then len = 0
  for i=0, n_elements(w)-1 do $
      new_struct = append_struct(new_struct, $
                        create_struct(strmid(tags[w[i]], len, 256), struct.(w[i])))

@@ -83,7 +83,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_maps, arg1, arg2, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=select, $
+function pg_get_maps, arg1, arg2, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=keyvals, $
                         override=override, verbatim=verbatim, $
                               @map__keywords_tree.include
                               @dat__keywords.include
@@ -97,10 +97,11 @@ function pg_get_maps, arg1, arg2, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=select
                           @dat__keywords.include
                           end_keywords
 
- ;-----------------------------------------------
- ; add selection keywords to translator keywords
- ;-----------------------------------------------
- if(keyword_set(select)) then pg_add_selections, trs, select
+ ;---------------------------------------------------------------------
+ ; add selection keywords to translator keywords and filter out any
+ ; prefixed keywords that don't apply
+ ;---------------------------------------------------------------------
+ if(keyword_set(keyvals)) then pg_add_selections, trs, keyvals, 'MAP'
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given

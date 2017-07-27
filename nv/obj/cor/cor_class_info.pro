@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	cor_class_info, classes=classes, abbrev=abbrev, tags=tags
+;	cor_class_info, class=class, abbrev=abbrev, tag=tag
 ;
 ;
 ; ARGUMENTS:
@@ -26,11 +26,11 @@
 ;  INPUT: NONE
 ;
 ;  OUTPUT: 
-;	classes:	String array giving the names of all OMINAS classes. 
+;	class:		String array giving the names of all OMINAS classes. 
 ;
 ;	abbrev:		String array giving the abbreviations of OMINAS classes. 
 ;
-;	tags:		String array giving the tag names of OMINAS classes. 
+;	tag:		String array giving the tag names of OMINAS classes. 
 ;
 ;
 ;
@@ -44,53 +44,41 @@
 ;	
 ;-
 ;=============================================================================
-pro cor_class_info, classes=classes, abbrev=abbrev, tags=tags
-common cor_class_info_block, _classes, _abbrev, _tags
+pro cor_class_info, class=class, abbrev=abbrev, tag=tag
+common cor_class_info_block, _class, _abbrev, _tag
 
-
- ;-------------------------------------------------------------
- ; determine OMINAS classes
- ;-------------------------------------------------------------
- if(NOT keyword_set(_classes)) then $
+  
+ ;------------------------------------------------
+ ; return prior results if available
+ ;------------------------------------------------
+ if(keyword_set(_class)) then $
   begin
-   ;--------------------------------------------
-   ; get object info
-   ;--------------------------------------------
-   help, /objects, output=s
+   class = _class
+   abbrev = _abbrev
+   tag = _tag
+   return
+  end
 
-   ;----------------------------------------------
-   ; parse output to deterine ominas class names
-   ;----------------------------------------------
-   p = strpos(s, '**')
-   w = where(p EQ 0)
-   s = s[w]
+ ;------------------------------------------------
+ ; get classes from directory structure
+ ;------------------------------------------------
+ alldirs = file_search(getenv('OMINAS_DIR') + '/nv/obj/*', /test_dir, /mark_dir)
+ defs = file_search(alldirs+'ominas_*__define.pro')
+ dirs = file_dirname(defs)
+ defs = file_basename(defs)
+ class = strupcase(str_nnsplit(strmid(defs, 7, 128), '__'))
+ nclass = n_elements(class)
 
-   p = strpos(s, 'OMINAS_')
-   w = where(p NE -1)
-   if(w[0] EQ -1) then return
-   s = s[w]
+ ;------------------------------------------------
+ ; create prototype objects and get abbrev an tag
+ ;------------------------------------------------
+ xd = objarr(nclass)
+ for i=0, nclass-1 do xd[i] = obj_new('ominas_'+class[i])
 
-   s = str_nnsplit(s, '_', rem=rem)
-   _classes = strtrim(str_nnsplit(rem, ','), 2)
-   nclasses = n_elements(_classes)
-
-   ;-------------------------------------------------------------
-   ; determine OMINAS abbreviations and tags
-   ;-------------------------------------------------------------
-   _abbrev = strarr(nclasses)
-   _tags = strarr(nclasses)
-   for i=0, nclasses-1 do $
-    begin
-     stat = execute('xd=ominas_' + strlowcase(_classes[i]) + '()')
-     _abbrev[i] = cor_abbrev(xd)
-     _tags[i] = cor_tag(xd)
-    end
-  end 
+ abbrev = cor_abbrev(xd)
+ tag = cor_tag(xd)
 
 
- classes = _classes
- abbrev = _abbrev
- tags = _tags
 
 
 end

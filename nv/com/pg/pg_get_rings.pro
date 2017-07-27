@@ -112,7 +112,7 @@ pro pggr_select_rings, rd, od=od, name=name, _extra=select
  ;------------------------------------------------------------------------
  ; standard body filters
  ;------------------------------------------------------------------------
- sel = pg_select_bodies(rd, od=od, _extra=select)
+ sel = pg_select_bodies(rd, od=od, prefix='rng', _extra=keyvals)
 
  ;------------------------------------------------------------------------
  ; implement any selections
@@ -129,7 +129,7 @@ end
 ; pg_get_rings
 ;
 ;===========================================================================
-function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=select, $
+function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=keyvals, $
                       override=override, verbatim=verbatim, $
                               @rng__keywords_tree.include
                               @dat__keywords.include
@@ -143,10 +143,11 @@ function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=select, $
                           @dat__keywords.include
                           end_keywords
 
- ;-----------------------------------------------
- ; add selection keywords to translator keywords
- ;-----------------------------------------------
- if(keyword_set(select)) then pg_add_selections, trs, select
+ ;---------------------------------------------------------------------
+ ; add selection keywords to translator keywords and filter out any
+ ; prefixed keywords that don't apply
+ ;---------------------------------------------------------------------
+ if(keyword_set(keyvals)) then pg_add_selections, trs, keyvals, 'RNG'
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -228,8 +229,8 @@ function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=select, $
  ; filter rings
  ;--------------------------------------------------------
  if(NOT keyword_set(rd)) then return, obj_new()
- if(keyword_set(select)) then $
-            pggr_select_rings, rd, od=od, name=name, _extra=select
+ if(keyword_set(keyvals)) then $
+            pggr_select_rings, rd, od=od, name=name, _extra=keyvals
  if(NOT keyword_set(rd)) then return, obj_new()
 
  ;--------------------------------------------------------

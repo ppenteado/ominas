@@ -440,7 +440,7 @@ pro grim_add_descriptor, grim_data, xdp, _xd, one=one, $
   end
 
  ;------------------------------------------------------------------------
- ; Remove delicates.  Check that any descriptors to remove are not 
+ ; Remove duplicates.  Check that any descriptors to remove are not 
  ; actually the same object as the new one.  If so, do nothing with them.
  ;------------------------------------------------------------------------
  if(keyword_set(xdx)) then $
@@ -481,12 +481,27 @@ function grim_get_cameras, grim_data, plane=plane
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if the translator keywords have change, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_CAM_TRS')
  if(NOT grim_compare(_trs, plane.cam_trs)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if descriptor has been marked as stale, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  mark = grim_demark_descriptor(*plane.cd_p)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if there are no descriptors, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(*plane.cd_p)) then load = 1
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; don't continue if load not necessary
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT load) then return, *plane.cd_p
 
 
@@ -504,7 +519,7 @@ function grim_get_cameras, grim_data, plane=plane
  grim_message, /clear
  grim_print, grim_data, 'Getting camera descriptor...'
  cd = pg_get_cameras(plane.dd, plane.cam_trs, $
-                 time=t, default_orient=orient, _extra=grim_data.cam_select)
+                 time=t, default_orient=orient, _extra=*grim_data.keyvals_p)
  md = pg_get_maps(plane.dd)
  grim_message
 
@@ -554,16 +569,33 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
- _names = cor_udata(plane.dd, 'GRIM_PLT_NAMES')
- if(keyword_set(names)) then $
-       if(NOT grim_compare(_names, names)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if requested names differ from loaded objects, need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_PLT_NAMES')
+ if(NOT grim_compare(_names, names)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if the translator keywords have change, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_PLT_TRS')
  if(NOT grim_compare(_trs, plane.plt_trs)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if descriptor has been marked as stale, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  mark = grim_demark_descriptor(*plane.pd_p)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1		;;;
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if there are no descriptors, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(*plane.pd_p)) then load = 1			;;;
 
-
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; don't continue if load not necessary
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT load) then return, get_object_by_name(*plane.pd_p, names)
 
 
@@ -577,7 +609,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - -
  grim_print, grim_data, 'Getting planet descriptors...'
  pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, $
-                name=names, plane.plt_trs, fov=fov, cov=cov, _extra=grim_data.plt_select)
+      name=names, plane.plt_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - -
  ; get planets that require primary descriptors
@@ -585,7 +617,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  if(keyword_set(pd)) then $
   begin
    pdd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, pd=pd, $
-                        name=names, plane.plt_trs, fov=fov, cov=cov, _extra=grim_data.plt_select)
+       name=names, plane.plt_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
    if(keyword_set(pdd)) then pd = [pd, pdd]
 
    _names = cor_name(pd)
@@ -632,14 +664,33 @@ function grim_get_sun, grim_data, plane=plane
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if requested names differ from loaded objects, need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _name = cor_udata(plane.dd, 'GRIM_SUN_NAME')
  if(NOT grim_compare(_name, name)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if the translator keywords have change, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_SUN_TRS')
  if(NOT grim_compare(_trs, plane.sun_trs)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if descriptor has been marked as stale, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  mark = grim_demark_descriptor(*plane.sund_p)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if there are no descriptors, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(*plane.sund_p)) then load = 1
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; don't continue if load not necessary
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT load) then return, get_object_by_name(*plane.sund_p, names)
 
 
@@ -648,11 +699,11 @@ function grim_get_sun, grim_data, plane=plane
  ;----------------------------------------------------------------------------
  grim_print, grim_data, 'Getting Sun descriptor...'
  if(star) then sund = pg_get_stars(plane.dd, od=*plane.cd_p, $
-                 name=name, plane.sun_trs, _extra=grim_data.sun_select) $
+                 name=name, plane.sun_trs, _extra=*grim_data.keyvals_p) $
  else $
   begin
    pd = (pg_get_planets(plane.dd, od=*plane.cd_p, $
-             name=name, plane.sun_trs, _extra=grim_data.sun_select))[1]
+             name=name, plane.sun_trs, _extra=*grim_data.keyvals_p))[1]
    sund = str_create_descriptors(1, gbd=pd)
   end
 
@@ -684,14 +735,33 @@ function grim_get_stars, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if requested names differ from loaded objects, need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_STR_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if the translator keywords have change, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_STR_TRS')
  if(NOT grim_compare(_trs, trs)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if descriptor has been marked as stale, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  mark = grim_demark_descriptor(*plane.sd_p)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if there are no descriptors, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(*plane.sd_p)) then load = 1
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if the view has changed, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  tvim, /silent, get=tvd
  _tvd = cor_udata(plane.dd, 'GRIM_STR_TVD')
  if(keyword_set(_tvd)) then $
@@ -700,6 +770,9 @@ function grim_get_stars, grim_data, plane=plane, names=names
    if(total(_tvd.offset - tvd.offset) GT 0) then load = 1
   end
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; don't continue if load not necessary
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT load) then return, get_object_by_name(*plane.sd_p, names)
 
 
@@ -710,7 +783,7 @@ function grim_get_stars, grim_data, plane=plane, names=names
 
  grim_print, grim_data, 'Getting star descriptors...'
  sd = pg_get_stars(plane.dd, od=*plane.cd_p, $
-                 trs, name=names, fov=fov, cov=cov, _extra=grim_data.str_select)
+                 trs, name=names, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
  cor_set_udata, plane.dd, 'GRIM_STR_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_STR_TRS', trs, /noevent
  cor_set_udata, plane.dd, 'GRIM_STR_TVD', tvd, /noevent
@@ -736,15 +809,33 @@ function grim_get_rings, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
- if(keyword_set(names)) then $
-           _names = cor_udata(plane.dd, 'GRIM_RNG_NAMES')
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if requested names differ from loaded objects, need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_RNG_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if the translator keywords have change, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_RNG_TRS')
  if(NOT grim_compare(_trs, plane.rng_trs)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if descriptor has been marked as stale, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  mark = grim_demark_descriptor(*plane.rd_p)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if there are no descriptors, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(*plane.rd_p)) then load = 1
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; don't continue if load not necessary
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT load) then return, get_object_by_name(*plane.rd_p, names)
 
  ;----------------------------------------------------------------------------
@@ -758,7 +849,7 @@ function grim_get_rings, grim_data, plane=plane, names=names
 
  rd = pg_get_rings(plane.dd, $
          od=*plane.cd_p, pd=pd, name=names, $
-                   plane.rng_trs, fov=fov, cov=cov, _extra=grim_data.rng_select)
+                   plane.rng_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
  cor_set_udata, plane.dd, 'GRIM_RNG_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_RNG_TRS', plane.rng_trs, /noevent
 
@@ -784,15 +875,33 @@ function grim_get_stations, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
- if(keyword_set(names)) then $
-           _names = cor_udata(plane.dd, 'GRIM_STN_NAMES')
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if requested names differ from loaded objects, need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_STN_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if the translator keywords have change, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_STN_TRS')
  if(NOT grim_compare(_trs, plane.stn_trs)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if descriptor has been marked as stale, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  mark = grim_demark_descriptor(*plane.std_p)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+ 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if there are no descriptors, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(*plane.std_p)) then load = 1
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; don't continue if load not necessary
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT load) then return, get_object_by_name(*plane.std_p, names)
 
 
@@ -803,7 +912,7 @@ function grim_get_stations, grim_data, plane=plane, names=names
  if(NOT map) then bx = *plane.pd_p
  std = pg_get_stations(plane.dd, $
 		   od=*plane.cd_p, bx=bx, name=names, $
-                          plane.stn_trs, _extra=grim_data.stn_select)
+                          plane.stn_trs, _extra=*grim_data.keyvals_p)
  cor_set_udata, plane.dd, 'GRIM_STN_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_STN_TRS', plane.stn_trs, /noevent
 
@@ -829,15 +938,33 @@ function grim_get_arrays, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
- if(keyword_set(names)) then $
-           _names = cor_udata(plane.dd, 'GRIM_ARR_NAMES')
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if requested names differ from loaded objects, need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_ARR_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if the translator keywords have change, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_ARR_TRS')
  if(NOT grim_compare(_trs, plane.arr_trs)) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if descriptor has been marked as stale, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  mark = grim_demark_descriptor(*plane.ard_p)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if there are no descriptors, then need to load
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(*plane.ard_p)) then load = 1
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; don't continue if load not necessary
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT load) then return, get_object_by_name(*plane.ard_p, names)
 
 
@@ -848,7 +975,7 @@ function grim_get_arrays, grim_data, plane=plane, names=names
  if(NOT map) then bx = *plane.pd_p
  ard = pg_get_arrays(plane.dd, $
 		   od=*plane.cd_p, bx=bx, name=names, $
-                         plane.arr_trs, _extra=grim_data.arr_select)
+                         plane.arr_trs, _extra=*grim_data.keyvals_p)
  cor_set_udata, plane.dd, 'GRIM_ARR_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_ARR_TRS', plane.arr_trs, /noevent
 

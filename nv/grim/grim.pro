@@ -271,8 +271,7 @@
 ;
 ;                Default is 0.
 ;
-;	*maxdat:	
-;		Maximum data value to scale to when displaying images.  
+;	*max:	Maximum data value to scale to when displaying images.  
 ;		Values larger than this are set to the maximum color table 
 ;		index.  If not set, the maximum value in the data set is used.  
 ;		In cases where the data array is being subsampled, this value 
@@ -9663,10 +9662,8 @@ end
 ;
 ;=============================================================================
 pro grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, xzero=xzero, $
-;               maintain=maintain, compress=compress, nhist=nhist, 
-               overlays=overlays, extensions=extensions, rgb=rgb, $
-               @dat__keywords_tree.include
-               end_keywords
+               maintain=maintain, compress=compress, nhist=nhist, $
+               overlays=overlays, extensions=extensions, rgb=rgb
 
  ;--------------------------------------------
  ; build data descriptors list 
@@ -9680,13 +9677,11 @@ pro grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, xzero=xzero, $
  ;--------------------------------------------
 ;stop
 ;;;need trs
- if(NOT keyword_set(_dd)) then $
-  if(keyword_set(overlays)) then $
-   begin
-    pg_sort_args, dd, trs=trs, $
-		       @dat__keywords_tree.include
-		       end_keywords
-   end
+; if(NOT keyword_set(_dd)) then $
+;  if(keyword_set(overlays)) then $
+;   begin
+;    pg_sort_args, dd, trs=trs, keyvals
+;   end
 
  ;--------------------------------------------
  ; process data descriptors 
@@ -9775,11 +9770,11 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	default=default, previous=previous, restore=restore, activate=activate, $
 	doffset=doffset, no_erase=no_erase, filter=filter, rgb=rgb, visibility=visibility, channel=channel, exit=exit, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, retain=retain, $
-;        gd=gd, nhist=nhist, compress=compress, maintain=maintain, $
+        gd=gd, nhist=nhist, compress=compress, maintain=maintain, $
 	mode_init=mode_init, modal=modal, xzero=xzero, frame=frame, $
 	refresh_callbacks=refresh_callbacks, refresh_callback_data_ps=refresh_callback_data_ps, $
 	plane_callbacks=plane_callbacks, plane_callback_data_ps=plane_callback_data_ps, $
-	maxdat=maxdat, path=path, symsize=symsize, $
+	max=max, path=path, symsize=symsize, $
 	user_psym=user_psym, workdir=workdir, mode_args=mode_args, $
         save_path=save_path, load_path=load_path, overlays=overlays, pn=pn, $
 	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
@@ -9794,9 +9789,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
-        xtitle=xtitle, ytitle=ytitle, psym=psym, title=title, $
-        @dat__keywords_tree.include
-        end_keywords
+        xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
 common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 @grim_block.include
 @grim_constants.common
@@ -9810,9 +9803,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  grim_constants
 
  grim_rc_settings, rcfile='.ominas/grimrc', keyvals=keyvals, $
-	cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
-	str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
-	sun_select=sun_select, cmd=cmd, $
+	cmd=cmd, $
 	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
@@ -9821,7 +9812,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
 	hide=hide, mode_args=mode_args, xzero=xzero, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
-        activate=activate, frame=frame, compress=compress, loadct=loadct, maxdat=maxdat, $
+        activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
 	visibility=visibility, channel=channel, render_sample=render_sample, $
@@ -9907,10 +9898,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ; resolve arguments
  ;=========================================================
  grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, $
-;             nhist=nhist, maintain=maintain, compress=compress, $
-             overlays=overlays, extensions=extensions, rgb=rgb, $
-             @dat__keywords_tree.include
-             end_keywords
+             nhist=nhist, maintain=maintain, compress=compress, $
+             overlays=overlays, extensions=extensions, rgb=rgb
 
 ; if(keyword_set(rendering)) then ....
 
@@ -9969,8 +9958,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        cmd=cmd, color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        symsize=symsize, nhist=nhist, maintain=maintain, $
-       compress=compress, extensions=extensions, max=maxdat, beta=beta, npoints=npoints, $
-       visibility=visibility, channel=channel, $
+       compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
+       visibility=visibility, channel=channel, keyvals=keyvals, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
        render_pht_min=render_pht_min, overlays=overlays, activate=activate)
 

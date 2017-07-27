@@ -24,7 +24,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 	   sun_select=sun_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
            color=color, xrange=xrange, yrange=yrange, position=position, npoints=npoints, $
            thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
-           psym=psym, cursor_modes=cursor_modes, $
+           psym=psym, cursor_modes=cursor_modes, keyvals=keyvals, $
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
@@ -32,6 +32,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            overlays=overlays, activate=activate
 @grim_block.include
 
+  if(NOT keyword_set(keyvals)) then keyvals = ''
   if(NOT keyword_set(dd0)) then dd0 = obj_new()
   if(NOT keyword_set(nhist)) then nhist = 1
 
@@ -165,6 +166,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 	;---------------
 	; bookkeeping
 	;---------------
+		keyvals_p		: nv_ptr_new(keyvals), $
 		base_xsize		: 0l, $
 		base_ysize		: 0l, $
 
@@ -237,13 +239,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 
 		misc_data_p		: ptr_new(0), $
 
-		cam_select     		: cam_select, $
-		plt_select     		: plt_select, $
-		rng_select     		: rng_select, $
-		str_select     		: str_select, $
-		stn_select     		: stn_select, $
-		arr_select     		: arr_select, $
-		sun_select     		: sun_select, $
 
 	;---------------
 	; planes

@@ -113,12 +113,12 @@
 ;
 ;
 ;===========================================================================
-pro pggp_select_planets, pd, od=od, name=name, _extra=select
+pro pggp_select_planets, pd, od=od, name=name, _extra=keyvals
 
  ;------------------------------------------------------------------------
  ; standard body filters
  ;------------------------------------------------------------------------
- sel = pg_select_bodies(pd, od=od, _extra=select)
+ sel = pg_select_bodies(pd, od=od, prefix='plt', _extra=keyvals)
 
  ;------------------------------------------------------------------------
  ; implement any selections
@@ -135,7 +135,7 @@ end
 ; pg_get_planets
 ;
 ;===========================================================================
-function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=select, $
+function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=keyvals, $
                              override=override, verbatim=verbatim, raw=raw, $
                               @plt__keywords_tree.include
                               @dat__keywords.include
@@ -151,10 +151,11 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=select, $
 
  ndd = n_elements(dd)
 
- ;-----------------------------------------------
- ; add selection keywords to translator keywords
- ;-----------------------------------------------
- if(keyword_set(select)) then pg_add_selections, trs, select
+ ;---------------------------------------------------------------------
+ ; add selection keywords to translator keywords and filter out any
+ ; prefixed keywords that don't apply
+ ;---------------------------------------------------------------------
+ if(keyword_set(keyvals)) then pg_add_selections, trs, keyvals, 'PLT'
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -169,7 +170,7 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=select, $
 
  ;-------------------------------------------------------------------
  ; if /override, create descriptors without calling translators
- ;-------------------------------------------------------------------s
+ ;-------------------------------------------------------------------
  if(keyword_set(override)) then $
   begin
    n = n_elements(name)
@@ -250,8 +251,8 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=select, $
  ; filter planets
  ;--------------------------------------------------------
  if(NOT keyword_set(pd)) then return, obj_new()
- if(keyword_set(select)) then $
-                pggp_select_planets, pd, od=od, name=name, _extra=select
+ if(keyword_set(keyvals)) then $
+                pggp_select_planets, pd, od=od, name=name, _extra=keyvals
  if(NOT keyword_set(pd)) then return, obj_new()
 
  ;--------------------------------------------------------
