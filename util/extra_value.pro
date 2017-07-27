@@ -23,7 +23,8 @@
 ;
 ;	name:	String giving the name of the keyword to search for.  May
 ;		be abbreviated according to the usual IDL keyword abbreviation
-;		rules *except* that perfect matches are exempt.  
+;		rules except that in the case of a conflict, perfect matches 
+;		are preferred; otherwise first match is returned.  
 ;
 ;	prefix:	String giving an optional prefix to apply to the keyword
 ;		search.  A value is returned if either the name or prefixed
@@ -80,18 +81,13 @@ function ev_match, extra, name, prefix
    ;- - - - - - -  - - - - - - - - - - - - - - - - - - - - -
    ; if multiple matches, return exact match if present
    ;- - - - - - -  - - - - - - - - - - - - - - - - - - - - -
-   if(ww[0] NE -1) then return, w[ww] $
-
-   ;- - - - - - -  - - - - - - - - - - - - - - - - - - - - -
-   ; otherwise, it's ambiguous
-   ;- - - - - - -  - - - - - - - - - - - - - - - - - - - - -
-   else message, 'Ambiguous keyword: ' + s
+   if(ww[0] NE -1) then return, w[ww[0]]
   end
 
  ;--------------------------------------------------------
  ; result for one or zero matches
  ;--------------------------------------------------------
- return, w
+ return, w[0]
 end
 ;=============================================================================
 
@@ -103,7 +99,8 @@ end
 ;=============================================================================
 function extra_value, extra, name, prefix, noabbrev=noabbrev
 
- 
+  if(NOT keyword_set(extra)) then return, !null
+
  ;--------------------------------------------------------
  ; if prefixed name matches, use that
  ;--------------------------------------------------------

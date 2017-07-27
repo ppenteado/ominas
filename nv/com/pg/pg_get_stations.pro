@@ -82,7 +82,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_stations, arg1, arg2, od=od, bx=bx, std=_std, _extra=select, $
+function pg_get_stations, arg1, arg2, od=od, bx=bx, std=_std, _extra=keyvals, $
                           override=override, verbatim=verbatim, $
                               @stn__keywords_tree.include
                               @dat__keywords.include
@@ -97,10 +97,11 @@ function pg_get_stations, arg1, arg2, od=od, bx=bx, std=_std, _extra=select, $
                           end_keywords
 
 
- ;-----------------------------------------------
- ; add selection keywords to translator keywords
- ;-----------------------------------------------
- if(keyword_set(select)) then pg_add_selections, trs, select
+ ;---------------------------------------------------------------------
+ ; add selection keywords to translator keywords and filter out any
+ ; prefixed keywords that don't apply
+ ;---------------------------------------------------------------------
+ if(keyword_set(keyvals)) then pg_add_selections, trs, keyvals, 'STN'
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given

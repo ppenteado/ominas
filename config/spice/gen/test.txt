@@ -15,3 +15,4 @@ grim ~/projects/maps/enceladus/EN_120828_DLR_south_equator.vic \
    over=planet_grid,station,array
 
 
+pd = pg_get_planets(plt_time=100)
