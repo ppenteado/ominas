@@ -484,6 +484,8 @@ function pkins()
                      #echo "${insp}"
                      #export insp
                      #export ins
+                     DFLAG="false"
+                     demost="NOT CONFIGURED"
                      return 1 ;;
 
                     *)
@@ -650,7 +652,7 @@ echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
 #echo "export CAM_NFILTERS=256" >> $setting
 
-for ((d=1; d<6; d++));
+for ((d=1; d<5; d++));
 do
         dat=${Data[$d]}
         #echo "$d: ${inst[$d]}"
@@ -894,15 +896,15 @@ fi
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
 #declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
-declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" "UCAC4")
-declare -a insts=("" "" "" "" "" "")
-insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
+declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" )
+declare -a insts=("" "" "" "" "")
+insts[1]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
 #insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
 #insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
 #insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
-insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
-insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
-insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
+insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
+insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
+insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
 for ((d=0; d<${#mis[@]}; d++));
 do
 	#mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
@@ -996,7 +998,7 @@ Mission Packages:
 Data:
         8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
            About 22 GB as of Dec/2016
-        9) Tycho2 star catalog . . . . . . . . . . ${dstatus[2]}
+        9) Tycho2 star catalog . . . . . . . . . . ${dstatus[1]}
            About 161 MB download, 665 MB unpacked
 For more information, see
 https://ppenteado.github.io/ominas/demo/install_guide.html
@@ -1045,9 +1047,9 @@ Mission Packages:
 Data:
         8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
            About 22 GB as of Dec/2016
-        9) Tycho2 star catalog . . . . . . . . . . ${dstatus[2]}
+        9) Tycho2 star catalog . . . . . . . . . . ${dstatus[1]}
            About 161 MB download, 665 MB unpacked
-       10) UCAC4 star catalog  . . . . . . . . . . ${dstatus[5]}
+       10) UCAC4 star catalog  . . . . . . . . . . ${dstatus[2]}
            About 8.5 GB download
        11) SAO star catalog  . . . . . . . . . . . ${dstatus[3]}
            About 19 MB download, 70 MB unpacked
@@ -1090,7 +1092,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 7 8 9 10 11 12"
+    ans="1 2 3 4 5 6 7 8 9"
   else
     ans="all"
   fi
@@ -1116,7 +1118,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 7 8 9 10 11 12 2 1"
+    ans="3 4 5 6 7 8 9 2 1"
   else
     ans="uall"
   fi
@@ -1168,8 +1170,8 @@ do
                                 pr=0
 				pkins ominas_env_def.sh "${corest}" $(($num-4))
                                 #corest=${yes}
-                                DFLAG="false"
-                                demost="NOT CONFIGURED"
+                                #DFLAG="false"
+                                #demost="NOT CONFIGURED"
 				ppkg $(($num-4)) 	;;
 		[89]|10|11|12)
                                 pr=0
@@ -1347,7 +1349,7 @@ while [ 1 ]; do
   fi
   
 done
-
+. ~/.ominas/ominasrc
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
 printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas/demo/\n"
 printf "For documentation on how OMINAS works, see the User Guide at https://ppenteado.github.io/ominas/user_guide\n"

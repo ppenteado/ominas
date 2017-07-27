@@ -5,12 +5,15 @@ if (~n_elements(dir)) || (~strlen(strtrim(dir,2))) then begin
   print,'delete_ominas_files: No directory specified'
   return
 endif
-print,'This will delete all files downloaded by the OMINAS installer at ',dir
-if (conf lt 1) then begin
-  print,'Are you sure (y/n)[n]? '
+;print,'This will delete all files downloaded by the OMINAS installer at ',dir
+if (conf lt 1) then begin 
+  print,'Would you like to delete all the files at '+dir+' (y/n)[n]? '
   ans=''
   read,ans
-endif else ans='y'
+endif else begin
+  ans='y'
+  print,'This will delete all files downloaded by the OMINAS installer at ',dir
+endelse
 if strlowcase(ans) ne 'y' then return
 ps=path_sep()
 ;odir=(file_search(dir)).replace(ps,'_')

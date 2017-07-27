@@ -412,6 +412,14 @@ if ~strmatch(link,'*/') then begin ;if entry is not a directory
   endif
 endif else begin
   if self.recursive then begin ; if entry is a directory
+    if self.pattern && ~stregex(link,self.pattern,/bool) then begin
+      if ~self.quiet then print,'skipping '+link+' because it does not match the specified pattern: '+self.pattern
+      return
+    endif
+    if self.xpattern && stregex(link,self.xpattern,/bool) then begin
+      if ~self.quiet then print,'skipping '+link+' because it matches the specified xpattern: '+self.xpattern
+      return
+    endif
     if ~self.quiet then print,'Entering directory ',link
     iw=pp_wget(self.baseurl+'/'+link,$
       timestamps=self.timestamps,clobber=self.clobber,pattern=self.pattern,$
