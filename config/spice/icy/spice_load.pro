@@ -21,7 +21,6 @@ pro spice_load, k_in, uk_in=uk_in, pool=pool
    if(ii[0] NE -1) then uk_in = loaded_kernels[ii]
   end
 
-
  if(keyword_set(k_in)) then k_in = file_search(k_in)
 
  n_k_in = 0l

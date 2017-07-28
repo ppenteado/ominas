@@ -116,7 +116,7 @@
 ; drd_read
 ;
 ;=============================================================================
-function drd_read, _filename, data, header, $
+function drd_read, filename, data, header, $
 		  filetype=_filetype, $
 		  input_fn=_input_fn, $
 		  output_fn=_output_fn, $
@@ -134,22 +134,6 @@ function drd_read, _filename, data, header, $
 		  extensions=extensions
 
 
- ;---------------------------------------------
- ; try filename extensions
- ;---------------------------------------------
- if(keyword_set(extensions)) then $
-  begin
-   ii = 0
-   while((ii LT n_elements(extensions)) AND (NOT keyword_set(filename))) do $
-    begin
-     dot = '.'
-     if(strmid(extensions[ii], 0, 1) EQ '.') then dot = ''
-     filename = file_search(_filename + dot + extensions[ii])
-     ii = ii + 1
-    end
-  end
- if(NOT keyword_set(filename)) then filename = _filename
-
  ;---------------------------------
  ; read detached header
  ;---------------------------------
@@ -162,7 +146,7 @@ function drd_read, _filename, data, header, $
  ; use base filename as id string
  ;---------------------------------
  if(keyword_set(_name)) then name = _name[i] $
- else split_filename, _filename, dir, name
+ else split_filename, filename, dir, name
   
  ;-----------------------------------------
  ; set up initial data descriptor
@@ -378,15 +362,26 @@ function dat_read, filespec, data, header, $
  nodata = keyword_set(nodata)
 
 
- ;----------------------------------------------------------
- ; expand file specification; return if no files found
- ;----------------------------------------------------------
- filenames = file_search(filespec)
+ ;--------------------------------------------------------------------------
+ ; expand file specifications and try extensions; return if no files found
+ ;--------------------------------------------------------------------------
+ nspec = n_elements(filespec)
+ next = n_elements(extensions)
+ for i=0, nspec-1 do $
+  begin
+   file = ''
+   for j=0, next-1 do $
+     file = append_array(file, file_search(filespec[i] + extensions[j]))
+   if(NOT keyword_set(file)) then file = file_search(filespec[i])
+   filenames = append_array(filenames, file)
+  end
+
  if(NOT keyword_set(filenames)) then  $
   begin
    nv_message, /con, 'No files.'
    return, !null
   end
+
 
 
  ;----------------------------------------------------------

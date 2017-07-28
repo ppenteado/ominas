@@ -1453,7 +1453,7 @@ end
 pro grim_modify_colors, grim_data
 
  ctmod, top=top
- grim_colortool
+ gr_colortool
 
 end
 ;=============================================================================
@@ -6866,7 +6866,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Opens grim_colortool. 
+;	Opens gr_colortool. 
 ;
 ;
 ; CATEGORY:
@@ -8907,7 +8907,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\---------------------\*grim_menu_delim_event', $ 
            '0\Render               \grim_menu_render_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
-           '0\Colors               \*grim_menu_view_colors_event', $ 
+           '0\Color Tables         \*grim_menu_view_colors_event', $ 
            '2\<null>               \+*grim_menu_delim_event', $
 
           '+*1\Overlays' ,$

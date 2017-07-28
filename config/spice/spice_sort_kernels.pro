@@ -116,15 +116,14 @@ pro spice_sort_kernels, all_kernels, $
   fk_reverse=_fk_reverse, ik_reverse=_ik_reverse, sck_reverse=_sck_reverse, $
   lsk_reverse=_lsk_reverse, xk_reverse=_xk_reverse, strict_priority=strict_priority
 
- all_kernels = ''
- if(keyword_set(ck_in)) then all_kernels = append_array(all_kernels, ck_in)
- if(keyword_set(spk_in)) then all_kernels = append_array(all_kernels, spk_in)
- if(keyword_set(pck_in)) then all_kernels = append_array(all_kernels, pck_in)
- if(keyword_set(fk_in)) then all_kernels = append_array(all_kernels, fk_in)
- if(keyword_set(ik_in)) then all_kernels = append_array(all_kernels, ik_in)
- if(keyword_set(sck_in)) then all_kernels = append_array(all_kernels, sck_in)
- if(keyword_set(lsk_in)) then all_kernels = append_array(all_kernels, lsk_in)
- if(keyword_set(xk_in)) then all_kernels = append_array(all_kernels, xk_in)
+ all_kernels = append_array(all_kernels, ck_in)
+ all_kernels = append_array(all_kernels, spk_in)
+ all_kernels = append_array(all_kernels, pck_in)
+ all_kernels = append_array(all_kernels, fk_in)
+ all_kernels = append_array(all_kernels, ik_in)
+ all_kernels = append_array(all_kernels, sck_in)
+ all_kernels = append_array(all_kernels, lsk_in)
+ all_kernels = append_array(all_kernels, xk_in)
 
 
  kernels_to_load = (kernels_to_unload = '')
