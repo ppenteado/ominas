@@ -22,6 +22,11 @@
 ;
 ;	keyvals:	Structure containing the seletion keywords and values.
 ;
+;	prefix:		Optional prefix for descriptor select keywords.  If
+;			given, a keyword is matched without or without the 
+;			prefix (including a '_'), and the prefixed version
+;			takes precedence.
+;
 ;  OUTPUT: NONE
 ;
 ;

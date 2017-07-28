@@ -577,7 +577,7 @@ pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
  ; Determine kernels to load / unload.  If no kernels specified, 
  ; the pool is left untouched.
  ;-----------------------------------------------------------------
- spice_sort_kernels, all_kernels, $
+ spice_sort_kernels, $
    reload=reload, reverse=reverse, protect=protect, $
    ck_in=ck_in, spk_in=spk_in, pck_in=pck_in, $
    fk_in=fk_in, ik_in=ik_in, sck_in=sck_in, lsk_in=lsk_in, xk_in=xk_in, $
@@ -592,7 +592,21 @@ pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
  ; load/unload kernels
  ;+++++++++++++++++++++++++++++++
  spice_load, kernels_to_load, uk_in=kernels_to_unload
-;  spice_cull
+; spice_cull
+
+
+ ;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ ; Save kernel pool for this data descriptor
+ ;  This is commented out because it leads to huge kernel pools for 
+ ;  unknown reasons.  If it wrked, it would proabably save some time.
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+; kernel_pool = cor_udata(dd, 'SPICE_KERNEL_POOL')
+; if(NOT keyword_set(kernel_pool)) then $
+;  begin
+;   loaded_kernels = spice_loaded(/full)
+;   if(keyword_set(loaded_kernels)) then $
+;             cor_set_udata, dd, 'SPICE_KERNEL_POOL', loaded_kernels
+;  end
 
 
 end
@@ -788,17 +802,6 @@ function si_get, dd, keyword, prefix, inst, od=od, time=__time, names=names, sta
 
  if(NOT keyword_set(result)) then status = -1
 	
-
- ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; Save kernel pool for this data descriptor
- ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- kernel_pool = cor_udata(dd, 'SPICE_KERNEL_POOL')
- if(NOT keyword_set(kernel_pool)) then $
-  begin
-   loaded_kernels = spice_loaded()
-   if(keyword_set(loaded_kernels)) then $
-             cor_set_udata, dd, 'SPICE_KERNEL_POOL', loaded_kernels
-  end
 
  return, result
 end
