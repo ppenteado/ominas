@@ -7,7 +7,8 @@
 ;  Edited by Mark Moretto for manual
 ;
 ;   This example demonstrates various capabilities of the PG programming
-;   itnerface.  It can be executed from the UNIX command line using::
+;   interface, OMINAS' command-line API.  It can be executed from the UNIX 
+;   command line using::
 ;
 ;     ominas pg_example-batch
 ;
@@ -28,13 +29,13 @@
 ;
 ; .. image:: graphics/jupiter_load.jpeg
 ;
-;   This first section uses DAT_READ to read the image and then displays 
-;   the image using TVIM.  With DAT_READ, it is not necessary to specify
-;   the file format.  DAT_READ uses your filetype detectors to determine 
-;   the format, and gets the appropriate reader from the I/O table.  
-;   DAT_READ returns a data descriptor (dd), which contains all of the
-;   data associated with the file.  For convenience, it also returns the
-;   data array (im) and header (label) in its second and third arguments.
+;   Use DAT_READ to read the image and then display the image using TVIM.  
+;   With DAT_READ, it is not necessary to specify the file format.  DAT_READ 
+;   uses your file type detectors to determine the format, and gets the 
+;   appropriate reader from your I/O table.  DAT_READ returns a data 
+;   descriptor (dd), which contains all of the data associated with the file.  
+;   For convenience, it also returns the data array (im) and header (label) 
+;   in its second and third arguments.
 ;
 ;   TVIM is called to display the image (im) in a new window with the y
 ;   coordinate as top-down::
@@ -55,7 +56,7 @@ tvim, im, zoom=0.75, /order, /new
 ;   Note that there is no reference to the source of the this information. 
 ;   That is handled by the translator system, which is controlled by 
 ;   a series of translators tables telling OMINAS which translators to use
-;   for a given instrument.  The translators tabes are parsed by DAT_READ,
+;   for a given instrument.  The translators tables are parsed by DAT_READ,
 ;   which stores the list of translators in the data descriptor.  
 ;
 ;   If you are using the default demo configuration, then the geometry
@@ -67,7 +68,7 @@ tvim, im, zoom=0.75, /order, /new
 ;   extension '.dh'.  Because the detached header translator dh_std_input 
 ;   appears before the Cassini Spice input translator in the default 
 ;   translators table, the descriptors are taken from the detached header 
-;   if it exists, and if te relevant descriptors are present.  If otherwise, 
+;   if it exists, and if the relevant descriptors are present.  Otherwise, 
 ;   they are obtained from the SPICE kernels.
 ;
 ;     cd = pg_get_cameras(dd)			  ; CAMERA descriptor
@@ -80,12 +81,12 @@ tvim, im, zoom=0.75, /order, /new
 ;   to perform aberration corrections on the returned objects.  In that
 ;   case, the returned descriptors would represent the real states of the
 ;   bodies at the time of observation at their respective positions rather
-;   thn from the point of view of the observer.  
+;   than from the point of view of the observer.  
 ;
 ;   Note the 'name' keyword in the call to PG_GET_STARS. This is a CORE
-;   attribute, so it may be appied to any body.  If you are only 
-;   interested in Jupiter and the Galilean satllites, you could have
-;   written::
+;   attribute, so it may be applied to any body.  For example, if you are 
+;   only interested in Jupiter and the Galilean satellites, you could 
+;   write::
 ;
 ;     pd = pg_get_planets(dd, od=cd, $
 ;              name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
@@ -108,7 +109,7 @@ sund = pg_get_stars(dd, od=cd, name='SUN')
 ;   the translators table to be passed to a specific translator, or
 ;   transient inputs may be provided to the PG_GET_* programs as a string
 ;   argument.  In the latter case, they are accessible to all translators
-;   pertaining to that PG_GET_* program an they precede translator keywords
+;   pertaining to that PG_GET_* program and they precede translator keywords
 ;   from the translators table.
 ;
 ;   Here are some examples of controlling the NAIF/SPICE interface in a
@@ -148,7 +149,7 @@ sund = pg_get_stars(dd, od=cd, name='SUN')
 ;   what you want because you can always build a GUI on top of it, but
 ;   it doesn't really work to start with a graphical tool and try to 
 ;   build a command-based system out of that.  Therefore, I decided to have 
-;   mercy on the poor jerk (mostly me up to now) who had to type (really 
+;   mercy on the poor jerks (mostly me up to now) who had to type (really 
 ;   paste) all of this nonsense in.  The generic descriptor was therefore
 ;   spawned as a way to cut down on all the cd=this, pd=that, bx=whatever
 ;   that tends to go on.  So we just shove it all into one structure and 
@@ -157,7 +158,7 @@ sund = pg_get_stars(dd, od=cd, name='SUN')
 ;   things make you happy, then you're welcome.  I rarely use them in this
 ;   way.  They live on because it turns out they have amazing utility in 
 ;   other ways.  So anyway, it's like this::
-
+;
 ;     gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;-
 ;-------------------------------------------------------------------------
@@ -264,14 +265,14 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;     
 ;   .. image:: graphics/jupiter_ex_edge.jpeg
 ;   
-;   Next, PG_FARFIT to find the x/y offset that best matches the limb of 
+;   Next, use PG_FARFIT to find the x/y offset that best matches the limb of 
 ;   planet 0 (which is Jupiter because the translators return the observation
 ;   target as number 0 if it is known)::
 ;
 ;     dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])
 ;
-;   BTW, you have been duped.  PG_FARIT fails a lot because the search 
-;   is pretty sparse.  We cherry-picked an image that usually works spretty 
+;   BTW, you have been duped.  PG_FARFIT fails a lot because the search 
+;   is pretty sparse.  We cherry-picked an image that usually works pretty 
 ;   well.  The sparse search makes PG_FARFIT pretty fast, though.  Ok,
 ;   now repoint using the farfit solution::
 ;
@@ -323,7 +324,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ; MANUALLY REPOINT THE GEOMETRY
 ;
 ;   If you have a little time, you can just drag the pointing around
-;   by hand.  We just need to get it close anugh to really nail down in 
+;   by hand.  We just need to get it close enough to really nail down in 
 ;   the next section.  There's a good chance PG_FARFIT really dropped 
 ;   the ball on the last step anyway.  Just paste this in and follow 
 ;   the directions::
@@ -337,7 +338,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;
 ;    pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 ;
-;   And no you have to recompute and redraw again.  It's the same as 
+;   And now you have to recompute and redraw again.  It's the same as 
 ;   above.  Please don't make me write it out.
 ;-
 ;-------------------------------------------------------------------------
@@ -362,13 +363,13 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;+
 ; PRECISE EDGE SCAN
 ;
-;   Not happy with PG_FARFIT?  I wouldn't be, it's just not a sub-pixel 
+;   Not satisfied with PG_FARFIT?  I wouldn't be, it's just not a sub-pixel 
 ;   kind of thing.  Sometimes its results can be very super-pixel.  However,
 ;   once we get within a few tens of pixels of the correct pointing, we can 
 ;   use PG_CVSCAN to pick up the edges with a more rigorous algorithm.
 ;   PG_CVSCAN scans around a predicted edge (in this case Jupiter's limb) 
 ;   comparing the brightness profile with a model profile.  In this case,
-;   we use the limb edge model developed by Gari Yagi and used in the old
+;   we use the limb edge model developed by Gary Yagi and used in the old
 ;   VICAR NAV program (Ugh, remember VICAR?  That's kind of the whole reason
 ;   we're doing any of this).  Indeed this whole CVSCAN business is the same
 ;   exact algorithm that Andy Ingersoll scribbled down on a piece of paper
@@ -408,7 +409,7 @@ pg_draw, cvscan_ptd
 ;   correlation coefficients.  The /relative flag means that the minimum 
 ;   and maximum thresholds are taken as a fraction of the maximum
 ;   correlation coefficient for each set of points. In this case we use 
-;   a minimun correlation coefficent of 0.81 and a maximum of 1.0::
+;   a minimum correlation coefficient of 0.81 and a maximum of 1.0::
 ;
 ;     pg_threshold, cvscan_ptd, min=0.81, max=1.0, /rel
 ;     tvim, im
@@ -458,10 +459,10 @@ pg_draw, cvscan_ptd
 ;    cvscan_cf = pg_cvscan_coeff(cvscan_ptd, fix=2)
 ;    dxy = pg_fit(cvscan_cf)
 ;
-;   The reason that these two programs are separate is that a simulataneous
+;   The reason that these two programs are separate is that a simultaneous
 ;   fit can be performed by simply adding all of the linear coefficients. 
 ;   If PG_FIT is given an array of coefficient structures, it will add them
-;   before prforming the fit, so, for example, you could compute coefficients 
+;   before performing the fit, so, for example, you could compute coefficients 
 ;   to fit stars in the image (using PG_PTSCAN), and include them in the 
 ;   call to PG_FIT to get a simultaneous fit to the stars and the limb.
 ;
@@ -493,7 +494,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;+
 ; FIT STATISTICS
 ;
-;   You cam get the statistics using PG_CHISQ and PG_COVARIANCE::
+;   You can get the statistics using PG_CHISQ and PG_COVARIANCE::
 ;
 ;    chisq = pg_chisq(dxy, 0, cvscan_ptd, fix=2)
 ;    covar = pg_covariance(cvscan_cf)
@@ -567,7 +568,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;   Paste the one you want::
 ;
 ;
-;    Retangular::
+;    Rectangular::
 ;
 ;      md = pg_get_maps(/over, bx=pd[0], $
 ;             projection='RECTANGULAR', $
@@ -637,7 +638,7 @@ md = pg_get_maps(/over, bx=pd[0], $
 ;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=map)
 ;     tvim, /new, map
 ;
-;    Retangular::
+;    Rectangular::
 ;          .. image:: graphics/jupiter_rectangular.jpeg
 ;
 ;    Orthographic::
@@ -674,7 +675,7 @@ tvim, /new, map
 ; PUT A GRID ON IT
 ;
 ;   PG_GRID computes a latitude/longitude grid.  This is the same program
-;   used in oter examples to draw grids on other things; here we're
+;   used in other examples to draw grids on other things; here we're
 ;   using a map descriptor instead of a camera descriptor.
 ;
 ;   First, define a new generic descriptor.  ::
@@ -756,9 +757,6 @@ tvim, /new, map1
 
 
 
-
-
-
 ;---------------------------------------------------------------------------
 ;+
 ; OUTPUT DESCRIPTORS
@@ -799,8 +797,8 @@ print, transpose(dat_dh(dd))
 ;+
 ; WRITE DATA FILE
 ;
-;   DAT_WRITE writes the data araay in the data descriptor using whatever
-;   output function was givenin the I/O table.  The detached header is
+;   DAT_WRITE writes the data array in the data descriptor using whatever
+;   output function was given in the I/O table.  The detached header is
 ;   is also written into a file with the same name as the image file except 
 ;   with the extension '.dh'.  If this file does not already exist, it is 
 ;   created.
@@ -820,8 +818,8 @@ dat_write, './outputs/' + cor_name(dd), dd
 ;   detached header and write the map descriptor into it.
 ;
 ;   As above, DAT_WRITE writes the map image file and the detached header. 
-;   Notice that the filetype is given explicitly because the data descriptor 
-;   was not created by DAT_READ, which would have detected the filetype::
+;   Notice that the file type is given explicitly because the data descriptor 
+;   was not created by DAT_READ, which would have detected the file type::
 ;
 ;     pg_put_maps, dd_map, md=md
 ;     dat_write, './outputs/' + cor_name(dd) + '.map', dd_map, filetype = 'VICAR'

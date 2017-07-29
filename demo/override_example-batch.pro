@@ -7,7 +7,7 @@
 ;
 ;  This example demonstrates the use of OMINAS with no translators.  All
 ;  geometric values are manually entered.  I don't know why you would 
-;  ever want to do this, but it's a useful way to test OMINAS without needing
+;  want to do this, but it's a useful way to test OMINAS without needing
 ;  any translator packages installed. 
 ;
 ;  This example file can be executed from the UNIX command line using
@@ -204,7 +204,7 @@ sund = pg_get_stars(dd, od=cd, /override, $
 ;  to keep all of your object descriptors together.  All PG programs 
 ;  accept individual descriptor as well as generic descriptors as 
 ;  arguments.  GBX means any subclass of GLOBE, DKX means any SUBCLASS
-;  of DSK.  THese are arguments to te PG programs tha we'll be working 
+;  of DSK.  These are arguments to the PG programs that we'll be working 
 ;  with.
 ;
 ;    gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
@@ -254,8 +254,8 @@ center_ptd = pg_center(gd=gd, bx=pd)
 ;  one array, and making corresponding arrays for the colors, plotting 
 ;  symbols, etc.  
 ;
-;  The CT programs are used to get color indices without having to know
-;  what type of visual class you're using. 
+;  The CT programs are used to get color indices for some basic colors 
+;  without having to know what type of visual class you're using. 
 ;
 ;    object_ptd = [center_ptd,limb_ptd,ring_ptd,shadow_ptd]
 ;    colors = [!p.color,ctyellow(),ctred(),ctred(),ctblue()]
@@ -284,7 +284,7 @@ nring = n_elements(ring_ptd)
 ;
 ;  PG_DRAW is the basic program for drawing overlays in OMINAS.  It does
 ;  the same thing as PLOTS (which you could use instead), but it accepts
-;  POINT objects are arguments and allows you to use specify multipe colors
+;  POINT objects are arguments and allows you to use specify multiple colors
 ;  symbols, etc.  PG_DRAW also accepts raw points arrays (i.e. 2 x np).
 ;
 ;    pg_draw, object_ptd, $
@@ -308,7 +308,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;  systems in OMINAS.  Because their representations are analogous, their
 ;  corresponding objects can be pretty much interchanged all over the place.  
 ;  This is such a place.  On that topic, coordinate systems using image
-;  points (i.e., CAMERA and MAP image systems) are similary interchangeable. 
+;  points (i.e., CAMERA and MAP image systems) are similarly interchangeable. 
 ; 
 ;    grid_ptd = pg_grid(gd=gd, bx=pd) 
 ;       pg_hide, grid_ptd, gd=gd, bx=pd, /assoc
@@ -342,8 +342,8 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ; DEFINE A RING SECTOR
 ;
 ;  Let's define a sector so we can make a plot of intensity vs. radius
-;  or longitude.  First, we'll specify the ongitude and radius limits 
-;  expicitly.  Not that we're working in meters here because all of our
+;  or longitude.  First, we'll specify the longitude and radius limits 
+;  explicitly.  Note that we're working in meters here because all of our
 ;  inputs for the descriptors were in meters.  Units in OMINAS are
 ;  determined by the translators.  Of course, all angles are in radians.
 ;
