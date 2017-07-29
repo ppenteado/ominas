@@ -232,15 +232,15 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;  argument to tell it which of the bodies in gd are intended.  PG_HIDE
 ;  hide the given points with respect to whatever bodies you give it.
 ;
-;    limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd
-;    ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd
+;    limb_ptd = pg_limb(gd=gd, count=nlimb) & pg_hide, limb_ptd, gd=gd
+;    ring_ptd = pg_disk(gd=gd, count=nring) & pg_hide, ring_ptd, gd=gd
 ;    shadow_ptd = pg_shadow_globe(gd=gd, ring_ptd)
 ;    center_ptd = pg_center(gd=gd, bx=pd)
 ;
 ;-
 ;-------------------------------------------------------------------------
-limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd
-ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd
+limb_ptd = pg_limb(gd=gd, count=nlimb) & pg_hide, limb_ptd, gd=gd
+ring_ptd = pg_disk(gd=gd, count=nring) & pg_hide, ring_ptd, gd=gd
 shadow_ptd = pg_shadow_globe(gd=gd, ring_ptd)
 center_ptd = pg_center(gd=gd, bx=pd)
 
@@ -262,8 +262,6 @@ center_ptd = pg_center(gd=gd, bx=pd)
 ;    psyms=[1,3,3,3,3]
 ;    psizes=[0.5]
 ;    plabels = [cor_name(pd), '', '']
-;    nlimb = n_elements(limb_ptd)
-;    nring = n_elements(ring_ptd)
 ; 
 ;-
 ;-------------------------------------------------------------------------
@@ -272,8 +270,6 @@ colors = [!p.color,ctyellow(),ctred(),ctred(),ctblue()]
 psyms=[1,3,3,3,3]
 psizes=[0.5]
 plabels = [cor_name(pd), '', '']
-nlimb = n_elements(limb_ptd)
-nring = n_elements(ring_ptd)
 
 
 ;-------------------------------------------------------------------------

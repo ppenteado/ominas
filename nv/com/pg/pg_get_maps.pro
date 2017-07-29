@@ -62,6 +62,9 @@
 ;	-------------
 ;	All DATA override keywords are accepted.  See dat__keywords.include.  
 ;
+;  OUTPUT:
+;	count:	Number of descriptors returned
+;
 ;
 ; RETURN:
 ;	Array of map descriptors, 0 if an error occurs.
@@ -84,11 +87,13 @@
 ;-
 ;=============================================================================
 function pg_get_maps, arg1, arg2, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=keyvals, $
-                        override=override, verbatim=verbatim, $
+                        override=override, verbatim=verbatim, count=count, $
                               @map__keywords_tree.include
                               @dat__keywords.include
                               @nv_trs_keywords_include.pro
                               end_keywords
+
+ count = 0
 
  ;------------------------------------------------------------------------
  ; sort out arguments
@@ -219,6 +224,7 @@ function pg_get_maps, arg1, arg2, md=_md, gbx=gbx, dkx=dkx, bx=bx, _extra=keyval
               dat_set_gd, dd, gd, md=md, gbx=gbx, dkx=dkx, bx=bx, /noevent
  dat_set_gd, md, gd, gbx=gbx, dkx=dkx, bx=bx, /noevent
 
+ count = n_elements(md)
  return, md
 end
 ;===========================================================================

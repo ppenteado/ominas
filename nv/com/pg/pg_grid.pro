@@ -78,6 +78,8 @@
 ;
 ;	lon:	Array giving grid-line longitudes in radians.
 ;
+;	count:	Number of descriptors returned.
+;
 ;
 ; RETURN:
 ;	Array of POINT containing image points and the corresponding inertial 
@@ -95,8 +97,10 @@
 ;=============================================================================
 function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_lon, $
 		nlat=nlat, nlon=nlon, flat=flat, flon=flon, npoints=npoints, $
-		clip=clip, cull=cull, slat=slat, slon=slon
+		clip=clip, cull=cull, slat=slat, slon=slon, count=count
 @pnt_include.pro
+
+ count = 0
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -264,6 +268,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
  if(keyword_set(__lat)) then _lat = __lat
  if(keyword_set(__lon)) then _lon = __lon
 
+ count = n_elements(grid_ptd)
  return, grid_ptd
 end
 ;=============================================================================

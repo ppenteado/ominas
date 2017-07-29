@@ -84,6 +84,9 @@
 ;	routine.  Named bodies are exempted.  See pg_select_bodies for a 
 ;	description of the standard keywords. 
 ;
+;  OUTPUT:
+;	count:	Number of descriptors returned
+;
 ;
 ; RETURN:
 ;	Array of planet descriptors, 0 if an error occurs.
@@ -136,11 +139,13 @@ end
 ;
 ;===========================================================================
 function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=keyvals, $
-                             override=override, verbatim=verbatim, raw=raw, $
-                              @plt__keywords_tree.include
-                              @dat__keywords.include
-                              @nv_trs_keywords_include.pro
-                              end_keywords
+                   override=override, verbatim=verbatim, raw=raw, count=count, $
+                   @plt__keywords_tree.include
+                   @dat__keywords.include
+                   @nv_trs_keywords_include.pro
+                   end_keywords
+
+ count = 0
 
  ;------------------------------------------------------------------------
  ; sort out arguments
@@ -261,6 +266,7 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=keyvals, $
  if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, pd=pd, od=od, sd=sd, /noevent
  dat_set_gd, pd, gd, od=od, sd=sd, /noevent
 
+ count = n_elements(pd)
  return, pd
 end
 ;===========================================================================

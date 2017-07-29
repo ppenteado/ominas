@@ -53,7 +53,8 @@
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	count:	Number of descriptors returned.
 ;
 ;
 ; RETURN:
@@ -73,8 +74,10 @@
 ;-
 ;=============================================================================
 function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
-                  inner=inner, outer=outer, npoints=npoints, reveal=reveal
+                  inner=inner, outer=outer, npoints=npoints, reveal=reveal, count=count
 @pnt_include.pro
+
+ count = 0
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -239,6 +242,7 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
   end
 
 
+ count = n_elements(disk_ptd)
  return, disk_ptd
 end
 ;=============================================================================

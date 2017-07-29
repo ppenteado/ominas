@@ -128,7 +128,6 @@ center_ptd = pg_center(gd=gd, bx=pd)
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 
-stop
 ;-------------------------------------------------------------------------
 ;+
 ; DISPLAY OVERLAYS

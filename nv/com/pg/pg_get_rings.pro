@@ -79,6 +79,9 @@
 ;	routine.  Named bodies are exempted.  See pg_select_bodies for a 
 ;	description of the standard keywords. 
 ;
+;  OUTPUT:
+;	count:	Number of descriptors returned
+;
 ;
 ; RETURN:
 ;	Ring descriptors obtained from the translators, 0 if an error occurs.
@@ -130,11 +133,13 @@ end
 ;
 ;===========================================================================
 function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=keyvals, $
-                      override=override, verbatim=verbatim, $
+                      override=override, verbatim=verbatim, count=count, $
                               @rng__keywords_tree.include
                               @dat__keywords.include
                               @nv_trs_keywords_include.pro
                               end_keywords
+
+ count = 0
 
  ;------------------------------------------------------------------------
  ; sort out arguments
@@ -239,6 +244,7 @@ function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=keyvals, $
  if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, rd=rd, pd=pd, od=od, /noevent
  dat_set_gd, rd, gd, pd=pd, od=od, /noevent
 
+ count = n_elements(rd)
  return, rd
 end
 ;===========================================================================

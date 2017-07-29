@@ -70,6 +70,9 @@
 ;	-------------
 ;	All DATA override keywords are accepted.  See dat__keywords.include.  
 ;
+;  OUTPUT:
+;	count:	Number of descriptors returned
+;
 ;
 ; RETURN:
 ;	Array of camera descriptors, 0 if an error occurs.
@@ -93,11 +96,13 @@
 ;=============================================================================
 function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
                           override=override, verbatim=verbatim, default_orient=default_orient, $
-                          no_default=no_default, $
+                          no_default=no_default, count=count, $
                               @cam__keywords_tree.include
                               @dat__keywords.include
                               @nv_trs_keywords_include.pro
                               end_keywords
+
+ count = 0
 
  ;------------------------------------------------------------------------
  ; sort out arguments
@@ -219,6 +224,7 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
  if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, cd=cd, bx=bx, /noevent
  dat_set_gd, cd, gd, bx=bx, /noevent
 
+ count = n_elements(cd)
  return, cd
 end
 ;===========================================================================

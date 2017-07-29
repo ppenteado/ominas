@@ -74,12 +74,12 @@ pro cas_spice_write_cameras, dd, value, ref, ck_file, reload=reload, $
 	'CAS_ISS_NA': $
 	  begin
 	   inst=-82360l
-	   orient_fn = 'cas_iss_orient_to_cmat'
+	   orient_fn = 'cas_orient_to_cmat'
 	  end
 	'CAS_ISS_WA': $
 	  begin
 	   inst=-82361l
-	   orient_fn = 'cas_iss_orient_to_cmat'
+	   orient_fn = 'cas_orient_to_cmat'
 	  end
  endcase
 
