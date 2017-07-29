@@ -1,6 +1,8 @@
 ;=======================================================================
 ;                            MAP_DISK_EXAMPLE.PRO
 ;
+;  Created by Joe Spitale
+;
 ;  This example demonstrates various map projections on a disk
 ;  using Cassini images and kernels that area not provided in the 
 ;  distribution.

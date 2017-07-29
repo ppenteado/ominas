@@ -4,24 +4,20 @@
 ; MOSAIC EXAMPLE
 ; --------------
 ;
-;   This example requires the following kernel files, which are
-;   included in the demo's data directory::
-;     $CAS_SPICE_CK/001103_001105ra.bc
-;     $CAS_SPICE_CK/001105_001108.bc
-;     $CAS_SPICE_CK/001026_001029ra.bc
-;     $CAS_SPICE_CK/001029_001031ra.bc
+;  Created by Joe Spitale
+;  Edited for manual by Mark Moretto
 ;
 ;   This example file demonstrates how to construct a mosaic using OMINAS.
-;   This example file can be executed from the UNIX command line using::
+;   The example can be executed from the UNIX command line using::
 ;
-;  	  ominas mosaic_example
+;  	  ominas mosaic_example-batch
 ;
 ;   or from within an OMINAS IDL session using::
 ;
-;  	  @mosaic_example
+;  	  @mosaic_example-batch
 ;
-;   After the example stops, later code samples in this file may be executed by
-;   pasting them onto the IDL command line.
+;   After the example stops, later code samples in this file may be executed 
+;   by pasting them onto the IDL command line.
 ;-
 ;=======================================================================
 !quiet = 1
@@ -31,10 +27,10 @@
 ; Read and display image
 ; ----------------------
 ;;
-;   This first section uses dat_read to read in the image and then displays
+;   This first section uses DAT_READ to read in the image and then displays
 ;   the image using tvim.
 ;
-;   dat_read reads the image portion (im) and the label (label) and returns a
+;   DAT_READ reads the image portion (im) and the label (label) and returns a
 ;   data descriptor (dd) containing the image and label and information obtained
 ;   through OMINAS' configuration tables.  If a file exists in the same directory
 ;   and with the same name as the image, except with the extension ".dh",
@@ -44,9 +40,7 @@
 ;   angle frames of Jupiter.  2000r.img and 2100r.img are Galileo SSI
 ;   images of Ganymede.
 ;
-;   ctmod is called to reserve several colors in the case of an 8-bit display.
-;
-;   tvim is called to display the image (im) in a new window with the y
+;   TVIM is called to display the image (im) in a new window with the y
 ;   coordinate as top-down::
 ;
 ;     files = getenv('OMINAS_DIR')+'/demo/data/'+['n1350122987.2','/n1351469359.2']
@@ -82,7 +76,7 @@
 ; load files
 ;-------------------------------
 files = ['n1351469359.2', $
-         'n1351523119.2', $
+         'n1351122421.2', $
          'n1352037683.2']
 files = getenv('OMINAS_DIR')+'/demo/data/'+files
 n = n_elements(files)
@@ -125,7 +119,7 @@ for i=0, n-1 do limb_ptd[i] = pg_limb(gd=gd[i])
 ; Navigate on limbs automatically
 ; -------------------------------
 ;
-;   pg_farfit finds the limb to within a few pixels.  In reality, you would 
+;   PG_FARFIT finds the limb to within a few pixels.  In reality, you would 
 ;   want to refine the pointing by scanning for the limb and performing a
 ;   least-squares fit, but for the purposes of clarity in this example, the 
 ;   inital fit will do::
@@ -133,7 +127,7 @@ for i=0, n-1 do limb_ptd[i] = pg_limb(gd=gd[i])
 ;     edge_ptd = objarr(n)
 ;     for i=0, n-1 do edge_ptd[i] = pg_edges(dd[i], edge=10)
 ;     
-;   Run pg_farfit to obtain the offsets between the computed points (limb_ptd)
+;   Run PG_FARFIT to obtain the offsets between the computed points (limb_ptd)
 ;   and the image edges (edge_ptd) and apply the offsets with pg_repoint::
 ;   
 ;     dxy = dblarr(2,n)
@@ -149,8 +143,7 @@ for i=0, n-1 do limb_ptd[i] = pg_limb(gd=gd[i])
 ;   .. image:: graphics/mosaic_ex_im_4.png
 ;
 ;   
-;   See jup_cassini.example and dione.example for examples
-;   of least-squares fits to image features   
+;   See the PG example for examples of least-squares fits to image features   
 ;     
 ;-
 ;-----------------------------------------------------------------------
@@ -193,7 +186,7 @@ for i=0, n-1 do  pg_draw, limb_ptd[i], wnum=ww[i]
 ;----------------------------------------------------------------------
 dd_pht = objarr(n)
 for i=0, n-1 do dd_pht[i] = pg_photom(dd[i], gd=gd[i], $
-    refl_fn='pht_refl_minneart',refl_parm=[0.6d], outline=limb_ptd[i]) 
+    refl_fn='pht_refl_minneart',refl_parm=[0.7d], outline=limb_ptd[i]) 
 
 for i=0, n-1 do tvim, dat_data(dd_pht[i]), ww[i]
 
@@ -315,7 +308,7 @@ for i=0, n-1 do tvim, dat_data(dd_map[i]), /new
 ;-
 ;----------------------------------------------------------------------
 dd_mosaic = pg_mosaic(dd_map, mosaic=mosaic, $
-               wt='emm', comb='sum', data={x:5, emm0:cos(75d*!dpi/180d)})
+               wt='emm', comb='sum', data={x:5, emm0:cos(85d*!dpi/180d)})
 tvim, mosaic, /new
 
 

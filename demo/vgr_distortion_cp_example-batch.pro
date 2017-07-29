@@ -1,6 +1,8 @@
 ;=======================================================================
 ;                            VOYAGER_CP_EXAMPLE.PRO
 ;  
+;  Created by Joe Spitale
+;
 ;  This example file demonstrates the use of OMINAS for Voyager image 
 ;  geometric corrections using control points.  Compared with the 
 ;  polynomial approach, this method is probably more precise (it forces 

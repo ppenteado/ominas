@@ -4,9 +4,7 @@
 ; MULTI-MISSION EXAMPLE
 ; ---------------------
 ;
-;   Created by Joe Spitale
-;   
-;   Feb 2017
+;  Created by Joe Spitale
 ;
 ;    This example file loads images from various missions onto planes of a 
 ;    GRIM window and computes the centers of all available planets for each
