@@ -40,13 +40,15 @@
 ; :History:
 ;       Written by:     Vance Haemmerle,  5/1998
 ;
-;	      Modified:                         1/1999
+;       Modified:                         1/1999
 ;
 ;       Modified:       Tiscareno,        7/2000
 ;
 ;       Modified:       Haemmerle,       12/2000
 ;
 ;       Modified:       Spitale,          9/2001
+;
+;       Modified:       Haemmerle,        7/2017
 ;
 ;-
 ;===============================================================================
@@ -109,19 +111,57 @@ end
 ;      be seconds past 2000, unless keyword /b1950 is set
 ;-
 ;===============================================================================
-function sao_get_stars, filename, $
+function sao_get_stars, dd, filename, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
          names=names, mag=mag, jtime=jtime
 
- ra1 = ra1 * !dpi/180d
- ra2 = ra2 * !dpi/180d
- dec1 = dec1 * !dpi/180d
- dec2 = dec2 * !dpi/180d
+ ;---------------------------------------------------------
+ ; check whether catalog falls within brightness limits
+ ;---------------------------------------------------------
+ if(keyword_set(faint)) then if(faint LT -1.5) then return, ''
+ if(keyword_set(bright)) then if(bright GT 10) then return, ''
+
+ ;---------------------------------------------------------
+ ; For segment testing, need to have limits in b1950 since
+ ; star positions in catalog are in b1950
+ ; If /b1950 is not specified, then convert range to b1950
+ ;---------------------------------------------------------
+ _ra1 = ra1
+ _ra2 = ra2
+ _dec1 = dec1
+ _dec2 = dec2
+ if (NOT keyword_set(b1950)) then $
+   begin
+     ; If ra1/ra2 is entire range then do not change
+     ; declination change is not enough to update
+     if (ra1 NE 0. OR ra2 NE 360.) then $
+       begin
+         nv_message, verb=0.9, 'Converting RA/DEC to B1950'
+         ra_to_xyz, ra1, dec1, pos1
+         ra_to_xyz, ra2, dec2, pos2
+         pos1_1950 = b1950_to_j2000(pos1)
+         pos2_1950 = b1950_to_j2000(pos2)
+         xyz_to_ra, pos1_1950, _ra1, _dec1
+         xyz_to_ra, pos2_1950, _ra2, _dec2
+       end
+   end
+
+ _ra1 = _ra1[0] * !dpi/180d
+ _ra2 = _ra2[0] * !dpi/180d
+ _dec1 = _dec1[0] * !dpi/180d
+ _dec2 = _dec2[0] * !dpi/180d
 
  ;---------------------------------------------------------
  ; Open file
  ;---------------------------------------------------------
+ ndx_f = file_search(filename)
+ if(ndx_f[0] eq '') then $
+  begin
+   nv_message, 'File does not exist - ' + filename
+   return, ''
+  end
+
  openr, unit, filename, /get_lun
  record = assoc(unit,{sao_record})
  pointer = assoc(unit,lonarr(9))
@@ -133,192 +173,196 @@ function sao_get_stars, filename, $
  ptr=[pointer[0],pointer[1],pointer[2],pointer[3]]
  byteorder, ptr, /ntohl
 
-;print, ptr
+ ;print, ptr
+ ;---------------------------------------------------------
+ ; Test validity of segment pointers (test if file is ok)
+ ;---------------------------------------------------------
+ filesize = (file_info(filename)).size
+ nrecs = filesize/n_tags(record, /length)
+ w = WHERE(ptr LT 0, count)
+ if(count GT 0) then $
+   nv_message, 'Segment pointers in file are not valid (< 0), perhaps not binary SAO catalog file:' + filename
+ w = WHERE(ptr GT nrecs, count)
+ if(count GT 0) then $
+   nv_message, 'Segment pointers in file are not valid (>num records), perhaps not binary SAO catalog file:' + filename
+ good = 1 
+ for i=1, 17 DO if(ptr(2*i)-ptr(2*i-1) NE 1) then good = 0
+ if(good EQ 0) then $
+   nv_message, 'Segment pointers in file are not valid, perhaps not binary SAO catalog file:' + filename
 
 ; find segments
- start_segment = 17 - fix((dec2*!RADEG+90.)/10)
- end_segment = 17 - fix((dec1*!RADEG+90.)/10)
+ start_segment = 17 - fix((_dec2*!RADEG+90.)/10)
+ end_segment = 17 - fix((_dec1*!RADEG+90.)/10)
 
-;print, 'Search segments from ',start_segment,' to ',end_segment
+ nv_message, verb=0.9, 'Search segments from ' + string(start_segment) + ' to ' + string(end_segment)
 
  first_segment = 1
  for i = start_segment, end_segment DO $
   begin
+   nv_message, verb=0.9, 'segment is ' + string(i)
    start_record = ptr(2*i)
    end_record = ptr(2*i+1)
 
-;print, 'Whole segment is ',start_record,' to ',end_record
+   nv_message, verb=0.9, 'Whole segment is ' + string(start_record) + ' to ' + string(end_record)
 
- ;---------------------------------------------------------
- ; Search within segment to find RA limits
- ;---------------------------------------------------------
-; *** need to use strcat_radec_regions (see strcat_tycho2_input) ***
+   ;---------------------------------------------------------
+   ; Search within segment to find RA limits
+   ;---------------------------------------------------------
    if(end_record-start_record GT 100) then $
-   begin
-    ra_ptr = ptr(2*i) + lindgen(37)*((ptr(2*i+1)-ptr(2*i))/36)
-    ra_ptr[36] = ptr(2*i+1)
-    ra_test = fltarr(37)
-    for j = 0, 36 do $
      begin
-      _star = record[ra_ptr[j]]
-      ra_test[j] = _star.RA
+      ra_ptr = ptr(2*i) + lindgen(37)*((ptr(2*i+1)-ptr(2*i))/36)
+      ra_ptr[36] = ptr(2*i+1)
+      ra_test = fltarr(37)
+      for j = 0, 36 do $
+       begin
+        _star = record[ra_ptr[j]]
+        ra_test[j] = _star.RA
+       end
+      byteorder, ra_test, /XDRTOF
+
+      index = where(ra_test LE _ra1,count)
+      start_record = ra_ptr[0]
+      if(count NE 0) then start_record = ra_ptr[count-1]
+
+      end_record = ra_ptr[36]
+      index = where(ra_test GE _ra2,count)
+      if(count NE 0) then end_record = ra_ptr[37-count]
      end
-    byteorder, ra_test, /XDRTOF
 
-    index = where(ra_test LE ra1,count)
-    start_record = ra_ptr[0]
-    if(count NE 0) then start_record = ra_ptr[count-1]
-
-    end_record = ra_ptr[36]
-    index = where(ra_test GE ra2,count)
-    if(count NE 0) then end_record = ra_ptr[37-count]
-   end
-
-;print, 'Search records from ',start_record,' to ',end_record
+   nv_message, verb=0.9, 'Search records from ' + string(start_record) + ' to ' + string(end_record)
 
    _star = replicate({sao_record},end_record-start_record+1)
    for j = start_record, end_record do _star[j-start_record] = record[j]
 
-;print,'star contains',n_elements(_star),' stars'
+   nv_message, verb=0.9, '_star contains ' + string(n_elements(_star)) + ' stars'
 
+   ;---------------------------------------------------------
+   ; If limits are defined, remove stars that fall outside
+   ; the limits. 
+   ;---------------------------------------------------------
    _RA = _star[*].RA
    byteorder, _RA, /XDRTOF
-   index = where(_RA LE ra2 AND _RA GE ra1, ra_count)
-   if(ra_count NE 0) then _star = _star(index)
+   _DEC = _star[*].DEC
+   byteorder, _DEC, /XDRTOF
 
-;print, 'After RA test, star contains',n_elements(_star),' stars'
+   w = strcat_radec_select([_ra1, _ra2], [_dec1, _dec2], _RA, _DEC)
+   if(w[0] EQ -1) then continue 
+   _star = _star[w]
 
-   dec_count = 0
-   if(ra_count NE 0) then $
-    begin
-     _DEC = _star[*].DEC
-     byteorder, _DEC, /XDRTOF
-     index = where(_DEC LE dec2 AND _DEC GE dec1, dec_count)
-     if(dec_count NE 0) then _star = _star(index)
-    end
+   nv_message, verb=0.9, 'After RA/DEC test, _star contains' + string(n_elements(_star)) + ' stars'
 
-;print, 'After DEC test, star contains',n_elements(_star),' stars'
-
- ;---------------------------------------------------------
- ; select within magnitude limits
- ;---------------------------------------------------------
- if(keyword__set(faint)) then $
-  begin
-   status = -1
-   _Mag = _star.mag
-   byteorder, _Mag, /XDRTOF
-   w = where(_Mag LE faint)
-   if(w[0] NE -1) then star = _star[w]
-   if(NOT keyword__set(star)) then return, ''
-   _star = star
-   status = 0
-  end
-
- if(keyword__set(bright)) then $
-  begin
-   status = -1
-   _Mag = _star.mag
-   byteorder, _Mag, /XDRTOF
-   w = where(_Mag GE bright)
-   if(w[0] NE -1) then star1 = _star[w]
-   if(NOT keyword__set(star1)) then return, ''
-   _star = star1
-   status = 0
-  end
-
-
- ;---------------------------------------------------------
- ; Unpack the _star array
- ;---------------------------------------------------------
-   if(dec_count NE 0) then $
-    begin
-     _RA = _star.RA
-     _DEC = _star.DEC
-     _DECpm = _star.DECpm
-     _RApm = _star.RApm
-     _Mag = _star.mag
-     _Name = STRING(_star.Name)
-     _Sp = STRING(_star.sp)
-     byteorder, _RA, /XDRTOF
-     byteorder, _DEC, /XDRTOF
-     byteorder, _RApm, /XDRTOF
-     byteorder, _DECpm, /XDRTOF
-     byteorder, _Mag, /XDRTOF
-
- ;---------------------------------------------------------
- ; Apply proper motion to star (JTIME = years past 1950.0)
- ;---------------------------------------------------------
-     _RA = _RA + (double(_RApm)*JTIME/240.D0)*!DTOR 
-     _DEC = _DEC + (double(_DECpm)*JTIME/3600.D0)*!DTOR
-
-   end
-
- ;---------------------------------------------------------
- ; Print out data
- ;---------------------------------------------------------
- ; print, _Name, _RA, _DEC, Mag, ' ',_Sp
- ; if(n_elements(_Name) NE 0) then $
- ;  print, _Name
-
- ;---------------------------------------------------------
- ; Build arrays
- ;---------------------------------------------------------
-    if(dec_count NE 0) then $
-    begin
-     if(first_segment EQ 1) then $
-      begin
-       first_segment = 0
-       RA = _RA
-       DEC = _DEC
-       Mag = _Mag
-       Name = _Name
-       Sp = _Sp
-      end $
-     else $
-      begin
-       RA = [RA,_RA]
-       DEC = [DEC,_DEC]
-       Mag = [Mag,_Mag]
-       Name = [Name,_Name]
-       Sp = [Sp,_Sp]
-      end
+   ;---------------------------------------------------------
+   ; select within magnitude limits
+   ;---------------------------------------------------------
+   if(keyword__set(faint)) then $
+     begin
+      _Mag = _star.mag
+      byteorder, _Mag, /XDRTOF
+      w = where(_Mag LE faint)
+      if(w[0] EQ -1) then continue
+      _star = _star[w]
      end
 
-   end ;segment end
+   if(keyword__set(bright)) then $
+     begin
+      _Mag = _star.mag
+      byteorder, _Mag, /XDRTOF
+      w = where(_Mag GE bright)
+      if(w[0] EQ -1) then continue 
+      _star = _star[w]
+     end
 
- Name = 'SAO ' + Name
+   ;---------------------------------------------------------
+   ; Select named stars
+   ;---------------------------------------------------------
+   if(keyword__set(names)) then $
+     begin
+      w = where(names EQ STRING(_star.Name))
+      if(w[0] EQ -1) then continue
+      _star = _star[w]
+     end
 
+   ;---------------------------------------------------------
+   ; Unpack the _star array
+   ;---------------------------------------------------------
+   _RA = _star.RA
+   _DEC = _star.DEC
+   _DECpm = _star.DECpm
+   _RApm = _star.RApm
+   _Mag = _star.mag
+   _Name = STRING(_star.Name)
+   _Sp = STRING(_star.sp)
+   byteorder, _RA, /XDRTOF
+   byteorder, _DEC, /XDRTOF
+   byteorder, _RApm, /XDRTOF
+   byteorder, _DECpm, /XDRTOF
+   byteorder, _Mag, /XDRTOF
 
- ;---------------------------------------------------------
- ; Select named stars
- ;---------------------------------------------------------
- if(keyword__set(names)) then $
-  begin
-   status = -1
-   w = where(names EQ Name)
-   if(w[0] NE -1) then star = _star[w]
-   if(NOT keyword__set(star)) then return, ''
-   _star = star
-   status = 0
-  end
+   ;---------------------------------------------------------
+   ; Apply proper motion to star (JTIME = years past 1950.0)
+   ;---------------------------------------------------------
+   _RA = _RA + (double(_RApm)*JTIME/240.D0)*!DTOR 
+   _DEC = _DEC + (double(_DECpm)*JTIME/3600.D0)*!DTOR
+
+   ;---------------------------------------------------------
+   ; Print out data
+   ;---------------------------------------------------------
+   nv_message, verb=1.0, '_Name: ' + _Name
+   nv_message, verb=1.0, '_RA: ' + string(_RA)
+   nv_message, verb=1.0, '_DEC: ' + string(_DEC)
+   nv_message, verb=1.0, '_Mag: ' +  string(_Mag)
+   nv_message, verb=1.0, '_Sp: ' + _Sp
+
+   ;---------------------------------------------------------
+   ; Build arrays
+   ;---------------------------------------------------------
+   if(first_segment EQ 1) then $
+     begin
+      first_segment = 0
+      RA = _RA
+      DEC = _DEC
+      Mag = _Mag
+      Name = _Name
+      Sp = _Sp
+     end $
+   else $
+     begin
+      RA = [RA,_RA]
+      DEC = [DEC,_DEC]
+      Mag = [Mag,_Mag]
+      Name = [Name,_Name]
+      Sp = [Sp,_Sp]
+     end
+
+  end ;segment end
 
  close, unit
  free_lun, unit
+
+ ;---------------------------------------------------------
+ ; If desired, select only nbright brightest stars
+ ;---------------------------------------------------------
+ if(keyword__set(nbright)) then $
+  begin
+   w = strcat_nbright(Mag, nbright)
+   RA = RA[w]
+   DEC = DEC[w]
+   Mag = Mag[w]
+   Name = Name[w]
+   Sp = Sp[w]
+  end
+
  ;---------------------------------------------------------
  ; Fill star descriptors
  ;---------------------------------------------------------
-
  n = n_elements(Name)
 
  print, 'Total of ',n,' stars'
- status = -1
  if(n EQ 0) then return, ''
- status = 0
 
  ;---------------------------------------------------------
  ; Calculate "dummy" properties
  ;---------------------------------------------------------
-
  orient = make_array(3,3,n)
  _orient = [ [1d,0d,0d], [0d,1d,0d], [0d,0d,1d] ]
  for j = 0 , n-1 do orient[*,*,j] = _orient
@@ -333,7 +377,6 @@ function sao_get_stars, filename, $
  ; Calculate position vector, use distance as 10 parsec 
  ; to have apparent magnitude = absolute magnitude
  ;---------------------------------------------------------
-
  dist = 3.085678d+17 ; 10pc in meters
  pos = make_array(3,n,value=0d)
  pos[0,*] = cos(RA)*cos(DEC)*dist
@@ -343,8 +386,7 @@ function sao_get_stars, filename, $
  ;---------------------------------------------------------
  ; Precess B1950 to J2000 if wanted
  ;---------------------------------------------------------
-
- if(keyword__set(j2000)) then pos = transpose(b1950_to_j2000(transpose(pos)))
+ if(NOT keyword__set(b1950)) then pos = transpose(b1950_to_j2000(transpose(pos)))
  pos = reform(pos,1,3,n)
 
  ;---------------------------------------------------------
@@ -355,6 +397,7 @@ function sao_get_stars, filename, $
  ; use formula Mv = 4.83 - 2.5*log(L/Lsun) and since
  ; distance is 10pc mv = Mv
  ;---------------------------------------------------------
+ mag = Mag
  Lsun = const_get('Lsun')
  lum = Lsun * 10.d^( (4.83d0-double(Mag))/2.5d )
 
