@@ -20,7 +20,7 @@
 ;	    NONE
 ;
 ;  OUTPUT:
-;	 zero:  The array element corresponding to the phyiscal edge.
+;	 zero:  The array element corresponding to the physical edge.
 ;
 ;	delta:	The number of pixels represented by each element
 ;		Currently = 1.0

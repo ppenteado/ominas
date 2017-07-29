@@ -1,6 +1,9 @@
+; docformat = 'rst'
 ;===============================================================================
 ;+
-;                            OVERRIDE_EXAMPLE.PRO
+;                            OVERRIDE EXAMPLE
+;
+;  Created by Joe Spitale
 ;
 ;  This example demonstrates the use of OMINAS with no translators.  All
 ;  geometric values are manually entered.  I don't know why you would 
@@ -9,11 +12,11 @@
 ;
 ;  This example file can be executed from the UNIX command line using
 ;
-;  	ominas override_example.pro
+;  	ominas override_example-batch
 ;
 ;  or from within IDL using
 ;
-;  	@override_example
+;  	@override_example-batch
 ;
 ;  After the example stops, later code samples in this file may be executed by
 ;  pasting them at the IDL command prompt.
@@ -200,7 +203,9 @@ sund = pg_get_stars(dd, od=cd, /override, $
 ;  At this level, a generic descriptor is just a convenient shorthand 
 ;  to keep all of your object descriptors together.  All PG programs 
 ;  accept individual descriptor as well as generic descriptors as 
-;  arguments.  
+;  arguments.  GBX means any subclass of GLOBE, DKX means any SUBCLASS
+;  of DSK.  THese are arguments to te PG programs tha we'll be working 
+;  with.
 ;
 ;    gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;
@@ -247,8 +252,7 @@ center_ptd = pg_center(gd=gd, bx=pd)
 ;  I seriously never do things this way, but I guess it illustrates various
 ;  ways to use the software.  We're putting all of the POINT objects into
 ;  one array, and making corresponding arrays for the colors, plotting 
-;  symbols, etc.  This will make the calls to PG_DRAW a little nicer, since
-;  they will need to be repeated every time we change things and recompute.
+;  symbols, etc.  
 ;
 ;  The CT programs are used to get color indices without having to know
 ;  what type of visual class you're using. 
