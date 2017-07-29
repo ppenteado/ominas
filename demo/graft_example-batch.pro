@@ -59,8 +59,8 @@ grim, './data/n1350122987.2', zoom=0.75, /order
 ;	dat_set_data, dd, rotate(dat_data(dd),7)
 ;
 ;  GRIM resigns itself to having its data descriptor tampered with and
-;  updates the display accordingly.  Run the same comand again if you
-;  want rotate it back.
+;  updates the display accordingly.  Run the same command again if you
+;  want flip the image back.
 ;-
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 grift, dd=dd				
@@ -138,7 +138,7 @@ stop
 ;
 ;    pg_draw, object_ptd
 ;
-;  I know we left out the nice colors, but you get the point.  Ok, now 
+;  I know we left out the nice colors, but you get the point.  Now 
 ;  let's zoom in and take a look at things.  You can use the mouse wheel 
 ;  with Ctrl depressed, or you can use one of the Zoom cursor modes, or you
 ;  can use the View->Zoom menu, or the associated keyboard shortcuts if 
@@ -176,7 +176,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;  Now let's do a farfit, even though GRIM could just do that from the menu.  
 ;  We start by doing an edge detection with PG_EDGES and we graft those 
 ;  points into GRIM just for fun.  GRIM has the last laugh, though, because
-;  all those edge points make it hard to see anything.  If it relly bothers
+;  all those edge points make it hard to see anything.  If it really bothers
 ;  you, you can just blast those points out of GRIM using GRIM's "REMOVE
 ;  OVERLAYS" cursor mode on the left side of the tool.  Note that GRIM has
 ;  added the edge points as user points because they don't correspond to
@@ -209,10 +209,10 @@ pg_repoint, dxy, cd=cd
 ;  Yes, GRIM could have done all of this nonsense for you, but that's
 ;  because it's simple point-and-click kids stuff.  The power of working
 ;  with a script is that you don't have to do all the pointing and clicking.
-;  Everything can be noninteractive, or it can be a setup for an interactive
-;  session using a GRIM tool with extensions for a specfic project.  Oh,
+;  Everything can be non-interactive, or it can be a setup for an interactive
+;  session using a GRIM tool with extensions for a specific project.  Oh,
 ;  you didn't know that GRIM could be extended?  If only there were a 
-;  document somwhere that talked about that.  I wonder what it would be
+;  document somewhere that talked about that.  I wonder what it would be
 ;  Called..
 ;
 ;  Also, the point of this demo was to look at ways to interact with GRIM 
