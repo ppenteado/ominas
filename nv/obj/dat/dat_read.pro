@@ -65,7 +65,8 @@
 ;			If no extensions work, then the raw filename is attemtped.
 ;
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	count:		Number of descriptors returned.
 ;
 ;
 ;  ENVIRONMENT VARIABLES:
@@ -133,6 +134,8 @@ function drd_read, filename, data, header, $
 		  name=_name, nhist=nhist, $
 		  extensions=extensions
 
+
+ count = 0
 
  ;---------------------------------
  ; read detached header
@@ -355,7 +358,8 @@ function dat_read, filespec, data, header, $
                   maintain=maintain, compress=compress, $
                   sample=sample, nodata=nodata, $
 		  name=name, nhist=nhist, $
-		  extensions=extensions
+		  extensions=extensions, $
+                  count=count
 @core.include
 
  if(NOT keyword_set(maintain)) then maintain = 0
@@ -406,6 +410,7 @@ function dat_read, filespec, data, header, $
 			name=name, nhist=nhist, $
 			extensions=extensions))
 
+ count = n_elements(dd)
  return, dd
 end
 ;===========================================================================

@@ -71,10 +71,10 @@ tvim, im, zoom=0.75, /order, /new
 ;   if it exists, and if the relevant descriptors are present.  Otherwise, 
 ;   they are obtained from the SPICE kernels.
 ;
-;     cd = pg_get_cameras(dd)			  ; CAMERA descriptor
-;     pd = pg_get_planets(dd, od=cd)		  ; PLANET descriptor(s)
-;     rd = pg_get_rings(dd, pd=pd, od=cd)	  ; RING descriptor(s)
-;     sund = pg_get_stars(dd, od=cd, name='SUN')  ; STAR descriptor for Sun
+;     cd = pg_get_cameras(dd)                        ; CAMERA descriptor
+;     pd = pg_get_planets(dd, od=cd, count=npd)      ; PLANET descriptor(s)
+;     rd = pg_get_rings(dd, pd=pd, od=cd, count=nrd) ; RING descriptor(s)
+;     sund = pg_get_stars(dd, od=cd, name='SUN')     ; STAR descriptor for Sun
 ;
 ;   The calls to PG_GET_PLANETS, PG_GET_RINGS, and PG_GET_STARS include
 ;   an observer descriptor, od.  Without this, it would not be possible 
@@ -93,8 +93,8 @@ tvim, im, zoom=0.75, /order, /new
 ;-
 ;-------------------------------------------------------------------------
 cd = pg_get_cameras(dd)	
-pd = pg_get_planets(dd, od=cd)
-rd = pg_get_rings(dd, pd=pd, od=cd)
+pd = pg_get_planets(dd, od=cd, count=npd)
+rd = pg_get_rings(dd, pd=pd, od=cd, count=nrd)
 sund = pg_get_stars(dd, od=cd, name='SUN')
 
 
@@ -197,38 +197,36 @@ center_ptd = pg_center(gd=gd, bx=pd)
 ;  arrays for the plot parameters.
 ;
 ;    object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
-;    npd = n_elements(pd)
-;    colors=[make_array(n_elements(pd),value=!p.color), $
-;            make_array(n_elements(pd),value=ctyellow()), $
-;            make_array(2*n_elements(rd),value=ctred()), $
+;    colors=[make_array(npd,value=!p.color), $
+;            make_array(npd,value=ctyellow()), $
+;            make_array(2*nrd,value=ctred()), $
 ;            make_array(npd,value=ctgreen())]
-;    psyms=[make_array(n_elements(pd),value=1), $
-;           make_array(n_elements(pd),value=3), $
-;           make_array(2*n_elements(rd),value=3), $
+;    psyms=[make_array(npd,value=1), $
+;           make_array(npd,value=3), $
+;           make_array(2*nrd,value=3), $
 ;           make_array(npd,value=3)]
 ;    psizes=1.0
 ;    csizes=0.75
 ;    plabels=[cor_name(pd), $
-;            make_array(n_elements(pd),value=''), $
-;            make_array(2*n_elements(rd),value=''), $
+;            make_array(npd,value=''), $
+;            make_array(2*nrd,value=''), $
 ;            make_array(npd,value='')]
 ;-
 ;-------------------------------------------------------------------------
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
-npd = n_elements(pd)
-colors=[make_array(n_elements(pd),value=!p.color), $
-        make_array(n_elements(pd),value=ctyellow()), $
-        make_array(2*n_elements(rd),value=ctred()), $
+colors=[make_array(npd,value=!p.color), $
+        make_array(npd,value=ctyellow()), $
+        make_array(2*nrd,value=ctred()), $
         make_array(npd,value=ctgreen())]
-psyms=[make_array(n_elements(pd),value=1), $
-       make_array(n_elements(pd),value=3), $
-       make_array(2*n_elements(rd),value=3), $
+psyms=[make_array(npd,value=1), $
+       make_array(npd,value=3), $
+       make_array(2*nrd,value=3), $
        make_array(npd,value=3)]
 psizes=1.0
 csizes=0.75
 plabels=[cor_name(pd), $
-        make_array(n_elements(pd),value=''), $
-        make_array(2*n_elements(rd),value=''), $
+        make_array(npd,value=''), $
+        make_array(2*nrd,value=''), $
         make_array(npd,value='')]
 
 ;-------------------------------------------------------------------------
@@ -664,7 +662,6 @@ md = pg_get_maps(/over, bx=pd[0], $
 ;             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd), map=map)
 ;-
 ;-------------------------------------------------------------------------
-map = 0
 dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=map, bounds=bounds)
 tvim, /new, map
 
@@ -738,7 +735,6 @@ pg_draw, map_term_ptd, col=ctyellow()
 ;        size=[400,400], $
 ;        center=[!dpi/6d,!dpi])
 ;
-;     map=0
 ;     dd_map1 = pg_map(dd_map, md=md1, cd=md, map=map1)
 ;     tvim, /new, map1
 ;
@@ -749,9 +745,8 @@ pg_draw, map_term_ptd, col=ctyellow()
 md1 = pg_get_maps(/over, bx=pd[0], $
 	projection='STEREOGRAPHIC', $
 	size=[400,400], $
-	center=[!dpi/6d,!dpi])
+	center=[!dpi/2d,!dpi])
 
-map1=0
 dd_map1 = pg_map(dd_map, md=md1, cd=md, map=map1)
 tvim, /new, map1
 

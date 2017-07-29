@@ -126,7 +126,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
  if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
  if(NOT keyword_set(md)) then md = dat_gd(gd, dd=dd, /md)
-
+ map = !null
 
  if(keyword_set(_gbx)) then gbx = _gbx
  if(NOT keyword_set(bx)) then $
@@ -217,7 +217,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
    ; the smoothing routine seems to have a bug --> use shift in all
-   ; direction to enlarge the sample of pixels
+   ; directions to enlarge the sample of pixels
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
    wt = where(test_map NE 0)
    if(wt[0] EQ -1) then map = bytarr(image_size(md)) $

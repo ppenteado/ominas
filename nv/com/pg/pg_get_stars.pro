@@ -92,6 +92,9 @@
 ;
 ;	  nbright:	Select this many brightest stars.
 ;
+;  OUTPUT:
+;	count:	Number of descriptors returned
+;
 ;
 ; RETURN:
 ;	Star descriptors obtained from the translators, 0 if an error occurs.
@@ -182,11 +185,13 @@ end
 ;
 ;===========================================================================
 function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=keyvals, $
-                     override=override, verbatim=verbatim, raw=raw, $
+                     override=override, verbatim=verbatim, raw=raw, count=count, $
                               @str__keywords_tree.include
                               @dat__keywords.include
                               @nv_trs_keywords_include.pro
                               end_keywords
+
+ count = 0
 
  ;------------------------------------------------------------------------
  ; sort out arguments
@@ -304,6 +309,7 @@ function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=keyvals, $
  if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, sd=sd, od=od, /noevent
  dat_set_gd, sd, gd, od=od, /noevent
 
+ count = n_elements(sd)
  return, sd
 end
 ;===========================================================================

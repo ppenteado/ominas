@@ -55,7 +55,8 @@
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	count:	Number of descriptors returned.
 ;
 ;
 ; RETURN:
@@ -91,8 +92,10 @@
 ;-
 ;=============================================================================
 function pg_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, clip=clip, cull=cull, $
-                        npoints=npoints, epsilon=epsilon, reveal=reveal
+                        npoints=npoints, epsilon=epsilon, reveal=reveal, count=count
 @pnt_include.pro
+
+ count = 0
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -203,6 +206,7 @@ function pg_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, clip=clip, cull=cull, $
 
 
 
+ count = n_elements(limb_ptd)
  return, limb_ptd
 end
 ;=============================================================================

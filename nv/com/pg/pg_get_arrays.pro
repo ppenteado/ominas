@@ -62,6 +62,9 @@
 ;	-------------
 ;	All DATA override keywords are accepted.  See dat__keywords.include.  
 ;
+;  OUTPUT:
+;	count:	Number of descriptors returned
+;
 ;
 ; RETURN:
 ;	Array of array descriptors, 0 if an error occurs.
@@ -83,11 +86,13 @@
 ;-
 ;=============================================================================
 function pg_get_arrays, arg1, arg2, od=od, bx=bx, ard=_ard, _extra=keyvals, $
-                          override=override, verbatim=verbatim, $
+                          override=override, verbatim=verbatim, count=count, $
                               @arr__keywords_tree.include
                               @dat__keywords.include
                               @nv_trs_keywords_include.pro
                               end_keywords
+
+ count = 0
 
  ;------------------------------------------------------------------------
  ; sort out arguments
@@ -156,6 +161,7 @@ function pg_get_arrays, arg1, arg2, od=od, bx=bx, ard=_ard, _extra=keyvals, $
  if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, ard=ard, bx=bx, /noevent
  dat_set_gd, ard, gd, bx=bx, /noevent
 
+ count = n_elements(ard)
  return, ard
 end
 ;===========================================================================
