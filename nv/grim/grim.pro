@@ -9508,8 +9508,6 @@ end
 pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
     only=only, temp=temp, ptd=ptd
 
- widget_control, /hourglass
-
  if(keyword_set(plane)) then planes = plane $
  else planes = grim_get_plane(grim_data, /all)
  nplanes = n_elements(planes)
@@ -9525,7 +9523,9 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
 
    if(keyword_set(overlays)) then $
     begin
-     ;---------------------------------------------------------------------
+     widget_control, /hourglass
+
+    ;---------------------------------------------------------------------
      ; clear overlays so they are not computed again for this plane
      ;---------------------------------------------------------------------
      *planes[j].initial_overlays_p = ''

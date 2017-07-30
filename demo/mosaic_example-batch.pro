@@ -270,8 +270,8 @@ dd_map = objarr(n)
 ; 
 ;   for i=0, n-1 do $
 ;     dd_map[i] = pg_map(dd_pht[i], md=md, gd=gd[i], aux=['EMM'], $
-;     wind_fn='pm_wind_zonal', $
-;     wind_data={vel:cos((dindgen(181)-90)*!dpi/180d) * 100d, $
+;     shear_fn='pm_shear_zonal', $
+;     shear_data={vel:cos((dindgen(181)-90)*!dpi/180d) * 100d, $
 ;     dt:bod_time(gd[i].cd)-bod_time(gd[0].cd)})
 ;     
 ;-
@@ -280,8 +280,8 @@ for i=0, n-1 do dd_map[i] = pg_map(dd_pht[i], md=md, gd=gd[i], aux=['EMM'])
 
 ;for i=0, n-1 do $
 ;   dd_map[i] = pg_map(dd_pht[i], md=md, gd=gd[i], aux=['EMM'], $
-;                   wind_fn='pm_wind_zonal', $
-;                   wind_data={vel:cos((dindgen(181)-90)*!dpi/180d) * 100d, $
+;                   shear_fn='pm_shear_zonal', $
+;                   shear_data={vel:cos((dindgen(181)-90)*!dpi/180d) * 100d, $
 ;                              dt:bod_time(gd[i].cd)-bod_time(gd[0].cd)})
 
 for i=0, n-1 do tvim, dat_data(dd_map[i]), /new

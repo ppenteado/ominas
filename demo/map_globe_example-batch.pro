@@ -62,7 +62,7 @@ md1 = pg_get_maps(/over, bx=pd, $
 	size=[400,200] $
 	)
 dd_map1 = pg_map(dd, md=md1, gd=gd, bx=pd, map=map1, $
-            hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
+                             hide_fn='pm_hide_ring', hide_bx=rd)
 tvim, /new, map1, title=map_projection(md1) + ' PROJECTION'
 
 
@@ -77,7 +77,7 @@ md2 = pg_get_maps(/over, bx=pd, $
 	center=[-!dpi/6d,0d] $
 	)
 dd_map2 = pg_map(dd, md=md2, gd=gd, bx=pd, map=map2, $
-            hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
+                              hide_fn='pm_hide_ring', hide_bx=rd)
 tvim, /new, map2, title=map_projection(md2) + ' PROJECTION'
 
 
@@ -92,7 +92,7 @@ md3 = pg_get_maps(/over, bx=pd, $
 	center=[!dpi/2d,0d] $
 	)
 dd_map3 = pg_map(dd, md=md3, gd=gd, bx=pd, map=map3, $
-            hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
+                           hide_fn='pm_hide_ring', hide_bx=rd)
 tvim, /new, map3, title=map_projection(md3) + ' PROJECTION'
 
 
@@ -105,7 +105,7 @@ md4 = pg_get_maps(/over, bx=pd, $
 	size=[400,200] $
 	)
 dd_map4 = pg_map(dd, md=md4, gd=gd, bx=pd, map=map4, $
-            hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd))
+                            hide_fn='pm_hide_ring', hide_bx=rd)
 tvim, /new, map4, title=map_projection(md4) + ' PROJECTION'
 
 
