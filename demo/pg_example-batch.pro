@@ -659,7 +659,7 @@ md = pg_get_maps(/over, bx=pd[0], $
 ;   Or exclude the areas covered by the rings::
 ;
 ;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], gbx=pd[0], $
-;             hide_fn='pm_hide_ring', hide_data_p=ptr_new(rd), map=map)
+;                        hide_fn='pm_hide_ring', hide_bx=rd, map=map)
 ;-
 ;-------------------------------------------------------------------------
 dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=map, bounds=bounds)

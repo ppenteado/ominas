@@ -114,7 +114,7 @@ pro grmt_create_map, data, md
 	 if(keyword_set(rd)) then $
 	  begin
 	   hide_fn = 'pm_hide_ring'
-           hide_data_p = nv_ptr_new(rd)
+           hide_bx = rd
 	  end
 
 	 if(keyword_set(pd)) then $
@@ -137,7 +137,7 @@ pro grmt_create_map, data, md
                     cd=cd, $
                     sund=sund, $
                     gbx=gbx, aux=['EMM'], $
-                    hide_fn=hide_fn, hide_data_p=hide_data_p)
+                    hide_fn=hide_fn, hide_bx=hide_bx)
 	end
 
   'DISK' : $
@@ -164,7 +164,7 @@ pro grmt_create_map, data, md
                     cd=cd, $
                     sund=sund, $
                     gbx=all_pd, $
-                    hide_fn=hide_fn, hide_data_p=hide_data_p)
+                    hide_fn=hide_fn, hide_bx=hide_bx)
 
 	 map_rd = rd[0]
 	end

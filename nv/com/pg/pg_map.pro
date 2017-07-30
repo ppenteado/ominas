@@ -48,21 +48,29 @@
 ;		are taken from the corresponding fields of this structure
 ;		instead of from those keywords.
 ;
-;	hide_fn:	String giving the name of a function whose purpose
-;			is to exclude hidden points from the map.  The only
-;			function currently packaged is 'pm_hide_ring', which
-;			takes a ring descriptor as data (see next keyword).
+;	hide_fn:
+;		String giving the name of a function whose purpose
+;		is to exclude hidden points from the map.  Options are:
+;		   pm_hide_ring
+;		   pm_hide_globe
+;		   pm_rm_globe_shadow
+;		   pm_rm_globe
 ;
-;	hide_data_p:	Pointer to data for the hide function.
+;	hide_bx:
+;		Array of BODY objects for the hide functions; one per
+;		function.
 ;
-;	aux_names:	Array (naux) giving udata names for additional data
-;			descriptor planes to reproject.  The dimensions of these
-;			planes must be the same as the image. 
+;	aux_names:	
+;		Array (naux) giving udata names for additional data
+;		descriptor planes to reproject.  The dimensions of these
+;		planes must be the same as the image. 
 ;
-;	pc_xsize, pc_ysize:	The map is generated in pieces of size pc_xsize
-;				x pc_ysize.   Default is 100 x 100 pixels.
+;	pc_xsize, pc_ysize:	
+;		The map is generated in pieces of size pc_xsize
+;		x pc_ysize.   Default is 100 x 100 pixels.
 ;
-;	bounds:		Projection bounds specified as [lat0, lat1, lon0, lon1].
+;	bounds:		
+;		Projection bounds specified as [lat0, lat1, lon0, lon1].
 ;
 ;	edge:	Minimum proximity to image edge.  Default is 0.
 ;
@@ -110,10 +118,10 @@
 ;-
 ;=============================================================================
 function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
-                   hide_fn=hide_fn, hide_data_p=hide_data_p, map=map, $
+                   hide_fn=hide_fn, hide_bx=hide_bx, map=map, $
                    aux_names=aux_names, pc_xsize=pc_xsize, pc_ysize=pc_ysize, $ 
                    bounds=bounds, interp=interp, arg_interp=arg_interp, $
-                   offset=offset, edge=edge, wind_fn=wind_fn, wind_data=wind_data, $
+                   offset=offset, edge=edge, shear_fn=shear_fn, shear_data=shear_data, $
                    smooth=smooth, roi=roi, test_factor=test_factor
 
  ;-----------------------------------------------
@@ -210,9 +218,9 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
 
    test_map = project_map(image, bounds=bounds, interp=interp,  $
             md=test_md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
-;            hide_fn=hide_fn, hide_data_p=hide_data_p, $
+;            hide_fn=hide_fn, hide_bx=hide_bx, $
             arg_interp=arg_interp, $
-            offset=offset, wind_fn=wind_fn, wind_data=wind_data, edge=edge, $
+            offset=offset, shear_fn=shear_fn, shear_data=shear_data, edge=edge, $
             smooth=smooth, roi=roi, value=1)
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -259,8 +267,8 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  if(NOT keyword_set(map)) then $
     map = project_map(image, bounds=bounds, interp=interp,  $
             md=md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
-            hide_fn=hide_fn, hide_data_p=hide_data_p, arg_interp=arg_interp, $
-            offset=offset, wind_fn=wind_fn, wind_data=wind_data, edge=edge, $
+            hide_fn=hide_fn, hide_bx=hide_bx, arg_interp=arg_interp, $
+            offset=offset, shear_fn=shear_fn, shear_data=shear_data, edge=edge, $
             smooth=smooth, roi=roi)
  map = map > 0
 

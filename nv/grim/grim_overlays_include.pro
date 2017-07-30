@@ -112,7 +112,7 @@ end
 ;
 ;=============================================================================
 function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
-                        data=data, class=class, dep=dep, labels=labels, ii=ii, $
+                        data=data, class=class, dep=dep, ii=ii, $
                         color=color, psym=psym, tlab=tlab, tshade=tshade, $
                         symsize=symsize, shade=shade, tfill=tfill, genre=genre, fast=fast
 
@@ -123,33 +123,29 @@ function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
 
  if(NOT defined(ii)) then $
   begin
-   if(keyword_set(name)) then ii = where(*plane.overlay_names_p EQ name) $
-   else if(keyword_set(class)) then ii = where(*plane.overlay_classes_p EQ class) $
-   else if(keyword_set(genre)) then ii = where(*plane.overlay_genres_p EQ genre)
+   if(keyword_set(name)) then ii = where((*plane.overlays_p).name EQ name) $
+   else if(keyword_set(class)) then ii = where((*plane.overlays_p).class EQ class) $
+   else if(keyword_set(genre)) then ii = where((*plane.overlays_p).genre EQ genre)
   end
  if(ii[0] EQ -1) then return, 0
  if(keyword_set(fast)) then return, (*plane.overlay_ptdps)[ii]
 
  ii = ii[0]
 
- name = (*plane.overlay_names_p)[ii]
- class = (*plane.overlay_classes_p)[ii]
+ name = (*plane.overlays_p)[ii].name
+ class = (*plane.overlays_p)[ii].class
  
- dep = *(*plane.overlay_dep_p)[ii]
+ dep = *(*plane.overlays_p)[ii].dep_p
 
- if(keyword_set((*plane.overlay_labels_p)[ii])) then $
-                                  labels = *(*plane.overlay_labels_p)[ii]
+ color = (*plane.overlays_p)[ii].color
+ psym = (*plane.overlays_p)[ii].psym
+ symsize = (*plane.overlays_p)[ii].symsize
+ shade = (*plane.overlays_p)[ii].shade
+ tlab = (*plane.overlays_p)[ii].tlab
+ tshade = (*plane.overlays_p)[ii].tshade
+ tfill = (*plane.overlays_p)[ii].tfill
 
-
- color = (*plane.overlay_color_p)[ii]
- psym = (*plane.overlay_psym_p)[ii]
- symsize = (*plane.overlay_symsize_p)[ii]
- shade = (*plane.overlay_shade_p)[ii]
- tlab = (*plane.overlay_tlab_p)[ii]
- tshade = (*plane.overlay_tshade_p)[ii]
- tfill = (*plane.overlay_tfill_p)[ii]
-
- data_p = (*plane.overlay_data_p)[ii]
+ data_p = (*plane.overlays_p)[ii].data_p
  if(ptr_valid(data_p)) then data = *data_p
 
  return, (*plane.overlay_ptdps)[ii]
@@ -404,7 +400,7 @@ pro grim_update_activated, grim_data, plane=plane
  grim_deactivate_xd, plane, *plane.std_p
 
 
- names = *plane.overlay_names_p
+ names = (*plane.overlays_p).name
  for i=0, n_elements(names)-1 do $
   begin
    name = names[i]
@@ -542,17 +538,18 @@ end
 pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
        update=update, mlab=mlab
 
-  names = *plane.overlay_names_p
+  names = (*plane.overlays_p).name
   for i=0, n_elements(names)-1 do $
    begin
     name = names[i]
     ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, name, data=data, $
              color=color, psym=psym, symsize=symsize, shade=shade, tlab=tlab, $
-             tshade=tshade, tfill=tfill, labels=labels)
+             tshade=tshade, tfill=tfill)
     if(color NE 'hidden') then $
      if(ptr_valid(ptdp)) then $
       if(keyword_set(*ptdp)) then $
        begin
+        labels = cor_name(*ptdp)
         if(keyword_set(plane.override_color) $
                   AND (strupcase(plane.override_color) NE 'NONE')) then $
                                                    color = plane.override_color
@@ -1313,7 +1310,7 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
  ; get all points arrays for this overlay type
  ;--------------------------------------------------------------------
  ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, $
-                                       class=class, dep=dep_classes, ii=ii)
+                                     class=class, dep=dep_classes, ii=ii)
  all_ptd = *ptdp
  nall = n_elements(all_ptd)
 
@@ -1342,15 +1339,10 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
 
 
  ;--------------------------------------------------------------------
- ; add labels
- ;-------------------------------------------------------------------- 
- *(*plane.overlay_labels_p)[ii] = cor_name(ptd)
-
-
- ;--------------------------------------------------------------------
  ; add data
  ;-------------------------------------------------------------------- 
- if(keyword_set(data)) then *(*plane.overlay_data_p)[ii] = data
+;; if(keyword_set(data)) then *(*plane.overlay_data_p)[ii] = data
+ if(keyword_set(data)) then *((*plane.overlays_p).data_p)[ii] = data
 
 
  ;--------------------------------------------------------------------
@@ -1437,7 +1429,7 @@ pro grim_clear_active_overlays, grim_data, plane
  ;------------------------------------------
  ; make active overlay points invisible
  ;------------------------------------------
- names = *plane.overlay_names_p
+ names = (*plane.overlays_p).name
  for i=0, n_elements(names)-1 do $
   grim_clear_overlay_points, $
      grim_get_overlay_ptdp(grim_data, plane=plane, names[i]), $
@@ -1744,7 +1736,7 @@ function grim_unique_array_label, ptdp
  for i=0, nptd-1 do if(keyword_set(ptd[i])) then $
                 ii[i] = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL')
 
- diff = set_difference(ii, lindgen(max(ii)+1))
+ diff = set_difference(ii, lindgen(max(ii)+2))
  if(diff[0] EQ -1) then return, nptd
 
  return, min(diff)
@@ -1792,7 +1784,6 @@ pro grim_add_indexed_array, ptdp, p, ptd=ptd, $
  ;------------------------------------------------------------------------
  ; add the array
  ;------------------------------------------------------------------------
-; *ptdp = [*ptdp, ptd]
  *ptdp = append_array(*ptdp, ptd)
 
  if(defined(flags)) then pnt_set_flags, ptd, flags
@@ -1951,8 +1942,7 @@ pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all
    if(ii[0] NE -1) then $
     begin
      nv_free, (*ptdp)[ii]
-*ptdp = rm_list_item(*ptdp, ii, only=obj_new())
-;     (*ptdp)[ii] = obj_new()
+     *ptdp = rm_list_item(*ptdp, ii, only=obj_new(), /scalar)
     end
   end
 
@@ -3072,11 +3062,10 @@ d2min = 25
    ww = -1 & mm = 1d20
    found = 1
 
-   names = *plane.overlay_names_p
+   names = (*plane.overlays_p).name
    for i=0, n_elements(names)-1 do $
     begin
      _name = names[i]
-;     ptd = grim_get_active_overlays(grim_data, plane=plane, _name)
      ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, _name)
      _ww = grim_nearest_overlay(plane, p, *ptdp, mm=_mm)
      if(_ww[0] NE -1) then if(_mm LT mm) then $
@@ -3161,7 +3150,7 @@ d2min = 25
  ww = -1 & mm = 1d20
  found = 1
 
- names = *plane.overlay_names_p
+ names = (*plane.overlays_p).name
  for i=0, n_elements(names)-1 do $
   begin
    _name = names[i]
@@ -3234,7 +3223,7 @@ pro grim_trim_overlays, grim_data, plane=plane, region
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- names = *plane.overlay_names_p
+ names = (*plane.overlays_p).name
  for i=0, n_elements(names)-1 do $
   begin
    name = names[i]
@@ -3256,7 +3245,7 @@ pro grim_select_overlay_points, grim_data, plane=plane, region, deselect=deselec
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- names = *plane.overlay_names_p
+ names = (*plane.overlays_p).name
  for i=0, n_elements(names)-1 do $
   begin
    name = names[i]
@@ -3298,7 +3287,7 @@ pro grim_remove_by_box, grim_data, plane, cx, cy, stat=stat, user=user
  ;- - - - - - - - - - - - -
  if(NOT keyword_set(user)) then $
   begin
-   names = *plane.overlay_names_p
+   names = (*plane.overlays_p).name
    for i=0, n_elements(names)-1 do $
     begin
      stat = 0
@@ -3366,7 +3355,7 @@ pro grim_activate_by_box, grim_data, plane, cx, cy, deactivate=deactivate
  ;- - - - - - - - - - - - -
  ; standard overlays
  ;- - - - - - - - - - - - -
- names = *plane.overlay_names_p
+ names = (*plane.overlays_p).name
  for i=0, n_elements(names)-1 do $
   begin
    name = names[i]
@@ -3500,28 +3489,27 @@ pro grim_create_overlay, grim_data, plane, name, class=class, dep_classes=dep_cl
                    color=color, psym=psym, symsize=symsize, shade=shade, $
                    tlab=tlab, tshade=tshade, tfill=tfill, genre=genre
 
-
-
  if(grim_test_map(grim_data, plane=plane)) then psym = abs(psym)
 
  if(NOT defined(symsize)) then symsize = 1.
  if(NOT defined(shade)) then shade = 1.
-  
- *plane.overlay_names_p = append_array(*plane.overlay_names_p, name)
- *plane.overlay_classes_p = append_array(*plane.overlay_classes_p, [class])
- *plane.overlay_genres_p = append_array(*plane.overlay_genres_p, [genre])
- *plane.overlay_dep_p = append_array(*plane.overlay_dep_p, ptr_new(dep_classes))
- *plane.overlay_labels_p = append_array(*plane.overlay_labels_p, ptr_new(''))
- *plane.overlay_ptdps = append_array(*plane.overlay_ptdps, ptr_new(0))
 
- *plane.overlay_color_p = append_array(*plane.overlay_color_p, color)
- *plane.overlay_symsize_p = append_array(*plane.overlay_symsize_p, [symsize])
- *plane.overlay_shade_p = append_array(*plane.overlay_shade_p, [shade])
- *plane.overlay_psym_p = append_array(*plane.overlay_psym_p, psym)
- *plane.overlay_tlab_p = append_array(*plane.overlay_tlab_p, [tlab])
- *plane.overlay_tshade_p = append_array(*plane.overlay_tshade_p, [tshade])
- *plane.overlay_tfill_p = append_array(*plane.overlay_tfill_p, [tfill])
- *plane.overlay_data_p = append_array(*plane.overlay_data_p, [ptr_new(0)])
+ overlay = {	ptdp		: ptr_new(0), $
+		name 		: name, $
+		class 		: class, $
+		genre 		: genre, $
+		dep_p 		: ptr_new(dep_classes), $
+		color 		: color, $
+		shade 		: float(shade), $
+		psym 		: fix(psym), $
+		symsize 	: float(symsize), $
+		tlab 		: tlab, $
+		tshade 		: tshade, $
+		tfill 		: tfill, $
+		data_p 		: ptr_new(0) }
+
+ *plane.overlays_p = append_array(*plane.overlays_p, overlay)
+ *plane.overlay_ptdps = append_array(*plane.overlay_ptdps, ptr_new(0))
 
 end
 ;=============================================================================

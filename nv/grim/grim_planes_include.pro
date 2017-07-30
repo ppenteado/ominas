@@ -618,20 +618,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	;  descriptor (e.g., rings have two arrays per descriptor).
 	;-----------------------------------------------------------
 		overlay_ptdps		:	ptr_new(0), $
-; it may be simpler to implement these as udata on each overlay ptd
-		overlay_names_p		:	ptr_new(''), $
-		overlay_classes_p	:	ptr_new(0), $
-		overlay_genres_p	:	ptr_new(0), $
-		overlay_dep_p		:	ptr_new(0), $
-		overlay_labels_p	:	ptr_new(0), $
-		overlay_color_p		:	ptr_new(''), $
-		overlay_psym_p		:	ptr_new(0), $
-		overlay_symsize_p	:	ptr_new(0.), $ 
-		overlay_shade_p		:	ptr_new(0.), $ 
-		overlay_tlab_p		:	ptr_new(0b), $
-		overlay_tshade_p	:	ptr_new(0b), $
-		overlay_tfill_p		:	ptr_new(0b), $
-		overlay_data_p		:	ptr_new(0), $
+		overlays_p		:	ptr_new(0), $	; Overlay global
+								; attributes
 		override_color		:	'', $
 
 ;	;-----------------------------------------------------------

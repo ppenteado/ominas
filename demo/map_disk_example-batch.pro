@@ -75,7 +75,7 @@ map_set_units, md, map_units_disk(md, $
 
 
 dd_map = pg_map(dd, md=md, cd=cd, bx=rd, gd=gd, map=map, $
-            hide_fn='pm_rm_globe', hide_data_p=ptr_new(pd))
+                           hide_fn='pm_rm_globe', hide_bx=pd)
 tvim, /new, map, title=map_projection(md) + ' PROJECTION'
 
 
