@@ -295,6 +295,8 @@ function strcat_input, dd, keyword, cat, n_obj=n_obj, dim=dim, values=values, st
     end
   end
 
+ if(NOT keyword_set(sd)) then return, 0
+
  ;--------------------------------------------------------
  ; indicate that light time is included in catalog states
  ;--------------------------------------------------------

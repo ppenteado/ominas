@@ -1336,15 +1336,15 @@ pro grim_kill_notify, top
 
    nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, plane.ard_p, plane.sund_p, $
              plane.od_p, plane.active_xd_p, plane.active_overlays_ptdp,$
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'limb'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'ring'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'terminator'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'star'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'station'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'array'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_grid'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'ring_grid'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_center'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'LIMB'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'RING'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'TERMINATOR'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'STAR'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'STATION'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'ARRAY'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_GRID'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'RING_GRID'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_CENTER'), $
              plane.user_ptd_tlp]
   end
 
@@ -1905,7 +1905,7 @@ pro grim_render, grim_data, plane=plane
 ; grim_load_descriptors, grim_data, name, plane=plane, $
 ;       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
 ;       gd=gd
- grim_load_descriptors, grim_data, 'limb', plane=plane
+ grim_load_descriptors, grim_data, 'LIMB', plane=plane
 
 
  ;---------------------------------------------------------
@@ -4330,7 +4330,7 @@ pro grim_menu_plane_coregister_event, event
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
  for i=0, n-1 do $
-   grim_load_descriptors, grim_data, class='camera', plane=planes[i], cd=cd
+   grim_load_descriptors, grim_data, class='CAMERA', plane=planes[i], cd=cd
  if(NOT keyword_set(cd[0])) then return 
 
 
@@ -4595,13 +4595,13 @@ pro grim_menu_plane_propagate_tiepoints_event, event
  npts = n_elements(tie_pts)/2
  ii = grim_get_tiepoint_indices(grim_data, plane=plane)
 
- grim_load_descriptors, grim_data, class='camera', plane=plane, cd=cd
+ grim_load_descriptors, grim_data, class='CAMERA', plane=plane, cd=cd
  if(NOT keyword_set(cd[0])) then $ 
   begin
    grim_message, 'No camera descriptor!'
    return
   end
- grim_load_descriptors, grim_data, class='planet', plane=plane, pd=pd
+ grim_load_descriptors, grim_data, class='PLANET', plane=plane, pd=pd
  if(NOT keyword_set(pd[0])) then return
 
  cd = cd[0]
@@ -4621,11 +4621,11 @@ pro grim_menu_plane_propagate_tiepoints_event, event
  for i=0, nplanes-1 do $
   if(planes[i].pn NE pn) then $
    begin
-    grim_load_descriptors, grim_data, class='camera', plane=planes[i]
+    grim_load_descriptors, grim_data, class='CAMERA', plane=planes[i]
     cdi = (*planes[i].cd_p)[0]
     if(keyword_set(cdi)) then $
      begin
-      grim_load_descriptors, grim_data, class='planet', plane=planes[i]
+      grim_load_descriptors, grim_data, class='PLANET', plane=planes[i]
       w = where(cor_name(pd) EQ name)
       if(w[0] NE -1) then $
        begin
@@ -6944,7 +6944,7 @@ pro grim_menu_points_planet_centers_event, event
  ;------------------------------------------------
  ; load descriptors and compute centers
  ;------------------------------------------------
- grim_overlay, grim_data, 'planet_center'
+ grim_overlay, grim_data, 'PLANET_CENTER'
 ; grim_planet_centers, grim_data
 
  ;------------------------------------------------
@@ -6993,7 +6993,7 @@ pro grim_menu_points_limbs_event, event
  ;------------------------------------------------
  ; load descriptors and compute limbs
  ;------------------------------------------------
- grim_overlay, grim_data, 'limb'
+ grim_overlay, grim_data, 'LIMB'
 ; grim_limbs, grim_data
 
  ;------------------------------------------------
@@ -7043,7 +7043,7 @@ pro grim_menu_points_terminators_event, event
  ;------------------------------------------------
  ; load descriptors and compute terminators
  ;------------------------------------------------
- grim_overlay, grim_data, 'terminator'
+ grim_overlay, grim_data, 'TERMINATOR'
 ; grim_terminators, grim_data
 
  ;------------------------------------------------
@@ -7093,7 +7093,7 @@ pro grim_menu_points_planet_grids_event, event
  ;------------------------------------------------
  ; load descriptors and compute planet grids
  ;------------------------------------------------
- grim_overlay, grim_data, 'planet_grid'
+ grim_overlay, grim_data, 'PLANET_GRID'
 ; grim_planet_grids, grim_data
 
  ;------------------------------------------------
@@ -7142,7 +7142,7 @@ pro grim_menu_points_rings_event, event
  ;------------------------------------------------
  ; load descriptors and compute rings
  ;------------------------------------------------
- grim_overlay, grim_data, 'ring'
+ grim_overlay, grim_data, 'RING'
 ;grim_rings, grim_data
 
  ;------------------------------------------------
@@ -7194,7 +7194,7 @@ pro grim_menu_points_ring_grids_event, event
  ;------------------------------------------------
  ; load descriptors and compute planet grids
  ;------------------------------------------------
- grim_overlay, grim_data, 'ring_grid'
+ grim_overlay, grim_data, 'RING_GRID'
 
  ;------------------------------------------------
  ; draw planet grids
@@ -7243,7 +7243,7 @@ pro grim_menu_points_stations_event, event
  ;------------------------------------------------
  ; load descriptors and compute planet grids
  ;------------------------------------------------
- grim_overlay, grim_data, 'station'
+ grim_overlay, grim_data, 'STATION'
 
  ;------------------------------------------------
  ; draw stations
@@ -7291,7 +7291,7 @@ pro grim_menu_points_arrays_event, event
  ;------------------------------------------------
  ; load descriptors and compute planet grids
  ;------------------------------------------------
- grim_overlay, grim_data, 'array'
+ grim_overlay, grim_data, 'ARRAY'
 
  ;------------------------------------------------
  ; draw arrays
@@ -7338,7 +7338,7 @@ pro grim_menu_points_stars_event, event
  ;------------------------------------------------
  ; load descriptors and compute stars
  ;------------------------------------------------
- grim_overlay, grim_data, 'star'
+ grim_overlay, grim_data, 'STAR'
 
  ;------------------------------------------------
  ; draw stars
@@ -7390,7 +7390,7 @@ pro grim_menu_points_shadows_event, event
  ;------------------------------------------------
  ; load descriptors and compute shadows
  ;------------------------------------------------
- grim_overlay, grim_data, 'shadow'
+ grim_overlay, grim_data, 'SHADOW'
 ;grim_shadows, grim_data
 
  ;------------------------------------------------
@@ -7443,7 +7443,7 @@ pro grim_menu_points_reflections_event, event
  ;------------------------------------------------
  ; load descriptors and compute reflections
  ;------------------------------------------------
- grim_overlay, grim_data, 'reflection'
+ grim_overlay, grim_data, 'REFLECTION'
 ;grim_reflections, grim_data
 
  ;------------------------------------------------
@@ -9470,6 +9470,7 @@ end
 ;=============================================================================
 pro grim_initial_framing, grim_data, frame, delay_overlays=delay_overlays
 
+ frame = strupcase(frame)
  z = 1d100
 
  if(keyword_set(delay_overlays)) then planes = grim_get_plane(grim_data) $
@@ -9680,13 +9681,17 @@ pro grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, xzero=xzero, $
  ;--------------------------------------------
  ; if no data descriptors, create one 
  ;--------------------------------------------
-;stop
-;;;need trs
-; if(NOT keyword_set(_dd)) then $
-;  if(keyword_set(overlays)) then $
-;   begin
-;    pg_sort_args, dd, trs=trs, keyvals
-;   end
+ if(keyword_set(overlays)) then $
+  begin
+   overlays = strupcase(overlays)
+
+;   if(NOT keyword_set(_dd)) then $
+;    begin
+;     pg_sort_args, dd, trs=trs, keyvals
+;    end
+
+  end
+
 
  ;--------------------------------------------
  ; process data descriptors 

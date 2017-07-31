@@ -75,7 +75,7 @@ function grim_get_xd, grim_data, plane=plane, class
 
  if(class[0] EQ '') then return, obj_new()
 
- if(class[0] EQ 'all') then class = ['planet', 'ring', 'sun', 'star', 'camera', 'station']
+ if(class[0] EQ 'all') then class = ['PLANET', 'RING', 'SUN', 'STAR', 'CAMERA', 'STATION']
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
@@ -84,19 +84,19 @@ function grim_get_xd, grim_data, plane=plane, class
  xds = 0
  for i=0, n-1 do $
   case class[i] of
-   'camera'	:	$
+   'CAMERA'	:	$
       if(keyword_set(*plane.cd_p)) then xds = append_array(xds, *plane.cd_p)
-   'planet'	:	$
+   'PLANET'	:	$
       if(keyword_set(*plane.pd_p)) then xds = append_array(xds, *plane.pd_p)
-   'ring'	:	$
+   'RING'	:	$
       if(keyword_set(*plane.rd_p)) then xds = append_array(xds, *plane.rd_p)
-   'sun'	:	$
+   'SUN'	:	$
       if(keyword_set(*plane.sund_p)) then xds = append_array(xds, *plane.sund_p)
-   'star'	:	$
+   'STAR'	:	$
       if(keyword_set(*plane.sd_p)) then xds = append_array(xds, *plane.sd_p)
-   'station'	:	$
+   'STATION'	:	$
       if(keyword_set(*plane.std_p)) then xds = append_array(xds, *plane.std_p)
-   'array'	:	$
+   'ARRAY'	:	$
       if(keyword_set(*plane.ard_p)) then xds = append_array(xds, *plane.ard_p)
   endcase
 
@@ -243,15 +243,15 @@ end
 function grim_get_all_active_overlays, grim_data, plane=plane, names=names
 
  if(NOT keyword_set(names)) then $
-   names = ['planet_center', $
-            'limb', $
-            'terminator', $
-            'ring', $
-            'star', $
-            'station', $
-            'array', $
-            'planet_grid', $
-            'ring_grid']
+   names = ['PLANET_CENTER', $
+            'LIMB', $
+            'TERMINATOR', $
+            'RING', $
+            'STAR', $
+            'STATION', $
+            'ARRAY', $
+            'PLANET_GRID', $
+            'RING_GRID']
 
  for i=0, n_elements(names)-1 do $
   ptd = append_array(ptd, grim_get_active_overlays(grim_data, plane=plane, names[i]))
@@ -269,15 +269,15 @@ end
 function grim_get_all_overlays, grim_data, plane=plane, names=names
 
  if(NOT keyword_set(names)) then $
-   names = ['planet_center', $
-            'limb', $
-            'terminator', $
-            'ring', $
-            'star', $
-            'station', $
-            'array', $
-            'planet_grid', $
-            'ring_grid']
+   names = ['PLANET_CENTER', $
+            'LIMB', $
+            'TERMINATOR', $
+            'RING', $
+            'STAR', $
+            'STATION', $
+            'ARRAY', $
+            'PLANET_GRID', $
+            'RING_GRID']
 
  for i=0, n_elements(names)-1 do $
   ptd = append_array(ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, names[i])))
@@ -303,11 +303,11 @@ function grim_get_active_xds, plane, class, $
  if(NOT keyword_set(class)) then return, *plane.active_xd_p
 
  case class of
-  'planet' :  xd_p = plane.pd_p
-  'ring' :  xd_p = plane.rd_p
-  'star' :  xd_p = plane.sd_p
-  'station' :  xd_p = plane.std_p
-  'array' :  xd_p = plane.ard_p
+  'PLANET' :  xd_p = plane.pd_p
+  'RING' :  xd_p = plane.rd_p
+  'STAR' :  xd_p = plane.sd_p
+  'STATION' :  xd_p = plane.std_p
+  'ARRAY' :  xd_p = plane.ard_p
  endcase
 
  if(NOT keyword_set(*xd_p)) then return, 0
@@ -3518,80 +3518,80 @@ end
 pro grim_create_overlays, grim_data, plane
 
    grim_create_overlay, grim_data, plane, $
-	'ring_grid', $
-		class='ring', $
-		dep_classes=['sun', 'planet'], $
-		genre='curve', $
+	'RING_GRID', $
+		class='RING', $
+		dep_classes=['SUN', 'PLANET'], $
+		genre='CURVE', $
 		col='orange', psym=3, tlab=0, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'planet_grid', $
-		class='planet', $
-		dep_classes=['sun', 'ring'], $
-		genre='curve', $
+	'PLANET_GRID', $
+		class='PLANET', $
+		dep_classes=['SUN', 'RING'], $
+		genre='CURVE', $
 		col='green', psym=3, tlab=0, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'station', $
-		class='station', $
-		dep_classes=['planet', 'sun', 'ring'], $
-		genre='point', $
+	'STATION', $
+		class='STATION', $
+		dep_classes=['PLANET', 'SUN', 'RING'], $
+		genre='POINT', $
 		col='yellow', psym=1, tlab=1, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'array', $
-		class='array', $
-		dep_classes=['planet', 'sun', 'ring'], $
-		genre='curve', $
+	'ARRAY', $
+		class='ARRAY', $
+		dep_classes=['PLANET', 'SUN', 'RING'], $
+		genre='CURVE', $
 		col='blue', psym=-3, tlab=1, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'limb', $
-		class='planet', $
-		dep_classes=['sun', 'ring'], $
-		genre='curve', $
+	'LIMB', $
+		class='PLANET', $
+		dep_classes=['SUN', 'RING'], $
+		genre='CURVE', $
 		col='yellow', psym=-3, tlab=0, tfill=0, shade=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'terminator', $
-		class='planet', $
-		dep_classes=['sun', 'ring'], $
-		genre='curve', $
+	'TERMINATOR', $
+		class='PLANET', $
+		dep_classes=['SUN', 'RING'], $
+		genre='CURVE', $
 		col='red', psym=-3, tlab=0, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'ring', $
-		class='ring', $
-		dep_classes=['sun', 'planet'], $
-		genre='curve', $
+	'RING', $
+		class='RING', $
+		dep_classes=['SUN', 'PLANET'], $
+		genre='CURVE', $
 		col='orange', psym=-3, tlab=0, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'planet_center', $
-		class='planet', $
-		dep_classes=['sun'], $
-		genre='point', $
+	'PLANET_CENTER', $
+		class='PLANET', $
+		dep_classes=['SUN'], $
+		genre='POINT', $
 		col='white',    psym=1, tlab=1, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'star', $
-		class='star', $
-		dep_classes=['planet', 'ring'], $
-		genre='point', $
+	'STAR', $
+		class='STAR', $
+		dep_classes=['PLANET', 'RING'], $
+		genre='POINT', $
 		col='white',  psym=6, tlab=0, tfill=0, symsize=1, tshade=0
 
    grim_create_overlay, grim_data, plane, $
-	'shadow', $
+	'SHADOW', $
 		class='', $
-		dep_classes=['planet', 'ring', 'sun'], $
-		genre='curve', $
+		dep_classes=['PLANET', 'RING', 'SUN'], $
+		genre='CURVE', $
 		col='blue', psym=-3, tlab=0, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
-	'reflection', $
+	'REFLECTION', $
 		class='', $
-		dep_classes=['planet', 'ring', 'sun'], $
-		genre='curve', $
+		dep_classes=['PLANET', 'RING', 'SUN'], $
+		genre='CURVE', $
 		col='blue', psym=-3, tlab=0, tfill=0, tshade=1
 
 
@@ -3638,7 +3638,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep_xd=dep_xd, ptd=ptd, source_p
 
 
  ;-----------------------------------------------------------------------
- ;  If the given name gives no result, then if there is an 's' at the 
+ ;  If the given name gives no result, then if there is an 'S' at the 
  ;  end, remove it and try a second time
  ;-----------------------------------------------------------------------
  for i=0,1 do $
@@ -3646,7 +3646,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep_xd=dep_xd, ptd=ptd, source_p
    ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, data=data) 
    if(keyword_set(ptdp)) then break
 
-   if(strmid(name, strlen(name)-1, 1) EQ 's') then $
+   if(strmid(name, strlen(name)-1, 1) EQ 'S') then $
     begin
      name = strmid(name, 0, strlen(name)-1)
      ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, data=data) 

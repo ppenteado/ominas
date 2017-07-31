@@ -160,7 +160,7 @@ function grim_pixel_readout, base, text=text, grn=grn
  ;-----------------------------------------------------
  ; otherwise, set up new widgets
  ;-----------------------------------------------------
- title = 'grim ' + strtrim(grn,2) + '; pixel data'
+ title = 'GRIM ' + strtrim(grn,2) + '; pixel data'
  base = widget_base(/col, title=title, /tlb_size_events)
  text = widget_text(base, xsize=80, ysize=15, /scroll)
  hide_button = widget_button(base, value='hide', $
