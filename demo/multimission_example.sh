@@ -7,7 +7,7 @@
 #   
 #   Feb 2017
 #
-#    This example file usees the grim xidl alias to run grim from a shell.
+#    This example file uses the grim alias to run grim from a shell.
 #    The command loads all of the images in the demo data directory, representing
 #    several missions, and computes geometrc quantities for each.
 #
@@ -18,5 +18,5 @@
 #    or the command may be pasted directly at the shell prompt.
 #-
 #=======================================================================
-grim data/*.img data/n* data/*.IMG over=planet_center,limb,terminator,ring
+grim 'data/N1350122987_2.IMG data/2100r.img data/c3440346.gem' over=planet_center,limb,terminator,ring
 

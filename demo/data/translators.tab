@@ -61,3 +61,7 @@
 #------------------------------------------------------------------------------
   GLL_SSI	gll_ssi_spice_input	gll_ssi_spice_output klist=gll_demo.kernels
 
+
+  COMMON	strcat_sao_input		-	
+  COMMON	strcat_common_input		-	
+
