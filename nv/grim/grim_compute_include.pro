@@ -692,7 +692,6 @@ function grim_compute_reflection, map=map, clip=clip, hide=hide, $
 
  if(map) then return, 0
  if(NOT keyword__set(active_ptd)) then return, 0
-
  grim_message, /clear
 
  cd = cor_dereference_gd(gd, /cd)

@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Graft arrays into GRIM.  Adds POINT arrays to GRIM.  
+;	Grafts POINT arrays into GRIM.  
 ;
 ;
 ; CATEGORY:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	graft, arg, <xd>=<xd>
+;	graft, arg
 ;
 ;
 ; ARGUMENTS:
@@ -41,16 +41,6 @@
 ;
 ;	psym:	 Plotting symbol.
 ;
-;	user:	 If set, graft does not try to determine what type of overlay 
-;		 (e.g., limb, ring) is given.
-;
-;	gd:	Generic descriptor containing <xd> inputs. 
-;
-;
-; SIDE EFFECTS:
-;	In addition to replacing internal POINT objects, GRAFT updates
-;	GRIM's internal descriptor set using the generic desciptor
-;	cntained in the input array.  
 ;
 ;
 ; EXAMPLE:
@@ -75,6 +65,96 @@
 ;-
 ;=============================================================================
 pro graft, arg, $
+   psym=psym, symsize=symsize, color=_color, tag=tag, pn=pn, grn=grn
+
+ type = size(arg, /type)
+ if(type EQ 11) then ptd = arg $
+ else ptd = pnt_create_descriptors(points=arg)
+ nobj = n_elements(ptd)
+
+ ;------------------------------------------------------------------
+ ; determine which GRIM window
+ ;------------------------------------------------------------------
+ if(keyword_set(grn)) then $
+                     grim_data = grim_get_data(grim_grn_to_top(grn)) $
+ else grim_data = grim_get_data(/primary)
+
+ refresh = 0
+
+ ;------------------------------------------------------------------
+ ; determine which GRIM plane
+ ;------------------------------------------------------------------
+ plane = grim_get_plane(grim_data)
+ planes = grim_get_plane(grim_data, /all)
+
+ if(NOT defined(pn)) then $
+    if(n_elements(dim) EQ 1) then pn = plane.pn
+
+ if(defined(pn)) then $
+  begin
+   w = where(grim_data.pn EQ pn)
+   if(w[0] NE -1) then refresh = 1
+   plane = planes[pn]
+  end $
+ else refresh = 1
+
+
+ ;------------------------------------------------------------------
+ ; parse color input
+ ;------------------------------------------------------------------
+ if(keyword__set(_color)) then $
+    if(size(_color, /type) NE 7) then __color = ctlookup(_color)
+ if(keyword__set(__color)) then color = __color
+
+
+ ;------------------------------
+ ; set user points
+ ;------------------------------
+ if(keyword_set(tag)) then $
+    grim_add_user_points, plane=plane, ptd, tag, $
+        	   psym=psym, symsize=symsize, color=color, /no_refresh $
+ else $
+  begin
+   nuser = n_elements(ptd)
+   all_tags = strarr(nuser)
+
+   ;-------------------------
+   ; determine unique tags
+   ;-------------------------
+   tags = ''
+   for i=0, nuser-1 do $
+    begin
+     tag = pnt_desc(ptd[0])
+     all_tags[i] = tag
+     w = where(tags EQ tag)
+     if(w[0] EQ -1) then tags = [tags, tag]
+    end
+   if(keyword_set(tags)) then tags = tags[1:*]
+
+   ;-------------------------
+   ; add points by tag
+   ;-------------------------
+   ntags = n_elements(tags)
+   for i=0, ntags-1 do $
+    begin
+     w = where(all_tags EQ tags[i])
+     grim_add_user_points, plane=plane, ptd[w], $
+        	  tags[i], psym=psym, symsize=symsize, color=color, /no_refresh
+    end
+
+  end
+
+
+ if(refresh) then grim_refresh, grim_data;, /no_image
+
+end
+;=============================================================================
+
+
+
+
+;=============================================================================
+pro ___graft, arg, $
    psym=psym, symsize=symsize, color=_color, tag=tag, pn=pn, grn=grn, user=user
 
  type = size(arg, /type)

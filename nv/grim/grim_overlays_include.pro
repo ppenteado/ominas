@@ -1216,10 +1216,13 @@ end
 ;=============================================================================
 function grim_match_overlays, ptd, ptd0
 
+;print, pnt_desc(ptd)
+;help, pnt_assoc_xd(ptd)
+;stop
  return, where((pnt_desc(ptd) EQ pnt_desc(ptd0)) $
                      AND (cor_name(ptd) EQ cor_name(ptd0)) )
 
-; this is more unique, but much slower...
+; this is more rigorous, but much slower...
  return, where(cor_match_gd(ptd, ptd0) $
                    AND (pnt_desc(ptd) EQ pnt_desc(ptd0)) $
                      AND (cor_name(ptd) EQ cor_name(ptd0)) )
@@ -1350,8 +1353,10 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
  ;-------------------------------------------------------------------- 
  for i=0, n-1 do $
   begin
-   dep = cd
+; should just use the object's gd here
+stop
 
+   dep = cd
    xd = pnt_assoc_xd(ptd[i])
    if(keyword_set(xd)) then dep = [dep, xd]
 

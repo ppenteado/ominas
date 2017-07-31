@@ -488,6 +488,8 @@ pro grim_mode_navigate_mouse_event, event, data
  if(struct NE 'WIDGET_DRAW') then return
  if(event.press EQ 2) then return
 
+ if(NOT keyword_set(*plane.cd_p)) then return
+
  ;---------------------------------------
  ; scroll wheel -- adjust distance
  ;---------------------------------------
