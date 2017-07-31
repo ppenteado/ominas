@@ -6,7 +6,11 @@
 # generic kernels (should always be loaded first)
 $DEMO_SPICE_LSK/naif0012.tls
 
-# used for jupiter_example.pro
+# used for grim_example.pro
+$DEMO_SPICE_CK/001024_001026ra.bc
+$DEMO_SPICE_CK/04094_04101ra.bc
+
+# used for pg_example.pro
 $DEMO_SPICE_CK/001011_001014ra.bc
 
 # used for mosaic_example.pro
