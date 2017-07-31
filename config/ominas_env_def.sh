@@ -49,6 +49,7 @@ if [ "${DFLAG}" = 'true' ]; then
     export NV_TRANSFORMS=${NV_TRANSFORMS}:${OMINAS_DEMO}/data/transforms.tab
     export NV_SPICE_KER=${NV_SPICE_KER}:${OMINAS_DEMO}/data
     export NV_INS_DETECT=${NV_INS_DETECT}:${OMINAS_DEMO}/data/instrument_detectors.tab
+    export NV_SAO_DATA=$OMINAS_DIR/demo/data/
     
     #-----------------------------------------------------------------------------------#
     # 	These variables point to the directories containing the SPICE kernels	    	#
