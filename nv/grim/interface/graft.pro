@@ -207,7 +207,7 @@ pro ___graft, arg, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; get descriptors
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   xds = append_array(xds, cor_cat_gd(cor_gd(object_ptd[i])))
+   xds = append_array(xds, cor_dereference_gd(cor_gd(object_ptd[i])))
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; determine what type of overlay

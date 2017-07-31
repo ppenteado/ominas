@@ -18,7 +18,8 @@ end_keywords)
  ;-----------------------
  ; desc
  ;-----------------------
- if(keyword_set(desc)) then self.desc = desc[ii]
+ if(keyword_set(desc)) then pnt_set_desc, self, desc[ii]
+; if(keyword_set(desc)) then self.desc = desc[ii]
 
  ;-----------------------
  ; points

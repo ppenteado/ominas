@@ -125,6 +125,7 @@ function pg_center, cd=cd, bx=bx, dd=dd, gd=gd, clip=clip, cull=cull
 
    center_ptd[i] = $
         pnt_create_descriptors(name = cor_name(xd), $
+		task = 'pg_center', $
 		desc = desc[i], $
 		gd = {bx:bx[i,0], cd:cd[0]}, $
 		assoc_xd = xd, $

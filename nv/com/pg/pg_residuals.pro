@@ -65,7 +65,7 @@ function pg_residuals, scan_ptd
      ;----------------------
      ; curve scan data
      ;----------------------
-     if(desc EQ 'cvscan') then $
+     if(desc EQ 'CVSCAN') then $
       begin
        model_pts = scan_data[5:6,*]
        _resx = tr(model_pts[0,*] - scan_pts[0,*])
@@ -76,7 +76,7 @@ function pg_residuals, scan_ptd
      ;----------------------
      ; point scan data
      ;----------------------
-     else if(desc EQ 'ptscan') then $
+     else if(desc EQ 'PTSCAN') then $
       begin
        dx = scan_data[0]
        dy = scan_data[1]

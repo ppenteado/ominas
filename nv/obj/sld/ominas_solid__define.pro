@@ -44,7 +44,7 @@ end_keywords)
    self.albedo = albedo[ii]
   end
 
- if(keyword_set(opacity)) then self.opacity=decrapify(opacity[ii]) $
+ if(keyword_set(opacity)) then self.opacity = decrapify(opacity[ii]) $
  else self.opacity = 1d
 
 

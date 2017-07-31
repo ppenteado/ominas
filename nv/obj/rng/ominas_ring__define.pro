@@ -15,7 +15,8 @@ end_keywords)
  self.abbrev = 'RNG'
  self.tag = 'RD'
 
- if(keyword__set(desc)) then self.desc = decrapify(desc[ii])
+; if(keyword__set(desc)) then self.desc = decrapify(desc[ii])
+ if(keyword__set(desc)) then rng_set_desc, self, decrapify(desc[ii])
 
  return, 1
 end

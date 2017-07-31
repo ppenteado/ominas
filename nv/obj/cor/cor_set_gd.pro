@@ -62,7 +62,7 @@ pro cor_set_gd, crd0, gd, xds=xds, noevent=noevent, direct=direct, _ref_extra=ke
  _crd0 = cor_dereference(crd0)
  n = n_elements(_crd0)
 
- if(keyword_set(gd)) then xds = append_array(xds, cor_cat_gd(gd))	;;;
+ if(keyword_set(gd)) then xds = append_array(xds, cor_dereference_gd(gd))	;;;
  gd0 = _cor_gd(_crd0)
 
  new_gd = cor_create_gd(xds, gd=gd0, _extra=keys)
