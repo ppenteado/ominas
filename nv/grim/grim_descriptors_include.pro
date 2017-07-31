@@ -1066,28 +1066,28 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;----------------------------------------------------------------
  if(NOT map) then $
   begin
-   if((where(dep EQ 'planet'))[0] NE -1) then $
+   if((where(dep EQ 'PLANET'))[0] NE -1) then $
     begin
      names = ''
-     if(class EQ 'planet') then names = obj_name
+     if(class EQ 'PLANET') then names = obj_name
      pd = grim_get_planets(grim_data, plane=plane, names=names)
     end
 
-   if((where(dep EQ 'ring'))[0] NE -1) then $
+   if((where(dep EQ 'RING'))[0] NE -1) then $
     begin
      names = ''
-     if(class EQ 'ring') then names = obj_name
+     if(class EQ 'RING') then names = obj_name
      rd = grim_get_rings(grim_data, plane=plane, names=names)
     end
 
-   if((where(dep EQ 'star'))[0] NE -1) then $
+   if((where(dep EQ 'STAR'))[0] NE -1) then $
     begin
      names = ''
-     if(class EQ 'star') then names = obj_name
+     if(class EQ 'STAR') then names = obj_name
      sd = grim_get_stars(grim_data, plane=plane, names=names)
     end
 
-   if((where(dep EQ 'sun'))[0] NE -1) then $
+   if((where(dep EQ 'SUN'))[0] NE -1) then $
            sund = grim_get_sun(grim_data, plane=plane)
 ;--           sd = append_array(sd, grim_get_sun(grim_data, plane=plane))
   end $
@@ -1103,17 +1103,17 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;----------------------------------------------------------------
  ; common descriptors...
  ;----------------------------------------------------------------
- if((where(dep EQ 'station'))[0] NE -1) then $
+ if((where(dep EQ 'STATION'))[0] NE -1) then $
   begin
    names = ''
-   if(class EQ 'station') then names = obj_name
+   if(class EQ 'STATION') then names = obj_name
    std = grim_get_stations(grim_data, plane=plane, names=names)
   end
 
- if((where(dep EQ 'array'))[0] NE -1) then $
+ if((where(dep EQ 'ARRAY'))[0] NE -1) then $
   begin
    names = ''
-   if(class EQ 'array') then names = obj_name
+   if(class EQ 'ARRAY') then names = obj_name
    ard = grim_get_arrays(grim_data, plane=plane, names=names)
   end
 

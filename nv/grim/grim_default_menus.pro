@@ -196,7 +196,7 @@ pro grim_menu_ring_box_profile_radial_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- rd = grim_get_active_xds(plane, 'ring')
+ rd = grim_get_active_xds(plane, 'RING')
  if(NOT keyword__set(rd)) then $
   begin
    grim_message, 'There are no active ring points.'
@@ -284,7 +284,7 @@ pro grim_menu_ring_box_profile_longitudinal_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- rd = grim_get_active_xds(plane, 'ring')
+ rd = grim_get_active_xds(plane, 'RING')
  if(NOT keyword__set(rd)) then $
   begin
    grim_message, 'There are no active ring points.'
@@ -378,7 +378,7 @@ pro grim_menu_ring_profile_radial_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- rd = grim_get_active_xds(plane, 'ring')
+ rd = grim_get_active_xds(plane, 'RING')
  if(NOT keyword__set(rd)) then $
   begin
    grim_message, 'There are no active ring points.'
@@ -474,7 +474,7 @@ pro grim_menu_ring_profile_longitudinal_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- rd = grim_get_active_xds(plane, 'ring')
+ rd = grim_get_active_xds(plane, 'RING')
  if(NOT keyword__set(rd)) then $
   begin
    grim_message, 'There are no active ring points.'
@@ -570,7 +570,7 @@ pro grim_menu_limb_profile_azimuthal_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- pd = grim_get_active_xds(plane, 'planet')
+ pd = grim_get_active_xds(plane, 'PLANET')
  if(NOT keyword__set(pd)) then $
   begin
    grim_message, 'There are no active planets.'
@@ -660,7 +660,7 @@ pro grim_menu_limb_profile_radial_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- pd = grim_get_active_xds(plane, 'planet')
+ pd = grim_get_active_xds(plane, 'PLANET')
  if(NOT keyword__set(pd)) then $
   begin
    grim_message, 'There are no active planets.'
