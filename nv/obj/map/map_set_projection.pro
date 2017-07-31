@@ -48,7 +48,7 @@ pro map_set_projection, md, projection, noevent=noevent
 @core.include
  _md = cor_dereference(md)
 
- _md.projection = projection
+ _md.projection = strupcase(projection)
 
  cor_rereference, md, _md
  nv_notify, md, type = 0, noevent=noevent

@@ -112,9 +112,10 @@ end
 ;
 ;=============================================================================
 function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
-                        data=data, class=class, dep=dep, ii=ii, $
+                        data=data, class=class, dep_classes=dep_classes, ii=ii, $
                         color=color, psym=psym, tlab=tlab, tshade=tshade, $
-                        symsize=symsize, shade=shade, tfill=tfill, genre=genre, fast=fast
+                        symsize=symsize, shade=shade, tfill=tfill, genre=genre, $
+                        fast=fast
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
  grim_initial_overlays, grim_data, plane=plane
@@ -135,7 +136,7 @@ function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
  name = (*plane.overlays_p)[ii].name
  class = (*plane.overlays_p)[ii].class
  
- dep = *(*plane.overlays_p)[ii].dep_p
+ dep_classes = *(*plane.overlays_p)[ii].dep_classes_p
 
  color = (*plane.overlays_p)[ii].color
  psym = (*plane.overlays_p)[ii].psym
@@ -1216,11 +1217,15 @@ end
 ;=============================================================================
 function grim_match_overlays, ptd, ptd0
 
-;print, pnt_desc(ptd)
-;help, pnt_assoc_xd(ptd)
-;stop
+
  return, where((pnt_desc(ptd) EQ pnt_desc(ptd0)) $
-                     AND (cor_name(ptd) EQ cor_name(ptd0)) )
+                  AND (cor_name(ptd) EQ cor_name(ptd0)) $
+                  AND (pnt_assoc_xd(ptd) EQ pnt_assoc_xd(ptd0)) )
+
+
+
+; return, where((pnt_desc(ptd) EQ pnt_desc(ptd0)) $
+;                     AND (cor_name(ptd) EQ cor_name(ptd0)) )
 
 ; this is more rigorous, but much slower...
  return, where(cor_match_gd(ptd, ptd0) $
@@ -1312,8 +1317,7 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
  ;--------------------------------------------------------------------
  ; get all points arrays for this overlay type
  ;--------------------------------------------------------------------
- ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, $
-                                     class=class, dep=dep_classes, ii=ii)
+ ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, class=class, ii=ii)
  all_ptd = *ptdp
  nall = n_elements(all_ptd)
 
@@ -1349,23 +1353,9 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
 
 
  ;--------------------------------------------------------------------
- ; determine dependencies
+ ; record overlay name for recalculation
  ;-------------------------------------------------------------------- 
- for i=0, n-1 do $
-  begin
-; should just use the object's gd here
-stop
-
-   dep = cd
-   xd = pnt_assoc_xd(ptd[i])
-   if(keyword_set(xd)) then dep = [dep, xd]
-
-   xds_all = grim_get_xd(grim_data, plane=plane, dep_classes)
-   if(keyword_set(xds_all)) then dep = [dep, xds_all]
-
-   cor_set_udata, ptd[i], 'grim_dep', dep, /noev
-   cor_set_udata, ptd[i], 'grim_name', name, /noev
-  end
+ for i=0, n-1 do cor_set_udata, ptd[i], 'GRIM_OVERLAY_NAME', name, /noev
 
 
 end
@@ -3503,7 +3493,7 @@ pro grim_create_overlay, grim_data, plane, name, class=class, dep_classes=dep_cl
 		name 		: name, $
 		class 		: class, $
 		genre 		: genre, $
-		dep_p 		: ptr_new(dep_classes), $
+		dep_classes_p 	: ptr_new(dep_classes), $
 		color 		: color, $
 		shade 		: float(shade), $
 		psym 		: fix(psym), $
@@ -3544,14 +3534,14 @@ pro grim_create_overlays, grim_data, plane
    grim_create_overlay, grim_data, plane, $
 	'station', $
 		class='station', $
-		dep_classes=['station', 'planet', 'sun', 'ring'], $
+		dep_classes=['planet', 'sun', 'ring'], $
 		genre='point', $
 		col='yellow', psym=1, tlab=1, tfill=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'array', $
 		class='array', $
-		dep_classes=['array', 'planet', 'sun', 'ring'], $
+		dep_classes=['planet', 'sun', 'ring'], $
 		genre='curve', $
 		col='blue', psym=-3, tlab=1, tfill=0, tshade=1
 
@@ -3640,7 +3630,7 @@ end
 ; grim_overlay
 ;
 ;=============================================================================
-pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=source_ptd, $
+pro grim_overlay, grim_data, name, plane=plane, dep_xd=dep_xd, ptd=ptd, source_ptd=source_ptd, $
                                    obj_name=obj_name, temp=temp
 
  if(grim_data.slave_overlays) then plane = grim_get_plane(grim_data, pn=0)
@@ -3668,14 +3658,14 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  ; if the dependencies are given, then just update
  ;  existing arrays
  ;--------------------------------------------------
- if(keyword_set(dep)) then $
+ if(keyword_set(dep_xd)) then $
   begin
    grim_suspend_events 
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; recompute the overlay points
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   gd = cor_create_gd(dep, /explicit)
+   gd = cor_create_gd(dep_xd, /explicit)
    if(cor_test_gd(gd, 'MD')) then $
                        gd = cor_create_gd(gd=gd, cd=gd.md, od=*plane.od_p)
 
@@ -3718,7 +3708,7 @@ pro grim_overlay, grim_data, name, plane=plane, dep=dep, ptd=ptd, source_ptd=sou
  active_xds = *plane.active_xd_p
  if(keyword_set(obj_name)) then $
   begin
-   xds = cor_cat_gd(gd)
+   xds = cor_dereference_gd(gd)
    w = nwhere(cor_name(xds), obj_name)
    if(w[0] EQ -1) then return
    active_xds = xds[w]

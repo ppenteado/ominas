@@ -20,8 +20,12 @@ end_keywords)
  ;----------------------------------------------------------------------
  if(keyword_set(size)) then self.size = size[*,ii] $
  else size = lonarr(2)
- if(keyword_set(projection)) then self.projection = decrapify(projection[ii]) $
- else projection = 'NONE'
+
+ if(keyword_set(projection)) then map_set_projection, self, decrapify(projection[ii]) $
+ else map_set_projection, self, 'NONE'
+
+; if(keyword_set(projection)) then self.projection = decrapify(projection[ii]) $
+; else projection = 'NONE'
 
 
  if(keyword_set(units)) then self.units = units[*,ii] $

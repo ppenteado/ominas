@@ -39,11 +39,11 @@ end_keywords
 
 
  if(keyword_set(tasks)) then self.tasks_p = nv_ptr_new(tasks[*,ii]) $
- else self.tasks_p=nv_ptr_new([''])
+ else self.tasks_p = nv_ptr_new([''])
 
  self.abbrev = 'COR'
  self.tag = 'CRD'
- if(keyword_set(name)) then self.name = decrapify(name[ii])
+ if(keyword_set(name)) then cor_set_name, self, decrapify(name[ii])
 
  if(keyword_set(udata)) then cor_set_udata, self, uname, udata, /noevent	;;;;
 

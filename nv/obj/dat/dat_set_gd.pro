@@ -58,9 +58,9 @@ pro dat_set_gd, xd, gd, noevent=noevent, _extra=gdx
  ;--------------------------------------------------
  ; build an array of all xds contained in inputs
  ;--------------------------------------------------
- xds = cor_cat_gd(gd)
- xds = append_array(xds, cor_cat_gd(gdx))
-if(NOT keyword_set(xds)) then return
+ xds = cor_dereference_gd(gd)
+ xds = append_array(xds, cor_dereference_gd(gdx))
+ if(NOT keyword_set(xds)) then return
 
  ;--------------------------------------------------
  ; match input xds to xd generic descriptors

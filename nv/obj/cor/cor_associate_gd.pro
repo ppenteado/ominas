@@ -53,8 +53,7 @@ function cor_associate_gd, xd, assoc_xd
  for i=0, n_elements(xd)-1 do $
   begin
    gd = cor_gd(xd[i])
-   assoc_xds = cor_cat_gd(gd)
-   w = where(cor_cat_gd(gd) EQ assoc_xd)
+   w = where(cor_dereference_gd(gd) EQ assoc_xd)
    if(w[0] NE -1) then result = append_array(result, xd[i])
   end
 

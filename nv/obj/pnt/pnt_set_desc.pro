@@ -53,7 +53,7 @@ pro pnt_set_desc, ptd, desc, noevent=noevent
 @core.include
  _ptd = cor_dereference(ptd)
 
- _ptd.desc = desc
+ _ptd.desc = strupcase(desc)
 
  cor_rereference, ptd, _ptd
  nv_notify, ptd, type = 0, noevent=noevent

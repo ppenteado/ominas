@@ -183,6 +183,7 @@ function pg_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, clip=clip, cull=cull, $
       end
 
      limb_ptd[i] = pnt_create_descriptors(name = cor_name(xd), $
+                          task = 'pg_limb', $
                           desc=desc, $
                           gd={gbx:gbx[i,0], od:od[0], cd:cd[0]}, $
                           assoc_xd = xd, $

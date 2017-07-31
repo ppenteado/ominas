@@ -86,7 +86,7 @@ function pg_chisq, dxy, dtheta, scan_ptd, axis_ptd=axis_ptd, fix=fix
      ;----------------------
      ; curve scan data
      ;----------------------
-     if(desc EQ 'cvscan') then $
+     if(desc EQ 'CVSCAN') then $
       begin
        cos_alpha = scan_data[0,*]
        sin_alpha = scan_data[1,*]
@@ -98,7 +98,7 @@ function pg_chisq, dxy, dtheta, scan_ptd, axis_ptd=axis_ptd, fix=fix
      ;----------------------
      ; point scan data
      ;----------------------
-     else if(desc EQ 'ptscan') then $
+     else if(desc EQ 'PTSCAN') then $
       begin
        dx = scan_data[0]
        dy = scan_data[1]

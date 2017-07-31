@@ -122,8 +122,8 @@ function grim_shade_limb, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -204,8 +204,8 @@ function grim_shade_terminator, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -293,8 +293,8 @@ function grim_shade_planet_grid, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -396,8 +396,8 @@ function grim_shade_station, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -498,8 +498,8 @@ function grim_shade_array, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -827,7 +827,7 @@ function grim_shade_ring, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -910,7 +910,7 @@ function grim_shade_ring_grid, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5

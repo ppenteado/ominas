@@ -49,7 +49,7 @@ pro rng_set_desc, rd, desc, noevent=noevent
 
  _rd = cor_dereference(rd)
 
- _rd.desc=desc
+ _rd.desc = strupcase(desc)
 
  cor_rereference, rd, _rd
  nv_notify, rd, type = 0, noevent=noevent

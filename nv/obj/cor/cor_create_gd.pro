@@ -88,7 +88,7 @@ function ccgd_append, gd
  ;------------------------------------------------------
  ; add explicit objects
  ;------------------------------------------------------
- xds = append_array(xds, cor_cat_gd(gd))
+ xds = append_array(xds, cor_dereference_gd(gd))
  if(NOT keyword_set(xds)) then return, !null
 
  ;------------------------------------------------------
@@ -142,17 +142,17 @@ function cor_create_gd, _xds, gd=_gd, explicit=explicit, _extra=gdx
  ;------------------------------------------------------
  if(NOT keyword_set(explicit)) then $
             for i=0, n_elements(xds)-1 do $
-                     xds = append_array(xds, cor_cat_gd(cor_gd(xds[i])))
+                     xds = append_array(xds, cor_dereference_gd(cor_gd(xds[i])))
  xds = cor_cull(xds)
  all_tags = cor_tag(xds)
 
  ;------------------------------------------------------
  ; add explicit objects
  ;------------------------------------------------------
- xds = append_array(xds, cor_cat_gd(gd))
+ xds = append_array(xds, cor_dereference_gd(gd))
  all_tags = append_array(all_tags, ccgd_tag_names(gd))
 
- xds = append_array(xds, cor_cat_gd(gdx))
+ xds = append_array(xds, cor_dereference_gd(gdx))
  all_tags = append_array(all_tags, ccgd_tag_names(gdx))
 
  if(NOT keyword_set(xds)) then return, !null
@@ -205,13 +205,13 @@ function __cor_create_gd, _xds, gd=_gd, explicit=explicit, _extra=gdx
  ;------------------------------------------------------
  if(NOT keyword_set(explicit)) then $
             for i=0, n_elements(xds)-1 do $
-                     xds = append_array(xds, cor_cat_gd(cor_gd(xds[i])))
+                     xds = append_array(xds, cor_dereference_gd(cor_gd(xds[i])))
 
  ;------------------------------------------------------
  ; add explicit objects
  ;------------------------------------------------------
- xds = append_array(xds, cor_cat_gd(gd))
- xds = append_array(xds, cor_cat_gd(gdx))
+ xds = append_array(xds, cor_dereference_gd(gd))
+ xds = append_array(xds, cor_dereference_gd(gdx))
  if(NOT keyword_set(xds)) then return, !null
 
  ;------------------------------------------------------
