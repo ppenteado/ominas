@@ -589,6 +589,9 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	;---------------
 	; descriptors
 	;---------------
+; should put these in a gd...
+; --> gd = grim_gd(plane)
+gd_p		:	ptr_new(0), $	; Generic descriptor
 		dd		:	dd[i], $		; Data descriptor
 		sibling_dd	:	obj_new(), $		; Last sibling dd
 		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
@@ -617,7 +620,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	;  (planets, rings, etc.) and nptd is the number of arrays per
 	;  descriptor (e.g., rings have two arrays per descriptor).
 	;-----------------------------------------------------------
-		overlay_ptdps		:	ptr_new(0), $
+		overlay_ptdps		:	ptr_new(0), $	; Overlay ptds
 		overlays_p		:	ptr_new(0), $	; Overlay global
 								; attributes
 		override_color		:	'', $

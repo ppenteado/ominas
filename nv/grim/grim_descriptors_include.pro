@@ -135,16 +135,15 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
       end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - -
-   ; get rid of redundant dependencies
+   ; get rid of redundant results
    ;- - - - - - - - - - - - - - - - - - - - - - - -
    nn = 0
    if(keyword_set(name_list)) then nn = n_elements(name_list)
    for i=0, nn-1 do $
     begin
-     deps = *dep_list[i]
-     deps = deps[sort(deps)]
-     deps = deps[uniq(deps)]
-     *dep_list[i] = deps
+     *dep_list[i] = unique(*dep_list[i])
+     *points_ptd_list[i] = unique(*points_ptd_list[i])
+     *source_points_ptd_list[i] = unique(*source_points_ptd_list[i])
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -168,6 +167,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
 ;stop
 ;i=3
 ;print, *dep_list[i]		; some bad object references in here
+
    for i=0, nn-1 do $
          grim_overlay, grim_data, plane=plane, $
                name_list[i], dep=*dep_list[i], $
@@ -362,6 +362,7 @@ end
 ;
 ;=============================================================================
 pro grim_mark_descriptors, grim_data, all=all, $
+;--     cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, planes=planes, $
      cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, planes=planes, $
      val
 
@@ -385,8 +386,8 @@ pro grim_mark_descriptors, grim_data, all=all, $
                                 grim_mark_descriptor, *planes[i].std_p, val
    if((keyword_set(all)) OR (keyword_set(ard))) then $
                                 grim_mark_descriptor, *planes[i].ard_p, val
-   if((keyword_set(all)) OR (keyword_set(sund))) then $
-                                grim_mark_descriptor, *planes[i].sund_p, val
+   if((keyword_set(all)) OR (keyword_set(sund))) then $	                     ;--
+                                grim_mark_descriptor, *planes[i].sund_p, val ;--
   end
 
 
@@ -608,6 +609,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ; get main planets
  ;- - - - - - - - - - - - - - - - - - - - - - - -
  grim_print, grim_data, 'Getting planet descriptors...'
+;-- pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sd_p, $
  pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, $
       name=names, plane.plt_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
 
@@ -616,6 +618,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - -
  if(keyword_set(pd)) then $
   begin
+;--   pdd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sd_p, pd=pd, $
    pdd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, pd=pd, $
        name=names, plane.plt_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
    if(keyword_set(pdd)) then pd = [pd, pdd]
@@ -1004,7 +1007,7 @@ pro grim_clear_descriptors, grim_data, planes=planes
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sd_p
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].std_p
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].ard_p
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sund_p
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sund_p	;--
 
    *planes[i].active_xd_p = 0
   end
@@ -1061,9 +1064,6 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;----------------------------------------------------------------
  if(NOT map) then $
   begin
-   if((where(dep EQ 'sun'))[0] NE -1) then $
-           sund = grim_get_sun(grim_data, plane=plane)
-
    if((where(dep EQ 'planet'))[0] NE -1) then $
     begin
      names = ''
@@ -1084,10 +1084,15 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
      if(class EQ 'star') then names = obj_name
      sd = grim_get_stars(grim_data, plane=plane, names=names)
     end
+
+   if((where(dep EQ 'sun'))[0] NE -1) then $
+           sund = grim_get_sun(grim_data, plane=plane)
+;--           sd = append_array(sd, grim_get_sun(grim_data, plane=plane))
   end $
  else $
   begin
    pd = *plane.pd_p
+;--   sd = *plane.sd_p
    sund = *plane.sund_p
    od = *plane.od_p
   end
@@ -1114,7 +1119,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  gd = {cd: cd, $
        pd: pd, $
        rd: rd, $
-       sund: sund, $
+       sund: sund, $		;--
        sd: sd, $
        std: std, $
        ard: ard, $

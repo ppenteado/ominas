@@ -19,11 +19,11 @@
 ;
 ;  This example file can be executed from the UNIX command line using
 ;
-;  	ominas grim_example-batch
+;  	ominas grim_examples-batch
 ;
 ;  or from within IDL using
 ;
-;  	@grim_example-batch
+;  	@grim_examples-batch
 ;-
 ;==============================================================================
 !quiet = 1

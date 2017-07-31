@@ -163,6 +163,7 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
               pnt_create_descriptors(points = points, $
                  name = 'reflection-' + cor_name(object_ptd[j]), $
                  assoc_xd = object_ptd[j], $
+;                   assoc_xd = xd, $
 	         desc = 'globe_reflection', $
                  gd = {gbx:gbx[i,0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
 	         vectors = inertial_pts)

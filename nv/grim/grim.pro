@@ -794,6 +794,11 @@
 ;	be pretty obnxious.  This probably has to do with the calls to
 ;	grim_message in grim_compute.include
 ;
+;	Overlay point selections are not retained after recomputing
+;
+;	Undo does not seem to be working
+;
+;
 ;
 ; STATUS:
 ;	Incomplete.
@@ -10100,6 +10105,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_xd=_assoc_xd[i]
    grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_xd=_assoc_xd[i]
    grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd[i]
+;--   grim_add_descriptor, grim_data, planes[i].sd_p, sund, assoc_xd=_assoc_xd[i]
    grim_add_descriptor, grim_data, planes[i].sund_p, sund, /one, assoc_xd=_assoc_xd[i]
   end
 
