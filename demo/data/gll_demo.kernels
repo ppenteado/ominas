@@ -10,4 +10,5 @@ $DEMO_SPICE_SPK/sat337.bsp
 
 $DEMO_SPICE_SPK/s980326b.bsp
 $DEMO_SPICE_SCK/mk00062a.tsc
-$DEMO_SPICE_CK/ckg01ajh.plt
+$DEMO_SPICE_CK/gll_plt_pre_1996_v00.bc
+$DEMO_SPICE_PCK/pck00007.tpc
