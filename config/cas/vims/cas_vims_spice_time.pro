@@ -22,7 +22,7 @@ function cas_vims_spice_time, label, dt=dt, string=string, status=status,startjd
   exposure=endjd-startjd
  exposure*=86400d0
  dt = -0.5d*exposure
-
+ nv_message,verb=0.91,'VIMS START_TIME='+strtrim(start_time,2)
  return, close_time
 end
 ;===========================================================================
