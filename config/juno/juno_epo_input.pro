@@ -119,6 +119,7 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
    ; additional info for two functions above (leave this empty for now)
    fi_data=cam_fi_data, $
    ; cam_scale is angular size of one pixel, x y, in radians (from documentation, 0.6727 in mrad)
+   ;0.0006729d0,0.0006736
    scale=[0.0006727d0,0.0006727d0], $
    ; point spread function, see seciton 4.3 https://link.springer.com/article/10.1007/s11214-014-0079-x
    ; need to define a function to handle this... (from documentation)
@@ -127,7 +128,7 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
    filters=replicate(h['FILTER_NAME',0],cam_nfilters()), $
    ; cam_size pixels in x y (from documentation)
    ; "1640×1214 7.4-micron pixels (1600×1200 photoactive)" tho .PNG files have 1648 width. Strips have 128 height.
-   size=[1600,128], $
+   size=[1648,128], $
    ; cam_oaxis pixel x y value for optical axis (from documentation)
    ;oaxis=cam_oaxis)
    oaxis=[824,64])
@@ -199,9 +200,16 @@ function juno_epo_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
                                    status=status, time=time, obs=obs
 
  ;cas_spice_parse_labels, dd, time
-  return,0
- ;return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
- ;           status=status, time=time, constants=constants, obs=obs)
+ ; return,0
+ ref='J2000'
+ @loadjunokerns
+ h=dat_header(dd)
+ cspice_str2et,h['START_TIME'],et
+ expoms=strsplit(h['EXPOSURE_DURATION'],' ',/EXTRACT)
+ expos=double(expoms[0])/1000
+ time=et+expos/2
+ return, eph_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
+            status=status, time=time, constants=constants, obs=obs)
 
 end
 ;===========================================================================
@@ -223,8 +231,11 @@ function juno_epo_input, dd, keyword, values=values, status=status, $
   
 ;  return,0
 
-if (keyword eq 'PLT_DESCRIPTORS') then return,juno_epo_spice_planets(dd, ref, constants=constants, $
-  n_obj=n_obj, dim=dim, status=status, time=time, obs=obs,  targ_list=targ_list,planets=planets)
+  if (keyword eq 'PLT_DESCRIPTORS') then return,juno_epo_spice_planets(dd, ref, constants=constants, $
+    n_obj=n_obj, dim=dim, status=status, time=time, obs=obs,  targ_list=targ_list,planets=planets)
+  
+  if (keyword eq 'STR_DESCRIPTORS') then return,juno_epo_sun(dd, ref, constants=constants, $
+    n_obj=n_obj, dim=dim, status=status, time=time, obs=obs)
 ; return, spice_input(dd, keyword, 'juno_epo', values=values, status=status, $
 ;@nv_trs_keywords_include.pro
 ;@nv_trs_keywords1_include.pro
