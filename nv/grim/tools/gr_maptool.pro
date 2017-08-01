@@ -491,7 +491,7 @@ pro gr_maptool, order=order
  ;-----------------------------------------------
  ; setup map form widget
  ;-----------------------------------------------
- base = widget_base(title = 'Map projection', group=top)
+ base = widget_base(title = 'GRIM Map projection', group=top)
 
  classes = ['Globe', $
             'Disk']
