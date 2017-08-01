@@ -189,7 +189,7 @@ pro grim_wset, grim_data, wnum, get_info=get_info, $
     save=save, noplot=noplot
 
 
- if(grim_data.type EQ 'plot') then tvgr, wnum, get_info=get_info, $
+ if(grim_data.type EQ 'PLOT') then tvgr, wnum, get_info=get_info, $
      save=save, noplot=noplot, /silent $
  else tvim, wnum, get_info=get_info, save=save, noplot=noplot, /silent 
 

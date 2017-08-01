@@ -20,7 +20,7 @@ pro grim_next_plane, grim_data, norefresh=norefresh
  grim_set_data, grim_data
 
  no_erase = 1 
- if(grim_data.type EQ 'plot') then no_erase = 0
+ if(grim_data.type EQ 'PLOT') then no_erase = 0
  
  if(NOT keyword_set(norefresh)) then grim_refresh, grim_data, no_erase=no_erase, /noglass
 
@@ -53,7 +53,7 @@ pro grim_previous_plane, grim_data
  grim_set_data, grim_data
 
  no_erase = 1 
- if(grim_data.type EQ 'plot') then no_erase = 0
+ if(grim_data.type EQ 'PLOT') then no_erase = 0
  
  grim_refresh, grim_data, no_erase=no_erase, /noglass
  grim_call_plane_callbacks, grim_data
@@ -284,7 +284,7 @@ pro grim_crop_plane, grim_data, plane
  ;----------------------------------------------
  ; plot: crop to visible xrange
  ;----------------------------------------------
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    tvgr, grim_data.wnum, get=tvd
    xrange = tvd.xrange

@@ -1897,7 +1897,7 @@ end
 ;=============================================================================
 pro grim_render, grim_data, plane=plane
 
- if(grim_data.type EQ 'plot') then return
+ if(grim_data.type EQ 'PLOT') then return
 
  ;---------------------------------------------------------
  ; make sure relevant descriptors are loaded
@@ -2266,7 +2266,7 @@ pro grim_update_xy_label, grim_data, plane, x, y
  ;- - - - - - - - - -  - - - 
  ; plot
  ;- - - - - - - - - -  - - - 
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    if((p[0] GE 0) AND (p[0] LT dim[1])) then $
  			     dn = dat_data(plane.dd, sample=[1,p[0]], /nd)
@@ -2331,7 +2331,7 @@ pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers, output_wn
 
  if(press NE 2) then return
 
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    xx = convert_coord(/data, /to_device,$
               [transpose(double(plane.xrange)), transpose(double(plane.yrange))])
@@ -6235,7 +6235,7 @@ end
 ;=============================================================================
 pro grim_menu_view_recenter_help_event, event
  text = ''
- nv_help, 'grim_menu_view_home_event', cap=text
+ nv_help, 'grim_menu_view_recenter_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -6274,7 +6274,7 @@ end
 ;=============================================================================
 pro grim_menu_view_apply_help_event, event
  text = ''
- nv_help, 'grim_menu_view_home_event', cap=text
+ nv_help, 'grim_menu_view_apply_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -9021,7 +9021,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
  if(grim_data.retain GT 0) then retain = grim_data.retain
 
  map = grim_test_map(grim_data)
- plot = grim_data.type EQ 'plot'
+ plot = grim_data.type EQ 'PLOT'
  beta = grim_data.beta
 
  ;-----------------------------------------
@@ -9728,12 +9728,12 @@ pro grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, xzero=xzero, $
  ;-------------------------------------------------------------------
  ; all dd assumed to have same type as first one; default is image
  ;-------------------------------------------------------------------
- type = 'image'
+ type = 'IMAGE'
  if(keyword_set(dd)) then $
   begin 
    dim = dat_dim(dd[0])
-   if(n_elements(dim) EQ 1) then type = 'plot'
-   if(dim[0] EQ 2) then type = 'plot'
+   if(n_elements(dim) EQ 1) then type = 'PLOT'
+   if(dim[0] EQ 2) then type = 'PLOT'
   end
 
 
@@ -9917,12 +9917,12 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  if(NOT keyword_set(mode_init)) then $
   begin
-   if(type EQ 'plot') then mode_init = 'grim_mode_zoom_plot' $
+   if(type EQ 'PLOT') then mode_init = 'grim_mode_zoom_plot' $
    else mode_init = 'grim_mode_activate'
   end
 
 
- if(type EQ 'plot') then $
+ if(type EQ 'PLOT') then $
   begin
    if(NOT keyword_set(xsize)) then xsize = 500
    if(NOT keyword_set(ysize)) then ysize = 500
@@ -9984,7 +9984,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;-----------------------------
    ; widgets
    ;-----------------------------
-   if(type NE 'plot') then grim_get_window_size, grim_data, xsize=xsize, ysize=ysize
+   if(type NE 'PLOT') then grim_get_window_size, grim_data, xsize=xsize, ysize=ysize
    grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes, $
          menu_fname=menu_fname, menu_extensions=menu_extensions
 
@@ -10125,12 +10125,12 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;----------------------------------------------
    ; sampling
    ;----------------------------------------------
-   if(type NE 'plot') then $
+   if(type NE 'PLOT') then $
       for i=0, nplanes-1 do $
          dat_set_sampling_fn, planes[i].dd, 'grim_sampling_fn', /noevent
 
    entire = 1 & default = 0
-   if(type EQ 'plot') then $
+   if(type EQ 'PLOT') then $
     begin
      entire = 0 & default = 1
     end
