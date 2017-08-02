@@ -164,6 +164,7 @@ fi
 export idlbin
 idlversion=`$idlbin -e 'print,!version.os+strjoin((strsplit(!version.release,".",/extract))[0:1])'`
 export idlversion
+
 ominassh="$HOME/.ominas/ominas_setup.sh"
 usersh=$setting
 setting=$ominassh
@@ -862,6 +863,8 @@ printf "More help is in the Install Guide, at https://ppenteado.github.io/ominas
 #	echo "OMINAS_DIR=$OMINAS_DIR; export OMINAS_DIR" >> $setting
 #fi
 
+
+
 printf "OMINAS files located in $OMINAS_DIR\n"
 
 function main() {
@@ -876,6 +879,19 @@ fi
 
 export OMINAS_DIR=${DIR}
 
+
+export OMINAS_CF="${OMINAS_DIR}/util/downloader/ca-bundle.crt"
+if [ -z ${idlversion+x} ]; then
+  idlversion="z"
+fi
+if [ "${idlversion}" == "" ]; then
+  idlversion="z"
+fi
+ldp=""
+if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
+  ldp="${OMINAS_DIR}/util/downloader/libcurl.so.4"
+fi
+export OMINAS_LDP=${ldp}
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
 corest=`pkst ${OMINAS_DIR}/config/tab/`
@@ -1272,7 +1288,7 @@ fi
 
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
-  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
+  LD_PRELOAD=${OMINAS_LDP} $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
   . "${OMINAS_RC}/idlpath.sh"
 #  if [ -e idlpath.sh ]; then
 #    cat idlpath.sh >> $idlpathfile
@@ -1280,7 +1296,7 @@ if [ "${corest}" == "${yes}" ]; then
 #  fi
 else
   #export OMINAS_DIR=''
-  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
+  LD_PRELOAD=${OMINAS_LDP} $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
   . "${OMINAS_RC}/idlpath.sh"
 fi
 
