@@ -11,7 +11,7 @@ function juno_epo_cmat_to_orient, cmat
 
  orient = dblarr(3,3,n, /nozero)
 
- orient[0,*,*] =  cmat[*,0,*] ;x
+ orient[0,*,*] =  -cmat[*,0,*] ;x
  orient[1,*,*] =  cmat[*,2,*] ;y 
  orient[2,*,*] =  cmat[*,1,*] ;z
 
