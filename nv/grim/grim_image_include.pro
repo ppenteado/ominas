@@ -704,7 +704,7 @@ pro grim_display, grim_data, plane=plane, wnum=wnum, home=home, $
  ;------------------------------------------------------
  else $
   begin
-   if(grim_data.type NE 'plot') then $
+   if(grim_data.type NE 'PLOT') then $
      grim_display_image, grim_data, plane=plane, no_copy=no_copy, $
        entire=entire, wnum=wnum, doffset=doffset, zoom=zoom, rotate=rotate, order=order, $
        default=default, previous=previous, flip=flip, restore=restore, $
@@ -1057,7 +1057,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
   begin
    beta = ''
    if(grim_data.beta) then beta = '(beta)'
-   title = 'grim' + beta + ' ' + strtrim(grim_data.grn,2) + $
+   title = 'GRIM' + beta + ' ' + strtrim(grim_data.grn,2) + $
            ';  plane ' + strtrim(grim_data.pn,2) + ' of ' + $
            strtrim(grim_data.n_planes,2) + ';  ' + $
            grim_title(plane)
@@ -1125,7 +1125,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ;-----------------------------------
  ; update render button
  ;-----------------------------------
- if(grim_data.type NE 'plot') then $
+ if(grim_data.type NE 'PLOT') then $
   if(NOT grim_test_map(grim_data)) then $
    begin
     bm = grim_render_bitmap()

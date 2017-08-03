@@ -6,7 +6,7 @@
 ; PURPOSE:
 ;	Allows the user to adjust data values using the mouse.  A rectangle 
 ;	is selected height (positve or negative) gives the data value adjustment.
-;	Works for 1-D or 2_d data sets.
+;	Works for 1-D or 2-D data sets.
 ;
 ; CATEGORY:
 ;       NV/PG
@@ -42,7 +42,7 @@
 ;
 ;-
 ;=============================================================================
-pro pg_data_adjust, dd
+pro pg_data_adjust, dd, silent=silent
 
  device, cursor_standard=30
  data = dat_data(dd, abscissa=abscissa)	; requesting the entire data array is not ideal
@@ -51,8 +51,11 @@ pro pg_data_adjust, dd
  ndim = n_elements(dim)
 
  ;----------------------------------------------------
- ; adjust values until right button pressed
+ ; adjust values until middle button pressed
  ;----------------------------------------------------
+ if(NOT keyword_set(silent)) then $
+            nv_message, /con, 'Left:Point; drag to value, Middle:Done, Right:Multiple'
+
  oldbutton = 0
  repeat $
   begin
@@ -137,7 +140,7 @@ pro pg_data_adjust, dd
      if(ndim EQ 1) then data[x] = y
 
     end
-  endrep until(release EQ 4)
+  endrep until(release EQ 2)
 
  ;-------------------------------------------------
  ; update data descriptor with modified data array

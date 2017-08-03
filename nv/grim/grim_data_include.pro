@@ -175,7 +175,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		npoints			: npoints, $
 		nhist			: nhist, $
 		ref_comb		: 'Average', $
-		type			: type, $	; 'image', 'plot', 'map'
+		type			: type, $	; 'IMAGE', 'PLOT', 'MAP'
 		user_tlp		: ptr_new(), $
 		retain			: retain, $
 		maintain		: maintain, $
@@ -700,7 +700,7 @@ pro grim_sync_planes, grim_data, norefresh=norefresh
   begin
    _grim_data = grim_get_data(tops[i])
 
-   if(grim_data.type NE 'plot') then $
+   if(grim_data.type NE 'PLOT') then $
     if(grim_get_toggle_flag(_grim_data, 'PLANE_SYNCING')) then $
      if(_grim_data.n_planes NE 1) then $
       begin
