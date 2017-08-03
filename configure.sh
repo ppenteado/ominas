@@ -335,7 +335,11 @@ function dins()
 	if grep -q "export NV_${dat}_DATA" ${setting}; then
                 if [ ${ominas_auto} == 1 ] ; then
                   return 1
-                fi 
+                fi
+                if [ ${2} == "NOASK" ]; then
+                 unset inst[${1}]
+                 return 1
+                fi
 		printf "Warning: $dat data files appear to already be set at this location:\n"
                 eval echo \$NV_${dat}_DATA
                 tmp=`grep "export NV_${dat}_DATA" $setting`
@@ -365,6 +369,13 @@ function dins()
            return 1
          fi
 	fi
+        if [ ${2} == "NOASK" ]; then
+          datapath=~/ominas_data/${dat}
+          datapath=`eval echo ${datapath}`
+          inst[${1}]=${datapath}
+          dins=${datapath}
+          return 1
+        fi
         if [ ${ominas_auto} == 1 ] ; then
           echo "Auto option selected in the main menu; will download and place the $dat data at ~/ominas_data/${dat}"
           datapath=~/ominas_data/${dat}
@@ -912,7 +923,8 @@ fi
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
 #declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
-declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" )
+#declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" )
+declare -a Data=("Generic_kernels" "TYCHO2" "SAO" "UCAC4" "GSC" )
 declare -a insts=("" "" "" "" "")
 insts[1]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
 #insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
@@ -1016,6 +1028,9 @@ Data:
            About 22 GB as of Dec/2016
         9) Tycho2 star catalog . . . . . . . . . . ${dstatus[1]}
            About 161 MB download, 665 MB unpacked
+       10) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
+           Already provided with OMINAS, no download needed
+
 For more information, see
 https://ppenteado.github.io/ominas/demo/install_guide.html
 PKGS
@@ -1065,11 +1080,12 @@ Data:
            About 22 GB as of Dec/2016
         9) Tycho2 star catalog . . . . . . . . . . ${dstatus[1]}
            About 161 MB download, 665 MB unpacked
-       10) UCAC4 star catalog  . . . . . . . . . . ${dstatus[2]}
+       10) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
+           Already provided with OMINAS, no download needed
+       11) UCAC4 star catalog  . . . . . . . . . . ${dstatus[3]}
            About 8.5 GB download
-       11) SAO star catalog  . . . . . . . . . . . ${dstatus[3]}
-           About 19 MB download, 70 MB unpacked
        12) GSC star catalog  . . . . . . . . . . . ${dstatus[4]}
+
 For more information, see
 https://ppenteado.github.io/ominas/demo/install_guide.html
 PKGS
@@ -1108,7 +1124,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 7 8 9"
+    ans="1 2 3 4 5 6 7 8 9 10"
   else
     ans="all"
   fi
@@ -1134,7 +1150,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 7 8 9 2 1"
+    ans="3 4 5 6 7 8 9 10 2 1"
   else
     ans="uall"
   fi
@@ -1189,11 +1205,16 @@ do
                                 #DFLAG="false"
                                 #demost="NOT CONFIGURED"
 				ppkg $(($num-4)) 	;;
-		[89]|10|11|12)
+		[89]|11|12)
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 #corest=${yes}
-				dins $(($num-8)) 	;;
+				dins $(($num-8)) ASK	;;
+                10)
+                                pr=0
+                                pkins ominas_env_def.sh "${corest}" $(($num-8))
+                                #corest=${yes}
+                                dins $(($num-8)) NOASK  ;;
                 all)            pr=0;;
                 uall)           pr=0;;
 		*)
