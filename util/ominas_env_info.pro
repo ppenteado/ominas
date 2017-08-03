@@ -82,6 +82,14 @@ printf,lun,'DYLD_LIBRARY_PATH:'
 printf,lun,getenv('DYLD_LIBRARY_PATH')
 printf,lun,sep
 
+;IDLAstro
+routs=['cntrd','minmax']
+printf,lun,''
+printf,lun,sep
+printf,lun,'IDLAstro routines:'
+foreach r,routs do print,r,':',routine_exists(r)
+printf,lun,sep
+
 ;OMINAS repo
 printf,lun,''
 printf,lun,'OMINAS repository:'
