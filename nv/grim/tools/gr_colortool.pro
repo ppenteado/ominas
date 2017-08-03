@@ -158,7 +158,7 @@ pro grct_descriptor_to_widget, data, cmd, noslide=noslide
  ctmod, top=top, visual=visual
 
  widget_control, data.base, $
-               tlb_set_title='Grim Color Table Tool : ' + grim_title(/primary)
+               tlb_set_title='GRIM Color Table Tool : ' + grim_title(/primary)
 end
 ;=============================================================================
 
@@ -403,7 +403,7 @@ pro grct_primary_notify, data_p
  grim_data = grim_get_data(/primary)
  plane = grim_get_plane(grim_data)
 
- if(grim_data.type EQ 'plot') then return
+ if(grim_data.type EQ 'PLOT') then return
 
  gr_colortool_change, (*data_p).base
 

@@ -627,7 +627,7 @@ pro gr_phttool, top
  ;-----------------------------------------------
  ; setup map form widget
  ;-----------------------------------------------
- base = widget_base(title = 'Photometry', group=top)
+ base = widget_base(title = 'GRIM Photometry', group=top)
 
  refl_fns = strupcase(grpht_get_functions('refl'))
  nrefl = n_elements(refl_fns)

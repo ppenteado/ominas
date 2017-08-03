@@ -973,7 +973,7 @@ pro grim_draw_grids, grim_data, plane=plane, no_wset=no_wset
  ;--------------------------------------------
  ; image
  ;--------------------------------------------
- if(grim_data.type NE 'plot') then $
+ if(grim_data.type NE 'PLOT') then $
   begin
 
    ;----------------------------
@@ -1016,7 +1016,7 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
  ;--------------------------------------------
  ; images
  ;--------------------------------------------
- if(grim_data.type NE 'plot') then $
+ if(grim_data.type NE 'PLOT') then $
   begin
 ;   mg = 0.03
 ;   plot, [0], [0], /noerase, /data, pos=[mg,mg, 1.0-mg,1.0-mg]
@@ -1555,7 +1555,7 @@ pro grim_clear_objects, grim_data, all=all, $
    ;----------------------------------
    ; clear points arrays
    ;----------------------------------
-   names = *planes[i].overlay_names_p
+   names = (*planes[i].overlays_p).name
    for j=0, n_elements(names)-1 do $
     begin
      name = names[j]
@@ -2041,7 +2041,7 @@ pro grim_set_roi, grim_data, roi, p, plane=plane
  pnt_set_points, plane.roi_ptd, p
  pnt_set_flags, plane.roi_ptd, flags
 
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    dat = dat_data(plane.dd)
 
