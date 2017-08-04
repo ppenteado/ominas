@@ -671,7 +671,10 @@ do
         #if grep -q NV_${Data[$d]}_DATA $setting; then
         if [ -z ${inst[$d]+x} ]  ;then
           #echo "${d}:0 ${inst[$d]}"
-          echo "unset NV_${dat}_DATA" >>${setting}
+          #echo "unset NV_${dat}_DATA" >>${setting}
+          cat <<VARCMD >> ${setting}
+if [ \`echo "\$NV_${dat}_DATA" | grep -Eco "\${OMINAS_DIR}/demo/data(/?)\$"\` == 0 ]; then unset NV_${dat}_DATA; fi
+VARCMD
         else 
           #echo "$d: ${inst[$d]}"
           #echo "${d}:i ${inst[$d]}"
