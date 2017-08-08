@@ -5,18 +5,19 @@
 ;
 ; Points that do not intersect are returned as the zero vector.
 ;
-; v and r must have same number of elements
+; view_pts and ray_pts must have same number of elements
 ;
 ; returned array is (2*nv,3,nt); 1st half is near points, 
 ;  2nd half is far points.
 ;
 ;===========================================================================
-pro glb_intersect_points, gbd, v, r, discriminant, alpha, beta, gamma, $
-                       valid=valid, nosolve=nosolve, near=points_near, far=points_far
+pro glb_intersect_points, gbd, view_pts, ray_pts, $
+                  discriminant, alpha, beta, gamma, $
+                   valid=valid, nosolve=nosolve, near=points_near, far=points_far
 @core.include
 
  nt = n_elements(gbd)
- nv = (size(v))[1]
+ nv = (size(view_pts))[1]
  n = nv*nt
 
 
@@ -40,8 +41,8 @@ pro glb_intersect_points, gbd, v, r, discriminant, alpha, beta, gamma, $
     tfar = ((-b + sqd)/g)
     w = where(tnear LT 0)
 
-    pp = v[ww] + r[ww]*(tnear#make_array(3, val=1d))
-    qq = v[ww] + r[ww]*(tfar#make_array(3, val=1d))
+    pp = view_pts[ww] + ray_pts[ww]*(tnear#make_array(3, val=1d))
+    qq = view_pts[ww] + ray_pts[ww]*(tfar#make_array(3, val=1d))
 
     if(w[0] NE -1) then valid[ww[w]] = 0
 

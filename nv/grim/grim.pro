@@ -10034,13 +10034,12 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   end
 
 
-
  ;===========================================================================
  ; Update descriptors if any given
  ;  To sort descriptors into their appropriate planes, gds are compared 
  ;  to planes.dd, or to assoc_xd if given.  If cd is a MAP, then descriptors
  ;  are sorted by od, if given.  Note that cd and od are not sorted; there 
- ;  must either be one given for each, or a single desciptor given, which 
+ ;  must either be one given for each, or a single descriptor given, which 
  ;  is applied to the current plane.
  ;===========================================================================
  if(NOT keyword_set(_cd)) then _cd = dat_gd(gd, dd=dd, /cd)

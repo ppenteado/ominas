@@ -86,17 +86,17 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
     ; such that each source function is called only once.
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
     name_list = ''
-    dep_xd_list = ptr_new()
+    source_xd_list = ptr_new()
     points_ptd_list = ptr_new()
     source_points_ptd_list = ptr_new()
 
     if(keyword_set(points_ptd)) then $
      for i=0, n-1 do if(obj_valid(points_ptd[i])) then $
       begin
-       dep_xd = cor_dereference_gd(points_ptd[i])
-       if(keyword_set(dep_xd)) then $
+       source_xd = cor_dereference_gd(points_ptd[i])
+       if(keyword_set(source_xd)) then $
         begin
-         w = where(dep_xd EQ xd)
+         w = where(source_xd EQ xd)
          if(w[0] NE -1) then $
           begin
            name = cor_udata(points_ptd[i], 'GRIM_OVERLAY_NAME')
@@ -107,7 +107,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
            ; find any point dependencies
            ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
            source_ptd = obj_new()
-           w = nwhere(points_ptd, dep_xd)
+           w = nwhere(points_ptd, source_xd)
            if(w[0] NE -1) then source_ptd = points_ptd[w]
 
            ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -117,7 +117,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
            if(w[0] EQ -1) then $
             begin
              name_list = append_array(name_list, name)
-             dep_xd_list = append_array(dep_xd_list, ptr_new(dep_xd))
+             source_xd_list = append_array(source_xd_list, ptr_new(source_xd))
              points_ptd_list = append_array(points_ptd_list, ptr_new(points_ptd[i]))
              source_points_ptd_list = append_array(source_points_ptd_list, ptr_new(source_ptd))
              if(plane.pn EQ planes[j].pn) then refresh = 1
@@ -128,7 +128,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
            else $
             begin
              ii = w[0]
-             *dep_xd_list[ii] = append_array(*dep_xd_list[ii], dep_xd)
+             *source_xd_list[ii] = append_array(*source_xd_list[ii], source_xd)
              *points_ptd_list[ii] = append_array(*points_ptd_list[ii], points_ptd[i])
              *source_points_ptd_list[ii] = append_array(*source_points_ptd_list[ii], source_ptd)
             end 
@@ -143,7 +143,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    if(keyword_set(name_list)) then nn = n_elements(name_list)
    for i=0, nn-1 do $
     begin
-     *dep_xd_list[i] = unique(*dep_xd_list[i])
+     *source_xd_list[i] = unique(*source_xd_list[i])
      *points_ptd_list[i] = unique(*points_ptd_list[i])
      *source_points_ptd_list[i] = unique(*source_points_ptd_list[i])
     end
@@ -155,7 +155,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
 ;    if(plane.t0 NE bod_time(*plane.cd_p)) then $
 ;     begin
 ;      grim_mark_descriptors, grim_data, /all, plane=plane, MARK_STALE
-;      for i=0, nn-1 do *dep_xd_list[i] = 0	; force everything to recompute.
+;      for i=0, nn-1 do *source_xd_list[i] = 0	; force everything to recompute.
 ;						; this is not the right way
 ;						; to do this since it destroys
 ;						; all memory of which overlays
@@ -168,14 +168,14 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;stop
 ;i=3
-;print, *dep_xd_list[i]		; some bad object references in here
+;print, *source_xd_list[i]		; some bad object references in here
 
    for i=0, nn-1 do $
          grim_overlay, grim_data, plane=plane, $
-               name_list[i], dep_xd=*dep_xd_list[i], $
+               name_list[i], source_xd=*source_xd_list[i], $
                ptd=*points_ptd_list[i], source_ptd=*source_points_ptd_list[i]
 
-   for i=0, nn-1 do ptr_free, dep_xd_list[i], points_ptd_list[i], source_points_ptd_list[i]
+   for i=0, nn-1 do ptr_free, source_xd_list[i], points_ptd_list[i], source_points_ptd_list[i]
 
 
   end
@@ -734,7 +734,6 @@ function grim_get_stars, grim_data, plane=plane, names=names
 
  trs = '/tr_nosort'
  if(keyword_set(plane.str_trs)) then trs = trs + ', ' + plane.str_trs
-
 
  ;----------------------------------------------------------------------------
  ; determine whether to reload or keep current descriptor set
