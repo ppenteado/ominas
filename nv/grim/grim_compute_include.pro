@@ -70,7 +70,8 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  rd = cor_dereference_gd(gd, /rd)
  pd = cor_dereference_gd(gd, /pd)
  sund = cor_dereference_gd(gd, name='SUN')
-
+ if(keyword_set(sund)) then sund = sund[0]		; goofy; another reason
+							; to get rid of sund
 
  ;--------------------------------
  ; compute points
@@ -82,11 +83,11 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pd, hide_ptd, /cat
+ pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pds, hide_ptd, /dissoc, /cat
  grim_message
 
- if(keyword_set(sund)) then $
  pg_hide, limb_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
+ pg_hide, hide_ptd_term, cd=cd, od=od, dkx=rd, gbx=pds, /dissoc, /cat
  grim_message
 
  ;-------------------------------------
@@ -146,6 +147,7 @@ function grim_compute_terminator, map=map, clip=clip, hide=hide, $
 
  sund = cor_dereference_gd(gd, name='SUN')
  if(NOT keyword_set(sund)) then return, 0
+ sund = sund[0]
 
  grim_message, /clear
 
@@ -154,7 +156,6 @@ function grim_compute_terminator, map=map, clip=clip, hide=hide, $
  npd = n_elements(pds)
 
  cd = cor_dereference_gd(gd, /cd)
- sund = cor_dereference_gd(gd, name='SUN')
  rd = cor_dereference_gd(gd, /rd)
 
 
@@ -237,7 +238,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
  sund = cor_dereference_gd(gd, name='SUN')
-
+ if(keyword_set(sund)) then sund = sund[0]
 
  ;--------------------------------
  ; compute points
@@ -627,6 +628,7 @@ function grim_compute_shadow, map=map, clip=clip, hide=hide, $
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
  sund = cor_dereference_gd(gd, name='SUN')
+ if(keyword_set(sund)) then sund = sund[0]
 
 
  ;--------------------------------
@@ -698,6 +700,7 @@ function grim_compute_reflection, map=map, clip=clip, hide=hide, $
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
  sund = cor_dereference_gd(gd, name='SUN')
+ if(keyword_set(sund)) then sund = sund[0]
 
  ;--------------------------------
  ; compute points
@@ -765,6 +768,7 @@ function grim_compute_ring, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  sund = cor_dereference_gd(gd, name='SUN')
+ if(keyword_set(sund)) then sund = sund[0]
 
 
  ;--------------------------------------------------------
@@ -861,6 +865,7 @@ function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  sund = cor_dereference_gd(gd, name='SUN')
+ if(keyword_set(sund)) then sund = sund[0]
 
 
  ;--------------------------------

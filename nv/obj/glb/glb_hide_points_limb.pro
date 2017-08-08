@@ -15,16 +15,16 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	sub = glb_hide_points_limb(gbd, r, p)
+;	sub = glb_hide_points_limb(gbd, view_pts, hide_pts)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	gbd:	Array (nt) of any subclass of GLOBE descriptors.
+;	gbd:		Array (nt) of any subclass of GLOBE descriptors.
 ;
-;	r:	Columns vector givnng the BODY-frame position of the viewer.
+;	view_pts:	Columns vector giving the BODY-frame position of the viewer.
 ;
-;	p:	Array (nv) of BODY-frame vectors giving the points to hide.
+;	hide_pts:	Array (nv) of BODY-frame vectors giving the points to hide.
 ;
 ;
 ;  OUTPUT: NONE
@@ -53,17 +53,18 @@
 ;	
 ;-
 ;===========================================================================
-function glb_hide_points_limb, gbd, r, points
+function glb_hide_points_limb, gbd, view_pts, hide_pts
 @core.include
  
 
  nt = n_elements(gbd)
- nv = (size(points))[1]
+ nv = (size(hide_pts))[1]
 
- x = points - r[gen3y(nv,3,nt)]
- n = glb_get_surface_normal(/body, gbd, points)
+ ray_pts = v_unit(hide_pts - view_pts[gen3y(nv,3,nt)])
+ norm_pts = glb_get_surface_normal(/body, gbd, hide_pts)
 
- sub = where(v_inner(n,x) GT 0)
+ sub = where(v_inner(norm_pts,ray_pts) GT 0)
+; sub = where(v_inner(norm_pts,ray_pts) GT -1d-2)
 
  return, sub
 end

@@ -3630,7 +3630,7 @@ end
 ; grim_overlay
 ;
 ;=============================================================================
-pro grim_overlay, grim_data, name, plane=plane, dep_xd=dep_xd, ptd=ptd, source_ptd=source_ptd, $
+pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, source_ptd=source_ptd, $
                                    obj_name=obj_name, temp=temp
 
  if(grim_data.slave_overlays) then plane = grim_get_plane(grim_data, pn=0)
@@ -3658,20 +3658,25 @@ pro grim_overlay, grim_data, name, plane=plane, dep_xd=dep_xd, ptd=ptd, source_p
  ; if the dependencies are given, then just update
  ;  existing arrays
  ;--------------------------------------------------
- if(keyword_set(dep_xd)) then $
+ if(keyword_set(source_xd)) then $
   begin
    grim_suspend_events 
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; recompute the overlay points
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   gd = cor_create_gd(dep_xd, /explicit)
+   gd = cor_create_gd(cd=*plane.cd_p, $
+                      pd=*plane.pd_p, $
+                      rd=*plane.rd_p, $
+                      sund=*plane.sund_p, $
+                      sd=*plane.sd_p, $
+                      od=*plane.od_p)
    if(cor_test_gd(gd, 'MD')) then $
                        gd = cor_create_gd(gd=gd, cd=gd.md, od=*plane.od_p)
 
    _ptd = call_function(fn, gd=gd, $
            map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
-           active_ptd=source_ptd, data=data, $
+           active_xd=source_xd, active_ptd=source_ptd, data=data, $
            npoints=grim_data.npoints)
    _ptd = pnt_cull(_ptd)
 
