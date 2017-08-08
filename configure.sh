@@ -374,6 +374,10 @@ function dins()
           datapath=`eval echo ${datapath}`
           inst[${1}]=${datapath}
           dins=${datapath}
+          if [ ${3} == "NODEMO" ]; then
+           DFLAG="false"
+           demost="NOT CONFIGURED"
+          fi         
           return 1
         fi
         if [ ${ominas_auto} == 1 ] ; then
@@ -416,6 +420,10 @@ function dins()
         #echo "args: ${1}"
         inst[${1}]=${datapath}
         dins=${datapath}
+        if [ ${3} == "NODEMO" ]; then
+          DFLAG="false"
+          demost="NOT CONFIGURED"
+        fi
 	#echo "NV_${dat}_DATA=$datapath; export NV_${dat}_DATA" >>$setting
 }
 
@@ -1208,16 +1216,21 @@ do
                                 #DFLAG="false"
                                 #demost="NOT CONFIGURED"
 				ppkg $(($num-4)) 	;;
-		[89]|11|12)
+                8)
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 #corest=${yes}
-				dins $(($num-8)) ASK	;;
+                                dins $(($num-8)) ASK DEMO;;
+		[9]|11|12)
+                                pr=0
+                                pkins ominas_env_def.sh "${corest}" $(($num-8))
+                                #corest=${yes}
+				dins $(($num-8)) ASK NODEMO;;
                 10)
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 #corest=${yes}
-                                dins $(($num-8)) NOASK  ;;
+                                dins $(($num-8)) NOASK NODEMO;;
                 all)            pr=0;;
                 uall)           pr=0;;
 		*)
