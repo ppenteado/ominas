@@ -4,9 +4,6 @@
 ; Star fitting example
 ; ====================
 ;
-; Note: One optional image in this example requires the voyager SEDR
-; files, which is not supplied in the default installation.
-;
 ; This example requires a star catalog. The options are: UCAC4, UCACT,
 ; TYCHO2, SAO, and GSC2. To learn more about where to obtain these
 ; catalogs, please see the documentation for the star catalog translators,
@@ -69,30 +66,14 @@ tvim, im, zoom=0.75, /order
 ;
 ; This section fills the camera descriptor (cd), the planet descriptor
 ; (pd) and the ring descriptor (rd) for use by the software.
-;  
-; In this example, if the Voyager image is chosen, the default translators
-; are skipped to use a SEDR update from a VICAR program called NAV instead
-; of using the normal SEDR the regular translator would return.
-;
-; If the Cassini image is chosen, this option will be ignored.
 ; 
 ; Code::
 ;
-;  ; Voyager descriptor-generating code
-;  ;cd = pg_get_cameras(dd, 'sedr_source=NAV')
-;  ;pd = pg_get_planets(dd, od=cd, 'sedr_source=NAV')
-;  ;rd = pg_get_rings(dd, pd=pd, od=cd, 'sedr_source=NAV')
-;  ; Cassini descriptor-generating code
 ;  cd = pg_get_cameras(dd)
 ;  pd = pg_get_planets(dd, od=cd)
 ;  rd = pg_get_rings(dd, pd=pd, od=cd)
 ;-
 ;-------------------------------------------------------------------------
-; Voyager descriptor-generating code
-;cd = pg_get_cameras(dd, 'sedr_source=NAV')
-;pd = pg_get_planets(dd, od=cd, 'sedr_source=NAV')
-;rd = pg_get_rings(dd, pd=pd, od=cd, 'sedr_source=NAV')
-; Cassini descriptor-generating code
 cd = pg_get_cameras(dd)
 pd = pg_get_planets(dd, od=cd)
 rd = pg_get_rings(dd, pd=pd, od=cd)

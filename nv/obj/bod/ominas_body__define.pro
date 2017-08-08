@@ -114,6 +114,9 @@ end
 ;
 ;		Methods: bod_dlibdt, bod_set_dlibdt
 ;
+;	aberration:
+;		Aberration flag mask: 1=correction performed.
+;
 ;
 ; STATUS:
 ;	Complete
@@ -141,6 +144,8 @@ pro ominas_body__define
 						;  higher-order avel is the
 						;  ang. vel. for the avel of
 						;  the preceding order.
+	aberration:	0l, $			; Aberration flag mask: 1=
+						;  correction performed
 
 	fn_body_to_inertial:   '', $		; user procedures to tranform
 	fn_inertial_to_body:   '', $		;  between body and inertial

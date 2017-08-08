@@ -218,6 +218,8 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, _extra=select, $
 		end_keywords
 
 
+ ndd = n_elements(dd)
+
  ;-----------------------------------------------
  ; add selection keywords to translator keywords
  ;-----------------------------------------------
@@ -289,10 +291,15 @@ end_keywords)
    sd = sd[sub]
 
    ;------------------------------------------------------------------
-   ; perform stellar aberration correction
+   ; perform aberration corrections
    ;------------------------------------------------------------------
-;   if(keyword_set(od) AND (NOT keyword_set(raw))) then $
-;                                        stellab, od, sd, c=pgc_const('c')
+   if(keyword_set(od) AND (NOT keyword_set(raw))) then $
+    for i=0, ndd-1 do $
+     begin
+      w = where(cor_gd(sd, /dd) EQ dd[i])
+;      if(w[0] NE -1) then stellab, od[i], sd[w], c=pgc_const('c')
+      if(w[0] NE -1) then abcorr, od[i], sd[w], c=pgc_const('c')
+     end
 
    ;-------------------------------------------------------------------
    ; override the specified values (name cannot be overridden)

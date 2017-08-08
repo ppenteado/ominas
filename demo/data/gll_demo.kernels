@@ -1,0 +1,13 @@
+###############################################################################
+# gll_demo.kernels
+#
+###############################################################################
+$DEMO_SPICE_LSK/naif0012.tls
+
+#$DEMO_SPICE_SPK/de403s.bsp
+$DEMO_SPICE_SPK/sat337.bsp
+
+
+$DEMO_SPICE_SPK/s980326b.bsp
+$DEMO_SPICE_SCK/mk00062a.tsc
+$DEMO_SPICE_CK/ckg01ajh.plt
