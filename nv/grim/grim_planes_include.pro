@@ -603,16 +603,6 @@ gd_p		:	ptr_new(0), $	; Generic descriptor
 		ard_p		:	ptr_new(obj_new()), $	; Array descriptors
 		od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 
-	;----------------------------
-	; active objects
-	;----------------------------
-; it may be simpler to implement these as udata on each overlay ptd or xd
-		active_xd_p	:	ptr_new(obj_new()), $	; Descriptors of
-								;  active objects
-		active_overlays_ptdp :	ptr_new(obj_new()), $	; Active overlays
-
-		active_user_tags_p	:	ptr_new(''), $	
-
 	;-----------------------------------------------------------
 	; overlay points arrays  -- 
 	;  Each overlay array, *(*overlay_ptdps)[i], has dimensions
@@ -624,13 +614,6 @@ gd_p		:	ptr_new(0), $	; Generic descriptor
 		overlays_p		:	ptr_new(0), $	; Overlay global
 								; attributes
 		override_color		:	'', $
-
-;	;-----------------------------------------------------------
-;	; fill arrays
-;	;-----------------------------------------------------------
-;		fill_poly_ptdps		:	ptr_new(0), $
-;		fill_color_p		:	ptr_new(0), $
-;		fill_names_p		:	ptr_new(''), $
 
 	;-----------------------------------------------------------
 	; special arrays

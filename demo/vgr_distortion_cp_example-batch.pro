@@ -9,11 +9,11 @@
 ;  the control points to match exactly), but it requires the image to be
 ;  geometrically corrected.
 ;
-;  This example file can be executed from the UNIX command line using
+;  This example file can be executed from the UNIX command line using::
 ;
 ;  	ominas voyager-cp_example.pro
 ;
-;  or from within IDL using
+;  or from within IDL using::
 ;
 ;  	@voyager_cp_example
 ;

@@ -22,7 +22,7 @@
 ;		but an error will result if their generic descriptors
 ;		are incompatible.
 ;
-;	name:	If given, only descriptors whose names appear in this aray
+;	name:	If given, only descriptors whose names appear in this array
 ;		will be returned.  If no descriptor keywords are
 ;		specified (see below), then all fields are searched for
 ;		descriptors with these names.

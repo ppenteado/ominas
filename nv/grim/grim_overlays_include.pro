@@ -26,7 +26,7 @@ function grim_get_overlay_update_flag, ptd
  nptd = n_elements(ptd)
  vals = bytarr(nptd)
 
- for i=0, nptd-1 do vals[i] = cor_udata(ptd[i], 'GRIM_UPDATE_FLAG')
+ for i=0, nptd-1 do vals[i] = cor_udata(ptd[i], 'GRIM_UPDATE_FLAG', /noevent)
 
  return, vals
 end
@@ -160,12 +160,11 @@ end
 ;
 ;=============================================================================
 function grim_get_active_overlays, grim_data, plane=plane, type, $
-     active_indices=active_indices, inactive_indices=inactive_indices
+                                                 inactive_ptd=inactive_ptd
 
+ active_ptd = (inactive_ptd = !null)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
- active_indices = -1
-
+ if(NOT keyword_set(type)) then type = 'all'
 
  ;-------------------------------------------------------------------------
  ; if initial overlays exist and have not yet been computed for this
@@ -177,58 +176,34 @@ function grim_get_active_overlays, grim_data, plane=plane, type, $
 ;      if(keyword_set(plane.initial_overlays_p)) then $
 ;                          if(NOT grim_data.activate) then return, 0
 
- inactive_indices = -1
 
  ;-------------------------------------------
  ; determine which arrays to use
  ;-------------------------------------------
- ptd = *(grim_get_overlay_ptdp(grim_data, plane=plane, type))
-
- if(NOT keyword_set(ptd)) then return, 0
- nptd = n_elements(ptd)
-
- ;--------------------------------------
- ; find requested active overlay arrays
- ;--------------------------------------
- _inactive_indices = lindgen(nptd)
- active_ptd = 0
-
- if(keyword_set(*plane.active_overlays_ptdp)) then $
+ ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, type)
+ for i=0, n_elements(ptdp)-1 do $
   begin
-   w = nwhere(*plane.active_overlays_ptdp, ptd)
-   ww = where(w NE -1)
-   if(ww[0] NE -1) then $
-    begin 
-     w = w[ww]
-     active_ptd = (*plane.active_overlays_ptdp)[w]
+   ptd = *ptdp[i]
+   if(keyword_set(ptd)) then $
+    begin
+     ;-------------------------------------------
+     ; check active flags
+     ;-------------------------------------------
+     flag = cor_udata(ptd, 'GRIM_ACTIVE_FLAG', /noevent)
+     active_indices = where(flag EQ 1)
+     inactive_indices = where(flag EQ 0)
 
-     _active_indices = nwhere(ptd, active_ptd)
-     _inactive_indices = complement(ptd, _active_indices)
-    end 
+     _inactive_ptd = 0
+     if(inactive_indices[0] NE -1) then _inactive_ptd = ptd[inactive_indices]
+ 
+     _active_ptd = 0
+     if(active_indices[0] NE -1) then _active_ptd = ptd[active_indices]
+ 
+     active_ptd = append_array(active_ptd, _active_ptd)
+     inactive_ptd = append_array(inactive_ptd, _inactive_ptd)
+    end
   end
 
- ;-----------------------------------------
- ; remove undefined overlays
- ;-----------------------------------------
- www = where(obj_valid(ptd))
-
- if(www[0] EQ -1) then return, 0
-
- if(defined(_active_indices)) then active_indices = _active_indices
- if(defined(_inactive_indices)) then inactive_indices = _inactive_indices
-
- w = n_where(www, active_indices)
- if(w[0] NE -1) then $
-  begin
-   active_indices = active_indices[w]
-   active_ptd = active_ptd[w]
-  end
-
- w = n_where(www, inactive_indices)
- if(w[0] NE -1) then inactive_indices = inactive_indices[w]
-
-; if((active_indices[0] EQ -1) AND (inactive_indices[0] EQ -1)) then $
-;  inactive_indices = lindgen()
 
  return, active_ptd
 end
@@ -268,19 +243,13 @@ end
 ;=============================================================================
 function grim_get_all_overlays, grim_data, plane=plane, names=names
 
- if(NOT keyword_set(names)) then $
-   names = ['PLANET_CENTER', $
-            'LIMB', $
-            'TERMINATOR', $
-            'RING', $
-            'STAR', $
-            'STATION', $
-            'ARRAY', $
-            'PLANET_GRID', $
-            'RING_GRID']
+ if(NOT keyword_set(names)) then names = 'all'
 
  for i=0, n_elements(names)-1 do $
-  ptd = append_array(ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, names[i])))
+  begin
+   ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, names[i])
+   for j=0, n_elements(ptdp)-1 do ptd = append_array(ptd, *ptdp[j])
+  end
 
  return, ptd
 end
@@ -292,49 +261,39 @@ end
 ; grim_get_active_xds
 ;
 ;=============================================================================
-function grim_get_active_xds, plane, class, $
-     active_indices=active_indices, inactive_indices=inactive_indices
+function grim_get_active_xds, plane, class
 
- active_indices = -1
+ active_xds = !null
 
  ;-------------------------------------------
  ; determine which arrays to use
  ;-------------------------------------------
- if(NOT keyword_set(class)) then return, *plane.active_xd_p
-
- case class of
-  'PLANET' :  xd_p = plane.pd_p
-  'RING' :  xd_p = plane.rd_p
-  'STAR' :  xd_p = plane.sd_p
-  'STATION' :  xd_p = plane.std_p
-  'ARRAY' :  xd_p = plane.ard_p
- endcase
-
- if(NOT keyword_set(*xd_p)) then return, 0
-
- ;------------------------------
- ; get the descriptors
- ;------------------------------
- inactive_indices = lindgen(n_elements(*xd_p))
-
- if(NOT keyword_set(*plane.active_xd_p)) then return, 0
-
- n_active = n_elements(*plane.active_xd_p)
- w = make_array(n_active, val=-1l)
- for i=0, n_active-1 do $
-           if(cor_class((*plane.active_xd_p)[i]) EQ strupcase(class)) then w[i] = i
-
- ww = where(w NE -1)
- if(ww[0] EQ -1) then return, 0 
- w = w[ww]
-
- active_xds = (*plane.active_xd_p)[w]
+ if(NOT keyword_set(class)) then $
+     xd_p = [plane.cd_p, $
+             plane.pd_p, $
+             plane.rd_p, $
+             plane.sund_p, $
+             plane.sd_p, $
+             plane.od_p] $
+ else $
+  case class of
+   'PLANET' :  xd_p = plane.pd_p
+   'RING' :  xd_p = plane.rd_p
+   'STAR' :  xd_p = plane.sd_p
+   'STATION' :  xd_p = plane.std_p
+   'ARRAY' :  xd_p = plane.ard_p
+  endcase
 
  ;-------------------------------------------
- ; get the corresponding points arrays
+ ; get the objects
  ;-------------------------------------------
- active_indices = nwhere(cor_name(*xd_p), cor_name(active_xds))
- inactive_indices = complement(*xd_p, active_indices)
+ for i=0, n_elements(xd_p)-1 do $
+  if(keyword_set(*xd_p[i])) then $
+   begin
+    flag = cor_udata(*xd_p[i], 'GRIM_ACTIVE_FLAG', /noevent)
+    w = where(flag EQ 1)
+    if(w[0] NE -1) then active_xds = append_array(active_xds, (*xd_p[i])[w])
+   end
 
  return, active_xds
 end
@@ -343,81 +302,47 @@ end
 
 
 ;=============================================================================
-; grim_update_activated
+; grim_update_active_xds
 ;
 ;=============================================================================
-pro grim_update_activated, grim_data, plane=plane
+pro grim_update_active_xds, grim_data, plane=plane
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
- ; verify that all active arrays actually exist
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
- active_ptd = *plane.active_overlays_ptdp
- if(keyword_set(active_ptd)) then $
-  begin
-   ptdps = grim_get_overlay_ptdp(grim_data, plane=plane, 'all')
-   nptdps = n_elements(ptdps)
+ ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, 'all') 
 
-   n_active = n_elements(active_ptd)
-   mark = make_array(n_active, val=1b)
+ ;------------------------------------------
+ ; clear all xd activations
+ ;------------------------------------------
+ for i=0, n_elements(ptdp)-1 do $
+  if(keyword_set(*ptdp[i])) then $
+   begin
+    ptd = *ptdp[i]
+    assoc_xd = pnt_assoc_xd(ptd)
+    w = where(obj_valid(assoc_xd))
+    if(w[0] NE -1) then $
+         cor_set_udata, assoc_xd[w], 'GRIM_ACTIVE_FLAG', 0, /all, /noevent
+   end
 
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; compare each active overlay to every existing overlay point.
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   for i=0, n_active-1 do $
-    begin
-     for j=0, nptdps-1 do $
-      begin
-       ptd = *ptdps[j]
-       if(keyword_set(ptd)) then $
-	begin
-	 w = where(*ptdps[j] EQ active_ptd[i])
-	 if(w[0] NE -1) then mark[i] = 0
-	end
-      end
-    end
+ ;--------------------------------------------------------------
+ ; activate xds for which any associated overlays are active
+ ;--------------------------------------------------------------
+ for i=0, n_elements(ptdp)-1 do $
+  if(keyword_set(*ptdp[i])) then $
+   begin
+    ptd = *ptdp[i]
+    assoc_xd = pnt_assoc_xd(ptd)
+    w = where(obj_valid(assoc_xd))
+    if(w[0] NE -1) then $
+     begin
+      ptd = ptd[w]
+      assoc_xd = assoc_xd[w]
+      active = cor_udata(ptd, 'GRIM_ACTIVE_FLAG', /noevent)
+      w = where(active)
+      if(w[0] NE -1) then cor_set_udata, assoc_xd[w], 'GRIM_ACTIVE_FLAG', 1, /all, /noevent
+     end
+   end
 
-   w = where(mark EQ 1)
-   if(w[0] NE -1) then $
-      *plane.active_overlays_ptdp = $
-		rm_list_item(*plane.active_overlays_ptdp, w, only=0)    
-   if(NOT keyword_set((*plane.active_overlays_ptdp)[0])) then $
-					 *plane.active_overlays_ptdp = 0
-  end
-
-
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
- ; update activations for each descriptor type
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
- ss = sort(*plane.active_xd_p)
- *plane.active_xd_p = (*plane.active_xd_p)[ss]
- uu = uniq(*plane.active_xd_p)
- *plane.active_xd_p = (*plane.active_xd_p)[uu]
-
- grim_deactivate_xd, plane, *plane.pd_p
- grim_deactivate_xd, plane, *plane.rd_p
- grim_deactivate_xd, plane, *plane.sd_p
- grim_deactivate_xd, plane, *plane.std_p
-
-
- names = (*plane.overlays_p).name
- for i=0, n_elements(names)-1 do $
-  begin
-   name = names[i]
-   class = ''
-   ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, name, class=class) 
-   if(keyword_set(*ptdp)) then $
-    begin
-     active_ptd = grim_get_active_overlays(grim_data, plane=plane, name, active=active)
-     if(active[0] NE -1) then grim_activate_xd, plane, pnt_assoc_xd(active_ptd) 
-    end
-  end 
-
- ss = sort(*plane.active_xd_p)
- *plane.active_xd_p = (*plane.active_xd_p)[ss]
- uu = uniq(*plane.active_xd_p)
- *plane.active_xd_p = (*plane.active_xd_p)[uu]
 end
 ;=============================================================================
 
@@ -523,8 +448,8 @@ pro grim_draw_standard_points, grim_data, plane, _ptd, name, data, color, tshade
  else shade = call_function('grim_shade_'+ name, data, ptd)
  col = make_array(n_elements(shade), val=color)
 
- pg_draw, ptd, col=col, shades=shade, label_color='yellow', label_shade=label_shade, $
-                                    psym=psym, psize=symsize, plabels=plabels
+ pg_draw, ptd, col=col, shades=shade, label_color='yellow', $
+           label_shade=label_shade, psym=psym, psize=symsize, plabels=plabels
 
 
 end
@@ -556,7 +481,7 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
                                                    color = plane.override_color
 
         active_ptd = grim_get_active_overlays(grim_data, plane=plane, name, $
-                                 active_indices=active, inactive_indices=inactive)
+                                                       inactive_ptd=inactive_ptd)
 
         plabels = make_array(n_elements(*ptdp), val='')
         if(keyword_set(mlab) AND tlab) then plabels = labels
@@ -572,24 +497,16 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
         ;- - - - - - - - - - - - - - - - - - - - - - -
         ; determine which overlays to actually draw
         ;- - - - - - - - - - - - - - - - - - - - - - -
-        active_ptd = 0 & active_plabels = 0
-        if(active[0] NE -1) then $
-         begin
-          active_ptd = (*ptdp)[active]
-          active_plabels = plabels[active]
-         end
+        active_plabels = cor_name(active_ptd)
+        if(NOT keyword_set(mlab) OR  NOT tlab) then active_plabels[*] = ''
         if(keyword_set(update)) then $
          begin
           active_ptd = grim_get_updated_ptd(active_ptd, ii=ii, /clear)
           if(keyword_set(active_ptd)) then active_plabels = active_plabels[ii]
          end
 
-        inactive_ptd = 0 & inactive_plabels = 0
-        if(inactive[0] NE -1) then $
-         begin
-          inactive_ptd = (*ptdp)[inactive]
-          inactive_plabels = plabels[inactive]
-         end
+        inactive_plabels = cor_name(inactive_ptd)
+        if(NOT keyword_set(mlab) OR  NOT tlab) then inactive_plabels[*] = ''
         if(keyword_set(update)) then $
          begin
           inactive_ptd = grim_get_updated_ptd(inactive_ptd, ii=ii, /clear)
@@ -617,7 +534,7 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
               grim_draw_standard_points, grim_data, plane, $
                  inactive_ptd, name, data, inactive_color, tshade, shade, $
                  psym=psym, psize=symsize, plabels=inactive_plabels, label_shade=0.5
- 
+
           ;- - - - - - - - - - - - - - -
           ; active points
           ;- - - - - - - - - - - - - - -
@@ -639,15 +556,12 @@ end
 ; grim_draw_user_points
 ;
 ;=============================================================================
-pro grim_draw_user_points, grim_data, plane, tags, xmap=xmap
-
- user_ptd = grim_get_user_ptd(plane=plane, tags) 
- n = n_elements(tags)
+pro ___grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap
 
  ;-------------------------------------
  ; draw each user array
  ;-------------------------------------
- for i=0, n-1 do $
+ for i=0, n_elements(tags)-1 do $
   begin
    ;- - - - - - - - - - - - - - - - - -
    ; get user array
@@ -659,8 +573,95 @@ pro grim_draw_user_points, grim_data, plane, tags, xmap=xmap
                  xgraphics=user_xgraphics, $
                  psym=user_psym, thick=user_thick, line=user_line, $
                  symsize=user_symsize)
+   np = n_elements(user_ptd)
+   if(keyword_set(inactive_color)) then user_color = inactive_color
+
+   for j=0, np-1 do $
+    begin
+     ;- - - - - - - - - - - - - - - - - -
+     ; draw only if not hidden
+     ;- - - - - - - - - - - - - - - - - -
+     if(user_color[0] NE 'hidden') then $
+      begin
+       ;- - - - - - - - - - - - - - - - - -
+       ; get shade values
+       ;- - - - - - - - - - - - - - - - - -
+       shade = 1d
+
+       if(keyword_set(user_shade_fn)) then $
+                shade = call_function(user_shade_fn, user_ptd[j], grim_data, plane)
+
+       ;- - - - - - - - - - - - - - - - - - - -
+       ; determine which points are visible
+       ;- - - - - - - - - - - - - - - - - - - -
+       if(keyword_set(user_shade_fn) AND defined(user_shade_threshold)) then $
+               p = grim_shade_threshold(user_ptd[j], shade, user_shade_threshold) $
+       else p = pnt_points(user_ptd[j], /visible)
+
+       ;- - - - - - - - - - - - - - - - - - - -
+       ; proceed with visible points
+       ;- - - - - - - - - - - - - - - - - - - -
+       if(keyword_set(p)) then $
+        begin
+         ;- - - - - - - - - - - - - - - - - - - -
+         ; parse user color
+         ;- - - - - - - - - - - - - - - - - - - -
+         if((str_isnum(strtrim(user_color,2)))[0] EQ -1) then $
+          begin
+            ucol = ctcolor(user_color, shade)
+            uxcol = ctcolor(user_color)
+          end $ 
+         else $
+          ucol = (uxcol = long(user_color))
+
+         ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+         ; draw points using standard plotting or add to xgraphics map
+         ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+         if(keyword_set(user_xgraphics)) then $
+                 shade = xshade(p, shade, map=xmap, color=uxcol, /getmap, /tv) $
+         else $
+          pg_draw, p, col=ucol, psym=user_psym, $
+               thick=user_thick, line=user_line, psize=user_symsize, $
+               graphics=user_graphics_fn
+        end
+      end
+    end
+  end
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_draw_user_points
+;
+;=============================================================================
+pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap
+
+ ;-------------------------------------
+ ; draw each user array
+ ;-------------------------------------
+ for i=0, n_elements(tags)-1 do $
+  begin
+   ;- - - - - - - - - - - - - - - - - -
+   ; get user array
+   ;- - - - - - - - - - - - - - - - - -
+   user_ptd = grim_get_user_ptd(plane=plane, tags[i], user_struct=user_struct)
+   user_color = user_struct.color
+   user_shade_fn = user_struct.shade_fn
+   user_shade_threshold = user_struct.shade_threshold
+   user_graphics_fn = user_struct.graphics_fn
+   user_xgraphics = user_struct.xgraphics
+   user_psym = user_struct.psym
+   user_thick = user_struct.thick
+   user_line = user_struct.line
+   user_symsize = user_struct.symsize
 
    np = n_elements(user_ptd)
+   if(keyword_set(inactive_color)) then user_color = inactive_color
+
    for j=0, np-1 do $
     begin
      ;- - - - - - - - - - - - - - - - - -
@@ -732,15 +733,17 @@ pro grim_draw_user_overlays, grim_data, plane, inactive_color
  ;--------------------------------------------------
  if(keyword_set(plane.user_ptd_tlp)) then $
   begin
-   grim_get_active_user_overlays, plane, $
-			  active_tags=active_tags, inactive_tags=inactive_tags
-
-   if(keyword_set(active_tags)) then $
-	  grim_draw_user_points, grim_data, plane, active_tags, xmap=xmap
+   active_user_ptd = grim_get_active_user_overlays(plane, inactive_user_ptd)
+   active_tags = unique(cor_name(active_user_ptd))
+   inactive_tags = unique(cor_name(inactive_user_ptd))
 
 
-   if(keyword_set(inactive_tags)) then $
-	   grim_draw_user_points, grim_data, plane, inactive_tags, xmap=xmap
+   if(keyword_set(active_user_ptd)) then $
+           grim_draw_user_points, grim_data, plane, active_tags, xmap=xmap
+
+
+   if(keyword_set(inactive_user_ptd)) then $
+       grim_draw_user_points, grim_data, plane, inactive_tags, inactive_color, xmap=xmap
   end
 
 
@@ -762,6 +765,7 @@ end
 
 ;=============================================================================
 ; grim_draw_roi
+;
 ;=============================================================================
 pro grim_draw_roi, grim_data, plane
 
@@ -778,6 +782,7 @@ end
 
 ;=============================================================================
 ; grim_draw_indexed_arrays
+;
 ;=============================================================================
 pro grim_draw_indexed_arrays, ptdp, psym=psym
 
@@ -883,7 +888,6 @@ pro grim_draw, grim_data, planes=planes, $
   begin
    plane = planes[jj]
 
-   inactive_color = 'cyan'
    hidden = 'hidden'
 
    if(keyword_set(all)) then $
@@ -900,14 +904,13 @@ pro grim_draw, grim_data, planes=planes, $
   ; standard overlay points
   ;--------------------------------
   if(NOT keyword_set(nopoints)) then $
-    grim_draw_standard_overlays, grim_data, plane, inactive_color, $
+          grim_draw_standard_overlays, grim_data, plane, 'cyan', $
                                                      update=update, mlab=mlab
 
    ;--------------------------------
    ; user overlay points
    ;--------------------------------
-   if(keyword_set(user)) then $
-          grim_draw_user_overlays, grim_data, plane, inactive_color
+   if(keyword_set(user)) then grim_draw_user_overlays, grim_data, plane, 'gray'
 
 
    ;--------------------------------
@@ -1162,8 +1165,7 @@ function grim_cat_points, grim_data, all=all, active=active, plane=plane
  ;------------------------------------
  if(keyword_set(active)) then $
   begin
-   if(keyword_set(*plane.active_overlays_ptdp)) then $
-                         ptd = append_array(ptd, *plane.active_overlays_ptdp)
+   ptd = append_array(ptd, grim_get_active_overlays(grim_data, plane=plane))
 
   end $
  ;------------------------------------
@@ -1192,10 +1194,10 @@ end
 
 
 ;=============================================================================
-; grim_rm_points
+; grim_rm_overlay
 ;
 ;=============================================================================
-pro grim_rm_points, plane, ptdp, ii
+pro grim_rm_overlay, plane, ptdp, ii
 
 
  if(NOT ptr_valid(ptdp)) then return
@@ -1268,8 +1270,27 @@ pro grim_rm_matched_points, grim_data, ptdp, ptd, plane=plane
  for i=0, n_elements(ptd)-1 do if(pnt_valid(ptd[i])) then $
   begin
    w = grim_match_overlays(ptd[i], ptd0)
-   if(w[0] NE -1) then grim_rm_points, plane, ptdp, w
+   if(w[0] NE -1) then grim_rm_overlay, plane, ptdp, w
   end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_copy_overlay
+;
+;=============================================================================
+pro grim_copy_overlay, ptd_dst, ptd_src
+
+ nv_suspend_events
+ pnt_set_points, ptd_dst, pnt_points(ptd_src)
+ pnt_set_flags, ptd_dst, pnt_flags(ptd_src)
+ cor_set_udata, ptd_dst, cor_udata(ptd_src, 'GRIM_ACTIVE_FLAG'), /all
+ cor_set_udata, ptd_dst, cor_udata(ptd_src, 'GRIM_UPDATE_FLAG'), /all
+ cor_set_udata, ptd_dst, cor_udata(ptd_src, 'GRIM_OVERLAY_NAME'), /all
+ nv_resume_events
 
 end
 ;=============================================================================
@@ -1285,14 +1306,10 @@ pro grim_update_points, grim_data, ptd0, ptd, plane=plane
  for i=0, n_elements(ptd)-1 do if(pnt_valid(ptd[i])) then $
   begin
    w = grim_match_overlays(ptd[i], ptd0)
-
    if(w[0] NE -1) then $
     begin
-     if(n_elements(w) EQ 1) then $
-      begin
-       pnt_set_points, ptd0[w], pnt_points(ptd[i])
-       pnt_set_flags, ptd0[w], pnt_flags(ptd[i])
-      end
+     if(n_elements(w) EQ 1) then grim_copy_overlay, ptd0[w], ptd[i]
+     nv_free, ptd[i]
     end
   end
 
@@ -1348,7 +1365,6 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
  ;--------------------------------------------------------------------
  ; add data
  ;-------------------------------------------------------------------- 
-;; if(keyword_set(data)) then *(*plane.overlay_data_p)[ii] = data
  if(keyword_set(data)) then *((*plane.overlays_p).data_p)[ii] = data
 
 
@@ -1390,32 +1406,6 @@ end
 
 
 ;=============================================================================
-; grim_clear_overlay_points
-;
-;=============================================================================
-pro grim_clear_overlay_points, ptdp, active_ptdp
-@pnt_include.pro
-
- if(NOT keyword_set(*active_ptdp)) then return
- if(NOT keyword_set(*ptdp)) then return
-
- n_active = n_elements(*active_ptdp)
-
- for i=0, n_active-1 do $
-  begin
-   w = where(*ptdp EQ (*active_ptdp)[i])
-   if(w[0] NE -1) then grim_rm_points, plane, ptdp, w[0]
-
-;;   if(w[0] NE -1) then *ptdp = rm_list_item(*ptdp, w[0], only=0)
-;;   if(NOT keyword_set(*ptdp[0])) then *ptdp = 0
-  end
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_clear_active_overlays
 ;
 ;=============================================================================
@@ -1426,14 +1416,15 @@ pro grim_clear_active_overlays, grim_data, plane
  ;------------------------------------------
  names = (*plane.overlays_p).name
  for i=0, n_elements(names)-1 do $
-  grim_clear_overlay_points, $
-     grim_get_overlay_ptdp(grim_data, plane=plane, names[i]), $
-                                                  plane.active_overlays_ptdp
-
- ;------------------------------------------
- ; clear active overlay arrays
- ;------------------------------------------
- *plane.active_overlays_ptdp = 0
+  begin
+   ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, names[i])
+   active_ptd = grim_get_active_overlays(grim_data, plane=plane, names[i])
+   if(keyword_set(active_ptd)) then $
+    begin
+     w = nwhere(*ptdp, active_ptd)
+     if(w[0] NE -1) then grim_rm_overlay, plane, ptdp, w
+    end
+  end
 
 
 end
@@ -1550,8 +1541,6 @@ pro grim_clear_objects, grim_data, all=all, $
    if((keyword_set(all)) OR (keyword_set(sund))) then $
      grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sund_p
 
-   if(keyword_set(all)) then *planes[i].active_xd_p = 0
-
    ;----------------------------------
    ; clear points arrays
    ;----------------------------------
@@ -1564,8 +1553,6 @@ pro grim_clear_objects, grim_data, all=all, $
      if(keyword_set(all)) then $
                 *(grim_get_overlay_ptdp(grim_data, plane=planes[i], name)) = 0
     end
-
-   if(keyword_set(all)) then *planes[i].active_overlays_ptdp = 0
 
    if(keyword_set(all)) then ptr_free, planes[i].user_ptd_tlp	; Need to free all the pointers!!
    if(keyword_set(all)) then planes[i].user_ptd_tlp = ptr_new()
@@ -1706,7 +1693,7 @@ pro grim_read_indexed_arrays, grim_data, plane, name, fname=fname
 
  for i=0, n-1 do $
   begin
-   label = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL')
+   label = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL', /noevent)
    if(NOT keyword_set(label)) then label = strtrim(i,2)
    grim_add_indexed_array, ptdp, pnt_points(ptd[i]), label=label
   end
@@ -1729,7 +1716,7 @@ function grim_unique_array_label, ptdp
 
  ii = make_array(nptd, val=-1)
  for i=0, nptd-1 do if(keyword_set(ptd[i])) then $
-                ii[i] = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL')
+                ii[i] = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL', /noevent)
 
  diff = set_difference(ii, lindgen(max(ii)+2))
  if(diff[0] EQ -1) then return, nptd
@@ -2365,8 +2352,8 @@ pro grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _plane, _ptdp
  ; add points
  ;------------------------------------------
  label = strtrim(grim_data.grn,2) + '.' + $
-                     strtrim(plane.pn,2) + '.' + $
-                            strtrim(cor_udata(ptd, 'GRIM_INDEXED_ARRAY_LABEL'),2)
+               strtrim(plane.pn,2) + '.' + $
+                    strtrim(cor_udata(ptd, 'GRIM_INDEXED_ARRAY_LABEL', /noevent),2)
  if(keyword_set(_pts)) then $
   begin
    grim_add_indexed_array, _ptdp, _pts, label=label
@@ -2612,21 +2599,11 @@ end
 pro grim_deactivate_xd, plane, xds
 
  if(NOT keyword_set(xds)) then return
- if(NOT keyword_set(*plane.active_xd_p)) then return
 
- ;---------------------------------------------
- ; determine which xds are already active
- ;---------------------------------------------
- w = nwhere(*plane.active_xd_p, xds)
-
- ;---------------------------------------------
- ; deactivate active objects
- ;---------------------------------------------
- if(w[0] NE -1) then $
-  begin
-    *plane.active_xd_p = rm_list_item(*plane.active_xd_p, w, only=0)
-    if(NOT keyword_set((*plane.active_xd_p)[0])) then *plane.active_xd_p = 0
-  end
+ ;--------------------------------------------------------------------
+ ; deactivate xds
+ ;--------------------------------------------------------------------
+ cor_set_udata, xds, 'GRIM_ACTIVE_FLAG', 0, /all, /noevent
 
 end
 ;=============================================================================
@@ -2637,33 +2614,16 @@ end
 ; grim_deactivate_overlay
 ;
 ;=============================================================================
-pro grim_deactivate_overlay, grim_data, plane, ptd, xds=xds, assoc_xds=assoc_xds, pptd=pptd, $
+pro grim_deactivate_overlay, grim_data, plane, ptd, xds=xds, pptd=pptd, $
       no_callback=no_callback
 
- if(NOT keyword_set(*plane.active_overlays_ptdp)) then return
  if(NOT keyword_set(ptd)) then return
 
- ;---------------------------------------------
- ; determine which ptdp are already active
- ;---------------------------------------------
- nptd = n_elements(ptd)
+ ;--------------------------------------------------------------------
+ ; deactivate overlays
+ ;--------------------------------------------------------------------
+ cor_set_udata, ptd, 'GRIM_ACTIVE_FLAG', 0, /all, /noevent
 
- w = [-1]
- ww = lindgen(nptd)
-
- w = nwhere(*plane.active_overlays_ptdp, ptd)
- ww = complement(ptd, w)
-
- ;---------------------------------------------
- ; deactivate active objects
- ;---------------------------------------------
- if(w[0] NE -1) then $
-  begin
-    *plane.active_overlays_ptdp = $
-                  rm_list_item(*plane.active_overlays_ptdp, w, only=0)
-    if(NOT keyword__set((*plane.active_overlays_ptdp)[0])) then $
-                                              *plane.active_overlays_ptdp = 0
-  end
 
  ;--------------------------------------------------------------------
  ; If xds given, deactivate all overlays for a each descriptor.
@@ -2679,14 +2639,6 @@ pro grim_deactivate_overlay, grim_data, plane, ptd, xds=xds, assoc_xds=assoc_xds
      grim_deactivate_overlay, grim_data, plane, pptd
     end
   end
-
- ;--------------------------------------------------------------------
- ; If assoc_xds given, deactivate all overlays projected from the same xd 
- ; as the array with the given xd was.
- ; Note the recursive call.
- ;--------------------------------------------------------------------
-; if(keyword_set(assoc_xds)) then $
-;   for i=0, n_elements(assoc_xds)-1 do grim_deactivate_overlay, grim_data, plane, assoc_xds[i]
  
 
  ;-----------------------------------
@@ -2694,7 +2646,6 @@ pro grim_deactivate_overlay, grim_data, plane, ptd, xds=xds, assoc_xds=assoc_xds
  ;-----------------------------------
  if(NOT keyword_set(no_callback)) then $
                          grim_call_activation_callbacks, plane, ptd, 'DEACTIVATE'
-
 
 end
 ;=============================================================================
@@ -2709,35 +2660,11 @@ pro grim_activate_xd, plane, xds
 
  if(NOT keyword_set(xds)) then return
 
- w = where(obj_valid(xds))
- if(w[0] EQ -1) then return
- xds = xds[w]
+ ;--------------------------------------------------------------------
+ ; activate xds
+ ;--------------------------------------------------------------------
+ cor_set_udata, xds, 'GRIM_ACTIVE_FLAG', 1, /all, /noevent
 
- ;---------------------------------------------
- ; determine which xds are already active
- ;---------------------------------------------
- nxd = n_elements(xds)
-
- w = [-1]
- ww = lindgen(nxd)
-
- if(keyword_set(*plane.active_xd_p)) then $
-  begin
-   w = nwhere(xds, *plane.active_xd_p)
-   ww = complement(xds, w)
-  end
-
- ;---------------------------------------------
- ; activate inactive objects
- ;---------------------------------------------
- if(ww[0] NE -1) then $
-  begin
-   if(NOT keyword_set(*plane.active_xd_p)) then $
-                                         *plane.active_xd_p = xds[ww] $
-   else *plane.active_xd_p = [*plane.active_xd_p, xds[ww]]
-  end
-
- 
 end
 ;=============================================================================
 
@@ -2784,29 +2711,11 @@ pro grim_activate_overlay, grim_data, plane, ptd, xds=xds, pptd=pptd, $
 
  if(NOT keyword_set(ptd)) then return
 
- ;---------------------------------------------
- ; determine which ptd are already active
- ;---------------------------------------------
- nptd = n_elements(ptd)
+ ;--------------------------------------------------------------------
+ ; activate overlays
+ ;--------------------------------------------------------------------
+ cor_set_udata, ptd, 'GRIM_ACTIVE_FLAG', 1, /all, /noevent
 
- w = [-1]
- ww = lindgen(nptd)
-
- if(keyword_set(*plane.active_overlays_ptdp)) then $
-  begin
-   w = nwhere(ptd, *plane.active_overlays_ptdp)		; which active
-   ww = complement(ptd, w)				; which inactive
-  end
-
- ;---------------------------------------------
- ; activate inactive overlays
- ;---------------------------------------------
- if(ww[0] NE -1) then $
-  begin
-   if(NOT keyword_set(*plane.active_overlays_ptdp)) then $
-                                     *plane.active_overlays_ptdp = ptd[ww] $
-   else *plane.active_overlays_ptdp = [*plane.active_overlays_ptdp, ptd[ww]]
-  end
 
  ;--------------------------------------------------------------------
  ; If xds given, activate all overlays for each descriptor.  
@@ -2823,12 +2732,6 @@ pro grim_activate_overlay, grim_data, plane, ptd, xds=xds, pptd=pptd, $
     end
   end
 
-
- ;-----------------------------------------------------
- ; cull out any invalid activations
- ;-----------------------------------------------------
- *plane.active_overlays_ptdp = pnt_cull(*plane.active_overlays_ptdp, /nofree)
- 
 
  ;-----------------------------------
  ; contact activation callbacks
@@ -2852,13 +2755,9 @@ pro grim_activate_all_overlays, grim_data, plane
  n = n_elements(*plane.overlay_ptdps)
  for i=0, n-1 do grim_activate_overlay, grim_data, plane, *(*plane.overlay_ptdps)[i]
 
- if(ptr_valid(plane.user_ptd_tlp)) then $
-  begin
-   ww = lindgen(n_elements(*plane.user_ptd_tlp))
-   grim_activate_user_overlay, plane, ww
-  end
+ grim_activate_user_overlay, plane, grim_get_user_ptd(plane=plane)
 
- grim_update_activated, grim_data, plane=plane
+ grim_update_active_xds, grim_data, plane=plane
 end
 ;=============================================================================
 
@@ -2875,13 +2774,9 @@ pro grim_deactivate_all_overlays, grim_data, plane
  n = n_elements(*plane.overlay_ptdps)
  for i=0, n-1 do grim_deactivate_overlay, grim_data, plane, *(*plane.overlay_ptdps)[i]
 
- if(ptr_valid(plane.user_ptd_tlp)) then $
-  begin
-   ww = lindgen(n_elements(*plane.user_ptd_tlp))
-   grim_deactivate_user_overlay, plane, ww
-  end
+ grim_deactivate_user_overlay, plane, grim_get_user_ptd(plane=plane)
 
- grim_update_activated, grim_data, plane=plane
+ grim_update_active_xds, grim_data, plane=plane
 end
 ;=============================================================================
 
@@ -2891,39 +2786,21 @@ end
 ; grim_invert_active_overlays
 ;
 ;=============================================================================
-pro grim_invert_active_overlays, grim_data, plane, ptd, xds=xds
+pro grim_invert_active_overlays, grim_data, plane, ptd
 
  if(NOT keyword_set(ptd)) then return
 
  ;------------------------------------------------------
- ; determine which ptdp are currently active/inactive
+ ; invert activations
  ;------------------------------------------------------
- nptd = n_elements(ptd)
+ flag = cor_udata(ptd, 'GRIM_ACTIVE_FLAG', /noevent)
+ cor_set_udata, ptd, 'GRIM_ACTIVE_FLAG', 1-flag, /noevent
 
- w = [-1]
- ww = lindgen(nptd)
 
- if(keyword_set(*plane.active_overlays_ptdp)) then $
-  begin
-   w = nwhere(ptd, *plane.active_overlays_ptdp)	; active
-   ww = complement(ptd, w)			; inactive
-  end
-
- ;---------------------------------------------
- ; deactivate active objects
- ;---------------------------------------------
- if(w[0] NE -1) then grim_deactivate_overlay, grim_data, plane, ptd[w]
-
- ;---------------------------------------------
- ; activate previously inactive objects
- ;---------------------------------------------
- if(ww[0] NE -1) then grim_activate_overlay, grim_data, plane, ptd[ww]
-
- 
  ;-----------------------------------------------------
  ; update object-referenced activation lists
  ;-----------------------------------------------------
- grim_update_activated, grim_data, plane=plane
+ grim_update_active_xds, grim_data, plane=plane
 
 
 end
@@ -2943,7 +2820,7 @@ pro grim_invert_all_overlays, grim_data, plane
  for i=0, n-1 do $
     grim_invert_active_overlays, grim_data, plane, *(*plane.overlay_ptdps)[i]
 
- grim_invert_active_user_overlays, plane
+ grim_invert_active_user_overlays, grim_data, plane
 
 end
 ;=============================================================================
@@ -3092,7 +2969,7 @@ d2min = 25
 ;here, we'd like to remove the associated xd, as well as all its points
 ; not yet implemented, though
 
-     if(ww[0] NE -1) then grim_rm_points, plane, ptdp, ww[0]
+     if(ww[0] NE -1) then grim_rm_overlay, plane, ptdp, ww[0]
 
      return, 0
     end
@@ -3105,19 +2982,18 @@ d2min = 25
   begin
    if(ptr_valid(plane.user_ptd_tlp)) then $
     begin
-     all_tags = (*plane.user_ptd_tlp).name
-     user_ptd = grim_get_user_ptd(all_tags, plane=plane)
+     user_ptd = grim_get_user_ptd(plane=plane)
      ww_usr = grim_nearest_overlay(plane, p, user_ptd)
 
      if(ww_usr[0] NE -1) then $
       begin
-       grim_clear_user_overlays, plane, all_tags[ww_usr]
+       grim_rm_user_overlay, plane, user_ptd[ww_usr]
        return, 0
       end
     end 
   end
 
- grim_update_activated, grim_data, plane=plane
+ grim_update_active_xds, grim_data, plane=plane
 
  return, -1
 end
@@ -3166,10 +3042,7 @@ d2min = 25
  ;------------------------------------------------------------------
  if(keyword_set(ptd)) then $
   begin
-   active_ptd = *plane.active_overlays_ptdp
-   w = -1
-   if(keyword_set(active_ptd)) then w = where(active_ptd EQ ptd[0])
-   active = (w[0] NE -1) ? 1 : 0
+   active = cor_udata(ptd, 'GRIM_ACTIVE_FLAG', /noevent)
 
    xd = 0
    if(clicks EQ 2) then xd = pnt_assoc_xd(ptd)
@@ -3192,14 +3065,28 @@ d2min = 25
  ;--------------
  if(ptr_valid(plane.user_ptd_tlp)) then $
   begin
-   all_tags = (*plane.user_ptd_tlp).name
-   user_ptd = grim_get_user_ptd(all_tags, plane=plane)
+   user_ptd = grim_get_user_ptd(plane=plane)
    ww_usr = grim_nearest_overlay(plane, p, user_ptd)
+   n = n_elements(ww_usr)
 
    if(ww_usr[0] NE -1) then $
     begin
-     if(keyword__set(deactivate)) then grim_deactivate_user_overlay, plane, ww_usr $
-     else grim_activate_user_overlay, plane, ww_usr
+     user_ptd = user_ptd[ww_usr]
+
+     active = cor_udata(user_ptd, 'GRIM_ACTIVE_FLAG', /noevent)
+
+     deactivate = make_array(n, val=deactivate)
+
+     if(keyword_set(invert)) then $
+      begin
+       w = where(active, complement=ww)
+       if(w[0] NE -1) then deactivate[w] = 1
+       if(ww[0] NE -1) then deactivate[ww] = 0
+      end
+
+     w = where(deactivate, complement=ww) 
+     if(w[0] NE -1) then grim_deactivate_user_overlay, plane, user_ptd[w]
+     if(ww[0] NE -1) then grim_activate_user_overlay, plane, user_ptd[ww]
      return, 0
     end
   end 
@@ -3301,7 +3188,7 @@ pro grim_remove_by_box, grim_data, plane, cx, cy, stat=stat, user=user
        xd = 0
        if(ww_xd[0] NE -1) then $
                         xd = (grim_get_xd(grim_data, plane=plane, class))[ww_xd[0]]
-       if(ww[0] NE -1) then grim_rm_points, plane, ptdp, ww
+       if(ww[0] NE -1) then grim_rm_overlay, plane, ptdp, ww
       end
 
     end
@@ -3316,16 +3203,14 @@ pro grim_remove_by_box, grim_data, plane, cx, cy, stat=stat, user=user
    if(ptr_valid(plane.user_ptd_tlp)) then $
     begin
      stat = 0
-     all_tags = (*plane.user_ptd_tlp).name
-     user_ptd = grim_get_user_ptd(all_tags, plane=plane)
+     user_ptd = grim_get_user_ptd(plane=plane)
      ww_usr = grim_enclosed_overlays(corners, user_ptd)
 
-     if(ww_usr[0] NE -1) then $
-                        grim_clear_user_overlays, plane, all_tags[ww_usr]
+     if(ww_usr[0] NE -1) then grim_rm_user_overlay, plane, user_ptd[ww_usr]
     end
   end
 
- grim_update_activated, grim_data, plane=plane
+ grim_update_active_xds, grim_data, plane=plane
 end
 ;=============================================================================
 
@@ -3377,14 +3262,14 @@ pro grim_activate_by_box, grim_data, plane, cx, cy, deactivate=deactivate
  ;- - - - - - - - - - - - -
  if(ptr_valid(plane.user_ptd_tlp)) then $
   begin
-   all_tags = (*plane.user_ptd_tlp).name
-   user_ptd = grim_get_user_ptd(all_tags, plane=plane)
+   user_ptd = grim_get_user_ptd(plane=plane)
    ww_usr = grim_enclosed_overlays(corners, user_ptd)
 
    if(ww_usr[0] NE -1) then $
     begin
-     if(keyword_set(deactivate)) then grim_deactivate_user_overlay, plane, ww_usr $
-     else grim_activate_user_overlay, plane, ww_usr
+     if(keyword_set(deactivate)) then $
+                          grim_deactivate_user_overlay, plane, user_ptd[ww_usr] $
+     else grim_activate_user_overlay, plane, user_ptd[ww_usr]
     end
   end
 
@@ -3429,7 +3314,7 @@ d2min = 9
    if(box) then grim_activate_by_box, grim_data, plane, cx, cy, deactivate=deactivate
   end
 
- grim_update_activated, grim_data, plane=plane
+ grim_update_active_xds, grim_data, plane=plane
 end
 ;=============================================================================
 
@@ -3681,7 +3566,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
    _ptd = pnt_cull(_ptd)
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; update the existing overlay array
+   ; replace existing overlay arrays wth recomputed ones
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    grim_update_points, grim_data, plane=plane, ptd, _ptd
 
@@ -3710,7 +3595,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; compute overlay arrays
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
- active_xds = *plane.active_xd_p
+ active_xds = grim_get_active_xds(plane)
  if(keyword_set(obj_name)) then $
   begin
    xds = cor_dereference_gd(gd)
@@ -3721,7 +3606,8 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
 
  ptd = call_function(fn, gd=gd, data=data, $
           map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
-          active_xds=active_xds, active_ptd=*plane.active_overlays_ptdp, $
+          active_xds=active_xds, $
+          active_ptd=grim_get_active_overlays(grim_data, plane=plane), $
           npoints=grim_data.npoints)
  ptd = pnt_cull(ptd)
 

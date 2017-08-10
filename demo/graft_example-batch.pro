@@ -13,11 +13,11 @@
 ;  a better result by specifying the desired overlays in the call to GRIM,
 ;  as in grim_example, but let's live a little.
 ;
-;  This example file can be executed from the UNIX command line using
+;  This example file can be executed from the UNIX command line using::
 ;
 ;  	ominas graft_example-batch
 ;
-;  or from within IDL using
+;  or from within IDL using::
 ;
 ;  	@graft_example-batch
 ;
@@ -47,13 +47,13 @@ grim, './data/n1350122987.2', zoom=0.75, /order
 ; GRIFT
 ;
 ;  First, GRIFT the data descriptor out of poor old GRIM.  Note that the 
-;  returned object is a reference to the same object as GRIM is using.  
+;  returned object is a reference to the same object as GRIM is using::
 ;
 ;    grift, dd=dd				
 ;
 ;  Be warned that GRIM jealously watches over its objects and updates whenever 
 ;  it detects any changes, so you can simultaneously operate on objects from 
-;  within GRIM and from the command line.  For example, try:
+;  within GRIM and from the command line.  For example, try::
 ;
 ;	dat_set_data, dd, rotate(dat_data(dd),7)
 ;

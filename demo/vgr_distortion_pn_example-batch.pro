@@ -10,11 +10,11 @@
 ;  raw image without the need for a geometric correction.  The disadvantage
 ;  is that it may not be as precise as the control-point approach.
 ;
-;  This example file can be executed from the UNIX command line using
+;  This example file can be executed from the UNIX command line using::
 ;
 ;  	ominas voyager-pn_example.pro
 ;
-;  or from within IDL using
+;  or from within IDL using::
 ;
 ;  	@voyager_pn_example
 ;

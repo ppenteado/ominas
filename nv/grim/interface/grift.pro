@@ -195,7 +195,7 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
      reflection_ptd = append_array(reflection_ptd, grim_get_active_overlays(grim_data, 'REFLECTION'))
      station_ptd = append_array(station_ptd, grim_get_active_overlays(grim_data, 'STATION'))
      array_ptd = append_array(array_ptd, grim_get_active_overlays(grim_data, 'ARRAY'))
-     object_ptd = append_array(object_ptd, *plane.active_xd_p)
+     object_ptd = append_array(object_ptd, grim_get_active_xds(plane))
     end $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; all objects

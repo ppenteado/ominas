@@ -25,6 +25,7 @@ function ctgray, frac
  if(keyword_set(_color)) then return, _color 
 
  if(NOT defined(frac)) then frac = 0.5
+frac = 0.5*frac
 
  ctmod, visual=visual
 
