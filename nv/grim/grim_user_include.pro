@@ -214,8 +214,10 @@ end
 ;
 ;=============================================================================
 function grim_get_user_ptd, plane=plane, grn=grn, tag, prefix=prefix, $
-           user_struct=_user_struct, $
+           user_struct=user_struct, $
            tags=tags, active=active
+
+ user_struct = !null
 
  if(NOT keyword_set(plane)) then $
   begin
@@ -233,24 +235,19 @@ function grim_get_user_ptd, plane=plane, grn=grn, tag, prefix=prefix, $
  user_ptd = 0
  for i=0, n-1 do $
   begin
-   user_struct = tag_list_get(plane.user_ptd_tlp, tag[i], prefix=prefix)
+   __user_struct = tag_list_get(plane.user_ptd_tlp, tag[i], prefix=prefix)
 
-   if(keyword_set(user_struct)) then $
+   if(keyword_set(__user_struct)) then $
     if((NOT keyword_set(active)) OR $
         grim_test_active_user_ptd(plane, tag[i], prefix=prefix)) then $
      begin
-      if(NOT keyword_set(user_ptd)) then $
-       begin
-        user_ptd = *user_struct.user_ptdp
-        tags = tag[i]
-        _user_struct = user_struct
-       end $
-      else $
-       begin
-        user_ptd = [user_ptd, *user_struct.user_ptdp]
-        _user_struct = [_user_struct, user_struct]
-        tags = [tags, tag[i]]
-       end
+       _user_ptd = *__user_struct.user_ptdp
+       for j=0, n_elements(_user_ptd)-1 do $
+        begin
+         user_ptd = append_array(user_ptd, _user_ptd[j])
+         user_struct = append_array(user_struct, __user_struct)
+         tags = append_array(tags, tag[i])
+        end
      end
   end
 
