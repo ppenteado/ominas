@@ -22,7 +22,9 @@
 ;			descriptor in this object are retained in the new one.
 ;			Only one object allowed.
 ;
-;	gd:		New gd.  
+;	gd:		New gd.  If no other inputs are given, then the current
+;			gd is overwritten with this one.  Otherwise, fields are
+;			appended as specified.
 ;
 ;  OUTPUT: NONE
 ;
@@ -56,18 +58,31 @@
 ;	
 ;-
 ;=============================================================================
-pro cor_set_gd, crd0, gd, xds=xds, noevent=noevent, direct=direct, _ref_extra=keys
+pro cor_set_gd, crd0, gd, xds=xds, noevent=noevent, _ref_extra=keys
 @core.include
 
  _crd0 = cor_dereference(crd0)
  n = n_elements(_crd0)
 
- if(keyword_set(gd)) then xds = append_array(xds, cor_dereference_gd(gd))	;;;
- gd0 = _cor_gd(_crd0)
+ ;------------------------------------------------------------------
+ ; If no descriptor keywords, and no xds given, then overwrite gd
+ ;------------------------------------------------------------------
+ if(keyword_set(gd) AND $
+      NOT keyword_set(xds)AND $
+           NOT keyword_set(keys)) then _cor_set_gd, _crd0, gd $
 
- new_gd = cor_create_gd(xds, gd=gd0, _extra=keys)
+ ;------------------------------------------------------------------
+ ; otherwise, append inputs to existing gd
+ ;------------------------------------------------------------------
+ else $
+  begin
+   if(keyword_set(gd)) then xds = append_array(xds, cor_dereference_gd(gd))	;;;
+   gd0 = _cor_gd(_crd0)
 
- if(keyword_set(new_gd)) then _cor_set_gd, _crd0, new_gd
+   new_gd = cor_create_gd(xds, gd=gd0, _extra=keys)
+
+   if(keyword_set(new_gd)) then _cor_set_gd, _crd0, new_gd
+  end
 
  cor_rereference, crd0, _crd0
  nv_notify, crd0, type = 0, noevent=noevent

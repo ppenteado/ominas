@@ -1136,7 +1136,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ;-----------------------------------
  ; update active and primary arrays
  ;-----------------------------------
- grim_update_activated, grim_data, plane=plane
+ grim_update_active_xds, grim_data, plane=plane
 
 
  ;-----------------------------------

@@ -1009,8 +1009,6 @@ pro grim_clear_descriptors, grim_data, planes=planes
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].std_p
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].ard_p
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sund_p	;--
-
-   *planes[i].active_xd_p = 0
   end
 
  grim_set_data, grim_data, grim_data.base

@@ -45,7 +45,8 @@ pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
  pn = plane.pn
 
  n = n_elements(user_ptd)
- for i=0, n-1 do if(pnt_valid(user_ptd[i])) then cor_set_name, user_ptd[i], tag
+; for i=0, n-1 do if(pnt_valid(user_ptd[i])) then cor_set_name, user_ptd[i], tag
+ cor_set_name, user_ptd, tag, /noevent
 
  if(NOT keyword_set(color)) then color = 'purple' 
 
@@ -75,7 +76,7 @@ pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
  plane.user_ptd_tlp = tlp
  grim_set_plane, grim_data, plane, pn=pn
 
- if(NOT keyword_set(inactive)) then grim_activate_user_overlay, plane, index
+ if(NOT keyword_set(inactive)) then grim_activate_user_overlay, plane, user_ptd
 
 
  if(keyword_set(nodraw)) then return
@@ -194,11 +195,14 @@ end
 ;=============================================================================
 function grim_test_active_user_ptd, plane, tag, prefix=prefix
 
- if(NOT keyword_set(*plane.active_user_tags_p)) then return, 0
+ user_struct = tag_list_get(plane.user_ptd_tlp, tag)
+ if(NOT keyword_set(user_struct)) then return, 0
+ user_ptd = *user_struct.user_ptdp
 
- w = tag_list_match(*plane.active_user_tags_p, tag, prefix=prefix)
+ flag = cor_udata(user_ptd, 'GRIM_ACTIVE_FLAG', /noevent)
+
+ w = where(flag EQ 1)
  if(w[0] NE -1) then return, 1
-
  return, 0
 end
 ;=============================================================================
@@ -209,14 +213,9 @@ end
 ; grim_get_user_ptd
 ;
 ;=============================================================================
-function grim_get_user_ptd, grn=grn, tag, prefix=prefix, $
-           plane=plane, color=color, shade_fn=shade_fn, $
-           xgraphics=xgraphics, graphics_fn=graphics_fn, $
-           shade_threshold=shade_threshold, psym=psym, thick=thick, $
-           line=line, symsize=symsize, $
+function grim_get_user_ptd, plane=plane, grn=grn, tag, prefix=prefix, $
+           user_struct=_user_struct, $
            tags=tags, active=active
-
-; if(NOT keyword_set(tag)) then tag = 'no_name'
 
  if(NOT keyword_set(plane)) then $
   begin
@@ -243,6 +242,68 @@ function grim_get_user_ptd, grn=grn, tag, prefix=prefix, $
      begin
       if(NOT keyword_set(user_ptd)) then $
        begin
+; user_struct should be user data fields in user_ptd
+        for j=0, nu-1 do $
+            if(keyword_set(*user_struct[j].user_ptdp)) then $
+                    user_ptd = append_array(user_ptd, *user_struct[j].user_ptdp)
+        tags = tag[i]
+        _user_struct = user_struct
+       end $
+      else $
+       begin
+        _user_ptd = objarr(nu)
+;        for j=0, nu-1 do _user_ptd[j] = *user_struct[j].user_ptdp
+        for j=0, nu-1 do _user_ptd[j] = (*user_struct[j].user_ptdp)[0]
+        user_ptd = [user_ptd, _user_ptd]
+        _user_struct = [_user_struct, user_struct]
+        tags = [tags, tag[i]]
+       end
+     end
+  end
+
+ return, user_ptd
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_user_ptd
+;
+;=============================================================================
+function ___grim_get_user_ptd, plane=plane, grn=grn, tag, prefix=prefix, $
+           color=color, shade_fn=shade_fn, $
+           xgraphics=xgraphics, graphics_fn=graphics_fn, $
+           shade_threshold=shade_threshold, psym=psym, thick=thick, $
+           line=line, symsize=symsize, $
+           tags=tags, active=active
+
+ if(NOT keyword_set(plane)) then $
+  begin
+   grim_data = grim_get_data(grn=grn)
+   plane = grim_get_plane(grim_data)
+  end
+
+ if(NOT keyword_set(plane.user_ptd_tlp)) then return, 0
+ if(NOT ptr_valid(plane.user_ptd_tlp)) then return, 0
+
+ if(NOT keyword_set(tag)) then tag = (*plane.user_ptd_tlp).name
+
+ n = n_elements(tag)
+
+ user_ptd = 0
+ for i=0, n-1 do $
+  begin
+   user_struct = tag_list_get(plane.user_ptd_tlp, tag[i], prefix=prefix)
+
+   nu = n_elements(user_struct)
+   if(keyword_set(user_struct)) then $
+    if((NOT keyword_set(active)) OR $
+        grim_test_active_user_ptd(plane, tag[i], prefix=prefix)) then $
+     begin
+      if(NOT keyword_set(user_ptd)) then $
+       begin
+; user_struct should be user data fields in user_ptd
         for j=0, nu-1 do $
             if(keyword_set(*user_struct[j].user_ptdp)) then $
                     user_ptd = append_array(user_ptd, *user_struct[j].user_ptdp)
@@ -287,31 +348,36 @@ end
 ; grim_get_active_user_overlays
 ;
 ;=============================================================================
-pro grim_get_active_user_overlays, plane, $
-                         active_tags=active_tags, inactive_tags=inactive_tags
+function grim_get_active_user_overlays, plane, inactive_user_ptd
 
- if(NOT ptr_valid(plane.user_ptd_tlp)) then return
+ active_user_ptd = (inactive_user_ptd = 0)
 
- tags = (*plane.user_ptd_tlp).name
- nuser = n_elements(tags)
+ user_ptd = grim_get_user_ptd(plane=plane)
+ if(NOT keyword_set(user_ptd)) then return, 0
 
- active_indices = -1
- inactive_indices = lindgen(nuser)
- inactive_tags = tags[inactive_indices]
- 
+ flag = cor_udata(user_ptd, 'GRIM_ACTIVE_FLAG', /noevent)
+ active_indices = where(flag EQ 1)
+ inactive_indices = where(flag EQ 0)
 
- if(NOT keyword__set(*plane.active_user_tags_p)) then return
- active_user_tags = *plane.active_user_tags_p
+ if(inactive_indices[0] NE -1) then inactive_user_ptd = user_ptd[inactive_indices]
+ if(active_indices[0] NE -1) then active_user_ptd = user_ptd[active_indices]
 
- w = nwhere(tags, active_user_tags)
- if(w[0] EQ -1) then return
+ return, active_user_ptd
+end
+;=============================================================================
 
- active_indices = w
- inactive_indices = complement(tags, active_indices)
 
- inactive_tags = ''
- if(active_indices[0] NE -1) then active_tags = tags[active_indices]
- if(inactive_indices[0] NE -1) then inactive_tags = tags[inactive_indices]
+
+;=============================================================================
+; grim_rm_user_overlay
+;
+;=============================================================================
+pro grim_rm_user_overlay, plane, ptd
+
+ if(NOT keyword_set(ptd)) then return
+
+ for i=0, n_elements(ptd)-1 do $
+              tag_list_rm, plane.user_ptd_tlp, cor_name(ptd[i])
 
 end
 ;=============================================================================
@@ -338,37 +404,14 @@ end
 ; grim_activate_user_overlay
 ;
 ;=============================================================================
-pro grim_activate_user_overlay, plane, indices
+pro grim_activate_user_overlay, plane, ptd
 
- if(indices[0] EQ -1) then return
- if(NOT ptr_valid(plane.user_ptd_tlp)) then return
+ if(NOT keyword_set(ptd)) then return
 
- tags = (*plane.user_ptd_tlp).name
- active_user_tags = *plane.active_user_tags_p
- given_user_tags = tags[indices]
-
- ;---------------------------------------------
- ; determine which user_ptd are already active
- ;---------------------------------------------
- n = n_elements(given_user_tags)
- w = [-1]
- ww = lindgen(n)
-
- if(keyword__set(active_user_tags)) then $
-  begin
-   w = nwhere(given_user_tags, active_user_tags)
-   ww = complement(indices, w)
-  end
-
- ;---------------------------------------------
- ; activate inactive user_ptd
- ;---------------------------------------------
- if(ww[0] NE -1) then $
-  begin
-   if(NOT keyword__set(active_user_tags)) then $
-                              *plane.active_user_tags_p = given_user_tags[ww] $
-   else *plane.active_user_tags_p = [active_user_tags, given_user_tags[ww]]
-  end
+ ;--------------------------------------------------------------------
+ ; activate overlays
+ ;--------------------------------------------------------------------
+ cor_set_udata, ptd, 'GRIM_ACTIVE_FLAG', 1, /all, /noevent
 
 
 end
@@ -380,68 +423,14 @@ end
 ; grim_deactivate_user_overlay
 ;
 ;=============================================================================
-pro grim_deactivate_user_overlay, plane, indices
+pro grim_deactivate_user_overlay, plane, ptd
 
- if(indices[0] EQ -1) then return
- if(NOT ptr_valid(plane.user_ptd_tlp)) then return
+ if(NOT keyword_set(ptd)) then return
 
- tags = (*plane.user_ptd_tlp).name
- active_user_tags = *plane.active_user_tags_p
- if(NOT keyword__set(active_user_tags)) then return
- given_user_tags = tags[indices]
-
- ;---------------------------------------------
- ; determine which user_ptd are already active
- ;---------------------------------------------
- n = n_elements(given_user_tags)
- w = [-1]
- ww = lindgen(n)
-
- w = nwhere(active_user_tags, given_user_tags)
- ww = complement(indices, w)
-
- ;---------------------------------------------
- ; activate inactive user_ptd
- ;---------------------------------------------
- if(w[0] NE -1) then $
-  begin
-    *plane.active_user_tags_p = $
-                  rm_list_item(*plane.active_user_tags_p, w, only='')
-    if(NOT keyword__set((*plane.active_user_tags_p)[0])) then $
-                                                *plane.active_user_tags_p = ''
-  end
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_clear_user_overlays
-;
-;=============================================================================
-pro grim_clear_user_overlays, plane, tags
-
- ;------------------------------------------
- ; get tags of active user overlays
- ;------------------------------------------
-; grim_get_active_user_overlays, plane, active_tags=active_tags
-; if(NOT keyword__set(active_tags)) then return
-
- ;------------------------------------------
- ; remove active user overlays
- ;------------------------------------------
- n = n_elements(tags)
- for i=0, n-1 do tag_list_rm, plane.user_ptd_tlp, tags[i]
-
-; if(NOT keyword__set((*plane.user_ptd_tlp)[0])) then ptr_free, plane.user_ptd_tlp
-
- ;------------------------------------------
- ; clear active user overlay array
- ;------------------------------------------
-; *plane.active_user_tags_p = ''
-
+ ;--------------------------------------------------------------------
+ ; deactivate overlays
+ ;--------------------------------------------------------------------
+ cor_set_udata, ptd, 'GRIM_ACTIVE_FLAG', 0, /all, /noevent
 
 end
 ;=============================================================================
@@ -457,22 +446,15 @@ pro grim_clear_active_user_overlays, plane
  ;------------------------------------------
  ; get tags of active user overlays
  ;------------------------------------------
- grim_get_active_user_overlays, plane, active_tags=active_tags
- if(NOT keyword__set(active_tags)) then return
+ user_ptd = grim_get_active_user_overlays(plane)
+ if(NOT keyword_set(user_ptd)) then return
+ active_tags = cor_name(user_ptd, /noevent)
 
  ;------------------------------------------
  ; remove active user overlays
  ;------------------------------------------
- n = n_elements(active_tags)
+ n = n_elements(user_ptd)
  for i=0, n-1 do tag_list_rm, plane.user_ptd_tlp, active_tags[i]
-
-; if(NOT keyword__set((*plane.user_ptd_tlp)[0])) then ptr_free, plane.user_ptd_tlp
-
- ;------------------------------------------
- ; clear active user overlay array
- ;------------------------------------------
- *plane.active_user_tags_p = ''
-
 
 end
 ;=============================================================================
@@ -483,41 +465,16 @@ end
 ; grim_invert_active_user_overlays
 ;
 ;=============================================================================
-pro grim_invert_active_user_overlays, plane
+pro grim_invert_active_user_overlays, grim_data, plane
 
- if(NOT ptr_valid(plane.user_ptd_tlp)) then return
-
- ;---------------------------------------------------------
- ; determine which ptdp are currently active/inactive
- ;---------------------------------------------------------
-
- tags = (*plane.user_ptd_tlp).name
- active_user_tags = *plane.active_user_tags_p
-
- nptd = n_elements(tags)
-
- w = [-1]
- ww = lindgen(nptd)
-
- if(keyword__set(active_user_tags)) then $
-  begin
-   w = nwhere(tags, active_user_tags)		; active
-   ww = complement(tags, w)			; inactive
-  end
-
- ;---------------------------------------------
- ; deactivate active objects
- ;---------------------------------------------
- if(w[0] NE -1) then grim_deactivate_user_overlay, plane, w
-
- ;---------------------------------------------
- ; activate previously inactive objects
- ;---------------------------------------------
- if(ww[0] NE -1) then grim_activate_user_overlay, plane, ww
-
+ ptd = grim_get_user_ptd(plane=plane)
+ grim_invert_active_overlays, grim_data, plane, ptd
  
 end
 ;=============================================================================
+
+
+
 
 pro grim_user_include
 a=!null
