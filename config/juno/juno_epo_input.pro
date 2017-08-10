@@ -72,7 +72,8 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
 ;;  sc  Need to be long
  sc=-61l
 ;;  inst
- inst=-61500l
+;; inst=-61500l
+ inst=-61501l
 ;;  plat (in cas_spice_inpu, this is defined as sc000, e.g. sc=-82, plat=-82000
  plat=-61000l
 ;;  ref (must be J2000)
@@ -131,8 +132,8 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
    size=[1648,128], $
    ; cam_oaxis pixel x y value for optical axis (from documentation)
    ;oaxis=cam_oaxis)
-   oaxis=[824,64])
-
+;   oaxis=[824,64])
+   oaxis=[824,72])
  bod_set_orient, cd, call_function('juno_epo_cmat_to_orient', bod_orient(cd))
  ;bod_set_orient, cd, bod_orient(cd)
  bod_set_pos, cd, bod_pos(cd)*1000d   ; km --> m
