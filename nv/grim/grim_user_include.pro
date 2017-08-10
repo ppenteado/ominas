@@ -235,26 +235,19 @@ function grim_get_user_ptd, plane=plane, grn=grn, tag, prefix=prefix, $
   begin
    user_struct = tag_list_get(plane.user_ptd_tlp, tag[i], prefix=prefix)
 
-   nu = n_elements(user_struct)
    if(keyword_set(user_struct)) then $
     if((NOT keyword_set(active)) OR $
         grim_test_active_user_ptd(plane, tag[i], prefix=prefix)) then $
      begin
       if(NOT keyword_set(user_ptd)) then $
        begin
-; user_struct should be user data fields in user_ptd
-        for j=0, nu-1 do $
-            if(keyword_set(*user_struct[j].user_ptdp)) then $
-                    user_ptd = append_array(user_ptd, *user_struct[j].user_ptdp)
+        user_ptd = *user_struct.user_ptdp
         tags = tag[i]
         _user_struct = user_struct
        end $
       else $
        begin
-        _user_ptd = objarr(nu)
-;        for j=0, nu-1 do _user_ptd[j] = *user_struct[j].user_ptdp
-        for j=0, nu-1 do _user_ptd[j] = (*user_struct[j].user_ptdp)[0]
-        user_ptd = [user_ptd, _user_ptd]
+        user_ptd = [user_ptd, *user_struct.user_ptdp]
         _user_struct = [_user_struct, user_struct]
         tags = [tags, tag[i]]
        end
