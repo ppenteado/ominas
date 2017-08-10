@@ -185,6 +185,13 @@ if [ ! -e "$HOME/.ominas/config/ominas_env_def.sh" ]; then
   cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_def.sh already exists\n"
+#  read -rp "Would you like to overwrite it with the default ominas_env_def.sh (y/n)[n]? A copy will be made of the old file, as ominas_env_def.sh.old " ans
+#  case $ans in
+#   [Yy]*) 
+#     cp -avn $HOME/.ominas/config/ominas_env_def.sh $HOME/.ominas/config/ominas_env_def.sh.old
+#     cp -avn config/ominas_env_def.sh $HOME/.ominas/config/ ;;
+#   *) ;;
+#  esac
 fi
 if [ ! -e "$HOME/.ominas/config/ominas_env_strcat.sh" ]; then
   cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
