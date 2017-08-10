@@ -59,7 +59,7 @@
 ;-
 ;=============================================================================
 pro bod_query, xd, condition=condition, cat=cat, noevent=noevent, $
-@bod__keywords.include
+@bod__keywords_tree.include
 end_keywords
 
  nv_notify, xd, type = 1, noevent=noevent

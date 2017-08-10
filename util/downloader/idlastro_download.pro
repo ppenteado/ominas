@@ -46,7 +46,11 @@ endif else begin
       j=pp_wget('https://github.com/wlandsman/IDLAstro/archive/master.zip',localdir=locl,ssl_certificate_file=certf)
       j.geturl
       file_unzip,locl+'/master.zip',locl;,/verbose
-      loc=locl+'/IDLAstro-master'
+      if file_test(loc,/directory) then begin
+        file_move,loc,loc+'_old'
+      endif
+      ;loc=locl+'/IDLAstro-master'
+      file_move,locl+'/IDLAstro-master',loc
     endif
     path=getenv('IDL_PATH') ? getenv('IDL_PATH') : pref_get('IDL_PATH')
     if getenv('NV_VERBOSITY') then print,'idlastro_download: old path=',path
@@ -61,7 +65,7 @@ endif else begin
         readf,lun,pathr
         free_lun,lun
       endif else pathr=['']
-      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+loc+'/pro/?(:|$)',/bool),/null)]
+      pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+loc+'/pro/?(:|")',/bool),/null)]
       pathline='if [ `echo $IDL_PATH | grep -Eco "'+loc+'/pro/?(:|$)"` == 0 ]; then '
       pathline+='export IDL_PATH="${IDL_PATH:+$IDL_PATH:}+'+loc+'/pro"; fi'
       pathr=[pathr,pathline]

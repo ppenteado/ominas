@@ -53,7 +53,8 @@
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	count:	Number of descriptors returned.
 ;
 ;
 ; RETURN:
@@ -73,8 +74,10 @@
 ;-
 ;=============================================================================
 function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
-                  inner=inner, outer=outer, npoints=npoints, reveal=reveal
+                  inner=inner, outer=outer, npoints=npoints, reveal=reveal, count=count
 @pnt_include.pro
+
+ count = 0
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -145,6 +148,7 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
 
          outer_disk_ptd[i] = $
             pnt_create_descriptors(name = cor_name(xd) + '-OUTER', $
+		    task = 'pg_disk', $
 		    desc = 'disk_outer', $
 ;		    gd = {dkx:dkx[i,0], gbx:gbx[0], cd:cd[0]}, $
 		    gd = {dkx:dkx[i,0], cd:cd[0]}, $
@@ -201,6 +205,7 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
          inner_disk_ptd[i] = $
             pnt_create_descriptors(name = cor_name(xd) + '-INNER', $
 		    desc = 'disk_inner', $
+		    task = 'pg_disk', $
 ;		    gd = {dkx:dkx[i,0], gbx:gbx[0], cd:cd[0]}, $
 		    gd = {dkx:dkx[i,0], cd:cd[0]}, $
 		    assoc_xd = xd, $
@@ -239,6 +244,7 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
   end
 
 
+ count = n_elements(disk_ptd)
  return, disk_ptd
 end
 ;=============================================================================

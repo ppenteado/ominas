@@ -13,7 +13,7 @@ end
 ; grim_init
 ;
 ;=============================================================================
-function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filter,$
+function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            retain=retain, user_callbacks=user_callbacks, $
            user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, $
            cursor_swap=cursor_swap, cmd=cmd, $
@@ -24,7 +24,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 	   sun_select=sun_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
            color=color, xrange=xrange, yrange=yrange, position=position, npoints=npoints, $
            thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
-           psym=psym, cursor_modes=cursor_modes, $
+           psym=psym, cursor_modes=cursor_modes, keyvals=keyvals, $
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
@@ -32,6 +32,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
            overlays=overlays, activate=activate
 @grim_block.include
 
+  if(NOT keyword_set(keyvals)) then keyvals = ''
   if(NOT keyword_set(dd0)) then dd0 = obj_new()
   if(NOT keyword_set(nhist)) then nhist = 1
 
@@ -165,6 +166,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 	;---------------
 	; bookkeeping
 	;---------------
+		keyvals_p		: nv_ptr_new(keyvals), $
 		base_xsize		: 0l, $
 		base_ysize		: 0l, $
 
@@ -173,7 +175,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		npoints			: npoints, $
 		nhist			: nhist, $
 		ref_comb		: 'Average', $
-		type			: type, $	; 'image', 'plot', 'map'
+		type			: type, $	; 'IMAGE', 'PLOT', 'MAP'
 		user_tlp		: ptr_new(), $
 		retain			: retain, $
 		maintain		: maintain, $
@@ -205,7 +207,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 		mag_pixmap		: 0, $
 		mag_last_x0		: -1l, $
 		mag_last_y0		: -1l, $
-		grnum			: -1l, $
+		grn			: -1l, $
 		act_callbacks_p		: ptr_new(''), $
 		act_callbacks_data_pp	: ptr_new(0), $
 		rf_callbacks_p		: ptr_new(''), $
@@ -237,13 +239,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, filter=filte
 
 		misc_data_p		: ptr_new(0), $
 
-		cam_select     		: cam_select, $
-		plt_select     		: plt_select, $
-		rng_select     		: rng_select, $
-		str_select     		: str_select, $
-		stn_select     		: stn_select, $
-		arr_select     		: arr_select, $
-		sun_select     		: sun_select, $
 
 	;---------------
 	; planes
@@ -317,12 +312,13 @@ end
 
 
 ;=============================================================================
-; grim_grnum_to_top
+; grim_grn_to_top
 ;
 ;=============================================================================
-function grim_grnum_to_top, grnum
-common grnum_block, tops
- return, tops[grnum]
+function grim_grn_to_top, grn
+common grn_block, tops
+ if(grn GE n_elements(tops)) then return, 0
+ return, tops[grn]
 end
 ;=============================================================================
 
@@ -332,13 +328,13 @@ end
 ; grim_get_data
 ;
 ;=============================================================================
-function grim_get_data, top, grnum=grnum, plane=plane, $
+function grim_get_data, top, grn=grn, plane=plane, $
          dead=dead, primary=primary, no_wset=no_wset
 @grim_block.include
 
- if(keyword_set(plane)) then grnum = plane.grnum
+ if(keyword_set(plane)) then grn = plane.grn
 
- if(defined(grnum)) then top = grim_grnum_to_top(grnum)
+ if(defined(grn)) then top = grim_grn_to_top(grn)
  if((NOT keyword_set(top)) AND (NOT keyword_set(_top))) then return, 0
 
  
@@ -597,38 +593,38 @@ end
 
 
 ;=============================================================================
-; grim_grnum_create
+; grim_grn_create
 ;
 ;=============================================================================
-function grim_grnum_create, top
-common grnum_block, tops
+function grim_grn_create, top
+common grn_block, tops
 
  if(NOT defined(tops)) then tops = -1
 
 
- grnum = (min(where(tops EQ -1)))[0]
- if(grnum EQ -1) then $
+ grn = (min(where(tops EQ -1)))[0]
+ if(grn EQ -1) then $
   begin
-   grnum = n_elements(tops) 
+   grn = n_elements(tops) 
    tops = [tops, top] 
   end $
- else tops[grnum] = top
+ else tops[grn] = top
  
 
- return, grnum
+ return, grn
 end
 ;=============================================================================
 
 
 
 ;=============================================================================
-; grim_grnum_destroy
+; grim_grn_destroy
 ;
 ;=============================================================================
-pro grim_grnum_destroy, grnum
-common grnum_block, tops
+pro grim_grn_destroy, grn
+common grn_block, tops
 
- tops[grnum] = -1
+ tops[grn] = -1
 
 end
 ;=============================================================================
@@ -636,15 +632,15 @@ end
 
 
 ;=============================================================================
-; grim_top_to_grnum
+; grim_top_to_grn
 ;
 ;=============================================================================
-function grim_top_to_grnum, top, new=new
+function grim_top_to_grn, top, new=new
 
- if(keyword_set(new)) then return, grim_grnum_create(top)
+ if(keyword_set(new)) then return, grim_grn_create(top)
 
  grim_data = grim_get_data(top)
- return, grim_data.grnum
+ return, grim_data.grn
 end
 ;=============================================================================
 
@@ -704,7 +700,7 @@ pro grim_sync_planes, grim_data, norefresh=norefresh
   begin
    _grim_data = grim_get_data(tops[i])
 
-   if(grim_data.type NE 'plot') then $
+   if(grim_data.type NE 'PLOT') then $
     if(grim_get_toggle_flag(_grim_data, 'PLANE_SYNCING')) then $
      if(_grim_data.n_planes NE 1) then $
       begin

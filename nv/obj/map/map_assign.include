@@ -2,7 +2,7 @@
 ;  implemented as a .include because arg_present does not propogate to 
 ;  lower-level calls
 
- if(defined(type)) then map_set_type, _xd, type, /noevent
+ if(defined(projection)) then map_set_projection, _xd, projection, /noevent
  if(defined(fn_data)) then map_set_fn_data, _xd, fn_data, /noevent
  if(defined(size)) then map_set_size, _xd, size, /noevent
  if(defined(origin)) then map_set_origin, _xd, origin, /noevent

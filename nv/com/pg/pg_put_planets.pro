@@ -73,7 +73,7 @@
 ;-
 ;=============================================================================
 pro pg_put_planets, dd, trs, pd=_pd, ods=ods, raw=raw, $
-@plt__keywords.include
+@plt__keywords_tree.include
 @nv_trs_keywords_include.pro
 		end_keywords
 
@@ -85,7 +85,7 @@ pro pg_put_planets, dd, trs, pd=_pd, ods=ods, raw=raw, $
 
  if(defined(name)) then _name = name & name = !null
  plt_assign, pd, /noevent, $
-@plt__keywords.include
+@plt__keywords_tree.include
 end_keywords
  if(defined(_name)) then name = _name
 
@@ -97,7 +97,7 @@ end_keywords
   for i=0, n_elements(dd)-1 do $
    begin
     w = where(cor_gd(pd, /dd) EQ dd[i])
-    if(w[0] NE -1) then abcorr, ods[i], pd[w], c=pgc_const('c'), /invert
+    if(w[0] NE -1) then abcorr, ods[i], pd[w], c=const_get('c'), /invert
    end
 
 

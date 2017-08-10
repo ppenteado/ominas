@@ -87,12 +87,15 @@
 ;	
 ;-
 ;=============================================================================
-pro spice_output, dd, keyword, value, prefix, status=status, $
+pro spice_output, dd, keyword, value, prefix, inst, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
  status=0
+
+ inst_prefix = prefix
+ if(keyword_set(inst)) then inst_prefix = inst_prefix + '_' + inst
 
  ;-----------------------------------------------
  ; translator arguments
@@ -136,7 +139,7 @@ pro spice_output, dd, keyword, value, prefix, status=status, $
   end
 
 
- call_procedure, prefix + '_spice_write_cameras', $
+ call_procedure, inst_prefix + '_spice_write_cameras', $
                   dd, value, ref, ck_file, n_obj=n_obj, dim=dim, status=status
 
 ; if(keyword__set(klist_tmp)) then delete_file, klist

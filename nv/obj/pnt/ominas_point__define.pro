@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function ominas_point::init, ii, crd=crd0, ptd=ptd0, $
-@pnt__keywords.include
+@pnt__keywords_tree.include
 end_keywords
 @core.include
  
@@ -18,7 +18,8 @@ end_keywords)
  ;-----------------------
  ; desc
  ;-----------------------
- if(keyword_set(desc)) then self.desc = desc[ii]
+ if(keyword_set(desc)) then pnt_set_desc, self, desc[ii]
+; if(keyword_set(desc)) then self.desc = desc[ii]
 
  ;-----------------------
  ; points

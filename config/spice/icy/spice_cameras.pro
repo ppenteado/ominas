@@ -58,8 +58,8 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
         end $
        else $
         begin
-         nv_message, /continue, $
-                           'Error obtaining camera data for ' + cor_name(dd[i])
+         nv_message, /continue, 'Error obtaining camera data' + $
+            (keyword_set(cor_name(dd[i])) ? ' for ' + cor_name(dd[i]) + '.' : '.')
          return, 0
         end
       end
@@ -70,7 +70,8 @@ function spice_cameras, dd, ref, k_in, uk_in, sc=sc, inst=inst, plat=plat, $
      if(NOT pos) then $
       if(NOT valid_rotation(_cmat)) then $
        begin
-        nv_message, /continue, 'Invalid C-matrix for ' + cor_name(dd[i]) + '.'
+         nv_message, /continue, 'Invalid C-matrix' + $
+            (keyword_set(cor_name(dd[i])) ? ' for ' + cor_name(dd[i]) + '.' : '.')
         status = -1
         return, 0
        end

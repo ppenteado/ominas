@@ -13,20 +13,23 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_get_stars(dd, od=od)
-;	result = pg_get_stars(dd, od=od, trs)
+;	result = pg_get_stars(arg1, arg2)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:	data descriptor
+;	arg1:	Data descriptor or transient translator argument.  In the
+;		latter case, a string containing keywords and values to be 
+;		passed directly to the translators as if they appeared as 
+;		arguments in the translators table.  Keywords passed using 
+;		this mechanism take precedence over keywords appearing in 
+;		the translators table.  If no data descriptor is given, 
+;		one may be constructed using DATA keywords (see below).  The
+;		newly created data descriptor is freed unless this argument
+;		is an undefined named variable, in which case the new
+;		descriptor is returned in this variable.
 ;
-;	trs:	String containing keywords and values to be passed directly
-;		to the translators as if they appeared as arguments in the
-;		translators table.  These arguments are passed to every
-;		translator called, so the user should be aware of possible
-;		conflicts.  Keywords passed using this mechanism take 
-;		precedence over keywords appearing in the translators table.
+;	arg2:	Transient translator argument, if present.
 ;
 ;  OUTPUT: NONE
 ;
@@ -48,12 +51,6 @@
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
-;	str_*:		All star override keywords are accepted.  See
-;			star_keywords.include.
-;
-;			If name is specified, then only descriptors with
-;			those names are returned.
-;
 ;	verbatim:	If set, the descriptors requested using name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
@@ -64,49 +61,39 @@
 ;			table are called, but the translators keywords
 ;			from the table are still used.  
 ;
-;    Descriptor Select Keywords
-;    --------------------------
-;    Descriptor select keywords are combined with OR logic.  They are implemented
-;    in this routine as described below after the translators have been called,
-;    but they are also added to the translator keywords.  The purpose of sending
-;    then to the translators as well is to give the translators an opportunity
-;    to filter their outputs before potentially generating a huge array of
-;    descriptors that would mostly be filtered out by this routine.   
+;	STAR Keywords
+;	---------------
+;	All STAR override keywords are accepted.  See str__keywords.include.
+;	If 'name' is specified, then only descriptors with those names are 
+;	returned.
 ;
-;	fov/cov:	Select all stars that fall within this many fields of
-;			view (fov) (+/- 10%) from the center of view (cov).
-;			Default cov is the camera optic axis.
+;	DATA Keywords
+;	-------------
+;	All DATA override keywords are accepted.  See dat__keywords.include.  
 ;
-;	pix:		Select all stars whose apparent size (in pixels) is 
-;			greater than or equal to this value.
 ;
-;	radmax:		Select all stars whose radius is greater than or 
-;			equal to this value.
+;	Descriptor Select Keywords
+;	--------------------------
+;	Descriptor select keywords are combined with OR logic.  They are 
+;	implemented in this routine after the translators have been called, 
+;	but they are also added to the translator keywords.  The purpose of 
+;	sending then to the translators as well is to give the  translators 
+;	an opportunity to filter their outputs before potentially  generating 
+;	a huge array of descriptors that would mostly be filtered out by this 
+;	routine.  Named bodies are exempted.  See pg_select_bodies for a 
+;	description of the standard keywords.  Additional keywords specific 
+;	to this program are as follows:
 ;
-;	radmin:		Select all stars whose radius is less than or 
-;			equal to this value.
-;
-;	distmax:	Select all stars whose distance is greater than or 
-;			equal to this value.
-;
-;	distmin:	Select all stars whose distance is less than or 
-;			equal to this value.
-;
-;	nlarge:		Select n largest stars.
-;
-;	nsmall:		Select n smallest stars.
-;
-;	nclose:		Select n closst stars.
-;
-;	nfar:		Select n farthest stars.
-;
-;	faint:		Select stars with magnitudes less than or equal to
+;	  faint:	Select stars with magnitudes less than or equal to
 ;			this value.
 ;
-;	bright:		Select stars with magnitudes greater than or equal to
+;	  bright:	Select stars with magnitudes greater than or equal to
 ;			this value.
 ;
-;	nbright:	Select this many brightest stars.
+;	  nbright:	Select this many brightest stars.
+;
+;  OUTPUT:
+;	count:	Number of descriptors returned
 ;
 ;
 ; RETURN:
@@ -122,11 +109,6 @@
 ;	only descriptors corresponding to those names will be returned.
 ;	
 ;
-;
-; SEE ALSO:
-;	xx, xx, xx
-;
-;
 ; MODIFICATION HISTORY:
 ; 	Written by:	Spitale, 1998
 ;	Modified:	Spitale, 8/2001
@@ -141,12 +123,12 @@
 ;
 ;
 ;===========================================================================
-pro pggs_select_stars, dd, sd, od=od, select
+pro pggs_select_stars, sd, od=od, name=name, _extra=keyvals
 
  ;------------------------------------------------------------------------
  ; standard body filters
  ;------------------------------------------------------------------------
- sel = pg_select_bodies(dd, sd, od=od, select)
+ sel = pg_select_bodies(sd, od=od, prefix='str', _extra=keyvals)
 
  ;------------------------------------------------------------------------
  ; filters specific to stars
@@ -157,7 +139,7 @@ pro pggs_select_stars, dd, sd, od=od, select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  ; faint -- faintest magnitude to select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- faint = struct_get(select, 'faint')
+ faint = extra_value(keyvals, 'faint', 'str')
  if(keyword_set(faint)) then $
   begin
    w = where(mag LE faint)
@@ -167,7 +149,7 @@ pro pggs_select_stars, dd, sd, od=od, select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  ; bright -- brightest magnitude to select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- bright = struct_get(select, 'bright')
+ bright = extra_value(keyvals, 'bright', 'str')
  if(keyword_set(bright)) then $
   begin
    w = where(mag GE bright)
@@ -177,7 +159,7 @@ pro pggs_select_stars, dd, sd, od=od, select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  ; nbright -- number of brightest stars to select
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- nbright = struct_get(select, 'nbright')
+ nbright = extra_value(keyvals, 'nbright', 'str')
  if(keyword_set(nbright)) then $
   if(n GT nbright) then $ 
    begin
@@ -191,16 +173,7 @@ pro pggs_select_stars, dd, sd, od=od, select
  ;------------------------------------------------------------------------
  ; implement any selections
  ;------------------------------------------------------------------------
- if(keyword_set(sel)) then $
-  begin
-   sel = unique(sel)
-
-   w = complement(sd, sel)
-   if(w[0] NE -1) then nv_free, sd[w]
-
-   if(sel[0] EQ -1) then sd = obj_new() $
-   else sd = sd[sel]
-  end
+ pg_cull_bodies, sd, sel, name=name
 
 end
 ;===========================================================================
@@ -211,19 +184,29 @@ end
 ; pg_get_stars
 ;
 ;===========================================================================
-function pg_get_stars, dd, trs, sd=_sd, od=od, _extra=select, $
-                     override=override, verbatim=verbatim, raw=raw, $
-@str__keywords.include
-@nv_trs_keywords_include.pro
-		end_keywords
+function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=keyvals, $
+                     override=override, verbatim=verbatim, raw=raw, count=count, $
+                              @str__keywords_tree.include
+                              @dat__keywords.include
+                              @nv_trs_keywords_include.pro
+                              end_keywords
 
+ count = 0
+
+ ;------------------------------------------------------------------------
+ ; sort out arguments
+ ;------------------------------------------------------------------------
+ pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+                          @dat__keywords.include
+                          end_keywords
 
  ndd = n_elements(dd)
 
- ;-----------------------------------------------
- ; add selection keywords to translator keywords
- ;-----------------------------------------------
- if(keyword_set(select)) then pg_add_selections, trs, select
+ ;---------------------------------------------------------------------
+ ; add selection keywords to translator keywords and filter out any
+ ; prefixed keywords that don't apply
+ ;---------------------------------------------------------------------
+ if(keyword_set(keyvals)) then pg_add_selections, trs, keyvals, 'STR'
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -237,12 +220,12 @@ function pg_get_stars, dd, trs, sd=_sd, od=od, _extra=select, $
   begin
    n = n_elements(name)
 
-   if(keyword_set(dd)) then gd = dd
+   if(keyword_set(dd)) then gd = cor_create_gd(dd, gd=gd)
    sd = str_create_descriptors(n, $
-@str__keywords.include
-end_keywords)
-   gd = !null
+                     @str__keywords_tree.include
+                     end_keywords)
 
+   if(keyword_set(free)) then nv_free, dd
   end $
  ;-------------------------------------------------------------------
  ; otherwise, get star descriptors from the translators
@@ -252,17 +235,17 @@ end_keywords)
    ;-----------------------------------------------
    ; call translators
    ;-----------------------------------------------
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if names requested, the force tr_first
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;   if(keyword_set(name)) then tr_first = 1
-;   if(NOT keyword__set(od)) then nv_message,'No observer descriptor.'
-
-   sd=dat_get_value(dd, 'STR_DESCRIPTORS', key1=od, key4=_sd, $
+   sd = dat_get_value(dd, 'STR_DESCRIPTORS', key1=od, key4=_sd, $
                  key7=time, key8=name, trs=trs, $
-@nv_trs_keywords_include.pro
-	end_keywords)
+                              @nv_trs_keywords_include.pro
+                              end_keywords)
+
+   ;------------------------------------------------------------------------
+   ; Free dd if pg_sort_args determined that it will not be used outside 
+   ; this function.  Note that the object ID is not lost will still appear
+   ; in the gd.
+   ;------------------------------------------------------------------------
+   if(keyword_set(free)) then nv_free, dd
 
    if(NOT keyword__set(sd)) then return, obj_new()
 
@@ -297,8 +280,7 @@ end_keywords)
     for i=0, ndd-1 do $
      begin
       w = where(cor_gd(sd, /dd) EQ dd[i])
-;      if(w[0] NE -1) then stellab, od[i], sd[w], c=pgc_const('c')
-      if(w[0] NE -1) then abcorr, od[i], sd[w], c=pgc_const('c')
+      if(w[0] NE -1) then abcorr, od[i], sd[w], c=const_get('c')
      end
 
    ;-------------------------------------------------------------------
@@ -306,8 +288,8 @@ end_keywords)
    ;-------------------------------------------------------------------
    if(defined(name)) then _name = name & name = !null
    str_assign, sd, /noevent, $
-@str__keywords.include
-end_keywords
+                     @str__keywords_tree.include
+                     end_keywords
     if(defined(_name)) then name = _name
 
   end
@@ -316,16 +298,18 @@ end_keywords
  ; filter stars
  ;--------------------------------------------------------
  if(NOT keyword_set(sd)) then return, obj_new()
- if(keyword_set(select)) then pggs_select_stars, dd, sd, od=od, select
+ if(keyword_set(keyvals)) then $
+                  pggs_select_stars, sd, od=od, name=name, _extra=keyvals
  if(NOT keyword_set(sd)) then return, obj_new()
 
 
  ;--------------------------------------------------------
  ; update generic descriptors
  ;--------------------------------------------------------
- if(keyword_set(dd)) then dat_set_gd, dd, gd, od=od
- dat_set_gd, sd, gd, od=od
+ if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, sd=sd, od=od, /noevent
+ dat_set_gd, sd, gd, od=od, /noevent
 
+ count = n_elements(sd)
  return, sd
 end
 ;===========================================================================

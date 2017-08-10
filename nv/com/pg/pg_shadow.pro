@@ -106,7 +106,7 @@ function pg_shadow, cd=cd, od=od, dkx=dkx, gbx=gbx, bx=bx, dd=dd, gd=gd, object_
  ;----------------------------------
  if(keyword_set(dkx)) then $
    disk_shadow_ptd = $
-       pg_shadow_disk(object_ptd, cd=cd, od=od, dkx=dkx, gbx=gbx, dd=dd, gd=gd, $
+       pg_shadow_disk(object_ptd, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, $
                /nocull, reveal=reveal, clip=clip, both=both, backshadow=backshadow, epsilon=epsilon)
 
 

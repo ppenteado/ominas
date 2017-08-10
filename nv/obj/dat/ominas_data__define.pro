@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function ominas_data::init, ii, crd=crd0, dd=dd0, $
-@dat__keywords.include
+@dat__keywords_tree.include
 end_keywords
 @core.include
 

@@ -35,8 +35,8 @@ end
 ;=============================================================================
 pro grim_mode_navigate_get_points, grim_data, plane=plane, points_ptd, curves_ptd
 
- points_ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, genre='point', /fast)
- curves_ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, genre='curve', /fast)
+ points_ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, genre='POINT', /fast)
+ curves_ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, genre='CURVE', /fast)
  for i=0, n_elements(points_ptdp)-1 do points_ptds = append_array(points_ptds, *points_ptdp[i])
  for i=0, n_elements(curves_ptdp)-1 do curves_ptds = append_array(curves_ptds, *curves_ptdp[i])
  points_ptd = pnt_compress(points_ptds)
@@ -487,6 +487,8 @@ pro grim_mode_navigate_mouse_event, event, data
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
  if(event.press EQ 2) then return
+
+ if(NOT keyword_set(*plane.cd_p)) then return
 
  ;---------------------------------------
  ; scroll wheel -- adjust distance

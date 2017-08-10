@@ -1,14 +1,7 @@
 ;==============================================================================
-; cas_delut
-;
-;  Adapted from cassimg__twelvebit.pro, which was contributed by Daren Wilson.
-;
-;  This Lookup Table (or LUT) is from Appendix F1 of the
-;  Cassini ISS Calibration Report
-;  It is the inverse of the 12bit to 8bit pseudologarithmic LUT
-;  optionally used to encode the ISS images.
-;  There are therefore 256 elements which map corresponding DNs back
-;  into the full 12bit range 0-4095 in a near exponential relationship
+; cas_radar_transform
+; 
+; based on documentation at https://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DOCUMENT/
 ;
 ;==============================================================================
 function cas_radar_transform, ima, label, force=force

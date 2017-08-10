@@ -197,7 +197,7 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
  ;---------------------------
  ; get data
  ;----------------------------
- limb_ptd = grim_get_active_overlays(grim_data, 'limb')
+ limb_ptd = grim_get_active_overlays(grim_data, 'LIMB')
  if(NOT keyword_set(limb_ptd)) then $
   begin
    grim_message, 'No outline points.'
@@ -207,7 +207,8 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
  outline_ptd = nv_clone(limb_ptd[0])
  flags = pnt_flags(outline_ptd) & flags[*] = NOT PTD_MASK_INVISIBLE & pnt_set_flags, outline_ptd, flags
 
- ingrid, dd=dd, cd=cd, sund=sund, active_pd=pd
+ grift, dd=dd, cd=cd, sund=sund
+ grift, /active, pd=pd
 
  if(NOT keyword_set(cd)) then $
   begin
@@ -249,7 +250,8 @@ pro grpht_apply_correction_all, grim_data, data, phtd
 
  for i=0, nplanes-1 do $
   begin
-   ingrid, pn=i, dd=dd, cd=cd, sund=sund, active_pd=pd, active_limb_ptd=limb_ptd
+   grift, pn=i, dd=dd, cd=cd, sund=sund
+   grift, pn=i, /active, pd=pd, limb_ptd=limb_ptd
    apply = 1
 
    ;---------------------------
@@ -625,7 +627,7 @@ pro gr_phttool, top
  ;-----------------------------------------------
  ; setup map form widget
  ;-----------------------------------------------
- base = widget_base(title = 'Photometry', group=top)
+ base = widget_base(title = 'GRIM Photometry', group=top)
 
  refl_fns = strupcase(grpht_get_functions('refl'))
  nrefl = n_elements(refl_fns)

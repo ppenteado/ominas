@@ -63,7 +63,7 @@ function map_get_grid_points, lat=lat, lon=lon, nt=nt, $
 
 
  ;==============================
- ; generate latitude circles
+ ; generate longitude circles
  ;==============================
  nlat = n_elements(lat)
  np = nplon*nlat
@@ -73,12 +73,12 @@ function map_get_grid_points, lat=lat, lon=lon, nt=nt, $
                      make_array(nplon, val=1), np, /overwrite)#Mt
    lons = reform([scan_lon]#make_array(nlat, val=1), np, /overwrite)#Mt
 
-   rlat_map = [tr(lats), tr(lons)]
+   rlon_map = [tr(lats), tr(lons)]
   end
 
 
  ;==============================
- ; generate longitude circles
+ ; generate latitude circles
  ;==============================
  nlon = n_elements(lon)
  np = nplat*nlon
@@ -88,7 +88,7 @@ function map_get_grid_points, lat=lat, lon=lon, nt=nt, $
                       make_array(nplat, val=1), np, /overwrite)#Mt
    lats = reform([scan_lat]#make_array(nlon, val=1), np, /overwrite)#Mt
 
-   rlon_map = [tr(lats), tr(lons)]
+   rlat_map = [tr(lats), tr(lons)]
   end
 
 

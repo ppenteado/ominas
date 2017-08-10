@@ -130,7 +130,7 @@ pro gros_update_form, grim_data, plane, base
  ;- - - - - - - - - - - - - - - - - - - - - - -
  ; overlay colors
  ;- - - - - - - - - - - - - - - - - - - - - - -
- colors = *plane.overlay_color_p
+ colors = (*plane.overlays_p).color
  for i=0, n_elements(colors)-1 do $
   begin
    w = where(data.colors EQ colors[i])
@@ -140,7 +140,7 @@ pro gros_update_form, grim_data, plane, base
  ;- - - - - - - - - - - - - - - - - - - - - - -
  ; overlay psyms
  ;- - - - - - - - - - - - - - - - - - - - - - -
- psyms = *plane.overlay_psym_p
+ psyms = (*plane.overlays_p).psym
  for i=0, n_elements(psyms)-1 do $
       grim_set_form_entry, data.ids, data.tags, $
                                  gros_overlay_tag(i,'psym'), strtrim(psyms[i], 2)
@@ -148,7 +148,7 @@ pro gros_update_form, grim_data, plane, base
  ;- - - - - - - - - - - - - - - - - - - - - - -
  ; overlay symsizes
  ;- - - - - - - - - - - - - - - - - - - - - - -
- symsizes = *plane.overlay_symsize_p
+ symsizes = (*plane.overlays_p).symsize
  for i=0, n_elements(symsizes)-1 do $
       grim_set_form_entry, data.ids, data.tags, $
                                  gros_overlay_tag(i,'symsize'), strtrim(symsizes[i], 2)
@@ -156,7 +156,7 @@ pro gros_update_form, grim_data, plane, base
  ;- - - - - - - - - - - - - - - - - - - - - - -
  ; overlay label toggles
  ;- - - - - - - - - - - - - - - - - - - - - - -
- tlabs = *plane.overlay_tlab_p NE 1
+ tlabs = (*plane.overlays_p).tlab NE 1
  for i=0, n_elements(tlabs)-1 do $
         grim_set_form_entry, data.ids, data.tags, $
                                gros_overlay_tag(i,'tlabels'), tlabs[i], /cwbutton
@@ -164,7 +164,7 @@ pro gros_update_form, grim_data, plane, base
  ;- - - - - - - - - - - - - - - - - - - - - - -
  ; overlay shading toggles
  ;- - - - - - - - - - - - - - - - - - - - - - -
- tshades = *plane.overlay_tshade_p NE 1
+ tshades = (*plane.overlays_p).tshade NE 1
  for i=0, n_elements(tshades)-1 do $
         grim_set_form_entry, data.ids, data.tags, $
                                gros_overlay_tag(i,'tshades'), tshades[i], /cwbutton
@@ -267,47 +267,47 @@ pro gros_apply_settings, data
    ;-----------------------
    ;  overlay colors
    ;-----------------------
-   colors = *planes[i].overlay_color_p
+   colors = (*planes[i].overlays_p).color
    for j=0, n_elements(colors)-1 do $
      colors[j] = data.colors[grim_parse_form_entry(data.ids, data.tags, $
                                          gros_overlay_tag(j,'color'), /drop)]
-   *planes[i].overlay_color_p = colors
+   (*planes[i].overlays_p).color = colors
 
    ;-----------------------
    ; overlay psyms
    ;-----------------------
-   psyms = *planes[i].overlay_psym_p
+   psyms = (*planes[i].overlays_p).psym
    for j=0, n_elements(psyms)-1 do $
      psyms[j] = fix(grim_parse_form_entry(data.ids, data.tags, $
                                                   gros_overlay_tag(j,'psym')))
-   *planes[i].overlay_psym_p = psyms
+   (*planes[i].overlays_p).psym = psyms
  
    ;-----------------------
    ; overlay symsizes
    ;-----------------------
-   symsizes = *planes[i].overlay_symsize_p
+   symsizes = (*planes[i].overlays_p).symsize
    for j=0, n_elements(symsizes)-1 do $
      symsizes[j] = float(grim_parse_form_entry(data.ids, data.tags, /num, $
                                                   gros_overlay_tag(j,'symsize')))
-   *planes[i].overlay_symsize_p = symsizes
+   (*planes[i].overlays_p).symsize = symsizes
 
    ;-----------------------
    ; overlay label toggles
    ;-----------------------
-   tlabs = *planes[i].overlay_tlab_p
+   tlabs = (*planes[i].overlays_p).tlab
    for j=0, n_elements(tlabs)-1 do $
      tlabs[j] = grim_parse_form_entry(data.ids, data.tags, $
                                         gros_overlay_tag(j,'tlabels')) NE 1
-   *planes[i].overlay_tlab_p = tlabs
+   (*planes[i].overlays_p).tlab = tlabs
 
    ;-----------------------
    ; overlay shading
    ;-----------------------
-   tshades = *planes[i].overlay_tshade_p
+   tshades = (*planes[i].overlays_p).tshade
    for j=0, n_elements(tshades)-1 do $
      tshades[j] = grim_parse_form_entry(data.ids, data.tags, $
                                         gros_overlay_tag(j,'tshades')) NE 1
-   *planes[i].overlay_tshade_p = tshades
+   (*planes[i].overlays_p).tshade = tshades
 
    ;-----------------------
    ; descriptors
@@ -467,7 +467,7 @@ common grim_overlay_settings_block, tops
  ; settings form widget
  ;-----------------------------------------------
  base = widget_base(/column, $
-       title = 'Overlay Settings - grim ' + strtrim(grim_data.grnum,2));, /tlb_size_events)
+       title = 'GRIM Overlay Settings - grim ' + strtrim(grim_data.grn,2));, /tlb_size_events)
 
  blank = '0'
  colors = ['red', $

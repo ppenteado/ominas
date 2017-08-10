@@ -26,7 +26,7 @@
 ;
 ;	struct2:	Second structure.  If undefined, the first structure is 
 ;			returned.  If duplicate fields exist, the output 
-;			field wil be an array of the unique elements from both
+;			field will be an array of the unique elements from both
 ;			input structures.
 ;
 ;  OUTPUT:
@@ -38,7 +38,7 @@
 ;	fast:		If set, no checking is performed to ensure structure
 ;			tags are not duplicated.
 ;
-;	replace:	If set, duplicate fields in struct2 are replace those 
+;	replace:	If set, duplicate fields in struct2 replace those 
 ;			from struct1 instead of concatenating them.
 ;
 ;  OUTPUT: NONE

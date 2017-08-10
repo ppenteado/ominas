@@ -164,6 +164,7 @@ fi
 export idlbin
 idlversion=`$idlbin -e 'print,!version.os+strjoin((strsplit(!version.release,".",/extract))[0:1])'`
 export idlversion
+
 ominassh="$HOME/.ominas/ominas_setup.sh"
 usersh=$setting
 setting=$ominassh
@@ -177,15 +178,28 @@ fi
 if [ ! -d "$HOME/.ominas/config" ]; then
   printf "Creating ~/.ominas/config directory\n"
   mkdir $HOME/.ominas/config
-  cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
-  cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
-  for mis in  cas dawn gll vgr 
-  do
-    cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
-  done
 else
   printf "~/.ominas/config directory already exists\n"
 fi
+if [ ! -e "$HOME/.ominas/config/ominas_env_def.sh" ]; then
+  cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
+else
+  printf "$HOME/.ominas/config/ominas_env_def.sh already exists\n"
+fi
+if [ ! -e "$HOME/.ominas/config/ominas_env_strcat.sh" ]; then
+  cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
+else
+  printf "$HOME/.ominas/config/ominas_env_strcat.sh already exists\n"
+fi
+for mis in  cas dawn gll vgr 
+do
+  if [ ! -e "$HOME/.ominas/config/ominas_env_$mis.sh" ]; then
+    cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
+  else
+    printf "$HOME/.ominas/config/ominas_env_$mis.sh already exists\n"
+  fi
+done
+
 
 export OMINAS_RC=${HOME}/.ominas
 if [ ! -d "${HOME}/ominas_data" ]; then
@@ -321,7 +335,11 @@ function dins()
 	if grep -q "export NV_${dat}_DATA" ${setting}; then
                 if [ ${ominas_auto} == 1 ] ; then
                   return 1
-                fi 
+                fi
+                if [ ${2} == "NOASK" ]; then
+                 unset inst[${1}]
+                 return 1
+                fi
 		printf "Warning: $dat data files appear to already be set at this location:\n"
                 eval echo \$NV_${dat}_DATA
                 tmp=`grep "export NV_${dat}_DATA" $setting`
@@ -351,11 +369,22 @@ function dins()
            return 1
          fi
 	fi
+        if [ ${2} == "NOASK" ]; then
+          datapath=~/ominas_data/${dat}
+          datapath=`eval echo ${datapath}`
+          inst[${1}]=${datapath}
+          dins=${datapath}
+          if [ ${3} == "NODEMO" ]; then
+           DFLAG="false"
+           demost="NOT CONFIGURED"
+          fi         
+          return 1
+        fi
         if [ ${ominas_auto} == 1 ] ; then
           echo "Auto option selected in the main menu; will download and place the $dat data at ~/ominas_data/${dat}"
           datapath=~/ominas_data/${dat}
           datapath=`eval echo ${datapath}`
-          if ! ./download_$dat.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
+          if ! ./util/downloader/download_$dat.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
             unset inst[${1}]
             return 1
           fi
@@ -371,12 +400,16 @@ function dins()
                datapath=~/ominas_data/${dat}
              fi
              datapath=`eval echo ${datapath}`
-             if ! ./download_$dat.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
+             if ! ./util/downloader/download_$dat.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
                unset inst[${1}]
                return 1
              fi ;;
            *)
-	     read -rp "Please enter the path to $dat (if not known, press enter): " datapath
+	     read -rp "Please enter the path to $dat [~/ominas_data/${dat}]: " datapath
+             if [ -z ${datapath} ] ; then
+               datapath=~/ominas_data/${dat}
+             fi
+             datapath=`eval echo ${datapath}`
           esac 
         fi
         datapath=`eval echo ${datapath}`
@@ -387,6 +420,10 @@ function dins()
         #echo "args: ${1}"
         inst[${1}]=${datapath}
         dins=${datapath}
+        if [ ${3} == "NODEMO" ]; then
+          DFLAG="false"
+          demost="NOT CONFIGURED"
+        fi
 	#echo "NV_${dat}_DATA=$datapath; export NV_${dat}_DATA" >>$setting
 }
 
@@ -467,6 +504,8 @@ function pkins()
                      #echo "${insp}"
                      #export insp
                      #export ins
+                     DFLAG="false"
+                     demost="NOT CONFIGURED"
                      return 1 ;;
 
                     *)
@@ -490,7 +529,7 @@ function pkins()
                         echo "Auto option selected in the main menu; will download and place the $3 kernels at ~/ominas_data/${3}"
                         datapath=~/ominas_data/${3}
                         datapath=`eval echo ${datapath}`
-                        if ! ./download_$2.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
+                        if ! ./util/downloader/download_$2.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
                           unset insp[${4}]
                           unset ins[${4}]
                           return 1
@@ -508,7 +547,7 @@ function pkins()
                               datapath=~/ominas_data/${3}
                             fi
                             datapath=`eval echo ${datapath}`
-                            if ! ./download_$2.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
+                            if ! ./util/downloader/download_$2.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET} ; then
                               unset insp[${4}]
                               unset ins[${4}]
                               return 1
@@ -595,7 +634,10 @@ chmod a+rx $setting
 
 echo "#!/usr/bin/env bash" > ${setting}
 cat ${OMINAS_RC}/idlpath.sh >> ${setting}
-echo "xrdb -merge ${OMINAS_RC}/Xdefaults-grim" >> ${setting}
+echo "#The following line, to load the new Xdefaults definition, is commented to avoid problems in systems where xrdb is not available." >> ${setting}
+echo "#If you would like to enable it, copy this line to you ~/.bashrc  /  ~/.bash_profile" >> ${setting}
+echo "#Uncommenting that line here n ominas_setup.sh is not recommended, as this file will be overwritten the next time you use configure.sh" >> ${setting}
+echo "#xrdb -merge ${OMINAS_RC}/Xdefaults-grim" >> ${setting}
 #echo "alias ominas=~/.ominas/ominas" >> ${setting}
 #echo "alias ominasde=~/.ominas/ominasde" >> ${setting}
 #echo 'alias brim="ominas brim.bat -args "' >> ${setting}
@@ -610,18 +652,37 @@ echo "xrdb -merge ${OMINAS_RC}/Xdefaults-grim" >> ${setting}
   echo "export OMINAS_TMP=${OMINAS_TMP}" >> ${setting}
   echo "if [ ! -w ${OMINAS_TMP} ]; then mkdir -p ${OMINAS_TMP}; fi" >> ${setting}
 #fi
+
+#Generic Kernels must come first
+
+        d=0
+        dat=${Data[$d]}
+        if [ -z ${inst[$d]+x} ]  ;then
+          echo "unset NV_${dat}_DATA" >>${setting}
+        else
+          echo "export NV_${dat}_DATA=${inst[$d]}" >>${setting}
+          if [ ! -z ${insts[$d]+x} ]  ;then
+            echo ${insts[$d]} >>${setting}
+          fi
+        fi
+
+
+
 echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
 #echo "export CAM_NFILTERS=256" >> $setting
 
-for ((d=0; d<6; d++));
+for ((d=1; d<5; d++));
 do
         dat=${Data[$d]}
         #echo "$d: ${inst[$d]}"
         #if grep -q NV_${Data[$d]}_DATA $setting; then
         if [ -z ${inst[$d]+x} ]  ;then
           #echo "${d}:0 ${inst[$d]}"
-          echo "unset NV_${dat}_DATA" >>${setting}
+          #echo "unset NV_${dat}_DATA" >>${setting}
+          cat <<VARCMD >> ${setting}
+if [ \`echo "\$NV_${dat}_DATA" | grep -Eco "\${OMINAS_DIR}/demo/data(/?)\$"\` == 0 ]; then unset NV_${dat}_DATA; fi
+VARCMD
         else 
           #echo "$d: ${inst[$d]}"
           #echo "${d}:i ${inst[$d]}"
@@ -663,6 +724,11 @@ if [ -e "/opt/X11/lib/flat_namespace/" ]; then
 LDCMD
 fi
 tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idl/g" >> ~/.ominas/ominas
+if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
+  ldp="LD_PRELOAD=${OMINAS_DIR}/util/downloader/libcurl.so.4"
+  cat ~/.ominas/ominas | sed -e "s|exec |${ldp} exec |g" > ~/.ominas/ominas_tmp
+  mv -f ~/.ominas/ominas_tmp ~/.ominas/ominas
+fi
 chmod a+rx ~/.ominas/ominas
 
 #make ominasde script
@@ -681,6 +747,11 @@ if [ -e "/opt/X11/lib/flat_namespace/" ]; then
 LDCMD
 fi
 tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idlde/g" >> ~/.ominas/ominasde
+if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
+  ldp="LD_PRELOAD=${OMINAS_DIR}/util/downloader/libcurl.so.4"
+  cat ~/.ominas/ominasde | sed -e "s|exec |${ldp} exec |g" > ~/.ominas/ominasde_tmp
+  mv -f ~/.ominas/ominasde_tmp ~/.ominas/ominasde
+fi
 chmod a+rx ~/.ominas/ominasde
 
 echo "done with writing ${setting}"
@@ -763,7 +834,7 @@ case $ans in
                                 echo "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" ${OMINAS_TMP} #"~/ominas_data/icy.tar.Z"
                                 #curl -L "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" > ~/ominas_data/icy.tar.Z
                                 ldir=`eval echo ~/ominas_data/`
-                                ./pp_wget "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" --localdir=${OMINAS_TMP}
+                                ./util/downloader/pp_wget "http://naif.jpl.nasa.gov/pub/naif/toolkit//IDL/${ostr}_IDL8.x_${bstr}/packages/icy.tar.Z" --localdir=${OMINAS_TMP}
                                 owd=$PWD
 				#cd ..
                                 cd ~/ominas_data/
@@ -803,6 +874,7 @@ esac
 }
 
 printf "The setup will guide you through the installation of OMINAS\n"
+printf "More help is in the Install Guide, at https://ppenteado.github.io/ominas_doc/demo/install_guide.html\n"
 
 #if ! grep -q "OMINAS_DIR=.*; export OMINAS_DIR" ${setting}; then
 # NOTE: OMINAS is available in repository form. Extraction is no longer needed
@@ -812,6 +884,8 @@ printf "The setup will guide you through the installation of OMINAS\n"
 	OMINAS_DIR=$DIR
 #	echo "OMINAS_DIR=$OMINAS_DIR; export OMINAS_DIR" >> $setting
 #fi
+
+
 
 printf "OMINAS files located in $OMINAS_DIR\n"
 
@@ -827,6 +901,19 @@ fi
 
 export OMINAS_DIR=${DIR}
 
+
+export OMINAS_CF="${OMINAS_DIR}/util/downloader/ca-bundle.crt"
+if [ -z ${idlversion+x} ]; then
+  idlversion="z"
+fi
+if [ "${idlversion}" == "" ]; then
+  idlversion="z"
+fi
+ldp=""
+if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
+  ldp="${OMINAS_DIR}/util/downloader/libcurl.so.4"
+fi
+export OMINAS_LDP=${ldp}
 
 # Ascertain the status of each package (INSTALLED/NOT INSTALLED) or (SET/NOT SET)
 corest=`pkst ${OMINAS_DIR}/config/tab/`
@@ -846,12 +933,17 @@ if grep -q "export DFLAG=true" $setting; then
 fi
 
 declare -a mis=("cas" "gll" "vgr" "dawn")
-declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
-declare -a insts=("" "" "" "" "" "")
-insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
+#declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
+#declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" )
+declare -a Data=("Generic_kernels" "TYCHO2" "SAO" "UCAC4" "GSC" )
+declare -a insts=("" "" "" "" "")
+insts[1]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
+#insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
+#insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
+#insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
+insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
 insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
 insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
-insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
 for ((d=0; d<${#mis[@]}; d++));
 do
 	#mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
@@ -902,6 +994,7 @@ if [ ! -w "${OMINAS_TMP}" ]; then
 fi
 echo "OMINAS_TMP=${OMINAS_TMP}"
 export OMINAS_TMP
+if [ ${OMINAS_INST_QUIET} == "1" ]; then
 
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
@@ -942,19 +1035,75 @@ Mission Packages:
 	7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
            Subsetted, about 8 GB as of Jan/2017
 Data:
-        8) NAIF Generic Kernels . . . . . . . . .  ${dstatus[0]}
+        8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
            About 22 GB as of Dec/2016
-	9) SEDR image data . . . . . . . . . . . . ${dstatus[1]}
-       10) TYCHO2 star catalog . . . . . . . . . . ${dstatus[2]}
+        9) Tycho2 star catalog . . . . . . . . . . ${dstatus[1]}
            About 161 MB download, 665 MB unpacked
-       11) SAO star catalog . . . . . . . . . . . ${dstatus[3]}
-           About 19 MB download, 70 MB unpacked
-       12) GSC star catalog . . . . . . . . . . . ${dstatus[4]}
-       13) UCAC4 star catalog . . . . . . . . . . ${dstatus[5]}
-           About 8.5 GB download
+       10) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
+           Already provided with OMINAS, no download needed
+
 For more information, see
-https://ppenteado.github.io/ominas_doc/demo/install_guide.html
+https://ppenteado.github.io/ominas/demo/install_guide.html
 PKGS
+
+else
+
+# Print the configuration list with all statuses to stdout
+cat <<PKGS
+=============================================================================
+        Current OMINAS configuration settings
+Required:
+        1) OMINAS Core  . . . . . . . . . . . . .  $corest
+           Contains the OMINAS code. If you select only one 
+           of the other packages, this will be included.
+Optional packages:
+        2) Demo package . . . . . . . . . . . . .  $demost
+           Contains the demo scripts and the data required 
+           to run then.
+           These files are always present (in ominas/demo), 
+           this option is to set up the environment so that
+           the demos can be run.
+        3) SPICE Icy  . . . . . . . . . . . . . .  $icyst
+           Library maintained by JPL's NAIF (Navigation and Ancillary
+           Information Facility, https://naif.jpl.nasa.gov/naif/toolkit.html,
+           required to use spacecraft / planetary kernel files.
+
+Mission Packages:
+           Kernels used for each mission's position and 
+           pointing data. If you do not already have them,
+           an option to download them from PDS will be provided.
+           If you already have them, you will need to provide
+           the path to your kernel files.
+           Note: the NAIF Generic Kernels (one of the optional 
+           data packages) are not required for the missions, they
+           already contain a copy the subset of the generic kernel
+           files they need.
+        4) Cassini . . . . . . . . . . . . . . . . ${mstatus[0]}
+           Subsetted, about 16 GB as of Dec/2016
+        5) Galileo (GLL) . . . . . . . . . . . . . ${mstatus[1]}
+           About 833 MB as of Dec/2016
+        6) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
+           About 163 MB as of Dec/2016
+        7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
+           Subsetted, about 8 GB as of Jan/2017
+Data:
+        8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
+           About 22 GB as of Dec/2016
+        9) Tycho2 star catalog . . . . . . . . . . ${dstatus[1]}
+           About 161 MB download, 665 MB unpacked
+       10) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
+           Already provided with OMINAS, no download needed
+       11) UCAC4 star catalog  . . . . . . . . . . ${dstatus[3]}
+           About 8.5 GB download
+       12) GSC star catalog  . . . . . . . . . . . ${dstatus[4]}
+
+For more information, see
+https://ppenteado.github.io/ominas/demo/install_guide.html
+PKGS
+
+
+
+fi
 
 pr=1
 while [ $pr == 1 ]; do
@@ -986,7 +1135,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 7 8 9 10 11 12 13"
+    ans="1 2 3 4 5 6 7 8 9 10"
   else
     ans="all"
   fi
@@ -1012,7 +1161,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 7 8 9 10 11 12 13 2 1"
+    ans="3 4 5 6 7 8 9 10 2 1"
   else
     ans="uall"
   fi
@@ -1064,14 +1213,24 @@ do
                                 pr=0
 				pkins ominas_env_def.sh "${corest}" $(($num-4))
                                 #corest=${yes}
-                                DFLAG="false"
-                                demost="NOT CONFIGURED"
+                                #DFLAG="false"
+                                #demost="NOT CONFIGURED"
 				ppkg $(($num-4)) 	;;
-		[89]|10|11|12|13)
+                8)
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 #corest=${yes}
-				dins $(($num-8)) 	;;
+                                dins $(($num-8)) ASK DEMO;;
+		[9]|11|12)
+                                pr=0
+                                pkins ominas_env_def.sh "${corest}" $(($num-8))
+                                #corest=${yes}
+				dins $(($num-8)) ASK NODEMO;;
+                10)
+                                pr=0
+                                pkins ominas_env_def.sh "${corest}" $(($num-8))
+                                #corest=${yes}
+                                dins $(($num-8)) NOASK NODEMO;;
                 all)            pr=0;;
                 uall)           pr=0;;
 		*)
@@ -1166,7 +1325,7 @@ fi
 
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
-  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
+  LD_PRELOAD=${OMINAS_LDP} $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
   . "${OMINAS_RC}/idlpath.sh"
 #  if [ -e idlpath.sh ]; then
 #    cat idlpath.sh >> $idlpathfile
@@ -1174,7 +1333,7 @@ if [ "${corest}" == "${yes}" ]; then
 #  fi
 else
   #export OMINAS_DIR=''
-  $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
+  LD_PRELOAD=${OMINAS_LDP} $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
   . "${OMINAS_RC}/idlpath.sh"
 fi
 
@@ -1243,6 +1402,7 @@ while [ 1 ]; do
   fi
   
 done
-
+. ~/.ominas/ominasrc
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
-printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas_doc/demo/\n"
+printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas/demo/\n"
+printf "For documentation on how OMINAS works, see the User Guide at https://ppenteado.github.io/ominas/user_guide\n"

@@ -131,7 +131,7 @@ end
 
 pro test
 ;grim ~/casIss/1495/N1495308131_1.IMG over=rings
-ingrid, dd=dd, cd=cd
+grift, dd=dd, cd=cd
 
 outline_ptd = pg_image_sector()
 profile = pg_core(dd, outline_ptd, cd=cd, distance=distance)

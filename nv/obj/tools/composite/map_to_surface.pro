@@ -28,7 +28,8 @@
 ;       NONE
 ;
 ; KEYWORDS:
-;   INPUT: NONE
+;   INPUT: 
+;	alt:	If set, atitudes are set to this value instead of 0.
 ;
 ;   OUTPUT: NONE
 ;
@@ -45,9 +46,10 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function map_to_surface, md, bx, map_pts
+function map_to_surface, md, bx, map_pts, alt=alt
 
  class = (cor_class(md))[0]
+ if(NOT keyword_set(alt)) then alt = 0d
 
  if(class EQ 'CAMERA') then $
               if(NOT keyword_set(bx)) then $
@@ -64,7 +66,7 @@ function map_to_surface, md, bx, map_pts
  result = dblarr(nv,3,nt, /nozero)
  result[*,0,*] = map_pts[0,*,*]
  result[*,1,*] = map_pts[1,*,*]
- result[*,2,*] = 0
+ result[*,2,*] = alt
 
  if((cor_class(bx))[0] EQ 'GLOBE') then $
   if(class EQ 'MAP') then $

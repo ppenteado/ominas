@@ -211,7 +211,7 @@ for i=0, nv-1 do dd_phtv[i] = pg_photom(ddv[i], gd=gdv[i], refl_fn='pht_lamb', $
 ;   Create the new map descriptor::
 ;     mdp= pg_get_maps(/over,  $
 ;       name='TITAN',$
-;       type='ORTHOGRAPHIC', $
+;       projection='ORTHOGRAPHIC', $
 ;       size=[map_xsize,map_ysize], $
 ;       origin=[map_xsize,map_ysize]/2, $
 ;       center=[0d0,-0.6d0*!dpi])
@@ -250,7 +250,7 @@ map_ysize = 1000
   
 mdp= pg_get_maps(/over,  $
   name='TITAN',$
-  type='ORTHOGRAPHIC', $
+  projection='ORTHOGRAPHIC', $
   size=[map_xsize,map_ysize], $
   origin=[map_xsize,map_ysize]/2, $
   center=[0d0,-0.6d0*!dpi])

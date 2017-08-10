@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro dsk_assign, xd, noevent=noevent, $
-@dsk__keywords.include
+@dsk__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

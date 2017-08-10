@@ -13,20 +13,23 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_get_cameras(dd)
-;	result = pg_get_cameras(dd, trs)
+;	result = pg_get_cameras(arg1, arg2)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:	data descriptor
+;	arg1:	Data descriptor or transient translator argument.  In the
+;		latter case, a string containing keywords and values to be 
+;		passed directly to the translators as if they appeared as 
+;		arguments in the translators table.  Keywords passed using 
+;		this mechanism take precedence over keywords appearing in 
+;		the translators table.  If no data descriptor is given, 
+;		one may be constructed using DATA keywords (see below).  The
+;		newly created data descriptor is freed unless this argument
+;		is an undefined named variable, in which case the new
+;		descriptor is returned in this variable.
 ;
-;	trs:	String containing keywords and values to be passed directly
-;		to the translators as if they appeared as arguments in the
-;		translators table.  These arguments are passed to every
-;		translator called, so the user should be aware of possible
-;		conflicts.  Keywords passed using this mechanism take 
-;		precedence over keywords appearing in the translators table.
+;	arg2:	Transient translator argument, if present.
 ;
 ;  OUTPUT: NONE
 ;
@@ -42,12 +45,6 @@
 ;	override:	Create a data descriptor and initilaize with the 
 ;			given values.  Translators will not be called.
 ;
-;	cam_*:		All camera override keywords are accepted.  See
-;			camera_keywords.include. 
-;
-;			If cam_name is specified, then only descriptors with
-;			those names are returned.
-;
 ;	verbatim:	If set, the descriptors requested using cam_name
 ;			are returned in the order requested.  Otherwise, the 
 ;			order is determined by the translators.
@@ -61,6 +58,20 @@
 ;	default_orient:		Default orientation matrix to use if camera
 ;				orientation is not available.  If not specified, 
 ;				the identity matrix is used.
+;
+;
+;	CAMERA Keywords
+;	---------------
+;	All CAMERA override keywords are accepted.  See cam__keywords.include.  
+;	If 'name' is specified, then only descriptors with those names are 
+;	returned.
+;
+;	DATA Keywords
+;	-------------
+;	All DATA override keywords are accepted.  See dat__keywords.include.  
+;
+;  OUTPUT:
+;	count:	Number of descriptors returned
 ;
 ;
 ; RETURN:
@@ -83,17 +94,28 @@
 ;	
 ;-
 ;=============================================================================
-function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, _extra=select, $
+function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
                           override=override, verbatim=verbatim, default_orient=default_orient, $
-                          no_default=no_default, $
-@cam__keywords.include
-@nv_trs_keywords_include.pro
-		end_keywords
+                          no_default=no_default, count=count, $
+                              @cam__keywords_tree.include
+                              @dat__keywords.include
+                              @nv_trs_keywords_include.pro
+                              end_keywords
 
- ;-----------------------------------------------
- ; add selection keywords to translator keywords
- ;-----------------------------------------------
- if(keyword_set(select)) then pg_add_selections, trs, select
+ count = 0
+
+ ;------------------------------------------------------------------------
+ ; sort out arguments
+ ;------------------------------------------------------------------------
+ pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+                          @dat__keywords.include
+                          end_keywords
+
+ ;---------------------------------------------------------------------
+ ; add selection keywords to translator keywords and filter out any
+ ; prefixed keywords that don't apply
+ ;---------------------------------------------------------------------
+ if(keyword_set(keyvals)) then pg_add_selections, trs, keyvals, 'CAM'
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -130,6 +152,8 @@ function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, _extra=select, $
 	opaque=opaque, $
 	exposure=exposure, $
 	oaxis=oaxis)
+
+   if(keyword_set(free)) then nv_free, dd
   end $
  else $
   begin
@@ -142,17 +166,17 @@ function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, _extra=select, $
    ;-----------------------------------------------
    ; call translators
    ;-----------------------------------------------
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if names requested, the force tr_first
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;   if(keyword_set(name)) then tr_first = 1
-;tr_first = 1
-
    cd = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cd, key3=default_orient, $
                              key7=time, key8=name, trs=trs, $
-@nv_trs_keywords_include.pro
-	end_keywords)
+                              @nv_trs_keywords_include.pro
+                              end_keywords)
+
+   ;------------------------------------------------------------------------
+   ; Free dd if pg_sort_args determined that it will not be used outside 
+   ; this function.  Note that the object ID is not lost will still appear
+   ; in the gd.
+   ;------------------------------------------------------------------------
+   if(keyword_set(free)) then nv_free, dd
 
    if(NOT keyword_set(cd)) then return, obj_new()
    n = n_elements(cd)
@@ -186,8 +210,8 @@ function pg_get_cameras, dd, trs, cd=_cd, od=od, pd=pd, _extra=select, $
    if(defined(name)) then _name = name & name = !null
    if(defined(time)) then _time = time & time = !null
    cam_assign, cd, /noevent, $
-@cam__keywords.include
-end_keywords
+                 @cam__keywords_tree.include
+                 end_keywords
     if(defined(_name)) then name = _name
     if(defined(_time)) then time = _time
 
@@ -197,9 +221,10 @@ end_keywords
  ;--------------------------------------------------------
  ; update generic descriptors
  ;--------------------------------------------------------
- if(keyword_set(dd)) then dat_set_gd, dd, gd, bx=bx
- dat_set_gd, cd, gd, bx=bx
+ if((obj_valid(dd))[0]) then dat_set_gd, dd, gd, cd=cd, bx=bx, /noevent
+ dat_set_gd, cd, gd, bx=bx, /noevent
 
+ count = n_elements(cd)
  return, cd
 end
 ;===========================================================================

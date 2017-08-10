@@ -1,7 +1,7 @@
 # instrument		input			output		
 # string		transform		transform
 #------------------------------------------------------------------------------
-  CAS_ISSNA		cas_delut		- #cas_relut
-  CAS_ISSWA		cas_delut		- #cas_relut
+  CAS_ISSNA		cas_iss_delut		- #cas_iss_relut
+  CAS_ISSWA		cas_iss_delut		- #cas_iss_relut
   CAS_RADAR             cas_radar_transform     -
   END

@@ -116,6 +116,16 @@ pro spice_sort_kernels, all_kernels, $
   fk_reverse=_fk_reverse, ik_reverse=_ik_reverse, sck_reverse=_sck_reverse, $
   lsk_reverse=_lsk_reverse, xk_reverse=_xk_reverse, strict_priority=strict_priority
 
+ all_kernels = append_array(all_kernels, ck_in)
+ all_kernels = append_array(all_kernels, spk_in)
+ all_kernels = append_array(all_kernels, pck_in)
+ all_kernels = append_array(all_kernels, fk_in)
+ all_kernels = append_array(all_kernels, ik_in)
+ all_kernels = append_array(all_kernels, sck_in)
+ all_kernels = append_array(all_kernels, lsk_in)
+ all_kernels = append_array(all_kernels, xk_in)
+
+
  kernels_to_load = (kernels_to_unload = '')
  if(keyword_set(all_kernels)) then $
   begin
@@ -145,29 +155,22 @@ pro spice_sort_kernels, all_kernels, $
      if(keyword_set(k_in)) then k_to_load = $
        si_get_kernels_to_load(k_in, loaded_kernels, reload=reload)
      if(keyword_set(ck_in)) then ck_to_load = $
-       si_get_kernels_to_load(ck_in, loaded_kernels, $
-                                              reload=reload, exp=ck_exp)
+       si_get_kernels_to_load(ck_in, loaded_kernels, reload=reload, exp=ck_exp)
      if(keyword_set(spk_in)) then spk_to_load = $
-       si_get_kernels_to_load(spk_in, loaded_kernels, $
-                                              reload=reload, exp=spk_exp)
+       si_get_kernels_to_load(spk_in, loaded_kernels, reload=reload, exp=spk_exp)
      if(keyword_set(pck_in)) then pck_to_load = $
-       si_get_kernels_to_load(pck_in, loaded_kernels, $
-                                              reload=reload, exp=pck_exp)
+       si_get_kernels_to_load(pck_in, loaded_kernels, reload=reload, exp=pck_exp)
      if(keyword_set(fk_in)) then fk_to_load = $
-       si_get_kernels_to_load(fk_in, loaded_kernels, $
-                                              reload=reload, exp=fk_exp)
+       si_get_kernels_to_load(fk_in, loaded_kernels, reload=reload, exp=fk_exp)
      if(keyword_set(ik_in)) then ik_to_load = $
-       si_get_kernels_to_load(ik_in, loaded_kernels, $
-                                             reload=reload, exp=ik_exp)
+       si_get_kernels_to_load(ik_in, loaded_kernels, reload=reload, exp=ik_exp)
      if(keyword_set(sck_in)) then sck_to_load = $
-       si_get_kernels_to_load(sck_in, loaded_kernels, $
-                                              reload=reload, exp=sck_exp)
+       si_get_kernels_to_load(sck_in, loaded_kernels, reload=reload, exp=sck_exp)
      if(keyword_set(lsk_in)) then lsk_to_load = $
-       si_get_kernels_to_load(lsk_in, loaded_kernels, $
-                                              reload=reload, exp=lsk_exp)
+       si_get_kernels_to_load(lsk_in, loaded_kernels, reload=reload, exp=lsk_exp)
      if(keyword_set(xk_in)) then xk_to_load = $
-       si_get_kernels_to_load(xk_in, loaded_kernels, $
-                                              reload=reload, exp=xk_exp)
+       si_get_kernels_to_load(xk_in, loaded_kernels, reload=reload, exp=xk_exp)
+
      ck_reverse = keyword_set(_ck_reverse) OR keyword_set(reverse)
      spk_reverse = keyword_set(_spk_reverse) OR keyword_set(reverse)
      pck_reverse = keyword_set(_pck_reverse) OR keyword_set(reverse)

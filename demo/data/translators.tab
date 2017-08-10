@@ -1,7 +1,7 @@
 # instrument	input			output		keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  CAS_ISSNA	cas_spice_input		cas_spice_output \
+  CAS_ISS_NA	cas_iss_spice_input	cas_iss_spice_output \
 							klist=cas_demo.kernels \
 #							ck_in=auto \
 #							spk_in=auto \
@@ -13,7 +13,7 @@
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
 
-  CAS_ISSWA	cas_spice_input		cas_spice_output \
+  CAS_ISS_WA	cas_iss_spice_input	cas_iss_spice_output \
 							klist=cas_demo.kernels \
 #							ck_in=auto \
 #							spk_in=auto \
@@ -25,7 +25,7 @@
 							xk_in=extra.tpc   \
 							ck_out=ck_out.bc
 
-  VIMS_IR      vims_spice_input         vims_spice_output \
+  CAS_VIMS_IR	cas_vims_spice_input	cas_vims_spice_output \
                                                         klist=cas_demo.kernels 
 #                                                       ck_in=auto \
 #                                                       spk_in=auto \
@@ -37,19 +37,31 @@
 
 
 
-  CAS_RADAR     cas_radar_input                  -
+  CAS_RADAR     cas_radar_spice_input                  - \
+                                                        klist=cas_demo.kernels 
+#                                                       ck_in=auto \
+#                                                       spk_in=auto \
+#                                                       pck_in=auto \
+#                                                       lsk_in=auto \
+#                                                       fk_in=auto \
+#                                                       ik_in=auto \
+#                                                       sck_in=auto \
 
 # Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  VGR1_ISS_NA	vgr_spice_input		vgr_spice_output klist=vgr_demo.kernels
-  VGR1_ISS_WA	vgr_spice_input		vgr_spice_output klist=vgr_demo.kernels
-  VGR2_ISS_NA	vgr_spice_input		vgr_spice_output klist=vgr_demo.kernels
-  VGR2_ISS_WA	vgr_spice_input		vgr_spice_output klist=vgr_demo.kernels
+  VGR1_ISS_NA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
+  VGR1_ISS_WA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
+  VGR2_ISS_NA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
+  VGR2_ISS_WA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
 
 
 # Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
-  GLL_SSI	gll_spice_input		gll_spice_output klist=gll_demo.kernels
+  GLL_SSI	gll_ssi_spice_input	gll_ssi_spice_output klist=gll_demo.kernels
+
+
+  COMMON	strcat_sao_input		-	
+  COMMON	strcat_common_input		-	
 

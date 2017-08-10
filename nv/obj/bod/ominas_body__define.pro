@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function ominas_body::init, ii, crd=crd0, bd=bd0, $
-@bod__keywords.include
+@bod__keywords_tree.include
 end_keywords
 @core.include
  

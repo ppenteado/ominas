@@ -28,10 +28,12 @@ function spice_planets, dd, ref, $
  ;----------------------------------------------------------------------
  if(NOT keyword_set(name)) then name = spice_get_all_target_names()
  n = n_elements(name)
-
+ 
+ _time = 0
  for i=0, ndd-1 do $
   begin
-   status = spice_get_planets(name, ref, time[i], constants=constants, $
+   if(defined(time)) then _time = time[i]
+   status = spice_get_planets(name, ref, _time, constants=constants, $
 			plt_pos, plt_vel, plt_avel, plt_orient, plt_radii, $
                         plt_lora, plt_gm, plt_j, found, ids, plt_rref, plt_refl_fn, plt_refl_parm, $
 			plt_phase_fn, plt_phase_parm, plt_albedo, obs=obs)
@@ -53,7 +55,7 @@ function spice_planets, dd, ref, $
      status = 0
      ids = ids[w]
      name = name[w]
-     plt_time = make_array(n_obj, val=time[i])
+     plt_time = make_array(n_obj, val=_time)
      plt_pos = reform(plt_pos[*,w], 1, 3, n_obj)
      plt_vel = reform(plt_vel[*,w], 1, 3, n_obj)
      plt_orient = plt_orient[*,*,w]
@@ -70,7 +72,7 @@ function spice_planets, dd, ref, $
      plt_phase_parm = plt_phase_parm[*,w]
      plt_albedo = plt_albedo[w]
 
-     plt_mass = plt_gm / (pgc_const('G')/1d9) 
+     plt_mass = plt_gm / (const_get('G')/1d9) 
      ww = where(plt_rref EQ 0)
      if(ww[0] NE -1) then plt_rref[ww] = plt_radii[0,ww]
 

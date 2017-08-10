@@ -33,7 +33,7 @@
 ;
 ;	crd:	Core descriptor(s) instead of using cor_create_descriptors.
 ;
-;	type:	Array (n) of type strings.
+;	model:	Array (n) of model strings.
 ;
 ;	lref:	Array (n) of longitude reference notes.
 ;
@@ -79,7 +79,7 @@
 ;-
 ;=============================================================================
 function glb_create_descriptors, n, crd=_crd0, bd=_bd0, sld=_sld0, gbd=_gbd0, $
-@glb__keywords.include
+@glb__keywords_tree.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -94,7 +94,7 @@ end_keywords
    if(keyword_set(_gbd0)) then gbd0 = _gbd0[i]
 
    gbd[i] = ominas_globe(i, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, $
-@glb__keywords.include
+@glb__keywords_tree.include
 end_keywords)
 
   end

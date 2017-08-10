@@ -298,7 +298,7 @@ common grim_plane_settings_block, tops
  ;-----------------------------------------------
  ; settings form widget
  ;-----------------------------------------------
- base = widget_base(title = 'Plane Settings - grim ' + strtrim(grim_data.grnum,2), /tlb_size_events)
+ base = widget_base(title = 'GRIM Plane Settings - grim ' + strtrim(grim_data.grn,2), /tlb_size_events)
 
  blank = '0'
  colors = ['none', $

@@ -3,12 +3,12 @@
 ;
 ;=============================================================================
 function ominas_disk::init, ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
-@dsk__keywords.include
+@dsk__keywords_tree.include
 end_keywords
 @core.include
  
  void = self->ominas_solid::init(ii, crd=crd0, bd=bd0, sld=sld0, $
-@sld__keywords.include
+@sld__keywords_tree.include
 end_keywords)
  if(keyword_set(dkd0)) then struct_assign, dkd0, self
 
@@ -43,8 +43,8 @@ end_keywords)
  if(keyword_set(dlibldt)) then self.dlibldt = dlibldt[ii]
 
 
- if(keyword_set(scale)) then self.scale = scale[*,ii] $
- else self.scale = [0.,1.]
+ if(keyword_set(radial_scale)) then self.radial_scale = radial_scale[*,ii] $
+ else self.radial_scale = [0.,1.]
 
 
  return, 1
@@ -94,11 +94,12 @@ end
 ;		Methods: dsk_dap, dsk_set_dap
 ;
 ;
-;	scale:	2-elements array giving optional radial scale coefficients:
+;	radial_scale:	
+;		2-elements array giving optional radial scale coefficients:
 ;
-;			 scaled_radii = scale[0] * radii*scale[1]
+;		      scaled_radii = radial_scale[0] * radii*radial_scale[1]
 ;
-;		Methods: dsk_scale, dsk_set_scale, dsk_apply_scale
+;		Methods: dsk_radial_scale, dsk_set_radial_scale, dsk_apply_radial_scale
 ;
 ;
 ;	nm:	Integer giving the number of radial harmonics in the ring
@@ -223,9 +224,10 @@ pro ominas_disk__define
 						; 0=inner edge, 1=outer edge
 	dap:		 dblarr(ndv+1,2), $	; apsidal shift.
 						
-	scale:		dblarr(2), $		; Radial scale coefficients:
+	radial_scale:	dblarr(2), $		; Radial scale coefficients:
 						;  scaled_radii = 
-						;    scale[0] * radii*scale[1]
+						;    radial_scale[0] 
+						;       * radii*radial_scale[1]
 
 	;--------------------- m != 1 radial harmonics ----------------------
 

@@ -70,7 +70,8 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  rd = cor_dereference_gd(gd, /rd)
  pd = cor_dereference_gd(gd, /pd)
  sund = cor_dereference_gd(gd, name='SUN')
-
+ if(keyword_set(sund)) then sund = sund[0]		; goofy; another reason
+							; to get rid of sund
 
  ;--------------------------------
  ; compute points
@@ -82,11 +83,11 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pd, hide_ptd, /cat
+ pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pds, hide_ptd, /dissoc, /cat
  grim_message
 
- if(keyword_set(sund)) then $
  pg_hide, limb_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
+ pg_hide, hide_ptd_term, cd=cd, od=od, dkx=rd, gbx=pds, /dissoc, /cat
  grim_message
 
  ;-------------------------------------
@@ -122,8 +123,8 @@ function grim_shade_limb, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -146,6 +147,7 @@ function grim_compute_terminator, map=map, clip=clip, hide=hide, $
 
  sund = cor_dereference_gd(gd, name='SUN')
  if(NOT keyword_set(sund)) then return, 0
+ sund = sund[0]
 
  grim_message, /clear
 
@@ -154,7 +156,6 @@ function grim_compute_terminator, map=map, clip=clip, hide=hide, $
  npd = n_elements(pds)
 
  cd = cor_dereference_gd(gd, /cd)
- sund = cor_dereference_gd(gd, name='SUN')
  rd = cor_dereference_gd(gd, /rd)
 
 
@@ -204,8 +205,8 @@ function grim_shade_terminator, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -237,7 +238,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
  sund = cor_dereference_gd(gd, name='SUN')
-
+ if(keyword_set(sund)) then sund = sund[0]
 
  ;--------------------------------
  ; compute points
@@ -293,8 +294,8 @@ function grim_shade_planet_grid, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -334,7 +335,7 @@ function grim_compute_station, map=map, clip=clip, hide=hide, $
  if(keyword_set(bx)) then $
   begin
    for i=0, n_elements(stds)-1 do $
-     if((where(cor_name(stn_primary(stds[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
+     if((where(cor_name(get_primary(stds[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
    stds = stds[select]
   end
  nstd = n_elements(stds)
@@ -396,8 +397,8 @@ function grim_shade_station, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -437,7 +438,7 @@ function grim_compute_array, map=map, clip=clip, hide=hide, $
  if(keyword_set(bx)) then $
   begin
    for i=0, n_elements(ards)-1 do $
-     if((where(cor_name(arr_primary(ards[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
+     if((where(cor_name(get_primary(ards[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
    ards = ards[select]
   end
  nard = n_elements(ards)
@@ -498,8 +499,8 @@ function grim_shade_array, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
- ww = where(strpos(desc, 'hide_ring') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
+ ww = where(strpos(desc, 'HIDE_RING') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.25
@@ -627,6 +628,7 @@ function grim_compute_shadow, map=map, clip=clip, hide=hide, $
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
  sund = cor_dereference_gd(gd, name='SUN')
+ if(keyword_set(sund)) then sund = sund[0]
 
 
  ;--------------------------------
@@ -692,13 +694,13 @@ function grim_compute_reflection, map=map, clip=clip, hide=hide, $
 
  if(map) then return, 0
  if(NOT keyword__set(active_ptd)) then return, 0
-
  grim_message, /clear
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
  sund = cor_dereference_gd(gd, name='SUN')
+ if(keyword_set(sund)) then sund = sund[0]
 
  ;--------------------------------
  ; compute points
@@ -766,6 +768,7 @@ function grim_compute_ring, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  sund = cor_dereference_gd(gd, name='SUN')
+ if(keyword_set(sund)) then sund = sund[0]
 
 
  ;--------------------------------------------------------
@@ -828,7 +831,7 @@ function grim_shade_ring, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5
@@ -862,6 +865,7 @@ function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  sund = cor_dereference_gd(gd, name='SUN')
+ if(keyword_set(sund)) then sund = sund[0]
 
 
  ;--------------------------------
@@ -911,7 +915,7 @@ function grim_shade_ring_grid, data, ptd
  desc = pnt_desc(ptd)
  nptd = n_elements(ptd)
 
- w = where(strpos(desc, 'hide_planet') NE -1)
+ w = where(strpos(desc, 'HIDE_PLANET') NE -1)
 
  shade = make_array(nptd, val=1.0)
  if(w[0] NE -1) then shade[w] = 0.5

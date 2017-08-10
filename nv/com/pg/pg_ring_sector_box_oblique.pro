@@ -213,7 +213,7 @@ end
 
 
 pro test
-ingrid, dd=dd, cd=cd, pd=pd, rd=rd
+grift, dd=dd, cd=cd, pd=pd, rd=rd
 
 outline_ptd = pg_ring_sector_box_oblique()
 

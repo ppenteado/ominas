@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 function plt_create_descriptors, n, crd=_crd0, bd=_bd0, sld=_sld0, gbd=_gbd0, pd=_pd0, $
-@plt__keywords.include
+@plt__keywords_tree.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -68,7 +68,7 @@ end_keywords
    if(keyword_set(_pd0)) then pd0 = _pd0[i]
 
    pd[i] = ominas_planet(i, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, pd=pd0, $
-@plt__keywords.include
+@plt__keywords_tree.include
 end_keywords)
 
   end

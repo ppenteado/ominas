@@ -45,7 +45,7 @@ pro cor_set_name, crd, name, noevent=noevent
 @core.include
  _crd = cor_dereference(crd)
 
- _crd.name=name
+ _crd.name = name
 
  cor_rereference, crd, _crd
 

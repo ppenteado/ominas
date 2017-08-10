@@ -21,7 +21,7 @@ end
 ; spice_kernel_parse
 ;
 ;=============================================================================
-function spice_kernel_parse, dd, prefix, type, ext=ext, time=_time, $
+function spice_kernel_parse, dd, prefix, inst, type, ext=ext, time=_time, $
                        explicit=explicit, strict=strict, all=all
 
  if(keyword_set(_time)) then time = _time[0]
@@ -36,9 +36,11 @@ function spice_kernel_parse, dd, prefix, type, ext=ext, time=_time, $
  def = 'spice_' + strlowcase(type) + '_detect'
 
  fn = prefix + '_' + def
- if(NOT routine_exists(fn)) then fn = 'eph_' + def
+ if(NOT routine_exists(fn)) then fn = 'gen_' + def
  
- sc = call_function(prefix + '_spice_sc', dd)
+ scfn = prefix + '_spice_sc'
+ sc = 0
+ if(routine_exists(scfn)) then sc = call_function(scfn, dd)
 
  ;---------------------------------------
  ; Get raw kernel keyword value
@@ -53,6 +55,7 @@ function spice_kernel_parse, dd, prefix, type, ext=ext, time=_time, $
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; get path specific to this translator
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+; kpath = subdirs(getenv(env)) + '/'
  kpath = getenv(env)
  w = where(kpath NE '')
  if(w[0] EQ -1) then $
@@ -117,7 +120,11 @@ function spice_kernel_parse, dd, prefix, type, ext=ext, time=_time, $
       begin
        if(strpos(_k_in[i], '/') EQ -1) then _k_in[i] = kpath[j] + _k_in[i]
        ff = file_search(_k_in[i])
-       if(keyword_set(ff)) then explicit = append_array(explicit, ff) ;$
+       if(keyword_set(ff)) then explicit = append_array(explicit, ff) $
+       else $
+        nv_message, 'Not found: ' + _k_in[i], $
+         exp = ['This kernel was explicitly requested, but it cannot be found in the', $
+                'directory.']             
       end
     end
 

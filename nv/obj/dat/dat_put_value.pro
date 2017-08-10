@@ -38,9 +38,6 @@
 ;	tr_override:	Comma-delimited list of translators to use instead
 ;			of those stored in dd.
 ;
-;	tr_first:	If set, dat_get_value returns after the first
-;			successful translator.
-;
 ;  OUTPUT: 
 ;	status:		0 if at least one translator call was successful, 
 ;			-1 otherwise.

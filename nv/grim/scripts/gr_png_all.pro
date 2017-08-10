@@ -4,7 +4,7 @@
 ;====================================================================================
 pro gr_png_all
 
- ingrid, dd=dds, /all, pn=pn
+ grift, dd=dds, /all, pn=pn
  grim_data = grim_get_data()
 
  n = n_elements(pn)

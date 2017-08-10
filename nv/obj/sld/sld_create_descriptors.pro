@@ -67,7 +67,7 @@
 ;-
 ;=============================================================================
 function sld_create_descriptors, n, crd=_crd0, bd=_bd0, sld=_sld0, $
-@sld__keywords.include
+@sld__keywords_tree.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -81,7 +81,7 @@ end_keywords
    if(keyword_set(_sld0)) then sld0 = _sld0[i]
 
    sld[i] = ominas_solid(i, crd=crd0, bd=bd0, sld=sld0, $
-@sld__keywords.include
+@sld__keywords_tree.include
 end_keywords)
 
   end

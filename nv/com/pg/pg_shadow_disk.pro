@@ -85,18 +85,16 @@
 ;	
 ;-
 ;=============================================================================
-function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_ptd, $
+function pg_shadow_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
                            nocull=nocull, both=both, reveal=reveal, $
                            clip=clip, cull=cull, backshadow=backshadow, all=all, $
                            epsilon=epsilon
 @pnt_include.pro
 
-
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
- if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
  if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
  if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
@@ -104,11 +102,6 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_p
  if(NOT keyword_set(od)) then $
   if(keyword_set(sund)) then od = sund $
   else nv_message, 'No observer descriptor.'
-
- if(NOT keyword_set(_gbx)) then nv_message, 'Globe descriptor required.'
- __gbx = get_primary(cd, _gbx, rx=dkx)
- if(keyword_set(__gbx)) then gbx = __gbx $
- else  gbx = _gbx[0,*]
 
 
  ;-----------------------------------
@@ -194,9 +187,10 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, gbx=_gbx, dd=dd, gd=gd, object_p
               shadow_ptd[i,j] = $
                  pnt_create_descriptors(points = points, $
                    name = 'shadow-' + cor_name(object_ptd[j]), $
-                   assoc_xd = object_ptd[j], $
+                   assoc_xd = xd, $
+                   task = 'pg_shadow_disk', $
 		   desc = 'disk_shadow', $
-                   gd = {dkx:dkx[i,0], gbx:gbx[0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
+                   gd = {dkx:dkx[i,0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
                    vectors = inertial_pts)
 
               ;-----------------------------------------------

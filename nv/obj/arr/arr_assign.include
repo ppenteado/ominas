@@ -2,7 +2,6 @@
 ;  implemented as a .include because arg_present does not propogate to 
 ;  lower-level calls
 
- if(defined(primary)) then arr_set_primary, _xd, primary, /noevent
  if(defined(surface_pts)) then arr_set_surface_pts, _xd, surface_pts, /noevent
 
 @cor_assign.include

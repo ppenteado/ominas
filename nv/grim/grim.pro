@@ -1,810 +1,883 @@
-;=============================================================================
+;docformat = 'rst rst'
 ;+
-; NAME:
-;	GRIM
+;
+; GRIM: General-purpose GRaphical Interface for oMinas.
+; =====================================================
+; 
+;
+; Categories: NV/GR
 ;
 ;
-; PURPOSE:
-;	General-purpose GRaphical Interface for oMinas.
+; Calling sequence::
+;
+;   grim, arg1, arg2
 ;
 ;
-; CATEGORY:
-;	NV/GR
+; Arguments
+; ---------
+; 
+; Input
+; ~~~~~
+; 
+; arg1, arg2:
+; 
+;   Grim accepts up to two arguments, which can appear in either
+;   order.  Possible arguments are:
+;
+;       data descriptors (object)
+;       
+;     file specification (string)
+;     
+;       grn (scalar)
+;       
+;       plot (1d array)
+;       
+;       image (2d array)
+;       
+;       cube (3d array)
+;       
+;   Plots are displayed as graphs whose abscissa are the array index, unless
+;   an abscissa is present in the data descriptor.  Many functions are not
+;   available in this mode.
+;
+;   Cubes are handled as multiple image planes unless /rgb is used
+;   (see below).  All grim planes will contain the same data array,
+;   but display only data ranges corresponding to one channel of the cube.
+;   For /rgb (assuming the cube has three channels), the data are placed
+;   on a single image plane with each cube channel assigned the R, G, or B
+;   color channel.
+;
+;  Outputs
+;  ~~~~~~~
+;  
+;  None
+;  
+;  Keywords: Input
+;  ---------------
+;   
+;  Descriptor Keywords
+;  ~~~~~~~~~~~~~~~~~~~
+; 
+;  The following inputs replace objects already maintained by GRIM.  They
+;  must be given as either a single element, which is applied to the
+;  current plane, or as an array with one element for each plane.
+;
+;  `cd`:
+;   Replaces the current camera descriptor.  This may also be
+;   a map descriptor, in which case some of GRIM's functions
+;   will not be available.  When using a map descriptor instead
+;   of a camera descriptor, you can specify a camera descriptor
+;   as the observer descriptor (see the 'od' keyword below) and
+;   some additional geometry functions will be available.
+;
+;  `od`:
+;   Replaces the current observer descriptor.  The observer
+;   descriptor is used to allow some geometry objects (limb,
+;   terminator) to be computed when using a map descriptor instead
+;   of a camera descriptor.
+;
+;  The following inputs replace or augment objects already maintained
+;  by GRIM.  They are sorted into their respective planes by comparing
+;  their internal generic descriptors with the data descriptor or
+;  observer descriptor (in the case of a map) for each plane.  Objects
+;  whose names match those already maintained by GRIM replace them.
+;
+;  `sund`:  Replaces the current sun descriptor.
+;
+;  `pd`:  Adds/replaces planet descriptors.
+;
+;  `rd`:  Adds/replaces ring descriptors.
+;
+;  `sd`:  Adds/replaces star descriptors.
+;
+;  `std`: Adds/replaces station descriptors
+;
+;  `ard`: Adds/replaces array descriptors
+;
+;  `gd`:  Generic descriptor containing some or all of the above
+;   descriptors.
+;
+;  `assoc_xd`:
+;   If given, use these descriptors to sort descriptors into
+;   planes instead of matching the data descriptors or observer
+;   descriptors in their internal generic descriptors.
 ;
 ;
-; CALLING SEQUENCE:
-;	
-;	grim, arg1, arg2
+;  Descriptor Select Keywords
+;  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+;  Descriptor select keywords (see pg_get_*) are specified using the
+;  standard prefix corresponding to the descriptor type.  For example,
+;  the fov keyword to pg_get_planets would be given to grim as plt_fov.
 ;
 ;
-; ARGUMENTS:
-;  INPUT:
-;	arg1, arg2:	
-;		Grim accepts up to two arguments, which can appear in either 
-;		order.  Possible arguments are:
+;  Initial Colormap Keywords
+;  ~~~~~~~~~~~~~~~~~~~~~~~~~
+;  
+;  The colormap structure (see colormap_descriptor__define) can be
+;  be initialized via keywords prefied with 'cmd_', e.g., 'cmd_shade'.
+;  In addition, the following keywords apply to the initial color map:
 ;
-; 			data descriptors (object)
-;			file specification (string)
-; 			grnum (scalar)
-; 			plot (1d array)
-; 			image (2d array)
-; 			cube (3d array)
-;
-;	Plots are displayed as graphs whose abscissa are the array index, unless
-;	an abscissa is present in the data descriptor.  Many functions are not 
-;	available in this mode.  
-;
-;	Cubes are handled as multiple image planes unless /rgb is used 
-;	(see below).  All grim planes will contain the same data array,
-;	but display only data ranges corresponding to one channel of the cube.
-;	For /rgb (assuming the cube has three channels), the data are placed 
-;	on a single image plane with each cube channel assigned the R, G, or B 
-;	color channel.
-;	
-;
-;  OUTPUT: NONE
+;  `*auto_stretch`:
+;   If set, the color table for each plane is automatically
+;   stretched.  This is identical to using the 'Auto' button
+;   on on the grim color tool.
 ;
 ;
-; KEYWORDS:
-;  INPUT:
-;	Descriptor Keywords
-;	-------------------
-;	The following inputs replace objects already maintained by GRIM.  For 
-;	the case of a single plane, all given descriptors are placed in that 
-;	plane.  In that case, only one cd, od, or sund are allowed.  For a cube,
-;	cd and od must have either one element, or the same number of elements 
-;	as the number of channels in the cube, and are assigned one-to-one to 
-;	the grim planes.  In this case, all other decriptors are assigned to all 
-;	planes.  For multiple images, descriptors are assigned to planes by 
-;	matching their generic decsriptor dd fields (or assoc_dd if given) to 
-;	the data descriptor for each plane.  
+;  Translator Keywords
+;  ~~~~~~~~~~~~~~~~~~~
+;  
+;  The following keywords are passed directly to the translators, which
+;  are responsible for interpreting their meanings.
 ;
-;	 cd:	Replaces the current camera descriptor.  This may also be 
-;		a map descriptor, in which case some of GRIM's functions 
-;		will not be available.  When using a map descriptor instead 
-;		of a camera descriptor, you can specify a camera descriptor 
-;		as the observer descriptor (see the 'od' keyword below) and 
-;		some additional geometry functions will be available.
+;  `*cam_trs`:
+;   String giving translator keywords for the camera descriptors.
 ;
-;	 od:	Replaces the current observer descriptor.  The observer
-;		descriptor is used to allow some geometry objects (limb,
-;		terminator) to be computed when using a map descriptor instead
-;		of a camera descriptor.
+;  `*sun_trs`:
+;   String giving translator keywords for the sun descriptors.
 ;
-;	 sund:	Replaces the current sun descriptor.
+;  `*plt_trs`:
+;   String giving translator keywords for the planet descriptors.
 ;
-;	 pd:	Adds/replaces planet descriptors.
+;  `*rng_trs`:
+;   String giving translator keywords for the ring descriptors.
 ;
-;	 rd:	Adds/replaces ring descriptors.
+;  `*str_trs`:
+;   String giving translator keywords for the star descriptors.
 ;
-;	 sd:	Adds/replaces star descriptors.
+;  `*stn_trs`:
+;   String giving translator keywords for the stations descriptors.
 ;
-;	 std:	Adds/replaces station descriptors
-;
-;	 ard:	Adds/replaces array descriptors
-;
-;	 gd:	Generic descriptor containing some or all of the above 
-;		descriptors.
-;
-;	 assoc_dd: 
-;		If given, use these data descriptors to assign descriptors to 
-;		planes instead of matching the data descriptors from their
-;		generic descriptors.
+;  `*arr_trs`:
+;   String giving translator keywords for the array descriptors.
 ;
 ;
-;	Descriptor Select Keywords
-;	--------------------------
-;	Descriptor select keywords (see pg_get_*) are specified using the
-;	standard prefix corresponding to the descriptor type.  For example, 
-;	the fov keyword to pg_get_planets would be given to grim as plt_fov.  
+;  TVIM Keywords
+;  ~~~~~~~~~~~~~
+;  
+;  The following keywords set the initial viewing parameters and are
+;  simply passed to TVIM.
 ;
+;  `*xsize`: Size of the graphics window in the x direction.  Defaults to
+;   400 pixels.
 ;
-;	Initial Colormap Keywords
-;	-------------------------
-;	The colormap structure (see colormap_descriptor__define) can be
-;	be initialized via keywords prefied with 'cmd_', e.g., 'cmd_shade'.
-;	In addition, the following keywords apply to the initial color map:
+;  `*ysize`: Size of the graphics window in the y direction.  Defaults to
+;   400 pixels.
 ;
-;	*auto_stretch:
-;		If set, the color table for each plane is automatically
-;		stretched.  This is identical to using the 'Auto' button
-;		on on the grim color tool.
+;  `*zoom`:  Initial zoom to be applied to the image.  If not given, grim
+;   computes an initial zoom such that the entire image fits on the
+;   screen.
 ;
+;  `*rotate`:
+;   Initial rotate value to be applied to the image (as in the IDL
+;   ROTATE routine).  If not given, 0 is assumed.
 ;
-;	Translator Keywords
-;	-------------------
-;	The following keywords are passed directly to the translators, which
-;	are responsible for interpreting their meanings.
+;  `*order`: Initial display order to be applied to the image.
 ;
-;	*cam_trs:
-;		String giving translator keywords for the camera descriptors.
+;  `*offset`:
+;   Initial offset (dx,dy) to be applied to the image.
 ;
-;	*sun_trs: 
-;		String giving translator keywords for the sun descriptors.
+;  `doffset`:
+;   Change the offset viewing parameter by this amount.
 ;
-;	*plt_trs: 
-;		String giving translator keywords for the planet descriptors.
-;
-; 	*rng_trs: 
-;		String giving translator keywords for the ring descriptors.
-;
-; 	*str_trs: 
-;		String giving translator keywords for the star descriptors.
-;
-; 	*stn_trs: 
-;		String giving translator keywords for the stations descriptors.
-;
-; 	*arr_trs: 
-;		String giving translator keywords for the array descriptors.
-;
-;
-;	TVIM Keywords
-;	-------------
-;	The following keywords set the initial viewing parameters and are
-;	simply passed to TVIM.  
-;
-;	*xsize:	Size of the graphics window in the x direction.  Defaults to
-;		400 pixels.
-;
-;	*ysize:	Size of the graphics window in the y direction.  Defaults to
-;		400 pixels.
-;
-;	*zoom:	Initial zoom to be applied to the image.  If not given, grim
-;		computes an initial zoom such that the entire image fits on the
-;		screen.
-;
-;	*rotate:	
-;		Initial rotate value to be applied to the image (as in the IDL
-;		ROTATE routine).  If not given, 0 is assumed.
-;
-;	*order:	Initial display order to be applied to the image.
-;
-;	*offset:	
-;		Initial offset (dx,dy) to be applied to the image.
-;	
-;	 doffset: 
-;		Change the offset viewing parameter by this amount.
-;
-;	 default: 
-;		If set, use default tvim properties (zoom=[1,1], offset=[0,0]
+;  `default`:
+;   If set, use default tvim properties (zoom=[1,1], offset=[0,0]
 ;               order=0 [bottom-up])
 ;
-;	 previous: 
-;		If set, restore last-used tvim viewing parameters.
+;  `previous`:
+;   If set, restore last-used tvim viewing parameters.
 ;
-;	 restore: 
-;		If set, use saved tvim viewing paramters.
-;
-;
-;	Customization Keywords
-;	----------------------
-;	*menu_extensions:
-;		Array of strings giving the names of functions that return
-;		menu definitions, as defined by cw_pdmenu.  These menus are 
-;		added to the built-in GRIM menus between the Overlays menu
-;		and the Help menu.  The default is 'grim_default_menus'.  If
-;		the first character in the first menu function is '+', then
-;		grim_default_menus is retained an the new menu are appended
-;		after that menu.  Otherwise, 'grim_default_menus' is replaced.
-;
-;	*button_extensions:
-;		Array of strings giving the names of definition functions
-;		for custom cursor modes to be added after the built-in
-;		cursor modes.  The definition function takes one argument 
-;		(see arg_extensions below) and returns a grim_user_mode_struct.
-;
-;	*arg_extensions:
-;		Argument to be provided to the button extension definition
-;		function above. 
-;
-;	*menu_fname:	
-;		Name of a file containing additional menus to add to
-;		the grim widget.  The file syntax follows that for cw_pdmenu.
+;  `restore`:
+;   If set, use saved tvim viewing paramters.
 ;
 ;
-;	Other Keywords
-;	--------------
-;	*extensions:
-;		String array giving extensions to try for each input file.
-;		see dat_read.
+;  Customization Keywords
+;  ~~~~~~~~~~~~~~~~~~~~~~
+;  
+;  `*menu_extensions`:
+;   Array of strings giving the names of functions that return
+;   menu definitions, as defined by cw_pdmenu.  These menus are
+;   added to the built-in GRIM menus between the Overlays menu
+;   and the Help menu.  The default is 'grim_default_menus'.  If
+;   the first character in the first menu function is '+', then
+;   grim_default_menus is retained an the new menu are appended
+;   after that menu.  Otherwise, 'grim_default_menus' is replaced.
 ;
-;	*new:	If set, a new grim instance is created and all keywords apply
-;		to that instance.
+;  `*button_extensions`:
+;   Array of strings giving the names of definition functions
+;   for custom cursor modes to be added after the built-in
+;   cursor modes.  The definition function takes one argument
+;   (see arg_extensions below) and returns a grim_user_mode_struct.
 ;
-;	 erase:	If set, erase the current image before doing anything else.
+;  `*arg_extensions`:
+;   Argument to be provided to the button extension definition
+;   function above.
 ;
-;	*mode_init:
-;		Initial cursor mode.  See below.
+;  `*menu_fname`:
+;   Name of a file containing additional menus to add to
+;   the grim widget.  The file syntax follows that for cw_pdmenu.
 ;
-;	*mode_args:
-;		Array giving arguments for the cursor modes initialization
-;		functions.  If a string, then syntax is NAME:ARG, where NAME 
-;		is the name of the cursor mode, and ARG is the argument for 
-;		that mode.  For example:
 ;
-;			mode_args='READOUT:myreadout_fn'
+;  Other Keywords
+;  ~~~~~~~~~~~~~~
+;  
+;  `*extensions`:
+;   String array giving extensions to try for each input file.
+;   see dat_read.
 ;
-;		would cause the function 'myreadout_fn' to be added to 
-;		the list of functions called by pg_cursor and pg_measure
-;		via the readout cursor mode.  If not a string, the argument 
-;		is passed to the initialization function with no processing.
+;  `*new`: If set, a new grim instance is created and all keywords apply
+;   to that instance.
 ;
-;	*retain:	
-;		Retain settings for backing store (see "backing store" in 
-;		the IDL reference guide).  Defaults to 2.
+;  `erase`: If set, erase the current image before doing anything else.
 ;
-;	*clip:	Controls the number of fields of view in which overlays are 
-;		computed.
+;  `*mode_init`:
+;   Initial cursor mode.  See below.
 ;
-;	*fov:	Controls the number of fields of view in which to request
-;		planet, ring and star descriptors.  Values are as follows:
+;  `*mode_args`:
+;   Array giving arguments for the cursor modes initialization
+;   functions.  If a string, then syntax is NAME:ARG, where NAME
+;   is the name of the cursor mode, and ARG is the argument for
+;   that mode.  For example::
 ;
-; 			 0 : get all descriptors
-;                  	<0 : relative to viewport
-;                 	>0 : relative to image / optic axis
+;     mode_args='READOUT:myreadout_fn'
 ;
-;		Note that fov > 0 is the same as setting the fov descriptor
-;		select keywords (see above).  Default is 0, but stars operate
-;		best when fov > 0.
+;   would cause the function 'myreadout_fn' to be added to
+;   the list of functions called by pg_cursor and pg_measure
+;   via the readout cursor mode.  If not a string, the argument
+;   is passed to the initialization function with no processing.
 ;
-;	*hide:	If set, overlays are hidden w.r.t shadows and obstructions.
-; 		Default is on. 
+;  `*retain`:
+;   Retain settings for backing store (see "backing store" in
+;   the IDL reference guide).  Defaults to 2.
 ;
-;	 no_erase: 
-;		If set, GRIM does not erase the draw window.  When called.
+;  `*clip`:  Controls the number of fields of view in which overlays are
+;   computed.
 ;
-;	*rgb:	If set, grim interprets a 3-plane cube as a 3-channel image
+;  `*fov`: Controls the number of fields of view in which to request
+;   planet, ring and star descriptors.  Values are as follows:
+;
+;        0 : get all descriptors
+;        
+;                   <0 : relative to viewport
+;                   
+;                   >0 : relative to image / optic axis
+;
+;  Note that fov > 0 is the same as setting the fov descriptor
+;  select keywords (see above).  Default is 0, but stars operate
+;  best when fov > 0.
+;
+;  `*hide`:  If set, overlays are hidden w.r.t shadows and obstructions.
+;     Default is on.
+;
+;  `no_erase`:
+;   If set, GRIM does not erase the draw windoww.
+;
+;  `no_refresh`:
+;   If set, grim does not refresh.
+;
+;  `*rgb`: If set, grim interprets a 3-plane cube as a 3-channel image
 ;               to be displayed on a single plane.
 ;
-;	*channel: 
-;		Array of bitmasks specifying the color channel in which to 
-;		display each given image: 1b, 2b, or 4b.
+;  `*channel`:
+;   Array of bitmasks specifying the color channel in which to
+;   display each given image: 1b, 2b, or 4b.
 ;
-;	*visibility: 
-;		Initial visibility setting for planes:
+;  `*visibility`:
+;   Initial visibility setting for planes:
 ;
-;                	0: Only the current plane is drawn.
-;                	1: All planes are drawn.
+;                 0: Only the current plane is drawn.
+;                 
+;                 1: All planes are drawn.
 ;
 ;                Default is 0.
 ;
-;	*max:	Maximum data value to scale to when displaying images.  
-;		Values larger than this are set to the maximum color table 
-;		index.  If not set, the maximum value in the data set is used.  
-;		In cases where the data array is being subsampled, this value 
-;		may not be known, resulting in varying image scaling as more 
-;		and more data values are sampled.  That problem may be
-;		eliminated via this keyword.
+;  `*max`: Maximum data value to scale to when displaying images.
+;   Values larger than this are set to the maximum color table
+;   index.  If not set, the maximum value in the data set is used.
+;   In cases where the data array is being subsampled, this value
+;   may not be known, resulting in varying image scaling as more
+;   and more data values are sampled.  That problem may be
+;   eliminated via this keyword.
 ;
-;	 exit:	If set, GRIM immediately exits.  This can be used to kill an
-;		existing GRIM window.
+;  `exit`:  If set, GRIM immediately exits.  This can be used to kill an
+;   existing GRIM window.
 ;
-;	 modal:	If set, grim is run as a modal widget, i.e., there is no command
-;		prompt.
+;  `modal`: If set, grim is run as a modal widget, i.e., there is no command
+;   prompt.
 ;
-;	*frame:	If set, the initial view is set such that all members of the 
-;		named overlay types are are visible.  If /frame, then all
-;		overlays are framed.  Note that object types that rely on the
-;		view to determine which objects to compute (e.g., stars) 
-;		cannot be framed in this way.  
+;  `*frame`: If set, the initial view is set such that all members of the
+;   named overlay types are are visible.  If /frame, then all
+;   overlays are framed.  Note that object types that rely on the
+;   view to determine which objects to compute (e.g., stars)
+;   cannot be framed in this way.
 ;
-;	 refresh_callbacks: 
-;		Array of strings giving the names of procedures to be 
-;		called after each refresh.  See CALLBACK PROCEDURES
-;		below.  Refresh callbacks receive only the data argument.
+;  `refresh_callbacks`:
+;   Array of strings giving the names of procedures to be
+;   called after each refresh.  See CALLBACK PROCEDURES
+;   below.  Refresh callbacks receive only the data argument.
 ;
-;	 refresh_callback_data_ps: 
-;		Array of pointers (one per callback) to data for the refresh 
-;		callback procedures specified using the refresh_callbacks 
-;		keyword.  See CALLBACK PROCEDURES below.  
+;  `refresh_callback_data_ps`:
+;   Array of pointers (one per callback) to data for the refresh
+;   callback procedures specified using the refresh_callbacks
+;   keyword.  See CALLBACK PROCEDURES below.
 ;
-;	 plane_callbacks: 
-;		Array of strings giving the names of procedures to be 
-;		called after each plane change.  See CALLBACK PROCEDURES
-;		below.  Plane callbacks receive only the data argument.
+;  `plane_callbacks`:
+;   Array of strings giving the names of procedures to be
+;   called after each plane change.  See CALLBACK PROCEDURES
+;   below.  Plane callbacks receive only the data argument.
 ;
-;	 plane_callback_data_ps: 
-;		Array of pointers (one per callback) to data for the plane 
-;		callback procedures specified using the plane_callbacks 
-;		keyword.  See CALLBACK PROCEDURES below.  
+;  `plane_callback_data_ps`:
+;   Array of pointers (one per callback) to data for the plane
+;   callback procedures specified using the plane_callbacks
+;   keyword.  See CALLBACK PROCEDURES below.
 ;
-;	*nhist:	History setting to be applied to data decriptor (see 
-;		ominas_data__define).  GRIM uses data descriptor history to 
-;		undo changes to the data array.  If nhist is not set, or is 
-;		equal to 1, the undo menu option will not function.
+;  `*nhist`: History setting to be applied to data decriptor (see
+;   ominas_data__define).  GRIM uses data descriptor history to
+;   undo changes to the data array.  If nhist is not set, or is
+;   equal to 1, the undo menu option will not function.
 ;
-;	*maintain: 
-;		If given, this maintainance setting is applied to the data
-;		descriptor (see ominas_data__define).
+;  `*maintain`:
+;   If given, this maintainance setting is applied to the data
+;   descriptor (see ominas_data__define).
 ;
-;	*compress: 
-;		Compression setting to be applied to data decriptor (see 
-;		ominas_data__define).  
+;  `*compress`:
+;   Compression setting to be applied to data decriptor (see
+;   ominas_data__define).
 ;
-;	*filter:
-;		Initial filter to use when loading or browsing files.
+;  `*filter`:
+;   Initial filter to use when loading or browsing files.
 ;
-;	*load_path: 
-;		Initial path for the file loading dialog.
+;  `*load_path`:
+;   Initial path for the file loading dialog.
 ;
-;	*save_path: 
-;		Initial path for the file saving dialog.
+;  `*save_path`:
+;   Initial path for the file saving dialog.
 ;
-;	*path:	Sets both load_path and save_path to this value.
+;  `*path`:  Sets both load_path and save_path to this value.
 ;
-;	*workdir: 
-;		Default directory for saving user points, masks, tie 
-;		points, curves
+;  `*workdir`:
+;   Default directory for saving user points, masks, tie
+;   points, curves
 ;
-;	 user_psym: 
-;		Default plotting symbol for user overlays.  
+;  `user_psym`:
+;   Default plotting symbol for user overlays.
 ;
-;	 grnum:	Identifies a specific GRIM window by number.  Grim numbers are
-;		displayed in the status bar, e.g.: grim <grnum>.
+;  `grn`: Identifies a specific GRIM window by number.  Grim numbers are
+;   displayed in the status bar, e.g.: grim <grn>.
 ;
-;	 pn:	Directs GRIM to change to the plane correspondng to this plane 
-;		number.
+;  `pn`:  Directs GRIM to change to the plane corresponding to this plane
+;   number.
 ;
-;	*cursor_swap: 
-;		If set, cursor bitmaps are byte-order swapped.
+;  `*cursor_swap`:
+;   If set, cursor bitmaps are byte-order swapped.
 ;
-;	*loadct: 
-;		Index of color table to load.
+;  `*loadct`:
+;   Index of color table to load.
 ;
-;	*beta:	If set beta features are enabled.
+;  `*beta`:  If set beta features are enabled.
 ;
-;	*npoints: 
-;		Number of point to compute for various overlays.  Default is 1000.
+;  `*npoints`:
+;   Number of point to compute for various overlays.  Default is 1000.
 ;
-; 	*plane_syncing: Turns plane syncing on (1) or off(0).  Default is 0.
+;  `*plane_syncing`: Turns plane syncing on (1) or off(0).  Default is 0.
 ;
-; 	*tiepoint_syncing: Turns tiepoint syncing on (1) or off(0).  Default is 0.
+;  `*tiepoint_syncing`: Turns tiepoint syncing on (1) or off(0).  Default is 0.
 ;
-; 	*curve_syncing: Turns curve syncing on (1) or off(0).  Default is 0.
+;  `*curve_syncing`: Turns curve syncing on (1) or off(0).  Default is 0.
 ;
-; 	 position: 
-;		Sets the plot position; see the POSITION grahics keyword.
+;  `position`:
+;   Sets the plot position; see the POSITION grahics keyword.
 ;
-; 	 color:	Sets the line color index for plots.  One element per plane.
+;  `color`: Sets the line color index for plots.  One element per plane.
 ;
-; 	 xrange: 
-;		Sets the X-axis range for plots.
+;  `xrange`:
+;   Sets the X-axis range for plots.
 ;
-; 	 yrange: 
-;		Sets the Y-axis range for plots.
+;  `yrange`:
+;   Sets the Y-axis range for plots.
 ;
-;	 thick:	Sets the line thickness for plots.  One element per plane.
+;  `thick`: Sets the line thickness for plots.  One element per plane.
 ;
-;	 title:	For plots, sets the plot title for plots; one element per plane.
-;		For images, sets the base default title.
+;  `title`: For plots, sets the plot title for plots; one element per plane.
+;   For images, sets the base default title.
 ;
-;	 xtitle: 
-;		Sets the X-axis label for plots.  One element per plane.
+;  `xtitle`:
+;   Sets the X-axis label for plots.  One element per plane.
 ;
-;	 ytitle: 
-;		Sets the Y-axis label for plots.  One element per plane.
+;  `ytitle`:
+;   Sets the Y-axis label for plots.  One element per plane.
 ;
-;	 psym:	Sets the plotting symbol for plots.  One element per plane.
+;  `psym`:  Sets the plotting symbol for plots.  One element per plane.
 ;
-;	 nsum:	See OPLOT.  One element per plane.
+;  `nsum`:  See OPLOT.  One element per plane.
 ;
 ;
-;	*overlays: 
-;		List of initial overlays to compute on startup.  Each element
-;		is of the form:
+;  `*overlays`:
+;   List of initial overlays to compute on startup.  Each element
+;   is of the form::
 ;
 ;                          type[:name1,name2,...]
 ;
-;		where 'type' is one of {limb, terminator, planet_center, 
-;		star, ring, planet_grid, array, station} and the names 
-;		identify the name of the desired object.  Note that grim 
-;		will load more objects than named if required by another 
-;		startup overlay.  For example:
+;   where 'type' is one of {limb, terminator, planet_center,
+;   star, ring, planet_grid, array, station} and the names
+;   identify the name of the desired object.  Note that grim
+;   will load more objects than named if required by another
+;   startup overlay.  For example::
 ;
 ;                         overlays='ring:a_ring'
 ;
-;		will cause only one ring descriptor to load, whereas
+;   will cause only one ring descriptor to load, whereas::
 ;
 ;                         overlays=['limb:saturn', 'ring:a_ring']
 ;
-;		will cause all of Saturn's rings to load because they are
-;		required in computing the limb points (for hiding).
+;   will cause all of Saturn's rings to load because they are
+;   required in computing the limb points (for hiding).
 ;
-;		Different results may be obtained using translator keywords, 
-;		because those keywords are evaluated at the translator level.  
-;		For example:
+;   Different results may be obtained using translator keywords,
+;   because those keywords are evaluated at the translator level.
+;   For example::
 ;
-;			overlays='ring:fn54'
+;     overlays='ring:fn54'
 ;
-;		may result in no ring, while:
+;   may result in no ring, while::
 ;
-;			overlays='ring', trs_rd='name=fn54'
+;     overlays='ring', trs_rd='name=fn54'
 ;
-;		would be more likely to yield a ring.  In the former example,
-;		the specified name is compared against whatever default ring
-;		descriptors are returned by the tranlators, while in the latter
-;		case, the 'name' translator keyword is compared against all
-;		rings available to the translator.
+;   would be more likely to yield a ring.  In the former example,
+;   the specified name is compared against whatever default ring
+;   descriptors are returned by the tranlators, while in the latter
+;   case, the 'name' translator keyword is compared against all
+;   rings available to the translator.
+;
+;
+;  `*delay_overlays`:
+;   If set, initial overlays (see 'overlays' above) are not computed
+;   until the first time they are accessed.  This option can greatly
+;   improve performance in cases where a large number of image planes
+;   are loaded with initial overlays, particularly if it is not
+;   expected that all planes will necesarily be viewed or otherwise
+;   accessed.  Typically this option will cause overlays to be
+;   computed only for the initially visible planes, with other
+;   planes loading overlays only as they are made visible.  However,
+;   there may be other cirumstances that can cause initial overlays
+;   to be loaded without actually viewing a plane.
+;
+;  `*activate`:
+;   If set, inital overlay are activated.
+;
+;  `*ndd`:   Sets the global ndd value in the OMINAS sate structure, which
+;   controls the maximum number of data descriptors with maintain == 1
+;   to keep in memory at any given time
+;
+;  `*render_sample`:
+;   Over-sampling value for rendering.  See pg_render.
+;
+;  `*render_pht_min`:
+;   Minimum value to assign to photometric output in renderings.
+;   See pg_render.
+;
+;
+;  Incomplete Keywords
+;  ~~~~~~~~~~~~~~~~~~~
+; `*rendering`:
+;   If set, perform a rendering on the initial descriptor set.
+;
+;
+;  Keywords: Output
+;  ----------------
+;  
+;  None
+;
+;
+; Resource File
+; -------------
 ; 
+; The keywords marked above with an asterisk may be overridden using
+; the file $HOME/.ominas/grimrc.  Keyword=value pairs may be entered, one per
+; line, using the same syntax as if the keyword were entered on the IDL
+; command line to invoke grim.  Lines beginning with '#' are ignored.
+; Keywords entered in the resource file override the default values, and
+; are themselves overridden by keywords entered on the command line.
 ;
-;	*delay_overlays:
-;		If set, initial overlays (see 'overlays' above) are not computed 
-;		until the first time they are accessed.  This option can greatly
-;		improve performance in cases where a large number of image planes
-;		are loaded with initial overlays, particularly if it is not
-;		expected that all planes will necesarily be viewed or otherwise
-;		accessed.  Typically this option will cause overlays to be
-;		computed only for the initially visible planes, with other
-;		planes loading overlays only as they are made visible.  However, 
-;		there may be other cirumstances that can cause initial overlays 
-;		to be loaded without actually viewing a plane.
+; Shell Interface
+; ---------------
 ; 
-;	*activate: 
-;		If set, inital overlay are activated.
+; The `grim` alias may be used to start grim from the shell prompt
+; via the XIDL interface.  The shell interface accepts all keywords
+; marked above with an asterisk.  See grim.bat.
 ;
-;	*ndd: 	Sets the global ndd value in the OMINAS sate structure, which
-;		controls the maximum number of data descriptors with maintain == 1 
-;		to keep in memory at any given time
+; Example (assuming the grim alias described in grim.bat)::
 ;
-;	*render_sample:
-;		Over-sampling value for rendering.  See pg_render.
-;
-;	*render_pht_min:
-;		Minimum value to assign to photometric output in renderings.
-;		See pg_render.
+;  % grim -beta data/*.img overlay=planet_center,limb:JUPITER
 ;
 ;
-;	Incomplete Keywords
-;	-------------------
-;	*rendering:
-;		If set, perform a rendering on the initial descriptor set.  
+; Environment Variables
+; ---------------------
+; 
+; Grim currently defines no environment variables..
 ;
 ;
-;  OUTPUT: NONE
+; Common Blocks
+; -------------
+; 
+;  grim_block:
+;   Keeps track of most recent grim instance and which ones are
+;   selected.
 ;
 ;
-; RESOURCE FILE:
-;	The keywords marked above with an asterisk may be overridden using 
-;	the file $HOME/.ominas/grimrc.  Keyword=value pairs may be entered, one per
-;	line, using the same syntax as if the keyword were entered on the IDL 
-;	command line to invoke grim.  Lines beginning with '#' are ignored.
-;	Keywords entered in the resource file override the default values, and
-;	are themselves overridden by keywords entered on the command line.
-;
-; SHELL INTERFACE
-;	The 'grim' alias may be used to start grim from the shell prompt
-;	via the XIDL interface.  The shell interface accepts all keywords 
-;	marked above with an asterisk.  See grim.bat.
-;
-;	Example (assuming the grim alias described in grim.bat): 
-;
-;	 % grim -beta data/*.img overlay=planet_center,limb:JUPITER
+; Side Effects
+; ------------
+; 
+; Grim operates directly on the memory images of the descriptors that
+; it is given.  Therefore, those descriptors are modified during
+; a session.  This architecture allows data to be operated on concurrently
+; through grim and from the command line; see grift.pro for details.
 ;
 ;
-; ENVIRONMENT VARIABLES:
-;	Grim currently defines no environment variables..
+; Layout
+; ------
+; 
+; The philosphy that drives GRIM's layout is that the maximum possible
+; screen space should be devoted to displaying the data.  This policy
+; allows for many GRIM windows to be used simultaneously without being
+; obscured by crazy control panels full of buttons, gadgets, widgets,
+; doodads, whirly-gigs, and what-nots.  The grim layout consists of the
+; following items:
+;
+;  Title bar
+;  ~~~~~~~~~
+;  
+;   The title bar displays the grim window number (grn),
+;   the current plane number (pn), the total number of planes, the
+;   name field of the data descriptor for the current plane, the
+;   default title (if given; see the title keyword above), and
+;   a string indicating which RGB channels are associated with the
+;   current plane.
+;
+;  Menu bar
+;  ~~~~~~~~
+;  
+;   Most of grim's functionality is accessed through the
+;   system of pulldown menus at the top.  Individual menu
+;   items are described in their own sections.
+;
+;  Shortcut buttons
+;  ~~~~~~~~~~~~~~~~
+;   Some commonly used menu options are duplicated as shortcut
+;   buttons arranged horizontally just beneath the menu bar.  The
+;   function of each button is displayed in the status bar (see
+;   below) when the mouse cursor is hovered ove the button.
+;
+;  Cursor mode buttons
+;  ~~~~~~~~~~~~~~~~~~~
+;   Cursor mode shortcut buttons are arranged vertically along the
+;   left side of the GRIM window, and as provided as shortcuts
+;   for the corresponding options in the Mode menu.  The following
+;   modes are available:
+;
+;   Activate:
+;     In activate mode, overlay objects may be activated
+;     or deactivated by clicking and/or dragging using the
+;     left or right mouse buttons respectively.  This
+;     activation mechanism allows the user to select which
+;     among a certain type of objects should be used in a
+;     given menu selection.  A left click on an overlay
+;     activates that overlay and a right click deactivates
+;     it.  A double click activates or deactivates all
+;     overlays associated with a given descriptor, or all
+;     stars.  Active overlays appear in the colors selected
+;     in the 'Overlay Settings' menu selection.  Inactive
+;     overlays appear in cyan.  A descriptor is active
+;     whenever any of its overlays are active.
+;
+;   Zoom: The zoom button puts grim in a zoom cursor mode, wherein
+;     the image zoom and offset are controlled by selecting
+;     a box in the image.  When the box is created using the
+;     left mouse button, zoom and offset are changed so that
+;     the contents of the box best fill the current graphics
+;     window.  When the right button is used, the contents of
+;     the current graphics window are shrunken so as to best
+;     fill the box.  In other words, the left button zooms in
+;     and the right button zooms out.
+;
+;   Pan:  The pan button puts grim in a pan cursor mode, wherein the
+;     image offset is controlled by selecting an offset vector
+;     using the left mouse button.  The middle button may be
+;     used to center the image on a selected point.
+;
+;   Pixel Readout:
+;     In pixel readout mode, a text window appears
+;     and displays data about the pixel selected
+;     using the left mouse button.
+;
+;   Tiepoint:
+;     In tiepoint mode, tiepoints are added using the
+;     left mouse button and deleted using the right button.
+;     Tiepoints appear as crosses identified by numbers.
+;     The use of tiepoints is determined by the particular
+;     option selected by the user.
+;
+;   Curve:
+;     In curve mode, curves are added using the
+;     left mouse button and deleted using the right button.
+;     Curves appear as red lines identified by numbers at
+;     each end.  The use of curves is determined by the
+;     particular option selected by the user.
+;
+;   Mask:
+;     GRIM maintains a mask for each plane whose use is
+;     appication-dependent.  Mask mode allows pixels in the
+;     mask to be toggled on and off.
+;
+;   Magnify:
+;     In magnify mode, image pixels in the graphics
+;     window may be magnifed using either the right or left
+;     mouse buttons.  The left button magnifies the displayed
+;     pixels, directly from the graphics window.  The right
+;     button magnifies the data itself, without the overlays.
+;
+;   XY Zoom:
+;     Same as 'zoom' above, except the aspect ratio is
+;     set by the proportions of the selected box.
+;
+;   Remove overlays:
+;     Allows the user to remove overlay arrays.
+;
+;   Trim overlays:
+;     Allows the user to trim points from overlay arrays.
+;
+;   Select within overlays:
+;     Allows the user to select points within overlay arrays.
+;
+;   Define Region:
+;     Allows the user to define GRIM's region of interest.
+;
+;   Smooth:
+;     Allows the user to select a smoothing box to be applied
+;     to the data array.
+;
+;   Select Plane:
+;     Allows the user to change planes using the pointer.
+;     This option is only useful in cases where multiple
+;     planes are displayed.
+;
+;   Drag Image:
+;     Allows the user to reposition the current plane by
+;     clicking and dragging.
+;
+;   Navigate:
+;     Allows the user to modify the camera position and
+;     orientation usng the mouse.
 ;
 ;
-; COMMON BLOCKS:
-;	 grim_block:
-;		Keeps track of most recent grim instance and which ones are 
-;		selected.
+;  Graphics window
+;  ~~~~~~~~~~~~~~~
+;  
+;   The graphics window displays the data associated with the
+;   given data descriptor using the current zoom, offset, and
+;   display order.  The edges of an image are indicated by a dotted
+;   line.  The camera optic axis is indicated by a large red cross.
 ;
+;  Pixel readout
+;  ~~~~~~~~~~~~~
+;  
+;   The cursor position and corresponding data value are are
+;   displayed beneath the graphics window, next to the message line.
 ;
-; SIDE EFFECTS:
-;	Grim operates directly on the memory images of the descriptors that 
-;	it is given.  Therefore, those descriptors are modified during 
-;	a session.  This architecture allows data to be operated on concurrently
-;	through grim and from the command line; see ingrid.pro for details.
+;  Message line
+;  ~~~~~~~~~~~~
+;  
+;   The message line displays short messages pertaining GRIM's
+;    current state, or displayng button functions.
 ;
-;
-; LAYOUT:
-;	The philosphy that drives GRIM's layout is that the maximum possible 
-;	screen space should be devoted to displaying the data.  This policy 
-;	allows for many GRIM windows to be used simultaneously without being 
-;	obscured by crazy control panels full of buttons, gadgets, widgets, 
-;	doodads, whirly-gigs, and what-nots.  The grim layout consists of the 
-;	following items:
-;
-;	 Title bar:
-;		The title bar displays the grim window number (grnum),
-;		the current plane number (pn), the total number of planes, the 
-;		name field of the data descriptor for the current plane, the
-;		default title (if given; see the title keyword above), and 
-;		a string indicating which RGB channels are associated with the
-;		current plane.
-;
-;	 Menu bar: 
-;		Most of grim's functionality is accessed through the 
-;		system of pulldown menus at the top.  Individual menu
-;		items are described in their own sections.
-;
-;	 Shortcut buttons: 
-;		Some commonly used menu options are duplicated as shortcut 
-;		buttons arranged horizontally just beneath the menu bar.  The
-;		function of each button is displayed in the status bar (see 
-;		below) when the mouse cursor is hovered ove the button.
-;
-;	 Cursor mode buttons: 
-;		Cursor mode shortcut buttons are arranged vertically along the 
-;		left side of the GRIM window, and as provided as shortcuts
-;		for the corresponding options in the Mode menu.  The following 
-;		modes are available:
-;
-;		Activate: 
-;			In activate mode, overlay objects may be activated
-;			or deactivated by clicking and/or dragging using the
-;			left or right mouse buttons respectively.  This
-;			activation mechanism allows the user to select which
-;			among a certain type of objects should be used in a
-;			given menu selection.  A left click on an overlay
-;			activates that overlay and a right click deactivates
-;			it.  A double click activates or deactivates all
-;			overlays associated with a given descriptor, or all
-;			stars.  Active overlays appear in the colors selected
-;			in the 'Overlay Settings' menu selection.  Inactive
-;			overlays appear in cyan.  A descriptor is active
-;			whenever any of its overlays are active.
-;
-;		Zoom:	The zoom button puts grim in a zoom cursor mode, wherein
-;			the image zoom and offset are controlled by selecting
-;			a box in the image.  When the box is created using the
-;			left mouse button, zoom and offset are changed so that 
-;			the contents of the box best fill the current graphics
-;			window.  When the right button is used, the contents of
-;			the current graphics window are shrunken so as to best
-;			fill the box.  In other words, the left button zooms in
-;			and the right button zooms out.
-;
-;		Pan: 	The pan button puts grim in a pan cursor mode, wherein the 
-;			image offset is controlled by selecting an offset vector
-;			using the left mouse button.  The middle button may be
-;			used to center the image on a selected point.
-;
-;		Pixel Readout:	
-;			In pixel readout mode, a text window appears 
-;			and displays data about the pixel selected 
-;			using the left mouse button.  
-;
-;		Tiepoint: 
-;			In tiepoint mode, tiepoints are added using the
-;			left mouse button and deleted using the right button.
-;			Tiepoints appear as crosses identified by numbers.
-;			The use of tiepoints is determined by the particular 
-;			option selected by the user.
-;
-;		Curve: 
-;			In curve mode, curves are added using the
-;			left mouse button and deleted using the right button.
-;			Curves appear as red lines identified by numbers at
-;			each end.  The use of curves is determined by the 
-;			particular option selected by the user.
-;
-;		Mask: 
-;			GRIM maintains a mask for each plane whose use is
-;			appication-dependent.  Mask mode allows pixels in the
-;			mask to be toggled on and off.
-;
-;		Magnify: 
-;			In magnify mode, image pixels in the graphics
-;			window may be magnifed using either the right or left
-;			mouse buttons.  The left button magnifies the displayed
-;			pixels, directly from the graphics window.  The right
-;			button magnifies the data itself, without the overlays.
-;
-;		XY Zoom: 
-;			Same as 'zoom' above, except the aspect ratio is
-;			set by the proportions of the selected box.
-;
-;		Remove overlays: 
-;			Allows the user to remove overlay arrays.
-;
-;		Trim overlays: 
-;			Allows the user to trim points from overlay arrays.
-;
-;		Select within overlays: 
-;			Allows the user to select points within overlay arrays.
-;
-;		Define Region: 
-;			Allows the user to define GRIM's region of interest.
-;
-;		Smooth:
-;			Allows the user to select a smoothing box to be applied
-;			to the data array.
-;
-;		Select Plane:
-;			Allows the user to change planes using the pointer.  
-;			This option is only useful in cases where multiple
-;			planes are displayed.
-;
-;		Drag Image:
-;			Allows the user to reposition the current plane by 
-;			clicking and dragging.
-;
-;		Navigate:
-;			Allows the user to modify the camera position and 
-;			orientation usng the mouse.
-;
-;
-;	 Graphics window: 
-;		The graphics window displays the data associated with the 
-;		given data descriptor using the current zoom, offset, and 
-;		display order.  The edges of an image are indicated by a dotted 
-;		line.  The camera optic axis is indicated by a large red cross.
-;
-;	 Pixel readout: 
-;		The cursor position and corresponding data value are are 
-;		displayed beneath the graphics window, next to the message line.
-;
-;	 Message line: 
-;		The message line displays short messages pertaining GRIM's
-;		 current state, or displayng button functions.
-;
-; CALLBACK PROCEDURES:
-;	GRIM callback procedures are called with one or two arguments:
+; Callback Procedures
+; -------------------
+; 
+; GRIM callback procedures are called with one or two arguments:
 ;       the first argument is a pointer to data that was provided
-;	when the callback was added.  The second argument, if present, depends 
-;	on the applicatation.  
+; when the callback was added.  The second argument, if present, depends
+; on the applicatation.
 ;
 ;
-; RESOURCE NAMES
-;	The following X-windows resource names apply to grim:
-;	 grim_base:		top level base
-;	 grim_mbar:		menu bar
-;	 grim_shortcuts_base:	base containing shortcut buttons
-;	 grim_modes_base:	base containing modes buttons
-;	 grim_draw:		grim draw widget
-;	 grim_label:		grim bottom label widget
+; Resouce Names
+; -------------
+; 
+; The following X-windows resource names apply to grim:
+; 
+;  grim_base:   top level base
+;  
+;  grim_mbar:   menu bar
+;  
+;  grim_shortcuts_base: base containing shortcut buttons
+;  
+;  grim_modes_base: base containing modes buttons
+;  
+;  grim_draw:   grim draw widget
+;  
+;  grim_label:    grim bottom label widget
 ;
-;	To turn off the confusing higlight box around the modes buttons, 
-;	put the following line in your ~/.Xdefaults file:
+; To turn off the confusing higlight box around the modes buttons,
+; put the following line in your ~/.Xdefaults file::
 ;
-;	 Idl*grim_modes_base*highlightThickness:	0
-;
-;
-; OPERATION:
-;	GRIM displays 1-, 2-, and 3-dimensional data sets.  1-dimensional 
-;	data arrays are displayed as plots.  In that case, the abscissa is 
-;	the sample number unless the data descriptor contains an abscissa.  
-;	2- and 3-dimensional arrays are displaye as image planes.  The only 
-;	difference between images and cubes in GRIM is that images planes 
-;	each have their own data descriptor, while cubes are represented by 
-;	multiple image planes that share a common data descriptor; each plane 
-;	in a cube corresponds to a unique offset in the data array stored in 
-;	the common data descriptor.  Some functionality is not available when
-;	working with plots.  In that case, those options do not appear in the 
-;	menus.
-;
-;	GRIM requests only the data samples needed for the current viewing 
-;	parameters.  Therefore, GRIM can display data sets of arbitrary size
-;	when used with a file reader that supports subsampling.  However, note 
-;	that specific menu options may request the entire data array, depending 
-;	on the application.  
-;
-;	Each GRIM window may contain any number of planes as well as 
-;	associated geometric data (i.e. object descriptors) and overlay arrays 
-;	for displaying various geometric objects -- limbs, rings, stars, etc.  
-;	An array of user overlay points is maintained to be used for application-
-;	specific purposes.  Generally, a set of overlay points or a descriptor 
-;	must be activated in order to be used as input to a menu item; see 
-;	activate mode above.  
-;
-;	There are exclusive and non-exclusive mechanisms for selecting grim
-;	windows.  Grim windows may be non-exclusively selected using the select
-;	mode button mentioned above (upper-left corner).  The exclusive
-;	selection mechanism consists of a "primary" GRIM window, indicated by 
-;	a red outline in the graphics window.  The primary selection is 
-;	changed by pressing any mode or shortcut button, or by clicking in 
-;	the graphics area of the desired grim window.  The meaning of the
-;	various selections depends on the application.
-;
-;	The functions of the left and right mouse buttons are determined by the
-;	cursor mode; some cursor modes define modifier keys to broaden the number
-;	of functions available in that mode.  The middle mouse button toggles
-;	the activation state of overlay arrays, or pans the image if no overlay
-;	appears beneath the cursor.  The mouse wheel cycles among cursor modes, 
-;	or zooms about the cursor position if the control key is held down.
-;
-;	Objects maintained by GRIM are accessible via the INGRID interface,
-;	for example:
-;
-;		IDL> ingrid, dd=dd, cd=cd, pd=pd, limb_ptd=limb_ptd
-;
-;	returns the data desciptor, camera descriptor, planet descriptors,
-;	and limb points associated with the current plane.  
-;
-;	GRIM registers event handlers for all of its objects, so the window
-;	is updated any time an object is modifed, whether by GRIM or by some
-;	other program, or from the command line.
+;  Idl*grim_modes_base*highlightThickness:  0
 ;
 ;
-; EXAMPLES:
-;	(1) To create a new grim instance with no data:
+; Operation
+; ---------
+; 
+; GRIM displays 1-, 2-, and 3-dimensional data sets.  1-dimensional
+; data arrays are displayed as plots.  In that case, the abscissa is
+; the sample number unless the data descriptor contains an abscissa.
+; 2- and 3-dimensional arrays are displaye as image planes.  The only
+; difference between images and cubes in GRIM is that images planes
+; each have their own data descriptor, while cubes are represented by
+; multiple image planes that share a common data descriptor; each plane
+; in a cube corresponds to a unique offset in the data array stored in
+; the common data descriptor.  Some functionality is not available when
+; working with plots.  In that case, those options do not appear in the
+; menus.
 ;
-;		IDL> grim, /new
+; GRIM requests only the data samples needed for the current viewing
+; parameters.  Therefore, GRIM can display data sets of arbitrary size
+; when used with a file reader that supports subsampling.  However, note
+; that specific menu options may request the entire data array, depending
+; on the application.
 ;
-;	(2) To create a new grim instance with data from a file of name
-;	    "filename":
+; Each GRIM window may contain any number of planes as well as
+; associated geometric data (i.e. object descriptors) and overlay arrays
+; for displaying various geometric objects -- limbs, rings, stars, etc.
+; An array of user overlay points is maintained to be used for application-
+; specific purposes.  Generally, a set of overlay points or a descriptor
+; must be activated in order to be used as input to a menu item; see
+; activate mode above.
 ;
-;		IDL> dd = dat_read(filename)
-;		IDL> grim, dd
+; There are exclusive and non-exclusive mechanisms for selecting grim
+; windows.  Grim windows may be non-exclusively selected using the select
+; mode button mentioned above (upper-left corner).  The exclusive
+; selection mechanism consists of a "primary" GRIM window, indicated by
+; a red outline in the graphics window.  The primary selection is
+; changed by pressing any mode or shortcut button, or by clicking in
+; the graphics area of the desired grim window.  The meaning of the
+; various selections depends on the application.
 ;
-;		   or
+; The functions of the left and right mouse buttons are determined by the
+; cursor mode; some cursor modes define modifier keys to broaden the number
+; of functions available in that mode.  The middle mouse button toggles
+; the activation state of overlay arrays, or pans the image if no overlay
+; appears beneath the cursor.  The mouse wheel cycles among cursor modes,
+; or zooms about the cursor position if the control key is held down.
 ;
-;		IDL> grim, filename
+; Objects maintained by GRIM are accessible via the grift interface,
+; for example::
 ;
-;	(3) To give an existing grim instance a new camera descriptor:
+;   IDL> grift, dd=dd, cd=cd, pd=pd, limb_ptd=limb_ptd
 ;
-;		IDL> grim, cd=cd
+; returns the data desciptor, camera descriptor, planet descriptors,
+; and limb points associated with the current plane.
+;
+; GRIM registers event handlers for all of its objects, so the window
+; is updated any time an object is modifed, whether by GRIM or by some
+; other program, or from the command line.
 ;
 ;
-; KNOWN BUGS:
-;	Window resizing is not precise.  GRIM tries to resize to the selected
-;	size, but typically overshoots.  This is probably platform-dependent.
+; :Examples:
+; 
+; (1) To create a new grim instance with no data::
 ;
-;	Objects inherited by rendering planes do not respond to events.
+;   IDL> grim, /new
 ;
-;	Image shifting:
-;	 -  Descriptors not updated if shift performed form another window
-;	    because the there's no way for the irst window to know to
-;	    update its descriptors
+; (2) To create a new grim instance with data from a file of name
+;     "filename"::
+;
+;   IDL> dd = dat_read(filename)
+;   IDL> grim, dd
+;
+;      or::
+;
+;   IDL> grim, filename
+;
+; (3) To give an existing grim instance a new camera descriptor::
+;
+;   IDL> grim, cd=cd
+;
+;
+; Known bugs
+; ----------
+; 
+; Window resizing is not precise.  GRIM tries to resize to the selected
+; size, but typically overshoots.  This is probably platform-dependent.
+;
+; Objects inherited by rendering planes do not respond to events.
+;
+; Image shifting:
+;  -  Descriptors not updated if shift performed form another window
+;     because the there's no way for the irst window to know to
+;     update its descriptors
 ;        - fix wrap-around; clip instead
 ;
-;	Plane->Coregister does not update descriptors
+; Plane->Coregister does not update descriptors
 ;
-;	Navigate mode gets weird when you do certain modifer key presses
-;	   --> maybe a conflict with <ctrl> wheel zoom action
+; Navigate mode gets weird when you do certain modifer key presses
+;    --> maybe a conflict with <ctrl> wheel zoom action
 ;
-;	Crashes occur with File->Close
+; Crashes occur with File->Close
 ;
-;	/no_erase is not enabled for images, just plots.  Probably should fix 
-;	that.
+; /no_erase is not enabled for images, just plots.  Probably should fix
+; that.
 ;
-;	Initial visibility setting does not seem to work until applied
-;	using plane settings window.
+; Initial visibility setting does not seem to work until applied
+; using plane settings window.
 ;
-;	/frame causes a crash if there are no initial overlays.
+; /frame causes a crash if there are no initial overlays.
 ;
-;	It's not clear whether the symsize keyword is actually used.
+; It's not clear whether the symsize keyword is actually used.
 ;
-;	pn keyword does not function.
+; pn keyword does not function.
 ;
-;	Crash when tiepoint syncing is on and tiepoint selected with
-;	multiple planes.
+; Crash when tiepoint syncing is on and tiepoint selected with
+; multiple planes.
 ;
-;	Title keyword does not properly map multiple elements to multiple
-;	planes.
+; Title keyword does not properly map multiple elements to multiple
+; planes.
 ;
-;	Nsum keyword does not properly map multiple elements to multiple
-;	planes.
+; Nsum keyword does not properly map multiple elements to multiple
+; planes.
 ;
-;	Plane syncing appears to be incomplete and I don't remember what it
-;	was supposed to be.  I'm sure it was awesome, though.
+; Plane syncing appears to be incomplete and I don't remember what it
+; was supposed to be.  I'm sure it was awesome, though.
 ;
-;	Not sure what slave_overlays keyword does, or was supposed to do.
+; Not sure what slave_overlays keyword does, or was supposed to do.
 ;
-;	Overlays on rendered planes do not respond to events
+; Overlays on rendered planes do not respond to events
 ;
-;	Menu toggles don't update propoerly in some circumsumstances.
+; Menu toggles don't update propoerly in some circumsumstances.
 ;
-;	grim_message sometimes pops up messages from nv_message, which can
-;	be pretty obnxious.  This probably has to do with the calls to
-;	grim_message in grim_compute.include
+; grim_message sometimes pops up messages from nv_message, which can
+; be pretty obnxious.  This probably has to do with the calls to
+; grim_message in grim_compute.include
 ;
+; Overlay point selections are not retained after recomputing
 ;
-; STATUS:
-;	Incomplete.
-;
-;
-; SEE ALSO:
-;	ingrid, gr_draw
+; Undo does not seem to be working
 ;
 ;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale 7/2002
-;	
+;
+; Status
+; ------
+; 
+; Incomplete.
+;
+;
+; See also
+; --------
+; 
+; `grift`, `graft`
+;
+;
+; :History:
+;   Written by: Spitale 7/2002
+;
 ;-
-;=============================================================================
+
 
 @grim_bitmaps_include.pro
 @grim_util_include.pro
@@ -1328,15 +1401,15 @@ pro grim_kill_notify, top
 
    nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, plane.ard_p, plane.sund_p, $
              plane.od_p, plane.active_xd_p, plane.active_overlays_ptdp,$
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'limb'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'ring'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'terminator'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'star'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'station'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'array'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_grid'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'ring_grid'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'planet_center'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'LIMB'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'RING'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'TERMINATOR'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'STAR'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'STATION'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'ARRAY'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_GRID'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'RING_GRID'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_CENTER'), $
              plane.user_ptd_tlp]
   end
 
@@ -1344,7 +1417,7 @@ pro grim_kill_notify, top
            grim_data.planes_p, grim_data.pl_flags_p, $
            grim_data.menu_ids_p, grim_data.menu_desc_p]
 
- grim_grnum_destroy, grim_data.grnum
+ grim_grn_destroy, grim_data.grn
 
  w = where(_all_tops EQ top)
  _all_tops = rm_list_item(_all_tops, w[0], only=0)
@@ -1450,7 +1523,7 @@ end
 pro grim_modify_colors, grim_data
 
  ctmod, top=top
- grim_colortool
+ gr_colortool
 
 end
 ;=============================================================================
@@ -1889,7 +1962,7 @@ end
 ;=============================================================================
 pro grim_render, grim_data, plane=plane
 
- if(grim_data.type EQ 'plot') then return
+ if(grim_data.type EQ 'PLOT') then return
 
  ;---------------------------------------------------------
  ; make sure relevant descriptors are loaded
@@ -1897,7 +1970,7 @@ pro grim_render, grim_data, plane=plane
 ; grim_load_descriptors, grim_data, name, plane=plane, $
 ;       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
 ;       gd=gd
- grim_load_descriptors, grim_data, 'limb', plane=plane
+ grim_load_descriptors, grim_data, 'LIMB', plane=plane
 
 
  ;---------------------------------------------------------
@@ -2030,12 +2103,16 @@ end
 ; grim_exit
 ;
 ;=============================================================================
-pro grim_exit, grim_data
+pro grim_exit, grim_data, grn=grn
 
-  if(NOT keyword_set(grim_data)) then grim_data = grim_get_data()
-  if(NOT keyword_set(grim_data)) then return
-  widget_control, grim_data.base, /destroy
+ if(NOT keyword_set(grim_data)) then grim_data = grim_get_data()
+ if(NOT defined(grn)) then grn = grim_data.grn
 
+ for i=0, n_elements(grn)-1 do $
+  begin
+   grim_data = grim_get_data(grn=grn[i])
+   if(keyword_set(grim_data)) then widget_control, grim_data.base, /destroy
+  end
 end
 ;=============================================================================
 
@@ -2254,7 +2331,7 @@ pro grim_update_xy_label, grim_data, plane, x, y
  ;- - - - - - - - - -  - - - 
  ; plot
  ;- - - - - - - - - -  - - - 
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    if((p[0] GE 0) AND (p[0] LT dim[1])) then $
  			     dn = dat_data(plane.dd, sample=[1,p[0]], /nd)
@@ -2319,7 +2396,7 @@ pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers, output_wn
 
  if(press NE 2) then return
 
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    xx = convert_coord(/data, /to_device,$
               [transpose(double(plane.xrange)), transpose(double(plane.yrange))])
@@ -2421,10 +2498,10 @@ end
 
 
 ;=============================================================================
-;+
+;
 ; FILE MENU
 ;	
-;-
+;
 ;=============================================================================
 
 
@@ -3763,10 +3840,10 @@ end
 
 
 ;=============================================================================
-;+
+;
 ; PLANE MENU
 ;	
-;-
+;
 ;=============================================================================
 
 
@@ -4318,7 +4395,7 @@ pro grim_menu_plane_coregister_event, event
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
  for i=0, n-1 do $
-   grim_load_descriptors, grim_data, class='camera', plane=planes[i], cd=cd
+   grim_load_descriptors, grim_data, class='CAMERA', plane=planes[i], cd=cd
  if(NOT keyword_set(cd[0])) then return 
 
 
@@ -4334,13 +4411,13 @@ pro grim_menu_plane_coregister_event, event
    begin
     dd[i] = planes[i].dd
     cd[i] = *planes[i].cd_p
-    bx[i] = (*planes[i].active_xd_p)[0]
+    bx[i] = (*planes[i].active_xd_p)[0]		; Is this a good assumption?
    end
 
  w = where(obj_valid(dd))
- if(w[0] EQ -1)then $
+ if(n_elements(w) LT 2) then $
   begin
-   grim_message, 'There are no active overlays.'
+   grim_message, 'There must be active overlays on at least two planes.'
    return
   end
 
@@ -4351,9 +4428,10 @@ pro grim_menu_plane_coregister_event, event
  ;------------------------------------------------
  ; recenter image
  ;------------------------------------------------
- nv_suspend_events
+; we don't want one event for every registration here....
+; nv_suspend_events;, /flush
  pg_coregister, dd, cd=cd, bx=bx
- nv_resume_events
+; nv_resume_events;, /flush
 
  grim_refresh, grim_data
 end
@@ -4565,7 +4643,6 @@ pro grim_menu_plane_propagate_tiepoints_help_event, event
 end
 ;----------------------------------------------------------------------------
 pro grim_menu_plane_propagate_tiepoints_event, event
-@mks.include
 
  widget_control, /hourglass
 
@@ -4583,13 +4660,13 @@ pro grim_menu_plane_propagate_tiepoints_event, event
  npts = n_elements(tie_pts)/2
  ii = grim_get_tiepoint_indices(grim_data, plane=plane)
 
- grim_load_descriptors, grim_data, class='camera', plane=plane, cd=cd
+ grim_load_descriptors, grim_data, class='CAMERA', plane=plane, cd=cd
  if(NOT keyword_set(cd[0])) then $ 
   begin
    grim_message, 'No camera descriptor!'
    return
   end
- grim_load_descriptors, grim_data, class='planet', plane=plane, pd=pd
+ grim_load_descriptors, grim_data, class='PLANET', plane=plane, pd=pd
  if(NOT keyword_set(pd[0])) then return
 
  cd = cd[0]
@@ -4609,11 +4686,11 @@ pro grim_menu_plane_propagate_tiepoints_event, event
  for i=0, nplanes-1 do $
   if(planes[i].pn NE pn) then $
    begin
-    grim_load_descriptors, grim_data, class='camera', plane=planes[i]
+    grim_load_descriptors, grim_data, class='CAMERA', plane=planes[i]
     cdi = (*planes[i].cd_p)[0]
     if(keyword_set(cdi)) then $
      begin
-      grim_load_descriptors, grim_data, class='planet', plane=planes[i]
+      grim_load_descriptors, grim_data, class='PLANET', plane=planes[i]
       w = where(cor_name(pd) EQ name)
       if(w[0] NE -1) then $
        begin
@@ -4998,10 +5075,10 @@ end
 
 
 ;=============================================================================
-;+
+;
 ; DATA MENU
 ;	
-;-
+;
 ;=============================================================================
 
 
@@ -5050,10 +5127,10 @@ end
 
 
 ;=============================================================================
-;+
+;
 ; VIEW MENU
 ;	
-;-
+;
 ;=============================================================================
 
 
@@ -6223,7 +6300,7 @@ end
 ;=============================================================================
 pro grim_menu_view_recenter_help_event, event
  text = ''
- nv_help, 'grim_menu_view_home_event', cap=text
+ nv_help, 'grim_menu_view_recenter_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -6262,7 +6339,7 @@ end
 ;=============================================================================
 pro grim_menu_view_apply_help_event, event
  text = ''
- nv_help, 'grim_menu_view_home_event', cap=text
+ nv_help, 'grim_menu_view_apply_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -6859,7 +6936,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Opens grim_colortool. 
+;	Opens gr_colortool. 
 ;
 ;
 ; CATEGORY:
@@ -6889,10 +6966,10 @@ end
 
 
 ;=============================================================================
-;+
+;
 ; OVERLAYS MENU
 ;	
-;-
+;
 ;=============================================================================
 
 
@@ -6932,7 +7009,7 @@ pro grim_menu_points_planet_centers_event, event
  ;------------------------------------------------
  ; load descriptors and compute centers
  ;------------------------------------------------
- grim_overlay, grim_data, 'planet_center'
+ grim_overlay, grim_data, 'PLANET_CENTER'
 ; grim_planet_centers, grim_data
 
  ;------------------------------------------------
@@ -6981,7 +7058,7 @@ pro grim_menu_points_limbs_event, event
  ;------------------------------------------------
  ; load descriptors and compute limbs
  ;------------------------------------------------
- grim_overlay, grim_data, 'limb'
+ grim_overlay, grim_data, 'LIMB'
 ; grim_limbs, grim_data
 
  ;------------------------------------------------
@@ -7031,7 +7108,7 @@ pro grim_menu_points_terminators_event, event
  ;------------------------------------------------
  ; load descriptors and compute terminators
  ;------------------------------------------------
- grim_overlay, grim_data, 'terminator'
+ grim_overlay, grim_data, 'TERMINATOR'
 ; grim_terminators, grim_data
 
  ;------------------------------------------------
@@ -7081,7 +7158,7 @@ pro grim_menu_points_planet_grids_event, event
  ;------------------------------------------------
  ; load descriptors and compute planet grids
  ;------------------------------------------------
- grim_overlay, grim_data, 'planet_grid'
+ grim_overlay, grim_data, 'PLANET_GRID'
 ; grim_planet_grids, grim_data
 
  ;------------------------------------------------
@@ -7130,7 +7207,7 @@ pro grim_menu_points_rings_event, event
  ;------------------------------------------------
  ; load descriptors and compute rings
  ;------------------------------------------------
- grim_overlay, grim_data, 'ring'
+ grim_overlay, grim_data, 'RING'
 ;grim_rings, grim_data
 
  ;------------------------------------------------
@@ -7182,7 +7259,7 @@ pro grim_menu_points_ring_grids_event, event
  ;------------------------------------------------
  ; load descriptors and compute planet grids
  ;------------------------------------------------
- grim_overlay, grim_data, 'ring_grid'
+ grim_overlay, grim_data, 'RING_GRID'
 
  ;------------------------------------------------
  ; draw planet grids
@@ -7231,7 +7308,7 @@ pro grim_menu_points_stations_event, event
  ;------------------------------------------------
  ; load descriptors and compute planet grids
  ;------------------------------------------------
- grim_overlay, grim_data, 'station'
+ grim_overlay, grim_data, 'STATION'
 
  ;------------------------------------------------
  ; draw stations
@@ -7279,7 +7356,7 @@ pro grim_menu_points_arrays_event, event
  ;------------------------------------------------
  ; load descriptors and compute planet grids
  ;------------------------------------------------
- grim_overlay, grim_data, 'array'
+ grim_overlay, grim_data, 'ARRAY'
 
  ;------------------------------------------------
  ; draw arrays
@@ -7326,7 +7403,7 @@ pro grim_menu_points_stars_event, event
  ;------------------------------------------------
  ; load descriptors and compute stars
  ;------------------------------------------------
- grim_overlay, grim_data, 'star'
+ grim_overlay, grim_data, 'STAR'
 
  ;------------------------------------------------
  ; draw stars
@@ -7378,7 +7455,7 @@ pro grim_menu_points_shadows_event, event
  ;------------------------------------------------
  ; load descriptors and compute shadows
  ;------------------------------------------------
- grim_overlay, grim_data, 'shadow'
+ grim_overlay, grim_data, 'SHADOW'
 ;grim_shadows, grim_data
 
  ;------------------------------------------------
@@ -7431,7 +7508,7 @@ pro grim_menu_points_reflections_event, event
  ;------------------------------------------------
  ; load descriptors and compute reflections
  ;------------------------------------------------
- grim_overlay, grim_data, 'reflection'
+ grim_overlay, grim_data, 'REFLECTION'
 ;grim_reflections, grim_data
 
  ;------------------------------------------------
@@ -8900,7 +8977,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\---------------------\*grim_menu_delim_event', $ 
            '0\Render               \grim_menu_render_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
-           '0\Colors               \*grim_menu_view_colors_event', $ 
+           '0\Color Tables         \*grim_menu_view_colors_event', $ 
            '2\<null>               \+*grim_menu_delim_event', $
 
           '+*1\Overlays' ,$
@@ -9009,7 +9086,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
  if(grim_data.retain GT 0) then retain = grim_data.retain
 
  map = grim_test_map(grim_data)
- plot = grim_data.type EQ 'plot'
+ plot = grim_data.type EQ 'PLOT'
  beta = grim_data.beta
 
  ;-----------------------------------------
@@ -9018,7 +9095,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
  grim_data.base = widget_base(mbar=mbar, /col, /tlb_size_events, $
                           resource_name='grim_base', rname_mbar='grim_mbar')
  grim_data.mbar = mbar
- grim_data.grnum = grim_top_to_grnum(grim_data.base, /new)
+ grim_data.grn = grim_top_to_grn(grim_data.base, /new)
 
  menu_desc = grim_menu_desc(cursor_modes=cursor_modes)
  for i=0, n_elements(menu_extensions)-1 do $
@@ -9458,6 +9535,7 @@ end
 ;=============================================================================
 pro grim_initial_framing, grim_data, frame, delay_overlays=delay_overlays
 
+ frame = strupcase(frame)
  z = 1d100
 
  if(keyword_set(delay_overlays)) then planes = grim_get_plane(grim_data) $
@@ -9501,8 +9579,6 @@ end
 pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
     only=only, temp=temp, ptd=ptd
 
- widget_control, /hourglass
-
  if(keyword_set(plane)) then planes = plane $
  else planes = grim_get_plane(grim_data, /all)
  nplanes = n_elements(planes)
@@ -9518,7 +9594,9 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
 
    if(keyword_set(overlays)) then $
     begin
-     ;---------------------------------------------------------------------
+     widget_control, /hourglass
+
+    ;---------------------------------------------------------------------
      ; clear overlays so they are not computed again for this plane
      ;---------------------------------------------------------------------
      *planes[j].initial_overlays_p = ''
@@ -9587,7 +9665,7 @@ end
 ; grim_get_arg
 ;
 ;=============================================================================
-pro grim_get_arg, arg, dd=dd, grnum=grnum, extensions=extensions
+pro grim_get_arg, arg, dd=dd, grn=grn, extensions=extensions
 
  if(NOT keyword_set(arg)) then return
 
@@ -9614,11 +9692,11 @@ pro grim_get_arg, arg, dd=dd, grnum=grnum, extensions=extensions
   end
 
  ;------------------------------------------------
- ; scalar arg is grnum
+ ; scalar arg is grn
  ;------------------------------------------------
  if((ndim EQ 1) AND (dim[0] EQ 0)) then $
   begin
-   grnum = arg
+   grn = arg
    return
   end
 
@@ -9648,20 +9726,36 @@ end
 ; Possible arguments to GRIM:
 ; 	dd (object)
 ; 	filename (string)
-; 	grnum (scalar)
+; 	grn (scalar)
 ; 	image (2d array)
 ; 	plot (1d array)
 ; 	cube (3d array)
 ;
 ;=============================================================================
-pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist=nhist, $
-               maintain=maintain, compress=compress, extensions=extensions, rgb=rgb
+pro grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, xzero=xzero, $
+               maintain=maintain, compress=compress, nhist=nhist, $
+               overlays=overlays, extensions=extensions, rgb=rgb
 
  ;--------------------------------------------
  ; build data descriptors list 
  ;--------------------------------------------
- grim_get_arg, arg1, dd=_dd, grnum=grnum, extensions=extensions
- grim_get_arg, arg2, dd=_dd, grnum=grnum, extensions=extensions
+ grim_get_arg, arg1, dd=_dd, grn=grn, extensions=extensions
+ grim_get_arg, arg2, dd=_dd, grn=grn, extensions=extensions
+
+
+ ;--------------------------------------------
+ ; if no data descriptors, create one 
+ ;--------------------------------------------
+ if(keyword_set(overlays)) then $
+  begin
+   overlays = strupcase(overlays)
+
+;   if(NOT keyword_set(_dd)) then $
+;    begin
+;     pg_sort_args, dd, trs=trs, keyvals
+;    end
+
+  end
 
 
  ;--------------------------------------------
@@ -9699,12 +9793,12 @@ pro grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, xzero=xzero, nhist
  ;-------------------------------------------------------------------
  ; all dd assumed to have same type as first one; default is image
  ;-------------------------------------------------------------------
- type = 'image'
+ type = 'IMAGE'
  if(keyword_set(dd)) then $
   begin 
    dim = dat_dim(dd[0])
-   if(n_elements(dim) EQ 1) then type = 'plot'
-   if(dim[0] EQ 2) then type = 'plot'
+   if(n_elements(dim) EQ 1) then type = 'PLOT'
+   if(dim[0] EQ 2) then type = 'PLOT'
   end
 
 
@@ -9745,24 +9839,26 @@ end
 ; grim
 ;
 ;=============================================================================
-pro grim, arg1, arg2, gd=gd, _extra=keyvals, $
-        cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=od, $
-	new=new, xsize=xsize, ysize=ysize, $
+;=============================================================================
+pro grim, arg1, arg2, _extra=keyvals, $
+        cd=_cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=_od, $
+	new=new, xsize=xsize, ysize=ysize, no_refresh=no_refresh, $
 	default=default, previous=previous, restore=restore, activate=activate, $
 	doffset=doffset, no_erase=no_erase, filter=filter, rgb=rgb, visibility=visibility, channel=channel, exit=exit, $
-	zoom=zoom, rotate=rotate, order=order, offset=offset, retain=retain, maintain=maintain, $
+	zoom=zoom, rotate=rotate, order=order, offset=offset, retain=retain, $
+        gd=gd, nhist=nhist, compress=compress, maintain=maintain, $
 	mode_init=mode_init, modal=modal, xzero=xzero, frame=frame, $
 	refresh_callbacks=refresh_callbacks, refresh_callback_data_ps=refresh_callback_data_ps, $
 	plane_callbacks=plane_callbacks, plane_callback_data_ps=plane_callback_data_ps, $
-	nhist=nhist, compress=compress, path=path, symsize=symsize, $
+	max=max, path=path, symsize=symsize, $
 	user_psym=user_psym, workdir=workdir, mode_args=mode_args, $
         save_path=save_path, load_path=load_path, overlays=overlays, pn=pn, $
 	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
 	menu_extensions=menu_extensions, button_extensions=button_extensions, $
-	arg_extensions=arg_extensions, loadct=loadct, max=max, grnum=grnum, $
+	arg_extensions=arg_extensions, loadct=loadct, grn=grn, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, $
-        sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_dd=assoc_dd, $
+        sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_xd=assoc_xd, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
@@ -9776,16 +9872,14 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  if(keyword_set(exit)) then $
   begin
-   grim_exit
+   grim_exit, grn=grn
    return
   end
 
  grim_constants
 
  grim_rc_settings, rcfile='.ominas/grimrc', keyvals=keyvals, $
-	cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
-	str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
-	sun_select=sun_select, cmd=cmd, $
+	cmd=cmd, $
 	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
@@ -9879,9 +9973,9 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;=========================================================
  ; resolve arguments
  ;=========================================================
- grim_get_args, arg1, arg2, dd=dd, grnum=grnum, type=type, $
+ grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, $
              nhist=nhist, maintain=maintain, compress=compress, $
-             extensions=extensions, rgb=rgb
+             overlays=overlays, extensions=extensions, rgb=rgb
 
 ; if(keyword_set(rendering)) then ....
 
@@ -9889,12 +9983,12 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
  if(NOT keyword_set(mode_init)) then $
   begin
-   if(type EQ 'plot') then mode_init = 'grim_mode_zoom_plot' $
+   if(type EQ 'PLOT') then mode_init = 'grim_mode_zoom_plot' $
    else mode_init = 'grim_mode_activate'
   end
 
 
- if(type EQ 'plot') then $
+ if(type EQ 'PLOT') then $
   begin
    if(NOT keyword_set(xsize)) then xsize = 500
    if(NOT keyword_set(ysize)) then ysize = 500
@@ -9931,7 +10025,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;----------------------------------------------
    ; initialize data structure and common block
    ;----------------------------------------------
-   grim_data = grim_init(dd, dd0=dd0, zoom=zoom, wnum=wnum, grnum=grnum, type=type, $
+   grim_data = grim_init(dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, type=type, $
        filter=filter, retain=retain, user_callbacks=user_callbacks, $
        user_psym=user_psym, path=path, save_path=save_path, load_path=load_path, $
        cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
@@ -9941,7 +10035,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
        symsize=symsize, nhist=nhist, maintain=maintain, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
-       visibility=visibility, channel=channel, $
+       visibility=visibility, channel=channel, keyvals=keyvals, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
        render_pht_min=render_pht_min, overlays=overlays, activate=activate)
 
@@ -9956,14 +10050,14 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;-----------------------------
    ; widgets
    ;-----------------------------
-   if(type NE 'plot') then grim_get_window_size, grim_data, xsize=xsize, ysize=ysize
+   if(type NE 'PLOT') then grim_get_window_size, grim_data, xsize=xsize, ysize=ysize
    grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes, $
          menu_fname=menu_fname, menu_extensions=menu_extensions
 
-   grnum = grim_data.grnum 
+   grn = grim_data.grn 
 
    planes = grim_get_plane(grim_data, /all)
-   for i=0, n_elements(planes)-1 do planes[i].grnum = grnum
+   for i=0, n_elements(planes)-1 do planes[i].grn = grn
    grim_set_plane, grim_data, planes
 
    grim_set_mode, grim_data, mode_init, /init
@@ -9999,66 +10093,90 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;======================================================================
  ; change to new window if specified
  ;======================================================================
- if(defined(grnum)) then $
+ if(defined(grn)) then $
   begin
-   grim_data = grim_get_data(grnum=grnum)
+   grim_data = grim_get_data(grn=grn)
    grim_wset, grim_data
   end
 
 
+ ;===========================================================================
+ ; Update descriptors if any given
+ ;  To sort descriptors into their appropriate planes, gds are compared 
+ ;  to planes.dd, or to assoc_xd if given.  If cd is a MAP, then descriptors
+ ;  are sorted by od, if given.  Note that cd and od are not sorted; there 
+ ;  must either be one given for each, or a single descriptor given, which 
+ ;  is applied to the current plane.
+ ;===========================================================================
+ if(NOT keyword_set(_cd)) then _cd = dat_gd(gd, dd=dd, /cd)
+ if(NOT keyword_set(_od)) then _od = dat_gd(gd, dd=dd, /od)
 
-
- ;======================================================================
- ; update descriptors if any given
- ;  If one plane, then descriptors all go to that plane; in that case
- ;   only one cd, od, sund are allowed
- ;  If multiple planes, descriptors are sorted using gd dd's
- ;  If assoc_dd given as argument, use those instead.  
- ;   In that case, if a map descriptor given, associate cd with dd
- ;   instead of assoc_dd since dd will be the corresponding map.
- ;  If a cube, cd and od are assigned to planes one-to-one, and all other
- ;  descriptors are assigned to all planes
- ;======================================================================
- if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(pd)) then pd = dat_gd(gd, dd=dd, /pd)
  if(NOT keyword_set(rd)) then rd = dat_gd(gd, dd=dd, /rd)
  if(NOT keyword_set(sd)) then sd = dat_gd(gd, dd=dd, /sd)
  if(NOT keyword_set(std)) then std = dat_gd(gd, dd=dd, /std)
  if(NOT keyword_set(ard)) then ard = dat_gd(gd, dd=dd, /ard)
  if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
- if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  grim_data = grim_get_data()
+ plane = grim_get_plane(grim_data)
  planes = grim_get_plane(grim_data, /all)
  nplanes = n_elements(planes)
 
+ _assoc_xd = planes.dd
+ if(keyword_set(assoc_xd)) then _assoc_xd = assoc_xd
+
+ ;------------------------------------------------------------
+ ; must be either one cd or one per plane...
+ ;------------------------------------------------------------
+ if(keyword_set(_cd)) then $
+  begin
+   ncd = n_elements(_cd)
+   cd = objarr(nplanes)
+   if(ncd EQ 1) then cd[plane.pn] = _cd $
+   else if(ncd EQ nplanes) then cd = _cd $
+   else nv_message, 'One camera descriptor or one per plane required.'
+  end
+
+ ;------------------------------------------------------------
+ ; must be either one od or one per plane...
+ ;------------------------------------------------------------
+ if(keyword_set(_od)) then $
+  begin
+   nod = n_elements(_od)
+   od = objarr(nplanes)
+   if(nod EQ 1) then od[plane.pn] = _od $
+   else if(nod EQ nplanes) then od = _od $
+   else nv_message, 'One observer descriptor or one per plane required.'
+  end
+
+ ;------------------------------------------------------------
+ ; If cd is a map, the sort against od
+ ;------------------------------------------------------------
+ if(keyword_set(cd)) then $
+  begin
+   w = where(cor_class(cd) EQ 'MAP')
+   if(w[0] NE -1) then $
+     if(keyword_set(od)) then _assoc_xd[w] = od
+  end
+
+ ;------------------------------------------------------------
+ ; Sort inputs
+ ;------------------------------------------------------------
  for i=0, nplanes-1 do $
   begin
-   _assoc_dd = 0
-   if(nplanes NE 1) then _assoc_dd = planes[i].dd
-   if(keyword_set(assoc_dd)) then _assoc_dd = assoc_dd[i]
-
-   if(keyword_set(pd)) then $
-	 grim_add_descriptor, grim_data, planes[i].pd_p, pd, assoc_dd=_assoc_dd
-   if(keyword_set(rd)) then $
-	 grim_add_descriptor, grim_data, planes[i].rd_p, rd, assoc_dd=_assoc_dd
-   if(keyword_set(std)) then $
-	 grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_dd=_assoc_dd
-   if(keyword_set(ard)) then $
-	 grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_dd=_assoc_dd
-   if(keyword_set(sd)) then $
-	 grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_dd=_assoc_dd
-   if(keyword_set(sund)) then $
-	 grim_add_descriptor, grim_data, planes[i].sund_p, sund[i], /one, assoc_dd=_assoc_dd
    if(keyword_set(od)) then $
-     grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister, assoc_dd=_assoc_dd
-
+      grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister
    if(keyword_set(cd)) then $
-    begin
-     if(keyword_set(_assoc_dd)) then $
-       if(cor_class(cd[i]) EQ 'MAP') then _assoc_dd = planes[i].dd
-     grim_add_descriptor, grim_data, planes[i].cd_p, cd[i], /one, assoc_dd=_assoc_dd
-    end
+      grim_add_descriptor, grim_data, planes[i].cd_p, cd[i], /one
+
+   grim_add_descriptor, grim_data, planes[i].pd_p, pd, assoc_xd=_assoc_xd[i]
+   grim_add_descriptor, grim_data, planes[i].rd_p, rd, assoc_xd=_assoc_xd[i]
+   grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_xd=_assoc_xd[i]
+   grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_xd=_assoc_xd[i]
+   grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd[i]
+;--   grim_add_descriptor, grim_data, planes[i].sd_p, sund, assoc_xd=_assoc_xd[i]
+   grim_add_descriptor, grim_data, planes[i].sund_p, sund, /one, assoc_xd=_assoc_xd[i]
   end
 
 
@@ -10072,12 +10190,12 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;----------------------------------------------
    ; sampling
    ;----------------------------------------------
-   if(type NE 'plot') then $
+   if(type NE 'PLOT') then $
       for i=0, nplanes-1 do $
          dat_set_sampling_fn, planes[i].dd, 'grim_sampling_fn', /noevent
 
    entire = 1 & default = 0
-   if(type EQ 'plot') then $
+   if(type EQ 'PLOT') then $
     begin
      entire = 0 & default = 1
     end
@@ -10086,7 +10204,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ; initial settings
    ;----------------------------------------------
    widget_control, grim_data.draw, /hourglass
-   grim_refresh, grim_data, default=default, entire=entire, $
+   if(NOT keyword_set(no_refresh)) then $
+     grim_refresh, grim_data, default=default, entire=entire, $
 	xsize=xsize, ysize=ysize, $
 	xrange=planes[0].xrange, yrange=planes[0].yrange, $
 	zoom=zoom, $
@@ -10102,7 +10221,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_data = grim_get_data()
 
    widget_control, grim_data.draw, /hourglass
-   grim_refresh, grim_data, $
+   if(NOT keyword_set(no_refresh)) then $
+     grim_refresh, grim_data, $
 	default=default, previous=previous, restore=restore, $
 	doffset=doffset, $
 	zoom=zoom, $
@@ -10199,7 +10319,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ;-------------------------
  ; draw initial image
  ;-------------------------
- grim_refresh, grim_data, no_erase=no_erase
+ if(NOT keyword_set(no_refresh)) then grim_refresh, grim_data, no_erase=no_erase
 
 
  ;----------------------------------------------

@@ -68,10 +68,10 @@
 ; grmt_get_md
 ;
 ;=============================================================================
-function grmt_get_md, data, type, index=index
+function grmt_get_md, data, projection, index=index
 
- types = map_type(data.mds)
- w = where(types EQ strupcase(type))
+ projections = map_projection(data.mds)
+ w = where(projections EQ strupcase(projection))
  index = w[0]
 
  return, data.mds[index]
@@ -86,7 +86,8 @@ end
 ;=============================================================================
 pro grmt_create_map, data, md
 
- ingrid, dd=dd, cd=cd, sund=sund, active_pd=pd, active_rd=rd, pd=all_pd
+ grift, dd=dd, cd=cd, sund=sund, pd=all_pd
+ grift, /active, pd=pd, rd=rd
  class = cor_udata(md, 'CLASS')
  
  if(NOT keyword__set(cd)) then $
@@ -113,7 +114,7 @@ pro grmt_create_map, data, md
 	 if(keyword_set(rd)) then $
 	  begin
 	   hide_fn = 'pm_hide_ring'
-           hide_data_p = nv_ptr_new(rd)
+           hide_bx = rd
 	  end
 
 	 if(keyword_set(pd)) then $
@@ -136,7 +137,7 @@ pro grmt_create_map, data, md
                     cd=cd, $
                     sund=sund, $
                     gbx=gbx, aux=['EMM'], $
-                    hide_fn=hide_fn, hide_data_p=hide_data_p)
+                    hide_fn=hide_fn, hide_bx=hide_bx)
 	end
 
   'DISK' : $
@@ -163,7 +164,7 @@ pro grmt_create_map, data, md
                     cd=cd, $
                     sund=sund, $
                     gbx=all_pd, $
-                    hide_fn=hide_fn, hide_data_p=hide_data_p)
+                    hide_fn=hide_fn, hide_bx=hide_bx)
 
 	 map_rd = rd[0]
 	end
@@ -177,7 +178,7 @@ pro grmt_create_map, data, md
  if(cor_class(cd) NE 'MAP') then od = cd
  grim, /new, dd_map, cd=md, od=od, sund=sund, pd=map_pd, rd=map_rd, $
               /tiepoint_sync, /curve_sync, order=1-data.order, $
-              title=map_type(md) + ' ' + cor_name(dd)
+              title=map_projection(md) + ' ' + cor_name(dd)
 
 
 end
@@ -227,7 +228,7 @@ end
 ; grmt_form_to_md
 ;
 ;=============================================================================
-function grmt_form_to_md, data, type=type
+function grmt_form_to_md, data, projection=projection
 
  class = strupcase(data.classes[ $
                grmt_parse_entry(data.ids, data.tags, 'CLASS', /drop)])
@@ -242,21 +243,19 @@ function grmt_form_to_md, data, type=type
  if(class EQ 'DISK') then center[1] = center[1] * !dpi/180d $
  else center = center * !dpi/180d
 
- if(NOT keyword__set(type)) then $
+ if(NOT keyword__set(projection)) then $
   begin
-   type_index = long(grmt_parse_entry(data.ids, data.tags, 'TYPE', /drop))
-   type = strupcase(data.types[type_index])
+   projection_index = long(grmt_parse_entry(data.ids, data.tags, 'PROJECTION', /drop))
+   projection = strupcase(data.projections[projection_index])
   end
 
- ingrid, dd=dd
  md = map_create_descriptors(1, $
-		type=type, $
+		projection=projection, $
 		size=size, $
 		scale=scale, $
 		origin=origin, $
 		units=units, $
-		center=center, $
-		gd=dd)
+		center=center)
 
  cor_set_udata, md, 'CLASS', class
 
@@ -284,10 +283,10 @@ pro grmt_md_to_form, data, md
  center = strtrim(map_center(md) * 180d/!dpi, 2)
  grmt_set_entry, data.ids, data.tags, 'CENTER', strmid(center, 0, 6)
 
- type_index = (where(strupcase(data.types) EQ map_type(md)))[0]
- grmt_set_entry, data.ids, data.tags, 'TYPE', type_index, /drop
+ projection_index = (where(strupcase(data.projections) EQ map_projection(md)))[0]
+ grmt_set_entry, data.ids, data.tags, 'PROJECTION', projection_index, /drop
 
- data.last_type = data.types[type_index]
+ data.last_projection = data.projections[projection_index]
  widget_control, data.base, set_uvalue=data
 
 end
@@ -327,7 +326,8 @@ pro grmt_refresh_callback, data_p
  if(NOT widget_info(data.ids[w1], /valid_id)) then return
  if(NOT widget_info(data.ids[w2], /valid_id)) then return
 
- ingrid, dd=dd, cd=cd, sund=sund, active_pd=pd, active_rd=rd
+ grift, dd=dd, cd=cd, sund=sund
+ grift, /active, pd=pd, rd=rd
 
  if((NOT keyword__set(cd)) OR $
     (NOT keyword__set(pd)) OR $
@@ -366,11 +366,11 @@ pro gr_maptool_event, event
  widget_control, event.id, get_value=value
 
  ;-----------------------------------------------
- ; get tag names, widget ids, and types
+ ; get tag names, widget ids, and projections
  ;-----------------------------------------------
  tags = data.tags
  ids = data.ids
- types = data.types
+ projections = data.projections
 
  case event.tag of
   ;---------------------------------------------------------
@@ -397,7 +397,7 @@ pro gr_maptool_event, event
 
 
 ;		 md = map_create_descriptors(1, $
-;;			type=type, $
+;;			projection=projection, $
 ;;			size=size, $
 ;			scale=scale, $
 ;;			origin=origin, $
@@ -441,18 +441,18 @@ pro gr_maptool_event, event
 	end
 
   ;---------------------------------------------------------------
-  ; Projection type --
+  ; Projection --
   ;  Save the current setting in the appropriate map descriptor
   ;  and restore the displayed settings to those of the new map 
   ;  descriptor.
   ;---------------------------------------------------------------
-  'TYPE' : $
+  'PROJECTION' : $
 	begin
-	 md_form = grmt_form_to_md(data, type=data.last_type)
-	 md = grmt_get_md(data, data.last_type, index=index)
+	 md_form = grmt_form_to_md(data, projection=data.last_projection)
+	 md = grmt_get_md(data, data.last_projection, index=index)
 	 nv_copy, md, md_form
 
-	 md = grmt_get_md(data, types[value.type])
+	 md = grmt_get_md(data, projections[value.projection])
          grmt_md_to_form, data, md
 
 	 widget_control, base, set_uvalue=data
@@ -491,7 +491,7 @@ pro gr_maptool, order=order
  ;-----------------------------------------------
  ; setup map form widget
  ;-----------------------------------------------
- base = widget_base(title = 'Map projection', group=top)
+ base = widget_base(title = 'GRIM Map projection', group=top)
 
  classes = ['Globe', $
             'Disk']
@@ -499,23 +499,23 @@ pro gr_maptool, order=order
  dl_classes = classes[0]
  for i=1, nclasses-1 do dl_classes = dl_classes + '|' + classes[i]
 
- types = ['Rectangular', $
+ projections = ['Rectangular', $
           'Mercator', $
           'Orthographic', $
           'Stereographic'];, $
 ;          'Sinusoidal', $
 ;          'Mollweide', $
 ;          'Oblique Disk']
- ntypes = n_elements(types)
- dl_types = types[0]
- for i=1, ntypes-1 do dl_types = dl_types + '|' + types[i]
+ nprojections = n_elements(projections)
+ dl_projections = projections[0]
+ for i=1, nprojections-1 do dl_projections = dl_projections + '|' + projections[i]
 
  desc = [ $
 	'1, BASE,, COLUMN, FRAME', $
 	  '0, DROPLIST,' + dl_classes + ',SET_VALUE=0' + $
 	           ',LABEL_LEFT=Class            :, TAG=class', $
-	  '0, DROPLIST,' + dl_types + ',SET_VALUE=0' + $
-	           ',LABEL_LEFT=Projection       :, TAG=type', $
+	  '0, DROPLIST,' + dl_projections + ',SET_VALUE=0' + $
+	           ',LABEL_LEFT=Projection       :, TAG=projection', $
 	  '0, TEXT,, LABEL_LEFT=Size             :   , WIDTH=20, TAG=size', $
 	    '1, BASE,, ROW, FRAME', $
 	    '2, BUTTON, Auto,, TAG=auto', $
@@ -530,7 +530,7 @@ pro gr_maptool, order=order
 	  '2, BUTTON, Close, QUIT, TAG=close']
 
  form = cw__form(base, desc, ids=ids, tags=tags)
- widget_control, form, set_uvalue={ids:ids, tags:tags, types:types}
+ widget_control, form, set_uvalue={ids:ids, tags:tags, projections:projections}
 
 
  ;-----------------------------------------------
@@ -544,41 +544,41 @@ pro gr_maptool, order=order
 		form		:	form, $
 		ids		:	ids, $
 		tags		:	tags, $
-		types		:	types, $
+		projections	:	projections, $
 		classes		:	classes, $
 		order		:	order, $
 	;---------------
 	; book keeping
 	;---------------
-		last_type	:	'', $
+		last_projection	:	'', $
 		cb_data_p	:	nv_ptr_new(), $
 	;-----------------------------
 	; default map descriptors
 	;-----------------------------
 		mds 		:	[ map_create_descriptors(1,$
-					   type='RECTANGULAR', $
+					   projection='RECTANGULAR', $
 					   size = [800,400]), $
 					  map_create_descriptors(1,$
-					   type='MERCATOR', $
+					   projection='MERCATOR', $
 					   size = [800,400]), $
 					  map_create_descriptors(1,$
-					   type='ORTHOGRAPHIC', $
+					   projection='ORTHOGRAPHIC', $
 					   size = [400,400]), $
 					  map_create_descriptors(1,$
-					   type='STEREOGRAPHIC', $
+					   projection='STEREOGRAPHIC', $
 					   size = [400,400])   ]$;, $
 ;					  map_create_descriptors(1,$
-;					   type='SINUSOIDAL', $
+;					   projection='SINUSOIDAL', $
 ;					   size = [800,400]), $
 ;					  map_create_descriptors(1,$
-;					   type='MOLLWEIDE', $
+;					   projection='MOLLWEIDE', $
 ;					   size = [800,400]), $
 ;					  map_create_descriptors(1,$
-;					   type='OBLIQUE_DISK', $
+;					   projection='OBLIQUE_DISK', $
 ;					   size = [400,400]) ] $ 
 	     }
 
- data.types = map_type(data.mds)
+ data.projections = map_projection(data.mds)
  widget_control, base, set_uvalue=data
 
  data.cb_data_p = nv_ptr_new(data)

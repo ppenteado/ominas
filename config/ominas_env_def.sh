@@ -49,6 +49,7 @@ if [ "${DFLAG}" = 'true' ]; then
     export NV_TRANSFORMS=${NV_TRANSFORMS}:${OMINAS_DEMO}/data/transforms.tab
     export NV_SPICE_KER=${NV_SPICE_KER}:${OMINAS_DEMO}/data
     export NV_INS_DETECT=${NV_INS_DETECT}:${OMINAS_DEMO}/data/instrument_detectors.tab
+    export NV_SAO_DATA=$OMINAS_DIR/demo/data/
     
     #-----------------------------------------------------------------------------------#
     # 	These variables point to the directories containing the SPICE kernels	    	#
@@ -106,5 +107,5 @@ export NV_ORBIT_DATA=$OMINAS_DIR/config/orb/
 # This variable points to the location of the station catalogs, which are
 # provided in the default OMINAS installation.
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
-export NV_STATION_DATA=$OMINAS_DIR/config/stn/
+export NV_STATION_DATA=$OMINAS_DIR/config/stn/dat/
 

@@ -1,9 +1,91 @@
-;===========================================================================
-; pg_select_bodies
+;=============================================================================
+;+
+; NAME:
+;	pg_select_bodies
 ;
 ;
-;===========================================================================
-function pg_select_bodies, dd, bx, od=od, select
+; PURPOSE:
+;	Selects bodies based on given criteria.  
+;
+;
+; CATEGORY:
+;	NV/PG
+;
+;
+; CALLING SEQUENCE:
+;	result = pg_select_bodies(bx, keyvals, od=od)
+;
+;
+; ARGUMENTS:
+;  INPUT:
+;	bx:		Array of descriptors.
+;
+;	keyvals:	Structure containing the seletion keywords and values.
+;
+;	prefix:		Optional prefix for descriptor select keywords.  If
+;			given, a keyword is matched without or without the 
+;			prefix (including a '_'), and the prefixed version
+;			takes precedence.
+;
+;  OUTPUT: NONE
+;
+;
+; KEYWORDS:
+;  INPUT:
+;	od:		Observer descriptor; some selections require a
+;			CAMERA, others will work with any subclass of BODY.
+;			
+;	Descriptor Select Keywords
+;	--------------------------
+;	Descriptor select keywords are combined with OR logic.  
+;
+;	  fov/cov:	Select all planets that fall within this many fields of
+;			view (fov) (+/- 10%) from the center of view (cov).
+;			Default cov is the camera optic axis.
+;
+;	  pix:		Select all planets whose apparent size (in pixels) is 
+;			greater than or equal to this value.
+;
+;	  radmax:	Select all planets whose radius is greater than or 
+;			equal to this value.
+;
+;	  radmin:	Select all planets whose radius is less than or 
+;			equal to this value.
+;
+;	  distmax:	Select all planets whose distance is greater than or 
+;			equal to this value.
+;
+;	  distmin:	Select all planets whose distance is less than or 
+;			equal to this value.
+;
+;	  *nlarge:	Select n largest planets.
+;
+;	  *nsmall:	Select n smallest planets.
+;
+;	  *nclose:	Select n closst planets.
+;
+;	  *nfar:	Select n farthest planets.
+;
+;
+; RETURN:
+;	Array of subscripts for the descriptors in bx corresponding to the 
+;	specified criteria.  !null if no selection criteria were applied.
+;
+;
+; SEE ALSO:
+; 	pg_cull_bodies
+;
+;
+; STATUS:
+;	Starred keywords are not yet implemented.
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2017
+;	
+;-
+;=============================================================================
+function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
 
  n = n_elements(bx)
  if(cor_class(od) EQ 'CAMERA') then cd = od
@@ -21,7 +103,7 @@ function pg_select_bodies, dd, bx, od=od, select
    cam_scale = min(cam_scale(cd))
    cam_size = cam_size(cd)
 
-   cov = struct_get(select, 'cov')
+   cov = extra_value(keyvals, 'cov', prefix)
    if(NOT keyword_set(cov)) then cov = cam_oaxis(cd)
    cov = cov#make_array(n,val=1d)
 
@@ -35,7 +117,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;----------------------------------------------------------------------------- 
  ; fov -- select all bodies that fall within this many fovs (+/- 10%)
  ;-----------------------------------------------------------------------------
- fov = struct_get(select, 'fov')
+ fov = extra_value(keyvals, 'fov', prefix)
  if(keyword_set(fov)) then $
   if(keyword_set(cd)) then $
    begin
@@ -50,7 +132,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;---------------------------------------------------------------------------- 
  ; pix -- select all bodies whose apparent size (in pixels) is GE this value
  ;----------------------------------------------------------------------------
- pix = struct_get(select, 'pix')
+ pix = extra_value(keyvals, 'pix', prefix)
  if(keyword_set(pix)) then $
   if(keyword_set(cd)) then $
    begin
@@ -62,7 +144,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;------------------------------------------------------------------------ 
  ; radmax -- select all bodies whose radius is GE this value
  ;------------------------------------------------------------------------
- radmax = struct_get(select, 'radmax')
+ radmax = extra_value(keyvals, 'radmax', prefix)
  if(keyword_set(radmax)) then $
   begin
    radmax = double(radmax[0])
@@ -73,7 +155,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;------------------------------------------------------------------------ 
  ; radmin -- select all bodies whose radius is LE this value
  ;------------------------------------------------------------------------
- radmin = struct_get(select, 'radmin')
+ radmin = extra_value(keyvals, 'radmin', prefix)
  if(keyword_set(radmin)) then $
   begin
    radmin = double(radmin[0])
@@ -84,7 +166,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;------------------------------------------------------------------------ 
  ; distmax -- select all bodies whose distance is GE this value
  ;------------------------------------------------------------------------
- distmax = struct_get(select, 'distmax')
+ distmax = extra_value(keyvals, 'distmax', prefix)
  if(keyword_set(distmax)) then $
   if(keyword_set(cd)) then $
    begin
@@ -96,7 +178,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;------------------------------------------------------------------------ 
  ; distmin -- select all bodies whose distance is LE this value
  ;------------------------------------------------------------------------
- distmin = struct_get(select, 'distmin')
+ distmin = extra_value(keyvals, 'distmin', prefix)
  if(keyword_set(distmin)) then $
   if(keyword_set(cd)) then $
    begin
@@ -108,7 +190,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;------------------------------------------------------------------------ 
  ; nlarge -- select n largest bodies
  ;------------------------------------------------------------------------
- nlarge = struct_get(select, 'nlarge')
+ nlarge = extra_value(keyvals, 'nlarge', prefix)
  if(keyword_set(nlarge)) then $
   begin
     nlarge = long(nlarge[0])
@@ -119,7 +201,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;------------------------------------------------------------------------ 
  ; nsmall -- select n smallest bodies
  ;------------------------------------------------------------------------
- nsmall = struct_get(select, 'nsmall')
+ nsmall = extra_value(keyvals, 'nsmall', prefix)
  if(keyword_set(nsmall)) then $
   begin
     nsmall = long(nsmall[0])
@@ -130,7 +212,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;------------------------------------------------------------------------ 
  ; nclose -- select n closest bodies
  ;------------------------------------------------------------------------
- nclose = struct_get(select, 'nclose')
+ nclose = extra_value(keyvals, 'nclose', prefix)
  if(keyword_set(nclose)) then $
   if(keyword_set(cd)) then $
    begin
@@ -142,7 +224,7 @@ function pg_select_bodies, dd, bx, od=od, select
  ;------------------------------------------------------------------------ 
  ; nfar -- select n farthest bodies
  ;------------------------------------------------------------------------
- nfar = struct_get(select, 'nfar')
+ nfar = extra_value(keyvals, 'nfar', prefix)
  if(keyword_set(nfar)) then $
   if(keyword_set(cd)) then $
    begin

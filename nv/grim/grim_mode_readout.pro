@@ -141,7 +141,7 @@ end
 ; grim_pixel_readout
 ;
 ;=============================================================================
-function grim_pixel_readout, base, text=text, grnum=grnum
+function grim_pixel_readout, base, text=text, grn=grn
 
 
  ;-----------------------------------------------------
@@ -160,7 +160,7 @@ function grim_pixel_readout, base, text=text, grnum=grnum
  ;-----------------------------------------------------
  ; otherwise, set up new widgets
  ;-----------------------------------------------------
- title = 'grim ' + strtrim(grnum,2) + '; pixel data'
+ title = 'GRIM ' + strtrim(grn,2) + '; pixel data'
  base = widget_base(/col, title=title, /tlb_size_events)
  text = widget_text(base, xsize=80, ysize=15, /scroll)
  hide_button = widget_button(base, value='hide', $
@@ -232,7 +232,7 @@ pro grim_mode_readout_mouse_event, event, data
    widget_control, grim_data.draw, draw_motion_events=1
    grim_wset, grim_data, input_wnum
    grim_data.readout_top = $
-   grim_pixel_readout(grim_data.readout_top, text=text, grnum=grim_data.grnum)
+   grim_pixel_readout(grim_data.readout_top, text=text, grn=grim_data.grn)
    grim_data.readout_text = text
    grim_set_data, grim_data, event.top
 
@@ -261,7 +261,7 @@ pro grim_mode_readout_mouse_event, event, data
      widget_control, grim_data.draw, draw_motion_events=1
      grim_wset, grim_data, input_wnum
      grim_data.readout_top = $
-       grim_pixel_readout(grim_data.readout_top, text=text, grnum=grim_data.grnum)
+       grim_pixel_readout(grim_data.readout_top, text=text, grn=grim_data.grn)
      grim_data.readout_text = text
      grim_set_data, grim_data, event.top
 
@@ -374,7 +374,7 @@ pro grim_mode_readout_button_event, event
  grim_set_mode, grim_data, 'grim_mode_readout', /new, data_p=data.data_p
 
  grim_data.readout_top = $
-   grim_pixel_readout(grim_data.readout_top, text=text, grnum=grim_data.grnum)
+   grim_pixel_readout(grim_data.readout_top, text=text, grn=grim_data.grn)
  grim_data.readout_text = text
 
  grim_set_data, grim_data, event.top

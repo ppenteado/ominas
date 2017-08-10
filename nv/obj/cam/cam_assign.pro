@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro cam_assign, xd, noevent=noevent, $
-@cam__keywords.include
+@cam__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

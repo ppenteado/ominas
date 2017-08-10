@@ -674,7 +674,7 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
  ;----------------------------------
  ; widgets
  ;----------------------------------
- if(NOT keyword_set(title)) then title = 'brim'
+ if(NOT keyword_set(title)) then title = 'BRIM'
 
 ; base = widget_base(title=title, /column, /tlb_size_events)
  base = widget_base(title=title, /tlb_size_events)

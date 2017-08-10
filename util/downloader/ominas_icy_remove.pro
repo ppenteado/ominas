@@ -23,7 +23,7 @@ if nwc then begin
       readf,lun,pathr
       free_lun,lun
     endif else pathr=['']
-    pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+fpath+'/?(:|$)',/bool),/null)]
+    pathr=pathr[where(~stregex(pathr,'[^#]*IDL_PATH=[^#]*'+fpath+'/?(:|")',/bool),/null)]
     openw,lun,orc+'/idlpath.sh',/get_lun
     ;printf,lun,'export IDL_PATH="'+np+'"'
     printf,lun,pathr,format='(A0)'
@@ -58,7 +58,7 @@ if nwc then begin
       readf,lun,pathr
       free_lun,lun
     endif else pathr=['']
-    pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=[^#]*'+fpath+'/?(:|$)',/bool),/null)]
+    pathr=pathr[where(~stregex(pathr,'[^#]*IDL_DLM_PATH=[^#]*'+fpath+'/?(:|")',/bool),/null)]
     openw,lun,orc+'/idlpath.sh',/get_lun
     printf,lun,pathr,format='(A0)'
     ;printf,lun,'export IDL_DLM_PATH="'+ndp+'"'

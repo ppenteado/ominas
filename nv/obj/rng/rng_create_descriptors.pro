@@ -57,7 +57,7 @@
 ;-
 ;=============================================================================
 function rng_create_descriptors, n, crd=_crd0, bd=_bd0, sld=_sld0, dkd=_dkd0, rd=_rd0, $
-@rng__keywords.include
+@rng__keywords_tree.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -73,7 +73,7 @@ end_keywords
    if(keyword_set(_rd0)) then rd0 = _rd0[i]
 
    rd[i] = ominas_ring(i, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, rd=rd0, $
-@rng__keywords.include
+@rng__keywords_tree.include
 end_keywords)
 
   end

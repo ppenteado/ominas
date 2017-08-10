@@ -88,6 +88,7 @@ pro grim_mode_remove_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(event.press EQ 0) then return
  if(event.press EQ 2) then return
 
  if(input_wnum NE grim_data.wnum) then return
@@ -98,8 +99,8 @@ pro grim_mode_remove_mouse_event, event, data
  if(defined(user)) then $
   begin
    grim_mode_remove_flash, [event.x, event.y]
-   grim_remove_overlays, plane, user=user, [event.x, event.y], $
-        		     clicks=event.clicks, stat=stat
+   grim_remove_overlays, grim_data, plane, user=user, [event.x, event.y], $
+                                                clicks=event.clicks, stat=stat
    if(stat NE -1) then grim_refresh, grim_data, /use_pixmap, /noglass
   end
 

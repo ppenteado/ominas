@@ -6,7 +6,8 @@
 ;
 ; PURPOSE:
 ;	Attempts to determine the primary planet from a list of descriptors
-;	based on their names and proximity to the observer.
+;	based on their names and proximity to the observer, or extracts
+;	the observer descriptor from an object's generic descriptor.
 ;
 ;
 ; CATEGORY:
@@ -14,15 +15,19 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       gbx0 = get_primary(bx, gbx)
+;       xd0 = get_primary(xd)
+;       xd0 = get_primary(od, bx)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	bx:	Array (nt) of any subclass of BODY, describing the observer.
+;	xd:	Array of objects from which to extract primary descriptors
+;		using their generic descriptors.
 ;
-;	gbx:	Array (nd,nt) of any subclass of GLOBE, specifying a 
-;		system of globe objects.
+;	od:	Array (nt) of any subclass of BODY, describing the observer.
+;
+;	bx:	Array (nd,nt) of any subclass of BODY, specifying a 
+;		system of candidate primary objects.
 ;
 ;  OUTPUT:
 ;       NONE
@@ -30,8 +35,6 @@
 ;
 ; KEYOWRDS:
 ;  INPUT: 
-;	rx:	Any subclass of RING.
-;	
 ;	planets:	Array of names of objects to consider as planets.
 ;			Default is the planets of the Solar System, or the
 ;			primary planet of rx, if provided.
@@ -39,8 +42,7 @@
 ;  OUTPUT: NONE
 ;
 ;
-; RETURN: 
-;	GLOBE descriptor for the selected primary. 
+; RETURN: BODY descriptor for the selected primary. 
 ;
 ;
 ; MODIFICATION HISTORY:
@@ -48,16 +50,25 @@
 ;
 ;-
 ;=============================================================================
-function get_primary, od, gbx, planets=planets, rx=rx
+function get_primary, arg1, arg2, planets=planets
 
+ ;----------------------------------------------------------------
+ ; if only one argument, return the primary descriptor from arg1
+ ;----------------------------------------------------------------
+ if(NOT defined(arg2)) then return, cor_gd(arg1, /xd0)
+
+
+ ;----------------------------------------------------------------
+ ; otherwise, try to infer the primary body from the scene
+ ;----------------------------------------------------------------
+ od = arg1
+ bx = arg2
+
+ if(NOT keyword_set(bx)) then return, 0
 
  nt = n_elements(od)
 
- if(keyword__set(rx)) then if(cor_isa(rx[0], 'RING')) then rd = rx
 
- if(NOT keyword_set(gbx)) then return, 0
-
- if(keyword_set(rd)) then return, rng_primary(rd)
 
  if(NOT keyword_set(planets)) then $
    planets = ['mercury', 'venus', 'earth', 'mars', $
@@ -70,14 +81,14 @@ function get_primary, od, gbx, planets=planets, rx=rx
 
  nplanets = n_elements(planets)
 
- gbx0 = objarr(nt)
+ xd0 = objarr(nt)
  for j=0, nt-1 do $
   begin
    ;------------------------------------------------
-   ; determine which given gbx are planets
+   ; determine which given bx are planets
    ;------------------------------------------------
    planets = strlowcase(planets)
-   names = strlowcase(cor_name(gbx[*,j]))
+   names = strlowcase(cor_name(bx[*,j]))
    for i=0, nplanets-1 do $
     begin
      w = where(strpos(names, planets[i]) NE -1)
@@ -90,19 +101,19 @@ function get_primary, od, gbx, planets=planets, rx=rx
      ; take closest planet
      ;------------------------------------------------
      nii = n_elements(ii)
-     if(nii EQ 1) then gbx0[j] = gbx[ii,j] $
+     if(nii EQ 1) then xd0[j] = bx[ii,j] $
      else $
       begin
        r0 = bod_pos(od) ## make_array(nii, val=1d)
 
-       d2 = v_sqmag(r0 - transpose(bod_pos(gbx[ii,j])))
+       d2 = v_sqmag(r0 - transpose(bod_pos(bx[ii,j])))
 
        w = where(d2 EQ min(d2))
-       gbx0[j] = gbx[ii[w[0]]]
+       xd0[j] = bx[ii[w[0]]]
       end
     end
   end
 
- return, gbx0
+ return, xd0
 end
 ;=============================================================================

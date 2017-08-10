@@ -15,7 +15,7 @@
 ; CALLING SEQUENCE:
 ;       result = project_map(image, md=md, cd=cd, bx=bx, sund=sund, $
 ;                            pc_xsize, pc_ysize, $
-;                            hide_fn=hide_fn, hide_data_p=hide_data_p)
+;                            hide_fn=hide_fn, hide_bx=hide_bx)
 ;
 ; ARGUMENTS:
 ;  INPUT:
@@ -47,9 +47,23 @@
 ;		first is used with the cd input and the second is used with 
 ;		the map input.
 ;
-;	hide_fn:	Array of hide functions, e.g. 'pm_hide_ring'
+;	hide_fn:	
+;		Array of hide functions.  Options are:
+;		   pm_hide_ring
+;		   pm_hide_globe
+;		   pm_rm_globe_shadow
+;		   pm_rm_globe
 ;
-;	hide_data_p:	Array of hide data pointers, e.g. nv_ptr_new(rd)
+;	hide_bx:	
+;		Array of BODY objects for the hide functions; one per
+;		function.
+;
+;	shear_fn:
+;		Name of function to use to shear map.  Options are:
+;		   pm_shear_zonal	data: {dt, vel}
+;		   pm_shear_kepler	data: {dt, gbx}
+;
+;	shear_data: Structure giving data for the shear function (see above).  
 ;
 ;	offset:	Offset in [lat,lon] to apply to map coordinates before 
 ;		projecting.
@@ -100,13 +114,13 @@ end
 ; pm_hide_globe
 ;
 ;=============================================================================
-function pm_hide_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
+function pm_hide_globe, bx, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
 
- nxd = n_elements(xd)
+ nbx = n_elements(bx)
 
- pd = xd[0]
- if(nxd EQ 1) then r = pos_cam $
- else r = bod_inertial_to_body_pos(pd, bod_pos(xd[1]))
+ pd = bx[0]
+ if(nbx EQ 1) then r = pos_cam $
+ else r = bod_inertial_to_body_pos(pd, bod_pos(bx[1]))
 
  return, glb_hide_points(pd, r, body_pts)
 end
@@ -118,19 +132,19 @@ end
 ; pm_rm_globe_shadow
 ;
 ;=============================================================================
-function pm_rm_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
+function pm_rm_globe, bx, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
 
- cd = xd[0]
- pd = xd[1]
- rd = xd[2]
- sund = xd[3]
+ cd = bx[0]
+ pd = bx[1]
+ rd = bx[2]
+ sund = bx[3]
 
 
- nxd = n_elements(xd)
+ nbx = n_elements(bx)
 
- pd = xd[0]
- if(nxd EQ 1) then r = pos_cam $
- else r = bod_inertial_to_body_pos(pd, bod_pos(xd[1]))
+ pd = bx[0]
+ if(nbx EQ 1) then r = pos_cam $
+ else r = bod_inertial_to_body_pos(pd, bod_pos(bx[1]))
 
  return, glb_hide_points(pd, r, body_pts, /rm)
 end
@@ -142,13 +156,13 @@ end
 ; pm_rm_globe
 ;
 ;=============================================================================
-function pm_rm_globe, xd, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
+function pm_rm_globe, bx, map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam
 
- nxd = n_elements(xd)
+ nbx = n_elements(bx)
 
- pd = xd[0]
- if(nxd EQ 1) then r = pos_cam $
- else r = bod_inertial_to_body_pos(pd, bod_pos(xd[1]))
+ pd = bx[0]
+ if(nbx EQ 1) then r = pos_cam $
+ else r = bod_inertial_to_body_pos(pd, bod_pos(bx[1]))
 
  return, glb_hide_points(pd, r, body_pts, /rm)
 end
@@ -194,20 +208,20 @@ end
 
 
 ;=============================================================================
-; pm_wind_zonal
+; pm_shear_zonal
 ;
-;  wind_data must contain the following fields:
+;  shear_data must contain the following fields:
 ;
-;   vel:	Wind speeds as a function of latitude.  Assumed to be 
-;		uniformly-gridded, spanning the entire globe, with an 
+;   vel:	Shear speeds as a function of latitude.  Assumed to be 
+;		uniformly-gridded, spanning the entire body, with an 
 ;		entry for each pole.
 ;   dt:		Time over which to integrate velocities
 ;
 ;=============================================================================
-function pm_wind_zonal, bx, map_pts, wind_data
+function pm_shear_zonal, bx, map_pts, shear_data
 
- dt = wind_data.dt
- vel = wind_data.vel
+ dt = shear_data.dt
+ vel = shear_data.vel
  n = n_elements(vel)
 
  lat = map_pts[0,*]
@@ -228,18 +242,18 @@ end
 
 
 ;=============================================================================
-; pm_wind_kepler
+; pm_shear_kepler
 ;
-;  wind_data must contain the following fields:
+;  shear_data must contain the following fields:
 ;
 ;   gbx:	Descriptor for central planet
 ;   dt:		Time over which to integrate velocities
 ;
 ;=============================================================================
-function pm_wind_kepler, bx, map_pts, wind_data
+function pm_shear_kepler, bx, map_pts, shear_data
 
- dt = wind_data.dt
- gbx = wind_data.gbx
+ dt = shear_data.dt
+ gbx = shear_data.gbx
 
  rad = map_pts[0,*]
  lon = map_pts[1,*]
@@ -261,9 +275,9 @@ end
 ;=============================================================================
 function project_map, image, md=md, cd=cd, bx=bx, sund=sund, $
                       _pc_xsize, _pc_ysize, bounds=bounds, hit=hit, value=value, $
-                      hide_fn=hide_fn, hide_data_p=hide_data_p, roi=roi, $
+                      hide_fn=hide_fn, hide_bx=hide_bx, roi=roi, $
                       interp=interp, arg_interp=arg_interp, offset=offset, $
-                      wind_fn=wind_fn, wind_data=wind_data, edge=edge, smooth=smooth
+                      shear_fn=shear_fn, shear_data=shear_data, edge=edge, smooth=smooth
 
  n_hide = n_elements(hide_fn)
  if(NOT keyword_set(offset)) then offset = [0d,0d]
@@ -385,8 +399,8 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, $
         ;--------------------------
         ; apply wind function
         ;--------------------------
-        if(keyword_set(wind_fn)) then $
-             map_pts = call_function('pm_wind_'+wind_fn, bx_map, map_pts, wind_data)
+        if(keyword_set(shear_fn)) then $
+             map_pts = call_function('pm_shear_'+shear_fn, bx_map, map_pts, shear_data)
 
         ;----------------------------------------------
         ; compute projection
@@ -456,7 +470,7 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, $
               for k=0, n_hide-1 do $
                begin
                 user_sub = -1
-                user_sub = call_function(hide_fn[k], *hide_data_p[k], $
+                user_sub = call_function(hide_fn[k], hide_bx[k], $
                             map_image_pts, cam_image_pts, surface_pts, body_pts, pos_cam)
                 sub = append_array(sub, user_sub)
                end
@@ -523,7 +537,6 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, $
 
 
 
- for k=0, n_hide-1 do nv_ptr_free, hide_data_p[k]
  
 ; w = where(map NE 0)
 ; if(w[0] EQ -1) then return, 0

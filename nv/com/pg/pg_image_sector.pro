@@ -245,7 +245,7 @@ end
 
 pro test
 
-ingrid, dd=dd, cd=cd
+grift, dd=dd, cd=cd
 ptd = pg_image_sector(p0=[100,100], p1=[200,200], /nov, width=10)
 pg_draw, ptd, col=ctred()
 dd_profile = pg_profile_image(dd, ptd, profile=profile)

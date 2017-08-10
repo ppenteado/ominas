@@ -3,7 +3,7 @@
 ;
 ;=============================================================================
 function ominas_array::init, ii, crd=crd0, ard=ard0, $
-@arr__keywords.include
+@arr__keywords_tree.include
 end_keywords
 @core.include
  
@@ -15,7 +15,6 @@ end_keywords)
  self.abbrev = 'ARR'
  self.tag = 'ARD'
 
- if(keyword__set(primary)) then self.__PROTECT__primary_xd = decrapify(primary[ii])
  if(keyword__set(surface_pts)) then $
            self.surface_pts_p = nv_ptr_new(decrapify(surface_pts[*,*,ii]))
 
@@ -50,10 +49,6 @@ end
 ;		Methods: arr_body, arr_set_body
 ;
 ;
-;	primary:	Primary descriptor.
-;
-;			Methods: arr_primary, arr_set_primary
-;
 ;	surface_pts:	Vector giving the surface coordinates of the 
 ;			array points on the primary.  
 ;
@@ -74,8 +69,7 @@ pro ominas_array__define
 
  struct = $
     { ominas_array, inherits ominas_core, $
-	surface_pts_p:	 ptr_new(), $		; Surface coords of location.
-        __PROTECT__primary_xd:     obj_new() $	; primary pd
+	surface_pts_p:	 ptr_new() $		; Surface coords of location.
     }
 
 end

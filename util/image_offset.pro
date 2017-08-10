@@ -434,7 +434,7 @@ end
 
 pro test
 
- ingrid, dd=dd, cd=cd, pd=pd, rd=rd, sund=sund
+ grift, dd=dd, cd=cd, pd=pd, rd=rd, sund=sund
  dxy = pg_renderfit(dd, cd=cd, sund=sund, bx=[pd,rd], /show)
  pg_repoint, cd=cd, dxy
 

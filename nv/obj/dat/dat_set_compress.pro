@@ -45,7 +45,23 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_set_compress, dd, compress
+pro dat_set_compress, dd, compress, noevent=noevent
+@core.include
+ data = dat_data(dd)
+
+ _dd = cor_dereference(dd)
+ (*_dd.dd0p).compress = compress
+
+ cor_rereference, dd, _dd
+ nv_notify, dd, type = 0, noevent=noevent
+ nv_notify, /flush, noevent=noevent
+end
+;===========================================================================
+
+
+
+;=============================================================================
+pro __dat_set_compress, dd, compress
 @core.include
  data = dat_data(dd)
 

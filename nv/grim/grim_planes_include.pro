@@ -20,7 +20,7 @@ pro grim_next_plane, grim_data, norefresh=norefresh
  grim_set_data, grim_data
 
  no_erase = 1 
- if(grim_data.type EQ 'plot') then no_erase = 0
+ if(grim_data.type EQ 'PLOT') then no_erase = 0
  
  if(NOT keyword_set(norefresh)) then grim_refresh, grim_data, no_erase=no_erase, /noglass
 
@@ -53,7 +53,7 @@ pro grim_previous_plane, grim_data
  grim_set_data, grim_data
 
  no_erase = 1 
- if(grim_data.type EQ 'plot') then no_erase = 0
+ if(grim_data.type EQ 'PLOT') then no_erase = 0
  
  grim_refresh, grim_data, no_erase=no_erase, /noglass
  grim_call_plane_callbacks, grim_data
@@ -284,7 +284,7 @@ pro grim_crop_plane, grim_data, plane
  ;----------------------------------------------
  ; plot: crop to visible xrange
  ;----------------------------------------------
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    tvgr, grim_data.wnum, get=tvd
    xrange = tvd.xrange
@@ -557,7 +557,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	; bookkeeping
 	;---------------
 		pn		:	-1, $
-		grnum		:	grim_data.grnum, $
+		grn		:	grim_data.grn, $
 		filter		:	filter, $
 		load_path	:	load_path, $
 		save_path	:	save_path, $
@@ -589,6 +589,9 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	;---------------
 	; descriptors
 	;---------------
+; should put these in a gd...
+; --> gd = grim_gd(plane)
+gd_p		:	ptr_new(0), $	; Generic descriptor
 		dd		:	dd[i], $		; Data descriptor
 		sibling_dd	:	obj_new(), $		; Last sibling dd
 		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
@@ -617,21 +620,9 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	;  (planets, rings, etc.) and nptd is the number of arrays per
 	;  descriptor (e.g., rings have two arrays per descriptor).
 	;-----------------------------------------------------------
-		overlay_ptdps		:	ptr_new(0), $
-; it may be simpler to implement these as udata on each overlay ptd
-		overlay_names_p		:	ptr_new(''), $
-		overlay_classes_p	:	ptr_new(0), $
-		overlay_genres_p	:	ptr_new(0), $
-		overlay_dep_p		:	ptr_new(0), $
-		overlay_labels_p	:	ptr_new(0), $
-		overlay_color_p		:	ptr_new(''), $
-		overlay_psym_p		:	ptr_new(0), $
-		overlay_symsize_p	:	ptr_new(0.), $ 
-		overlay_shade_p		:	ptr_new(0.), $ 
-		overlay_tlab_p		:	ptr_new(0b), $
-		overlay_tshade_p	:	ptr_new(0b), $
-		overlay_tfill_p		:	ptr_new(0b), $
-		overlay_data_p		:	ptr_new(0), $
+		overlay_ptdps		:	ptr_new(0), $	; Overlay ptds
+		overlays_p		:	ptr_new(0), $	; Overlay global
+								; attributes
 		override_color		:	'', $
 
 ;	;-----------------------------------------------------------

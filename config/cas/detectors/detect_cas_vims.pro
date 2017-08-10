@@ -13,16 +13,16 @@ function detect_cas_vims, dd
    if stregex(group,'[[:<:]]INSTRUMENT_ID[[:space:]]*=[[:space:]]*("VIMS")|(VIMS)',/boolean) then begin
      channel=stregex(group,'[[:<:]]CHANNEL[[:space:]]*=[[:space:]]*(("([[:alnum:]]+)")|([[:alnum:]]+))',/extract,/subexpr)
      channel=channel[-1] ? channel[-1] : channel[-2]
-     return,channel ? 'VIMS_'+channel : ''
+     return,channel ? 'CAS_VIMS_'+channel : ''
    endif
  endif
 
  if( (strpos(label, 'CAS-ISS1') NE -1) $
       OR ((strpos(label, "'ISSNA'") NE -1) AND $
-          (strpos(label, 'CASSINI') NE -1)) ) then return, 'CAS_ISSNA'
+          (strpos(label, 'CASSINI') NE -1)) ) then return, 'CAS_ISS_NA'
  if( (strpos(label, 'CAS-ISS2') NE -1) $
       OR ((strpos(label, "'ISSWA'") NE -1) AND $
-          (strpos(label, 'CASSINI') NE -1)) ) then return, 'CAS_ISSWA'
+          (strpos(label, 'CASSINI') NE -1)) ) then return, 'CAS_ISS_WA'
 
 
  return, ''

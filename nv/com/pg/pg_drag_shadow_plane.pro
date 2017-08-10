@@ -100,7 +100,7 @@ common pickplane_compute_points_block, dkd
  ;----------------------------------------------------------------
  ; project shadow
  ;----------------------------------------------------------------
- shadow_ptd = pg_shadow_disk(cd=cd, od=sund, dkx=dkd, gbx=dkd, term_ptd)
+ shadow_ptd = pg_shadow_disk(cd=cd, od=sund, dkx=dkd, term_ptd)
 
  return, shadow_ptd
 end

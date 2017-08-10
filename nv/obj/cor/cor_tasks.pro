@@ -24,7 +24,10 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT:  NONE
+;  INPUT:  
+;	first:	If set, only the first task is returned.
+;
+;	latest:	If set, only the most recent task is returned.
 ;
 ;  OUTPUT: NONE
 ;
@@ -44,11 +47,16 @@
 ;	
 ;-
 ;=============================================================================
-function cor_tasks, crd, noevent=noevent
+function cor_tasks, crd, first=first, latest=latest, noevent=noevent
 @core.include
  nv_notify, crd, type = 1, noevent=noevent
  _crd = cor_dereference(crd)
- return, *_crd.tasks_p
+
+ tasks = *_crd.tasks_p
+ if(keyword_set(first)) then tasks = tasks[0]
+ if(keyword_set(latest)) then tasks = tasks[n_elements(tasks)-1]
+
+ return, tasks
 end
 ;===========================================================================
 

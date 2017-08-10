@@ -289,16 +289,27 @@ end
 function grlsq_get_ptdps, grim_data, data, lsqd, pds=pds, rds=rds, sds=sds
  ptdps = nv_ptr_new()
 
- ingrid, active_limb_ptd=limb_ptd, $
-         active_ring_ptd=ring_ptd, $
-         active_term_ptd=term_ptd, $
-         active_shadow_ptd=shadow_ptd, $
-         active_reflection_ptd=reflection_ptd, $
-         active_star_ptd=star_ptd, $
-         active_center_ptd=center_ptd, $
-         active_pd=pds, $
-         active_rd=rds, $
-         active_sd=sds
+; grift, active_limb_ptd=limb_ptd, $
+;         active_ring_ptd=ring_ptd, $
+;         active_term_ptd=term_ptd, $
+;         active_shadow_ptd=shadow_ptd, $
+;         active_reflection_ptd=reflection_ptd, $
+;         active_star_ptd=star_ptd, $
+;         active_center_ptd=center_ptd, $
+;         active_pd=pds, $
+;         active_rd=rds, $
+;         active_sd=sds
+ grift, /active, $
+         limb_ptd=limb_ptd, $
+         ring_ptd=ring_ptd, $
+         term_ptd=term_ptd, $
+         shadow_ptd=shadow_ptd, $
+         reflection_ptd=reflection_ptd, $
+         star_ptd=star_ptd, $
+         center_ptd=center_ptd, $
+         pd=pds, $
+         rd=rds, $
+         sd=sds
 
  if(keyword__set(limb_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(limb_ptd))
  if(keyword__set(ring_ptd)) then ptdps = append_array(ptdps, nv_ptr_new(ring_ptd))
@@ -593,7 +604,7 @@ pro grlsq_scan, grim_data, data, nocreate=nocreate, $
   end
  nobj = n_elements(object_ptdps)
 
- ingrid, dd=dd, cd=cd, pd=pd
+ grift, dd=dd, cd=cd, pd=pd
 
  pmodel_p = 0
  pmzero = 0
@@ -781,7 +792,7 @@ pro grlsq_fit, grim_data, data, lsqd, status=status
  _fix = where(lsqd.fix NE 0)
  if(_fix[0] NE -1) then fix = _fix
 
- ingrid, dd=dd, cd=cd
+ grift, dd=dd, cd=cd
  axis = cam_oaxis(cd)
 
  ;---------------------------------------------------------
@@ -1085,7 +1096,7 @@ pro gr_lsqtool, top
  ;-----------------------------------------------
  ; setup form widget
  ;-----------------------------------------------
- base = widget_base(title = 'Least-Squares fit', /column, group=top)
+ base = widget_base(title = 'GRIM Least-Squares fit', /column, group=top)
 
  objects = ['Limb      ', $
             'Ring      ', $

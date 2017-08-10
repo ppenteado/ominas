@@ -39,7 +39,7 @@ pro grim_smooth, grim_data, plane=plane, box
 
  data = double(dat_data(plane.dd, abscissa=abscissa))
 
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    xx = abscissa & xx = xx[sort(xx)]
 

@@ -51,7 +51,7 @@
 ;-
 ;=============================================================================
 function arr_create_descriptors, n, crd=_crd0, ard=_ard0, $
-@arr__keywords.include
+@arr__keywords_tree.include
 end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
@@ -63,7 +63,7 @@ end_keywords
    if(keyword_set(_ard0)) then ard0 = _ard0[i]
 
    ard[i] = ominas_array(i, crd=crd0, ard=ard0, $
-@arr__keywords.include
+@arr__keywords_tree.include
 end_keywords)
 
   end

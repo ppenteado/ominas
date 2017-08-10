@@ -5,7 +5,7 @@
  if(defined(sma)) then dsk_set_sma, _xd, sma, /noevent
  if(defined(ecc)) then dsk_set_ecc, _xd, ecc, /noevent
  if(defined(dap)) then dsk_set_dap, _xd, dap, /noevent
- if(defined(scale)) then dsk_set_scale, _xd, scale, /noevent
+ if(defined(radial_scale)) then dsk_set_radial_scale, _xd, radial_scale, /noevent
  if(defined(nm)) then dsk_set_nm, _xd, nm, /noevent
  if(defined(m)) then dsk_set_m, _xd, m, /noevent
  if(defined(em)) then dsk_set_em, _xd, em, /noevent

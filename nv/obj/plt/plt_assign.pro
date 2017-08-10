@@ -52,7 +52,7 @@
 ;-
 ;=============================================================================
 pro plt_assign, xd, noevent=noevent, $
-@plt__keywords.include
+@plt__keywords_tree.include
 end_keywords
 
  _xd = cor_dereference(xd)

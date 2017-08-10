@@ -56,14 +56,14 @@ function cor_dereference, xd
  if(s[0] GT 0) then n1 = s[1]
  if(s[0] GT 1) then n2 = s[2]
 
- _xd0 = create_struct(name=obj_class(xd[0]))
+ _xd_0 = create_struct(name=obj_class(xd[0]))
 
- _xd = replicate(_xd0, n1, n2)
+ _xd = replicate(_xd_0, n1, n2)
  for j=0, n2-1 do $
   for i=0, n1-1 do $
    begin
     ii = j*n1 + i
-    _xd[ii] = xd[ii].dereference(_xd0)
+    _xd[ii] = xd[ii].dereference(_xd_0)
    end
 
  return, _xd
