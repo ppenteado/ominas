@@ -35,9 +35,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	adjust:		If set, the limb points are biased by this angle 
-;			toward(+) or away (-) from the observer.
+;  INPUT: NONE
 ;
 ;  OUTPUT: 
 ;	alpha:	Array (np) of azimuths for each output point.
@@ -66,7 +64,7 @@
 ;
 ;===========================================================================
 function _glb_get_limb_points, gbd, view_pt, $
-                       n_points, epsilon, niter, alpha=alpha, adjust=adjust
+                                   n_points, epsilon, niter, alpha=alpha
 
  ;-----------------------------------------------
  ; if any radii are zero, then return a point
@@ -118,7 +116,6 @@ function _glb_get_limb_points, gbd, view_pt, $
    ; compute current limb points
    ;---------------------------------
    limb_pts_surf = glb_body_to_globe(gbd, guess_pts)
-;   limb_pts_surf[*,2] = 1d
    limb_pts_surf[*,2] = 0d
    limb_pts_body = glb_globe_to_body(gbd, limb_pts_surf)
 
@@ -127,7 +124,6 @@ function _glb_get_limb_points, gbd, view_pt, $
    ;---------------------------------
    ray_pts = v_unit(limb_pts_body - view_pts)
    norm_pts = glb_get_surface_normal(gbd, limb_pts_surf)
-;   if(keyword_set(adjust)) then norm_pts = norm_pts + ray_pts*adjust
 
    residuals = v_inner(norm_pts, ray_pts)
 
@@ -159,21 +155,20 @@ end
 ;
 ;===========================================================================
 function glb_get_limb_points, gbd, view_pt, $
-                         n_points, epsilon, niter, alpha=alpha, adjust=adjust
+                         n_points, epsilon, niter, alpha=alpha
 @core.include
  
 
  if(NOT keyword_set(n_points)) then n_points = 1000
  if(NOT keyword_set(epsilon)) then epsilon = 1d-3
  if(NOT keyword_set(niter)) then niter = 1000
- if(NOT defined(adjust)) then adjust = 2d*epsilon
 
  nt = n_elements(gbd)
  result = dblarr(n_points, 3, nt, /nozero)
 
  for t=0, nt-1 do $
   result[*,*,t] = _glb_get_limb_points(gbd[t], view_pt[*,*,t], $
-                     n_points, epsilon, niter, alpha=alpha, adjust=adjust)
+                                    n_points, epsilon, niter, alpha=alpha)
 
  return, result
 end

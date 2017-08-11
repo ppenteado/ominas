@@ -270,6 +270,6 @@ for i=0,2 do begin
 endfor
 
 
-grim,mds,cd=replicate(mdp,3),/new;,overlays=['planet_grid']
+grim,mds,cd=replicate(mdp,3),/new,vis=1,channel=[1b,2b,4b];,overlays=['planet_grid']
 
 end
