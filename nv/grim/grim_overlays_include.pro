@@ -71,6 +71,24 @@ end
 ; grim_get_xd
 ;
 ;=============================================================================
+function ___grim_get_xd, grim_data, plane=plane, class
+
+ if(NOT keyword_set(class)) then return, obj_new()
+
+; xds = *plane.xd_p					;++
+ xds = cor_dereference(*plane.gd_p)			;**
+
+ if(class[0] EQ 'all') then return, xds
+ return, cor_select(xds, class, /class)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_xd
+;
+;=============================================================================
 function grim_get_xd, grim_data, plane=plane, class
 
  if(class[0] EQ '') then return, obj_new()
@@ -81,23 +99,24 @@ function grim_get_xd, grim_data, plane=plane, class
 
  n = n_elements(class)
 
+print, '!!!'
  xds = 0
  for i=0, n-1 do $
   case class[i] of
    'CAMERA'	:	$
-      if(keyword_set(*plane.cd_p)) then xds = append_array(xds, *plane.cd_p)
+      if(keyword_set(grim_xd(plane, /cd))) then xds = append_array(xds, grim_xd(plane, /cd))
    'PLANET'	:	$
-      if(keyword_set(*plane.pd_p)) then xds = append_array(xds, *plane.pd_p)
+      if(keyword_set(grim_xd(plane, /pd))) then xds = append_array(xds, grim_xd(plane, /pd))
    'RING'	:	$
-      if(keyword_set(*plane.rd_p)) then xds = append_array(xds, *plane.rd_p)
+      if(keyword_set(grim_xd(plane, /rd))) then xds = append_array(xds, grim_xd(plane, /rd))
    'SUN'	:	$
-      if(keyword_set(*plane.sund_p)) then xds = append_array(xds, *plane.sund_p)
+      if(keyword_set(grim_xd(plane, /sund))) then xds = append_array(xds, grim_xd(plane, /sund))
    'STAR'	:	$
-      if(keyword_set(*plane.sd_p)) then xds = append_array(xds, *plane.sd_p)
+      if(keyword_set(grim_xd(plane, /sd))) then xds = append_array(xds, grim_xd(plane, /sd))
    'STATION'	:	$
-      if(keyword_set(*plane.std_p)) then xds = append_array(xds, *plane.std_p)
+      if(keyword_set(grim_xd(plane, /std))) then xds = append_array(xds, grim_xd(plane, /std))
    'ARRAY'	:	$
-      if(keyword_set(*plane.ard_p)) then xds = append_array(xds, *plane.ard_p)
+      if(keyword_set(grim_xd(plane, /ard))) then xds = append_array(xds, grim_xd(plane, /ard))
   endcase
 
 
@@ -255,6 +274,31 @@ end
 ;=============================================================================
 
 
+;++
+;=============================================================================
+; grim_get_active_xds
+;
+;=============================================================================
+function ___grim_get_active_xds, plane, class
+
+
+ ;-------------------------------------------
+ ; determine which arrays to use
+ ;-------------------------------------------
+ xds = grim_get_xd(grim_data, plane=plane, class)
+
+ ;-------------------------------------------
+ ; get the objects
+ ;-------------------------------------------
+ flag = cor_udata(xds, 'GRIM_ACTIVE_FLAG', /noevent)
+ w = where(flag EQ 1)
+ if(w[0] NE -1) then active_xds = xds[w]
+
+ return, active_xds
+end
+;=============================================================================
+
+
 
 ;=============================================================================
 ; grim_get_active_xds
@@ -267,6 +311,10 @@ function grim_get_active_xds, plane, class
  ;-------------------------------------------
  ; determine which arrays to use
  ;-------------------------------------------
+;++ xds = *plane.xd_p
+;++ if(keyword_set(class)) then xds = cor_select(xds, class=class)
+
+
  if(NOT keyword_set(class)) then $
      xd_p = [plane.cd_p, $
              plane.pd_p, $
@@ -860,9 +908,10 @@ pro grim_draw_grids, grim_data, plane=plane, no_wset=no_wset
    ; RA/DEC grid
    ;----------------------------
    if(grim_data.grid_flag) then $
-      if(keyword_set(*plane.cd_p)) then $
-               plots, radec_grid(*plane.cd_p), psym=3, col=ctblue()
-
+    begin
+     cd = grim_xd(plane, /cd)
+     if(keyword_set(cd)) then plots, radec_grid(cd), psym=3, col=ctblue()
+    end
    ;----------------------------
    ; pixel grid
    ;----------------------------
@@ -917,7 +966,7 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
    ;----------------------------
    ; optic axis 
    ;----------------------------
-   cd = *plane.cd_p
+   cd = grim_xd(plane, /cd)
    if(keyword_set(cd)) then $
     if(cor_class(cd) EQ 'CAMERA') then $
      begin
@@ -1205,7 +1254,7 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
  n = n_elements(ptd)
 
- if(NOT keyword_set(cd)) then cd = *plane.cd_p
+ if(NOT keyword_set(cd)) then cd = grim_xd(plane, /cd)
 
 
  ;--------------------------------------------------------------------
@@ -1267,14 +1316,17 @@ pro grim_default_activations, grim_data, plane=plane
  ;--------------------------------------------------------------------------
  ; if there's only one of a type of object, then it is automatically active
  ;--------------------------------------------------------------------------
-; if(keyword__set(*plane.pd_p)) then $
-;   if(n_elements(*plane.pd_p) EQ 1) then grim_activate, plane, *plane.pd_p
+; pd = grim_xd(plane, /pd)
+; if(keyword__set(pd)) then $
+;               if(n_elements(pd) EQ 1) then grim_activate, plane, pd
 
-; if(keyword__set(*plane.rd_p)) then $
-;   if(n_elements(*plane.rd_p) EQ 1) then grim_activate, plane, *plane.rd_p
+; rd = grim_xd(plane, /rd)
+; if(keyword__set(rd)) then $
+;               if(n_elements(rd) EQ 1) then grim_activate, plane, rd
 
-; if(keyword__set(*plane.sd_p)) then $
-;   if(n_elements(*plane.sd_p) EQ 1) then grim_activate, plane, *plane.sd_p
+; sd = grim_xd(plane, /sd)
+; if(keyword__set(sd)) then $
+;               if(n_elements(sd) EQ 1) then grim_activate, plane, sd
 
 
 end
@@ -2087,7 +2139,7 @@ function grim_image_to_surface, grim_data, plane, image_pts, $
 @pnt_include.pro
 
 
- cd = *plane.cd_p
+ cd = grim_xd(plane, /cd)
  surf_pts = 0
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2153,7 +2205,7 @@ function grim_surface_to_image, grim_data, plane, surf_pts, names, valid=valid
 @grim_block.include
 @pnt_include.pro
 
- cd = *plane.cd_p
+ cd = grim_xd(plane, /cd)
  image_pts = 0
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2546,6 +2598,21 @@ end
 ;=============================================================================
 
 
+;++
+;=============================================================================
+; grim_deactivate_all_xds
+;
+;=============================================================================
+pro ___grim_deactivate_all_xds, plane
+
+ grim_deactivate_xd, plane, *plane.xd_p					;++
+ grim_deactivate_xd, plane, cor_dereference(*plane.gd_p)		;**
+
+
+end
+;=============================================================================
+
+
 
 ;=============================================================================
 ; grim_deactivate_all_xds
@@ -2553,10 +2620,24 @@ end
 ;=============================================================================
 pro grim_deactivate_all_xds, plane
 
- grim_deactivate_xd, plane, *plane.pd_p
- grim_deactivate_xd, plane, *plane.rd_p
- grim_deactivate_xd, plane, *plane.sd_p
- grim_deactivate_xd, plane, *plane.std_p
+ grim_deactivate_xd, plane, grim_xd(plane, /pd)
+ grim_deactivate_xd, plane, grim_xd(plane, /rd)
+ grim_deactivate_xd, plane, grim_xd(plane, /sd)
+ grim_deactivate_xd, plane, grim_xd(plane, /std)
+
+end
+;=============================================================================
+
+
+;++
+;=============================================================================
+; grim_activate_all_xds
+;
+;=============================================================================
+pro ___grim_activate_all_xds, plane
+
+ grim_activate_xd, plane, *plane.xd_p					;++
+ grim_activate_xd, plane, cor_dereference(*plane.gd_p)			;**
 
 end
 ;=============================================================================
@@ -2569,10 +2650,10 @@ end
 ;=============================================================================
 pro grim_activate_all_xds, plane
 
- grim_activate_xd, plane, *plane.pd_p
- grim_activate_xd, plane, *plane.rd_p
- grim_activate_xd, plane, *plane.sd_p
- grim_activate_xd, plane, *plane.std_p
+ grim_activate_xd, plane, grim_xd(plane, /pd)
+ grim_activate_xd, plane, grim_xd(plane, /rd)
+ grim_activate_xd, plane, grim_xd(plane, /sd)
+ grim_activate_xd, plane, grim_xd(plane, /std)
 
 end
 ;=============================================================================
@@ -3426,14 +3507,15 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; recompute the overlay points
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   gd = cor_create_gd(cd=*plane.cd_p, $
-                      pd=*plane.pd_p, $
-                      rd=*plane.rd_p, $
-                      sund=*plane.sund_p, $
-                      sd=*plane.sd_p, $
-                      od=*plane.od_p)
-   if(cor_test_gd(gd, 'MD')) then $
-                       gd = cor_create_gd(gd=gd, cd=gd.md, od=*plane.od_p)
+;++   gd = cor_create_gd(*plane.xd_p)
+;**   gd = *plane.gd_p
+   gd = cor_create_gd(cd=grim_xd(plane, /cd), $
+                      pd=grim_xd(plane, /pd), $
+                      rd=grim_xd(plane, /rd), $
+                      sund=grim_xd(plane, /sund), $
+                      sd=grim_xd(plane, /sd), $
+                      od=grim_xd(plane, /od))
+   if(cor_test_gd(gd, 'MD')) then gd = cor_create_gd(gd=gd, cd=gd.md, od=gd.od)
 
    _ptd = call_function(fn, gd=gd, $
            map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
