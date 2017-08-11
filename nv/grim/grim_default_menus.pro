@@ -73,7 +73,7 @@ pro grim_menu_core_event, event
  ;------------------------------------------------
 return
  grim_message, /clear
-; dd = pg_core(planes.dd, sigma=sigma, cd=*plane.cd_p, outline_ptd, distance=distance)
+; dd = pg_core(planes.dd, sigma=sigma, cd=grim_xd(plane, /cd), outline_ptd, distance=distance)
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -145,7 +145,7 @@ pro grim_menu_image_profile_event, event
  ;------------------------------------------------
  grim_message, /clear
  dd = pg_profile_image(plane.dd, sigma=sigma, $
-                             cd=*plane.cd_p, outline_ptd, distance=distance)
+                             cd=grim_xd(plane, /cd), outline_ptd, distance=distance)
  grim_message
  if(NOT keyword_set(dd)) then return
 
@@ -228,7 +228,7 @@ pro grim_menu_ring_box_profile_radial_event, event
  ;------------------------------------------------
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, w=w, nn=nn, $
-                  cd=*plane.cd_p, dkx=rd[0], outline_ptd, dsk_pts=dsk_pts)
+                  cd=grim_xd(plane, /cd), dkx=rd[0], outline_ptd, dsk_pts=dsk_pts)
  if(NOT keyword_set(dd)) then return
 
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
@@ -316,7 +316,7 @@ pro grim_menu_ring_box_profile_longitudinal_event, event
  ;------------------------------------------------
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
-                 cd=*plane.cd_p, dkx=rd[0], outline_ptd, dsk_pts=dsk_pts, /az)
+                 cd=grim_xd(plane, /cd), dkx=rd[0], outline_ptd, dsk_pts=dsk_pts, /az)
  if(NOT keyword_set(dd)) then return
 
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
@@ -397,7 +397,7 @@ pro grim_menu_ring_profile_radial_event, event
  ; select the sector by dragging
  ;------------------------------------------------
  grim_logging, grim_data, /start
- outline_ptd = pg_ring_sector(cd=*plane.cd_p, dkx=rd[0], col=ctred())
+ outline_ptd = pg_ring_sector(cd=grim_xd(plane, /cd), dkx=rd[0], col=ctred())
  grim_logging, grim_data, /stop
 
  p = pnt_points(outline_ptd)
@@ -418,7 +418,7 @@ pro grim_menu_ring_profile_radial_event, event
  ;------------------------------------------------
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
-                  cd=*plane.cd_p, dkx=rd[0], outline_ptd, dsk_pts=dsk_pts)
+                  cd=grim_xd(plane, /cd), dkx=rd[0], outline_ptd, dsk_pts=dsk_pts)
  if(NOT keyword_set(dd)) then return
 
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
@@ -493,7 +493,7 @@ pro grim_menu_ring_profile_longitudinal_event, event
  ; select the sector by dragging
  ;------------------------------------------------
  grim_logging, grim_data, /start
- outline_ptd = pg_ring_sector(cd=*plane.cd_p, dkx=rd[0], lon=lon, col=ctred())
+ outline_ptd = pg_ring_sector(cd=grim_xd(plane, /cd), dkx=rd[0], lon=lon, col=ctred())
  grim_logging, grim_data, /stop
 
  p = pnt_points(outline_ptd)
@@ -514,7 +514,7 @@ pro grim_menu_ring_profile_longitudinal_event, event
  ;------------------------------------------------
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
-                 cd=*plane.cd_p, dkx=rd[0], outline_ptd, dsk_pts=dsk_pts, /az)
+                 cd=grim_xd(plane, /cd), dkx=rd[0], outline_ptd, dsk_pts=dsk_pts, /az)
  if(NOT keyword_set(dd)) then return
 
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
@@ -585,7 +585,7 @@ pro grim_menu_limb_profile_azimuthal_event, event
  ; select the sector by dragging
  ;------------------------------------------------
  grim_logging, grim_data, /start
- outline_ptd = pg_limb_sector(cd=*plane.cd_p, gbx=pd[0], $
+ outline_ptd = pg_limb_sector(cd=grim_xd(plane, /cd), gbx=pd[0], $
                                       col=ctred(), dkd=dkd, az=scan_az)
  grim_logging, grim_data, /stop
 
@@ -607,7 +607,7 @@ pro grim_menu_limb_profile_azimuthal_event, event
  ;------------------------------------------------
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
-                 cd=*plane.cd_p, dkx=dkd, outline_ptd, dsk_pts=dsk_pts, /az)
+                 cd=grim_xd(plane, /cd), dkx=dkd, outline_ptd, dsk_pts=dsk_pts, /az)
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
  grim_message
  if(NOT keyword_set(dd)) then return
@@ -675,7 +675,7 @@ pro grim_menu_limb_profile_radial_event, event
  ; select the sector by dragging
  ;------------------------------------------------
  grim_logging, grim_data, /start
- outline_ptd = pg_limb_sector(cd=*plane.cd_p, gbx=pd[0], col=ctred(), dkd=dkd)
+ outline_ptd = pg_limb_sector(cd=grim_xd(plane, /cd), gbx=pd[0], col=ctred(), dkd=dkd)
  grim_logging, grim_data, /stop
 
  p = pnt_points(outline_ptd)
@@ -696,7 +696,7 @@ pro grim_menu_limb_profile_radial_event, event
  ;------------------------------------------------
  grim_message, /clear
  dd = pg_profile_ring(plane.dd, sigma=sigma, $
-                 cd=*plane.cd_p, dkx=dkd, outline_ptd, dsk_pts=dsk_pts)
+                 cd=grim_xd(plane, /cd), dkx=dkd, outline_ptd, dsk_pts=dsk_pts)
  cor_set_udata, dd[0], 'DISK_PTS', dsk_pts
  grim_message
  if(NOT keyword_set(dd)) then return
@@ -705,79 +705,6 @@ pro grim_menu_limb_profile_radial_event, event
  grim, dd, /new, $
      xtitle='Radius (m)', ytitle=['<DN>', 'Sigma'], $
          title=['Radial limb profile', 'Radial limb profile sigmas']
- 
-
-end
-;=============================================================================
-
-
-;=============================================================================
-;+
-; NAME:
-;	grim_menu_pointing_manual_event
-;
-;
-; PURPOSE:
-;   This option allows you to change the pointing manually using pg_drag. 
-;  
-;    1) Activate the points that you wish to drag.  
-;  
-;    2) Select this option and use the left button to translate your 
-;       points, the middle button to rotate them, and the right button 
-;       to accept the change and correct the pointing.
-;
-;
-; CATEGORY:
-;	NV/GR
-;
-;
-; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 7/2002
-;	
-;-
-;=============================================================================
-pro grim_menu_pointing_manual_help_event, event
- text = ''
- nv_help, 'grim_menu_pointing_manual_event', cap=text
- if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-end
-;----------------------------------------------------------------------------
-pro grim_menu_pointing_manual_event, event
-
- grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
-
- ;----------------------------------------------------------------------
- ; construct the outlines to use based on currently existing points
- ;----------------------------------------------------------------------
- point_ptd = grim_cat_points(grim_data, /active)
- if(NOT keyword_set(point_ptd)) then $
-  begin
-   grim_message, 'There are no active image points.'
-   return
-  end
-
- ;------------------------------------------------
- ; find the offset
- ;------------------------------------------------
- axis_ptd = pnt_create_descriptors(points=cam_oaxis(*plane.cd_p))
- grim_print, grim_data, 'LEFT: Translate, MIDDLE: Rotate, RIGHT: Accept'
-
- grim_logging, grim_data, /start
- dxy = pg_drag(point_ptd, draw=grim_data.draw, $
-               dtheta=dtheta, axis=axis_ptd, col=ctpurple(), sample=1)
- grim_logging, grim_data, /stop
-
- if((dxy[0] EQ 0) AND (dxy[1] EQ 0) AND (dtheta[0] EQ 0)) then return
-
- ;------------------------------------------------------------
- ; repoint the camera
- ;  NOTE: this will result in a data event and the handler
- ;        for that event will take it from there. 
- ;------------------------------------------------------------
- pg_repoint, dxy, dtheta, axis=axis_ptd, cd=*plane.cd_p
- nv_free, axis_ptd
-
  
 
 end
@@ -853,7 +780,7 @@ pro grim_menu_pointing_farfit_event, event
  ;  NOTE: this will result in a data event and the handler
  ;        for that event will take it from here. 
  ;------------------------------------------------------------
- pg_repoint, dxy, 0d, cd=*plane.cd_p
+ pg_repoint, dxy, 0d, cd=grim_xd(plane, /cd)
  
 
 end
@@ -1158,7 +1085,7 @@ pro grim_menu_shift_enter_offset_event, event
   endrep until(done)
 
  shift = double(s)
- grim_reposition, grim_data, plane, cd=*plane.cd_p, -shift
+ grim_reposition, grim_data, plane, cd=grim_xd(plane, /cd), -shift
 
 end
 ;=============================================================================
@@ -1199,7 +1126,7 @@ pro grim_menu_shift_left_event, event
  plane = grim_get_plane(grim_data)
 
  step = grim_get_shift_step(grim_data)
- grim_reposition, grim_data, plane, cd=*plane.cd_p, -[step,0]
+ grim_reposition, grim_data, plane, cd=grim_xd(plane, /cd), -[step,0]
 
 end
 ;=============================================================================
@@ -1240,7 +1167,7 @@ pro grim_menu_shift_right_event, event
  plane = grim_get_plane(grim_data)
 
  step = grim_get_shift_step(grim_data)
- grim_reposition, grim_data, plane, cd=*plane.cd_p, -[-step,0]
+ grim_reposition, grim_data, plane, cd=grim_xd(plane, /cd), -[-step,0]
 
 end
 ;=============================================================================
@@ -1285,7 +1212,7 @@ pro grim_menu_shift_up_event, event
  grim_wset, grim_data, grim_data.wnum, get=tvd
  if(tvd.order) then dy = step
 
- grim_reposition, grim_data, plane, cd=*plane.cd_p, -[0,dy]
+ grim_reposition, grim_data, plane, cd=grim_xd(plane, /cd), -[0,dy]
 
 end
 ;=============================================================================
@@ -1330,7 +1257,7 @@ pro grim_menu_shift_down_event, event
  grim_wset, grim_data, grim_data.wnum, get=tvd
  if(tvd.order) then dy = -step
 
- grim_reposition, grim_data, plane, cd=*plane.cd_p, -[0,dy]
+ grim_reposition, grim_data, plane, cd=grim_xd(plane, /cd), -[0,dy]
 
 end
 ;=============================================================================

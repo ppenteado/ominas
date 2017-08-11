@@ -203,14 +203,14 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
    else $
     begin
      dd = cor_cull(append_array(dd, (ddi=plane.dd)))
-     cd = cor_cull(append_array(cd, (cdi=*plane.cd_p)))
-     pd = cor_cull(append_array(pd, (pdi=*plane.pd_p)))
-     rd = cor_cull(append_array(rd, (rdi=*plane.rd_p)))
-     sd = cor_cull(append_array(sd, (sdi=*plane.sd_p)))
-     std = cor_cull(append_array(std, (stdi=*plane.std_p)))
-     ard = cor_cull(append_array(ard, (ardi=*plane.ard_p)))
-     sund = cor_cull(append_array(sund, (sundi=*plane.sund_p)))
-     od = cor_cull(append_array(od, (odi=*plane.od_p)))
+     cd = cor_cull(append_array(cd, (cdi=grim_xd(plane, /cd))))
+     pd = cor_cull(append_array(pd, (pdi=grim_xd(plane, /pd))))
+     rd = cor_cull(append_array(rd, (rdi=grim_xd(plane, /rd))))
+     sd = cor_cull(append_array(sd, (sdi=grim_xd(plane, /sd))))
+     std = cor_cull(append_array(std, (stdi=grim_xd(plane, /std))))
+     ard = cor_cull(append_array(ard, (ardi=grim_xd(plane, /ard))))
+     sund = cor_cull(append_array(sund, (sundi=grim_xd(plane, /sund))))
+     od = cor_cull(append_array(od, (odi=grim_xd(plane, /od))))
 
      limb_ptd = append_array(limb_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'LIMB')))
      ring_ptd = append_array(ring_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'RING')))
