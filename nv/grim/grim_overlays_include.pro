@@ -114,7 +114,7 @@ end
 function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
                         data=data, class=class, dep_classes=dep_classes, ii=ii, $
                         color=color, psym=psym, tlab=tlab, tshade=tshade, $
-                        symsize=symsize, shade=shade, tfill=tfill, genre=genre, $
+                        symsize=symsize, shade=shade, genre=genre, $
                         fast=fast
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
@@ -144,7 +144,6 @@ function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
  shade = (*plane.overlays_p)[ii].shade
  tlab = (*plane.overlays_p)[ii].tlab
  tshade = (*plane.overlays_p)[ii].tshade
- tfill = (*plane.overlays_p)[ii].tfill
 
  data_p = (*plane.overlays_p)[ii].data_p
  if(ptr_valid(data_p)) then data = *data_p
@@ -409,33 +408,6 @@ end
 
 
 ;=============================================================================
-; grim_fill
-;
-;=============================================================================
-pro grim_fill, ptd, name, color
-
- shade = call_function('grim_shade_'+ name, data, ptd)
- col = make_array(n_elements(shade), val=color)
- nptd = n_elements(ptd)
- for j=0, nptd-1 do $
-  begin
-   p = pnt_points(ptd[j], /visible)
-
-   if(keyword_set(p)) then $
-    begin
-;     device, set_graphics=1
-     polyfill, p[0,*], p[1,*], col=call_function('ct' + col[j], shade[j])
-     device, set_graphics=3
-    end
-  end
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_draw_standard_points
 ;
 ;=============================================================================
@@ -470,7 +442,7 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
     name = names[i]
     ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, name, data=data, $
              color=color, psym=psym, symsize=symsize, shade=shade, tlab=tlab, $
-             tshade=tshade, tfill=tfill)
+             tshade=tshade)
     if(color NE 'hidden') then $
      if(ptr_valid(ptdp)) then $
       if(keyword_set(*ptdp)) then $
@@ -515,34 +487,20 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
 
 
         ;- - - - - - - - - - - - - - -
-        ; fills
+        ; inactive points
         ;- - - - - - - - - - - - - - -
-        if(tfill) then $
-         begin
-          if(keyword_set(inactive_ptd)) then grim_fill, inactive_ptd, name, inactive_color
-          if(keyword_set(active_ptd)) then grim_fill, active_ptd, name, color
-         end $
-        ;- - - - - - - - - - - - - - -
-        ; points
-        ;- - - - - - - - - - - - - - -
-        else $
-         begin
-          ;- - - - - - - - - - - - - - -
-          ; inactive points
-          ;- - - - - - - - - - - - - - -
-          if(keyword_set(inactive_ptd)) then $
-              grim_draw_standard_points, grim_data, plane, $
-                 inactive_ptd, name, data, inactive_color, tshade, shade, $
-                 psym=psym, psize=symsize, plabels=inactive_plabels, label_shade=0.5
+        if(keyword_set(inactive_ptd)) then $
+            grim_draw_standard_points, grim_data, plane, $
+               inactive_ptd, name, data, inactive_color, tshade, shade, $
+               psym=psym, psize=symsize, plabels=inactive_plabels, label_shade=0.5
 
-          ;- - - - - - - - - - - - - - -
-          ; active points
-          ;- - - - - - - - - - - - - - -
-          if(keyword_set(active_ptd)) then $
-              grim_draw_standard_points, grim_data, plane, $
-                 active_ptd, name, data, color, tshade, shade, $
-                 psym=psym, psize=symsize, plabels=active_plabels, label_shade=1.0
-         end
+        ;- - - - - - - - - - - - - - -
+        ; active points
+        ;- - - - - - - - - - - - - - -
+        if(keyword_set(active_ptd)) then $
+            grim_draw_standard_points, grim_data, plane, $
+               active_ptd, name, data, color, tshade, shade, $
+               psym=psym, psize=symsize, plabels=active_plabels, label_shade=1.0
        end
    end
 
@@ -3286,7 +3244,7 @@ end
 ;=============================================================================
 pro grim_create_overlay, grim_data, plane, name, class=class, dep_classes=dep_classes, dep_overlays, $
                    color=color, psym=psym, symsize=symsize, shade=shade, $
-                   tlab=tlab, tshade=tshade, tfill=tfill, genre=genre
+                   tlab=tlab, tshade=tshade, genre=genre
 
  if(grim_test_map(grim_data, plane=plane)) then psym = abs(psym)
 
@@ -3304,7 +3262,6 @@ pro grim_create_overlay, grim_data, plane, name, class=class, dep_classes=dep_cl
 		symsize 	: float(symsize), $
 		tlab 		: tlab, $
 		tshade 		: tshade, $
-		tfill 		: tfill, $
 		data_p 		: ptr_new(0) }
 
  *plane.overlays_p = append_array(*plane.overlays_p, overlay)
@@ -3326,77 +3283,77 @@ pro grim_create_overlays, grim_data, plane
 		class='RING', $
 		dep_classes=['SUN', 'PLANET'], $
 		genre='CURVE', $
-		col='orange', psym=3, tlab=0, tfill=0, tshade=1
+		col='orange', psym=3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'PLANET_GRID', $
 		class='PLANET', $
 		dep_classes=['SUN', 'RING'], $
 		genre='CURVE', $
-		col='green', psym=3, tlab=0, tfill=0, tshade=1
+		col='green', psym=3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'STATION', $
 		class='STATION', $
 		dep_classes=['PLANET', 'SUN', 'RING'], $
 		genre='POINT', $
-		col='yellow', psym=1, tlab=1, tfill=0, tshade=1
+		col='yellow', psym=1, tlab=1, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'ARRAY', $
 		class='ARRAY', $
 		dep_classes=['PLANET', 'SUN', 'RING'], $
 		genre='CURVE', $
-		col='blue', psym=-3, tlab=1, tfill=0, tshade=1
+		col='blue', psym=-3, tlab=1, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'LIMB', $
 		class='PLANET', $
 		dep_classes=['SUN', 'RING'], $
 		genre='CURVE', $
-		col='yellow', psym=-3, tlab=0, tfill=0, shade=0, tshade=1
+		col='yellow', psym=-3, tlab=0, shade=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'TERMINATOR', $
 		class='PLANET', $
 		dep_classes=['SUN', 'RING'], $
 		genre='CURVE', $
-		col='red', psym=-3, tlab=0, tfill=0, tshade=1
+		col='red', psym=-3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'RING', $
 		class='RING', $
 		dep_classes=['SUN', 'PLANET'], $
 		genre='CURVE', $
-		col='orange', psym=-3, tlab=0, tfill=0, tshade=1
+		col='orange', psym=-3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'PLANET_CENTER', $
 		class='PLANET', $
 		dep_classes=['SUN'], $
 		genre='POINT', $
-		col='white',    psym=1, tlab=1, tfill=0, tshade=1
+		col='white',    psym=1, tlab=1, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'STAR', $
 		class='STAR', $
 		dep_classes=['PLANET', 'RING'], $
 		genre='POINT', $
-		col='white',  psym=6, tlab=0, tfill=0, symsize=1, tshade=0
+		col='white',  psym=6, tlab=0, symsize=1, tshade=0
 
    grim_create_overlay, grim_data, plane, $
 	'SHADOW', $
 		class='', $
 		dep_classes=['PLANET', 'RING', 'SUN'], $
 		genre='CURVE', $
-		col='blue', psym=-3, tlab=0, tfill=0, tshade=1
+		col='blue', psym=-3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'REFLECTION', $
 		class='', $
 		dep_classes=['PLANET', 'RING', 'SUN'], $
 		genre='CURVE', $
-		col='blue', psym=-3, tlab=0, tfill=0, tshade=1
+		col='blue', psym=-3, tlab=0, tshade=1
 
 
 end
