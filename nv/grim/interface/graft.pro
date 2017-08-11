@@ -119,7 +119,7 @@ pro graft, arg, $
     begin
      tag = pnt_desc(ptd[i]) + '-' + cor_name(ptd[i])
      grim_add_user_points, plane=plane, ptd[i], $
-             tag, psym=psym, symsize=symsize, color=color, /no_refresh
+                  tag, psym=psym, symsize=symsize, color=color, /no_refresh
     end
   end
 
