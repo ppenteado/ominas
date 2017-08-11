@@ -95,7 +95,7 @@ pro grim_mode_navigate_reposition_xy, data, xarr, yarr, pixmap, win_num
  user_ptd = data.user_ptd
  cd = data.cd
 
- cd0 = *plane.cd_p
+ cd0 = grim_xd(plane, /cd)
 
  scale = (cam_scale(cd))[0]
 scale=1d
@@ -121,7 +121,7 @@ common grim_mode_navigate_reposition_xz_block, name, bx, inertial_pt0
  user_ptd = data.user_ptd
  cd = data.cd
 
- cd0 = *plane.cd_p
+ cd0 = grim_xd(plane, /cd)
  nv_copy, cd, cd0
 
  xy = (convert_coord(double(xarr), double(yarr), /device, /to_data))[0:1,*]
@@ -178,7 +178,7 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
  user_ptd = data.user_ptd
  cd = data.cd
 
- cd0 = *plane.cd_p
+ cd0 = grim_xd(plane, /cd)
  nv_copy, cd, cd0
 
  xy = (convert_coord(double(xarr), double(yarr), /device, /to_data))[0:1,*]
@@ -307,7 +307,7 @@ common grim_mode_navigate_reposition_y_block, name, bx, surf_pt0, body_pt0
 
  if(done) then $
   begin
-   nv_copy, *plane.cd_p, cd
+   nv_copy, grim_xd(plane, /cd), cd
    nv_free, [cd, curves_ptd, points_ptd]				;;;;;
    widget_control, grim_data.draw, event_pro=event_pro
    wdelete, pixmap
@@ -381,7 +381,7 @@ pro grim_mode_navigate_reposition_y, grim_data
 
  grim_mode_navigate_get_points, grim_data, $
                                plane=plane, points_ptd, curves_ptd, user_ptd
- cd = nv_clone(*plane.cd_p)
+ cd = nv_clone(grim_xd(plane, /cd))
 
  ;-----------------------------------------------
  ; temporarily replace main event handler
@@ -433,7 +433,7 @@ pro grim_mode_navigate_reorient_nod, data, xarr, yarr, pixmap, win_num
  user_ptd = data.user_ptd
  cd = data.cd
 
- cd0 = *plane.cd_p
+ cd0 = grim_xd(plane, /cd)
 
  xy = (convert_coord(double(xarr), double(yarr), /device, /to_data))[0:1,*]
  dxy = xy[*,1] - xy[*,0]
@@ -463,7 +463,7 @@ common grim_mode_navigate_reorient_twist_block, p0
  user_ptd = data.user_ptd
  cd = data.cd
 
- cd0 = *plane.cd_p
+ cd0 = grim_xd(plane, /cd)
 
  xy = (convert_coord(double(xarr), double(yarr), /device, /to_data))[0:1,*]
 
@@ -511,7 +511,7 @@ pro grim_mode_navigate_mouse_event, event, data
  if(struct NE 'WIDGET_DRAW') then return
  if(event.press EQ 2) then return
 
- if(NOT keyword_set(*plane.cd_p)) then return
+ if(NOT keyword_set(grim_xd(plane, /cd))) then return
 
  ;---------------------------------------
  ; scroll wheel -- adjust distance
@@ -531,7 +531,7 @@ pro grim_mode_navigate_mouse_event, event, data
  ;---------------------------------------
  grim_mode_navigate_get_points, grim_data, plane=plane, $
                                             points_ptd, curves_ptd, user_ptd
- cd = nv_clone(*plane.cd_p)
+ cd = nv_clone(grim_xd(plane, /cd))
  p0 = [event.x, event.y]
 
  fn = ''
@@ -556,7 +556,7 @@ pro grim_mode_navigate_mouse_event, event, data
  if(keyword_set(fn)) then $
        pp = tvline(p0=p0, fn_draw='grim_mode_navigate_'+fn, fn_data=fn_data)
 
- nv_copy, *plane.cd_p, cd
+ nv_copy, grim_xd(plane, /cd), cd
  nv_free, [cd, points_ptd, curves_ptd]			;;;;;
 
 end
