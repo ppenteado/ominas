@@ -91,9 +91,7 @@ end
 ;
 ;=============================================================================
 pro grim_update_user_points, plane=plane, grn=grn, user_ptd, tag, $
-                  color=color, shade_fn=shade_fn, psym=psym, thick=thick, line=line, symsize=symsize, $
-                  shade_threshold=shade_threshold, graphics_fn=graphics_fn, xgraphics=xgraphics, nodraw=nodraw, $
-                  no_refresh=no_refresh
+                  user_struct=user_struct, nodraw=nodraw, no_refresh=no_refresh
 
  if(NOT keyword_set(grn)) then if(keyword_set(plane)) then grn = plane.grn
  grim_data = grim_get_data(grn=grn)
@@ -102,20 +100,7 @@ pro grim_update_user_points, plane=plane, grn=grn, user_ptd, tag, $
  if(NOT keyword_set(plane.user_ptd_tlp)) then return
  if(NOT ptr_valid(plane.user_ptd_tlp)) then return
 
-
  user_ptd = tag_list_get(plane.user_ptd_tlp, tag)
- user_struct = cor_udata(user_ptd, 'GRIM_USER_STRUCT', /noevent)
-
- if(arg_present(color)) then user_struct.color = color
- if(arg_present(shade_fn)) then user_struct.shade_fn = shade_fn
- if(arg_present(psym)) then user_struct.psym = psym
- if(arg_present(shade_threshold)) then user_struct.shade_threshold = shade_threshold
- if(arg_present(graphics_fn)) then user_struct.graphics_fn = graphics_fn
- if(arg_present(xgraphics)) then user_struct.xgraphics = xgraphics
- if(arg_present(thick)) then user_struct.thick = thick
- if(arg_present(line)) then user_struct.line = line
- if(arg_present(symsize)) then user_struct.symsize = symsize
-
  cor_set_udata, user_ptd, 'GRIM_USER_STRUCT', user_struct, /all, /noevent
 
  if(keyword_set(nodraw)) then return
