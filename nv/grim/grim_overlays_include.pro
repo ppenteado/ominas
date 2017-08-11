@@ -556,88 +556,6 @@ end
 ; grim_draw_user_points
 ;
 ;=============================================================================
-pro ___grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap
-
- ;-------------------------------------
- ; draw each user array
- ;-------------------------------------
- for i=0, n_elements(tags)-1 do $
-  begin
-   ;- - - - - - - - - - - - - - - - - -
-   ; get user array
-   ;- - - - - - - - - - - - - - - - - -
-   user_ptd = $
-     grim_get_user_ptd(plane=plane, tags[i], $
-                 color=user_color, shade_fn=user_shade_fn, $
-                 shade_threshold=user_shade_threshold, graphics_fn=user_graphics_fn, $
-                 xgraphics=user_xgraphics, $
-                 psym=user_psym, thick=user_thick, line=user_line, $
-                 symsize=user_symsize)
-   np = n_elements(user_ptd)
-   if(keyword_set(inactive_color)) then user_color = inactive_color
-
-   for j=0, np-1 do $
-    begin
-     ;- - - - - - - - - - - - - - - - - -
-     ; draw only if not hidden
-     ;- - - - - - - - - - - - - - - - - -
-     if(user_color[0] NE 'hidden') then $
-      begin
-       ;- - - - - - - - - - - - - - - - - -
-       ; get shade values
-       ;- - - - - - - - - - - - - - - - - -
-       shade = 1d
-
-       if(keyword_set(user_shade_fn)) then $
-                shade = call_function(user_shade_fn, user_ptd[j], grim_data, plane)
-
-       ;- - - - - - - - - - - - - - - - - - - -
-       ; determine which points are visible
-       ;- - - - - - - - - - - - - - - - - - - -
-       if(keyword_set(user_shade_fn) AND defined(user_shade_threshold)) then $
-               p = grim_shade_threshold(user_ptd[j], shade, user_shade_threshold) $
-       else p = pnt_points(user_ptd[j], /visible)
-
-       ;- - - - - - - - - - - - - - - - - - - -
-       ; proceed with visible points
-       ;- - - - - - - - - - - - - - - - - - - -
-       if(keyword_set(p)) then $
-        begin
-         ;- - - - - - - - - - - - - - - - - - - -
-         ; parse user color
-         ;- - - - - - - - - - - - - - - - - - - -
-         if((str_isnum(strtrim(user_color,2)))[0] EQ -1) then $
-          begin
-            ucol = ctcolor(user_color, shade)
-            uxcol = ctcolor(user_color)
-          end $ 
-         else $
-          ucol = (uxcol = long(user_color))
-
-         ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-         ; draw points using standard plotting or add to xgraphics map
-         ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-         if(keyword_set(user_xgraphics)) then $
-                 shade = xshade(p, shade, map=xmap, color=uxcol, /getmap, /tv) $
-         else $
-          pg_draw, p, col=ucol, psym=user_psym, $
-               thick=user_thick, line=user_line, psize=user_symsize, $
-               graphics=user_graphics_fn
-        end
-      end
-    end
-  end
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_draw_user_points
-;
-;=============================================================================
 pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap
 
  ;-------------------------------------
@@ -738,7 +656,6 @@ pro grim_draw_user_overlays, grim_data, plane, inactive_color
    active_user_ptd = grim_get_active_user_overlays(plane, inactive_user_ptd)
    active_tags = unique(cor_name(active_user_ptd))
    inactive_tags = unique(cor_name(inactive_user_ptd))
-
 
    if(keyword_set(active_user_ptd)) then $
            grim_draw_user_points, grim_data, plane, active_tags, xmap=xmap

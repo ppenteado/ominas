@@ -156,7 +156,7 @@ pg_draw, ring_ptd, col=ctorange()
 ;+
 ; GRAFT
 ;
-;  GRAFT crams the POINT objects into GRIM.  Note that these are entered
+;  GRAFT "grafts" the POINT objects into GRIM.  Note that these are entered
 ;  as user arrays in GRIM, so they're pretty much second class as far as
 ;  GRIM is concerned.  This would have been way better if you had just 
 ;  specified these as overlays in your call to GRIM.  Now you have wasted 
