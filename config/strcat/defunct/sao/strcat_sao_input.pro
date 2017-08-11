@@ -137,11 +137,11 @@ function sao_get_stars, dd, filename, $
      ; declination change is not enough to update
      if (ra1 NE 0. OR ra2 NE 360.) then $
        begin
-         nv_message, verb=0.9, 'Converting RA/DEC to B1950'
+         nv_message, verb=0.9, 'Converting RA/DEC to B1950 (catalog epoch) for range testing'
          ra_to_xyz, ra1, dec1, pos1
          ra_to_xyz, ra2, dec2, pos2
-         pos1_1950 = b1950_to_j2000(pos1)
-         pos2_1950 = b1950_to_j2000(pos2)
+         pos1_1950 = b1950_to_j2000(pos1,/reverse)
+         pos2_1950 = b1950_to_j2000(pos2,/reverse)
          xyz_to_ra, pos1_1950, _ra1, _dec1
          xyz_to_ra, pos2_1950, _ra2, _dec2
        end
