@@ -6,6 +6,15 @@ function grim_xd, plane, _ref_extra=keys
 
 ;** return, cor_dereference_gd(*plane.gd_p, _ref_extra=keys)
 
+ if(NOT keyword_set(keys)) then $
+       return, cor_cull([*plane.cd_p, $
+                         *plane.pd_p, $
+                         *plane.rd_p, $
+                         *plane.sd_p, $
+                         *plane.sund_p, $
+                         *plane.std_p, $
+                         *plane.ard_p])
+
  xds = !null
 
  if((where(keys EQ 'CD'))[0] NE -1) then xds = append_array(xds, *plane.cd_p)

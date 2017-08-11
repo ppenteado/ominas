@@ -1,5 +1,5 @@
 ; _map_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(projection)) then map_set_projection, _xd, projection, /noevent

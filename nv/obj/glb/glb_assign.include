@@ -1,5 +1,5 @@
 ; _glb_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(model)) then glb_set_model, _xd, model, /noevent

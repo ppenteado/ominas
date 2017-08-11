@@ -1,5 +1,5 @@
 ; _str_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(lum)) then str_set_lum, _xd, lum, /noevent
