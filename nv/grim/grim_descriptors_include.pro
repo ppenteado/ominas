@@ -6,7 +6,7 @@ function grim_compute_fov, grim_data, plane, cov=cov
 
  if(grim_test_map(grim_data)) then return, 0
 
- cd = *plane.cd_p
+ cd = grim_xd(plane, /cd)
  if(NOT keyword_set(cd)) then return, 0
 
  fov = (cov = 0)
@@ -152,7 +152,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
    ; if the cd time is changed, then all descriptors will need to be reloaded
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;   if(NOT grim_test_map(grim_data)) then $
-;    if(plane.t0 NE bod_time(*plane.cd_p)) then $
+;    if(plane.t0 NE bod_time(grim_xd(plane, /cd))) then $
 ;     begin
 ;      grim_mark_descriptors, grim_data, /all, plane=plane, MARK_STALE
 ;      for i=0, nn-1 do *source_xd_list[i] = 0	; force everything to recompute.
@@ -484,6 +484,7 @@ function grim_get_cameras, grim_data, plane=plane
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+ cd = grim_xd(plane, /cd)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if the translator keywords have change, then need to load
@@ -494,24 +495,24 @@ function grim_get_cameras, grim_data, plane=plane
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if descriptor has been marked as stale, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- mark = grim_demark_descriptor(*plane.cd_p)
+ mark = grim_demark_descriptor(cd)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if there are no descriptors, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT keyword_set(*plane.cd_p)) then load = 1
+ if(NOT keyword_set(cd)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT load) then return, *plane.cd_p
+ if(NOT load) then return, cd
 
 
  ;------------------------------------------------
  ; get camera and map descriptors
  ;------------------------------------------------
- cd0 = *plane.cd_p
+ cd0 = cd
  t = ''
  if(keyword_set(cd0)) then $
   begin
@@ -537,6 +538,7 @@ function grim_get_cameras, grim_data, plane=plane
  ;------------------------------------------------
  if(NOT map) then $
   begin
+;++**   grim_add_descriptor, grim_data, cd, /one 
    grim_add_descriptor, grim_data, plane.cd_p, cd, /one 
    plane.t0 = bod_time(cd)
    grim_set_plane, grim_data, plane;, pn=plane.pn
@@ -547,13 +549,14 @@ function grim_get_cameras, grim_data, plane=plane
  ;------------------------------------------------------------------
  else $
   begin
+;++**   grim_add_descriptor, grim_data, md, /one
    grim_add_descriptor, grim_data, plane.cd_p, md, /one
    if(keyword_set(cd)) then $
 	       grim_add_descriptor, grim_data, plane.od_p, cd, /one
   end
  cor_set_udata, plane.dd, 'GRIM_CAM_TRS', plane.cam_trs, /noevent
 
- return, *plane.cd_p
+ return, grim_xd(plane, /cd)
 end
 ;=============================================================================
 
@@ -572,6 +575,9 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+ cd = grim_xd(plane, /cd)
+ pd = grim_xd(plane, /pd)
+ sund = grim_xd(plane, /sund)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
@@ -588,18 +594,18 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if descriptor has been marked as stale, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- mark = grim_demark_descriptor(*plane.pd_p)
+ mark = grim_demark_descriptor(pd)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1		;;;
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if there are no descriptors, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT keyword_set(*plane.pd_p)) then load = 1			;;;
+ if(NOT keyword_set(pd)) then load = 1			;;;
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT load) then return, get_object_by_name(*plane.pd_p, names)
+ if(NOT load) then return, get_object_by_name(pd, names)
 
 
  ;----------------------------------------------------------------------------
@@ -611,8 +617,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ; get main planets
  ;- - - - - - - - - - - - - - - - - - - - - - - -
  grim_print, grim_data, 'Getting planet descriptors...'
-;-- pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sd_p, $
- pd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, $
+ pd = pg_get_planets(plane.dd, od=cd, sd=sund, $
       name=names, plane.plt_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - -
@@ -620,8 +625,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - -
  if(keyword_set(pd)) then $
   begin
-;--   pdd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sd_p, pd=pd, $
-   pdd = pg_get_planets(plane.dd, od=*plane.cd_p, sd=*plane.sund_p, pd=pd, $
+   pdd = pg_get_planets(plane.dd, od=cd, sd=sund, pd=pd, $
        name=names, plane.plt_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
    if(keyword_set(pdd)) then pd = [pd, pdd]
 
@@ -669,6 +673,8 @@ function grim_get_sun, grim_data, plane=plane
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+ cd = grim_xd(plane, /cd)
+ sund = grim_xd(plane, /sund)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
@@ -685,29 +691,29 @@ function grim_get_sun, grim_data, plane=plane
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if descriptor has been marked as stale, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- mark = grim_demark_descriptor(*plane.sund_p)
+ mark = grim_demark_descriptor(sund)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if there are no descriptors, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT keyword_set(*plane.sund_p)) then load = 1
+ if(NOT keyword_set(sund)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT load) then return, get_object_by_name(*plane.sund_p, names)
+ if(NOT load) then return, get_object_by_name(sund, names)
 
 
  ;----------------------------------------------------------------------------
  ; load descriptors
  ;----------------------------------------------------------------------------
  grim_print, grim_data, 'Getting Sun descriptor...'
- if(star) then sund = pg_get_stars(plane.dd, od=*plane.cd_p, $
+ if(star) then sund = pg_get_stars(plane.dd, od=cd, $
                  name=name, plane.sun_trs, _extra=*grim_data.keyvals_p) $
  else $
   begin
-   pd = (pg_get_planets(plane.dd, od=*plane.cd_p, $
+   pd = (pg_get_planets(plane.dd, od=cd, $
              name=name, plane.sun_trs, _extra=*grim_data.keyvals_p))[1]
    sund = str_create_descriptors(1, gbd=pd)
   end
@@ -739,6 +745,8 @@ function grim_get_stars, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+ cd = grim_xd(plane, /cd)
+ sd = grim_xd(plane, /sd)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
@@ -755,13 +763,13 @@ function grim_get_stars, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if descriptor has been marked as stale, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- mark = grim_demark_descriptor(*plane.sd_p)
+ mark = grim_demark_descriptor(sd)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if there are no descriptors, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT keyword_set(*plane.sd_p)) then load = 1
+ if(NOT keyword_set(sd)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if the view has changed, then need to load
@@ -777,7 +785,7 @@ function grim_get_stars, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT load) then return, get_object_by_name(*plane.sd_p, names)
+ if(NOT load) then return, get_object_by_name(sd, names)
 
 
  ;----------------------------------------------------------------------------
@@ -786,7 +794,7 @@ function grim_get_stars, grim_data, plane=plane, names=names
  fov = grim_compute_fov(grim_data, plane, cov=cov)
 
  grim_print, grim_data, 'Getting star descriptors...'
- sd = pg_get_stars(plane.dd, od=*plane.cd_p, $
+ sd = pg_get_stars(plane.dd, od=cd, $
                  trs, name=names, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
  cor_set_udata, plane.dd, 'GRIM_STR_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_STR_TRS', trs, /noevent
@@ -813,6 +821,9 @@ function grim_get_rings, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+ cd = grim_xd(plane, /cd)
+ rd = grim_xd(plane, /rd)
+ pd = grim_xd(plane, /pd)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
@@ -829,18 +840,18 @@ function grim_get_rings, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if descriptor has been marked as stale, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- mark = grim_demark_descriptor(*plane.rd_p)
+ mark = grim_demark_descriptor(rd)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if there are no descriptors, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT keyword_set(*plane.rd_p)) then load = 1
+ if(NOT keyword_set(rd)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT load) then return, get_object_by_name(*plane.rd_p, names)
+ if(NOT load) then return, get_object_by_name(rd, names)
 
  ;----------------------------------------------------------------------------
  ; load descriptors
@@ -848,11 +859,10 @@ function grim_get_rings, grim_data, plane=plane, names=names
  fov = grim_compute_fov(grim_data, plane, cov=cov)
 
  grim_print, grim_data, 'Getting ring descriptors...'
- pd = *plane.pd_p
  if(NOT keyword_set(pd)) then return, obj_new()
 
  rd = pg_get_rings(plane.dd, $
-         od=*plane.cd_p, pd=pd, name=names, $
+         od=cd, pd=pd, name=names, $
                    plane.rng_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
  cor_set_udata, plane.dd, 'GRIM_RNG_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_RNG_TRS', plane.rng_trs, /noevent
@@ -879,6 +889,9 @@ function grim_get_stations, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+ cd = grim_xd(plane, /cd)
+ pd = grim_xd(plane, /pd)
+ std = grim_xd(plane, /std)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
@@ -895,27 +908,27 @@ function grim_get_stations, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if descriptor has been marked as stale, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- mark = grim_demark_descriptor(*plane.std_p)
+ mark = grim_demark_descriptor(std)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
  
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if there are no descriptors, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT keyword_set(*plane.std_p)) then load = 1
+ if(NOT keyword_set(std)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT load) then return, get_object_by_name(*plane.std_p, names)
+ if(NOT load) then return, get_object_by_name(std, names)
 
 
  ;----------------------------------------------------------------------------
  ; load descriptors
  ;----------------------------------------------------------------------------
  grim_print, grim_data, 'Getting station descriptors...'
- if(NOT map) then bx = *plane.pd_p
+ if(NOT map) then bx = pd
  std = pg_get_stations(plane.dd, $
-		   od=*plane.cd_p, bx=bx, name=names, $
+		   od=cd, bx=bx, name=names, $
                           plane.stn_trs, _extra=*grim_data.keyvals_p)
  cor_set_udata, plane.dd, 'GRIM_STN_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_STN_TRS', plane.stn_trs, /noevent
@@ -942,6 +955,9 @@ function grim_get_arrays, grim_data, plane=plane, names=names
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
+ cd = grim_xd(plane, /cd)
+ pd = grim_xd(plane, /pd)
+ ard = grim_xd(plane, /ard)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
@@ -958,27 +974,27 @@ function grim_get_arrays, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if descriptor has been marked as stale, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- mark = grim_demark_descriptor(*plane.ard_p)
+ mark = grim_demark_descriptor(ard)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if there are no descriptors, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT keyword_set(*plane.ard_p)) then load = 1
+ if(NOT keyword_set(ard)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT load) then return, get_object_by_name(*plane.ard_p, names)
+ if(NOT load) then return, get_object_by_name(ard, names)
 
 
  ;----------------------------------------------------------------------------
  ; load descriptors
  ;----------------------------------------------------------------------------
  grim_print, grim_data, 'Getting array descriptors...'
- if(NOT map) then bx = *plane.pd_p
+ if(NOT map) then bx = pd
  ard = pg_get_arrays(plane.dd, $
-		   od=*plane.cd_p, bx=bx, name=names, $
+		   od=cd, bx=bx, name=names, $
                          plane.arr_trs, _extra=*grim_data.keyvals_p)
  cor_set_udata, plane.dd, 'GRIM_ARR_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_ARR_TRS', plane.arr_trs, /noevent
@@ -1086,14 +1102,12 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
 
    if((where(dep EQ 'SUN'))[0] NE -1) then $
            sund = grim_get_sun(grim_data, plane=plane)
-;--           sd = append_array(sd, grim_get_sun(grim_data, plane=plane))
   end $
  else $
   begin
-   pd = *plane.pd_p
-;--   sd = *plane.sd_p
-   sund = *plane.sund_p
-   od = *plane.od_p
+   pd = grim_xd(plane, /pd)
+   sund = grim_xd(plane, /sund)
+   od = grim_xd(plane, /od)
   end
 
 

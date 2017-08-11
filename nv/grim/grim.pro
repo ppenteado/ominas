@@ -1249,40 +1249,34 @@ pro grim_write, grim_data, filename, filetype=filetype
  ;---------------------------------------------
  ; output descriptors
  ;---------------------------------------------
- if(keyword_set(*plane.cd_p)) then $
+ cd = grim_xd(plane, /cd)
+ pd = grim_xd(plane, /pd)
+ rd = grim_xd(plane, /rd)
+ sd = grim_xd(plane, /sd)
+ sund = grim_xd(plane, /sund)
+ std = grim_xd(plane, /std)
+ ard = grim_xd(plane, /ard)
+
+ if(keyword_set(cd)) then $
   case grim_test_map(grim_data) of
     0 : $
 	begin
-	 pg_put_cameras, plane.dd, cd=*plane.cd_p
-	 od = *plane.cd_p
+	 pg_put_cameras, plane.dd, cd=cd
+	 od = cd
 	end
     1 : $
 	begin
-	 pg_put_maps, plane.dd, md=*plane.cd_p
-	 od = *plane.od_p
+	 pg_put_maps, plane.dd, md=cd
+	 od = grim_xd(plane, /od)
 	end
   endcase
 
- if(keyword_set(*plane.pd_p)) then $
-            pg_put_planets, plane.dd, pd=*plane.pd_p, od=od
-
- if(keyword_set(*plane.rd_p)) then $
-              pg_put_rings, plane.dd, rd=*plane.rd_p, od=od
-
- if(keyword_set(*plane.sd_p)) then $
-              pg_put_stars, plane.dd, sd=*plane.sd_p, od=od
-
-; if(keyword_set(*plane.std_p)) then $ 
- ;             pg_put_stations, plane.dd, std=*plane.std_p, od=od ;no such function
-
- if(keyword_set(*plane.ard_p)) then $
-              pg_put_arrays, plane.dd, ard=*plane.ard_p, od=od
-
- if(keyword_set(*plane.ard_p)) then $
-              pg_put_stations, plane.dd, ard=*plane.ard_p, od=od
-
- if(keyword_set(*plane.sund_p)) then $
-              pg_put_stars, plane.dd, sd=*plane.sund_p, od=od
+ if(keyword_set(pd)) then pg_put_planets, plane.dd, pd=pd, od=od
+ if(keyword_set(rd)) then pg_put_rings, plane.dd, rd=rd, od=od
+ if(keyword_set(sd)) then pg_put_stars, plane.dd, sd=sd, od=od
+; if(keyword_set(std)) then pg_put_stations, plane.dd, std=std, od=od ;no such function
+ if(keyword_set(ard)) then pg_put_arrays, plane.dd, ard=ard, od=od
+ if(keyword_set(sund)) then pg_put_stars, plane.dd, sd=sund, od=od
 
  grim_resume_events
 
@@ -1343,15 +1337,22 @@ pro grim_kill_notify, top
  for i=0, grim_data.n_planes-1 do $
   begin
    plane = grim_get_plane(grim_data, pn=i)
+   cd = grim_xd(plane, /cd)
+   pd = grim_xd(plane, /pd)
+   rd = grim_xd(plane, /rd)
+   sd = grim_xd(plane, /sd)
+   sund = grim_xd(plane, /sund)
+   std = grim_xd(plane, /std)
+   ard = grim_xd(plane, /ard)
 
    nv_notify_unregister, plane.dd, 'grim_descriptor_notify'
-   if(keyword_set(*plane.cd_p)) then nv_notify_unregister, *plane.cd_p, 'grim_descriptor_notify'
-   if(keyword_set(*plane.pd_p)) then nv_notify_unregister, *plane.pd_p, 'grim_descriptor_notify'
-   if(keyword_set(*plane.rd_p)) then nv_notify_unregister, *plane.rd_p, 'grim_descriptor_notify'
-   if(keyword_set(*plane.sd_p)) then nv_notify_unregister, *plane.sd_p, 'grim_descriptor_notify'
-   if(keyword_set(*plane.std_p)) then nv_notify_unregister, *plane.std_p, 'grim_descriptor_notify'
-   if(keyword_set(*plane.ard_p)) then nv_notify_unregister, *plane.ard_p, 'grim_descriptor_notify'
-   if(keyword_set(*plane.sund_p)) then nv_notify_unregister, *plane.sund_p, 'grim_descriptor_notify'
+   if(keyword_set(cd)) then nv_notify_unregister, cd, 'grim_descriptor_notify'
+   if(keyword_set(pd)) then nv_notify_unregister, pd, 'grim_descriptor_notify'
+   if(keyword_set(rd)) then nv_notify_unregister, rd, 'grim_descriptor_notify'
+   if(keyword_set(sd)) then nv_notify_unregister, sd, 'grim_descriptor_notify'
+   if(keyword_set(std)) then nv_notify_unregister, std, 'grim_descriptor_notify'
+   if(keyword_set(ard)) then nv_notify_unregister, ard, 'grim_descriptor_notify'
+   if(keyword_set(sund)) then nv_notify_unregister, sund, 'grim_descriptor_notify'
 
 ;;;
    nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, $

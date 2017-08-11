@@ -1,4 +1,30 @@
 ;=============================================================================
+; grim_xd
+;
+;=============================================================================
+function grim_xd, plane, _ref_extra=keys
+
+;** return, cor_dereference_gd(*plane.gd_p, _ref_extra=keys)
+
+ xds = !null
+
+ if((where(keys EQ 'CD'))[0] NE -1) then xds = append_array(xds, *plane.cd_p)
+ if((where(keys EQ 'MD'))[0] NE -1) then xds = append_array(xds, *plane.md_p)
+ if((where(keys EQ 'OD'))[0] NE -1) then xds = append_array(xds, *plane.od_p)
+ if((where(keys EQ 'PD'))[0] NE -1) then xds = append_array(xds, *plane.pd_p)
+ if((where(keys EQ 'RD'))[0] NE -1) then xds = append_array(xds, *plane.rd_p)
+ if((where(keys EQ 'SD'))[0] NE -1) then xds = append_array(xds, *plane.sd_p)
+ if((where(keys EQ 'STD'))[0] NE -1) then xds = append_array(xds, *plane.std_p)
+ if((where(keys EQ 'ARD'))[0] NE -1) then xds = append_array(xds, *plane.ard_p)
+ if((where(keys EQ 'SUND'))[0] NE -1) then xds = append_array(xds, *plane.sund_p)
+
+ return, xds
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_set_user_data
 ;
 ;=============================================================================
@@ -151,7 +177,7 @@ end
 ;=============================================================================
 function grim_cat_bodies, plane
 
- bx = [*plane.pd_p, *plane.rd_p]
+ bx = grim_xd(plane, /pd, /rd)
  w = where(obj_valid(bx))
  if(w[0] EQ -1) then return, 0
  return, bx[w]

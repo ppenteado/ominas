@@ -233,7 +233,7 @@ pro grim_user_notify, grim_data, plane=plane
  if(NOT ptr_valid(plane.user_ptd_tlp)) then return
 
  ptd = grim_get_user_ptd(plane=plane)
- cd = *plane.cd_p
+ cd = grim_xd(plane, /cd)
 
  nv_suspend_events
 

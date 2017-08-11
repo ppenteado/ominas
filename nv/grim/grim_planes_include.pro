@@ -96,9 +96,10 @@ function grim_test_map, grim_data, plane=plane
 
  if(dat_instrument(plane.dd) EQ 'MAP') then return, 1
 
- if(NOT keyword_set(*plane.cd_p)) then return, 0
+ cd = grim_xd(plane, /cd)
+ if(NOT keyword_set(cd)) then return, 0
 
- if(cor_class(*plane.cd_p) EQ 'MAP') then return, 1
+ if(cor_class(cd) EQ 'MAP') then return, 1
 
  return, 0
 end
@@ -340,7 +341,7 @@ pro grim_crop_plane, grim_data, plane
    ;- - - - - - - - - - - - - - - - - - - - - - 
    if(NOT grim_test_map(grim_data)) then $
     begin
-     cd = *plane.cd_p
+     cd = grim_xd(plane, /cd)
      if(keyword_set(cd)) then cam_set_oaxis, cd, cam_oaxis(cd) - [xxmin,yymin]
     end
 
@@ -589,11 +590,13 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	;---------------
 	; descriptors
 	;---------------
-; should put these in a gd...
-; --> gd = grim_gd(plane)
-gd_p		:	ptr_new(0), $	; Generic descriptor
 		dd		:	dd[i], $		; Data descriptor
 		sibling_dd	:	obj_new(), $		; Last sibling dd
+
+; should put these in a gd or xds...
+; --> gd = grim_gd(plane)
+xd_p		:	ptr_new(0), $	; Descriptor array		;++
+gd_p		:	ptr_new(0), $	; Generic descriptor		;**
 		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
 		pd_p		:	ptr_new(obj_new()), $	; Planet descriptors
 		rd_p		:	ptr_new(obj_new()), $	; Ring descriptors
