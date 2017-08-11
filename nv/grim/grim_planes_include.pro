@@ -591,20 +591,23 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	; descriptors
 	;---------------
 		dd		:	dd[i], $		; Data descriptor
+		cd		:	obj_new(), $		; Camera descriptor
+		od		:	obj_new(), $		; Observer descriptor
 		sibling_dd	:	obj_new(), $		; Last sibling dd
 
 ; should put these in a gd or xds...
 ; --> gd = grim_gd(plane)
 xd_p		:	ptr_new(0), $	; Descriptor array		;++
 gd_p		:	ptr_new(0), $	; Generic descriptor		;**
-		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
+
+cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
+od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 		pd_p		:	ptr_new(obj_new()), $	; Planet descriptors
 		rd_p		:	ptr_new(obj_new()), $	; Ring descriptors
 		sd_p		:	ptr_new(obj_new()), $	; Star descriptors
 		sund_p		:	ptr_new(obj_new()), $	; Sun descriptor
 		std_p		:	ptr_new(obj_new()), $	; Station descriptors
 		ard_p		:	ptr_new(obj_new()), $	; Array descriptors
-		od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 
 	;-----------------------------------------------------------
 	; overlay points arrays  -- 

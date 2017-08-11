@@ -9,7 +9,7 @@ function grim_compute_planet_center, map=map, clip=clip, hide=hide, $
 
  grim_message, /clear
 
- pds = cor_select(active_xds, 'PLANET', /class)
+ pds = cor_select(active_xds, 'GLOBE', /class)
  if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
 
  cd = cor_dereference_gd(gd, /cd)
@@ -62,32 +62,32 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
- pds = cor_select(active_xds, 'GLOBE', /class)
- if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
- npd = n_elements(pds)
+ gbx = cor_select(active_xds, 'GLOBE', /class)
+ if(NOT keyword_set(gbx)) then gbx = cor_dereference_gd(gd, /pd)
+ npd = n_elements(gbx)
 
+print , glb_radii(gbx)
  cd = cor_dereference_gd(gd, /cd)
  rd = cor_dereference_gd(gd, /rd)
  pd = cor_dereference_gd(gd, /pd)
  sund = cor_dereference_gd(gd, name='SUN')
- if(keyword_set(sund)) then sund = sund[0]		; goofy; another reason
-							; to get rid of sund
-
+ if(keyword_set(sund)) then sund = sund[0]		; goofy, another reason to get rid of sund
+	
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing limbs...'
- limb_ptd = pg_limb(cd=cd, gbx=pds, od=od, clip=clip, npoints=npoints)
+ limb_ptd = pg_limb(cd=cd, gbx=gbx, od=od, clip=clip, npoints=npoints)
  grim_message
 
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pds, hide_ptd, /dissoc, /cat
+ pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=gbx, hide_ptd, /dissoc, /cat
  grim_message
 
- pg_hide, limb_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
- pg_hide, hide_ptd_term, cd=cd, od=od, dkx=rd, gbx=pds, /dissoc, /cat
+ pg_hide, limb_ptd, cd=cd, gbx=gbx, od=sund, /assoc, hide_ptd_term, /cat
+ pg_hide, hide_ptd_term, cd=cd, od=od, dkx=rd, gbx=gbx, /dissoc, /cat
  grim_message
 
  ;-------------------------------------
@@ -230,9 +230,9 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
- pds = cor_select(active_xds, 'GLOBE', /class)
- if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
- npd = n_elements(pds)
+ gbx = cor_select(active_xds, 'GLOBE', /class)
+ if(NOT keyword_set(gbx)) then gbx = cor_dereference_gd(gd, /pd)
+ npd = n_elements(gbx)
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
@@ -244,7 +244,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing planet grids...'
- grid_ptd = pg_grid(cd=cd, bx=pds, clip=clip, npoints=npoints)
+ grid_ptd = pg_grid(cd=cd, bx=gbx, clip=clip, npoints=npoints)
  grim_message
 
  ;--------------------------------
@@ -255,7 +255,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
    pg_hide, grid_ptd, cd=cd, dkx=rd, od=od, gbx=pd, hide_ptd, /cat
    grim_message
 
-   pg_hide, grid_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
+   pg_hide, grid_ptd, cd=cd, gbx=gbx, od=sund, /assoc, hide_ptd_term, /cat
    grim_message
   end
  grim_message

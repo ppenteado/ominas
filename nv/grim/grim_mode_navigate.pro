@@ -168,7 +168,7 @@ end
 ;
 ;=============================================================================
 pro grim_mode_navigate_reposition_track, data, xarr, yarr, pixmap, win_num
-common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
+common grim_mode_navigate_reposition_track_block, name, bx, body_pt0, body_pt_last
 
  grim_data = data.grim_data
  plane = grim_get_plane(grim_data)
@@ -218,7 +218,10 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
                     bod_inertial_to_body_pos(bx, bod_pos(cd)), $
                                         bod_inertial_to_body(bx, $
                                           image_to_inertial(cd, xy[*,1])))
+ if(hit[0] EQ -1) then body_pt = body_pt_last
+
  body_pt = body_pt[0,*]
+ body_pt_last = body_pt
 
  n = v_unit(v_cross(body_pt, body_pt0))
  theta = v_angle(body_pt0, body_pt)

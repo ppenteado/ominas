@@ -78,8 +78,8 @@
 ;	Descriptor select keywords are combined with OR logic.  They are 
 ;	implemented in this routine after the translators have been called, 
 ;	but they are also added to the translator keywords.  The purpose of 
-;	sending then to the translators as well is to give the  translators 
-;	an opportunity to filter their outputs before potentially  generating 
+;	sending then to the translators as well is to give the translators 
+;	an opportunity to filter their outputs before potentially generating 
 ;	a huge array of descriptors that would mostly be filtered out by this 
 ;	routine.  Named bodies are exempted.  See pg_select_bodies for a 
 ;	description of the standard keywords. 

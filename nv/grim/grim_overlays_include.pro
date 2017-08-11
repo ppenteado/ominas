@@ -1210,13 +1210,10 @@ end
 ;=============================================================================
 pro grim_copy_overlay, ptd_dst, ptd_src
 
- nv_suspend_events
- pnt_set_points, ptd_dst, pnt_points(ptd_src)
- pnt_set_flags, ptd_dst, pnt_flags(ptd_src)
- cor_set_udata, ptd_dst, cor_udata(ptd_src, 'GRIM_ACTIVE_FLAG'), /all
- cor_set_udata, ptd_dst, cor_udata(ptd_src, 'GRIM_UPDATE_FLAG'), /all
- cor_set_udata, ptd_dst, cor_udata(ptd_src, 'GRIM_OVERLAY_NAME'), /all
- nv_resume_events
+ pnt_assign, ptd_dst, /noevent, $
+           points = pnt_points(ptd_src), $
+           vectors = pnt_vectors(ptd_src), $
+           flags = pnt_flags(ptd_src)
 
 end
 ;=============================================================================
@@ -2620,10 +2617,7 @@ end
 ;=============================================================================
 pro grim_deactivate_all_xds, plane
 
- grim_deactivate_xd, plane, grim_xd(plane, /pd)
- grim_deactivate_xd, plane, grim_xd(plane, /rd)
- grim_deactivate_xd, plane, grim_xd(plane, /sd)
- grim_deactivate_xd, plane, grim_xd(plane, /std)
+ grim_deactivate_xd, plane, grim_xd(plane)
 
 end
 ;=============================================================================
@@ -2650,10 +2644,7 @@ end
 ;=============================================================================
 pro grim_activate_all_xds, plane
 
- grim_activate_xd, plane, grim_xd(plane, /pd)
- grim_activate_xd, plane, grim_xd(plane, /rd)
- grim_activate_xd, plane, grim_xd(plane, /sd)
- grim_activate_xd, plane, grim_xd(plane, /std)
+ grim_activate_xd, plane, grim_xd(plane)
 
 end
 ;=============================================================================

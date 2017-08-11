@@ -1,5 +1,5 @@
 ; _arr_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(surface_pts)) then arr_set_surface_pts, _xd, surface_pts, /noevent
