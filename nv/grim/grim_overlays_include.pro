@@ -1132,7 +1132,7 @@ pro grim_rm_overlay, plane, ptdp, ii
 
  nv_notify_unregister, ptd, 'grim_descriptor_notify'
 
- *ptdp = rm_list_item(*ptdp, ii, only=0)
+ *ptdp = rm_list_item(*ptdp, ii, only=0, /scalar)
 
 end
 ;=============================================================================
@@ -3510,7 +3510,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
 
    _ptd = call_function(fn, gd=gd, $
            map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
-           active_xd=source_xd, active_ptd=source_ptd, data=data, $
+           xd=source_xd, active_ptd=source_ptd, data=data, $
            npoints=grim_data.npoints)
    _ptd = pnt_cull(_ptd)
 
@@ -3552,10 +3552,11 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
    if(w[0] EQ -1) then return
    active_xds = xds[w]
   end
+ if(NOT keyword_set(active_xds)) then active_xds = grim_xd(plane)
 
  ptd = call_function(fn, gd=gd, data=data, $
           map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
-          active_xds=active_xds, $
+          xds=active_xds, $
           active_ptd=grim_get_active_overlays(grim_data, plane=plane), $
           npoints=grim_data.npoints)
  ptd = pnt_cull(ptd)
