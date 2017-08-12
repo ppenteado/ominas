@@ -212,14 +212,27 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0, body_pt_la
  ;-------------------------------------------------------------------------
 
  ;- - - - - - - - - - - - - - - - - - - -
- ; rotate cd position about bx center
+ ; get body intercept point
  ;- - - - - - - - - - - - - - - - - - - -
  body_pt = surface_intersect(/near, hit=hit, bx, $
                     bod_inertial_to_body_pos(bx, bod_pos(cd)), $
                                         bod_inertial_to_body(bx, $
                                           image_to_inertial(cd, xy[*,1])))
- if(hit[0] EQ -1) then body_pt = body_pt_last
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; if off body, put the point on the limb
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(hit[0] EQ -1) then $
+  begin
+   vxy = image_to_inertial(cd, xy)
+   n = v_cross(vxy[0,*], vxy[1,*])
+   v = v_cross(n,bod_pos(bx)-bod_pos(cd))
+   body_pt = bod_inertial_to_body(bx, v)
+  end
+
+ ;- - - - - - - - - - - - - - - - - - - -
+ ; rotate cd position about bx center
+ ;- - - - - - - - - - - - - - - - - - - -
  body_pt = body_pt[0,*]
  body_pt_last = body_pt
 
