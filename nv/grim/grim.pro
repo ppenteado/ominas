@@ -393,7 +393,7 @@
 ;
 ;                          type[:name1,name2,...]
 ;
-;               where 'type' is one of {limb, terminator, planet_center,
+;               where 'type' is one of {limb, terminator, center,
 ;               star, ring, planet_grid, array, station} and the names
 ;               identify the name of the desired object.  Note that grim
 ;               will load more objects than named if required by another
@@ -480,7 +480,7 @@
 ;
 ;       Example (assuming the grim alias described in grim.bat)::
 ;
-;            % grim -beta data/*.img overlay=planet_center,limb:JUPITER
+;            % grim -beta data/*.img overlay=center,limb:JUPITER
 ;
 ;
 ;      Environment Variables
@@ -812,7 +812,9 @@
 ;
 ;       Overlay point selections are not retained after recomputing
 ;
-;       Undo does not seem to be working
+;       Undo does not seem to be working reliably
+;
+;       Events on overlays copied to rendering planes do not function
 ;
 ;
 ;
@@ -1365,7 +1367,7 @@ pro grim_kill_notify, top
              grim_get_overlay_ptdp(grim_data, plane=plane, 'ARRAY'), $
              grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_GRID'), $
              grim_get_overlay_ptdp(grim_data, plane=plane, 'RING_GRID'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_CENTER'), $
+             grim_get_overlay_ptdp(grim_data, plane=plane, 'CENTER'), $
              plane.user_ptd_tlp]
   end
 
@@ -1451,7 +1453,6 @@ end
 pro grim_deactivate_all, grim_data, plane
 
  grim_deactivate_all_overlays, grim_data, plane
- grim_deactivate_all_xds, plane
 
 end
 ;=============================================================================
@@ -1465,7 +1466,6 @@ end
 pro grim_activate_all, grim_data, plane
 
  grim_activate_all_overlays, grim_data, plane
- grim_activate_all_xds, plane
 
 end
 ;=============================================================================
@@ -6942,12 +6942,12 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_menu_points_planet_centers_event
+;	grim_menu_points_centers_event
 ;
 ;
 ; PURPOSE:
 ;	Obtains the necessary descriptors through the translators and computes
-;	planet center positions using pg_center for all active objects.  If no
+;	center positions using pg_center for all active globes.  If no
 ;	active objects, then all centers are computed.
 ;
 ;
@@ -6960,13 +6960,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_menu_points_planet_centers_help_event, event
+pro grim_menu_points_centers_help_event, event
  text = ''
- nv_help, 'grim_menu_points_planet_centers_event', cap=text
+ nv_help, 'grim_menu_points_centers_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_menu_points_planet_centers_event, event
+pro grim_menu_points_centers_event, event
 
  grim_data = grim_get_data(event.top)
  widget_control, grim_data.draw, /hourglass
@@ -6974,8 +6974,8 @@ pro grim_menu_points_planet_centers_event, event
  ;------------------------------------------------
  ; load descriptors and compute centers
  ;------------------------------------------------
- grim_overlay, grim_data, 'PLANET_CENTER'
-; grim_planet_centers, grim_data
+ grim_overlay, grim_data, 'CENTER'
+; grim_centers, grim_data
 
  ;------------------------------------------------
  ; draw centers
@@ -8946,7 +8946,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '2\<null>               \+*grim_menu_delim_event', $
 
           '+*1\Overlays' ,$
-           '0\Compute planet centers \grim_menu_points_planet_centers_event', $ 
+           '0\Compute centers        \grim_menu_points_centers_event', $ 
            '0\Compute limbs          \#grim_menu_points_limbs_event', $        
            '0\Compute terminators    \#grim_menu_points_terminators_event', $
            '0\Compute planet grids   \*grim_menu_points_planet_grids_event', $ 

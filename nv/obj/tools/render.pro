@@ -414,10 +414,10 @@ end
 
 
 pro test
-; grim ~/casIss/1350/N1350122987_2.IMG over=planet_center,ring
-; grim ~/casIss/1460/N1460090980_1.IMG over=planet_center,ring
-; grim ~/casIss/1444/N1444735589_1.IMG over=planet_center,ring
-; grim ~/casIss/1669/N1669801856_1.IMG over=planet_center
+; grim ~/casIss/1350/N1350122987_2.IMG over=center,ring
+; grim ~/casIss/1460/N1460090980_1.IMG over=center,ring
+; grim ~/casIss/1444/N1444735589_1.IMG over=center,ring
+; grim ~/casIss/1669/N1669801856_1.IMG over=center
 
  grift, dd=dd, cd=cd, pd=pd, rd=rd, sund=sund
  bx = append_array(pd, rd)

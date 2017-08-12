@@ -14,14 +14,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       set_primary, xd, xd0
+;       set_primary, xd, bx0
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	xd:	Any object descritor.
 ;
-;	xd0:	Primary descriptor.
+;	bx0:	Primary descriptor.
 ;
 ;  OUTPUT:
 ;       NONE
@@ -41,7 +41,7 @@
 ;
 ;-
 ;=============================================================================
-pro set_primary, xd, xd0
- cor_set_gd, xd, xd0=xd0
+pro set_primary, xd, bx0
+ cor_set_gd, xd, bx0=bx0
 end
 ;=============================================================================

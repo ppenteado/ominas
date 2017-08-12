@@ -105,7 +105,7 @@ tvim, im, zoom=0.5, /order, /new
 ;       
 ;    rd = pg_get_rings(dd, pd=pd, od=cd, /override, $
 ;           name='MAIN_RING_SYSTEM', $
-;           gd={xd0:pd}, $
+;           gd={bx0:pd}, $
 ;           orient= $
 ;                [ [-0.254669368,  0.963251789,  0.085378596], $
 ;                  [-0.962535206, -0.260997177,  0.073528563], $
@@ -173,7 +173,7 @@ pd = pg_get_planets(dd, od=cd, /override, $
 ;- - - - - - - - - - - - - 
 rd = pg_get_rings(dd, pd=pd, od=cd, /override, $
        name='MAIN_RING_SYSTEM', $
-       gd={xd0:pd}, $
+       gd={bx0:pd}, $
        orient= $
             [ [-0.254669368,  0.963251789,  0.085378596], $
               [-0.962535206, -0.260997177,  0.073528563], $

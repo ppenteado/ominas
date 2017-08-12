@@ -168,7 +168,7 @@ end
 ;
 ;=============================================================================
 pro grim_mode_navigate_reposition_track, data, xarr, yarr, pixmap, win_num
-common grim_mode_navigate_reposition_track_block, name, bx, body_pt0, body_pt_last
+common grim_mode_navigate_reposition_track_block, name, bx, body_pt0
 
  grim_data = data.grim_data
  plane = grim_get_plane(grim_data)
@@ -214,10 +214,7 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0, body_pt_la
  ;- - - - - - - - - - - - - - - - - - - -
  ; get body intercept point
  ;- - - - - - - - - - - - - - - - - - - -
- body_pt = surface_intersect(/near, hit=hit, bx, $
-                    bod_inertial_to_body_pos(bx, bod_pos(cd)), $
-                                        bod_inertial_to_body(bx, $
-                                          image_to_inertial(cd, xy[*,1])))
+ body_pt = image_to_body(hit=hit, cd, bx, xy[*,1])
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if off body, put the point on the limb
@@ -234,7 +231,6 @@ common grim_mode_navigate_reposition_track_block, name, bx, body_pt0, body_pt_la
  ; rotate cd position about bx center
  ;- - - - - - - - - - - - - - - - - - - -
  body_pt = body_pt[0,*]
- body_pt_last = body_pt
 
  n = v_unit(v_cross(body_pt, body_pt0))
  theta = v_angle(body_pt0, body_pt)
@@ -557,7 +553,8 @@ pro grim_mode_navigate_mouse_event, event, data
             cd:cd, $
             grim_data:grim_data}
 
-; grim_refresh, grim_data, plane=plane, /use_pixmap, /no_objects, /noglass
+ grim_refresh, grim_data, plane=plane, /use_pixmap, /noglass, $
+                                             overlay_color=ctgray(0.25)
 
  ;- - - - - - - - - - - - - - - - - - -
  ; reposition mode

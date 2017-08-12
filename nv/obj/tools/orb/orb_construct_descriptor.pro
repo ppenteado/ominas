@@ -86,7 +86,7 @@ if(defined(tl)) then message, /con, 'WARNING: tl not implemented.'
  if(NOT keyword_set(rd)) then $
   rd = rng_create_descriptors(1, $
 		name=name, $
-		gd = {xd0:gbxt}, $
+		gd = {bx0:gbxt}, $
 		orient = bod_orient((_xd=orb_inertialize(gbxt))), $
 		pos = bod_pos(gbxt), $
                 time = t, $
