@@ -2,9 +2,24 @@
 ; grim_xd
 ;
 ;=============================================================================
-function grim_xd, plane, _ref_extra=keys
+function grim_xd, plane, class=_class, _ref_extra=keys
 
 ;** return, cor_dereference_gd(*plane.gd_p, _ref_extra=keys)
+
+ xds = !null
+
+ if(defined(_class)) then $
+  begin
+   class = _class
+   if(class[0] EQ '') then return, obj_new()
+   if(class[0] EQ 'all') then class = ''
+
+   all_xds = grim_xd(plane)
+   for i=0, n_elements(class)-1 do $
+                  xds = append_array(xds, cor_select(all_xds, class, /class))
+   return, xds
+  end
+
 
  if(NOT keyword_set(keys)) then $
        return, cor_cull([*plane.cd_p, $
@@ -15,7 +30,6 @@ function grim_xd, plane, _ref_extra=keys
                          *plane.std_p, $
                          *plane.ard_p])
 
- xds = !null
 
  if((where(keys EQ 'CD'))[0] NE -1) then xds = append_array(xds, *plane.cd_p)
  if((where(keys EQ 'MD'))[0] NE -1) then xds = append_array(xds, *plane.md_p)
@@ -96,39 +110,6 @@ function grim_get_body_by_name_single, xd_p, name
  names = cor_name(*xd_p)
  w = where(name EQ names)
  if(w[0] NE -1) then return, (*xd_p)[w]
-
- return, 0
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_get_body_by_name
-;
-;=============================================================================
-function grim_get_body_by_name, name, plane=plane
-
- bx = grim_get_body_by_name_single(plane.pd_p, name)
- if(keyword_set(bx)) then return, bx
-
- bx = grim_get_body_by_name_single(plane.rd_p, name)
- if(keyword_set(bx)) then return, bx
-
- bx = grim_get_body_by_name_single(plane.sd_p, name)
- if(keyword_set(bx)) then return, bx
-
- bx = grim_get_body_by_name_single(plane.sund_p, name)
- if(keyword_set(bx)) then return, bx
-
- bx = grim_get_body_by_name_single(plane.std_p, name)
- if(keyword_set(bx)) then return, bx
-
- bx = grim_get_body_by_name_single(plane.ard_p, name)
- if(keyword_set(bx)) then return, bx
-
- bx = grim_get_body_by_name_single(plane.cd_p, name)
- if(keyword_set(bx)) then return, bx
 
  return, 0
 end

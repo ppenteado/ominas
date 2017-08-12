@@ -15,8 +15,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       xd0 = get_primary(xd)
-;       xd0 = get_primary(od, bx)
+;       bx0 = get_primary(xd)
+;       bx0 = get_primary(od, bx)
 ;
 ;
 ; ARGUMENTS:
@@ -55,7 +55,7 @@ function get_primary, arg1, arg2, planets=planets
  ;----------------------------------------------------------------
  ; if only one argument, return the primary descriptor from arg1
  ;----------------------------------------------------------------
- if(NOT defined(arg2)) then return, cor_gd(arg1, /xd0)
+ if(NOT defined(arg2)) then return, cor_gd(arg1, /bx0)
 
 
  ;----------------------------------------------------------------
@@ -81,7 +81,7 @@ function get_primary, arg1, arg2, planets=planets
 
  nplanets = n_elements(planets)
 
- xd0 = objarr(nt)
+ bx0 = objarr(nt)
  for j=0, nt-1 do $
   begin
    ;------------------------------------------------
@@ -101,7 +101,7 @@ function get_primary, arg1, arg2, planets=planets
      ; take closest planet
      ;------------------------------------------------
      nii = n_elements(ii)
-     if(nii EQ 1) then xd0[j] = bx[ii,j] $
+     if(nii EQ 1) then bx0[j] = bx[ii,j] $
      else $
       begin
        r0 = bod_pos(od) ## make_array(nii, val=1d)
@@ -109,11 +109,11 @@ function get_primary, arg1, arg2, planets=planets
        d2 = v_sqmag(r0 - transpose(bod_pos(bx[ii,j])))
 
        w = where(d2 EQ min(d2))
-       xd0[j] = bx[ii[w[0]]]
+       bx0[j] = bx[ii[w[0]]]
       end
     end
   end
 
- return, xd0
+ return, bx0
 end
 ;=============================================================================

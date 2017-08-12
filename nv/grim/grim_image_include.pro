@@ -961,7 +961,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  no_context=no_context, no_callback=no_callback, no_back=no_back, $
  no_coord=no_coord, tvimage=tvimage, no_plot=no_plot, just_image=just_image, $
  dx=dx, dy=dy, update=update, current=current, no_copy=no_copy, no_main=no_main, $
- no_user=no_user
+ no_user=no_user, overlay_color=overlay_color
 @grim_block.include
 
 
@@ -1033,7 +1033,8 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ; redraw overlays
  ;-----------------------------------
  if(NOT keyword_set(no_objects)) then $
-          grim_draw, grim_data, plane=planes, /all, update=update, no_user=no_user
+          grim_draw, grim_data, plane=planes, /all, $
+                 update=update, no_user=no_user, override_color=overlay_color
 
 
  ;------------------------------------

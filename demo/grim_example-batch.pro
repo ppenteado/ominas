@@ -39,13 +39,13 @@ defsysv, '!grimrc',  ''				; disable grim resource file
 ;
 ;    dd = dat_read(file)
 ;    grim, dd, zoom=0.75, /order, $
-;                  overlay=['planet_center', 'limb', 'terminator', 'ring']
+;                  overlay=['center', 'limb', 'terminator', 'ring']
 ;
 ;-
 ;------------------------------------------------------------------------------
 dd = dat_read(file)
 grim, dd, zoom=0.75, /order, $
-                  overlay=['planet_center', 'limb', 'terminator', 'ring']
+                  overlay=['center', 'limb', 'terminator', 'ring']
 
 
 ;------------------------------------------------------------------------------
@@ -57,11 +57,11 @@ grim, dd, zoom=0.75, /order, $
 ;  If you zoom out, you may notice many objects far from the field of view::
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
-;                overlay=['planet_center', 'limb', 'terminator', 'ring']
+;                overlay=['center', 'limb', 'terminator', 'ring']
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, file, zoom=0.75, /order, $
-                overlay=['planet_center', 'limb', 'terminator', 'ring']
+                overlay=['center', 'limb', 'terminator', 'ring']
 
 
 ;------------------------------------------------------------------------------
@@ -73,12 +73,12 @@ grim, /new, file, zoom=0.75, /order, $
 ;  on your translator setup::
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
-;        overlay=['planet_center:JUPITER,IO,EUROPA,GANYMEDE,CALLISTO', $
+;        overlay=['center:JUPITER,IO,EUROPA,GANYMEDE,CALLISTO', $
 ;                                                'limb', 'terminator', 'ring']
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, file, zoom=0.75, /order, $
-    overlay=['planet_center:JUPITER,IO,EUROPA,GANYMEDE,CALLISTO', $
+    overlay=['center:JUPITER,IO,EUROPA,GANYMEDE,CALLISTO', $
                                               'limb', 'terminator', 'ring']
 
 
@@ -91,11 +91,11 @@ grim, /new, file, zoom=0.75, /order, $
 ;  of the viewport::  
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
-;        overlay=['planet_center', 'limb', 'terminator', 'ring'], fov=-1
+;        overlay=['center', 'limb', 'terminator', 'ring'], fov=-1
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, file, zoom=0.75, /order, $
-    overlay=['planet_center', 'limb', 'terminator', 'ring'], fov=-1
+    overlay=['center', 'limb', 'terminator', 'ring'], fov=-1
 
 
 ;------------------------------------------------------------------------------
@@ -106,11 +106,11 @@ grim, /new, file, zoom=0.75, /order, $
 ;  of the *image*::
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
-;        overlay=['planet_center', 'limb', 'terminator', 'ring'], fov=1
+;        overlay=['center', 'limb', 'terminator', 'ring'], fov=1
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, file, zoom=0.75, /order, $
-    overlay=['planet_center', 'limb', 'terminator', 'ring'], fov=1
+    overlay=['center', 'limb', 'terminator', 'ring'], fov=1
 
 
 
@@ -139,10 +139,10 @@ grim, /exit, grn=lindgen(100)		; I'm assuming you haven't opened more
 ;  planes using the left/right arrows in the top left corner.  If you have
 ;  Xdefaults-grim set up, you can use the left / right arrow keys::
 ;
-;    grim, /new, './data/n*.2', /order, overlay='planet_center'
+;    grim, /new, './data/n*.2', /order, overlay='center'
 ;-
 ;------------------------------------------------------------------------------
-grim, /new, './data/n*.2', /order, overlay='planet_center'
+grim, /new, './data/n*.2', /order, overlay='center'
 
 
 
@@ -166,7 +166,7 @@ grim, /new, './data/GamAra037_2_bin50_031108.vic'
 ;                             'N1460072401_1.IMG', $
 ;                             'N1460072467_1.IMG'], $
 ;          ext='.cal', visibility=1, channel=[1b,2b,4b], $
-;          over=['planet_center', $
+;          over=['center', $
 ;                'limb:SATURN', $
 ;                'terminator:SATURN', $
 ;                'planet_grid:SATURN', $
@@ -177,7 +177,7 @@ grim, /new, './data/' + ['N1460072434_1.IMG', $
                          'N1460072401_1.IMG', $
                          'N1460072467_1.IMG'], $
       ext='.cal', visibility=1, channel=[1b,2b,4b], $
-      over=['planet_center', $
+      over=['center', $
            'limb:SATURN', $
            'terminator:SATURN', $
            'planet_grid:SATURN', $

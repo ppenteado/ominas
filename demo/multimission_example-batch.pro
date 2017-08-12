@@ -20,7 +20,7 @@
 ;     
 ;   Load the 3 images into grim, with planet centers as overlays::
 ;   
-;     grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
+;     grim, over='center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
 ;     ['N1350122987_2.IMG','2100r.img','c3440346.gem'])
 ;     
 ;   The Jupiter observation (from Cassini, the first one displayed in grim) 
@@ -46,6 +46,6 @@
 ;-
 ;-------------------------------------------------------------------------
 !quiet = 1
-grim, over='planet_center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
+grim, over='center', dat_read(getenv('OMINAS_DIR')+'/demo/data/'+ $
                   ['N1350122987_2.IMG','2100r.img','c3440346.gem'])
                    

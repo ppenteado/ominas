@@ -30,12 +30,12 @@
 ;  of undoing.  So now you're finished.  Have fun!
 ;::
 ;     grim, '~/casIss/1350/N1350122987_2.IMG', $
-;                over=['planet_center','limb','terminator','ring'], nhist=5
+;                over=['center','limb','terminator','ring'], nhist=5
 ;
 ;-
 ;-------------------------------------------------------------------------
 grim, './data/N1350122987_2.IMG', $
-                  over=['planet_center','limb','terminator','ring'], nhist=5
+                  over=['center','limb','terminator','ring'], nhist=5
 
 
 stop, '=== Auto-example complete.  Use cut & paste to continue.'
