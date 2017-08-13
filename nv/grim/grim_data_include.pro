@@ -16,7 +16,7 @@ end
 function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            retain=retain, user_callbacks=user_callbacks, $
            user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, $
-           cursor_swap=cursor_swap, cmd=cmd, $
+           cursor_swap=cursor_swap, cmd=cmd, lights=lights, $
            path=path, save_path=save_path, load_path=load_path, fov=fov, clip=clip, $
            cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
            sun_trs=sun_trs, hide=hide, type=type, $
@@ -46,6 +46,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   if(NOT keyword_set(slave_overlays)) then slave_overlays = 0
   if(NOT defined(cursor_swap)) then cursor_swap = -1
   if(NOT keyword_set(overlays)) then overlays = ''
+  if(NOT keyword_set(lights)) then lights = ''
 
   if(NOT keyword_set(cursor_modes)) then cursor_modes_p = ptr_new(0) $
   else cursor_modes_p = ptr_new(cursor_modes)
@@ -238,6 +239,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		slave_overlays		: slave_overlays, $
 
 		misc_data_p		: ptr_new(0), $
+		lights_p		 : ptr_new(lights), $
 
 
 	;---------------

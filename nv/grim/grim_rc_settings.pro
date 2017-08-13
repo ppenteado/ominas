@@ -33,7 +33,7 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
         render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
-        delay_overlays=delay_overlays, auto_stretch=auto_stretch
+        delay_overlays=delay_overlays, auto_stretch=auto_stretch, lights=lights
 	
 
  ;----------------------------------------------------
@@ -164,6 +164,10 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
  if(n_elements(retain) EQ 0) then _retain = extra_value(kv, 'RETAIN') $
  else _retain = retain
  if(keyword_set(_retain)) then retain = fix(_retain)
+
+ if(n_elements(lights) EQ 0) then _lights = extra_value(kv, 'LIGHTS') $
+ else _lights = lights
+ if(keyword_set(_lights)) then lights = _lights
 
  if(n_elements(overlays) EQ 0) then _overlays = extra_value(kv, 'OVERLAYS') $
  else _overlays = overlays

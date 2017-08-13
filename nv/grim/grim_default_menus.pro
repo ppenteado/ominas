@@ -825,7 +825,7 @@ pro grim_menu_pointing_renderfit_event, event
  ;------------------------------------------------
  cd = grim_get_cameras(grim_data)
  if(NOT keyword__set(cd[0])) then return
- sund = grim_get_sun(grim_data)
+ sund = (grim_data)
  if(NOT keyword__set(sund[0])) then return
  pd = grim_get_planets(grim_data)
  if(keyword__set(pd[0])) then bx = append_array(bx, pd)
@@ -1304,7 +1304,7 @@ pro grim_menu_corrections_photometry_event, event
  if(NOT keyword__set(cd[0])) then return
  pd = grim_get_planets(grim_data)
  if(NOT keyword__set(pd[0])) then return
- sund = grim_get_sun(grim_data)
+ sund = grim_get_lights(grim_data)
  if(NOT keyword__set(sund[0])) then return
 
 
@@ -1359,7 +1359,7 @@ pro grim_menu_project_map_event, event
  if(NOT keyword__set(cd[0])) then return
  pd = grim_get_planets(grim_data)
  if(NOT keyword__set(pd[0])) then return
- sund = grim_get_sun(grim_data)
+ sund = grim_get_lights(grim_data)
  if(NOT keyword__set(sund[0])) then return
 
 

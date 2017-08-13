@@ -388,8 +388,8 @@ pro grim_mark_descriptors, grim_data, all=all, $
                                 grim_mark_descriptor, *planes[i].std_p, val
    if((keyword_set(all)) OR (keyword_set(ard))) then $
                                 grim_mark_descriptor, *planes[i].ard_p, val
-   if((keyword_set(all)) OR (keyword_set(sund))) then $	                     ;--
-                                grim_mark_descriptor, *planes[i].sund_p, val ;--
+   if((keyword_set(all)) OR (keyword_set(sund))) then $	
+                                grim_mark_descriptor, *planes[i].sund_p, val
   end
 
 
@@ -399,10 +399,10 @@ end
 
 
 ;=============================================================================
-; grim_add_descriptor
+; grim_add_xd
 ;
 ;=============================================================================
-pro grim_add_descriptor, grim_data, xdp, _xd, one=one, $
+pro grim_add_xd, grim_data, xdp, _xd, one=one, $
                                noregister=noregister, assoc_xd=assoc_xd
 @grim_constants.common
 
@@ -538,8 +538,8 @@ function grim_get_cameras, grim_data, plane=plane
  ;------------------------------------------------
  if(NOT map) then $
   begin
-;++**   grim_add_descriptor, grim_data, cd, /one 
-   grim_add_descriptor, grim_data, plane.cd_p, cd, /one 
+;++**   grim_add_xd, grim_data, cd, /one 
+   grim_add_xd, grim_data, plane.cd_p, cd, /one 
    plane.t0 = bod_time(cd)
    grim_set_plane, grim_data, plane;, pn=plane.pn
   end $
@@ -549,10 +549,10 @@ function grim_get_cameras, grim_data, plane=plane
  ;------------------------------------------------------------------
  else $
   begin
-;++**   grim_add_descriptor, grim_data, md, /one
-   grim_add_descriptor, grim_data, plane.cd_p, md, /one
+;++**   grim_add_xd, grim_data, md, /one
+   grim_add_xd, grim_data, plane.cd_p, md, /one
    if(keyword_set(cd)) then $
-	       grim_add_descriptor, grim_data, plane.od_p, cd, /one
+	       grim_add_xd, grim_data, plane.od_p, cd, /one
   end
  cor_set_udata, plane.dd, 'GRIM_CAM_TRS', plane.cam_trs, /noevent
 
@@ -637,7 +637,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
 
  cor_set_udata, plane.dd, 'GRIM_PLT_NAMES', names, /noevent
 
- if(keyword_set(pd[0])) then grim_add_descriptor, grim_data, plane.pd_p, pd
+ if(keyword_set(pd[0])) then grim_add_xd, grim_data, plane.pd_p, pd
  
  return, pd
 end
@@ -646,27 +646,19 @@ end
 
 
 ;=============================================================================
-; grim_get_sun
+; grim_get_lights
 ;
 ;=============================================================================
-function grim_get_sun, grim_data, plane=plane
+function grim_get_lights, grim_data, plane=plane
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
  ;----------------------------------------------------------------------------
- ; can use a planet instead of the sun if 'name' translator keyword is given
+ ; get light sources
  ;----------------------------------------------------------------------------
- kv = dat_parse_keyvals(dat_parse_transient_keyvals(plane.sun_trs), keywords=keywords)
- nv_free, kv  
-
- star = 1
- name = 'SUN'   
- if(keyword_set(keywords)) then $
-  begin
-   w = where(keywords EQ 'name')
-   if(w[0] NE -1) then star = 0
-  end 
+ lights = *grim_data.lights_p
+ if(NOT keyword_set(lights)) then lights = 'SUN'
 
 
  ;----------------------------------------------------------------------------
@@ -679,13 +671,13 @@ function grim_get_sun, grim_data, plane=plane
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- _name = cor_udata(plane.dd, 'GRIM_SUN_NAME')
+ _name = cor_udata(plane.dd, 'GRIM_LIGHT_NAME')
  if(NOT grim_compare(_name, name)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if the translator keywords have change, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- _trs = cor_udata(plane.dd, 'GRIM_SUN_TRS')
+ _trs = cor_udata(plane.dd, 'GRIM_LIGHT_TRS')
  if(NOT grim_compare(_trs, plane.sun_trs)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -709,19 +701,24 @@ function grim_get_sun, grim_data, plane=plane
  ; load descriptors
  ;----------------------------------------------------------------------------
  grim_print, grim_data, 'Getting Sun descriptor...'
- if(star) then sund = pg_get_stars(plane.dd, od=cd, $
-                 name=name, plane.sun_trs, _extra=*grim_data.keyvals_p) $
- else $
+
+ for i=0, n_elements(lights)-1 do $
   begin
-   pd = (pg_get_planets(plane.dd, od=cd, $
-             name=name, plane.sun_trs, _extra=*grim_data.keyvals_p))[1]
-   sund = str_create_descriptors(1, gbd=pd)
+   xd = pg_get_stars(plane.dd, od=cd, $
+                 name=lights[i], plane.sun_trs, _extra=*grim_data.keyvals_p)
+   if(NOT keyword_set(xd)) then $
+     xd = pg_get_planets(plane.dd, od=cd, $
+                 name=lights[i], plane.sun_trs, _extra=*grim_data.keyvals_p)
+
+   if(keyword_set(xd)) then sund = append_array(sund, xd)
   end
 
- cor_set_udata, plane.dd, 'GRIM_SUN_NAME', name, /noevent
- cor_set_udata, plane.dd, 'GRIM_SUN_TRS', plane.sun_trs, /noevent
 
- if(keyword_set(sund)) then grim_add_descriptor, grim_data, plane.sund_p, sund, /one
+; cor_set_udata, plane.dd, 'GRIM_LIGHT_NAME', lights, /noevent
+ cor_set_udata, plane.dd, 'GRIM_LIGHT_NAME', name, /noevent
+ cor_set_udata, plane.dd, 'GRIM_LIGHT_TRS', plane.sun_trs, /noevent
+
+ if(keyword_set(sund)) then grim_add_xd, grim_data, plane.sund_p, sund
 
  return, sund
 end
@@ -800,7 +797,7 @@ function grim_get_stars, grim_data, plane=plane, names=names
  cor_set_udata, plane.dd, 'GRIM_STR_TRS', trs, /noevent
  cor_set_udata, plane.dd, 'GRIM_STR_TVD', tvd, /noevent
 
- if(keyword_set(sd[0])) then grim_add_descriptor, grim_data, plane.sd_p, sd
+ if(keyword_set(sd[0])) then grim_add_xd, grim_data, plane.sd_p, sd
 
  return, sd
 end
@@ -867,7 +864,7 @@ function grim_get_rings, grim_data, plane=plane, names=names
  cor_set_udata, plane.dd, 'GRIM_RNG_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_RNG_TRS', plane.rng_trs, /noevent
 
- if(keyword_set(rd)) then grim_add_descriptor, grim_data, plane.rd_p, rd
+ if(keyword_set(rd)) then grim_add_xd, grim_data, plane.rd_p, rd
 
  return, rd
 end
@@ -933,7 +930,7 @@ function grim_get_stations, grim_data, plane=plane, names=names
  cor_set_udata, plane.dd, 'GRIM_STN_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_STN_TRS', plane.stn_trs, /noevent
 
- if(keyword_set(std)) then grim_add_descriptor, grim_data, plane.std_p, std
+ if(keyword_set(std)) then grim_add_xd, grim_data, plane.std_p, std
 
  return, std
 end
@@ -999,7 +996,7 @@ function grim_get_arrays, grim_data, plane=plane, names=names
  cor_set_udata, plane.dd, 'GRIM_ARR_NAMES', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_ARR_TRS', plane.arr_trs, /noevent
 
- if(keyword_set(ard)) then grim_add_descriptor, grim_data, plane.ard_p, ard
+ if(keyword_set(ard)) then grim_add_xd, grim_data, plane.ard_p, ard
 
  return, ard
 end
@@ -1101,7 +1098,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
     end
 
    if((where(dep EQ 'SUN'))[0] NE -1) then $
-           sund = grim_get_sun(grim_data, plane=plane)
+           sund = grim_get_lights(grim_data, plane=plane)
   end $
  else $
   begin
@@ -1132,7 +1129,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  gd = {cd: cd, $
        pd: pd, $
        rd: rd, $
-       sund: sund, $		;--
+       sund: sund, $
        sd: sd, $
        std: std, $
        ard: ard, $

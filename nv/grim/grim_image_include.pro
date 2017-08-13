@@ -186,7 +186,7 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  cd = grim_get_cameras(grim_data, plane=plane)
  pd = grim_get_planets(grim_data, plane=plane)
  rd = grim_get_rings(grim_data, plane=plane)
- sund = grim_get_sun(grim_data, plane=plane)
+ sund = grim_get_lights(grim_data, plane=plane)
  grim_resume_events
 
 
