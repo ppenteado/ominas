@@ -116,7 +116,7 @@ end
 ; grim_get_active_overlays
 ;
 ;=============================================================================
-function grim_get_active_overlays, grim_data, plane=plane, type, $
+function grim_get_active_overlays, grim_data, plane=plane, type, user=user, $
                                                  inactive_ptd=inactive_ptd
 
  active_ptd = (inactive_ptd = !null)
@@ -159,6 +159,13 @@ function grim_get_active_overlays, grim_data, plane=plane, type, $
      active_ptd = append_array(active_ptd, _active_ptd)
      inactive_ptd = append_array(inactive_ptd, _inactive_ptd)
     end
+  end
+
+ if(keyword_set(user)) then $
+  begin
+   active_user_ptd = grim_get_active_user_overlays(plane, inactive_user_ptd)
+   active_ptd = append_array(active_ptd, active_user_ptd)
+   inactive_ptd = append_array(inactive_ptd, inactive_user_ptd)
   end
 
 
@@ -1087,20 +1094,41 @@ end
 function grim_match_overlays, ptd, ptd0
 
 
- return, where((pnt_desc(ptd) EQ pnt_desc(ptd0)) $
-                  AND (cor_name(ptd) EQ cor_name(ptd0)) $
+;print, pnt_desc(ptd)
+;stop
+ ;----------------------------------------------------------
+ ; narrow by comparing descriptions, names, and assoc xds
+ ;----------------------------------------------------------
+ w = where((pnt_desc(ptd) EQ pnt_desc(ptd0)) $
+              AND (cor_name(ptd) EQ cor_name(ptd0)) $
                   AND (pnt_assoc_xd(ptd) EQ pnt_assoc_xd(ptd0)) )
 
+ ;----------------------------------------------------------
+ ; if only one math, assume it's correct
+ ;----------------------------------------------------------
+ if(w[0] EQ -1) then nv_message, 'Overlay match failure.'
+ if(n_elements(w) EQ 1) then return, w
 
+ ;-------------------------------------------------------------------------
+ ; compare observers for remaining candidates; multiple ods are possible
+ ; for points hidden wrt a light source.  There should be only one match,
+ ; so return the first one.
+ ;-------------------------------------------------------------------------
+ od = cor_gd(ptd, /od)
+ for i=0, n_elements(w)-1 do $
+  begin
+   ii = w[i]
+   od0 = cor_gd(ptd0[ii], /od)
+   if(n_elements(od) EQ n_elements(od0)) then $
+    begin
+     ww = nwhere(od, od0)
+     if(ww[0] NE -1) then $
+         if(n_elements(ww) EQ n_elements(od)) then return, ii
+    end
 
-; return, where((pnt_desc(ptd) EQ pnt_desc(ptd0)) $
-;                     AND (cor_name(ptd) EQ cor_name(ptd0)) )
+  end
 
-; this is more rigorous, but much slower...
- return, where(cor_match_gd(ptd, ptd0) $
-                   AND (pnt_desc(ptd) EQ pnt_desc(ptd0)) $
-                     AND (cor_name(ptd) EQ cor_name(ptd0)) )
-
+ nv_message, 'Overlay match failure.'
 end
 ;=============================================================================
 
@@ -1396,17 +1424,17 @@ pro grim_clear_objects, grim_data, all=all, $
    ; clear descriptors
    ;----------------------------------
    if((keyword_set(all)) OR (keyword_set(cd))) then $
-     grim_rm_descriptor, grim_data, plane=planes[i], planes[i].cd_p
+     grim_rm_xd, grim_data, plane=planes[i], planes[i].cd_p
    if((keyword_set(all)) OR (keyword_set(pd))) then $
-     grim_rm_descriptor, grim_data, plane=planes[i], planes[i].pd_p
+     grim_rm_xd, grim_data, plane=planes[i], planes[i].pd_p
    if((keyword_set(all)) OR (keyword_set(rd))) then $
-     grim_rm_descriptor, grim_data, plane=planes[i], planes[i].rd_p
+     grim_rm_xd, grim_data, plane=planes[i], planes[i].rd_p
    if((keyword_set(all)) OR (keyword_set(sd))) then $
-     grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sd_p
+     grim_rm_xd, grim_data, plane=planes[i], planes[i].sd_p
    if((keyword_set(all)) OR (keyword_set(std))) then $
-     grim_rm_descriptor, grim_data, plane=planes[i], planes[i].std_p
+     grim_rm_xd, grim_data, plane=planes[i], planes[i].std_p
    if((keyword_set(all)) OR (keyword_set(sund))) then $
-     grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sund_p
+     grim_rm_xd, grim_data, plane=planes[i], planes[i].sund_p
 
    ;----------------------------------
    ; clear points arrays
@@ -3394,7 +3422,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
 
    _ptd = call_function(fn, gd=gd, $
            map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
-           bx=source_xd, active_ptd=source_ptd, data=data, $
+           bx=source_xd, ptd=source_ptd, data=data, $
            npoints=grim_data.npoints)
    _ptd = pnt_cull(_ptd)
 
@@ -3441,7 +3469,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
  ptd = call_function(fn, gd=gd, data=data, $
           map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
           bx=active_xds, $
-          active_ptd=grim_get_active_overlays(grim_data, plane=plane), $
+          ptd=grim_get_active_overlays(grim_data, plane=plane, /user), $
           npoints=grim_data.npoints)
  ptd = pnt_cull(ptd)
 

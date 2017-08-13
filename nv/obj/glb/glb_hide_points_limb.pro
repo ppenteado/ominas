@@ -64,7 +64,6 @@ function glb_hide_points_limb, gbd, view_pts, hide_pts
  norm_pts = glb_get_surface_normal(/body, gbd, hide_pts)
 
  sub = where(v_inner(norm_pts,ray_pts) GT 0)
-; sub = where(v_inner(norm_pts,ray_pts) GT -1d-2)
 
  return, sub
 end

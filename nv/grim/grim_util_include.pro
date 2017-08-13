@@ -47,6 +47,32 @@ end
 
 
 
+;===============================================================================
+; grim_get_illumination
+;
+;===============================================================================
+function grim_get_illumination, gd, cd, od=od
+; need to sort by brightness, brightest first...
+
+ sund = cor_dereference_gd(gd, /sund)
+ if(keyword_set(sund)) then return, sund
+
+ xds = cor_dereference_gd(gd)
+
+ sd = cor_select(xds, 'STAR', /class)
+ if(NOT keyword_set(sd)) then return, 0
+ if(NOT keyword_set(od)) then od=cd
+
+ F = str_get_flux(sd, od=od)
+
+ Fmax = max(F, w) 
+
+ return, sd[w[0]]
+end
+;===============================================================================
+
+
+
 ;=============================================================================
 ; grim_set_user_data
 ;
@@ -110,6 +136,39 @@ function grim_get_body_by_name_single, xd_p, name
  names = cor_name(*xd_p)
  w = where(name EQ names)
  if(w[0] NE -1) then return, (*xd_p)[w]
+
+ return, 0
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_body_by_name
+;
+;=============================================================================
+function grim_get_body_by_name, name, plane=plane
+
+ bx = grim_get_body_by_name_single(plane.pd_p, name)
+ if(keyword_set(bx)) then return, bx
+
+ bx = grim_get_body_by_name_single(plane.rd_p, name)
+ if(keyword_set(bx)) then return, bx
+
+ bx = grim_get_body_by_name_single(plane.sd_p, name)
+ if(keyword_set(bx)) then return, bx
+
+ bx = grim_get_body_by_name_single(plane.sund_p, name)
+ if(keyword_set(bx)) then return, bx
+
+ bx = grim_get_body_by_name_single(plane.std_p, name)
+ if(keyword_set(bx)) then return, bx
+
+ bx = grim_get_body_by_name_single(plane.ard_p, name)
+ if(keyword_set(bx)) then return, bx
+
+ bx = grim_get_body_by_name_single(plane.cd_p, name)
+ if(keyword_set(bx)) then return, bx
 
  return, 0
 end

@@ -386,6 +386,8 @@
 ;
 ;      `nsum`:  See OPLOT.  One element per plane.
 ;
+;      `*lights`:
+;               List of bodies to use as light sources.  Default is 'SUN'.
 ;
 ;      `*overlays`:
 ;               List of initial overlays to compute on startup.  Each element
@@ -9804,7 +9806,6 @@ end
 ; grim
 ;
 ;=============================================================================
-;=============================================================================
 pro grim, arg1, arg2, _extra=keyvals, $
         cd=_cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=_od, $
 	new=new, xsize=xsize, ysize=ysize, no_refresh=no_refresh, $
@@ -9815,7 +9816,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	mode_init=mode_init, modal=modal, xzero=xzero, frame=frame, $
 	refresh_callbacks=refresh_callbacks, refresh_callback_data_ps=refresh_callback_data_ps, $
 	plane_callbacks=plane_callbacks, plane_callback_data_ps=plane_callback_data_ps, $
-	max=max, path=path, symsize=symsize, $
+	max=max, path=path, symsize=symsize, lights=lights, $
 	user_psym=user_psym, workdir=workdir, mode_args=mode_args, $
         save_path=save_path, load_path=load_path, overlays=overlays, pn=pn, $
 	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
@@ -9851,7 +9852,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
 	fov=fov, clip=clip, menu_extensions=menu_extensions, button_extensions=button_extensions, arg_extensions=arg_extensions, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
-	hide=hide, mode_args=mode_args, xzero=xzero, $
+	hide=hide, mode_args=mode_args, xzero=xzero, lights=lights, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
@@ -9861,6 +9862,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	delay_overlays=delay_overlays, auto_stretch=auto_stretch
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
+
+ if(NOT keyword_set(lights)) then lights = 'SUN'
 
  if(NOT keyword_set(menu_extensions)) then $
                                      menu_extensions = 'grim_default_menus' $
@@ -9998,7 +10001,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select, $
        cmd=cmd, color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
-       symsize=symsize, nhist=nhist, maintain=maintain, $
+       symsize=symsize, nhist=nhist, maintain=maintain, lights=lights, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
        visibility=visibility, channel=channel, keyvals=keyvals, $
        title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
@@ -10131,17 +10134,16 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  for i=0, nplanes-1 do $
   begin
    if(keyword_set(od)) then $
-      grim_add_descriptor, grim_data, planes[i].od_p, od[i], /one, /noregister
+      grim_add_xd, grim_data, planes[i].od_p, od[i], /one, /noregister
    if(keyword_set(cd)) then $
-      grim_add_descriptor, grim_data, planes[i].cd_p, cd[i], /one
+      grim_add_xd, grim_data, planes[i].cd_p, cd[i], /one
 
-   grim_add_descriptor, grim_data, planes[i].pd_p, pd, assoc_xd=_assoc_xd[i]
-   grim_add_descriptor, grim_data, planes[i].rd_p, rd, assoc_xd=_assoc_xd[i]
-   grim_add_descriptor, grim_data, planes[i].std_p, std, assoc_xd=_assoc_xd[i]
-   grim_add_descriptor, grim_data, planes[i].ard_p, ard, assoc_xd=_assoc_xd[i]
-   grim_add_descriptor, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd[i]
-;--   grim_add_descriptor, grim_data, planes[i].sd_p, sund, assoc_xd=_assoc_xd[i]
-   grim_add_descriptor, grim_data, planes[i].sund_p, sund, /one, assoc_xd=_assoc_xd[i]
+   grim_add_xd, grim_data, planes[i].pd_p, pd, assoc_xd=_assoc_xd[i]
+   grim_add_xd, grim_data, planes[i].rd_p, rd, assoc_xd=_assoc_xd[i]
+   grim_add_xd, grim_data, planes[i].std_p, std, assoc_xd=_assoc_xd[i]
+   grim_add_xd, grim_data, planes[i].ard_p, ard, assoc_xd=_assoc_xd[i]
+   grim_add_xd, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd[i]
+   grim_add_xd, grim_data, planes[i].sund_p, sund, /one, assoc_xd=_assoc_xd[i]
   end
 
 
@@ -10285,14 +10287,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  ; draw initial image
  ;-------------------------
  if(NOT keyword_set(no_refresh)) then grim_refresh, grim_data, no_erase=no_erase
-
-
- ;----------------------------------------------
- ; compute any initial overlays
- ;----------------------------------------------
- if(keyword_set(overlays)) then $
-    if(NOT keyword_set(delay_overlays)) then $
-                        grim_initial_overlays, grim_data, plane=_plane
 
 
 end
