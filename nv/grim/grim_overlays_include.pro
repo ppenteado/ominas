@@ -3337,14 +3337,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
    ; recompute the overlay points
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;**   gd = *plane.gd_p
-   gd = {cd:grim_xd(plane, /cd), $
-         pd:grim_xd(plane, /pd), $
-         rd:grim_xd(plane, /rd), $
-         sund:grim_xd(plane, /sund), $
-         sd:grim_xd(plane, /sd), $
-         std:grim_xd(plane, /std), $
-         ard:grim_xd(plane, /ard), $
-         od:grim_xd(plane, /od)}
+   gd = grim_gd(plane)
    if(cor_test_gd(gd, 'MD')) then gd = cor_create_gd(gd=gd, cd=gd.md, od=gd.od)
 
    _ptd = call_function(fn, gd=gd, $
