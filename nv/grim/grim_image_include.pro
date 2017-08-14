@@ -186,7 +186,7 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  cd = grim_get_cameras(grim_data, plane=plane)
  pd = grim_get_planets(grim_data, plane=plane)
  rd = grim_get_rings(grim_data, plane=plane)
- sund = grim_get_lights(grim_data, plane=plane)
+ ltd = grim_get_lights(grim_data, plane=plane)
  grim_resume_events
 
 
@@ -209,7 +209,7 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  md = *grim_data.md_map_p
 
  stat = pg_render(/psf, /nodd, show=plane.render_show, $
-                    cd=cd, bx=bx, sund=sund, md=md, ddmap=dd_map, map=map, $
+                    cd=cd, bx=bx, ltd=ltd, md=md, ddmap=dd_map, map=map, $
                     pht=plane.render_pht_min, $
                     sample=plane.render_sample, $
                     image_ptd=image_pts)
@@ -757,7 +757,7 @@ end
 ; grim_show_axes
 ;
 ;  inertial axes:	blue
-;  sun direction:	yellow
+;  light direction:	yellow
 ;  camera axes:		red
 ;  dir. to primary:	green
 ;
@@ -782,7 +782,7 @@ pro grim_show_axes, grim_data, plane
  ; draw axis vectors
  ;---------------------------------
  cd = grim_xd(plane, /cd)
- sund = grim_xd(plane, /sund)
+ ltd = grim_xd(plane, /ltd)
  pd = get_primary(cd, grim_xd(plane, /pd))
  if(NOT grim_test_map(grim_data)) then $
   if(grim_data.axes_flag) then $
@@ -821,12 +821,12 @@ pro grim_show_axes, grim_data, plane
          label_shade=0.75
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; draw sun vector
+     ; draw primary light vector
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-     if(keyword_set(sund)) then $
+     if(keyword_set(ltd)) then $
        pg_draw_vector, cd=cd, source, /noshort, /fix, $
-         v_unit(bod_pos(sund) - bod_pos(cd)), $
-         plab=['SUN'], col='yellow', len=len, draw_wnum=grim_data.axes_wnum, $
+         v_unit(bod_pos(ltd[0]) - bod_pos(cd)), $
+         plab=['LIGHT'], col='yellow', len=len, draw_wnum=grim_data.axes_wnum, $
          label_shade=0.75
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -

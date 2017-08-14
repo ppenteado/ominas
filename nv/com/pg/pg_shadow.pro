@@ -42,7 +42,7 @@
 ;	od:	Array (n_timesteps) of descriptors of objects 
 ;		which must be a subclass of BODY.  These objects are used
 ;		as the source from which points are projected.  If no observer
-;		descriptor is given, then the sun descriptor in gd is used.
+;		descriptor is given, then the light descriptor in gd is used.
 ;		Only one observer is allowed.
 ;
 ;	gd:	Generic descriptor.  If given, the descriptor inputs 

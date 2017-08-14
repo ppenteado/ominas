@@ -14,14 +14,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       v = get_solar_ref(dkx, sund)
+;       v = get_solar_ref(dkx, ltd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dkx:	Array (nt) of any subclass of DISK.
 ;
-;	sund:	Array (nt) of any subclass of STAR representing the sun.
+;	ltd:	Array (nt) of any subclass of STAR representing the sun.
 ;
 ;  OUTPUT:  NONE
 ;
@@ -41,9 +41,9 @@
 ;
 ;-
 ;=============================================================================
-function get_solar_ref, dkx, sund
+function get_solar_ref, dkx, ltd
 
- v = bod_pos(sund) - bod_pos(dkx)
+ v = bod_pos(ltd) - bod_pos(dkx)
  vv = bod_inertial_to_body(dkx, v)
 
  vv[*,2,*] = 0

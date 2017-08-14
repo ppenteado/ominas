@@ -86,7 +86,7 @@ end
 ;=============================================================================
 pro grmt_create_map, data, md
 
- grift, dd=dd, cd=cd, sund=sund, pd=all_pd
+ grift, dd=dd, cd=cd, ltd=ltd, pd=all_pd
  grift, /active, pd=pd, rd=rd
  class = cor_udata(md, 'CLASS')
  
@@ -96,9 +96,9 @@ pro grmt_create_map, data, md
    return
   end
 
- if(NOT keyword__set(sund)) then $
+ if(NOT keyword__set(ltd)) then $
   begin
-   grim_message, 'No sun descriptor.'
+   grim_message, 'No light descriptor.'
    return
   end
 
@@ -135,7 +135,7 @@ pro grmt_create_map, data, md
 	 dd_map = pg_map(dd, $
                     md=md, $
                     cd=cd, $
-                    sund=sund, $
+                    ltd=ltd, $
                     gbx=gbx, aux=['EMM'], $
                     hide_fn=hide_fn, hide_bx=hide_bx)
 	end
@@ -162,7 +162,7 @@ pro grmt_create_map, data, md
 	 dd_map = pg_map(dd, bx=rd[0], $
                     md=md, $
                     cd=cd, $
-                    sund=sund, $
+                    ltd=ltd, $
                     gbx=all_pd, $
                     hide_fn=hide_fn, hide_bx=hide_bx)
 
@@ -176,7 +176,7 @@ pro grmt_create_map, data, md
  ; open map in grim
  ;-----------------------------------
  if(cor_class(cd) NE 'MAP') then od = cd
- grim, /new, dd_map, cd=md, od=od, sund=sund, pd=map_pd, rd=map_rd, $
+ grim, /new, dd_map, cd=md, od=od, ltd=ltd, pd=map_pd, rd=map_rd, $
               /tiepoint_sync, /curve_sync, order=1-data.order, $
               title=map_projection(md) + ' ' + cor_name(dd)
 
@@ -326,12 +326,12 @@ pro grmt_refresh_callback, data_p
  if(NOT widget_info(data.ids[w1], /valid_id)) then return
  if(NOT widget_info(data.ids[w2], /valid_id)) then return
 
- grift, dd=dd, cd=cd, sund=sund
+ grift, dd=dd, cd=cd, ltd=ltd
  grift, /active, pd=pd, rd=rd
 
  if((NOT keyword__set(cd)) OR $
     (NOT keyword__set(pd)) OR $
-    (NOT keyword__set(sund))) then $
+    (NOT keyword__set(ltd))) then $
   begin
 ;   widget_control, data.ids[w1], sensitive=0
 ;   widget_control, data.ids[w2], sensitive=0

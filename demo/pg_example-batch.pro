@@ -74,7 +74,7 @@ tvim, im, zoom=0.75, /order, /new
 ;     cd = pg_get_cameras(dd)                        ; CAMERA descriptor
 ;     pd = pg_get_planets(dd, od=cd, count=npd)      ; PLANET descriptor(s)
 ;     rd = pg_get_rings(dd, pd=pd, od=cd, count=nrd) ; RING descriptor(s)
-;     sund = pg_get_stars(dd, od=cd, name='SUN')     ; STAR descriptor for Sun
+;     ltd = pg_get_stars(dd, od=cd, name='SUN')     ; STAR descriptor for Sun
 ;
 ;   The calls to PG_GET_PLANETS, PG_GET_RINGS, and PG_GET_STARS include
 ;   an observer descriptor, od.  Without this, it would not be possible 
@@ -95,7 +95,7 @@ tvim, im, zoom=0.75, /order, /new
 cd = pg_get_cameras(dd)	
 pd = pg_get_planets(dd, od=cd, count=npd)
 rd = pg_get_rings(dd, pd=pd, od=cd, count=nrd)
-sund = pg_get_stars(dd, od=cd, name='SUN')
+ltd = pg_get_stars(dd, od=cd, name='SUN')
 
 
 ;-------------------------------------------------------------------------
@@ -159,10 +159,10 @@ sund = pg_get_stars(dd, od=cd, name='SUN')
 ;   way.  They live on because it turns out they have amazing utility in 
 ;   other ways.  So anyway, it's like this::
 ;
-;     gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+;     gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 ;-
 ;-------------------------------------------------------------------------
-gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 
 
 ;-------------------------------------------------------------------------
@@ -174,16 +174,16 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;   using PG_LIMB with the Sun as the observer::
 ;
 ;     limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-;               pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;               pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ;     ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
-;     term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+;     term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;     center_ptd = pg_center(gd=gd, bx=pd)
 ;-
 ;-------------------------------------------------------------------------
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 center_ptd = pg_center(gd=gd, bx=pd)
 
 
@@ -281,10 +281,10 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;
 ;
 ;    limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-;           pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;           pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ;    ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 ;    center_ptd = pg_center(gd=gd, bx=pd)
-;    term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+;    term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;    object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 ;
 ;   And now we can see the result:
@@ -305,10 +305,10 @@ dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])
 pg_repoint, dxy, gd=gd
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -346,10 +346,10 @@ pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -477,10 +477,10 @@ dxy = pg_fit(cvscan_cf)
 pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-        pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+        pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -522,7 +522,7 @@ print, dxy, chisq, covar
 ;
 ;     grid_ptd = pg_grid(gd=gd, lat=lat, lon=lon) 
 ;     pg_hide, grid_ptd, cd=cd, bx=pd, /assoc
-;     pg_hide, grid_ptd, cd=cd, bx=pd, od=sund, /assoc
+;     pg_hide, grid_ptd, cd=cd, bx=pd, od=ltd, /assoc
 ;     pg_hide, grid_ptd, gd=gd, bx=rd
 ;     pg_draw, grid_ptd, color=ctblue()
 ;
@@ -541,7 +541,7 @@ print, dxy, chisq, covar
 ;-------------------------------------------------------------------------
 grid_ptd = pg_grid(gd=gd, lat=lat, lon=lon) 
 pg_hide, grid_ptd, cd=cd, bx=pd, /assoc
-pg_hide, grid_ptd, cd=cd, bx=pd, od=sund, /assoc
+pg_hide, grid_ptd, cd=cd, bx=pd, od=ltd, /assoc
 pg_hide, grid_ptd, gd=gd, bx=rd
 pg_draw, grid_ptd, color=ctblue()
 
@@ -708,7 +708,7 @@ pg_draw, plon_ptd, psym=7, plabel=strmid(strtrim(lon*180d/!dpi,2),0,3), /label_p
 ;   observer descriptor::
 ;
 ;    map_limb_ptd = pg_limb(gd=gdm, od=cd)
-;    map_term_ptd = pg_limb(gd=gdm, od=sund)
+;    map_term_ptd = pg_limb(gd=gdm, od=ltd)
 ;
 ;    pg_draw, map_limb_ptd, col=ctred()
 ;    pg_draw, map_term_ptd, col=ctyellow()
@@ -716,7 +716,7 @@ pg_draw, plon_ptd, psym=7, plabel=strmid(strtrim(lon*180d/!dpi,2),0,3), /label_p
 ;-
 ;-------------------------------------------------------------------------
 map_limb_ptd = pg_limb(gd=gdm, od=cd)
-map_term_ptd = pg_limb(gd=gdm, od=sund)
+map_term_ptd = pg_limb(gd=gdm, od=ltd)
 
 pg_draw, map_limb_ptd, col=ctred()
 pg_draw, map_term_ptd, col=ctyellow()
@@ -764,7 +764,7 @@ tvim, /new, map1
 ;     pg_put_rings, dd, od=cd, rd=rd
 ;     pg_put_planets, dd, od=cd, pd=pd
 ;     pg_put_cameras, dd, cd=cd
-;     pg_put_stars, dd, sd=sund, od=cd
+;     pg_put_stars, dd, sd=ltd, od=cd
 ;
 ;
 ;   The detached head may be viewed using::
@@ -784,7 +784,7 @@ tvim, /new, map1
 pg_put_rings, dd, od=cd, rd=rd
 pg_put_planets, dd, od=cd, pd=pd
 pg_put_cameras, dd, cd=cd
-pg_put_stars, dd, sd=sund, od=cd
+pg_put_stars, dd, sd=ltd, od=cd
 print, transpose(dat_dh(dd))
 
 

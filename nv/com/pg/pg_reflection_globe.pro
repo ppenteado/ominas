@@ -34,7 +34,7 @@
 ;	od:	Array (n_timesteps) of descriptors of objects 
 ;		which must be a subclass of BODY.  These objects are used
 ;		as the source from which points are projected.  If no observer
-;		descriptor is given, then the sun descriptor in gd is used.
+;		descriptor is given, then the light descriptor in gd is used.
 ;		Only one observer is allowed.
 ;
 ;	gd:	Generic descriptor.  If given, the descriptor inputs 
@@ -91,11 +91,11 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
  ;-----------------------------------------------
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
  if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(NOT keyword_set(od)) then $
-  if(keyword_set(sund)) then od = sund $
+  if(keyword_set(ltd)) then od = ltd $
   else nv_message, 'No observer descriptor.'
 
 

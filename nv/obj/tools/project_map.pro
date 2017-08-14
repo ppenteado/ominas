@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = project_map(image, md=md, cd=cd, bx=bx, sund=sund, $
+;       result = project_map(image, md=md, cd=cd, bx=bx, ltd=ltd, $
 ;                            pc_xsize, pc_ysize, $
 ;                            hide_fn=hide_fn, hide_bx=hide_bx)
 ;
@@ -42,7 +42,7 @@
 ;		first is used with the cd input and the second is used with 
 ;		the map input.
 ;
-;	sund:	Star descriptor for the sun.  If not given, the dark side
+;	ltd:	Body descriptor for the light source.  If not given, the dark side
 ;		is mapped.  If two descriptors given, then the
 ;		first is used with the cd input and the second is used with 
 ;		the map input.
@@ -137,7 +137,7 @@ function pm_rm_globe, bx, map_image_pts, cam_image_pts, surface_pts, body_pts, p
  cd = bx[0]
  pd = bx[1]
  rd = bx[2]
- sund = bx[3]
+ ltd = bx[3]
 
 
  nbx = n_elements(bx)
@@ -273,7 +273,7 @@ end
 ; project_map
 ;
 ;=============================================================================
-function project_map, image, md=md, cd=cd, bx=bx, sund=sund, $
+function project_map, image, md=md, cd=cd, bx=bx, ltd=ltd, $
                       _pc_xsize, _pc_ysize, bounds=bounds, hit=hit, value=value, $
                       hide_fn=hide_fn, hide_bx=hide_bx, roi=roi, $
                       interp=interp, arg_interp=arg_interp, offset=offset, $
@@ -298,11 +298,11 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, $
    bx_map = bx[1]
   end
 
- if(keyword_set(sund)) then sund_cam = (sund_map = sund[0])
- if(n_elements(sund) EQ 2) then $
+ if(keyword_set(ltd)) then ltd_cam = (ltd_map = ltd[0])
+ if(n_elements(ltd) EQ 2) then $
   begin
-   sund_cam = sund[0]
-   sund_map = sund[1]
+   ltd_cam = ltd[0]
+   ltd_map = ltd[1]
   end
 
 
@@ -457,10 +457,10 @@ function project_map, image, md=md, cd=cd, bx=bx, sund=sund, $
               ;- - - - - - - - - - - - - - - - - - - - - - -
               ; points behind the terminator
               ;- - - - - - - - - - - - - - - - - - - - - - -
-              if(keyword_set(sund_cam)) then $
+              if(keyword_set(ltd_cam)) then $
                begin
-                pos_sun = bod_inertial_to_body_pos(bx_cam, bod_pos(sund_cam))
-                term_sub = pm_hide_points_limb(bx_cam, pos_sun, body_pts)
+                pos_light = bod_inertial_to_body_pos(bx_cam, bod_pos(ltd_cam))
+                term_sub = pm_hide_points_limb(bx_cam, pos_light, body_pts)
                 sub = append_array(sub, term_sub)
                end
 

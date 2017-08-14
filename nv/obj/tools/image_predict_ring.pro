@@ -10,7 +10,7 @@
 ;          given ring is likely to be observed.
 ;
 ;=============================================================================
-function image_predict_ring, cd, gbx, rx, sund=sund, rxt=_rxt
+function image_predict_ring, cd, gbx, rx, ltd=ltd, rxt=_rxt
 
  nt = n_elements(cd)
 
@@ -47,7 +47,7 @@ function image_predict_ring, cd, gbx, rx, sund=sund, rxt=_rxt
   begin
    ring_ptd = pg_disk(cd=cd, dkx=rxt, np=100, /clip)
    pg_hide, ring_ptd, cd=cd, bx=pd
-   if(keyword_set(sund)) then pg_hide, ring_ptd, cd=cd, od=sund, bx=pd
+   if(keyword_set(ltd)) then pg_hide, ring_ptd, cd=cd, od=ltd, bx=pd
 
    pp = pnt_points(/cat, /vis, ring_ptd)
    if(NOT keyword_set(pp)) then w[i] = -1
