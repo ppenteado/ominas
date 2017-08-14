@@ -43,6 +43,8 @@
 ;
 ;	hit:	Array giving the indices of rays that hit the object.
 ;
+;	miss:	Array giving the indices of rays that miss the object.
+;
 ;	valid:	Array in which each element indicates whether the object
 ;		was hit.
 ;
@@ -71,7 +73,7 @@
 ;	
 ;-
 ;===========================================================================
-function glb_intersect, gbd, view_pts, ray_pts, hit=hit, near=near, far=far, $
+function glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, near=near, far=far, $
                       discriminant=discriminant, nosolve=nosolve, valid=valid
 @core.include
 
@@ -90,8 +92,9 @@ function glb_intersect, gbd, view_pts, ray_pts, hit=hit, near=near, far=far, $
  ; compute the intersection points
  ;----------------------------------
  glb_intersect_points, gbd, view_pts, ray_pts, discriminant, alpha, beta, gamma, $
-                            valid=valid, nosolve=nosolve, near=near_pts, far=far_pts
+                          valid=valid, nosolve=nosolve, near=near_pts, far=far_pts
  if(arg_present(hit)) then hit = where(valid NE 0)
+ if(arg_present(miss)) then miss = where(valid EQ 0)
 
 
  ;----------------------------------

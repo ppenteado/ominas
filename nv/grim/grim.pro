@@ -818,14 +818,12 @@
 ;
 ;       Events on overlays copied to rendering planes do not function
 ;
+;       The help menu is currently not working because it relied on the old
+;       documentation system.
 ;
 ;
-;      STATUS
-;      ------
-;       Incomplete.
 ;
-;
-;        ALSO
+;      SEE ALSO
 ;      --------
 ;       `GRIFT`, `GRAFT`
 ;
@@ -6624,7 +6622,7 @@ pro grim_menu_view_frame_event, event
 
  widget_control, grim_data.draw, /hourglass
 
- ptd = grim_get_all_active_overlays(grim_data, plane=plane)
+ ptd = grim_get_active_overlays(grim_data, plane=plane, 'all')
  if(NOT keyword_set(ptd)) then $
    ptd = grim_get_all_overlays(grim_data, plane=plane)
  if(NOT keyword_set(ptd)) then return

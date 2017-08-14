@@ -48,26 +48,17 @@ end
 
 
 ;===============================================================================
-; grim_get_illumination
+; grim_sort_by_flux
+;
+;  This just puts stars before planets.  To be correct, must look at 
+;  luminosity and reflectance.  Probably do via a composite function.
 ;
 ;===============================================================================
-function grim_get_illumination, gd, cd, od=od
-; need to sort by brightness, brightest first...
+function grim_sort_by_flux, xds, od
 
- sund = cor_dereference_gd(gd, /sund)
- if(keyword_set(sund)) then return, sund
+ return, append_array(cor_select(xds, 'STAR', /class), $
+                      cor_select(xds, 'PLANET', /class))
 
- xds = cor_dereference_gd(gd)
-
- sd = cor_select(xds, 'STAR', /class)
- if(NOT keyword_set(sd)) then return, 0
- if(NOT keyword_set(od)) then od=cd
-
- F = str_get_flux(sd, od=od)
-
- Fmax = max(F, w) 
-
- return, sd[w[0]]
 end
 ;===============================================================================
 

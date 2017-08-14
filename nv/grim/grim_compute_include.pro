@@ -93,10 +93,8 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  od = cor_dereference_gd(gd, /od)
  rd = cor_dereference_gd(gd, /rd)
  pd = cor_dereference_gd(gd, /pd)
+ sund = (cor_dereference_gd(gd, /sund))[0]
 
- xds = cor_dereference_gd(gd)
- sund = (grim_get_illumination(gd, cd, od=od))[0]
-	
  ;-------------------------------------------------------------
  ; filter out objects whose apparent sizes are too small
  ;-------------------------------------------------------------
@@ -184,9 +182,7 @@ function grim_compute_terminator, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  od = cor_dereference_gd(gd, /od)
  rd = cor_dereference_gd(gd, /rd)
-
- xds = cor_dereference_gd(gd)
- sund = grim_get_illumination(gd, cd, od=od)
+ sund = cor_dereference_gd(gd, /sund)
  if(NOT keyword_set(sund)) then return, 0
 
  ;--------------------------------
@@ -273,8 +269,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
 
- xds = cor_dereference_gd(gd)
- sund = (grim_get_illumination(gd, cd, od=od))[0]
+ sund = (cor_dereference_gd(gd, /sund))[0]
 
  ;-------------------------------------------------------------
  ; filter out objects whose apparent sizes are too small
@@ -670,9 +665,7 @@ function grim_compute_shadow, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
-
- xds = cor_dereference_gd(gd)
- sund = grim_get_illumination(gd, cd, od=od)
+ sund = cor_dereference_gd(gd, /sund)
  if(NOT keyword_set(sund)) then return, 0
 
 
@@ -680,10 +673,13 @@ function grim_compute_shadow, map=map, clip=clip, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing shadows...'
- shadow_ptd = pg_shadow(ptd, epsilon=1d, /nocull, $
-                                 cd=cd, od=sund, dkx=rd, gbx=pd, clip=clip)
- nshad = n_elements(shadow_ptd)
- grim_message
+ for i=0, n_elements(sund)-1 do $
+  begin
+   shadow_ptd = append_array(shadow_ptd, $
+                   pg_shadow(ptd, epsilon=1d, /nocull, $
+                                 cd=cd, od=sund[i], dkx=rd, gbx=pd, clip=clip))
+   grim_message
+  end
 
  ;--------------------------------
  ; hide points
@@ -744,18 +740,19 @@ function grim_compute_reflection, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
-
- xds = cor_dereference_gd(gd)
- sund = grim_get_illumination(gd, cd, od=od)
+ sund = cor_dereference_gd(gd, /sund)
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing reflections...'
- reflection_ptd = pg_reflection(ptd, /nocull, $
-                         cd=cd, od=sund, dkx=rd, gbx=pd, clip=clip)
- nref = n_elements(reflection_ptd)
- grim_message
+ for i=0, n_elements(sund)-1 do $
+  begin
+   reflection_ptd = append_array(reflection_ptd, $
+                          pg_reflection(ptd, /nocull, $
+                                  cd=cd, od=sund[i], dkx=rd, gbx=pd, clip=clip))
+   grim_message
+  end
 
  ;--------------------------------
  ; hide points
@@ -813,9 +810,7 @@ function grim_compute_ring, map=map, clip=clip, hide=hide, $
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
-
- xds = cor_dereference_gd(gd)
- sund = (grim_get_illumination(gd, cd, od=od))[0]
+ sund = (cor_dereference_gd(gd, /sund))[0]
 
 
  ;--------------------------------------------------------
@@ -910,9 +905,7 @@ function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
-
- xds = cor_dereference_gd(gd)
- sund = (grim_get_illumination(gd, cd, od=od))[0]
+ sund = (cor_dereference_gd(gd, /sund))[0]
 
 
  ;--------------------------------
