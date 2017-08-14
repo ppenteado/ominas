@@ -64,16 +64,21 @@ function cor_udata, crd, name, noevent=noevent
  ;----------------------------
  ; if more than one _crd
  ;----------------------------
- xx = tag_list_get(_crd[0].udata_tlp, name, index=index)
+ xx = tag_list_get(_crd[0].udata_tlp, name)
  dim = size([xx], /dim)
  xdim = product(dim)
  type = size(xx, /type)
+;if(keyword_set(xx)) then stop
 
- result = tr(reform([xx], xdim, /over))
- for i=1, n-1 do $
-      result = [result, $
-        tr(reform([tag_list_get(_crd[i].udata_tlp, index=index)], xdim, /over))]
- result = reform(tr(result), [dim, n], /over)
+ for i=0, n-1 do $
+      result = append_array(result, tag_list_get(_crd[i].udata_tlp, name), /def)
+ result = reform(result, [dim, n], /over)
+
+; result = transpose(reform([xx], xdim, /over))
+; for i=1, n-1 do $
+;      result = [result, $
+;        transpose(reform([tag_list_get(_crd[i].udata_tlp, name)], xdim, /over))]
+; result = reform(transpose(result), [dim, n], /over)
 
  return, result
 end

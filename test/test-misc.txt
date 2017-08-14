@@ -12,7 +12,7 @@ cd = pg_get_cameras(inst='CAS_ISS_NA', time=5*3.5d7)
 
 
 grim ~/projects/maps/enceladus/EN_120828_DLR_south_equator.vic \
-   over=planet_grid,station,array
+                                           over=planet_grid,station,array
 
 
 
@@ -49,4 +49,22 @@ cd0 = pg_get_cameras(dd[0])		;fail
 
 cd=pg_get_cameras(inst='CAS_ISS_NA', time=5*3.5d7)
 grim, /new, cd=cd, over=['planet_center', 'limb', 'terminator', 'ring']
+
+
+
+ominas
+
+dd = dat_read('./data/N1350122987_2.IMG', im)
+
+grim, im, z=0.1, /order
+
+
+cd = pg_get_cameras(dd);, pos=tr([3.4809398e+11,6.1035525e+11,2.5319814e+11]))
+pd = pg_get_planets(dd, od=cd, name='JUPITER')
+
+limb_ptd = pg_limb(cd=cd, gbx=pd)
+pg_hide, limb_ptd, cd=cd, bx=pd, /diss
+graft, limb_ptd
+
+
 

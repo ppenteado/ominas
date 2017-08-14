@@ -14,21 +14,21 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	limb_pts = glb_get_limb_points(gbd, r, np, epsilon, niter)
+;	limb_pts = glb_get_limb_points(gbd, view_pt, np, epsilon, niter)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	gbd:	Array (nt) of any subclass of GLOBE descriptors.
+;	gbd:		Array (nt) of any subclass of GLOBE descriptors.
 ;
-;	r:	Array (1,3,nt) giving viewer position in the BODY frame.
+;	view_pt:	Array (1,3,nt) giving viewer position in the BODY frame.
 ;
-;	np:	Number of points to compute around the limb.
+;	np:		Number of points to compute around the limb.
 ;
 ;	epsilon:	Controls the precision of the iteration.  Default
 ;			is 1d-3.
 ;
-;	niter:	Maximum number of iterations, default is 1000
+;	niter:		Maximum number of iterations, default is 1000
 ;
 ;
 ;  OUTPUT: NONE
@@ -63,13 +63,16 @@
 ;
 ;
 ;===========================================================================
-function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
+function _glb_get_limb_points, gbd, view_pt, $
+                                   n_points, epsilon, niter, alpha=alpha
 
  ;-----------------------------------------------
  ; if any radii are zero, then return a point
  ;-----------------------------------------------
  radii = glb_radii(gbd)
  if(prod(radii[*],0) EQ 0) then return, dblarr(n_points,3)
+
+ MM = make_array(n_points, val=1.0)
 
  ;--------------------------------
  ; Angle to each limb point
@@ -79,15 +82,15 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
  ;--------------------------------------
  ; Unit vectors from planet to observer
  ;--------------------------------------
- n = v_unit(r)
+ _view_pt = v_unit(view_pt)
 
  ;-----------------------------------------------------------------
- ; Construct normal to n - 
+ ; Construct normal to _view_pt - 
  ;  Use projection of pole on skyplane
  ;-----------------------------------------------------------------
  zz = tr([0d,0d,1d])
- vv = v_cross(zz,n)
- vo = v_unit(v_cross(vv,n))
+ vv = v_cross(zz, _view_pt)
+ vo = v_unit(v_cross(vv, _view_pt))
 
  ;---------------------------------------------------------------
  ; Generate first guess at limb points - 
@@ -96,15 +99,15 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
  ;  points by rotating v about n and determining the surface 
  ;  radius at that point.
  ;---------------------------------------------------------------
- v = transpose( v_rotate(vo, n, sin(alpha), cos(alpha) ) )
- rr = r##make_array(n_points, val=1.0)
+ guess_pts = transpose( v_rotate(vo, _view_pt, sin(alpha), cos(alpha) ) )
+ view_pts = view_pt##MM
 
  ;-----------------------------------------------------------------
  ; Iterate to find the actual limb.  
  ; This recomputes many points unnecessarily
  ;-----------------------------------------------------------------
  done = 0
- axes = v_cross(n##make_array(n_points, val=1.0), v)
+ axes = v_unit(v_cross(_view_pt##MM, guess_pts))
  nit = 0
  correct = 1d
  while(NOT done) do $
@@ -112,17 +115,17 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
    ;---------------------------------
    ; compute current limb points
    ;---------------------------------
-   rlimb_surface = glb_body_to_globe(gbd, v)
-   rlimb_surface[*,2] = 1d
-   rlimb_body = glb_globe_to_body(gbd, rlimb_surface)
+   limb_pts_surf = glb_body_to_globe(gbd, guess_pts)
+   limb_pts_surf[*,2] = 0d
+   limb_pts_body = glb_globe_to_body(gbd, limb_pts_surf)
 
    ;---------------------------------
    ; compute residuals
    ;---------------------------------
-   x = v_unit(rlimb_body - rr)
+   ray_pts = v_unit(limb_pts_body - view_pts)
+   norm_pts = glb_get_surface_normal(gbd, limb_pts_surf)
 
-   rnorm_body = glb_get_surface_normal(gbd, rlimb_surface)
-   residuals = v_inner(rnorm_body, x)
+   residuals = v_inner(norm_pts, ray_pts)
 
    ;---------------------------------
    ; make new guesses if necessary
@@ -130,14 +133,14 @@ function _glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
    w = where(abs(residuals) GT epsilon)
    offsets = 0.5d*residuals * correct
    if(w[0] EQ -1) then done = 1 $
-   else v = v_rotate_11(v, axes, [offsets], [sqrt(1d - offsets^2)])
+   else guess_pts = v_rotate_11(guess_pts, axes, [offsets], [sqrt(1d - offsets^2)])
    nit = nit + 1
    if(nit GE niter) then done = 1
    if(nit mod (niter/4d) EQ 0) then correct = 0.5d*correct
   end
 
 
- return, rlimb_body
+ return, limb_pts_body
 end
 ;===========================================================================
 
@@ -146,12 +149,13 @@ end
 ;===========================================================================
 ; glb_get_limb_points
 ;
-; r is array (1,3,nt) of column vectors giving the position of the viewer.
-; gbd is array of nt globe descriptors.  Result is array (n_points,3,nt)
+; view_pt is array (1,3,nt) of column vectors giving the position of the 
+; viewer.  gbd is array of nt globe descriptors.  Result is array (n_points,3,nt)
 ; of limb column vectors.
 ;
 ;===========================================================================
-function glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
+function glb_get_limb_points, gbd, view_pt, $
+                         n_points, epsilon, niter, alpha=alpha
 @core.include
  
 
@@ -163,7 +167,8 @@ function glb_get_limb_points, gbd, r, n_points, epsilon, niter, alpha=alpha
  result = dblarr(n_points, 3, nt, /nozero)
 
  for t=0, nt-1 do $
-  result[*,*,t] = _glb_get_limb_points(gbd[t], r[*,*,t], n_points, epsilon, niter, alpha=alpha)
+  result[*,*,t] = _glb_get_limb_points(gbd[t], view_pt[*,*,t], $
+                                    n_points, epsilon, niter, alpha=alpha)
 
  return, result
 end

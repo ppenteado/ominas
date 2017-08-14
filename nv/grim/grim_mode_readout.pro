@@ -239,7 +239,7 @@ pro grim_mode_readout_mouse_event, event, data
    p = convert_coord(double(event.x), double(event.y), /device, /to_data)
    planes = grim_get_plane(grim_data);, /visible)
    pg_cursor, planes.dd, xy=p[0:1], /silent, fn=data.fn, $
-     gd={cd:*plane.cd_p, gbx:*plane.pd_p, dkx:*plane.rd_p, $
+     gd={cd:grim_xd(plane, /cd), gbx:*plane.pd_p, dkx:*plane.rd_p, $
     	   sund:*plane.sund_p, sd:*plane.sd_p, std:*plane.std_p}, /radec, /photom, string=string 
    sep = str_pad('', 80, c='-')
    widget_control, grim_data.readout_text, get_value=ss    
@@ -268,7 +268,7 @@ pro grim_mode_readout_mouse_event, event, data
      p = convert_coord(double(event.x), double(event.y), /device, /to_data)
      planes = grim_get_plane(grim_data);, /visible)
      pg_measure, planes.dd, xy=p[0:1], p=pp, /silent, fn=data.fn, $
-       gd={cd:*plane.cd_p, gbx:*plane.pd_p, dkx:*plane.rd_p, $
+       gd={cd:grim_xd(plane, /cd), gbx:*plane.pd_p, dkx:*plane.rd_p, $
     	   sund:*plane.sund_p, sd:*plane.sd_p, std:*plane.std_p}, /radec, string=string 
      sep = str_pad('', 80, c='-')
      widget_control, grim_data.readout_text, get_value=ss    

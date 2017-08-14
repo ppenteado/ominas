@@ -97,6 +97,11 @@ function pg_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, clip=clip, cull=cull, $
 
  count = 0
 
+
+ desc = 'limb'
+ if(keyword_set(od)) then desc = 'terminator'
+
+
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
  ;-----------------------------------------------
@@ -132,8 +137,6 @@ function pg_limb, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, clip=clip, cull=cull, $
  ;-----------------------------------------------
  ; contruct data set description
  ;-----------------------------------------------
- desc = 'limb'
- if((cor_class(od))[0] EQ 'STAR') then desc = 'terminator'
 
 
  hide_flags = make_array(npoints, val=PTD_MASK_INVISIBLE)

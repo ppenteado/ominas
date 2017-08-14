@@ -15,7 +15,7 @@
 ;
 ;   This example requires SPICE/Icy to have been setup. It can be run just by doing::
 ;
-;     .run vims_example
+;     .run cas_vims_example
 ;
 ;   from within an OMINAS IDL session.
 ;

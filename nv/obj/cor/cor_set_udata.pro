@@ -26,7 +26,9 @@
 ;		 then the data is overwritten.
 ;
 ;	data:	 Data to store.  If multiple crx supplied, then the trailing 
-;		 dimension must match the number of descriptors.
+;		 dimension must match the number of descriptors unless /all.
+;
+;	all:	 If set, the data array applied to every descriptor.
 ;
 ;  OUTPUT: NONE
 ;
@@ -50,7 +52,7 @@
 ;	
 ;-
 ;=============================================================================
-pro cor_set_udata, crd, name, udata, noevent=noevent
+pro cor_set_udata, crd, name, udata, all=all, noevent=noevent
 @core.include
 
  if(NOT defined(udata)) then return
@@ -64,7 +66,7 @@ pro cor_set_udata, crd, name, udata, noevent=noevent
    n = n_elements(_crd)
 
    ;-----------------------------
-   ; if one descriptor
+   ; one descriptor
    ;-----------------------------
    if(n EQ 1) then $
     begin
@@ -72,17 +74,25 @@ pro cor_set_udata, crd, name, udata, noevent=noevent
      _crd.udata_tlp = tlp
     end $
    ;-------------------------------
-   ; if more than one descriptor
+   ; /all
    ;-------------------------------
+   else if(keyword_set(all)) then for i=0, n-1 do  $
+    begin
+     _tlp = tlp[i]
+     tag_list_set, _tlp, name, udata
+     tlp[i] = _tlp
+    end $
+   ;-----------------------------------
+   ; more than one descriptor not /all
+   ;-----------------------------------
    else if(n_elements(udata) EQ n) then for i=0, n-1 do $
     begin
      _tlp = tlp[i]
-     tag_list_set, _tlp, name, udata[i];, index=index
+     tag_list_set, _tlp, name, udata[i]
      tlp[i] = _tlp
     end $
    else $
     begin
-
      type = size(udata, /type)
      dim = size(udata, /dim)
      ndim = n_elements(dim) - 1
@@ -94,12 +104,7 @@ pro cor_set_udata, crd, name, udata, noevent=noevent
      ss = replicate({x:make_array(type=type, dim=dim)}, n)
      ss.x = udata
 
-     for i=0, n-1 do $
-      begin
-       _tlp = tlp[i]
-       tag_list_set, _tlp, name, ss[i].x, index=index
-       tlp[i] = _tlp
-      end
+     for i=0, n-1 do tag_list_set, tlp[i], name, ss[i].x, index=index
     end
 
    _crd.udata_tlp = tlp

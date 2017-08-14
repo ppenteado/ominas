@@ -53,16 +53,6 @@
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
-;   backshadow:	 If set, only backshadows (shadows cast between the object and
-; 		 observer) are returned.
-;
-;	both:	 If set, both shadows and backshadows are returned.
-;
-;	all:	 If set, all points are returned, even if invalid.
-;
-;	epsilon: If set, shadow points that are closer than this amount 
-;		 to the source point will be excluded.
-;
 ;  OUTPUT: NONE
 ;
 ;
@@ -86,8 +76,8 @@
 ;-
 ;=============================================================================
 function pg_shadow_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
-                           nocull=nocull, both=both, reveal=reveal, $
-                           clip=clip, cull=cull, backshadow=backshadow, all=all, $
+                           nocull=nocull, reveal=reveal, $
+                           clip=clip, cull=cull, all=all, $
                            epsilon=epsilon
 @pnt_include.pro
 
@@ -151,90 +141,31 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
           ;---------------------------------
           ; project shadows in body frame
           ;---------------------------------
-          shadow_pts = dsk_intersect(xd, v_body, r_body, hit=hit, t=t)
+          shadow_pts = dsk_intersect(xd, v_body, r_body, hit=hit, miss=miss, t=t)
 
           ;---------------------------------------------------------------
           ; compute and store image coords of intersections
           ;---------------------------------------------------------------
           if(hit[0] NE -1) then $
            begin
-            flags = bytarr(n_elements(shadow_pts[*,0]))
+            flags = bytarr(n_vectors)
+            flags[miss] = flags[miss] OR PTD_MASK_INVISIBLE
+
             points = $
-                 degen(body_to_image_pos(cd, xd, shadow_pts, $
-                                         inertial=inertial_pts, valid=valid))
+              degen(body_to_image_pos(cd, xd, shadow_pts, inertial=inertial_pts))
 
-            ;---------------------------------------------------------------
-            ; remove points closer than epsilon to source
-            ;---------------------------------------------------------------
-            continue = 1
-            if(keyword_set(epsilon)) then $
-             begin
-              dist = v_mag(inertial_pts - vectors)
-              w = where(dist GT epsilon)
-              if(w[0] EQ -1) then continue = 0 $
-              else $
-               begin
-  	      points = points[*,w]
-  	      inertial_pts = inertial_pts[w,*]
-               end
-             end
-
-            if(continue) then $
-             begin
-              ;---------------------------------
-              ; store points
-              ;---------------------------------
-              shadow_ptd[i,j] = $
-                 pnt_create_descriptors(points = points, $
-                   name = 'shadow-' + cor_name(object_ptd[j]), $
-                   assoc_xd = xd, $
-                   task = 'pg_shadow_disk', $
-		   desc = 'disk_shadow', $
-                   gd = {dkx:dkx[i,0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
-                   vectors = inertial_pts)
-
-              ;-----------------------------------------------
-              ; flag points that missed the ring as invisible
-              ;-----------------------------------------------
-              flags = pnt_flags(shadow_ptd[i,j])
-              hh = complement(rr[*,0,0], hit)
-              if(hh[0] NE -1) then flags[hh] = flags[hh] OR PTD_MASK_INVISIBLE
-
-              ss = inertial_pts - v_inertial
-
-              ;-----------------------------------------------------------
-              ; flag backshadows as invisible unless /both or /backshadow
-              ;-----------------------------------------------------------
-              if((NOT keyword_set(backshadow)) AND (NOT keyword_set(both))) then $
-               begin
-                w = where(v_mag(ss) LT v_mag(rr))
-                if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
-               end
-
-              ;-----------------------------------------------------------
-              ; flag shadows as invisible if /backshadow
-              ;-----------------------------------------------------------
-              if(keyword_set(backshadow)) then $
-               begin
-                w = where(v_mag(ss) GE v_mag(rr))
-                if(w[0] NE -1) then flags[w] = flags[w] OR PTD_MASK_INVISIBLE
-               end
-
-              ;-----------------------------------------------------------
-              ; flag invalid image points as invisible unless /all
-              ;-----------------------------------------------------------
-              if(NOT keyword_set(all)) then $
-               if(keyword_set(valid)) then $
-                begin
-                 invalid = complement(shadow_pts[*,0], valid)
-                 if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-                end
-
-              ;---------------------------------------------------------------
-              ; store flags
-              ;---------------------------------------------------------------
-              pnt_set_flags, shadow_ptd[i,j], flags
-             end
+            ;---------------------------------
+            ; store points
+            ;---------------------------------
+            shadow_ptd[i,j] = $
+               pnt_create_descriptors(points = points, $
+         	 flags = flags, $
+           	 name = 'shadow-' + cor_name(object_ptd[j]), $
+           	 assoc_xd = xd, $
+           	 task = 'pg_shadow_disk', $
+	         desc = 'disk_shadow', $
+           	 gd = {dkx:dkx[i,0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
+           	 vectors = inertial_pts)
            end
          end
        end

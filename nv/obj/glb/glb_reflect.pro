@@ -58,7 +58,7 @@
 ;	
 ;-
 ;===========================================================================
-function glb_reflect, gbd, v, r, hit=hit, near=near, far=far, all=all, $
+function glb_reflect, gbd, v, r, hit=hit, miss=miss, near=near, far=far, all=all, $
           valid=valid, epsilon, niter
 @core.include
 
@@ -142,6 +142,7 @@ done = 1
 
 
  if(arg_present(hit)) then hit = where(valid NE 0)
+ if(arg_present(miss)) then miss = where(valid EQ 0)
  return, p
 end
 ;===========================================================================

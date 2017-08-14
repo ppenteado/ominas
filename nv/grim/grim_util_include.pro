@@ -1,4 +1,93 @@
 ;=============================================================================
+; grim_xd
+;
+;=============================================================================
+function grim_xd, plane, class=_class, _ref_extra=keys
+
+;** return, cor_dereference_gd(*plane.gd_p, _ref_extra=keys)
+
+ xds = !null
+
+ if(defined(_class)) then $
+  begin
+   class = _class
+   if(class[0] EQ '') then return, obj_new()
+   if(class[0] EQ 'all') then class = ''
+
+   all_xds = grim_xd(plane)
+   for i=0, n_elements(class)-1 do $
+                  xds = append_array(xds, cor_select(all_xds, class, /class))
+   return, xds
+  end
+
+
+ if(NOT keyword_set(keys)) then $
+       return, cor_cull([*plane.cd_p, $
+                         *plane.pd_p, $
+                         *plane.rd_p, $
+                         *plane.sd_p, $
+                         *plane.sund_p, $
+                         *plane.std_p, $
+                         *plane.ard_p])
+
+
+ if((where(keys EQ 'CD'))[0] NE -1) then xds = append_array(xds, *plane.cd_p)
+ if((where(keys EQ 'MD'))[0] NE -1) then xds = append_array(xds, *plane.md_p)
+ if((where(keys EQ 'OD'))[0] NE -1) then xds = append_array(xds, *plane.od_p)
+ if((where(keys EQ 'PD'))[0] NE -1) then xds = append_array(xds, *plane.pd_p)
+ if((where(keys EQ 'RD'))[0] NE -1) then xds = append_array(xds, *plane.rd_p)
+ if((where(keys EQ 'SD'))[0] NE -1) then xds = append_array(xds, *plane.sd_p)
+ if((where(keys EQ 'STD'))[0] NE -1) then xds = append_array(xds, *plane.std_p)
+ if((where(keys EQ 'ARD'))[0] NE -1) then xds = append_array(xds, *plane.ard_p)
+ if((where(keys EQ 'SUND'))[0] NE -1) then xds = append_array(xds, *plane.sund_p)
+
+ return, xds
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_gd
+;
+;=============================================================================
+function grim_gd, plane, class=_class, _ref_extra=keys
+
+;** return, *plane.gd_p
+
+   gd = {cd:grim_xd(plane, /cd), $
+         pd:grim_xd(plane, /pd), $
+         rd:grim_xd(plane, /rd), $
+         sund:grim_xd(plane, /sund), $
+         sd:grim_xd(plane, /sd), $
+         std:grim_xd(plane, /std), $
+         ard:grim_xd(plane, /ard), $
+         od:grim_xd(plane, /od)}
+
+ return, gd
+end
+;=============================================================================
+
+
+
+;===============================================================================
+; grim_sort_by_flux
+;
+;  This just puts stars before planets.  To be correct, must look at 
+;  luminosity and reflectance.  Probably do via a composite function.
+;
+;===============================================================================
+function grim_sort_by_flux, xds, od
+
+ return, append_array(cor_select(xds, 'STAR', /class), $
+                      cor_select(xds, 'PLANET', /class))
+
+end
+;===============================================================================
+
+
+
+;=============================================================================
 ; grim_set_user_data
 ;
 ;=============================================================================
@@ -151,7 +240,7 @@ end
 ;=============================================================================
 function grim_cat_bodies, plane
 
- bx = [*plane.pd_p, *plane.rd_p]
+ bx = grim_xd(plane, /pd, /rd)
  w = where(obj_valid(bx))
  if(w[0] EQ -1) then return, 0
  return, bx[w]
@@ -189,7 +278,7 @@ pro grim_wset, grim_data, wnum, get_info=get_info, $
     save=save, noplot=noplot
 
 
- if(grim_data.type EQ 'plot') then tvgr, wnum, get_info=get_info, $
+ if(grim_data.type EQ 'PLOT') then tvgr, wnum, get_info=get_info, $
      save=save, noplot=noplot, /silent $
  else tvim, wnum, get_info=get_info, save=save, noplot=noplot, /silent 
 

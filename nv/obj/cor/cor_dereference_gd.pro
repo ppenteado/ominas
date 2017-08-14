@@ -37,7 +37,7 @@
 ;
 ;
 ; RETURN: 
-;	Array of descriptors or zero if no fields found.  If not keywords
+;	Array of descriptors or zero if no fields found.  If no keywords
 ;	are given, then all descriptors are returned.
 ;
 ;

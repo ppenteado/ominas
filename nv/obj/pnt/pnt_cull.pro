@@ -5,8 +5,8 @@
 ;
 ;
 ; PURPOSE:
-;	Cleans out an array of POINT objects by removing invisible points
-;	and/or empty POINT objects.
+;	Cleans out an array of POINT objects by removing POINT objects that are
+;	empty, or whose points all fail the specified conditions.
 ;
 ;
 ; CATEGORY:
@@ -27,7 +27,7 @@
 ; KEYWORDS:
 ;  INPUT: 
 ;	<condition>:	All of the predefined conditions (e.g. /visible) are 
-;			accepted; see pnt_condition_keywords.include.  If this 
+;			accepted; see pnt_condition_keywords.include.  In this 
 ;			case, pnt_cull removes objects for which the specified
 ;			conditions return no points.  
 ;
