@@ -14,7 +14,7 @@ function ctcolor, _color, shade
  if(nshade EQ 0) then shade = make_array(nc, val=1.)
 
 
- if(nc EQ 1) then return, call_function('ct'+color, shade)
+ if(nc EQ 1) then return, call_function('ct'+color[0], shade)
 
  col = lonarr(nc)
  for i=0, nc-1 do col[i] = call_function('ct'+color[i], shade[i])

@@ -36,10 +36,11 @@
 ;
 ; KEYWORDS:
 ;   INPUT: 
-;	valid:	Indices of valid output points.
+;	valid:		Indices of valid output points.
 ;
 ;	body_pts:	Body coordinates of output points.
 ;
+;	alt:		If set, atitudes are set to this value instead of 0.
 ;
 ;   OUTPUT: NONE
 ;
@@ -55,14 +56,14 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function map_to_image, md, cd, bx, map_pts, body_pts=body_pts, valid=valid
+function map_to_image, md, cd, bx, map_pts, body_pts=body_pts, valid=valid, alt=alt
 
  if(NOT keyword_set(map_pts)) then return, 0
 
  if(NOT keyword_set(bx)) then return, map_map_to_image(md, map_pts, valid=valid)
 
  return, surface_to_image(cd, bx, body_pts=body_pts, $
-           map_to_surface(md, bx, map_pts), valid=valid)
+           map_to_surface(md, bx, map_pts, alt=alt), valid=valid)
 
 end
 ;===========================================================================

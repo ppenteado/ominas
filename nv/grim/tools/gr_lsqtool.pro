@@ -1096,7 +1096,7 @@ pro gr_lsqtool, top
  ;-----------------------------------------------
  ; setup form widget
  ;-----------------------------------------------
- base = widget_base(title = 'Least-Squares fit', /column, group=top)
+ base = widget_base(title = 'GRIM Least-Squares fit', /column, group=top)
 
  objects = ['Limb      ', $
             'Ring      ', $

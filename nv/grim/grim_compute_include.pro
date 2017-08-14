@@ -1,24 +1,49 @@
 ;===============================================================================
-; grim_compute_planet_center
+; grim_filter_apparent_size
 ;
 ;===============================================================================
-function grim_compute_planet_center, map=map, clip=clip, hide=hide, $
-                              gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+pro grim_filter_apparent_size, bx, cd=cd
+
+ rad = body_radius(bx)
+ dist = v_mag(bod_pos(bx) - (bod_pos(cd))[linegen3z(1,3,n_elements(bx))])
+
+ minpix = 1d-3
+ w = where(rad/dist/min(cam_scale(cd)) GT minpix)
+ if(w[0] EQ -1) then bx = 0 $
+ else bx = bx[w]
+ 
+end
+;===============================================================================
+
+
+
+;===============================================================================
+; grim_compute_center
+;
+;===============================================================================
+function grim_compute_center, map=map, clip=clip, hide=hide, $
+                              gd=gd, bx=bx, ptd=ptd, $
                               data=data, $
                               npoints=npoints
 
  grim_message, /clear
 
- pds = cor_select(active_xds, 'PLANET', /class)
- if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
+ gbx = cor_select(bx, 'GLOBE', /class)
+ if(NOT keyword_set(gbx)) then return, 0
 
  cd = cor_dereference_gd(gd, /cd)
+
+ ;-------------------------------------------------------------
+ ; filter out objects whose apparent sizes are too small
+ ;-------------------------------------------------------------
+ if(NOT map) then grim_filter_apparent_size, gbx, cd=cd
+ if(NOT keyword_set(gbx)) then return, 0
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
- grim_print, 'Computing planet centers...'
- center_ptd = pg_center(cd=cd, bx=pds)
+ grim_print, 'Computing centers...'
+ center_ptd = pg_center(cd=cd, bx=gbx)
  grim_message
 
  grim_print, 'Done', /append
@@ -29,10 +54,10 @@ end
 
 
 ;===============================================================================
-; grim_symsize_planet_center
+; grim_symsize_center
 ;
 ;===============================================================================
-function grim_symsize_planet_center, data
+function grim_symsize_center, data
  return, -1
 end
 ;===============================================================================
@@ -40,10 +65,10 @@ end
 
 
 ;===============================================================================
-; grim_shade_planet_center
+; grim_shade_center
 ;
 ;===============================================================================
-function grim_shade_planet_center, data, ptd
+function grim_shade_center, data, ptd
  return, 1.0
 end
 ;===============================================================================
@@ -55,48 +80,53 @@ end
 ;
 ;===============================================================================
 function grim_compute_limb, map=map, clip=clip, hide=hide, $
-                             gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                             gd=gd, bx=bx, ptd=ptd, $
                              data=data, $
                              npoints=npoints
 
- od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
- pds = cor_select(active_xds, 'GLOBE', /class)
- if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
- npd = n_elements(pds)
+ gbx = cor_select(bx, 'GLOBE', /class)
+ if(NOT keyword_set(gbx)) then return, 0
 
  cd = cor_dereference_gd(gd, /cd)
+ od = cor_dereference_gd(gd, /od)
  rd = cor_dereference_gd(gd, /rd)
  pd = cor_dereference_gd(gd, /pd)
- sund = cor_dereference_gd(gd, name='SUN')
+ sund = (cor_dereference_gd(gd, /sund))[0]
 
+ ;-------------------------------------------------------------
+ ; filter out objects whose apparent sizes are too small
+ ;-------------------------------------------------------------
+ if(NOT map) then grim_filter_apparent_size, gbx, cd=cd
+ if(NOT keyword_set(gbx)) then return, 0
+ if(map) then gbx = cor_select(gbx, cor_name(cd), /name)
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing limbs...'
- limb_ptd = pg_limb(cd=cd, gbx=pds, od=od, clip=clip, npoints=npoints)
+ limb_ptd = pg_limb(cd=cd, gbx=gbx, od=od, clip=clip, npoints=npoints)
  grim_message
 
  ;--------------------------------
  ; hide points
  ;--------------------------------
- pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=pd, hide_ptd, /cat
+ pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=gbx, hide_ptd, /dissoc, /cat
  grim_message
 
- if(keyword_set(sund)) then $
- pg_hide, limb_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
+ pg_hide, limb_ptd, cd=cd, gbx=gbx, od=sund, /assoc, hide_ptd_term, /cat
+ pg_hide, hide_ptd_term, cd=cd, od=od, dkx=rd, gbx=gbx, /dissoc, /cat
  grim_message
 
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = append_array(limb_ptd, hide_ptd_term)
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = append_array(limb_ptd, hide_ptd_term)
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;===============================================================================
 
@@ -140,30 +170,31 @@ end
 ;
 ;===============================================================================
 function grim_compute_terminator, map=map, clip=clip, hide=hide, $
-                             gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                             gd=gd, bx=bx, ptd=ptd, $
                              data=data, $
                              npoints=npoints
 
- sund = cor_dereference_gd(gd, name='SUN')
- if(NOT keyword_set(sund)) then return, 0
-
  grim_message, /clear
 
- pds = cor_select(active_xds, 'PLANET', /class)
- if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
- npd = n_elements(pds)
+ pds = cor_select(bx, 'PLANET', /class)
+ if(NOT keyword_set(pds)) then return, 0
 
  cd = cor_dereference_gd(gd, /cd)
- sund = cor_dereference_gd(gd, name='SUN')
+ od = cor_dereference_gd(gd, /od)
  rd = cor_dereference_gd(gd, /rd)
-
+ sund = cor_dereference_gd(gd, /sund)
+ if(NOT keyword_set(sund)) then return, 0
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing terminators...'
- term_ptd = pg_limb(cd=cd, od=sund, gbx=pds, clip=clip, npoints=npoints)
- grim_message
+ for i=0, n_elements(sund)-1 do $
+  begin
+   term_ptd = append_array(term_ptd, $
+                 pg_limb(cd=cd, od=sund[i], gbx=pds, clip=clip, npoints=npoints))
+   grim_message
+  end
 
  ;--------------------------------
  ; hide points
@@ -174,11 +205,11 @@ function grim_compute_terminator, map=map, clip=clip, hide=hide, $
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = term_ptd
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = term_ptd
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;===============================================================================
 
@@ -201,15 +232,18 @@ end
 ;===============================================================================
 function grim_shade_terminator, data, ptd
 
- desc = pnt_desc(ptd)
- nptd = n_elements(ptd)
+ n = n_elements(ptd)
+ shade = make_array(n)
 
- w = where(strpos(desc, 'HIDE_PLANET') NE -1)
- ww = where(strpos(desc, 'HIDE_RING') NE -1)
+ names = cor_name(ptd)
+ unames = unique(names)
 
- shade = make_array(nptd, val=1.0)
- if(w[0] NE -1) then shade[w] = 0.25
- if(ww[0] NE -1) then shade[ww] = 0.5
+ for i=0, n_elements(unames)-1 do $
+  begin
+   w = where(names EQ unames[i])
+   nw = n_elements(w)
+   shade[w] = (1d/(1+dindgen(nw)) * 0.75) + 0.25
+  end
 
  return, shade
 end
@@ -222,28 +256,33 @@ end
 ;
 ;=============================================================================
 function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
-                             gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                             gd=gd, bx=bx, ptd=ptd, $
                              data=data, $
                              npoints=npoints
 
- od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
- pds = cor_select(active_xds, 'GLOBE', /class)
- if(NOT keyword_set(pds)) then pds = cor_dereference_gd(gd, /pd)
- npd = n_elements(pds)
+ gbx = cor_select(bx, 'GLOBE', /class)
 
  cd = cor_dereference_gd(gd, /cd)
+ od = cor_dereference_gd(gd, /od)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
- sund = cor_dereference_gd(gd, name='SUN')
 
+ sund = (cor_dereference_gd(gd, /sund))[0]
+
+ ;-------------------------------------------------------------
+ ; filter out objects whose apparent sizes are too small
+ ;-------------------------------------------------------------
+; if(NOT map) then if(NOT keyword_set(gbx)) then return, 0
+ if(NOT map) then grim_filter_apparent_size, gbx, cd=cd
+ if(map) then gbx = cor_select(gbx, cor_name(cd), /name)
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing planet grids...'
- grid_ptd = pg_grid(cd=cd, bx=pds, clip=clip, npoints=npoints)
+ grid_ptd = pg_grid(cd=cd, bx=gbx, clip=clip, npoints=npoints)
  grim_message
 
  ;--------------------------------
@@ -254,7 +293,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
    pg_hide, grid_ptd, cd=cd, dkx=rd, od=od, gbx=pd, hide_ptd, /cat
    grim_message
 
-   pg_hide, grid_ptd, cd=cd, gbx=pds, od=sund, /assoc, hide_ptd_term, /cat
+   pg_hide, grid_ptd, cd=cd, gbx=gbx, od=sund, /assoc, hide_ptd_term, /cat
    grim_message
   end
  grim_message
@@ -263,11 +302,11 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = append_array(grid_ptd, hide_ptd_term)
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = append_array(grid_ptd, hide_ptd_term)
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;=============================================================================
 
@@ -311,10 +350,9 @@ end
 ;
 ;=============================================================================
 function grim_compute_station, map=map, clip=clip, hide=hide, $
-                             gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                             gd=gd, bx=bx, ptd=ptd, $
                              data=data, npoints=npoints
 
- od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
  ;--------------------------------------------------------
@@ -322,24 +360,25 @@ function grim_compute_station, map=map, clip=clip, hide=hide, $
  ;--------------------------------------------------------
  if(NOT map) then $
   begin
-   pds = cor_select(active_xds, 'PLANET', /class)
-   if(NOT keyword_set(pds)) then bx = cor_dereference_gd(gd, /pd) $
-   else bx = pds
+   pds = cor_select(bx, 'PLANET', /class)
+   if(NOT keyword_set(pds)) then return, 0
+   bx0 = pds
   end
 
 
  stds = cor_dereference_gd(gd, /std)
  if(NOT keyword_set(stds)) then return, 0
 
- if(keyword_set(bx)) then $
+ if(keyword_set(bx0)) then $
   begin
    for i=0, n_elements(stds)-1 do $
-     if((where(cor_name(get_primary(stds[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
+     if((where(cor_name(get_primary(stds[i])) EQ cor_name(bx0)))[0] NE -1) then select = append_array(select, i, /def)
    stds = stds[select]
   end
  nstd = n_elements(stds)
 
  cd = cor_dereference_gd(gd, /cd)
+ od = cor_dereference_gd(gd, /od)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
 
@@ -348,7 +387,7 @@ function grim_compute_station, map=map, clip=clip, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing stations...'
- station_ptd = pg_station(cd=cd, std=stds, bx=bx, clip=clip)
+ station_ptd = pg_station(cd=cd, std=stds, bx=bx0, clip=clip)
  grim_message
 
 
@@ -357,7 +396,7 @@ function grim_compute_station, map=map, clip=clip, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, station_ptd, cd=cd, gbx=bx, dkx=rd, hide_ptd, /cat
+   pg_hide, station_ptd, cd=cd, gbx=bx0, dkx=rd, hide_ptd, /cat
    grim_message
   end
  grim_message
@@ -366,11 +405,11 @@ function grim_compute_station, map=map, clip=clip, hide=hide, $
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = station_ptd
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = station_ptd
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;=============================================================================
 
@@ -414,11 +453,10 @@ end
 ;
 ;=============================================================================
 function grim_compute_array, map=map, clip=clip, hide=hide, $
-                             gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                             gd=gd, bx=bx, ptd=ptd, $
                              data=data, $
                              npoints=npoints
 
- od = cor_dereference_gd(gd, /od)
  grim_message, /clear
 
  ;--------------------------------------------------------
@@ -426,23 +464,24 @@ function grim_compute_array, map=map, clip=clip, hide=hide, $
  ;--------------------------------------------------------
  if(NOT map) then $
   begin
-   pds = cor_select(active_xds, 'PLANET', /class)
-   if(NOT keyword_set(pds)) then bx = cor_dereference_gd(gd, /pd) $
-   else bx = pds
+   pds = cor_select(bx, 'PLANET', /class)
+   if(NOT keyword_set(pds)) then return, 0
+   bx0 = pds
   end
 
  ards = cor_dereference_gd(gd, /ard)
  if(NOT keyword_set(ards)) then return, 0
 
- if(keyword_set(bx)) then $
+ if(keyword_set(bx0)) then $
   begin
    for i=0, n_elements(ards)-1 do $
-     if((where(cor_name(get_primary(ards[i])) EQ cor_name(bx)))[0] NE -1) then select = append_array(select, i, /def)
+     if((where(cor_name(get_primary(ards[i])) EQ cor_name(bx0)))[0] NE -1) then select = append_array(select, i, /def)
    ards = ards[select]
   end
  nard = n_elements(ards)
 
  cd = cor_dereference_gd(gd, /cd)
+ od = cor_dereference_gd(gd, /od)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
 
@@ -451,7 +490,7 @@ function grim_compute_array, map=map, clip=clip, hide=hide, $
  ; compute points
  ;--------------------------------
  grim_print, 'Computing planet arrays...'
- array_ptd = pg_array(cd=cd, ard=ards, bx=bx, clip=clip)
+ array_ptd = pg_array(cd=cd, ard=ards, bx=bx0, clip=clip)
  grim_message
 
 
@@ -460,7 +499,7 @@ function grim_compute_array, map=map, clip=clip, hide=hide, $
  ;--------------------------------
  if(NOT map) then $
   begin
-   pg_hide, array_ptd, cd=cd, gbx=bx, dkx=rd, hide_ptd, /cat
+   pg_hide, array_ptd, cd=cd, gbx=bx0, dkx=rd, hide_ptd, /cat
    grim_message
   end
  grim_message
@@ -469,11 +508,11 @@ function grim_compute_array, map=map, clip=clip, hide=hide, $
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = array_ptd
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = array_ptd
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;=============================================================================
 
@@ -516,7 +555,7 @@ end
 ;
 ;===============================================================================
 function grim_compute_star, map=map, clip=clip, hide=hide, $
-                            gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                            gd=gd, bx=bx, ptd=ptd, $
                             data=data, $
                             npoints=npoints
 
@@ -559,11 +598,11 @@ function grim_compute_star, map=map, clip=clip, hide=hide, $
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = star_ptd
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = star_ptd
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;===============================================================================
 
@@ -614,29 +653,33 @@ end
 ;
 ;===============================================================================
 function grim_compute_shadow, map=map, clip=clip, hide=hide, $
-                     gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                     gd=gd, bx=bx, ptd=ptd, $
                      data=data, $
                      npoints=npoints
 
  if(map) then return, 0
- if(NOT keyword__set(active_ptd)) then return, 0
+ if(NOT keyword__set(ptd)) then return, 0
 
  grim_message, /clear
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
- sund = cor_dereference_gd(gd, name='SUN')
+ sund = cor_dereference_gd(gd, /sund)
+ if(NOT keyword_set(sund)) then return, 0
 
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing shadows...'
- shadow_ptd = pg_shadow(active_ptd, epsilon=1d, /nocull, $
-                                 cd=cd, od=sund, dkx=rd, gbx=pd, clip=clip)
- nshad = n_elements(shadow_ptd)
- grim_message
+ for i=0, n_elements(sund)-1 do $
+  begin
+   shadow_ptd = append_array(shadow_ptd, $
+                   pg_shadow(ptd, epsilon=1d, /nocull, $
+                                 cd=cd, od=sund[i], dkx=rd, gbx=pd, clip=clip))
+   grim_message
+  end
 
  ;--------------------------------
  ; hide points
@@ -649,11 +692,11 @@ function grim_compute_shadow, map=map, clip=clip, hide=hide, $
  ; associated with any objects and they are replaced each time
  ; they are recomputed
  ;-------------------------------------------------------------------
- ptd = shadow_ptd
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = shadow_ptd
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;===============================================================================
 
@@ -686,27 +729,30 @@ end
 ;
 ;===============================================================================
 function grim_compute_reflection, map=map, clip=clip, hide=hide, $
-                     gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                     gd=gd, bx=bx, ptd=ptd, $
                      data=data, $
                      npoints=npoints
 
  if(map) then return, 0
- if(NOT keyword__set(active_ptd)) then return, 0
+ if(NOT keyword__set(ptd)) then return, 0
  grim_message, /clear
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
- sund = cor_dereference_gd(gd, name='SUN')
+ sund = cor_dereference_gd(gd, /sund)
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing reflections...'
- reflection_ptd = pg_reflection(active_ptd, /nocull, $
-                         cd=cd, od=sund, dkx=rd, gbx=pd, clip=clip)
- nref = n_elements(reflection_ptd)
- grim_message
+ for i=0, n_elements(sund)-1 do $
+  begin
+   reflection_ptd = append_array(reflection_ptd, $
+                          pg_reflection(ptd, /nocull, $
+                                  cd=cd, od=sund[i], dkx=rd, gbx=pd, clip=clip))
+   grim_message
+  end
 
  ;--------------------------------
  ; hide points
@@ -719,11 +765,11 @@ function grim_compute_reflection, map=map, clip=clip, hide=hide, $
  ; associated with any objects and they are replaced each time
  ; they are recomputed
  ;-------------------------------------------------------------------
- ptd = reflection_ptd
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = reflection_ptd
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;===============================================================================
 
@@ -756,7 +802,7 @@ end
 ;
 ;===============================================================================
 function grim_compute_ring, map=map, clip=clip, hide=hide, $
-                             gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                             gd=gd, bx=bx, ptd=ptd, $
                              data=data, $
                              npoints=npoints
 
@@ -764,17 +810,17 @@ function grim_compute_ring, map=map, clip=clip, hide=hide, $
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
- sund = cor_dereference_gd(gd, name='SUN')
+ sund = (cor_dereference_gd(gd, /sund))[0]
 
 
  ;--------------------------------------------------------
  ; if no active planet, then try to determine primary
  ;--------------------------------------------------------
-; pds = cor_select(active_xds, 'PLANET', /class)
-; if(NOT keyword_set(pds)) then pd = get_primary(cd, pd) $
-; else pd = (get_primary(cd, pds))[0]
-; if(NOT keyword_set(pds)) then pd = cor_dereference_gd(gd, /pd) $
-; else pd = pds
+; pds = cor_select(bx, 'PLANET', /class)
+; if(NOT keyword_set(pds)) then return, 0
+; pd = (get_primary(cd, pds))[0]
+; if(NOT keyword_set(pds)) then return, 0
+; pd = pds
 
  rds = cor_dereference_gd(gd, /rd)
  nrd = n_elements(rds)
@@ -797,11 +843,11 @@ function grim_compute_ring, map=map, clip=clip, hide=hide, $
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = append_array(ring_ptd, hide_ptd_shad)
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = append_array(ring_ptd, hide_ptd_shad)
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;===============================================================================
 
@@ -843,7 +889,7 @@ end
 ;
 ;===============================================================================
 function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
-                             gd=gd, active_xds=active_xds, active_ptd=active_ptd, $
+                             gd=gd, bx=bx, ptd=ptd, $
                              data=data, $
                              npoints=npoints
 
@@ -852,15 +898,14 @@ function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
  ;--------------------------------------------------------
  ; if no active planet, then try to determine primary
  ;--------------------------------------------------------
- rds = cor_select(active_xds, 'RING', /class)
- if(NOT keyword_set(rds)) then rds = cor_dereference_gd(gd, /rd)
+ rds = cor_select(bx, 'RING', /class)
  if(NOT keyword_set(rds)) then return, 0
 
  nrd = n_elements(rds)
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
- sund = cor_dereference_gd(gd, name='SUN')
+ sund = (cor_dereference_gd(gd, /sund))[0]
 
 
  ;--------------------------------
@@ -880,11 +925,11 @@ function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
  ;-------------------------------------
  ; set up output points
  ;-------------------------------------
- ptd = append_array(grid_ptd, hide_ptd_shad)
- if(NOT hide) then ptd = append_array(ptd, hide_ptd)
+ result = append_array(grid_ptd, hide_ptd_shad)
+ if(NOT hide) then result = append_array(result, hide_ptd)
 
  grim_print, 'Done', /append
- return, ptd
+ return, result
 end
 ;===============================================================================
 

@@ -20,7 +20,7 @@ pro grim_next_plane, grim_data, norefresh=norefresh
  grim_set_data, grim_data
 
  no_erase = 1 
- if(grim_data.type EQ 'plot') then no_erase = 0
+ if(grim_data.type EQ 'PLOT') then no_erase = 0
  
  if(NOT keyword_set(norefresh)) then grim_refresh, grim_data, no_erase=no_erase, /noglass
 
@@ -53,7 +53,7 @@ pro grim_previous_plane, grim_data
  grim_set_data, grim_data
 
  no_erase = 1 
- if(grim_data.type EQ 'plot') then no_erase = 0
+ if(grim_data.type EQ 'PLOT') then no_erase = 0
  
  grim_refresh, grim_data, no_erase=no_erase, /noglass
  grim_call_plane_callbacks, grim_data
@@ -96,9 +96,10 @@ function grim_test_map, grim_data, plane=plane
 
  if(dat_instrument(plane.dd) EQ 'MAP') then return, 1
 
- if(NOT keyword_set(*plane.cd_p)) then return, 0
+ cd = grim_xd(plane, /cd)
+ if(NOT keyword_set(cd)) then return, 0
 
- if(cor_class(*plane.cd_p) EQ 'MAP') then return, 1
+ if(cor_class(cd) EQ 'MAP') then return, 1
 
  return, 0
 end
@@ -284,7 +285,7 @@ pro grim_crop_plane, grim_data, plane
  ;----------------------------------------------
  ; plot: crop to visible xrange
  ;----------------------------------------------
- if(grim_data.type EQ 'plot') then $
+ if(grim_data.type EQ 'PLOT') then $
   begin
    tvgr, grim_data.wnum, get=tvd
    xrange = tvd.xrange
@@ -340,7 +341,7 @@ pro grim_crop_plane, grim_data, plane
    ;- - - - - - - - - - - - - - - - - - - - - - 
    if(NOT grim_test_map(grim_data)) then $
     begin
-     cd = *plane.cd_p
+     cd = grim_xd(plane, /cd)
      if(keyword_set(cd)) then cam_set_oaxis, cd, cam_oaxis(cd) - [xxmin,yymin]
     end
 
@@ -589,29 +590,24 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	;---------------
 	; descriptors
 	;---------------
-; should put these in a gd...
-; --> gd = grim_gd(plane)
-gd_p		:	ptr_new(0), $	; Generic descriptor
 		dd		:	dd[i], $		; Data descriptor
+		cd		:	obj_new(), $		; Camera descriptor
+		od		:	obj_new(), $		; Observer descriptor
 		sibling_dd	:	obj_new(), $		; Last sibling dd
-		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
+
+; should put these in a gd or xds...
+; --> gd = grim_gd(plane)
+xd_p		:	ptr_new(0), $	; Descriptor array		;++
+gd_p		:	ptr_new(0), $	; Generic descriptor		;**
+
+cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
+od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 		pd_p		:	ptr_new(obj_new()), $	; Planet descriptors
 		rd_p		:	ptr_new(obj_new()), $	; Ring descriptors
 		sd_p		:	ptr_new(obj_new()), $	; Star descriptors
 		sund_p		:	ptr_new(obj_new()), $	; Sun descriptor
 		std_p		:	ptr_new(obj_new()), $	; Station descriptors
 		ard_p		:	ptr_new(obj_new()), $	; Array descriptors
-		od_p		:	ptr_new(obj_new()), $	; Observer descriptor
-
-	;----------------------------
-	; active objects
-	;----------------------------
-; it may be simpler to implement these as udata on each overlay ptd or xd
-		active_xd_p	:	ptr_new(obj_new()), $	; Descriptors of
-								;  active objects
-		active_overlays_ptdp :	ptr_new(obj_new()), $	; Active overlays
-
-		active_user_tags_p	:	ptr_new(''), $	
 
 	;-----------------------------------------------------------
 	; overlay points arrays  -- 
@@ -624,13 +620,6 @@ gd_p		:	ptr_new(0), $	; Generic descriptor
 		overlays_p		:	ptr_new(0), $	; Overlay global
 								; attributes
 		override_color		:	'', $
-
-;	;-----------------------------------------------------------
-;	; fill arrays
-;	;-----------------------------------------------------------
-;		fill_poly_ptdps		:	ptr_new(0), $
-;		fill_color_p		:	ptr_new(0), $
-;		fill_names_p		:	ptr_new(''), $
 
 	;-----------------------------------------------------------
 	; special arrays

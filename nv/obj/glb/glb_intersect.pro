@@ -13,16 +13,16 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	int_pts = glb_intersect(gbd, v, r)
+;	int_pts = glb_intersect(gbd, view_pts, ray_pts)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	gbd:	Array (nt) of any subclass of GLOBE descriptors.
+;	gbd:		Array (nt) of any subclass of GLOBE descriptors.
 ;
-;	v:	Array (nv,3,nt) giving ray origins in the BODY frame.
+;	view_pts:	Array (nv,3,nt) giving ray origins in the BODY frame.
 ;
-;	r:	Array (nv,3,nt) giving ray directions in the BODY frame.
+;	ray_pts:	Array (nv,3,nt) giving ray directions in the BODY frame.
 ;
 ;
 ;  OUTPUT: NONE
@@ -31,7 +31,7 @@
 ; KEYWORDS:
 ;  INPUT: 
 ;	near:	If set, only the "near" points are returned.  More specifically,
-;		these points correspond to the furthest along the ray from the 
+;		these points correspond to the nearest along the ray from the 
 ;		observer to the globe.  If the observer is exterior, these are 
 ;		the nearest interesections to the observer; if the observer is 
 ;		interior, these intersections are behind the observer.  
@@ -41,7 +41,9 @@
 ;		the observer; if the observer is interior, these intersections 
 ;		are in front of the observer.
 ;
-;	hit:	Array giving the indices of rays the hit the object.
+;	hit:	Array giving the indices of rays that hit the object.
+;
+;	miss:	Array giving the indices of rays that miss the object.
 ;
 ;	valid:	Array in which each element indicates whether the object
 ;		was hit.
@@ -71,27 +73,28 @@
 ;	
 ;-
 ;===========================================================================
-function glb_intersect, gbd, v, r, hit=hit, near=near, far=far, $
+function glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, near=near, far=far, $
                       discriminant=discriminant, nosolve=nosolve, valid=valid
 @core.include
 
  nt = 1
- dim = size(v, /dim)
+ dim = size(view_pts, /dim)
  nv = dim[0]
  if(n_elements(dim) GT 2) then t = dim[2]
 
  ;----------------------------
  ; compute the discriminant
  ;----------------------------
- discriminant = glb_intersect_discriminant(gbd, v, r, $
+ discriminant = glb_intersect_discriminant(gbd, view_pts, ray_pts, $
                                            alpha=alpha, beta=beta, gamma=gamma)
 
  ;----------------------------------
  ; compute the intersection points
  ;----------------------------------
- glb_intersect_points, gbd, v, r, discriminant, alpha, beta, gamma, $
-                            valid=valid, nosolve=nosolve, near=near_pts, far=far_pts
+ glb_intersect_points, gbd, view_pts, ray_pts, discriminant, alpha, beta, gamma, $
+                          valid=valid, nosolve=nosolve, near=near_pts, far=far_pts
  if(arg_present(hit)) then hit = where(valid NE 0)
+ if(arg_present(miss)) then miss = where(valid EQ 0)
 
 
  ;----------------------------------

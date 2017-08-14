@@ -1,5 +1,5 @@
 ; sld_query.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(arg_present(opacity)) then opacity = sld_opacity(_xd, cat=cat, condition=condition, /noevent)

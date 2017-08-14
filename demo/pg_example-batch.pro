@@ -69,7 +69,7 @@ tvim, im, zoom=0.75, /order, /new
 ;   appears before the Cassini Spice input translator in the default 
 ;   translators table, the descriptors are taken from the detached header 
 ;   if it exists, and if the relevant descriptors are present.  Otherwise, 
-;   they are obtained from the SPICE kernels.
+;   they are obtained from the SPICE kernels::
 ;
 ;     cd = pg_get_cameras(dd)                        ; CAMERA descriptor
 ;     pd = pg_get_planets(dd, od=cd, count=npd)      ; PLANET descriptor(s)
@@ -81,7 +81,7 @@ tvim, im, zoom=0.75, /order, /new
 ;   to perform aberration corrections on the returned objects.  In that
 ;   case, the returned descriptors would represent the real states of the
 ;   bodies at the time of observation at their respective positions rather
-;   than from the point of view of the observer.  
+;   than from the point of view of the observer:: 
 ;
 ;   Note the 'name' keyword in the call to PG_GET_STARS. This is a CORE
 ;   attribute, so it may be applied to any body.  For example, if you are 
@@ -171,7 +171,7 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;
 ;   These commands compute the center, limb, and terminator of each planet, 
 ;   as well as the edges of the rings.  Note that the terminator is computed 
-;   using PG_LIMB with the Sun as the observer.::
+;   using PG_LIMB with the Sun as the observer::
 ;
 ;     limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
 ;               pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
@@ -194,7 +194,7 @@ center_ptd = pg_center(gd=gd, bx=pd)
 ;  This just makes the calls to PG_DRAW a little easier, since they will 
 ;  need to be repeated every time we change things and recompute.  We put
 ;  all of the POINT descriptors in one array and then make corresponding 
-;  arrays for the plot parameters.
+;  arrays for the plot parameters::
 ;
 ;    object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 ;    colors=[make_array(npd,value=!p.color), $
@@ -270,7 +270,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;     dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])
 ;
 ;   BTW, you have been duped.  PG_FARFIT fails a lot because the search 
-;   is pretty sparse.  We cherry-picked an image that usually works pretty 
+;   is pretty sparse.  I cherry-picked an image that usually works pretty 
 ;   well.  The sparse search makes PG_FARFIT pretty fast, though.  Ok,
 ;   now repoint using the farfit solution::
 ;
@@ -375,7 +375,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;   pg_this and gd_that and all manner of other whatnot.  
 ;
 ;   Anyway, here we are staying 30 pixels from the image edge, and scanning 
-;   with a width of 80 pixels.  The lzero and mzero are coordinating the
+;   with a width of 80 pixels.  lzero and mzero are coordinating the
 ;   zero pointing of the model::
 ;   
 ;    cvscan_ptd=pg_cvscan(dd, gd=gd, limb_ptd[0], edge=30, width=80, $
@@ -705,7 +705,7 @@ pg_draw, plon_ptd, psym=7, plabel=strmid(strtrim(lon*180d/!dpi,2),0,3), /label_p
 ; OBSERVATION-SPECIFIC OVERLAYS
 ;
 ;   Use PG_LIMB to compute a limb and a terminator by specifying an 
-;   observer descriptor.
+;   observer descriptor::
 ;
 ;    map_limb_ptd = pg_limb(gd=gdm, od=cd)
 ;    map_term_ptd = pg_limb(gd=gdm, od=sund)
@@ -759,7 +759,7 @@ tvim, /new, map1
 ;   These commands write the descriptor information out through the 
 ;   translators.  The exact behavior is translator-dependent.  In the default
 ;   configuration, the detached header translator modifies the detached header 
-;   stored in the data descriptor.  It is not written until DAT_WRITE is called.
+;   stored in the data descriptor.  It is not written until DAT_WRITE is called::
 ;   
 ;     pg_put_rings, dd, od=cd, rd=rd
 ;     pg_put_planets, dd, od=cd, pd=pd
@@ -796,7 +796,7 @@ print, transpose(dat_dh(dd))
 ;   output function was given in the I/O table.  The detached header is
 ;   is also written into a file with the same name as the image file except 
 ;   with the extension '.dh'.  If this file does not already exist, it is 
-;   created.
+;   created::
 ;
 ;     dat_write, './outputs/' + cor_name(dd), dd
 ;

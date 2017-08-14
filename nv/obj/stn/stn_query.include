@@ -1,5 +1,5 @@
 ; stn_query.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(arg_present(surface_pt)) then surface_pt = stn_surface_pt(_xd, cat=cat, condition=condition, /noevent)

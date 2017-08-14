@@ -1,5 +1,5 @@
 ; _stn_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(surface_pt)) then stn_set_surface_pt, _xd, surface_pt, /noevent

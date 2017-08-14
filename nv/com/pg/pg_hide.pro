@@ -60,12 +60,21 @@
 ;	rm:	If set, points are flagged for being in front of or behind
 ;		the body, rather then just behind it.
 ;
+;	limb:	If set, hide wrt to limb, where applicable.  Assumes points lie
+;		on the surface of the body.  Not that when /limb is not set,
+;		the limb algorithm is still used to hide points with respect
+;		to their associated body.
+;
 ;	assoc:	If set, points are only hidden wrt their associated body.
-;		This is typically much faster because the calcuations for
+;		This is typically much faster because the calculations for
 ;		each points array are carried out for a single body instead 
 ;		of all given bodies.  This is useful, for example, for hiding
 ;		points that lie on the surface of a planet wrt to only that
 ;		planet.
+;
+;	dissoc:	If set, points are not hidden wrt their associated body.
+;		This is useful, for example, for points lying on the limb
+;		of a body as seen from the specified observer.
 ;
 ;  OUTPUT: NONE
 ;
@@ -109,10 +118,27 @@
 
 
 ;=============================================================================
+; pgh_select_by_dissoc
+;
+;=============================================================================
+function pgh_select_by_dissoc, bx, point_ptd
+ if(NOT keyword_set(bx)) then return, !null
+
+ w = where(pnt_assoc_xd(point_ptd) NE bx[*,0])
+ if(w[0] NE -1) then return, bx[w,*]
+
+ return, !null
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; pgh_select_by_assoc
 ;
 ;=============================================================================
 function pgh_select_by_assoc, bx, point_ptd
+ if(NOT keyword_set(bx)) then return, !null
 
  w = where(pnt_assoc_xd(point_ptd) EQ bx[*,0])
  if(w[0] NE -1) then return, bx[w,*]
@@ -154,6 +180,8 @@ function pgh_select_by_bounding_box, _cd, bx, point_ptd
 
 
  p = pnt_points(point_ptd, /visible)
+ if(NOT keyword_set(p)) then return, !null
+
  xmax = make_array(n, val=max(p[0,*], min=xmin))
  ymax = make_array(n, val=max(p[1,*], min=ymin))
  xmin = make_array(n, val=xmin)
@@ -175,10 +203,11 @@ end
 ;
 ;=============================================================================
 pro pg_hide, cd=cd, od=od, bx=bx, gbx=gbx, dkx=dkx, dd=dd, gd=gd, _point_ptd, hide_ptd, $
-              reveal=reveal, compress=compress, cat=cat, rm=rm, assoc=assoc
+              reveal=reveal, compress=compress, cat=cat, rm=rm, assoc=assoc, $
+              limb=_limb, dissoc=dissoc
 @pnt_include.pro
 
- hide = arg_present(hide_ptd)
+ hide_output = arg_present(hide_ptd)
  if(NOT keyword_set(_point_ptd)) then return
 
  ;----------------------------------------------------------
@@ -221,7 +250,7 @@ point_ptd = _point_ptd
  ; hide object points wrt each body
  ;------------------------------------
  n_objects = n_elements(point_ptd)
- if(hide) then hide_ptd = objarr(n_objects, n_bodies)
+ if(hide_output) then hide_ptd = objarr(n_objects, n_bodies)
 
  obs_pos = bod_pos(od)
  for j=0, n_objects-1 do if(obj_valid(point_ptd[j])) then $
@@ -234,8 +263,12 @@ point_ptd = _point_ptd
    ;- - - - - - - - - - - - - - - - - - - - -
    ; associated bodies
    ;- - - - - - - - - - - - - - - - - - - - -
-   if(n_elements(bxx) GT 1) then $
-        if(keyword_set(assoc)) then bxx = pgh_select_by_assoc(bxx, point_ptd[j])
+   if(keyword_set(assoc)) then bxx = pgh_select_by_assoc(bxx, point_ptd[j])
+
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; dissociated bodies
+   ;- - - - - - - - - - - - - - - - - - - - -
+   if(keyword_set(dissoc)) then bxx = pgh_select_by_dissoc(bxx, point_ptd[j])
 
    ;- - - - - - - - - - - - - - - - - - - - -
    ; select using bounding radii
@@ -251,13 +284,15 @@ point_ptd = _point_ptd
      begin
       xd = reform(bxx[i,*], nt)
 
+      limb = pnt_assoc_xd(point_ptd[j]) EQ xd
+      if(keyword_set(_limb)) then limb = 1
+
       Rs = bod_inertial_to_body_pos(xd, obs_pos)
 
       pnt_query, point_ptd[j], p=p, vectors=vectors, flags=flags
       object_pts = bod_inertial_to_body_pos(xd, vectors)
 
-      w = hide_points(xd, Rs, object_pts, rm=rm)
-
+      w = hide_points(xd, Rs, object_pts, rm=rm, limb=limb)
       if(w[0] NE -1) then $
        begin
         _flags = flags
@@ -265,7 +300,7 @@ point_ptd = _point_ptd
         pnt_set_flags, point_ptd[j], _flags
        end
 
-      if(hide AND (w[0] NE -1)) then $
+      if(hide_output) then $
        begin
         hide_ptd[j,i] = nv_clone(point_ptd[j])
 
@@ -286,10 +321,9 @@ point_ptd = _point_ptd
  ;---------------------------------------------------------
  ; if desired, concatenate all hide_ptd for each object
  ;---------------------------------------------------------
- if(hide AND keyword_set(cat)) then $
+ if(hide_output AND keyword_set(cat)) then $
   begin
-   for j=0, n_objects-1 do $
-      hide_ptd[j,0] = pnt_compress(pnt_cull(hide_ptd[j,*], /nofree, /vis))
+   for j=0, n_objects-1 do hide_ptd[j,0] = pnt_compress(hide_ptd[j,*])
    if(n_bodies GT 1) then $
     begin
      nv_free, hide_ptd[*,1:*]

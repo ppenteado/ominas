@@ -162,7 +162,7 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
    if(w[0] NE -1) then jj = w[0]
   end
 
- if(NOT defined(jj)) then piece[ii] = phot $
+ if(NOT defined(jj)) then piece[ii] = bytscl(phot) $
  else $
   begin
    ww = where(phot NE 0)
@@ -181,7 +181,7 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
 ;     map_smoothing_width = rdr_map_smoothing_width(data, ii)
 map_smoothing_width=1
 
-     map = dat_data(ddmap[jj])
+     map = bytscl(dat_data(ddmap[jj]))
 
      dat = image_interp_cam(cd=md[jj], map, interp='sinc', $
                im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:map_smoothing_width})
@@ -414,10 +414,10 @@ end
 
 
 pro test
-; grim ~/casIss/1350/N1350122987_2.IMG over=planet_center,ring
-; grim ~/casIss/1460/N1460090980_1.IMG over=planet_center,ring
-; grim ~/casIss/1444/N1444735589_1.IMG over=planet_center,ring
-; grim ~/casIss/1669/N1669801856_1.IMG over=planet_center
+; grim ~/casIss/1350/N1350122987_2.IMG over=center,ring
+; grim ~/casIss/1460/N1460090980_1.IMG over=center,ring
+; grim ~/casIss/1444/N1444735589_1.IMG over=center,ring
+; grim ~/casIss/1669/N1669801856_1.IMG over=center
 
  grift, dd=dd, cd=cd, pd=pd, rd=rd, sund=sund
  bx = append_array(pd, rd)

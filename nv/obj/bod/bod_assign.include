@@ -1,5 +1,5 @@
 ; _bod_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(time)) then bod_set_time, _xd, time, /noevent

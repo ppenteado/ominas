@@ -74,6 +74,6 @@ function cor_select, crx, key, indices=ii, rm=rm, noevent=noevent, $
  if(keyword_set(rm)) then crx = rm_list_item(crx, ii, only=0)
 
 
- return, result
+ return, unique(result)
 end
 ;===============================================================================

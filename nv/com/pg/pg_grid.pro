@@ -226,6 +226,7 @@ function pg_grid, cd=cd, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, lat=_lat, lon=_l
                                         scan_lat=scan_lat, scan_lon=scan_lon)
      flags = bytarr(n_elements(grid_pts_map[0,*]))
      points = map_to_image(cd, cd, xd, grid_pts_map, valid=valid, body=grid_pts)
+
      inertial_pts = 0
      if(keyword_set(bx)) then $
       if(keyword_set(grid_pts)) then $

@@ -57,8 +57,10 @@ pro gros_update_form, grim_data, plane, base
    ;-----------------------------------------------------
    ; if no user overlays, unmap that section
    ;-----------------------------------------------------
-   user_ptd = grim_get_user_ptd(plane=plane, $
-                 utags, color=user_colors, psym=user_psyms, symsize=user_psizes)
+   user_ptd = grim_get_user_ptd(plane=plane, utags, user_struct=user_struct)
+   user_colors = user_struct.color
+   user_psyms = user_struct.psym
+   user_psizes = user_struct.symsize
 
    if(NOT keyword_set(user_ptd)) then $
     begin 
@@ -344,8 +346,10 @@ pro gros_apply_settings, data
    if(keyword__set(utags)) then $
     for j=0, n_utags-1 do $
      begin
-      user_ptd = grim_get_user_ptd(plane=planes[i], utags[j], shade_fn=shade_fn, $
-                          graphics_fn=graphics_fn, xgraphics=xgraphics)
+      user_ptd = grim_get_user_ptd(plane=planes[i], utags[j], user_struct=user_struct)
+      shade_fn = user_struct.shade_fn
+      graphics_fn = user_struct.graphics_fn
+      xgraphics = user_struct.xgraphics
 
       psym = ''
       _psym = grim_parse_form_entry(data.ids, data.tags, $
@@ -467,7 +471,7 @@ common grim_overlay_settings_block, tops
  ; settings form widget
  ;-----------------------------------------------
  base = widget_base(/column, $
-       title = 'Overlay Settings - grim ' + strtrim(grim_data.grn,2));, /tlb_size_events)
+       title = 'GRIM Overlay Settings - grim ' + strtrim(grim_data.grn,2));, /tlb_size_events)
 
  blank = '0'
  colors = ['red', $
