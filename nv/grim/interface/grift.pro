@@ -96,7 +96,7 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
          sd=sd, $
          std=std, $
          ard=ard, $
-         sund=sund, $
+         ltd=ltd, $
          od=od, $
          bx=bx, $
          bbx=bbx, $
@@ -126,7 +126,7 @@ _ref_extra=ex
  sd = !null
  std = !null
  ard = !null
- sund = !null
+ ltd = !null
  od = !null
  bx = !null
  gbx = !null
@@ -187,7 +187,7 @@ _ref_extra=ex
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(active)) then $
     begin
-     ddi = (cdi = (sundi = (odi = !null)))
+     ddi = (cdi = (ltdi = (odi = !null)))
      pd = append_array(active_pd, (pdi=grim_get_active_xds(plane, 'PLANET')))
      rd = append_array(active_rd, (rdi=grim_get_active_xds(plane, 'RING')))
      sd = append_array(active_sd, (sdi=grim_get_active_xds(plane, 'STAR')))
@@ -218,7 +218,7 @@ _ref_extra=ex
      sd = cor_cull(append_array(sd, (sdi=grim_xd(plane, /sd))))
      std = cor_cull(append_array(std, (stdi=grim_xd(plane, /std))))
      ard = cor_cull(append_array(ard, (ardi=grim_xd(plane, /ard))))
-     sund = cor_cull(append_array(sund, (sundi=grim_xd(plane, /sund))))
+     ltd = cor_cull(append_array(ltd, (ltdi=grim_xd(plane, /ltd))))
      od = cor_cull(append_array(od, (odi=grim_xd(plane, /od))))
 
      limb_ptd = append_array(limb_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'LIMB')))
@@ -244,7 +244,7 @@ _ref_extra=ex
    ; generic descriptor
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    gd[i] = cor_create_gd(dd=ddi, cd=cdi, pd=pdi, rd=rdi, $
-                            sund=sundi, sd=sdi, ard=ardi, std=stdi, od=odi)
+                            ltd=ltdi, sd=sdi, ard=ardi, std=stdi, od=odi)
   end
 
  ;------------------------------------------------------------------

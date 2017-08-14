@@ -86,7 +86,7 @@ function pg_reflection_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
  ;-----------------------------------------------
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
  if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(NOT keyword_set(od)) then $

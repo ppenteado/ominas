@@ -451,7 +451,7 @@ end
 pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, hide=hide, $
                       path=path, save_path=save_path, load_path=load_path, $
                       cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
-                      sun_trs=sun_trs, color=color, position=_position, $
+                      lgt_trs=lgt_trs, color=color, position=_position, $
                       xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
@@ -482,7 +482,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
   if(NOT keyword_set(str_trs)) then str_trs = grim_data.def_str_trs
   if(NOT keyword_set(stn_trs)) then stn_trs = grim_data.def_stn_trs
   if(NOT keyword_set(arr_trs)) then arr_trs = grim_data.def_arr_trs
-  if(NOT keyword_set(sun_trs)) then sun_trs = grim_data.def_sun_trs
+  if(NOT keyword_set(lgt_trs)) then lgt_trs = grim_data.def_lgt_trs
 
   if(NOT keyword_set(color)) then color = grim_data.def_color
   if(NOT keyword_set(thick)) then thick = grim_data.def_thick
@@ -605,7 +605,7 @@ od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 		pd_p		:	ptr_new(obj_new()), $	; Planet descriptors
 		rd_p		:	ptr_new(obj_new()), $	; Ring descriptors
 		sd_p		:	ptr_new(obj_new()), $	; Star descriptors
-		sund_p		:	ptr_new(obj_new()), $	; Sun descriptor
+		ltd_p		:	ptr_new(obj_new()), $	; Light descriptor
 		std_p		:	ptr_new(obj_new()), $	; Station descriptors
 		ard_p		:	ptr_new(obj_new()), $	; Array descriptors
 
@@ -656,7 +656,7 @@ od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 		str_trs		:	str_trs, $ 
 		stn_trs		:	stn_trs, $ 
 		arr_trs		:	arr_trs, $ 
-		sun_trs		:	sun_trs $ 
+		lgt_trs		:	lgt_trs $ 
 	     }
 
 

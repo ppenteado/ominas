@@ -93,7 +93,7 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  od = cor_dereference_gd(gd, /od)
  rd = cor_dereference_gd(gd, /rd)
  pd = cor_dereference_gd(gd, /pd)
- sund = (cor_dereference_gd(gd, /sund))[0]
+ ltd = (cor_dereference_gd(gd, /ltd))[0]
 
  ;-------------------------------------------------------------
  ; filter out objects whose apparent sizes are too small
@@ -115,7 +115,7 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  pg_hide, limb_ptd, cd=cd, od=od, dkx=rd, gbx=gbx, hide_ptd, /dissoc, /cat
  grim_message
 
- pg_hide, limb_ptd, cd=cd, gbx=gbx, od=sund, /assoc, hide_ptd_term, /cat
+ pg_hide, limb_ptd, cd=cd, gbx=gbx, od=ltd, /assoc, hide_ptd_term, /cat
  pg_hide, hide_ptd_term, cd=cd, od=od, dkx=rd, gbx=gbx, /dissoc, /cat
  grim_message
 
@@ -182,17 +182,17 @@ function grim_compute_terminator, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  od = cor_dereference_gd(gd, /od)
  rd = cor_dereference_gd(gd, /rd)
- sund = cor_dereference_gd(gd, /sund)
- if(NOT keyword_set(sund)) then return, 0
+ ltd = cor_dereference_gd(gd, /ltd)
+ if(NOT keyword_set(ltd)) then return, 0
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing terminators...'
- for i=0, n_elements(sund)-1 do $
+ for i=0, n_elements(ltd)-1 do $
   begin
    term_ptd = append_array(term_ptd, $
-                 pg_limb(cd=cd, od=sund[i], gbx=pds, clip=clip, npoints=npoints))
+                 pg_limb(cd=cd, od=ltd[i], gbx=pds, clip=clip, npoints=npoints))
    grim_message
   end
 
@@ -269,7 +269,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
 
- sund = (cor_dereference_gd(gd, /sund))[0]
+ ltd = (cor_dereference_gd(gd, /ltd))[0]
 
  ;-------------------------------------------------------------
  ; filter out objects whose apparent sizes are too small
@@ -293,7 +293,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
    pg_hide, grid_ptd, cd=cd, dkx=rd, od=od, gbx=pd, hide_ptd, /cat
    grim_message
 
-   pg_hide, grid_ptd, cd=cd, gbx=gbx, od=sund, /assoc, hide_ptd_term, /cat
+   pg_hide, grid_ptd, cd=cd, gbx=gbx, od=ltd, /assoc, hide_ptd_term, /cat
    grim_message
   end
  grim_message
@@ -665,19 +665,19 @@ function grim_compute_shadow, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
- sund = cor_dereference_gd(gd, /sund)
- if(NOT keyword_set(sund)) then return, 0
+ ltd = cor_dereference_gd(gd, /ltd)
+ if(NOT keyword_set(ltd)) then return, 0
 
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing shadows...'
- for i=0, n_elements(sund)-1 do $
+ for i=0, n_elements(ltd)-1 do $
   begin
    shadow_ptd = append_array(shadow_ptd, $
                    pg_shadow(ptd, epsilon=1d, /nocull, $
-                                 cd=cd, od=sund[i], dkx=rd, gbx=pd, clip=clip))
+                                 cd=cd, od=ltd[i], dkx=rd, gbx=pd, clip=clip))
    grim_message
   end
 
@@ -740,17 +740,17 @@ function grim_compute_reflection, map=map, clip=clip, hide=hide, $
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
- sund = cor_dereference_gd(gd, /sund)
+ ltd = cor_dereference_gd(gd, /ltd)
 
  ;--------------------------------
  ; compute points
  ;--------------------------------
  grim_print, 'Computing reflections...'
- for i=0, n_elements(sund)-1 do $
+ for i=0, n_elements(ltd)-1 do $
   begin
    reflection_ptd = append_array(reflection_ptd, $
                           pg_reflection(ptd, /nocull, $
-                                  cd=cd, od=sund[i], dkx=rd, gbx=pd, clip=clip))
+                                  cd=cd, od=ltd[i], dkx=rd, gbx=pd, clip=clip))
    grim_message
   end
 
@@ -810,7 +810,7 @@ function grim_compute_ring, map=map, clip=clip, hide=hide, $
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
- sund = (cor_dereference_gd(gd, /sund))[0]
+ ltd = (cor_dereference_gd(gd, /ltd))[0]
 
 
  ;--------------------------------------------------------
@@ -836,7 +836,7 @@ function grim_compute_ring, map=map, clip=clip, hide=hide, $
  pg_hide, ring_ptd, cd=cd, bx=pd, hide_ptd, /cat
  grim_message
 
- pg_hide, ring_ptd, cd=cd, od=sund, bx=pd, hide_ptd_shad, /cat
+ pg_hide, ring_ptd, cd=cd, od=ltd, bx=pd, hide_ptd_shad, /cat
  grim_message
 
 
@@ -905,7 +905,7 @@ function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /pd)
- sund = (cor_dereference_gd(gd, /sund))[0]
+ ltd = (cor_dereference_gd(gd, /ltd))[0]
 
 
  ;--------------------------------
@@ -918,7 +918,7 @@ function grim_compute_ring_grid, map=map, clip=clip, hide=hide, $
  pg_hide, grid_ptd, cd=cd, gbx=pd, hide_ptd, /cat
  grim_message
 
- pg_hide, grid_ptd, cd=cd, od=sund, gbx=pd, hide_ptd_shad, /cat
+ pg_hide, grid_ptd, cd=cd, od=ltd, gbx=pd, hide_ptd_shad, /cat
  grim_message
 
 

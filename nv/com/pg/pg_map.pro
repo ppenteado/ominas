@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_map(dd, md=md, cd=cd, gbx=gbx, sund=sund)
+;	result = pg_map(dd, md=md, cd=cd, gbx=gbx, ltd=ltd)
 ;	result = pg_map(dd, gd=gd)
 ;
 ;
@@ -41,7 +41,7 @@
 ;		code.  It is recommended that you use the 'bx' argument
 ;		instead.
 ;
-;	sund:	Star descriptor for the sun.  If given, points behind the
+;	ltd:	Star descriptor for a light source.  If given, points behind the
 ;		terminator are excluded.
 ;
 ;	gd:	Generic descriptor.  If given, the above descriptor inputs 
@@ -117,7 +117,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
+function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, ltd=ltd, gd=gd, $
                    hide_fn=hide_fn, hide_bx=hide_bx, map=map, $
                    aux_names=aux_names, pc_xsize=pc_xsize, pc_ysize=pc_ysize, $ 
                    bounds=bounds, interp=interp, arg_interp=arg_interp, $
@@ -132,7 +132,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
  if(NOT keyword_set(_gbx)) then _gbx = dat_gd(gd, dd=dd, /gbx)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
  if(NOT keyword_set(md)) then md = dat_gd(gd, dd=dd, /md)
  map = !null
 
@@ -217,7 +217,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
    if(cor_class(test_md) EQ 'CAMERA') then cam_set_scale, test_md, cam_scale(md)*test_factor
 
    test_map = project_map(image, bounds=bounds, interp=interp,  $
-            md=test_md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
+            md=test_md, cd=cd, bx=bx, ltd=ltd, pc_xsize, pc_ysize, $
 ;            hide_fn=hide_fn, hide_bx=hide_bx, $
             arg_interp=arg_interp, $
             offset=offset, shear_fn=shear_fn, shear_data=shear_data, edge=edge, $
@@ -266,7 +266,7 @@ function pg_map, dd, md=md, cd=cd, bx=bx, gbx=_gbx, dkx=dkx, sund=sund, gd=gd, $
  ;---------------------------------------
  if(NOT keyword_set(map)) then $
     map = project_map(image, bounds=bounds, interp=interp,  $
-            md=md, cd=cd, bx=bx, sund=sund, pc_xsize, pc_ysize, $
+            md=md, cd=cd, bx=bx, ltd=ltd, pc_xsize, pc_ysize, $
             hide_fn=hide_fn, hide_bx=hide_bx, arg_interp=arg_interp, $
             offset=offset, shear_fn=shear_fn, shear_data=shear_data, edge=edge, $
             smooth=smooth, roi=roi)

@@ -77,14 +77,14 @@ grift, dd=dd
 ;    pd = pg_get_planets(dd, od=cd, $
 ;           name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
 ;    rd = pg_get_rings(dd, pd=pd, od=cd)
-;    sund = pg_get_stars(dd, od=cd, name='SUN')
+;    ltd = pg_get_stars(dd, od=cd, name='SUN')
 ;- 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cd = pg_get_cameras(dd, 'ck_in=auto')
 pd = pg_get_planets(dd, od=cd, $
        name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
 rd = pg_get_rings(dd, pd=pd, od=cd)
-sund = pg_get_stars(dd, od=cd, name='SUN')
+ltd = pg_get_stars(dd, od=cd, name='SUN')
 
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -94,10 +94,10 @@ sund = pg_get_stars(dd, od=cd, name='SUN')
 ;  And of course we shove everything into a generic descriptor because it
 ;  makes everything so much easier::
 ;
-;    gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+;    gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 ;-
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 
 
 ;-------------------------------------------------------------------------
@@ -108,17 +108,17 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;  happy to do this for you::
 ;
 ;    limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
-;              pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;              pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ;    ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
-;    term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+;    term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;    center_ptd = pg_center(gd=gd, bx=pd)
 
 ;-
 ;-------------------------------------------------------------------------
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
-          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 center_ptd = pg_center(gd=gd, bx=pd)
 
 

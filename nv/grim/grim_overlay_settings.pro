@@ -200,7 +200,7 @@ pro gros_update_form, grim_data, plane, base
  grim_set_form_entry, data.ids, data.tags, 'STR_TRS', plane.str_trs
  grim_set_form_entry, data.ids, data.tags, 'STN_TRS', plane.stn_trs
  grim_set_form_entry, data.ids, data.tags, 'STN_TRS', plane.arr_trs
- grim_set_form_entry, data.ids, data.tags, 'SUN_TRS', plane.sun_trs
+ grim_set_form_entry, data.ids, data.tags, 'LGT_TRS', plane.lgt_trs
 
 
  widget_control, base, set_uvalue=data
@@ -326,8 +326,8 @@ pro gros_apply_settings, data
                         data.ids, data.tags, 'STN_TRS', /string), 2)
    arr_trs = strtrim(grim_parse_form_entry($
                         data.ids, data.tags, 'ARR_TRS', /string), 2)
-   sun_trs = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'SUN_TRS', /string), 2)
+   lgt_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'LGT_TRS', /string), 2)
 
    planes[i].cam_trs = cam_trs
    planes[i].plt_trs = plt_trs
@@ -335,7 +335,7 @@ pro gros_apply_settings, data
    planes[i].str_trs = str_trs
    planes[i].stn_trs = stn_trs
    planes[i].arr_trs = arr_trs
-   planes[i].sun_trs = sun_trs
+   planes[i].lgt_trs = lgt_trs
 
 
    ;-----------------------
@@ -556,7 +556,7 @@ common grim_overlay_settings_block, tops
 	  '0, TEXT,, LABEL_LEFT= Star   :, WIDTH=60, TAG=str_trs', $
 	  '0, TEXT,, LABEL_LEFT= Station:, WIDTH=60, TAG=stn_trs', $
 	  '0, TEXT,, LABEL_LEFT= Array  :, WIDTH=60, TAG=arr_trs', $
-	  '2, TEXT,, LABEL_LEFT= Sun    :, WIDTH=60, TAG=sun_trs']
+	  '2, TEXT,, LABEL_LEFT= Light    :, WIDTH=60, TAG=lgt_trs']
 
  ;- - - - - - - - - - - - - - - - - - - - - -
  ; settings for user overlays

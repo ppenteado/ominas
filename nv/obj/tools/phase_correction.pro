@@ -15,7 +15,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       dxy = phase_correction(cd, gbx, sund)
+;       dxy = phase_correction(cd, gbx, ltd)
 ;
 ;
 ; ARGUMENTS:
@@ -24,7 +24,7 @@
 ;
 ;	gbx:	Any subclass of GLOBE.
 ;
-;	sund:	STAR descriptor representing the sun.
+;	ltd:	BODY descriptor representing the light source.
 ;
 ;  OUTPUT:  NONE
 ;
@@ -44,7 +44,7 @@
 ;
 ;-
 ;=============================================================================
-function phase_correction, cd, gbx, sund
+function phase_correction, cd, gbx, ltd
 
  nv = n_elements(gbx)
 
@@ -52,7 +52,7 @@ function phase_correction, cd, gbx, sund
  ; phase angle
  ;--------------------------
  v = bod_pos(cd)
- s = bod_pos(sund)
+ s = bod_pos(ltd)
  p = bod_pos(gbx)
 
  vv = bod_inertial_to_body_pos(gbx, v)

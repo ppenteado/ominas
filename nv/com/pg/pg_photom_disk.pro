@@ -30,7 +30,7 @@
 ;
 ;	dkx:	Disk descriptor
 ;
-;	sund:	Sun descriptor
+;	ltd:	Light descriptor
 ;
 ;	gd:	Generic descriptor.  If present, cd and dkx are taken from 
 ;		here if contained.
@@ -83,7 +83,7 @@
 ;-
 ;=============================================================================
 function pg_photom_disk, dd, outline_ptd=outline_ptd, $
-                  cd=cd, dkx=dkx, sund=sund, gd=gd, $
+                  cd=cd, dkx=dkx, ltd=ltd, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
                   emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite
@@ -99,7 +99,7 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
 
 
  ;-----------------------------------------------
@@ -107,7 +107,7 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  ;-----------------------------------------------
  if(n_elements(cd) GT 1) then nv_message, 'Only one camera descriptor allowed.'
  if(n_elements(dkx) GT 1) then nv_message, 'Only one disk descriptor allowed.'
- if(n_elements(sund) GT 1) then nv_message, 'Only one sun descriptor allowed.'
+ if(n_elements(ltd) GT 1) then nv_message, 'Only one light descriptor allowed.'
 
 
  ;---------------------------------------
@@ -156,7 +156,7 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  ;---------------------------------------
  ; compute photometric angles
  ;---------------------------------------
- pht_angles, image_pts, cd, dkx, sund, emm=mu, inc=mu0, g=g, valid=valid
+ pht_angles, image_pts, cd, dkx, ltd, emm=mu, inc=mu0, g=g, valid=valid
  if(valid[0] EQ -1) then nv_message, 'No valid points in image region.'
 
  mu0 = mu0[valid] 

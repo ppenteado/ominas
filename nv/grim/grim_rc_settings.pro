@@ -26,7 +26,7 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
 	fov=fov, clip=clip, menu_extensions=menu_extensions, button_extensions=button_extensions, $
-	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, sun_trs=sun_trs, $
+	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, lgt_trs=lgt_trs, $
 	filetype=filetype, hide=hide, mode_args=mode_args, xzero=xzero, rgb=rgb, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, maxdat=maxdat, $
@@ -221,9 +221,9 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
  else _arr_trs = arr_trs
  if(keyword_set(_arr_trs)) then arr_trs = _arr_trs
 
- if(n_elements(sun_trs) EQ 0) then _sun_trs = extra_value(kv, 'SUN_TRS') $
- else _sun_trs = sun_trs
- if(keyword_set(_sun_trs)) then sun_trs = _sun_trs
+ if(n_elements(lgt_trs) EQ 0) then _lgt_trs = extra_value(kv, 'LGT_TRS') $
+ else _lgt_trs = lgt_trs
+ if(keyword_set(_lgt_trs)) then lgt_trs = _lgt_trs
 
  if(n_elements(filetype) EQ 0) then _filetype = extra_value(kv, 'FILETYPE') $
  else _filetype = filetype

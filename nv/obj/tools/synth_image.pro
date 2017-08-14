@@ -2,7 +2,7 @@
 ; synth_image.pro
 ;
 ;=============================================================================
-function synth_image, cd, pd, sund, rd=rd
+function synth_image, cd, pd, ltd, rd=rd
 
  cam_size = cam_size(cd)
 
@@ -26,7 +26,7 @@ function synth_image, cd, pd, sund, rd=rd
 
 
 stop
- pht_angles, image_pts, cd, pd, sund, emm=emm, inc=inc, g=g, valid=valid
+ pht_angles, image_pts, cd, pd, ltd, emm=emm, inc=inc, g=g, valid=valid
 
 end
 ;=============================================================================

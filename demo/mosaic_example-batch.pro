@@ -56,13 +56,13 @@
 ;   
 ;   Get camera, planets, rings and sun objects::
 ;   
-;     _gd = {cd:obj_new(), gbx:obj_new(), dkx:obj_new(), sund:obj_new()}
+;     _gd = {cd:obj_new(), gbx:obj_new(), dkx:obj_new(), ltd:obj_new()}
 ;     gd = replicate(_gd, n)
 ;     
 ;     for i=0, n-1 do gd[i].cd = pg_get_cameras(dd[i])
 ;     for i=0, n-1 do gd[i].gbx = pg_get_planets(dd[i], od=gd[i].cd, name='JUPITER')
 ;     for i=0, n-1 do gd[i].dkx = pg_get_rings(dd[i], pd=gd[i].gbx, od=gd[i].cd)
-;     for i=0, n-1 do gd[i].sund = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
+;     for i=0, n-1 do gd[i].ltd = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
 ;
 ;   Compute limb::
 ;
@@ -93,13 +93,13 @@ tvim, /list, wnum=ww
 ;---------------------------------------
 ; get geometry info for each image
 ;---------------------------------------
-_gd = {cd:obj_new(), gbx:obj_new(), dkx:obj_new(), sund:obj_new()}
+_gd = {cd:obj_new(), gbx:obj_new(), dkx:obj_new(), ltd:obj_new()}
 gd = replicate(_gd, n)
 
 for i=0, n-1 do gd[i].cd = pg_get_cameras(dd[i])
 for i=0, n-1 do gd[i].gbx = pg_get_planets(dd[i], od=gd[i].cd, name='JUPITER')
 for i=0, n-1 do gd[i].dkx = pg_get_rings(dd[i], pd=gd[i].gbx, od=gd[i].cd)
-for i=0, n-1 do gd[i].sund = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
+for i=0, n-1 do gd[i].ltd = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
 
 
 

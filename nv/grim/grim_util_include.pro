@@ -26,7 +26,7 @@ function grim_xd, plane, class=_class, _ref_extra=keys
                          *plane.pd_p, $
                          *plane.rd_p, $
                          *plane.sd_p, $
-                         *plane.sund_p, $
+                         *plane.ltd_p, $
                          *plane.std_p, $
                          *plane.ard_p])
 
@@ -39,7 +39,7 @@ function grim_xd, plane, class=_class, _ref_extra=keys
  if((where(keys EQ 'SD'))[0] NE -1) then xds = append_array(xds, *plane.sd_p)
  if((where(keys EQ 'STD'))[0] NE -1) then xds = append_array(xds, *plane.std_p)
  if((where(keys EQ 'ARD'))[0] NE -1) then xds = append_array(xds, *plane.ard_p)
- if((where(keys EQ 'SUND'))[0] NE -1) then xds = append_array(xds, *plane.sund_p)
+ if((where(keys EQ 'LTD'))[0] NE -1) then xds = append_array(xds, *plane.ltd_p)
 
  return, xds
 end
@@ -58,7 +58,7 @@ function grim_gd, plane, class=_class, _ref_extra=keys
    gd = {cd:grim_xd(plane, /cd), $
          pd:grim_xd(plane, /pd), $
          rd:grim_xd(plane, /rd), $
-         sund:grim_xd(plane, /sund), $
+         ltd:grim_xd(plane, /ltd), $
          sd:grim_xd(plane, /sd), $
          std:grim_xd(plane, /std), $
          ard:grim_xd(plane, /ard), $
@@ -172,7 +172,7 @@ function grim_get_body_by_name, name, plane=plane
  bx = grim_get_body_by_name_single(plane.sd_p, name)
  if(keyword_set(bx)) then return, bx
 
- bx = grim_get_body_by_name_single(plane.sund_p, name)
+ bx = grim_get_body_by_name_single(plane.ltd_p, name)
  if(keyword_set(bx)) then return, bx
 
  bx = grim_get_body_by_name_single(plane.std_p, name)

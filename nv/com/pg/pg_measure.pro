@@ -41,7 +41,7 @@
 ;	dkx:	Object descriptors, subclass of 'DISK'.  Must be included for 
 ;		ring coordinate output.
 ;
-;	sund:	Star descriptor specifying the state of the sun.
+;	ltd:	Body descriptor giving the light source
 ;
 ;	gd:	Generic descriptor.  If given, the above object descriptors are
 ;		taken from this structure.
@@ -537,7 +537,7 @@ end
 ; pg_measure
 ;
 ;=============================================================================
-pro pg_measure, dd, cd=cd, gbx=gbx, dkx=dkx, sund=sund, sd=sd, gd=_gd, fn=_fn, $
+pro pg_measure, dd, cd=cd, gbx=gbx, dkx=dkx, ltd=ltd, sd=sd, gd=_gd, fn=_fn, $
            radec=radec, xy=xy, string=string, $
            silent=silent, values=values, p=p
 common pgm_table_block, last_labels, first
@@ -552,7 +552,7 @@ common pgm_table_block, last_labels, first
  if(NOT keyword_set(cd)) then cd = dat_gd(_gd, dd=dd, /cd)
  if(NOT keyword_set(gbx)) then gbx = dat_gd(_gd, dd=dd, /gbx)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(_gd, dd=dd, /dkx)
- if(NOT keyword_set(sund)) then sund = dat_gd(_gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(_gd, dd=dd, /ltd)
  if(NOT keyword_set(sd)) then sd = dat_gd(_gd, dd=dd, /sd)
 
  ;-----------------------------------------------

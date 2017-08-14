@@ -1,11 +1,10 @@
 ;docformat = 'rst rst'
 ;=============================================================================
 ;+
-;=====
 ; GRIM
-;=====
+; ====
 ;
-; General-purpose GRaphical Interface for oMinas
+;      General-purpose GRaphical Interface for oMinas
 ; 
 ;
 ; CATEGORY: NV/GR
@@ -79,7 +78,7 @@
 ;      observer descriptor (in the case of a map) for each plane.  Objects
 ;      whose names match those already maintained by GRIM replace them.
 ;
-;      `sund`: Replaces the current sun descriptor.
+;      `ltd`: Replaces the current light descriptor.
 ;
 ;      `pd`:   Adds/replaces planet descriptors.
 ;
@@ -127,7 +126,7 @@
 ;
 ;      `*cam_trs`: String giving translator keywords for the camera descriptors.
 ;
-;      `*sun_trs`: String giving translator keywords for the sun descriptors.
+;      `*lgt_trs`: String giving translator keywords for the light descriptors.
 ;
 ;      `*plt_trs`: String giving translator keywords for the planet descriptors.
 ;
@@ -821,6 +820,8 @@
 ;       The help menu is currently not working because it relied on the old
 ;       documentation system.
 ;
+;       Navigation mode control is poor for the Shift-Right motion
+;
 ;
 ;
 ;      SEE ALSO
@@ -1255,7 +1256,7 @@ pro grim_write, grim_data, filename, filetype=filetype
  pd = grim_xd(plane, /pd)
  rd = grim_xd(plane, /rd)
  sd = grim_xd(plane, /sd)
- sund = grim_xd(plane, /sund)
+ ltd = grim_xd(plane, /ltd)
  std = grim_xd(plane, /std)
  ard = grim_xd(plane, /ard)
 
@@ -1278,7 +1279,7 @@ pro grim_write, grim_data, filename, filetype=filetype
  if(keyword_set(sd)) then pg_put_stars, plane.dd, sd=sd, od=od
 ; if(keyword_set(std)) then pg_put_stations, plane.dd, std=std, od=od ;no such function
  if(keyword_set(ard)) then pg_put_arrays, plane.dd, ard=ard, od=od
- if(keyword_set(sund)) then pg_put_stars, plane.dd, sd=sund, od=od
+ if(keyword_set(ltd)) then pg_put_stars, plane.dd, sd=ltd, od=od
 
  grim_resume_events
 
@@ -1343,7 +1344,7 @@ pro grim_kill_notify, top
    pd = grim_xd(plane, /pd)
    rd = grim_xd(plane, /rd)
    sd = grim_xd(plane, /sd)
-   sund = grim_xd(plane, /sund)
+   ltd = grim_xd(plane, /ltd)
    std = grim_xd(plane, /std)
    ard = grim_xd(plane, /ard)
 
@@ -1354,11 +1355,11 @@ pro grim_kill_notify, top
    if(keyword_set(sd)) then nv_notify_unregister, sd, 'grim_descriptor_notify'
    if(keyword_set(std)) then nv_notify_unregister, std, 'grim_descriptor_notify'
    if(keyword_set(ard)) then nv_notify_unregister, ard, 'grim_descriptor_notify'
-   if(keyword_set(sund)) then nv_notify_unregister, sund, 'grim_descriptor_notify'
+   if(keyword_set(ltd)) then nv_notify_unregister, ltd, 'grim_descriptor_notify'
 
 ;;;
    nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, $
-             plane.ard_p, plane.sund_p, plane.od_p,$
+             plane.ard_p, plane.ltd_p, plane.od_p,$
              grim_get_overlay_ptdp(grim_data, plane=plane, 'LIMB'), $
              grim_get_overlay_ptdp(grim_data, plane=plane, 'RING'), $
              grim_get_overlay_ptdp(grim_data, plane=plane, 'TERMINATOR'), $
@@ -1924,7 +1925,7 @@ pro grim_render, grim_data, plane=plane
  ; make sure relevant descriptors are loaded
  ;---------------------------------------------------------
 ; grim_load_descriptors, grim_data, name, plane=plane, $
-;       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
+;       cd=cd, pd=pd, rd=rd, ltd=ltd, sd=sd, ard=ard, std=std, od=od, $
 ;       gd=gd
  grim_load_descriptors, grim_data, 'LIMB', plane=plane
 
@@ -6825,7 +6826,7 @@ end
 ;	 Blue	- Inertial axes.
 ;	 Red	- Camera axes.
 ;	 Green	- Direction to primary planet, not foreshortened.
-;	 Yellow	- Direction to Sun, not foreshortened.
+;	 Yellow	- Direction to primary light source, not foreshortened.
 ;
 ;	Vectors pointing away from the camera are dotted.  The vectors are 
 ;	rooted at a point 1d5 distance units in front of the camera .  
@@ -7046,7 +7047,7 @@ end
 ;
 ; PURPOSE:
 ;	Obtains the necessary descriptors through the translators and computes
-;	terminators using pg_limb with the sun as the observer for all active
+;	terminators using pg_limb with the lights as the observer for all active
 ;	objects.  If no active objects, then all terminators are computed.
 ;
 ;
@@ -7394,7 +7395,7 @@ end
 ;	Note that you may have to disable overlay hiding in order to compute
 ;	and activate all of the appropriate source points for the shadows
 ;	since many point that are not visible to the observer may still have
-;	a line of sight to the sun.
+;	a line of sight to the lights.
 ;
 ;
 ; CATEGORY:
@@ -7447,7 +7448,7 @@ end
 ;	Note that you may have to disable overlay hiding in order to compute
 ;	and activate all of the appropriate source points for the reflections
 ;	since many point that are not visible to the observer may still have
-;	a line of sight to the sun.
+;	a line of sight to the lights.
 ;
 ;
 ; CATEGORY:
@@ -9805,7 +9806,7 @@ end
 ;
 ;=============================================================================
 pro grim, arg1, arg2, _extra=keyvals, $
-        cd=_cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, od=_od, $
+        cd=_cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, ltd=ltd, od=_od, $
 	new=new, xsize=xsize, ysize=ysize, no_refresh=no_refresh, $
 	default=default, previous=previous, restore=restore, activate=activate, $
 	doffset=doffset, no_erase=no_erase, filter=filter, rgb=rgb, visibility=visibility, channel=channel, exit=exit, $
@@ -9822,7 +9823,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	arg_extensions=arg_extensions, loadct=loadct, grn=grn, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, $
-        sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_xd=assoc_xd, $
+        lgt_trs=lgt_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_xd=assoc_xd, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
@@ -9849,7 +9850,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
 	fov=fov, clip=clip, menu_extensions=menu_extensions, button_extensions=button_extensions, arg_extensions=arg_extensions, $
-	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, sun_trs=sun_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
+	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, lgt_trs=lgt_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
 	hide=hide, mode_args=mode_args, xzero=xzero, lights=lights, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
@@ -9930,7 +9931,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  if(NOT keyword_set(str_trs)) then str_trs = ''
  if(NOT keyword_set(stn_trs)) then stn_trs = ''
  if(NOT keyword_set(arr_trs)) then arr_trs = ''
- if(NOT keyword_set(sun_trs)) then sun_trs = ''
+ if(NOT keyword_set(lgt_trs)) then lgt_trs = ''
  
  if(NOT keyword_set(title)) then title = ''
  if(NOT keyword_set(xtitle)) then xtitle = ''
@@ -9995,7 +9996,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        filter=filter, retain=retain, user_callbacks=user_callbacks, $
        user_psym=user_psym, path=path, save_path=save_path, load_path=load_path, $
        cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
-       cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, sun_trs=sun_trs, arr_trs=arr_trs, $
+       cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, lgt_trs=lgt_trs, arr_trs=arr_trs, $
        cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, sun_select=sun_select, $
        cmd=cmd, color=color, xrange=xrange, yrange=yrange, position=position, thick=thick, nsum=nsum, $
        psym=psym, xtitle=xtitle, ytitle=ytitle, cursor_modes=cursor_modes, workdir=workdir, $
@@ -10082,7 +10083,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  if(NOT keyword_set(sd)) then sd = dat_gd(gd, dd=dd, /sd)
  if(NOT keyword_set(std)) then std = dat_gd(gd, dd=dd, /std)
  if(NOT keyword_set(ard)) then ard = dat_gd(gd, dd=dd, /ard)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
 
  grim_data = grim_get_data()
  plane = grim_get_plane(grim_data)
@@ -10141,7 +10142,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_add_xd, grim_data, planes[i].std_p, std, assoc_xd=_assoc_xd[i]
    grim_add_xd, grim_data, planes[i].ard_p, ard, assoc_xd=_assoc_xd[i]
    grim_add_xd, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd[i]
-   grim_add_xd, grim_data, planes[i].sund_p, sund, /one, assoc_xd=_assoc_xd[i]
+   grim_add_xd, grim_data, planes[i].ltd_p, ltd, /one, assoc_xd=_assoc_xd[i]
   end
 
 

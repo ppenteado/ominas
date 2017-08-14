@@ -4,7 +4,7 @@
 ; NOTE: emm, inc, and g are COSINES.
 ;
 ;=============================================================================
-pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
+pro pht_angles, image_pts, cd, bx, ltd, inertial=inertial, $
        emm=emm, inc=inc, g=g, valid=valid, body_pts=body_pts, $
        north=north
 
@@ -39,9 +39,9 @@ pro pht_angles, image_pts, cd, bx, sund, inertial=inertial, $
  ww = colgen(np,3,nt, valid)
 
  ;-------------------------------
- ; construct sun vectors
+ ; construct light vectors
  ;-------------------------------
- sun_pos_inertial = (bod_pos(sund))[gen3y(np,3,nt)]
+ sun_pos_inertial = (bod_pos(ltd))[gen3y(np,3,nt)]
  sun_pos = bod_inertial_to_body_pos(bx, sun_pos_inertial)
  s = v_unit(body_pts - sun_pos)
 

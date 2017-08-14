@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	mask = pg_mask(cd=cd, gbx=gbx, dkx=dkx, bx=bx, sund=sund)
+;	mask = pg_mask(cd=cd, gbx=gbx, dkx=dkx, bx=bx, ltd=ltd)
 ;	mask = pg_mask(gd=gd)
 ;
 ;
@@ -34,7 +34,7 @@
 ;
 ;	bx:	Body descriptors (i.e. point sources).
 ;
-;	sund:	Star descriptor giving the sun.
+;	ltd:	Body descriptor giving the light source.
 ;
 ;	gd:	Generic descriptor.  If given, the descriptor inputs 
 ;		are taken from this structure if not explicitly given.
@@ -111,7 +111,7 @@ end
 ; pg_mask
 ;
 ;=============================================================================
-function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund=sund, $
+function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, ltd=ltd, $
                                     fgbx=fgbx, fdkx=fdkx, fbx=fbx, $
                                     dgbx=dgbx, ddkx=ddkx, dbx=dbx, $
                                     pgbx=pgbx, pdkx=pdkx, pbx=pbx, $
@@ -141,7 +141,7 @@ function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund
  if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
  if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
 
  if(NOT keyword_set(gbx)) then gbx = cor_select(bx, 'GLOBE', /rm, /class)
  if(NOT keyword_set(dkx)) then dkx = cor_select(bx, 'DISK', /rm, /class)
@@ -255,11 +255,11 @@ function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, sund
        if(ii[0] NE -1) then glb_mask[ii] = 1
       end
 
-     if(keyword_set(sund)) then $
+     if(keyword_set(ltd)) then $
       begin
-       pg_hide, /assoc, limb_ptd, bx=gbd[w], od=sund
+       pg_hide, /assoc, limb_ptd, bx=gbd[w], od=ltd
 
-       term_ptd = pg_limb(cd=cd, od=sund, gbx=gbd[w])
+       term_ptd = pg_limb(cd=cd, od=ltd, gbx=gbd[w])
        pg_hide, /assoc, term_ptd, bx=gbd[w], cd=cd
 
        for i=0, nw-1 do $
