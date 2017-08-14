@@ -121,7 +121,7 @@ tvim, im, zoom=0.5, /order, /new
 ;           
 ;   Star descriptor::
 ;   
-;    sund = pg_get_stars(dd, od=cd, /override, $
+;    ltd = pg_get_stars(dd, od=cd, /override, $
 ;           name='SUN', $
 ;           pos=tr([1.421392d12,4.3105676d10,-4.3613585d10]) $
 ;      )
@@ -190,7 +190,7 @@ rd = pg_get_rings(dd, pd=pd, od=cd, /override, $
 ;- - - - - - - - - - - - - 
 ; star descriptor for sun
 ;- - - - - - - - - - - - - 
-sund = pg_get_stars(dd, od=cd, /override, $
+ltd = pg_get_stars(dd, od=cd, /override, $
        name='SUN', $
        pos=tr([1.421392d12,4.3105676d10,-4.3613585d10]) $
   )
@@ -207,7 +207,7 @@ sund = pg_get_stars(dd, od=cd, /override, $
 ;  of DSK.  These are arguments to the PG programs that we'll be working 
 ;  with::
 ;
-;    gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+;    gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 ;
 ;  Here are a couple of tips regarding generic descriptors:
 ;
@@ -218,7 +218,7 @@ sund = pg_get_stars(dd, od=cd, /override, $
 ;      the core.
 ;-
 ;-------------------------------------------------------------------------
-gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 
 
 ;-------------------------------------------------------------------------

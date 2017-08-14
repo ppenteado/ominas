@@ -15,7 +15,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	dxy = pg_drag_shadow_plane(cd=cd, gbx=gbx, sund=sund)
+;	dxy = pg_drag_shadow_plane(cd=cd, gbx=gbx, ltd=ltd)
 ;
 ;
 ; ARGUMENTS:
@@ -30,7 +30,7 @@
 ;
 ;	gbx:	 Subclass of GLOBE.
 ;
-;	sund:	 Star descriptor for the Sun.
+;	ltd:	 Star descriptor for the Sun.
 ;
 ;	gd:	Generic descriptor.  If given, the descriptor inputs 
 ;		are taken from this structure if not explicitly given.
@@ -80,7 +80,7 @@
 ; pgdsp_compute
 ;
 ;=============================================================================
-function pgdsp_compute, cd, pd, sund, n0, term_ptd, axis, theta, n=n
+function pgdsp_compute, cd, pd, ltd, n0, term_ptd, axis, theta, n=n
 common pickplane_compute_points_block, dkd
 
  n = v_rotate_11(n0, axis, sin(theta), cos(theta))
@@ -100,7 +100,7 @@ common pickplane_compute_points_block, dkd
  ;----------------------------------------------------------------
  ; project shadow
  ;----------------------------------------------------------------
- shadow_ptd = pg_shadow_disk(cd=cd, od=sund, dkx=dkd, term_ptd)
+ shadow_ptd = pg_shadow_disk(cd=cd, od=ltd, dkx=dkd, term_ptd)
 
  return, shadow_ptd
 end
@@ -112,7 +112,7 @@ end
 ; pg_drag_shadow_plane
 ;
 ;=============================================================================
-function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, dd=dd, gd=gd, xor_graphics=xor_graphics, $
+function pg_drag_shadow_plane, cd=cd, gbx=gbx, ltd=ltd, dd=dd, gd=gd, xor_graphics=xor_graphics, $
                   p0=p0, n0=n0, silent=silent, color=color, gain=gain, $
                   axis=axis, shadow_ptd=shadow_ptd
 
@@ -121,7 +121,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, dd=dd, gd=gd, xor_grap
  ;-----------------------------------------------
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
 
  device, cursor_standard=30
 
@@ -163,7 +163,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, dd=dd, gd=gd, xor_grap
  ;-----------------------------------
  ; compute terminator
  ;-----------------------------------
- term_ptd = pg_limb(cd=cd, gbx=gbx, od=sund, np=5000)
+ term_ptd = pg_limb(cd=cd, gbx=gbx, od=ltd, np=5000)
 
 
  ;-----------------------------------
@@ -192,7 +192,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, dd=dd, gd=gd, xor_grap
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; compute initial model
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- shadow_ptd = pgdsp_compute(cd, gbx, sund, n0, term_ptd, axis, 0)
+ shadow_ptd = pgdsp_compute(cd, gbx, ltd, n0, term_ptd, axis, 0)
  shadow_pts = pnt_points(/cat, /vis, shadow_ptd)
  xarr = shadow_pts[0,*]
  yarr = shadow_pts[1,*]
@@ -222,7 +222,7 @@ function pg_drag_shadow_plane, cd=cd, gbx=gbx, sund=sund, dd=dd, gd=gd, xor_grap
     ; compute shadow points
     ;- - - - - - - - - - - - - - - -
     theta = (point[0] - p0[0]) * gain
-    shadow_ptd = pgdsp_compute(cd, gbx, sund, n0, term_ptd, axis, theta, n=n)
+    shadow_ptd = pgdsp_compute(cd, gbx, ltd, n0, term_ptd, axis, theta, n=n)
     shadow_pts = pnt_points(/cat, /vis, shadow_ptd)
     xarr = shadow_pts[0,*]
     yarr = shadow_pts[1,*]

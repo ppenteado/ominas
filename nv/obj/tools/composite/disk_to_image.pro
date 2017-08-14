@@ -29,8 +29,8 @@
 ;
 ; KEYWORDS:
 ;   INPUT:
-;	sund:	If given, longitudes are assumed to be referenced to the 
-;		sun direction.
+;	ltd:	If given, longitudes are assumed to be referenced to the 
+;		light direction.
 ;
 ;   OUTPUT:
 ;	valid:	Indices of valid output points.

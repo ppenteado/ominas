@@ -434,8 +434,8 @@ end
 
 pro test
 
- grift, dd=dd, cd=cd, pd=pd, rd=rd, sund=sund
- dxy = pg_renderfit(dd, cd=cd, sund=sund, bx=[pd,rd], /show)
+ grift, dd=dd, cd=cd, pd=pd, rd=rd, ltd=ltd
+ dxy = pg_renderfit(dd, cd=cd, ltd=ltd, bx=[pd,rd], /show)
  pg_repoint, cd=cd, dxy
 
 end

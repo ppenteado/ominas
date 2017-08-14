@@ -29,7 +29,7 @@
 ;	cd:	 Array (n_timesteps) of camera descriptors.
 ;
 ;	od:	 Array (n_timesteps) of descriptors for the observer, 
-;		 default is the sun is gd given.
+;		 default is ltd if gd given.
 ;
 ;	gbx:	 Array (n_objects, n_timesteps) of descriptors of objects 
 ;		 which must be a subclass of GLOBE.
@@ -57,7 +57,7 @@
 ; PROCEDURE:
 ;	This program uses an iterative scheme to find the two points on 
 ;	the surface of the globe where the surface normal is simultaneously
-;	perpendicular to the vectors from the camera and the Sun.
+;	perpendicular to the vectors from the camera and the light source.
 ;
 ;
 ;
@@ -79,16 +79,16 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, epsilon=epsilon, reveal=
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
  if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
 
 
  if(NOT keyword_set(cd)) then return, obj_new() 
  if(NOT keyword_set(gbx)) then return, obj_new()
 
- ;-----------------------------
- ; default observer is sun
- ;-----------------------------
- if(NOT keyword_set(od)) then od=sund
+ ;-------------------------------------------------
+ ; default observer is light source, if present
+ ;-------------------------------------------------
+ if(NOT keyword_set(od)) then od=ltd
 
  ;-----------------------------------
  ; default iteration parameters

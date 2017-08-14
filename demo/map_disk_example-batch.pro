@@ -25,16 +25,16 @@ tvim, im, zoom=0.5, /order, /new
 cd = pg_get_cameras(dd)					
 pd = pg_get_planets(dd, od=cd, name='SATURN')
 rd = pg_get_rings(dd, pd=pd, od=cd, '/system')
-sund = pg_get_stars(dd, od=cd, name='SUN')
+ltd = pg_get_stars(dd, od=cd, name='SUN')
 
-gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 
 
 ;---------------------------------------
 ; rough pointing correction
 ;---------------------------------------
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
-          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 pg_draw, limb_ptd, col=ctred()
 
 edge_ptd = pg_edges(dd, edge=10)			
@@ -44,7 +44,7 @@ dxy = pg_farfit(dd, edge_ptd, [limb_ptd])
 pg_repoint, dxy, 0d, gd=gd	
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
-          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 tvim, im
 pg_draw, limb_ptd
 

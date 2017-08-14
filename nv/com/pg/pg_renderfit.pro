@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	dxy = pg_renderfit(dd, cd=cd, sund=sund, bx=bx)
+;	dxy = pg_renderfit(dd, cd=cd, ltd=ltd, bx=bx)
 ;
 ;
 ; ARGUMENTS:
@@ -28,7 +28,7 @@
 ;  INPUT: 
 ;	cd: 		Camera descriptor.
 ;
-;	sund:		Sun descriptor.
+;	ltd:		Sun descriptor.
 ;
 ;	bx:		Array of body descriptors describing objects in the scene.
 ;
@@ -68,7 +68,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_renderfit, dd, cd=cd, sund=sund, bx=bx, show=show, fov=fov
+function pg_renderfit, dd, cd=cd, ltd=ltd, bx=bx, show=show, fov=fov
  
  if(NOT keyword_set(fov)) then fov = 2d
 
@@ -84,7 +84,7 @@ function pg_renderfit, dd, cd=cd, sund=sund, bx=bx, show=show, fov=fov
  size = size0 * fov
  grid_pts = gridgen(size, p0=size0/2, /center, /rectangular)
 
- dd0 = pg_render(cd=cd, sund=sund, bx=bx, show=show, image_ptd=grid_pts)
+ dd0 = pg_render(cd=cd, ltd=ltd, bx=bx, show=show, image_ptd=grid_pts)
  im0 = dat_data(dd0)
 
  ;------------------------------------ 

@@ -19,7 +19,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            cursor_swap=cursor_swap, cmd=cmd, lights=lights, $
            path=path, save_path=save_path, load_path=load_path, fov=fov, clip=clip, $
            cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
-           sun_trs=sun_trs, hide=hide, type=type, $
+           lgt_trs=lgt_trs, hide=hide, type=type, $
 	   cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
 	   sun_select=sun_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
            color=color, xrange=xrange, yrange=yrange, position=position, npoints=npoints, $
@@ -75,7 +75,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   if(NOT keyword_set(str_trs)) then str_trs = ''
   if(NOT keyword_set(stn_trs)) then stn_trs = ''
   if(NOT keyword_set(arr_trs)) then arr_trs = ''
-  if(NOT keyword_set(sun_trs)) then sun_trs = ''
+  if(NOT keyword_set(lgt_trs)) then lgt_trs = ''
 
   if(NOT keyword_set(color)) then color = ctwhite()
   if(NOT keyword_set(thick)) then thick = 1
@@ -260,7 +260,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		def_str_trs	: str_trs, $
 		def_stn_trs	: stn_trs, $
 		def_arr_trs	: arr_trs, $
-		def_sun_trs	: sun_trs, $
+		def_lgt_trs	: lgt_trs, $
 
 		def_load_path	: load_path, $
 		def_save_path	: save_path, $

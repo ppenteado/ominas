@@ -61,11 +61,11 @@ foreach ddd,dd do dat_set_data,ddd,0.>dat_data(ddd)<0.1
 ;
 ;     Create an array of global descriptors and populate it::
 ;
-;       gd = replicate({cd:obj_new(),cds:objarr(256), gbx:obj_new(), dkx:obj_new(), sund:obj_new()}, n)
+;       gd = replicate({cd:obj_new(),cds:objarr(256), gbx:obj_new(), dkx:obj_new(), ltd:obj_new()}, n)
 ;       for i=0, n-1 do gd[i].cds = pg_get_cameras(dd[i])
 ;       for i=0, n-1 do gd[i].cd=gd[i].cds[0]
 ;       for i=0, n-1 do gd[i].gbx = pg_get_planets(dd[i], od=gd[i].cd, name='TITAN')
-;       for i=0, n-1 do gd[i].sund = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
+;       for i=0, n-1 do gd[i].ltd = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
 ;       
 ;     Apply the pointing shifts and compute the limbs::
 ;     
@@ -79,11 +79,11 @@ foreach ddd,dd do dat_set_data,ddd,0.>dat_data(ddd)<0.1
 ;-
 ;-------------------------------------------------------------------------
 ;
-gd = replicate({cd:obj_new(),cds:objarr(256), gbx:obj_new(), dkx:obj_new(), sund:obj_new()}, n)
+gd = replicate({cd:obj_new(),cds:objarr(256), gbx:obj_new(), dkx:obj_new(), ltd:obj_new()}, n)
 for i=0, n-1 do gd[i].cds = pg_get_cameras(dd[i])
 for i=0, n-1 do gd[i].cd=gd[i].cds[0]
 for i=0, n-1 do gd[i].gbx = pg_get_planets(dd[i], od=gd[i].cd, name='TITAN')
-for i=0, n-1 do gd[i].sund = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
+for i=0, n-1 do gd[i].ltd = pg_get_stars(dd[i], od=gd[i].cd, name='SUN')
 
 limb_ps = objarr(n)
 dxy = dblarr(2,n)
@@ -120,7 +120,7 @@ for i=0, n-1 do limb_ps[i] = pg_limb(gd=gd[i])
 ;         grid_ps = pg_grid(gd=gd[i], lat=lat, lon=lon)
 ;         pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx
 ;         pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx,$
-;           od=gd[i].sund
+;           od=gd[i].ltd
 ;         pg_draw, grid_ps, color=ctblue(),wnum=ww[i]
 ;         plat_ps = pg_grid(gd=gd[i],slon=!dpi/2d,lat=lat,nlon=0)
 ;         pg_hide, plat_ps[0], cd=gd[i].cd, gbx=gd[0].gbx
@@ -167,7 +167,7 @@ for i=0,n-1 do begin
   grid_ps = pg_grid(gd=gd[i], lat=lat, lon=lon)
   pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx
   pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx,$
-    od=gd[i].sund
+    od=gd[i].ltd
   pg_draw, grid_ps, color=ctblue(),wnum=ww[i]
   plat_ps = pg_grid(gd=gd[i],slon=!dpi/2d,lat=lat,nlon=0)
   pg_hide, plat_ps[0], cd=gd[i].cd, gbx=gd[0].gbx

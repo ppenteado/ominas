@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	map = render(cd=cd, bx=bx, sund=sund)
+;	map = render(cd=cd, bx=bx, ltd=ltd)
 ;
 ;
 ;
@@ -31,7 +31,7 @@
 ;
 ;	bx:	      Array of object descriptors; must be a subclass of BODY.
 ;
-;	sund:         Star descriptor for the Sun.
+;	ltd:          Body descriptors for the light sources.
 ;
 ;	md:           Array of map descriptors, one for each body.
 ;
@@ -110,14 +110,14 @@ end
 ; rdr_photometry
 ;
 ;=================================================================================
-function rdr_photometry, data, cd, sund, bx, body_pts, no_pht=no_pht
+function rdr_photometry, data, cd, ltd, bx, body_pts, no_pht=no_pht
 
  n = n_elements(body_pts)/3
 
  if(data.no_pht) then phot = make_array(n, val=1d) $
  else $
   begin
-   pht_angles, 0, cd, bx, sund, body_pts=body_pts, emm=mu, inc=mu0, g=g
+   pht_angles, 0, cd, bx, ltd, body_pts=body_pts, emm=mu, inc=mu0, g=g
 
    refl_fn = sld_refl_fn(bx)
    refl_parm = sld_refl_parm(bx)
@@ -162,7 +162,8 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
    if(w[0] NE -1) then jj = w[0]
   end
 
- if(NOT defined(jj)) then piece[ii] = bytscl(phot) $
+;jj=!null
+ if(NOT defined(jj)) then piece[ii] = phot $
  else $
   begin
    ww = where(phot NE 0)
@@ -181,7 +182,7 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
 ;     map_smoothing_width = rdr_map_smoothing_width(data, ii)
 map_smoothing_width=1
 
-     map = bytscl(dat_data(ddmap[jj]))
+     map = double(dat_data(ddmap[jj])) / dat_max(ddmap[jj])
 
      dat = image_interp_cam(cd=md[jj], map, interp='sinc', $
                im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:map_smoothing_width})
@@ -213,7 +214,7 @@ function rdr_piece, data, image_pts
  md = data.md
  ddmap = data.ddmap
  cd = data.cd
- sund = data.sund
+ ltd = data.ltd
 
  np = n_elements(image_pts)/2
  piece = dblarr(np)
@@ -231,7 +232,7 @@ function rdr_piece, data, image_pts
 
 
  ;---------------------------------------------
- ; trace secondary rays to sun
+ ; trace secondary rays to light source
  ;---------------------------------------------
  sec_hit_indices = hit_indices
  sec_hit_matrix = hit_matrix
@@ -239,7 +240,7 @@ function rdr_piece, data, image_pts
  if(data.no_secondary) then sec_hit_list = -1
 
  if(sec_hit_list[0] NE -1) then $
-   raytrace, bx=bx, sbx=sund, penumbra=data.penumbra, $
+   raytrace, bx=bx, sbx=ltd, penumbra=data.penumbra, $
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
         near_matrix=sec_near_matrix, far_matrix=sec_far_matrix, $
@@ -271,7 +272,7 @@ function rdr_piece, data, image_pts
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; photometry
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     phot = rdr_photometry(data, cd, sund, bx[ii], hit_matrix[w,*])
+     phot = rdr_photometry(data, cd, ltd, bx[ii], hit_matrix[w,*])
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; map
@@ -291,7 +292,7 @@ end
 ; render
 ;
 ;=================================================================================
-function render, image_pts, cd=cd, sund=sund, $
+function render, image_pts, cd=cd, ltd=ltd, $
   bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
   show=show, pht_min=pht_min, no_pht=no_pht, $
   standoff=standoff, limit_source=limit_source, penumbra=penumbra, $
@@ -305,9 +306,9 @@ function render, image_pts, cd=cd, sund=sund, $
  if(NOT defined(limit_source)) then limit_source = 0
  if(NOT defined(standoff)) then standoff = 1
 
- if(NOT keyword_set(sund)) then $
+ if(NOT keyword_set(ltd)) then $
   begin
-   sund = 0
+   ltd = 0
    no_secondary = (no_pht = 1)
   end
 
@@ -324,7 +325,7 @@ function render, image_pts, cd=cd, sund=sund, $
  if(nbx EQ 0) then bx = 0
  data = { $
 		cd		:	cd, $
-		sund		:	sund, $
+		ltd		:	ltd, $
 		bx		:	bx, $
 		ddmap		:	ddmap, $
 		md		:	md, $
@@ -419,10 +420,10 @@ pro test
 ; grim ~/casIss/1444/N1444735589_1.IMG over=center,ring
 ; grim ~/casIss/1669/N1669801856_1.IMG over=center
 
- grift, dd=dd, cd=cd, pd=pd, rd=rd, sund=sund
+ grift, dd=dd, cd=cd, pd=pd, rd=rd, ltd=ltd
  bx = append_array(pd, rd)
- dd_render = pg_render(/show, cd=cd, bx=bx, sund=sund, pht=0.02, /psf, /pen, sample=2, mask=0)
+ dd_render = pg_render(/show, cd=cd, bx=bx, ltd=ltd, pht=0.02, /psf, /pen, sample=2, mask=0)
 
- grim, dd_render, /new, cd=cd, pd=pd, rd=rd, sund=sund
+ grim, dd_render, /new, cd=cd, pd=pd, rd=rd, ltd=ltd
 
 end

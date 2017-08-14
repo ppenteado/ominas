@@ -825,8 +825,8 @@ pro grim_menu_pointing_renderfit_event, event
  ;------------------------------------------------
  cd = grim_get_cameras(grim_data)
  if(NOT keyword__set(cd[0])) then return
- sund = (grim_data)
- if(NOT keyword__set(sund[0])) then return
+ ltd = (grim_data)
+ if(NOT keyword__set(ltd[0])) then return
  pd = grim_get_planets(grim_data)
  if(keyword__set(pd[0])) then bx = append_array(bx, pd)
  rd = grim_get_rings(grim_data)
@@ -836,7 +836,7 @@ pro grim_menu_pointing_renderfit_event, event
  ; find the offset
  ;------------------------------------------------
  grim_message, /clear
- dxy = pg_renderfit(plane.dd, cd=cd, sund=sund, bx=bx, /show)
+ dxy = pg_renderfit(plane.dd, cd=cd, ltd=ltd, bx=bx, /show)
  grim_message
 
  ;------------------------------------------------------------
@@ -1304,8 +1304,8 @@ pro grim_menu_corrections_photometry_event, event
  if(NOT keyword__set(cd[0])) then return
  pd = grim_get_planets(grim_data)
  if(NOT keyword__set(pd[0])) then return
- sund = grim_get_lights(grim_data)
- if(NOT keyword__set(sund[0])) then return
+ ltd = grim_get_lights(grim_data)
+ if(NOT keyword__set(ltd[0])) then return
 
 
  ;------------------------------------------------
@@ -1359,8 +1359,8 @@ pro grim_menu_project_map_event, event
  if(NOT keyword__set(cd[0])) then return
  pd = grim_get_planets(grim_data)
  if(NOT keyword__set(pd[0])) then return
- sund = grim_get_lights(grim_data)
- if(NOT keyword__set(sund[0])) then return
+ ltd = grim_get_lights(grim_data)
+ if(NOT keyword__set(ltd[0])) then return
 
 
  ;------------------------------------------------
