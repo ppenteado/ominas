@@ -30,7 +30,7 @@
 ;
 ;	gbx:	Globe descriptor
 ;
-;	sund:	Sun descriptor
+;	ltd:	Light descriptor
 ;
 ;	gd:	Generic descriptor.  If present, cd and gbx are taken from 
 ;		here if contained.
@@ -81,7 +81,7 @@
 ;-
 ;=============================================================================
 function pg_photom_globe, dd, outline_ptd=outline_ptd, $
-                  cd=cd, gbx=gbx, sund=sund, gd=gd, $
+                  cd=cd, gbx=gbx, ltd=ltd, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
                   emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite
@@ -92,7 +92,7 @@ function pg_photom_globe, dd, outline_ptd=outline_ptd, $
  if(NOT keyword_set(dd)) then dd = dat_gd(gd, /dd)
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
 
 
  ;----------------------------------------------
@@ -118,7 +118,7 @@ function pg_photom_globe, dd, outline_ptd=outline_ptd, $
  ;-----------------------------------------------
  if(n_elements(cd) GT 1) then nv_message, 'Only one camera descriptor allowed.'
  if(n_elements(gbx) GT 1) then nv_message, 'Only one globe descriptor allowed.'
- if(n_elements(sund) GT 1) then nv_message, 'Only one sun descriptor allowed.'
+ if(n_elements(ltd) GT 1) then nv_message, 'Only one light descriptor allowed.'
 
 
  ;---------------------------------------
@@ -158,7 +158,7 @@ function pg_photom_globe, dd, outline_ptd=outline_ptd, $
  ;---------------------------------------
  ; compute photometric angles
  ;---------------------------------------
- pht_angles, image_pts, cd, gbx, sund, emm=mu, inc=mu0, g=g
+ pht_angles, image_pts, cd, gbx, ltd, emm=mu, inc=mu0, g=g
  valid = where(mu0 NE 0)
  if(valid[0] EQ -1) then nv_message, 'No valid points in image region.'
 

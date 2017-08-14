@@ -6,7 +6,7 @@
 ;
 ; PURPOSE:
 ;	Assuming the body gbx is a sphere, this routine computes the fraction of 
-;	its disk that appears illuminated by the source sund, as seen from the
+;	its disk that appears illuminated by the source ltd, as seen from the
 ;	inertial position vectors v.
 ;
 ;
@@ -15,14 +15,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       v = illumination_fraction(gbx, sund, v)
+;       v = illumination_fraction(gbx, ltd, v)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	gbx:	Any subclass of GLOBE.
 ;
-;	sund:	Any subclass of STAR representing the sun.
+;	ltd:	Any subclass of STAR representing the light source.
 ;
 ;	v:	Array (nv,3) Inertial positions of viewer.
 ;
@@ -45,12 +45,12 @@
 ;
 ;-
 ;=============================================================================
-function illumination_fraction, gbx, sund, v
+function illumination_fraction, gbx, ltd, v
 
  nv = n_elements(v)/3
 
  vv = bod_inertial_to_body_pos(gbx, v)
- ss = bod_inertial_to_body_pos(gbx, bod_pos(sund)) ## make_array(nv, val=1d)
+ ss = bod_inertial_to_body_pos(gbx, bod_pos(ltd)) ## make_array(nv, val=1d)
 
  phi = v_angle(vv,ss) - !dpi/2d
 

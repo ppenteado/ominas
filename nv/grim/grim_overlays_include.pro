@@ -1339,7 +1339,7 @@ end
 ;
 ;=============================================================================
 pro grim_clear_objects, grim_data, all=all, $
-     cd=cd, pd=pd, rd=rd, sd=sd, std=std, sund=sund, planes=planes
+     cd=cd, pd=pd, rd=rd, sd=sd, std=std, ltd=ltd, planes=planes
 
  if(NOT keyword_set(planes)) then planes = grim_get_plane(grim_data)
  n = n_elements(planes)
@@ -1359,8 +1359,8 @@ pro grim_clear_objects, grim_data, all=all, $
      grim_rm_xd, grim_data, plane=planes[i], planes[i].sd_p
    if((keyword_set(all)) OR (keyword_set(std))) then $
      grim_rm_xd, grim_data, plane=planes[i], planes[i].std_p
-   if((keyword_set(all)) OR (keyword_set(sund))) then $
-     grim_rm_xd, grim_data, plane=planes[i], planes[i].sund_p
+   if((keyword_set(all)) OR (keyword_set(ltd))) then $
+     grim_rm_xd, grim_data, plane=planes[i], planes[i].ltd_p
 
    ;----------------------------------
    ; clear points arrays
@@ -3191,56 +3191,56 @@ pro grim_create_overlays, grim_data, plane
    grim_create_overlay, grim_data, plane, $
 	'RING_GRID', $
 		class='RING', $
-		dep_classes=['SUN', 'PLANET'], $
+		dep_classes=['LIGHT', 'PLANET'], $
 		genre='CURVE', $
 		col='orange', psym=3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'PLANET_GRID', $
 		class='PLANET', $
-		dep_classes=['SUN', 'RING'], $
+		dep_classes=['LIGHT', 'RING'], $
 		genre='CURVE', $
 		col='green', psym=3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'STATION', $
 		class='STATION', $
-		dep_classes=['PLANET', 'SUN', 'RING'], $
+		dep_classes=['PLANET', 'LIGHT', 'RING'], $
 		genre='POINT', $
 		col='yellow', psym=1, tlab=1, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'ARRAY', $
 		class='ARRAY', $
-		dep_classes=['PLANET', 'SUN', 'RING'], $
+		dep_classes=['PLANET', 'LIGHT', 'RING'], $
 		genre='CURVE', $
 		col='blue', psym=-3, tlab=1, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'LIMB', $
 		class='PLANET', $
-		dep_classes=['SUN', 'RING'], $
+		dep_classes=['LIGHT', 'RING'], $
 		genre='CURVE', $
 		col='yellow', psym=-3, tlab=0, shade=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'TERMINATOR', $
 		class='PLANET', $
-		dep_classes=['SUN', 'RING'], $
+		dep_classes=['LIGHT', 'RING'], $
 		genre='CURVE', $
 		col='red', psym=-3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'RING', $
 		class='RING', $
-		dep_classes=['SUN', 'PLANET'], $
+		dep_classes=['LIGHT', 'PLANET'], $
 		genre='CURVE', $
 		col='orange', psym=-3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'CENTER', $
 		class='PLANET', $
-		dep_classes=['SUN'], $
+		dep_classes=['LIGHT'], $
 		genre='POINT', $
 		col='white',    psym=1, tlab=1, tshade=1
 
@@ -3254,42 +3254,16 @@ pro grim_create_overlays, grim_data, plane
    grim_create_overlay, grim_data, plane, $
 	'SHADOW', $
 		class='', $
-		dep_classes=['PLANET', 'RING', 'SUN'], $
+		dep_classes=['PLANET', 'RING', 'LIGHT'], $
 		genre='CURVE', $
 		col='blue', psym=3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'REFLECTION', $
 		class='', $
-		dep_classes=['PLANET', 'RING', 'SUN'], $
+		dep_classes=['PLANET', 'RING', 'LIGHT'], $
 		genre='CURVE', $
 		col='blue', psym=3, tlab=0, tshade=1
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_hide
-;
-;=============================================================================
-pro grim_hide, grim_data, plane, ptd, gd=gd
-
- cd = cor_dereference_gd(gd, /cd)
- pd = cor_dereference_gd(gd, /pd)
- rd = cor_dereference_gd(gd, /rd)
- sund = cor_dereference_gd(gd, name='SUN')
-
- if(keyword__set(rd)) then $
-        pg_hide, ptd, cd=cd, dkx=rd, od=od, bx=rd, gbx=pd
- grim_message
-
- if(keyword__set(sund)) then $
-;     pg_hide, ptd, cd=cd, bx=pds, od=sund, /assoc
-     pg_hide, ptd, cd=cd, bx=pd, od=sund
- grim_message
 
 
 end
@@ -3370,7 +3344,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
  ; make sure relevant descriptors are loaded
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
  grim_load_descriptors, grim_data, name, plane=plane, obj_name=obj_name, $
-       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, gd=gd
+       cd=cd, pd=pd, rd=rd, ltd=ltd, sd=sd, ard=ard, std=std, od=od, gd=gd
  if(NOT keyword_set(cd)) then return
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -

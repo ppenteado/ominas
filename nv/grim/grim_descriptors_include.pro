@@ -365,7 +365,7 @@ end
 ;=============================================================================
 pro grim_mark_descriptors, grim_data, all=all, $
 ;--     cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, planes=planes, $
-     cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, sund=sund, planes=planes, $
+     cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, ltd=ltd, planes=planes, $
      val
 
  if(NOT keyword_set(planes)) then planes = grim_get_plane(grim_data)
@@ -388,8 +388,8 @@ pro grim_mark_descriptors, grim_data, all=all, $
                                 grim_mark_descriptor, *planes[i].std_p, val
    if((keyword_set(all)) OR (keyword_set(ard))) then $
                                 grim_mark_descriptor, *planes[i].ard_p, val
-   if((keyword_set(all)) OR (keyword_set(sund))) then $	
-                                grim_mark_descriptor, *planes[i].sund_p, val
+   if((keyword_set(all)) OR (keyword_set(ltd))) then $	
+                                grim_mark_descriptor, *planes[i].ltd_p, val
   end
 
 
@@ -577,7 +577,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  load = 0
  cd = grim_xd(plane, /cd)
  pd = grim_xd(plane, /pd)
- sund = grim_xd(plane, /sund)
+ ltd = grim_xd(plane, /ltd)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
@@ -617,7 +617,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ; get main planets
  ;- - - - - - - - - - - - - - - - - - - - - - - -
  grim_print, grim_data, 'Getting planet descriptors...'
- pd = pg_get_planets(plane.dd, od=cd, sd=sund, $
+ pd = pg_get_planets(plane.dd, od=cd, sd=ltd, $
       name=names, plane.plt_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - -
@@ -625,7 +625,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  ;- - - - - - - - - - - - - - - - - - - - - - - -
  if(keyword_set(pd)) then $
   begin
-   pdd = pg_get_planets(plane.dd, od=cd, sd=sund, pd=pd, $
+   pdd = pg_get_planets(plane.dd, od=cd, sd=ltd, pd=pd, $
        name=names, plane.plt_trs, fov=fov, cov=cov, _extra=*grim_data.keyvals_p)
    if(keyword_set(pdd)) then pd = [pd, pdd]
 
@@ -669,31 +669,31 @@ function grim_get_lights, grim_data, plane=plane, names=names
  load = 0
  cd = grim_xd(plane, /cd)
  od = grim_xd(plane, /od)
- sund = grim_xd(plane, /sund)
+ ltd = grim_xd(plane, /ltd)
  xds = grim_xd(plane)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_LIGHT_NAME')
+ if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_LGT_NAMES')
  if(NOT grim_compare(_names, names)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if the translator keywords have changed, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- _trs = cor_udata(plane.dd, 'GRIM_LIGHT_TRS')
- if(NOT grim_compare(_trs, plane.sun_trs)) then load = 1
+ _trs = cor_udata(plane.dd, 'GRIM_LGT_TRS')
+ if(NOT grim_compare(_trs, plane.lgt_trs)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if descriptor has been marked as stale, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- mark = grim_demark_descriptor(sund)
+ mark = grim_demark_descriptor(ltd)
  if((where(mark NE MARK_FRESH))[0] NE -1) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if there are no descriptors, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT keyword_set(sund)) then load = 1
+ if(NOT keyword_set(ltd)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
@@ -701,7 +701,7 @@ function grim_get_lights, grim_data, plane=plane, names=names
  if(NOT load) then $
   begin
    for i=0, n_elements(names)-1 do $
-             xd = append_array(xd, cor_select(sund, names[i], /name))
+             xd = append_array(xd, cor_select(ltd, names[i], /name))
    return, xd
   end
 
@@ -709,38 +709,38 @@ function grim_get_lights, grim_data, plane=plane, names=names
  ;----------------------------------------------------------------------------
  ; load descriptors
  ;----------------------------------------------------------------------------
- grim_print, grim_data, 'Getting Sun descriptor...'
+ grim_print, grim_data, 'Getting Light descriptors...'
 
  for i=0, n_elements(names)-1 do $
   begin
    w = where(cor_name(xds) EQ names[i])
-   if(w[0] NE -1) then sund = append_array(sund, xds[w]) $
+   if(w[0] NE -1) then ltd = append_array(ltd, xds[w]) $
    else $
     begin
      xd = pg_get_stars(plane.dd, od=cd, $
-                 name=names[i], plane.sun_trs, _extra=*grim_data.keyvals_p)
+                 name=names[i], plane.lgt_trs, _extra=*grim_data.keyvals_p)
      if(NOT keyword_set(xd)) then $
        xd = pg_get_planets(plane.dd, od=cd, $
-                  name=names[i], plane.sun_trs, _extra=*grim_data.keyvals_p)
+                  name=names[i], plane.lgt_trs, _extra=*grim_data.keyvals_p)
 
-     if(keyword_set(xd)) then sund = append_array(sund, xd)
+     if(keyword_set(xd)) then ltd = append_array(ltd, xd)
     end
   end
 
  ;----------------------------------------------------------------------------
  ; sort by flux at observer position
  ;----------------------------------------------------------------------------
- sund = grim_sort_by_flux(sund, od)
- names = cor_name(sund)
+ ltd = grim_sort_by_flux(ltd, od)
+ names = cor_name(ltd)
 
 
- cor_set_udata, plane.dd, 'GRIM_LIGHT_NAME', names, /noevent
- cor_set_udata, plane.dd, 'GRIM_LIGHT_TRS', plane.sun_trs, /noevent
+ cor_set_udata, plane.dd, 'GRIM_LGT_NAMES', names, /noevent
+ cor_set_udata, plane.dd, 'GRIM_LGT_TRS', plane.lgt_trs, /noevent
 
 
- if(keyword_set(sund)) then grim_add_xd, grim_data, plane.sund_p, sund
+ if(keyword_set(ltd)) then grim_add_xd, grim_data, plane.ltd_p, ltd
 
- return, sund
+ return, ltd
 end
 ;=============================================================================
 
@@ -1041,7 +1041,7 @@ pro grim_clear_descriptors, grim_data, planes=planes
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sd_p
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].std_p
    grim_rm_descriptor, grim_data, plane=planes[i], planes[i].ard_p
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sund_p	;--
+   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].ltd_p
   end
 
  grim_set_data, grim_data, grim_data.base
@@ -1065,7 +1065,7 @@ end
 ;
 ;=============================================================================
 pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
-       cd=cd, pd=pd, rd=rd, sund=sund, sd=sd, ard=ard, std=std, od=od, $
+       cd=cd, pd=pd, rd=rd, ltd=ltd, sd=sd, ard=ard, std=std, od=od, $
        obj_name=obj_name, gd=gd
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
@@ -1084,7 +1084,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;----------------------------------------------------------------
  ; load descriptors based on dependencies for this type of object
  ;----------------------------------------------------------------
- cd = (pd = (rd = (sund = (sd = (std = (ard = (od = 0)))))))
+ cd = (pd = (rd = (ltd = (sd = (std = (ard = (od = 0)))))))
 
  cd = grim_get_cameras(grim_data, plane=plane)
  if(NOT keyword_set(cd[0])) then return
@@ -1117,13 +1117,13 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
      sd = grim_get_stars(grim_data, plane=plane, names=names)
     end
 
-   if((where(dep EQ 'SUN'))[0] NE -1) then $
-           sund = grim_get_lights(grim_data, plane=plane)
+   if((where(dep EQ 'LIGHT'))[0] NE -1) then $
+           ltd = grim_get_lights(grim_data, plane=plane)
   end $
  else $
   begin
    pd = grim_xd(plane, /pd)
-   sund = grim_xd(plane, /sund)
+   ltd = grim_xd(plane, /ltd)
    od = grim_xd(plane, /od)
   end
 
@@ -1149,7 +1149,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  gd = {cd: cd, $
        pd: pd, $
        rd: rd, $
-       sund: sund, $
+       ltd: ltd, $
        sd: sd, $
        std: std, $
        ard: ard, $

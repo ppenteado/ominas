@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	result = pg_render(cd=cd, bx=bx, sund=sund, ddmap=dd_render, md=md)
+;	result = pg_render(cd=cd, bx=bx, ltd=ltd, ddmap=dd_render, md=md)
 ;
 ;
 ; ARGUMENTS:
@@ -28,7 +28,7 @@
 ;
 ;	bx:	      Array of object descriptors; must be a subclass of BODY.
 ;
-;	sund:         Star descriptor for the Sun.
+;	ltd:         Star descriptor for the Sun.
 ;
 ;	md:           Array of map descriptors for each ddmap.  
 ;
@@ -111,7 +111,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_render, cd=cd, sund=sund, $
+function pg_render, cd=cd, ltd=ltd, $
        bx=bx, ddmap=ddmap, md=md, dd=dd, gd=gd, sample=sample, pc_size=pc_size, $
        show=show, pht_min=pht_min, no_pht=no_pht, map=image, $
        standoff=standoff, limit_source=limit_source, nodd=nodd, $
@@ -128,7 +128,7 @@ function pg_render, cd=cd, sund=sund, $
  ;-----------------------------------------------
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
  if(NOT keyword_set(md)) then md = dat_gd(gd, dd=dd, /md)
 
 
@@ -197,7 +197,7 @@ function pg_render, cd=cd, sund=sund, $
  ; create the rendering
  ;---------------------------------------
  if(ii[0] NE -1) then $
-   map = render(image_pts, cd=cd, sund=sund, $
+   map = render(image_pts, cd=cd, ltd=ltd, $
               bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
               show=show, pht_min=pht_min, no_pht=no_pht, $
               standoff=standoff, limit_source=limit_source, $
