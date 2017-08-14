@@ -40,6 +40,9 @@
 ;	hit: 	Array giving the subscripts of the input rays that actually
 ;	 	intersect the disk. 
 ;
+;	miss: 	Array giving the subscripts of the input rays that do not
+;	 	intersect the disk. 
+;
 ;
 ; RETURN:
 ;	Array (nv x 3 x nt) of column vectors giving the ray/disk
@@ -52,7 +55,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_intersect, dkd, v, r, t=t, hit=hit, near=near, far=far, all=all
+function dsk_intersect, dkd, v, r, t=t, hit=hit, miss=miss, near=near, far=far, all=all
 @core.include
  
 
@@ -72,7 +75,7 @@ function dsk_intersect, dkd, v, r, t=t, hit=hit, near=near, far=far, all=all
  ;---------------------------------------------------------------
  ; determine where intersection lies within radial limits
  ;---------------------------------------------------------------
- if(arg_present(hit)) then $
+ if(arg_present(hit) OR arg_present(miss)) then $
   begin
    vv_disk = dsk_body_to_disk(dkd, vv)
    rad = dsk_get_radius(dkd, vv_disk[*,1,*])
@@ -92,6 +95,7 @@ function dsk_intersect, dkd, v, r, t=t, hit=hit, near=near, far=far, all=all
    if(w[0] NE -1) then mark[w] = 0
 
    hit = where(mark NE 0)
+   miss = where(mark EQ 0)
   end
 
 

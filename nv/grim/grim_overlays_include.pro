@@ -117,7 +117,7 @@ end
 ;
 ;=============================================================================
 function grim_get_active_overlays, grim_data, plane=plane, type, user=user, $
-                                                 inactive_ptd=inactive_ptd
+                                                      inactive_ptd=inactive_ptd
 
  active_ptd = (inactive_ptd = !null)
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
@@ -176,32 +176,6 @@ end
 
 
 ;=============================================================================
-; grim_get_all_active_overlays
-;
-;=============================================================================
-function grim_get_all_active_overlays, grim_data, plane=plane, names=names
-
- if(NOT keyword_set(names)) then $
-   names = ['CENTER', $
-            'LIMB', $
-            'TERMINATOR', $
-            'RING', $
-            'STAR', $
-            'STATION', $
-            'ARRAY', $
-            'PLANET_GRID', $
-            'RING_GRID']
-
- for i=0, n_elements(names)-1 do $
-  ptd = append_array(ptd, grim_get_active_overlays(grim_data, plane=plane, names[i]))
-
- return, ptd
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_get_all_overlays
 ;
 ;=============================================================================
@@ -220,31 +194,6 @@ end
 ;=============================================================================
 
 
-;++
-;=============================================================================
-; grim_get_active_xds
-;
-;=============================================================================
-function ___grim_get_active_xds, plane, class
-
-
- ;-------------------------------------------
- ; determine which arrays to use
- ;-------------------------------------------
- xds = grim_xd(plane, class=class)
-
- ;-------------------------------------------
- ; get the objects
- ;-------------------------------------------
- flag = cor_udata(xds, 'GRIM_ACTIVE_FLAG', /noevent)
- w = where(flag EQ 1)
- if(w[0] NE -1) then active_xds = xds[w]
-
- return, active_xds
-end
-;=============================================================================
-
-
 
 ;=============================================================================
 ; grim_get_active_xds
@@ -257,36 +206,15 @@ function grim_get_active_xds, plane, class
  ;-------------------------------------------
  ; determine which arrays to use
  ;-------------------------------------------
-;++ xds = *plane.xd_p
-;++ if(keyword_set(class)) then xds = cor_select(xds, class=class)
-
-
- if(NOT keyword_set(class)) then $
-     xd_p = [plane.cd_p, $
-             plane.pd_p, $
-             plane.rd_p, $
-             plane.sund_p, $
-             plane.sd_p, $
-             plane.od_p] $
- else $
-  case class of
-   'PLANET' :  xd_p = plane.pd_p
-   'RING' :  xd_p = plane.rd_p
-   'STAR' :  xd_p = plane.sd_p
-   'STATION' :  xd_p = plane.std_p
-   'ARRAY' :  xd_p = plane.ard_p
-  endcase
+ xds = grim_xd(plane, class=class)
+ if(NOT keyword_set(xds)) then return, 0
 
  ;-------------------------------------------
  ; get the objects
  ;-------------------------------------------
- for i=0, n_elements(xd_p)-1 do $
-  if(keyword_set(*xd_p[i])) then $
-   begin
-    flag = cor_udata(*xd_p[i], 'GRIM_ACTIVE_FLAG', /noevent)
-    w = where(flag EQ 1)
-    if(w[0] NE -1) then active_xds = append_array(active_xds, (*xd_p[i])[w])
-   end
+ flag = cor_udata(xds, 'GRIM_ACTIVE_FLAG', /noevent)
+ w = where(flag EQ 1)
+ if(w[0] NE -1) then active_xds = xds[w]
 
  return, active_xds
 end
@@ -1106,7 +1034,6 @@ function grim_match_overlays, ptd, ptd0
  ;----------------------------------------------------------
  ; if only one math, assume it's correct
  ;----------------------------------------------------------
- if(w[0] EQ -1) then nv_message, 'Overlay match failure.'
  if(n_elements(w) EQ 1) then return, w
 
  ;-------------------------------------------------------------------------
@@ -1125,10 +1052,9 @@ function grim_match_overlays, ptd, ptd0
      if(ww[0] NE -1) then $
          if(n_elements(ww) EQ n_elements(od)) then return, ii
     end
-
   end
 
- nv_message, 'Overlay match failure.'
+ return, !null
 end
 ;=============================================================================
 
@@ -3330,14 +3256,14 @@ pro grim_create_overlays, grim_data, plane
 		class='', $
 		dep_classes=['PLANET', 'RING', 'SUN'], $
 		genre='CURVE', $
-		col='blue', psym=-3, tlab=0, tshade=1
+		col='blue', psym=3, tlab=0, tshade=1
 
    grim_create_overlay, grim_data, plane, $
 	'REFLECTION', $
 		class='', $
 		dep_classes=['PLANET', 'RING', 'SUN'], $
 		genre='CURVE', $
-		col='blue', psym=-3, tlab=0, tshade=1
+		col='blue', psym=3, tlab=0, tshade=1
 
 
 end
@@ -3410,14 +3336,15 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; recompute the overlay points
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;++   gd = cor_create_gd(*plane.xd_p)
 ;**   gd = *plane.gd_p
-   gd = cor_create_gd(cd=grim_xd(plane, /cd), $
-                      pd=grim_xd(plane, /pd), $
-                      rd=grim_xd(plane, /rd), $
-                      sund=grim_xd(plane, /sund), $
-                      sd=grim_xd(plane, /sd), $
-                      od=grim_xd(plane, /od))
+   gd = {cd:grim_xd(plane, /cd), $
+         pd:grim_xd(plane, /pd), $
+         rd:grim_xd(plane, /rd), $
+         sund:grim_xd(plane, /sund), $
+         sd:grim_xd(plane, /sd), $
+         std:grim_xd(plane, /std), $
+         ard:grim_xd(plane, /ard), $
+         od:grim_xd(plane, /od)}
    if(cor_test_gd(gd, 'MD')) then gd = cor_create_gd(gd=gd, cd=gd.md, od=gd.od)
 
    _ptd = call_function(fn, gd=gd, $

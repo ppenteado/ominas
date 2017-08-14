@@ -649,7 +649,7 @@ end
 ; grim_get_lights
 ;
 ;=============================================================================
-function grim_get_lights, grim_data, plane=plane
+function grim_get_lights, grim_data, plane=plane, names=names
 @grim_constants.common
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
@@ -657,25 +657,29 @@ function grim_get_lights, grim_data, plane=plane
  ;----------------------------------------------------------------------------
  ; get light sources
  ;----------------------------------------------------------------------------
- lights = *grim_data.lights_p
- if(NOT keyword_set(lights)) then lights = 'SUN'
-
+ if(NOT keyword_set(names)) then $
+  begin
+   names = *grim_data.lights_p
+   if(NOT keyword_set(names)) then names = 'SUN'
+  end
 
  ;----------------------------------------------------------------------------
  ; determine whether to reload or keep current descriptor set
  ;----------------------------------------------------------------------------
  load = 0
  cd = grim_xd(plane, /cd)
+ od = grim_xd(plane, /od)
  sund = grim_xd(plane, /sund)
+ xds = grim_xd(plane)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; if requested names differ from loaded objects, need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- _name = cor_udata(plane.dd, 'GRIM_LIGHT_NAME')
- if(NOT grim_compare(_name, name)) then load = 1
+ if(keyword_set(names)) then _names = cor_udata(plane.dd, 'GRIM_LIGHT_NAME')
+ if(NOT grim_compare(_names, names)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if the translator keywords have change, then need to load
+ ; if the translator keywords have changed, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_LIGHT_TRS')
  if(NOT grim_compare(_trs, plane.sun_trs)) then load = 1
@@ -694,7 +698,12 @@ function grim_get_lights, grim_data, plane=plane
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; don't continue if load not necessary
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- if(NOT load) then return, get_object_by_name(sund, names)
+ if(NOT load) then $
+  begin
+   for i=0, n_elements(names)-1 do $
+             xd = append_array(xd, cor_select(sund, names[i], /name))
+   return, xd
+  end
 
 
  ;----------------------------------------------------------------------------
@@ -702,21 +711,32 @@ function grim_get_lights, grim_data, plane=plane
  ;----------------------------------------------------------------------------
  grim_print, grim_data, 'Getting Sun descriptor...'
 
- for i=0, n_elements(lights)-1 do $
+ for i=0, n_elements(names)-1 do $
   begin
-   xd = pg_get_stars(plane.dd, od=cd, $
-                 name=lights[i], plane.sun_trs, _extra=*grim_data.keyvals_p)
-   if(NOT keyword_set(xd)) then $
-     xd = pg_get_planets(plane.dd, od=cd, $
-                 name=lights[i], plane.sun_trs, _extra=*grim_data.keyvals_p)
+   w = where(cor_name(xds) EQ names[i])
+   if(w[0] NE -1) then sund = append_array(sund, xds[w]) $
+   else $
+    begin
+     xd = pg_get_stars(plane.dd, od=cd, $
+                 name=names[i], plane.sun_trs, _extra=*grim_data.keyvals_p)
+     if(NOT keyword_set(xd)) then $
+       xd = pg_get_planets(plane.dd, od=cd, $
+                  name=names[i], plane.sun_trs, _extra=*grim_data.keyvals_p)
 
-   if(keyword_set(xd)) then sund = append_array(sund, xd)
+     if(keyword_set(xd)) then sund = append_array(sund, xd)
+    end
   end
 
+ ;----------------------------------------------------------------------------
+ ; sort by flux at observer position
+ ;----------------------------------------------------------------------------
+ sund = grim_sort_by_flux(sund, od)
+ names = cor_name(sund)
 
-; cor_set_udata, plane.dd, 'GRIM_LIGHT_NAME', lights, /noevent
- cor_set_udata, plane.dd, 'GRIM_LIGHT_NAME', name, /noevent
+
+ cor_set_udata, plane.dd, 'GRIM_LIGHT_NAME', names, /noevent
  cor_set_udata, plane.dd, 'GRIM_LIGHT_TRS', plane.sun_trs, /noevent
+
 
  if(keyword_set(sund)) then grim_add_xd, grim_data, plane.sund_p, sund
 

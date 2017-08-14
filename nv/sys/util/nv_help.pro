@@ -53,7 +53,8 @@
 ;
 ;
 ; STATUS:
-;	Complete
+;       The routine help is currently not working because it relied on the old
+;       documentation system.
 ;
 ;
 ; MODIFICATION HISTORY:

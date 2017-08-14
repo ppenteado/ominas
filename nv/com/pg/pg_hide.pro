@@ -261,12 +261,12 @@ point_ptd = _point_ptd
    bxx = bx
 
    ;- - - - - - - - - - - - - - - - - - - - -
-   ; dissociated bodies
+   ; associated bodies
    ;- - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(assoc)) then bxx = pgh_select_by_assoc(bxx, point_ptd[j])
 
    ;- - - - - - - - - - - - - - - - - - - - -
-   ; associated bodies
+   ; dissociated bodies
    ;- - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(dissoc)) then bxx = pgh_select_by_dissoc(bxx, point_ptd[j])
 

@@ -53,8 +53,6 @@
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
-;	all:	 If set, all points are returned, even if invalid.
-;
 ;	nosolve: If set, reflection points are not computed.  
 ;
 ;  OUTPUT: NONE
@@ -81,7 +79,7 @@
 ;=============================================================================
 function pg_reflection_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
                           nocull=nocull, reveal=reveal, $
-                          clip=clip, cull=cull, all=all, $
+                          clip=clip, cull=cull, $
                           nosolve=nosolve
 @pnt_include.pro
 
@@ -143,54 +141,31 @@ function pg_reflection_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
         ;---------------------------------
         ; project reflections in body frame
         ;---------------------------------
-        reflection_pts = glb_reflect(valid=val, xd, v_body, r_body)
-        w = where(val)
+        reflection_pts = glb_reflect(hit=hit, miss=miss, xd, v_body, r_body)
 
         ;---------------------------------------------------------------
         ; Compute and store image coords of any valid intersections.
         ;---------------------------------------------------------------
-        if(w[0] NE -1) then $
+        if(hit[0] NE -1) then $
          begin
-          flags = bytarr(n_elements(reflection_pts[*,0]))
+          flags = bytarr(n_vectors)
+          flags[miss] = flags[miss] OR PTD_MASK_INVISIBLE
+
           points = $
-            degen(body_to_image_pos(cd, xd, reflection_pts, $
-                                          inertial=inertial_pts, valid=valid))
+           degen(body_to_image_pos(cd, xd, reflection_pts, inertial=inertial_pts))
 
           ;---------------------------------
           ; store points
           ;---------------------------------
           reflection_ptd[i,j] = $
               pnt_create_descriptors(points = points, $
+         	 flags = flags, $
                  name = 'reflection-' + cor_name(object_ptd[j]), $
                  assoc_xd = xd, $
                  task = 'pg_reflection_globe', $
 	         desc = 'globe_reflection', $
                  gd = {gbx:gbx[i,0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
 	         vectors = inertial_pts)
- 
-          ;-----------------------------------------------
-          ; flag points that miss the globe as invisible
-          ;-----------------------------------------------
-          flags = pnt_flags(reflection_ptd[i,j])
-          flags[*] = flags[*] OR PTD_MASK_INVISIBLE
-          flags[w] = 0
-
-          ss = inertial_pts - v_inertial
-
-          ;-----------------------------------------------------------
-          ; flag invalid image points as invisible
-          ;-----------------------------------------------------------
-          if(NOT keyword_set(all)) then $
-           if(keyword_set(valid)) then $
-            begin
-             invalid = complement(reflection_pts[*,0], valid)
-             if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-            end
-
-            ;---------------------------------
-            ; store flags
-            ;---------------------------------
-            pnt_set_flags, reflection_ptd[i,j], flags
          end
        end
      end

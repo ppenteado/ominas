@@ -49,6 +49,9 @@
 ;
 ;	<xd>:	Any descriptor maintained by GRIM.
 ;
+;	<xdx>:	Returnds all descriptors containing the given class, e.g., 
+;		bx, gbx, dkx.   Not implemented.
+;
 ;	<overlay>_ptd:
 ;		POINT object giving the points for the overlay of type <overlay>.
 ;
@@ -95,6 +98,9 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
          ard=ard, $
          sund=sund, $
          od=od, $
+         bx=bx, $
+         bbx=bbx, $
+         dkx=dkx, $
          limb_ptd=limb_ptd, $
          ring_ptd=ring_ptd, $
          star_ptd=star_ptd, $
@@ -107,8 +113,8 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
          reflection_ptd=reflection_ptd, $
          object_ptd=object_ptd, $
          tie_ptd=tie_ptd, $
-         curve_ptd=curve_ptd
-
+         curve_ptd=curve_ptd, $
+_ref_extra=ex
 
  ;--------------------------------------------
  ; clear output arrays
@@ -122,6 +128,9 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
  ard = !null
  sund = !null
  od = !null
+ bx = !null
+ gbx = !null
+ dkx = !null
  limb_ptd = !null
  ring_ptd = !null
  star_ptd = !null
