@@ -181,15 +181,32 @@ if [ ! -d "$HOME/.ominas/config" ]; then
 else
   printf "~/.ominas/config directory already exists\n"
 fi
+ans=u
 if [ ! -e "$HOME/.ominas/config/ominas_env_def.sh" ]; then
   cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_def.sh already exists\n"
+  read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
+  case $ans in
+   [Yy]*) 
+     cp -avn $HOME/.ominas/config/ominas_env_def.sh $HOME/.ominas/config/ominas_env_def.sh.old
+     cp -avn config/ominas_env_def.sh $HOME/.ominas/config/ ;;
+   *) ans=n ;;
+  esac
 fi
 if [ ! -e "$HOME/.ominas/config/ominas_env_strcat.sh" ]; then
   cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_strcat.sh already exists\n"
+  if [ $ans == u ]; then
+    read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
+  fi
+    case $ans in
+     [Yy]*) 
+       cp -avn $HOME/.ominas/config/ominas_env_strcat.sh $HOME/.ominas/config/ominas_env_strcat.sh.old
+       cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/ ;;
+     *) ans=n ;;
+    esac
 fi
 for mis in  cas dawn gll vgr 
 do
@@ -197,7 +214,16 @@ do
     cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
   else
     printf "$HOME/.ominas/config/ominas_env_$mis.sh already exists\n"
-  fi
+    if [ $ans == u ]; then
+      read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
+    fi
+      case $ans in
+       [Yy]*)
+         cp -avn $HOME/.ominas/config/ominas_env_$mis.sh $HOME/.ominas/config/ominas_env_$mis.sh.old
+         cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/ ;;
+       *) ans=n ;;
+      esac
+    fi
 done
 
 
@@ -353,7 +379,7 @@ function dins()
 		case $ans in 
 		[Yy]*)
                         #echo "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
-                        $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${tmpa[1]}',conf=${ominas_auto_u} & exit"
+                        $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${tmpa[1]}',conf=${ominas_auto_u}+${ominas_nodel} & exit"
                         
                         unset inst[${1}]
                         return 1;;
@@ -495,7 +521,7 @@ function pkins()
                 [Yy]*)
                      #echo "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}' & exit"
                      #$idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
-                     $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
+                     $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u}+${ominas_nodel} & exit"
 
                      #unset insp[${3}]
                      #unset ins[${3}]
@@ -504,8 +530,8 @@ function pkins()
                      #echo "${insp}"
                      #export insp
                      #export ins
-                     DFLAG="false"
-                     demost="NOT CONFIGURED"
+                     #DFLAG="false"
+                     #demost="NOT CONFIGURED"
                      return 1 ;;
 
                     *)
@@ -571,6 +597,8 @@ function pkins()
 #	  esac
           ins[${4}]=${pstr}
           insp[${4}]=${datapath}
+          DFLAG="false"
+          demost="NOT CONFIGURED"
         fi
 	dstr=""
 	#grep -v ".*$1.*" $setting >$HOME/temp
@@ -1143,6 +1171,7 @@ fi
 export ominas_auto
 
 ominas_auto_u=0
+ominas_nodel=0
 if [ ${aans[0]} == "uninstall" ] || [ ${aans[0]} == "u" ] || [ ${aans[0]} == "U" ] || [ ${aans[0]} == "Uninstall" ] || [ ${aans[0]} == "UNINSTALL" ]; then
 
   cat <<AUTOP
@@ -1173,19 +1202,25 @@ pr=0
 for num in $ans
 do
   if [ $num == "2" ]; then
-    if [ $DFLAG  == "true" ] && [ ${ominas_auto} == 0 ] ; then
+    if [ $DFLAG  == "true" ] && [ "${ominas_auto}" == "0" ]  ; then
       DFLAG="false"
       demost="NOT CONFIGURED"
     else
       DFLAG="true"
       demost="CONFIGURED"
+      ominas_auto_u=1
+      ominas_nodel=2
+      #ans="3 4 5 6 7 8 9 10"
     fi
-    if [ ${ominas_auto_u} == 1 ] ; then
+    if [ "${ominas_auto_u}" == "1" ] && [ "${ominas_nodel}" != "2" ] ; then
       DFLAG="false"
       demost="NOT CONFIGURED"
     fi
   fi
 done
+if [ "${ominas_nodel}" == "2" ]; then
+  ans="4 5 6 7 8 9 10"
+fi
 for num in $ans
 do
 	case $num in
@@ -1220,7 +1255,7 @@ do
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 #corest=${yes}
-                                dins $(($num-8)) ASK DEMO;;
+                                dins $(($num-8)) ASK NODEMO;;
 		[9]|11|12)
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
