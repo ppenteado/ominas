@@ -47,6 +47,29 @@ end
 
 
 
+;=============================================================================
+; grim_gd
+;
+;=============================================================================
+function grim_gd, plane, class=_class, _ref_extra=keys
+
+;** return, *plane.gd_p
+
+   gd = {cd:grim_xd(plane, /cd), $
+         pd:grim_xd(plane, /pd), $
+         rd:grim_xd(plane, /rd), $
+         sund:grim_xd(plane, /sund), $
+         sd:grim_xd(plane, /sd), $
+         std:grim_xd(plane, /std), $
+         ard:grim_xd(plane, /ard), $
+         od:grim_xd(plane, /od)}
+
+ return, gd
+end
+;=============================================================================
+
+
+
 ;===============================================================================
 ; grim_sort_by_flux
 ;

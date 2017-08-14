@@ -148,7 +148,8 @@ grim, /new, './data/n*.2', /order, overlay='center'
 
 ;------------------------------------------------------------------------------
 ; 
-;  Did you know GRIM also handles plots?  Well it does!::
+;  Did you know GRIM also handles plots?  Well it does!
+; ::
 ;
 ;    grim, /new, './data/GamAra037_2_bin50_031108.vic'
 ;-
