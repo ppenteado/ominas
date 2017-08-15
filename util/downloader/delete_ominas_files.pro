@@ -37,7 +37,7 @@ print,r.keys()
 if (conf lt 2) then begin
   print,'Are you sure you want to delete the above files (y/n)[n]?'
   read,ans
-endif else ans='y'
+endif else ans=conf eq 2 ? 'y' : 'n'
 if strlowcase(ans) ne 'y' then return
 ;file_delete,r.filename,/allow_nonexistent,/verbose
 file_delete,(r.keys()).toarray(),/allow_nonexistent,/verbose
