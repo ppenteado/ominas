@@ -189,13 +189,14 @@ else
   read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
   case $ans in
    [Yy]*) 
-     cp -avn $HOME/.ominas/config/ominas_env_def.sh $HOME/.ominas/config/ominas_env_def.sh.old
-     cp -avn config/ominas_env_def.sh $HOME/.ominas/config/ ;;
+     echo "aaa"
+     mv -v $HOME/.ominas/config/ominas_env_def.sh $HOME/.ominas/config/ominas_env_def.sh.old
+     cp -av config/ominas_env_def.sh $HOME/.ominas/config/ ;;
    *) ans=n ;;
   esac
 fi
 if [ ! -e "$HOME/.ominas/config/ominas_env_strcat.sh" ]; then
-  cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
+  cp -av config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_strcat.sh already exists\n"
   if [ $ans == u ]; then
@@ -203,15 +204,15 @@ else
   fi
     case $ans in
      [Yy]*) 
-       cp -avn $HOME/.ominas/config/ominas_env_strcat.sh $HOME/.ominas/config/ominas_env_strcat.sh.old
-       cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/ ;;
+       mv -v $HOME/.ominas/config/ominas_env_strcat.sh $HOME/.ominas/config/ominas_env_strcat.sh.old
+       cp -av config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/ ;;
      *) ans=n ;;
     esac
 fi
 for mis in  cas dawn gll vgr 
 do
   if [ ! -e "$HOME/.ominas/config/ominas_env_$mis.sh" ]; then
-    cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
+    cp -av config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
   else
     printf "$HOME/.ominas/config/ominas_env_$mis.sh already exists\n"
     if [ $ans == u ]; then
@@ -219,8 +220,8 @@ do
     fi
       case $ans in
        [Yy]*)
-         cp -avn $HOME/.ominas/config/ominas_env_$mis.sh $HOME/.ominas/config/ominas_env_$mis.sh.old
-         cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/ ;;
+         mv -v $HOME/.ominas/config/ominas_env_$mis.sh $HOME/.ominas/config/ominas_env_$mis.sh.old
+         cp -av config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/ ;;
        *) ans=n ;;
       esac
     fi
