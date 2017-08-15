@@ -47,6 +47,8 @@
 ;=============================================================================
 function surface_to_image, cd, bx, p, body_pts=body_pts, valid=valid
 
+; this needs to handle both kinds of bodies in one call.  See body_to_surface, e.g.
+
  if(NOT keyword_set(p)) then return, 0
 
  class = (cor_class(cd))[0]

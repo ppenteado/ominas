@@ -35,7 +35,9 @@
 ;	        input array.
 ;
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	indices:
+;		Indices of matched results in crx.
 ;
 ;
 ; RETURN:
@@ -67,13 +69,12 @@ function cor_select, crx, key, indices=ii, rm=rm, noevent=noevent, $
  if(ii[0] EQ -1) then return, 0
  result = crx[ii]
 
-
  ;----------------------------------------
  ; remove matches from list if desired
  ;----------------------------------------
  if(keyword_set(rm)) then crx = rm_list_item(crx, ii, only=0)
 
 
- return, unique(result)
+ return, result
 end
 ;===============================================================================
