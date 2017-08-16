@@ -31,7 +31,9 @@
 ;
 ;	arg2:	Transient translator argument, if present.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	arg1:	If present and undefined, any newly created data descriptor 
+;		is returnedin this argument. 
 ;
 ;
 ; KEYWORDS:
@@ -97,7 +99,8 @@ function pg_get_stations, arg1, arg2, od=od, bx=bx, std=_std, _extra=keyvals, $
  ;------------------------------------------------------------------------
  ; sort out arguments
  ;------------------------------------------------------------------------
- pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+ pg_sort_args, arg1, arg2, dd=dd, od=od, trs=trs, time=time, $
+                          free=free, $
                           @dat__keywords.include
                           end_keywords
 

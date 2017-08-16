@@ -875,6 +875,7 @@ common spice_input_block, last_prefix
    if(size(key7, /type) NE 7) then time = key7 $
    else if(keyword_set(key7)) then time = key7
   end
+ if(n_elements(time) EQ 1) then time = make_array(ndd, val=time[0])
 
  ;-----------------------------------------------
  ; object names passed as key8
@@ -886,9 +887,13 @@ common spice_input_block, last_prefix
  ; get descriptors for each dd
  ;-----------------------------------------------
  for i=0, ndd-1 do $
-      result = append_array(result, si_get(dd[i], $
+  begin
+   if(defined(time)) then _time = time[i]
+
+   result = append_array(result, si_get(dd[i], $
                       keyword, prefix, inst, od=od[i], $
-                        time=time, names=names, status=status))
+                        time=_time, names=names, status=status))
+  end
 
  return, result
 end

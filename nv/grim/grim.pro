@@ -144,11 +144,9 @@
 ;      The following keywords set the initial viewing parameters and are
 ;      simply passed to TVIM.
 ;
-;      `*xsize`:  Size of the graphics window in the x direction.  Defaults to
-;                 400 pixels.
+;      `*xsize`:  Size of the graphics window in the x direction.  
 ;
-;      `*ysize`:  Size of the graphics window in the y direction.  Defaults to
-;                 400 pixels.
+;      `*ysize`:  Size of the graphics window in the y direction.  
 ;
 ;      `*zoom`:   Initial zoom to be applied to the image.  If not given, grim
 ;                 computes an initial zoom such that the entire image fits on the
@@ -446,17 +444,15 @@
 ;               to keep in memory at any given time
 ;
 ;      `*render_sample`:
-;               Over-sampling value for rendering.  See pg_render.
+;               Over-sampling value for rendering.  See PG_RENDER.
 ;
 ;      `*render_pht_min`:
 ;               Minimum value to assign to photometric output in renderings.
 ;               See pg_render.
 ;
-;
-;      Incomplete Keywords
-;      ~~~~~~~~~~~~~~~~~~~
 ;      `*rendering`:
 ;               If set, perform a rendering on the initial descriptor set.
+;		(not yet implemented)
 ;
 ;
 ;  OUTPUT:
@@ -9763,7 +9759,7 @@ pro grim_get_args, arg1, arg2, dd=dd, grn=grn, display_type=type, xzero=xzero, $
  if(keyword_set(dd)) then $
   begin 
    dim = dat_dim(dd[0])
-   if(n_elements(dim) EQ 1) then type = 'PLOT'
+   if(n_elements(dim) EQ 1) then if(dim[0] GT 0) then  type = 'PLOT'
    if(dim[0] EQ 2) then type = 'PLOT'
   end
 
@@ -9955,11 +9951,14 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   end
 
 
+ if(NOT keyword_set(xsize)) then xsize = 768
+ if(NOT keyword_set(ysize)) then ysize = 768
  if(type EQ 'PLOT') then $
   begin
    if(NOT keyword_set(xsize)) then xsize = 500
    if(NOT keyword_set(ysize)) then ysize = 500
   end
+
 
  ;=========================================================
  ; if new instance, set up widgets and data structures
@@ -9971,22 +9970,9 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    ;-----------------------------
    if(NOT keyword_set(dd)) then $
     begin
-     if(NOT keyword_set(xsize)) then xsize = 768
-     if(NOT keyword_set(ysize)) then ysize = 768
      dd = dat_create_descriptors(1, data=grim_blank(xsize, ysize), $
           name='BLANK', nhist=nhist, maintain=maintain, compress=compress)
-    end $
-   else $
-    for i=0, n_elements(dd)-1 do $
-     if(NOT keyword_set(dat_dim(dd[i]))) then $
-      begin
-       if(NOT keyword_set(xsize)) then xsize = 512
-       if(NOT keyword_set(ysize)) then ysize = 512
-       dat_set_maintain, dd[i], 0
-       dat_set_compress, dd[i], compress
-       dat_set_data, dd[i], grim_blank(xsize, ysize) 
-      end
-
+    end
    if(NOT keyword_set(zoom)) then zoom = grim_get_default_zoom(dd[0])
 
    ;----------------------------------------------
@@ -10053,7 +10039,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    xmanager, 'grim', grim_data.base, $
                  /no_block, modal=modal, cleanup='grim_kill_notify'
    if(keyword_set(modal)) then return
-
   end
 
 
@@ -10144,6 +10129,19 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_add_xd, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd[i]
    grim_add_xd, grim_data, planes[i].ltd_p, ltd, /one, assoc_xd=_assoc_xd[i]
   end
+
+
+ ;=========================================================
+ ; if no data, set default parameters
+ ;=========================================================
+ for i=0, n_elements(dd)-1 do $
+  if(NOT keyword_set(dat_dim(dd[i]))) then $
+   begin
+    if(keyword_set(cd)) then cam_size = image_size(cd)
+    dat_set_maintain, dd[i], 0, /noevent
+    dat_set_compress, dd[i], compress, /noevent
+    dat_set_data, dd[i], grim_blank(cam_size[0], cam_size[1]) , /noevent
+   end
 
 
  ;=========================================================
