@@ -45,6 +45,8 @@
 ;=============================================================================
 function surface_to_body, bx, p
 
+; this needs to handle both kinds of bodies in one call.  See body_to_surface, e.g.
+
  if(NOT keyword_set(p)) then return, 0
 
  gbx = cor_select(bx, 'GLOBE', /class)
