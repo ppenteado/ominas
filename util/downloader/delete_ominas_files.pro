@@ -31,9 +31,11 @@ endif
 r=hash()
 foreach tts,ts do r+=json_parse(tts)
 
-print,'This will now delete the files'
-;print,r.filename
-print,r.keys()
+if conf lt 3 then begin
+  print,'This will now delete the files'
+  ;print,r.filename
+  print,r.keys()
+endif else print,'Auto skip selected, no deletion will be done'
 if (conf lt 2) then begin
   print,'Are you sure you want to delete the above files (y/n)[n]?'
   read,ans
