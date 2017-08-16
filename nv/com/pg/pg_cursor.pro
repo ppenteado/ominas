@@ -239,6 +239,7 @@ function _pgc_globe, p, dd, gd=gd, format=format, label=label, name=name
  name = cor_name(gbx)
  nt = n_elements(name)
 
+; problem is cor_select screws up the ordering of gbx
  v = image_to_surface(cd, gbx, p, dis=dis, body_pts=body_pts)
  if(NOT keyword_set(v)) then return, 0
 

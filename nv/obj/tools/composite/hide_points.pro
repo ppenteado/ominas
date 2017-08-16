@@ -50,6 +50,8 @@
 ;=============================================================================
 function hide_points, bx, view_pts, hide_pts, rm=rm, limb=limb
 
+; this needs to handle both kinds of bodies in one call.  See body_to_surface, e.g.
+
  if(NOT keyword_set(hide_pts)) then return, 0
 
  class = (cor_class(bx))[0]

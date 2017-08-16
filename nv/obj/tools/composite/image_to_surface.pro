@@ -57,10 +57,12 @@
 function image_to_surface, cd, bx, p, body_pts=body_pts, $
                                 discriminant=discriminant, hit=hit, valid=valid
 
+; this needs to handle both kinds of bodies in one call.  See body_to_surface, e.g.
+
  if(NOT keyword_set(p)) then return, 0
 
- gbx = cor_select(bx, 'GLOBE', /class, ind=gii)
- dkx = cor_select(bx, 'DISK', /class, ind=dii)
+ gbx = cor_select(bx, 'GLOBE', /class)
+ dkx = cor_select(bx, 'DISK', /class)
 
  if(keyword_set(gbx)) then $
          return, image_to_globe(cd, gbx, p, body_pts=body_pts, $
