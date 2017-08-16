@@ -20,8 +20,8 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	radec:	Array (nt) giving the radec representations of the 
-;		pointing vectors.
+;	radec:	Array (nv,3) or (1,2,nt)  giving the radec representations of the 
+;		pointing vectors (i.e., orient[1,*,*]).
 ;
 ;  OUTPUT:  NONE
 ;
@@ -42,7 +42,11 @@
 ;
 ;-
 ;=============================================================================
-function radec_to_orient, radec
+function radec_to_orient, _radec
+
+ radec = _radec
+ dim = size(radec, /dim)
+ if(n_elements(dim) EQ 3) then radec = transpose(radec)
 
  nv = n_elements(radec)/3
 
@@ -60,3 +64,6 @@ function radec_to_orient, radec
  return, orient
 end
 ;===========================================================================
+
+
+
