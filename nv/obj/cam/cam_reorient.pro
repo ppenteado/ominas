@@ -33,7 +33,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	absolute: If set, the dxy argument represents and abosolute image
+;	absolute: If set, the dxy argument represents an absolute image
 ;		  position rather than an offset.
 ;
 ;  OUTPUT: NONE

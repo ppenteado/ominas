@@ -13,12 +13,12 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       points = get_surface_ranges(cd, bx)
+;       points = get_surface_ranges(od, bx)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	cd:      Camera or map descriptor
+;	od:      Observer: camera or map descriptor
 ;
 ;	bx:      Object descriptor (subclass of BODY)
 ;

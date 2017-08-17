@@ -31,7 +31,9 @@
 ;
 ;	arg2:	Transient translator argument, if present.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	arg1:	If present and undefined, any newly created data descriptor 
+;		is returnedin this argument. 
 ;
 ;
 ; KEYWORDS:
@@ -107,7 +109,8 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
  ;------------------------------------------------------------------------
  ; sort out arguments
  ;------------------------------------------------------------------------
- pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+ pg_sort_args, arg1, arg2, dd=dd, od=od, time=time, $
+                          trs=trs, free=free, $
                           @dat__keywords.include
                           end_keywords
 

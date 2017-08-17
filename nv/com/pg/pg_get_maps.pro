@@ -31,7 +31,9 @@
 ;
 ;	arg2:	Transient translator argument, if present.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	arg1:	If present and undefined, any newly created data descriptor 
+;		is returnedin this argument. 
 ;
 ;
 ; KEYWORDS:
