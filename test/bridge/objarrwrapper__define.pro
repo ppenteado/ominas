@@ -1,5 +1,5 @@
 function objarrwrapper::init,arg1
-compile_opt idl2,logical_predicate
+compile_opt idl2,logical_predicate,hidden
 self.objs=list()
 return,1
 end
@@ -57,7 +57,7 @@ end
 
 
 pro objarrwrapper__define
-compile_opt idl2,logical_predicate
+compile_opt idl2,logical_predicate,hidden
 !null={objarrwrapper,inherits IDL_Object,objs:obj_new()}
 end
 
