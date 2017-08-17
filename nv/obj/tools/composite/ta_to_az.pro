@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = ta_to_az(ta, dkx, od)
+;       result = ta_to_az(ta, dkx, bx)
 ;
 ;
 ; ARGUMENTS:
@@ -22,7 +22,7 @@
 ;
 ;	dkx:	Disk descriptor.
 ;
-;	od:	Object descriptor (subclass of BODY) describing the observer.
+;	bx:	Object descriptor (subclass of BODY) describing the observer.
 ;
 ;  OUTPUT:
 ;       NONE
@@ -44,11 +44,11 @@
 ;       Written by:     Spitale
 ;-
 ;=============================================================================
-function ta_to_az, ta, dkx, od
+function ta_to_az, ta, dkx, bx
 
  n = n_elements(ta)
 
- vref_inertial = get_disk_ref(dkx, od)
+ vref_inertial = get_disk_ref(dkx, bx)
  vref_disk = dsk_body_to_disk(dkx, $
                bod_inertial_to_body(dkx, vref_inertial))
 

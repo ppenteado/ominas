@@ -30,6 +30,12 @@
 ;	dd:	Data descriptor.  If none given, one is created using the 
 ;		DATA keywords (see below).
 ;
+;	od:	Observer descriptor.  If no dd given, then thi descriptor
+;		is used to determine the number of dd to create.
+;
+;	time:	Observation time.  If no dd or od given, then this array
+;		is used to determine the number of dd to create.
+;
 ;	trs:	Transient arguments; Null string if not given.
 ;
 ;	DATA Keywords
@@ -47,7 +53,8 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+pro pg_sort_args, arg1, arg2, dd=dd, od=od, time=time, $
+                              trs=trs, free=free, $
                               @dat__keywords_tree.include
                               end_keywords
 
@@ -65,7 +72,11 @@ pro pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
 
  if(NOT keyword_set(dd)) then $
   begin
-    dd = dat_create_descriptors( $
+    ndd = 1
+    if(keyword_set(od)) then ndd = n_elements(od) $
+    else if(keyword_set(time)) then ndd = n_elements(time)
+
+    dd = dat_create_descriptors(ndd, $
                      @dat__keywords_tree.include
                      end_keywords )
     free = 1

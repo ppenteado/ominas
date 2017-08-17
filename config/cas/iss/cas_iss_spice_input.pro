@@ -118,11 +118,6 @@ pro cas_iss_spice_parse_labels, dd, _time, $
      size[1,i] = double(vicgetpar(label, 'NL'))
 
      ;-----------------------------------
-     ; optic axis
-     ;-----------------------------------
-     oaxis[*,i] = size[*,i]/2d
-
-     ;-----------------------------------
      ; filters
      ;-----------------------------------
      filters[*,i] = vicgetpar(label, 'FILTER_NAME')
@@ -136,6 +131,11 @@ pro cas_iss_spice_parse_labels, dd, _time, $
      obs_id = vicgetpar(label, 'OBSERVATION_ID')
      if((strpos(strupcase(obs_id), 'OPNAV'))[0] NE -1) then target[i] = target_desc
     end
+
+   ;-----------------------------------
+   ; optic axis
+   ;-----------------------------------
+   oaxis[*,i] = size[*,i]/2d
   end
 
  if(NOT keyword_set(_time)) then _time = time
