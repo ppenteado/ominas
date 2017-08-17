@@ -31,7 +31,9 @@
 ;
 ;	arg2:	Transient translator argument, if present.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	arg1:	If present and undefined, any newly created data descriptor 
+;		is returnedin this argument. 
 ;
 ;
 ; KEYWORDS:
@@ -150,7 +152,8 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=keyvals, $
  ;------------------------------------------------------------------------
  ; sort out arguments
  ;------------------------------------------------------------------------
- pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+ pg_sort_args, arg1, arg2, dd=dd, od=od, time=time, $
+                          trs=trs, free=free, $
                           @dat__keywords_tree.include
                           end_keywords
 
