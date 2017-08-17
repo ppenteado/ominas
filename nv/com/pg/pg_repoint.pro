@@ -15,13 +15,23 @@
 ;
 ; CALLING SEQUENCE:
 ;	pg_repoint, cd=cd, dxy, dtheta, axis_ptd=axis_ptd
-;	pg_repoint, gd=gd, dxy, dtheta, axis_ptd=axis_ptd
+;	pg_repoint, cd=cd, ptd, /absolute, dtheta, axis_ptd=axis_ptd
+;	pg_repoint, cd=cd, v
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dxy:		Array (2,1,nt) or (2,1) specifying the
-;			translation as [dx,dy] in pixels.
+;	arg:		Array (2,1,nt) or (2,1) specifying the translation as 
+;			[dx,dy] in pixels.  
+;				
+;				or
+;
+;			Array of POINT objects; mainly useful with the /absolute 
+;			option.
+;				
+;				or
+;
+;			Array of new pointing vectors (1,3,nt).
 ;
 ;	dtheta:		Array (nt) specfying the rotation angle in radians.
 ;
@@ -47,7 +57,7 @@
 ;
 ;	bore_dxy: Boresight offset in pixels.
 ;
-;	absolute: If set, the dxy argument represents and abosolute image
+;	absolute: If set, the dxy argument represents an absolute image
 ;		  position rather than an offset.
 ;
 ;  OUTPUT:
@@ -79,13 +89,13 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ptd=axis_ptd, $
+pro pg_repoint, cd=cd, gd=gd, _arg, _dtheta, axis_ptd=axis_ptd, $
                 bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy, $
 		absolute=absolute
 
 
- dxy = 0
- if(keyword_set(_dxy)) then dxy = _dxy
+ arg = 0
+ if(keyword_set(_arg)) then arg = _arg
 
  dtheta = 0
  if(keyword_set(_dtheta)) then dtheta = _dtheta
@@ -97,40 +107,52 @@ pro pg_repoint, cd=cd, gd=gd, _dxy, _dtheta, axis_ptd=axis_ptd, $
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
 
  ;-----------------------------------
- ; validate descriptors
+ ; interpret argument
  ;-----------------------------------
  nt = n_elements(cd)
+ dim = size(arg, /dim)
+ if(obj_valid(arg[0])) then dxy = reform(pnt_points(dxy, /cat), 2, 1, nt) $
+ else if(dim[0] EQ 2) then dxy = arg $
+ else v = arg
 
-
- ;---------------------------------------
- ; check for boresight cd
- ;---------------------------------------
- if(keyword__set(bore_cd)) then $
+ ;-------------------------------------------------------
+ ; if vector argument, then point along that vector
+ ;-------------------------------------------------------
+ if(keyword_set(v)) then $
+   bod_set_orient, cd, radec_to_orient($
+                            bod_body_to_radec(bod_inertial(nt), v)) $
+ else $
   begin
-   bore_orient = bod_orient(bore_cd)
-   if(NOT keyword_set(bore_rot)) then orient = bore_orient $
-   else orient = v_mxm(bore_rot[linegen3z(3,3, nt)], bore_orient)
-   bod_set_orient, cd, orient
+   ;---------------------------------------
+   ; check for boresight cd
+   ;---------------------------------------
+   if(keyword__set(bore_cd)) then $
+    begin
+     bore_orient = bod_orient(bore_cd)
+     if(NOT keyword_set(bore_rot)) then orient = bore_orient $
+     else orient = v_mxm(bore_rot[linegen3z(3,3, nt)], bore_orient)
+     bod_set_orient, cd, orient
 
-   if(keyword_set(bore_dxy)) then $
-     dxy = dxy + bore_dxy*cam_scale(bore_cd)/cam_scale(cd)
-  end 
- 
- if(keyword_set(dxy)) then $
-  begin
-   ;-----------------------------------
-   ; check number of parameters
-   ;-----------------------------------
-   if(n_elements(dtheta) EQ 1) then dtheta = replicate(dtheta[0], nt) 
-   if(n_elements(dxy) EQ 2) then dxy = dxy[linegen3z(2,1,nt)]
+     if(keyword_set(bore_dxy)) then $
+       dxy = dxy + bore_dxy*cam_scale(bore_cd)/cam_scale(cd)
+    end 
+  
+   if(keyword_set(dxy)) then $
+    begin
+     ;-----------------------------------
+     ; check number of parameters
+     ;-----------------------------------
+     if(n_elements(dtheta) EQ 1) then dtheta = replicate(dtheta[0], nt) 
+     if(n_elements(dxy) EQ 2) then dxy = dxy[linegen3z(2,1,nt)]
 
 
-   ;------------------------------------------------
-   ; modify camera pointing for all times
-   ;------------------------------------------------
-   if(keyword__set(axis_ptd)) then axis = pnt_points(axis_ptd) $
-   else axis = cam_oaxis(cd)
-   cam_reorient, cd, axis, dxy[*,0,*], dtheta[*], absolute=absolute
+     ;------------------------------------------------
+     ; modify camera pointing for all times
+     ;------------------------------------------------
+     if(keyword__set(axis_ptd)) then axis = pnt_points(axis_ptd) $
+     else axis = cam_oaxis(cd)
+     cam_reorient, cd, axis, dxy[*,0,*], dtheta[*], absolute=absolute
+    end
   end
 
 

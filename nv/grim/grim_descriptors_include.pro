@@ -100,6 +100,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
          if(w[0] NE -1) then $
           begin
            name = cor_udata(points_ptd[i], 'GRIM_OVERLAY_NAME')
+           if(NOT keyword_set(name)) then name = ''
 ;;           name = cor_tasks(points_ptd[i], /first)
 ;;           name = grim_get_overlay_name(points_ptd[i])
 
