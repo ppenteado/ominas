@@ -249,6 +249,10 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 
 
 
+
+
+
+
 ;-------------------------------------------------------------------------
 ;+
 ; FIRST-CUT AUTOMATIC REPOINTING

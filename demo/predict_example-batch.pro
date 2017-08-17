@@ -49,7 +49,7 @@ nt = 5
 ;  to convert the time strings in to numeric times.  The full set of camera
 ;  descriptors is then obtained by interpolating the numeric start and 
 ;  stop times.  We could also just give all the times, either as strings, or 
-;  numerically..  Note that, becausethere is no data descriptor, the second 
+;  numerically.  Note that, because there is no data descriptor, the second 
 ;  call to PG_GET_CAMERAS creates one and returns it in the first argument:: 
 ;
 ;     cds = pg_get_cameras(instrument=instrument, time=times)
@@ -75,8 +75,8 @@ cd = pg_get_cameras(dd, instrument=instrument, time=t)
 ;
 ;  If left alone, the camera pointing will be whatever was returned by the
 ;  translators.  Here we force the cameras to point at the center of Saturn
-;  by inputting the S/C -- Saturn vectors to pg_repoint.  Note the use of 
-;  data descriptor created by PG_GET_CAMERAS:: 
+;  by inputting the S/C -- Saturn vectors to PG_REPOINT.  Note the use of 
+;  the data descriptor created by PG_GET_CAMERAS:: 
 ;
 ;     pd0 = pg_get_planets(dd, od=cd, name='SATURN')
 ;     pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd)
@@ -104,7 +104,7 @@ pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd)
 ;
 ;-
 ;-------------------------------------------------------------------------
-grim, dd, cd=cd, order=1, /activate, plt_distmax=const_get('AU'), $
+grim, dd, cd=cd, order=1, xsize=768, ysize=768, /activate, plt_distmax=const_get('AU'), $
        over=['center', $
              'limb:SATURN', $
              'terminator:SATURN', $
@@ -125,8 +125,8 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ; COMPUTE FOOTPRINTS
 ;
 ;  Here is some code to compute a footprint for the current camera
-;  pointing and graft it into GRIM.  TO compute other footprints, use 
-;  GRIM's navigate mode to change the pointing and then paste the code
+;  pointing and graft it into GRIM.  To compute additional footprints, use 
+;  GRIM's navigate mode to change the pointing and then paste the lines
 ;  again:: 
 ;
 ;     grift, cd=cd, pd=pd, rd=rd
@@ -137,5 +137,5 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;-------------------------------------------------------------------------
 grift, cd=cd, pd=pd, rd=rd
 footprint_ptd = pg_footprint(cd=cd, bx=[pd,rd])
-graft, footprint_ptd, tag='FP-'+strtrim(counter(),2)
+graft, footprint_ptd, tag='FP-'+strtrim(counter(),2), col=ctbrown()
 

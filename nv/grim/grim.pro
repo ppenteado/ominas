@@ -9951,8 +9951,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   end
 
 
- if(NOT keyword_set(xsize)) then xsize = 768
- if(NOT keyword_set(ysize)) then ysize = 768
  if(type EQ 'PLOT') then $
   begin
    if(NOT keyword_set(xsize)) then xsize = 500
