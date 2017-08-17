@@ -115,7 +115,6 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
            ; if first instance of this type of overlay, add a new item
            ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
            w = where(name_list EQ name)
-;stop
            if(w[0] EQ -1) then $
             begin
              name_list = append_array(name_list, name)

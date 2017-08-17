@@ -437,7 +437,8 @@ end
 ; grim_draw_user_points
 ;
 ;=============================================================================
-pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap
+pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap, $
+                                                      override_color=override_color
 
  ;-------------------------------------
  ; draw each user array
@@ -450,6 +451,8 @@ pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap
    user_ptd = grim_get_user_ptd(plane=plane, tags[i], user_struct=user_struct)
 
    user_color = user_struct.color
+   if(keyword_set(override_color)) then user_color = override_color
+
    user_shade_fn = user_struct.shade_fn
    user_shade_threshold = user_struct.shade_threshold
    user_graphics_fn = user_struct.graphics_fn
@@ -468,7 +471,10 @@ pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap
      ;- - - - - - - - - - - - - - - - - -
      ; draw only if not hidden
      ;- - - - - - - - - - - - - - - - - -
-     if(user_color[j] NE 'hidden') then $
+     draw = 0
+     if(size(user_color, /type) NE 7) then draw = 1 $
+     else if(user_color[j] NE 'hidden') then draw = 1
+     if(draw) then $
       begin
        ;- - - - - - - - - - - - - - - - - -
        ; get shade values
@@ -539,11 +545,13 @@ pro grim_draw_user_overlays, grim_data, plane, inactive_color, override_color=ov
    inactive_tags = unique(cor_name(inactive_user_ptd))
 
    if(keyword_set(active_user_ptd)) then $
-           grim_draw_user_points, grim_data, plane, active_tags, xmap=xmap
+           grim_draw_user_points, grim_data, plane, active_tags, xmap=xmap, $
+                                                     override_color=override_color
 
 
    if(keyword_set(inactive_user_ptd)) then $
-       grim_draw_user_points, grim_data, plane, inactive_tags, inactive_color, xmap=xmap
+       grim_draw_user_points, grim_data, plane, inactive_tags, inactive_color, $
+                                           xmap=xmap, override_color=override_color
   end
 
 
