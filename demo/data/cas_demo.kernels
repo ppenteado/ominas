@@ -6,18 +6,22 @@
 # generic kernels (should always be loaded first)
 $DEMO_SPICE_LSK/naif0012.tls
 
-# used for grim_example.pro
+# used for predict example
+$DEMO_SPICE_CK/16028_16033ra.bc
+$DEMO_SPICE_SPK/160519R_SCPSE_16025_16041.bsp
+
+# used for grim example
 $DEMO_SPICE_CK/04094_04101ra.bc
 
-# used for tiepoint_example.pro
+# used for tiepoint example
 $DEMO_SPICE_CK/05331_05331ra.bc
 $DEMO_SPICE_SPK/051122AP_SCPSE_05326_05333.bsp
 
-# used for pg_example.pro
+# used for pg example
 $DEMO_SPICE_CK/001011_001014ra.bc
 $DEMO_SPICE_CK/001024_001026ra.bc
 
-# used for mosaic_example.pro
+# used for mosaic example
 $DEMO_SPICE_CK/001103_001105ra.bc
 $DEMO_SPICE_CK/001105_001108.bc
 $DEMO_SPICE_CK/001026_001029ra.bc
@@ -55,11 +59,11 @@ $DEMO_SPICE_CK/05232_05233ra.bc
 $DEMO_SPICE_CK/05232_05237ra.bc
 $DEMO_SPICE_CK/05213_05243ca_ISS.bc
 
-#used for cas_radar_example.pro
+#used for cas_radar example
 $DEMO_SPICE_SPK//050209AP_SCPSE_05040_05049.bsp
 $DEMO_SPICE_CK/05046_05046pa_itl_0.5mrad.bc
 
-# used for multimission_example.pro
+# used for multimission example
 $DEMO_SPICE_SPK/vgr1_sat337.bsp
 $DEMO_SPICE_SPK/voyager_1.ST+1991_a54418u.merged.bsp
 #$DEMO_SPICE_SPK/de403s.bsp
