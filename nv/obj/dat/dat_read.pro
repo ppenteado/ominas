@@ -266,13 +266,10 @@ function drd_read, filename, data, header, $
    ;-----------------------
    if(NOT keyword_set(_instrument)) then  $
     begin
-     if(keyword_set(filetype) AND keyword_set(header)) then $
-      begin
-       instrument = dat_detect_instrument(dd)
-       if(instrument EQ '') then $
-		    nv_message, /continue,'Unable to detect instrument.'
-       nv_message, verb=0.9, 'Instrument = ' + instrument
-      end 
+     instrument = dat_detect_instrument(dd)
+     if(instrument EQ '') then $
+        	  nv_message, /continue,'Unable to detect instrument.'
+     nv_message, verb=0.9, 'Instrument = ' + instrument
     end $
    else instrument = _instrument
 

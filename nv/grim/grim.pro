@@ -450,6 +450,18 @@
 ;               Minimum value to assign to photometric output in renderings.
 ;               See pg_render.
 ;
+;      `*render_rgb`:
+;               If set, renderings are done in color if the source has color
+;		color planes.  Default is off.
+;
+;      `*render_current`:
+;               If set, the rendering source is the image on thi plane rather 
+;		a map.  Default is off.
+;
+;      `*render_spawn`:
+;               If set, renderings from an image (as opposed to a rendering) are 
+;		placed on a new plane.  Default is on.
+;
 ;      `*rendering`:
 ;               If set, perform a rendering on the initial descriptor set.
 ;		(not yet implemented)
@@ -1933,22 +1945,25 @@ pro grim_render, grim_data, plane=plane
  widget_control, /hourglass
 
 
- ;---------------------------------------------------------
+ ;------------------------------------------------------------
  ; Create new plane unless the current one is a rendering
- ;  The new plane will include a transformation that allows
- ;  the rendering to appear in the correct location in the
- ;  display relative to the data coordinate system.
- ;---------------------------------------------------------
+ ; or spawning is off.  The new plane will include a 
+ ; transformation that allows the rendering to appear in 
+ ; the correct location in the display relative to the data 
+ ; coordinate system.
+ ;------------------------------------------------------------
+ if(NOT grim_get_toggle_flag(grim_data, 'RENDER_SPAWN')) then new_plane = plane
  if(NOT plane.rendering) then $
   begin
-   new_plane = grim_clone_plane(grim_data, plane=plane)
+   if(NOT keyword_set(new_plane)) then $
+                             new_plane = grim_clone_plane(grim_data, plane=plane)
    new_plane.rendering = 1
    new_plane.dd = nv_clone(plane.dd)
 
    dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn', /noevent
 
-   dat_set_dim_fn, new_plane.dd, 'grim_render_dim_fn'
-   dat_set_dim_data, new_plane.dd, dat_dim(plane.dd)
+   dat_set_dim_fn, new_plane.dd, 'grim_render_dim_fn', /noevent
+   dat_set_dim_data, new_plane.dd, dat_dim(plane.dd), /noevent
 
    nv_notify_register, new_plane.dd, 'grim_descriptor_notify', scalar_data=grim_data.base
 
@@ -6858,6 +6873,167 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_render_toggle_rgb_event
+;
+;
+; PURPOSE:
+;	Toggles RGB rendering on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_render_toggle_rgb_help_event, event
+ text = ''
+ nv_help, 'grim_menu_render_toggle_rgb_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_render_toggle_rgb_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+
+ flag = grim_get_toggle_flag(grim_data, 'RENDER_RGB')
+ flag = 1 - flag
+ 
+ grim_set_toggle_flag, grim_data, 'RENDER_RGB', flag
+ grim_update_menu_toggle, grim_data, $
+                       'grim_menu_render_toggle_rgb_event', flag
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_render_toggle_current_plane_event
+;
+;
+; PURPOSE:
+;	Toggles rednering from the current plane on/off.  If off, rendering
+;	data are taken from any map projections found by PG_LOAD_MAPS. When 
+;	toggled on, the current data descriptor and camera descriptor are 
+;	cloned and saved for use as the rendering source.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_render_toggle_current_plane_help_event, event
+ text = ''
+ nv_help, 'grim_menu_render_toggle_current_plane_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_render_toggle_current_plane_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+
+ flag = grim_get_toggle_flag(grim_data, 'RENDER_CURRENT')
+ flag = 1 - flag
+ 
+ grim_set_toggle_flag, grim_data, 'RENDER_CURRENT', flag
+ grim_update_menu_toggle, grim_data, $
+                       'grim_menu_render_toggle_current_plane_event', flag
+
+
+
+ if(flag EQ 0) then $
+  begin
+   nv_free, [plane.render_dd, plane.render_cd]
+   plane.render_dd = obj_new()
+   plane.render_cd = obj_new()
+   grim_set_plane, grim_data, plane
+   return
+  end
+
+ plane.render_dd = nv_clone(plane.dd)
+ plane.render_cd = nv_clone(grim_xd(plane, /cd))
+ grim_set_plane, grim_data, plane
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_render_toggle_spawn_event
+;
+;
+; PURPOSE:
+;	Toggles spawning of a new plane for each rendering on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_render_toggle_spawn_help_event, event
+ text = ''
+ nv_help, 'grim_menu_render_toggle_spawn_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_render_toggle_spawn_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+
+ flag = grim_get_toggle_flag(grim_data, 'RENDER_SPAWN')
+ flag = 1 - flag
+ 
+ grim_set_toggle_flag, grim_data, 'RENDER_SPAWN', flag
+ grim_update_menu_toggle, grim_data, $
+                       'grim_menu_render_toggle_spawn_event', flag
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_render_event
 ;
 ;
@@ -8859,22 +9035,22 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Dump               \*grim_menu_plane_dump_event', $
            '0\Coregister         \grim_menu_plane_coregister_event', $
            '0\Coadd              \grim_menu_plane_coadd_event', $
-           '0\Toggle Syncing            [xxx]\*grim_menu_plane_toggle_plane_syncing_event', $
-           '0\Toggle Highlight          [xxx]\*grim_menu_plane_highlight_event', $
-           '0\-------------------\*grim_menu_delim_event', $ 
-           '0\Copy tie points     \*grim_menu_plane_copy_tiepoints_event', $
-;           '0\Propagate tie points\*grim_menu_plane_propagate_tiepoints_event', $
-           '0\Toggle tie point syncing  [xxx]\*grim_menu_plane_toggle_tiepoint_syncing_event', $
-           '0\Clear tie points    \*grim_menu_plane_clear_tiepoints_event', $
-           '0\-------------------\*grim_menu_delim_event', $ 
-           '0\Copy curves        \*grim_menu_plane_copy_curves_event', $
-;           '0\Propagate curves    \*grim_menu_plane_propagate_curves_event', $
-           '0\Toggle curves syncing     [xxx]\*grim_menu_plane_toggle_curve_syncing_event', $
-           '0\Clear curves        \*grim_menu_plane_clear_curves_event', $
-           '0\-------------------\*grim_menu_delim_event', $ 
-           '0\Copy mask          \*grim_menu_plane_copy_mask_event', $
-           '0\Clear mask         \*grim_menu_plane_clear_mask_event', $
-           '0\-------------------\*grim_menu_delim_event', $ 
+           '0\Syncing            [xxx]\*grim_menu_plane_toggle_plane_syncing_event', $
+           '0\Highlight          [xxx]\*grim_menu_plane_highlight_event', $
+           '0\------------------------\*grim_menu_delim_event', $ 
+           '0\Copy Tie Points     \*grim_menu_plane_copy_tiepoints_event', $
+;           '0\Propagate Tie Points\*grim_menu_plane_propagate_tiepoints_event', $
+           '0\Tie Point Syncing  [xxx]\*grim_menu_plane_toggle_tiepoint_syncing_event', $
+           '0\Clear Tie Points    \*grim_menu_plane_clear_tiepoints_event', $
+           '0\------------------------\*grim_menu_delim_event', $ 
+           '0\Copy Curves        \*grim_menu_plane_copy_curves_event', $
+;           '0\Propagate Curves    \*grim_menu_plane_propagate_curves_event', $
+           '0\Curves Syncing     [xxx]\*grim_menu_plane_toggle_curve_syncing_event', $
+           '0\Clear Curves        \*grim_menu_plane_clear_curves_event', $
+           '0\------------------------\*grim_menu_delim_event', $ 
+           '0\Copy Mask          \*grim_menu_plane_copy_mask_event', $
+           '0\Clear Mask         \*grim_menu_plane_clear_mask_event', $
+           '0\------------------------\*grim_menu_delim_event', $ 
            '0\Settings           \+*grim_menu_plane_settings_event', $
            '2\<null>               \+*grim_menu_delim_event', $
 
@@ -8937,7 +9113,11 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Toggle Context       \+*grim_menu_context_event' , $
            '0\Toggle Axes          \*grim_menu_axes_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
-           '0\Render               \grim_menu_render_event' , $
+           '1\Render' , $
+            '0\RGB                  [xxx]\grim_menu_render_toggle_rgb_event' , $
+            '0\Current Plane        [xxx]\grim_menu_render_toggle_current_plane_event' , $
+            '0\Spawn Plane          [xxx]\grim_menu_render_toggle_spawn_event' , $
+            '2\Render               \grim_menu_render_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
            '0\Color Tables         \*grim_menu_view_colors_event', $ 
            '2\<null>               \+*grim_menu_delim_event', $
@@ -9824,6 +10004,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	curve_syncing=curve_syncing, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
+	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
         xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
@@ -9854,9 +10035,12 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
 	visibility=visibility, channel=channel, render_sample=render_sample, $
 	render_pht_min=render_pht_min, slave_overlays=slave_overlays, rgb=rgb, $
-	delay_overlays=delay_overlays, auto_stretch=auto_stretch
+	delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
+	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
+
+ if(NOT keyword_set(render_spawn)) then render_spawn = 1
 
  if(NOT keyword_set(lights)) then lights = 'SUN'
 
@@ -10229,6 +10413,13 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  if(keyword_set(highlght)) then $
                    grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', 1
 
+ if(keyword_set(render_rgb)) then $
+                   grim_set_toggle_flag, grim_data, 'RENDER_RGB', 1
+ if(keyword_set(render_current)) then $
+                   grim_set_toggle_flag, grim_data, 'RENDER_CURRENT', 1
+ if(keyword_set(render_spawn)) then $
+                   grim_set_toggle_flag, grim_data, 'RENDER_SPAWN', 1
+
 
  ;----------------------------------------------
  ; if new instance, initialize menu extensions
@@ -10270,6 +10461,16 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_update_menu_toggle, grim_data, $
          'grim_menu_plane_highlight_event', $
           grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
+
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_render_toggle_rgb_event', $
+          grim_get_toggle_flag(grim_data, 'RENDER_RGB')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_render_toggle_current_plane_event', $
+          grim_get_toggle_flag(grim_data, 'RENDER_CURRENT')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_render_toggle_spawn_event', $
+          grim_get_toggle_flag(grim_data, 'RENDER_SPAWN')
   end
 
 

@@ -62,6 +62,8 @@ end_keywords)
 
  if(keyword_set(graphic)) then self.graphic = decrapify(graphic[ii])
 
+ if(keyword_set(west)) then self.west = decrapify(west[ii])
+
  if(keyword_set(rotate)) then self.rotate = decrapify(rotate[ii])
  
  
@@ -144,8 +146,11 @@ end
 ;		IDL 'rotate' function.
 ;
 ;
-;	graphic:	Flag indicating whether latitudes are represented
-;			using the planetocrntric or planetographic convention.
+;	graphic:
+;		Flag indicating whether latitudes are represented
+;		using the planetocrntric or planetographic convention.
+;
+;	west:	Flag indicating that longitudes are measured to the west.  
 ;
 ;	radii:	3-element array giving ellipsoid radii to use in projections.  
 ;		Only the relative ratios are important.  All elements are 
@@ -180,6 +185,8 @@ pro ominas_map__define
 
 	graphic:	  0b, $			; If set, planetographic 
 						;  lats are used.
+	west:		  0b, $			; If set, west longitudes 
+						;  are used.
 
 	rotate:		  0b, $			; Rotate value as in idl 'rotate'
 

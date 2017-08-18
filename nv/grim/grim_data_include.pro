@@ -231,8 +231,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		cursor_modes_p		: cursor_modes_p, $
 		workdir			: workdir, $
 		tvd_init_p		: ptr_new(0), $
-		dd_map_p		: ptr_new(0), $
-		md_map_p		: ptr_new(0), $
 		dd0			: dd0, $
 		data_xy_p		: ptr_new(0), $		; data coords of viewport indices
 

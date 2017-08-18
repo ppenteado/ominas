@@ -156,7 +156,8 @@ end
 ;=================================================================================
 pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
 
- if(keyword_set(ddmap)) then $
+ if(n_elements(md) EQ 1) then jj = 0 $
+ else if(keyword_set(ddmap)) then $
   begin
    w = where(cor_name(bx) EQ cor_name(md))
    if(w[0] NE -1) then jj = w[0]
@@ -182,8 +183,9 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
 ;     map_smoothing_width = rdr_map_smoothing_width(data, ii)
 map_smoothing_width=1
 
-     map = double(dat_data(ddmap[jj])) / dat_max(ddmap[jj])
+     map = double(dat_data(ddmap[jj], /true)) / dat_max(ddmap[jj])
 
+; need to be able to have map be an rgb cube here...
      dat = image_interp_cam(cd=md[jj], map, interp='sinc', $
                im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:map_smoothing_width})
 
@@ -199,6 +201,7 @@ map_smoothing_width=1
      piece[www] = dat * phot
     end
   end
+
 end
 ;=================================================================================
 
@@ -218,7 +221,6 @@ function rdr_piece, data, image_pts
 
  np = n_elements(image_pts)/2
  piece = dblarr(np)
-
 
  ;---------------------------------------------
  ; trace primary rays from camera

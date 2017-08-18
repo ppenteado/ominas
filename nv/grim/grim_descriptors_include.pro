@@ -32,7 +32,7 @@ function grim_compute_fov, grim_data, plane, cov=cov
  dpq = abs(q-p)
  fov = max(dpq) / min(cam_size(cd))
 
- return, fov
+ return, -plane.fov/fov
 end
 ;=============================================================================
 
