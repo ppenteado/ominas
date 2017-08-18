@@ -72,6 +72,8 @@ function map_image_to_map, md, _image_pts, valid=valid
    return, 0
   end
   
+ if(_md.west) then map_pts = map_west_to_east(_md, map_pts)
+
  nmap_pts = map_pts
  w = where(finite(_md.pole.lat) + finite(_md.pole.lon) + finite(_md.pole.rot) EQ 3)
  if(w[0] NE -1) then $

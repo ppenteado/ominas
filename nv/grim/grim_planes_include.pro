@@ -588,6 +588,12 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 		parm		:	parm[i], $
 
 	;---------------
+	; rendering
+	;---------------
+		render_dd	:	obj_new(), $
+		render_cd	:	obj_new(), $
+
+	;---------------
 	; descriptors
 	;---------------
 		dd		:	dd[i], $		; Data descriptor

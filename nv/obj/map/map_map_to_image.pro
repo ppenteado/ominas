@@ -28,11 +28,11 @@
 ; KEYWORDS:
 ;  INPUT: 
 ;	nowrap:	If set, then points that lie outide the map will not be
-;		around to the other side.
+;		wrapped around to the other side.
 ;
 ;  OUTPUT: 
 ;	valid:	Indices of all input points that correspond to valid
-;		output image points.  If not se then all points are
+;		output image points.  If not set then all points are
 ;		valid.
 ;
 ;
@@ -58,6 +58,8 @@ function map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
  pi2 = !dpi/2d
  
  map_pts = _map_pts
+ if(_md.west) then map_pts = map_east_to_west(_md, map_pts)
+
  nmap_pts = map_pts
  w = where(finite(_md.pole.lat) + finite(_md.pole.lon) + finite(_md.pole.rot) EQ 3)
  if(w[0] NE -1) then $

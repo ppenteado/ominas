@@ -189,26 +189,21 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  ltd = grim_get_lights(grim_data, plane=plane)
  grim_resume_events
 
+ bx = append_array(pd, rd)
+
 
  ;-----------------------------------------
  ; load maps
  ;-----------------------------------------
- if(NOT keyword_set(*grim_data.dd_map_p)) then dd_map = pg_load_maps(md=md, bx=pd)
- if(keyword_set(dd_map)) then $
-  begin
-   *grim_data.dd_map_p = dd_map
-   *grim_data.md_map_p = md
-  end
+ md = plane.render_cd
+ dd_map = plane.render_dd
+ if(NOT keyword_set(dd_map)) then dd_map = pg_load_maps(md=md, bx=bx)
 
 
  ;-----------------------------------------
  ; render
  ;-----------------------------------------
- bx = append_array(pd, rd)
- dd_map = *grim_data.dd_map_p
- md = *grim_data.md_map_p
-
- stat = pg_render(/psf, /nodd, show=plane.render_show, $
+ stat = pg_render(/psf, /nodd, /no_mask, show=plane.render_show, $
                     cd=cd, bx=bx, ltd=ltd, md=md, ddmap=dd_map, map=map, $
                     pht=plane.render_pht_min, $
                     sample=plane.render_sample, $
