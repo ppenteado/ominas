@@ -143,7 +143,7 @@ pro nv_copy, dst_xd, src_xd, noevent=noevent
 ; if(cor_class(dst_xd) NE cor_class(src_xd)) then $
 ;    nv_message, 'Source and destination must have the same class'
 
- nv_notify, src_xd, type = 1, noevent=noevent
+ nv_notify, src_xd, type=1, noevent=noevent
 
  nv_copy_recurse, dst_xd, src_xd, alloc=0
 
