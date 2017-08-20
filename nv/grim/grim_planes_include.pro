@@ -139,7 +139,7 @@ function grim_get_image, grim_data, plane=plane, abscissa=abscissa, $
  if(grim_test_rgb(grim_data, plane)) then $
   begin
    true = 0
-   if(NOT keyword_set(channel)) then true = 1 $
+   if(NOT defined(channel)) then true = 1 $
    else slice = channel
   end
 
@@ -395,6 +395,9 @@ function grim_clone_plane, grim_data, plane=plane, spawn=spawn
 ; if(keyword_set(spawn)) then 
  grim_add_planes, grim_data, plane.dd, pn=pn
 
+ xd = grim_xd(plane)
+ ptd = grim_ptd(plane)
+
  new_plane = nv_clone(plane)
 
  new_plane.pn = pn
@@ -402,6 +405,23 @@ function grim_clone_plane, grim_data, plane=plane, spawn=spawn
 
  new_plane.cmd = colormap_descriptor(data=new_plane.pn, $
                                 n_colors=grim_n_colors(dat_typecode(new_plane.dd)))
+
+ new_xd = grim_xd(new_plane)
+ new_ptd = grim_ptd(new_plane)
+
+
+ nv_notify_register, new_plane.dd, 'grim_descriptor_notify', scalar_data=grim_data.base
+ nv_notify_register, new_xd, 'grim_descriptor_notify', scalar_data=grim_data.base
+
+
+ cor_substitute_xd, new_xd, plane.dd, new_plane.dd, /use_gd, /noevent
+ cor_substitute_xd, new_ptd, xd, new_xd, /use_gd, /noevent
+
+
+ assoc_xds = pnt_assoc_xd(ptd)
+ cor_substitute_xd, assoc_xds, xd, new_xd, /noevent
+ pnt_set_assoc_xd, new_ptd, assoc_xds
+
 
  grim_set_plane, grim_data, new_plane
  grim_set_data, grim_data
@@ -597,8 +617,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 	; descriptors
 	;---------------
 		dd		:	dd[i], $		; Data descriptor
-		cd		:	obj_new(), $		; Camera descriptor
-		od		:	obj_new(), $		; Observer descriptor
+;;;		cd		:	obj_new(), $		; Camera descriptor
+;;;		od		:	obj_new(), $		; Observer descriptor
 		sibling_dd	:	obj_new(), $		; Last sibling dd
 
 ; should put these in a gd or xds...
@@ -606,8 +626,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 xd_p		:	ptr_new(0), $	; Descriptor array		;++
 gd_p		:	ptr_new(0), $	; Generic descriptor		;**
 
-cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
-od_p		:	ptr_new(obj_new()), $	; Observer descriptor
+		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
+		od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 		pd_p		:	ptr_new(obj_new()), $	; Planet descriptors
 		rd_p		:	ptr_new(obj_new()), $	; Ring descriptors
 		sd_p		:	ptr_new(obj_new()), $	; Star descriptors

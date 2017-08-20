@@ -156,6 +156,9 @@ end
 ;=================================================================================
 pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
 
+ nz = data.nz
+ MM = make_array(nz,val=1d)
+
  if(n_elements(md) EQ 1) then jj = 0 $
  else if(keyword_set(ddmap)) then $
   begin
@@ -164,7 +167,7 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
   end
 
 ;jj=!null
- if(NOT defined(jj)) then piece[ii] = phot $
+ if(NOT defined(jj)) then piece[ii,*] = phot#MM $
  else $
   begin
    ww = where(phot NE 0)
@@ -185,9 +188,23 @@ map_smoothing_width=1
 
      map = double(dat_data(ddmap[jj], /true)) / dat_max(ddmap[jj])
 
-; need to be able to have map be an rgb cube here...
      dat = image_interp_cam(cd=md[jj], map, interp='sinc', $
                im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:map_smoothing_width})
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; if 1 channel, copy to all channels
+     ; if more than 1 channel, just leave on those channels 
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     dim = size(dat, /dim)
+     nzz = 1
+     if(n_elements(dim) EQ 2) then nzz = dim[1]
+     if(nzz EQ 1) then dat = dat#MM $
+     else if(nzz NE nz) then $
+      begin
+       _dat = dblarr(dim[0], nz)
+       _dat[*,0:nzz-1] = dat
+       dat = _dat
+      end
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - -
      ; replace unmapped samples with map average
@@ -198,7 +215,7 @@ map_smoothing_width=1
      ;- - - - - - - - - - - - - - - -
      ; apply photometry
      ;- - - - - - - - - - - - - - - -
-     piece[www] = dat * phot
+     piece[www,*] = dat * (phot#MM)
     end
   end
 
@@ -218,9 +235,10 @@ function rdr_piece, data, image_pts
  ddmap = data.ddmap
  cd = data.cd
  ltd = data.ltd
+ nz = data.nz
 
  np = n_elements(image_pts)/2
- piece = dblarr(np)
+ piece = dblarr(np,nz)
 
  ;---------------------------------------------
  ; trace primary rays from camera
@@ -324,6 +342,23 @@ function render, image_pts, cd=cd, ltd=ltd, $
  if(NOT keyword_set(md)) then md = objarr(nbx)
 
 
+ ;-----------------------------------------------
+ ; determine number of channels in output image
+ ;-----------------------------------------------
+ nz = lonarr(nbx)
+ for i=0, nbx-1 do $
+  begin
+   dim = dat_dim(ddmap[i])
+   if(n_elements(dim EQ 3)) then nz[i] = dim[2]
+  end
+ nzmax = max(nz)
+ nz = 1
+ if(nzmax GT 1) then nz = nzmax
+
+
+ ;-----------------------------------------------
+ ; store data
+ ;-----------------------------------------------
  if(nbx EQ 0) then bx = 0
  data = { $
 		cd		:	cd, $
@@ -332,6 +367,7 @@ function render, image_pts, cd=cd, ltd=ltd, $
 		ddmap		:	ddmap, $
 		md		:	md, $
 		sample		:	sample, $
+		nz		:	nz, $
 		no_secondary	:	no_secondary, $
 		penumbra	:	penumbra, $
 		limit_source	:	limit_source, $
@@ -342,24 +378,27 @@ function render, image_pts, cd=cd, ltd=ltd, $
 	}
 
 
- map_size = n_elements(image_pts)/2
- pc_size = long(pc_size<map_size)
- npc = map_size/pc_size
- if(map_size mod pc_size NE 0) then npc = npc + 1
+ ;-----------------------------------------------
+ ; set up output map
+ ;-----------------------------------------------
+ render_size = n_elements(image_pts)/2
+ pc_size = long(pc_size<render_size)
+ npc = render_size/pc_size
+ if(render_size mod pc_size NE 0) then npc = npc + 1
 
  sample2 = sample*sample
+ map = dblarr(render_size, nz)
 
  ;----------------------------------------
  ; perform ray tracing piece-by-piece
  ;----------------------------------------
- map = dblarr(map_size)
  for i=0, npc-1 do $
   begin
    ;------------------------------------
    ; determine the size of this piece
    ;------------------------------------
    size = pc_size
-   if(i EQ npc-1) then size = map_size - (npc-1)*pc_size
+   if(i EQ npc-1) then size = render_size - (npc-1)*pc_size
 
    ;------------------------------------
    ; resample this grid piece
@@ -393,15 +432,20 @@ function render, image_pts, cd=cd, ltd=ltd, $
      plots, pc_image_pts, psym=3, col=ctgray(0.25)
      device, set_graphics=3
     end
-   piece = rdr_piece(data, pc_image_pts)
+   piece_sample = rdr_piece(data, pc_image_pts)
 
    ;- - - - - - - - - - - - - - - - - - - - - 
    ; average over samples and add to map
    ;- - - - - - - - - - - - - - - - - - - - -
-   piece = reform(piece, pc_size, sample2, /over)
-   piece = total(piece,2)/(sample2)
+   piece = dblarr(pc_size, nz)
+   for j=0, nz-1 do $
+    begin
+     _piece = reform(piece_sample[*,j], pc_size, sample2, /over)
+     piece[*,j] = total(_piece,2)/(sample2)
+    end
 
-   map[ii] = piece
+
+   map[ii,*] = piece
   end
 
 
