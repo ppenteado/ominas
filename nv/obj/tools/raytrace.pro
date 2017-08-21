@@ -57,7 +57,9 @@
 ;	               through round-off error.  Default is 1 unit.
 ;
 ;	penumbra:      If set, lighting rays are traced to random points on 
-;	               each secondary body rather then the center.
+;	               each secondary body rather then to the center.
+;
+;	numbra:        Number of rays to trace to the secondary bodies.
 ;
 ;
 ;
@@ -77,8 +79,11 @@
 ;	far_matrix:   Array (nray,3,nhit) of body-frame points for all
 ;	              far-side intersections with bodies in the hit_list.
 ;
-;	near_matrix:   Array (nray,3,nhit) of body-frame points for all
-;	               near-side intersections with bodies in the hit_list.
+;	near_matrix:  Array (nray,3,nhit) of body-frame points for all
+;	              near-side intersections with bodies in the hit_list.
+;
+;	shadow_matrix:Array (nray) of "shadow levels" for each ray, based
+;	              on mulitple ray tracings to the secondary bodies.
 ;
 ;
 ; RETURN: NONE
@@ -100,103 +105,23 @@
 ;	
 ;-
 ;=============================================================================
-pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
-               hit_matrix=hit_matrix, show=show, penumbra=penumbra, $
-               hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-               far_matrix=far_matrix, near_matrix=near_matrix, $
-               back=back, standoff=standoff, limit_source=limit_source
-
- show = keyword_set(show)
- if(NOT keyword_set(all_bx)) then return
- bx = all_bx
- nbx = n_elements(bx)
-
- hit_list = -1
-
- if(NOT defined(standoff)) then standoff = 1d
- if(NOT defined(limit_source)) then limit_source = 0
-
- ;---------------------------------------------
- ; set up primary trace
- ;---------------------------------------------
- if(keyword_set(cd)) then $
-  begin
-   nray = n_elements(image_pts)/2l
-   MM = make_array(nray,val=1d)
-
-   vv = bod_pos(cd)##MM
-   rr = image_to_inertial(cd, image_pts)
-
-   select = lindgen(nray)
-  end $
- ;---------------------------------------------
- ; set up secondary trace
- ;---------------------------------------------
- else if(keyword_set(sbx)) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - - -
-   ; compute rays to secondary center
-   ;- - - - - - - - - - - - - - - - - - - - -
-   w = where(hit_indices NE -1)
-   if(w[0] EQ -1) then return
-   select = w
-   nselect = n_elements(select)
-
-   nray = n_elements(hit_indices)
-   MM = make_array(nray,val=1d)
-   sbx_pos = bod_pos(sbx)##MM 
-
-   vv = dblarr(nray,3)
-   rr = dblarr(nray,3)
-
-   ;- - - - - - - - - - - - - - - - - 
-   ; compute sources
-   ;- - - - - - - - - - - - - - - - - 
-   for i=0, nbx-1 do $
-    begin
-     w = where(hit_indices EQ i)
-     if(w[0] NE -1) then $
-             vv[w,*] = bod_body_to_inertial_pos(bx[i], hit_matrix[w,*])
-    end
-
-   ;- - - - - - - - - - - - - - - - - 
-   ; compute termini
-   ;- - - - - - - - - - - - - - - - - 
-   rr[select,*] = v_unit(sbx_pos[select,*] - vv[select,*])
-
-   ;- - - - - - - - - - - - - - - - - - - - -
-   ; scramble rays for penumbra  
-   ;- - - - - - - - - - - - - - - - - - - - -
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; This is a temporary hack that assumes sbx is a sphere.  
-   ; Need a good way to find random points on an arbitrary body.
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   if(keyword_set(penumbra)) then $
-    begin
-     MMn = make_array(nselect,val=1d)
-     MM3 = make_array(3,val=1d)
-
-     rsbx = (glb_radii(sbx))[0]  
-     r = (randomu(seed, nselect) * rsbx)#MM3
-     theta = (randomu(seed, nselect) * 2d*!dpi)#MM3
-
-     zz = rr[select,*]
-     xx = v_cross(zz, tr([0,0,1d])##MMn)
-     yy = v_cross(zz, xx)
-
-     sbx_pos[select,*] = sbx_pos[select,*] + r*cos(theta)*xx + r*sin(theta)*yy
-    end
-
-   src_hit_indices = hit_indices
-  end $
- else nv_message, 'Either cd or sbx must be specified. '
 
 
- ;---------------------------------------------
- ; Trace bodies
- ;---------------------------------------------
+
+;=============================================================================
+; rt_trace
+;
+;=============================================================================
+pro rt_trace, bx, vv, rr, select, hit_matrix=hit_matrix, $
+        hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
+        far_matrix=far_matrix, near_matrix=near_matrix, $
+        back=back, standoff=standoff, limit_source=limit_source, show=show
+
 ;hit_matrix = 0
 ;range_matrix =0
+
+ nray = n_elements(rr)/3
+ nbx = n_elements(bx)
 
  hit_matrix = dblarr(nray,3)
  far_matrix = dblarr(nray,3)
@@ -296,6 +221,142 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
 
 ;if(keyword_set(hit_matrix)) then $
 ;                            hit_matrix = transpose(hit_matrix)
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; raytrace
+;
+;=============================================================================
+pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
+               hit_matrix=hit_matrix, show=show, penumbra=penumbra, numbra=numbra, $
+               hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
+               far_matrix=far_matrix, near_matrix=near_matrix, $
+               shadow_matrix=shadow_matrix, $
+               back=back, standoff=standoff, limit_source=limit_source
+
+ show = keyword_set(show)
+ if(NOT keyword_set(all_bx)) then return
+ bx = all_bx
+ nbx = n_elements(bx)
+
+ hit_list = -1
+
+ if(NOT defined(standoff)) then standoff = 1d
+ if(NOT defined(limit_source)) then limit_source = 0
+ if(NOT defined(numbra)) then numbra = 1
+
+
+ ;---------------------------------------------
+ ; set up for primary trace
+ ;---------------------------------------------
+ if(keyword_set(cd)) then $
+  begin
+   nray = n_elements(image_pts)/2l
+   MM = make_array(nray,val=1d)
+
+   vv = bod_pos(cd)##MM
+   rr = image_to_inertial(cd, image_pts)
+
+   select = lindgen(nray)
+
+   rt_trace, bx, vv, rr, select, hit_matrix=hit_matrix, $
+      hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
+      far_matrix=far_matrix, near_matrix=near_matrix, $
+      back=back, standoff=standoff, limit_source=limit_source, show=show
+  end $
+ ;---------------------------------------------
+ ; set up for secondary trace
+ ;---------------------------------------------
+ else if(keyword_set(sbx)) then $
+  begin
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; compute rays to secondary center
+   ;- - - - - - - - - - - - - - - - - - - - -
+   w = where(hit_indices NE -1)
+   if(w[0] EQ -1) then return
+   select = w
+   nselect = n_elements(select)
+
+   nray = n_elements(hit_indices)
+   MM = make_array(nray,val=1d)
+   sbx_pos = bod_pos(sbx)##MM 
+
+   vv = dblarr(nray,3)
+   rr = dblarr(nray,3)
+
+   ;- - - - - - - - - - - - - - - - - 
+   ; compute sources
+   ;- - - - - - - - - - - - - - - - - 
+   for i=0, nbx-1 do $
+    begin
+     w = where(hit_indices EQ i)
+     if(w[0] NE -1) then $
+             vv[w,*] = bod_body_to_inertial_pos(bx[i], hit_matrix[w,*])
+    end
+
+   ;- - - - - - - - - - - - - - - - - 
+   ; compute termini
+   ;- - - - - - - - - - - - - - - - - 
+   MMn = make_array(nselect,val=1d)
+   MM3 = make_array(3,val=1d)
+   rsbx = (glb_radii(sbx))[0]  
+
+numbra = 100
+   if(NOT keyword_set(penumbra)) then numbra = 1
+   shadow_matrix = dblarr(nray)
+   for i=0, numbra-1 do $
+    begin
+     rr[select,*] = v_unit(sbx_pos[select,*] - vv[select,*])
+
+     ;- - - - - - - - - - - - - - - - - - - - -
+     ; scramble rays for penumbra  
+     ;- - - - - - - - - - - - - - - - - - - - -
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     ; This is a temporary hack that assumes sbx is a sphere.  
+     ; Need a good way to find random points on an arbitrary globe.
+     ; ...or a uniform skyplane grid on a body
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     if(keyword_set(penumbra)) then $
+      begin
+       r = (randomu(seed, nselect) * rsbx)#MM3
+       theta = (randomu(seed, nselect) * 2d*!dpi)#MM3
+
+       zz = rr[select,*]
+       xx = v_cross(zz, tr([0,0,1d])##MMn)
+       yy = v_cross(zz, xx)
+
+       sbx_pos_rand = sbx_pos
+       sbx_pos_rand[select,*] = sbx_pos[select,*] + r*cos(theta)*xx + r*sin(theta)*yy
+       rr[select,*] = v_unit(sbx_pos_rand[select,*] - vv[select,*])
+      end
+     src_hit_indices = hit_indices
+
+
+     ;- - - - - - - - - - - - - - - - - - - - -
+     ; trace
+     ;- - - - - - - - - - - - - - - - - - - - -
+     rt_trace, bx, vv, rr, select, hit_matrix=hit_matrix, $
+        hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
+        far_matrix=far_matrix, near_matrix=near_matrix, $
+        back=back, standoff=standoff, limit_source=limit_source, show=show
+
+     ;- - - - - - - - - - - - - - - - - - - - -
+     ; add to shadow matrix
+     ;- - - - - - - - - - - - - - - - - - - - -
+     w = where(hit_indices NE -1)
+     if(w[0] NE -1) then shadow_matrix[w] = shadow_matrix[w] + 1
+    end
+   shadow_matrix = shadow_matrix / numbra
+ 
+  end $
+ else nv_message, 'Either cd or sbx must be specified. '
+
+
 
 end
 ;=================================================================================

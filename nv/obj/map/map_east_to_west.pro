@@ -52,7 +52,7 @@ function map_east_to_west, md, map_pts0
  _md = cor_dereference(md)
 
  map_pts = map_pts0
- map_pts[1,*] = east_to_west_longitude(map_pts[1,*])
+ map_pts[1,*] = east_to_west_longitude(map_pts[1,*], max=!dpi)
 
  return, map_pts
 end

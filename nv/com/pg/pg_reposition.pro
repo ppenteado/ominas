@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	pg_repos
+;	pg_reposition
 ;
 ;
 ; PURPOSE:
@@ -13,8 +13,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	pg_repos, bx=bx, dv
-;	pg_repos, bx=bx, dv, od=od
+;	pg_reposition, bx=bx, dv
+;	pg_reposition, bx=bx, dv, od=od
 ;
 ;
 ; ARGUMENTS:
@@ -37,27 +37,31 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	 bx:	   Array (nt) of body descriptors to translate.
+;	bx:	Array (nt) of body descriptors to translate.
 ;
-;	 od:	   Observer descriptor; specifies the body frame for the
-;		   translation vector.
+;	od:	Observer descriptor; specifies the body frame for the
+;		translation vector.
 ;
-;  	 gd:	   Generic descriptor.  If given, the descriptor inputs 
-;		   are taken from this structure if not explicitly given.
+;	gd:	Generic descriptor.  If given, the descriptor inputs 
+;		are taken from this structure if not explicitly given.
 ;
-;	 dd:	   Data descriptor containing a generic descriptor to use
-;		   if gd not given.
+;	dd:	Data descriptor containing a generic descriptor to use
+;		if gd not given.
 ;
-;	 ref_bx:   Body descriptor giving reference position for directional
-;		   keywords.
+;	ref_bx:	Body descriptor giving reference position for directional
+;		keywords.
 ;
-;	toward:    Body should be translated toward ref_bx (default).
+;	toward:	Body should be translated toward ref_bx (default).
 ;
-;	away:      Body should be translated away from ref_bx.
+;	away:	Body should be translated away from ref_bx.
 ;
-;	at:        Body should be placed at the position of ref_bx.
+;	at:	Body should be placed at the position of ref_bx.
 ;
-;	along:     Index of bx axis along which to translate.
+;	along:	Index of bx axis along which to translate.
+;
+;	absolute:
+;		If set, dv is taken as an absolute position instead of an
+;		offset.	
 ;
 ;
 ;  OUTPUT:
@@ -68,7 +72,7 @@
 ;
 ;
 ; SIDE EFFECTS:
-;	pg_repos modifies bx and adds its name to the task list of each given
+;	pg_reposition modifies bx and adds its name to the task list of each given
 ;	descriptor.
 ;
 ;
@@ -81,8 +85,8 @@
 ;	
 ;-
 ;=============================================================================
-pro pg_repos, bx=bx, _dv, od=od, ref_bx=ref_bx, dd=dd, gd=gd, $
-               toward=toward, away=away, at=at, along=along
+pro pg_reposition, bx=bx, _dv, od=od, ref_bx=ref_bx, dd=dd, gd=gd, $
+               toward=toward, away=away, at=at, along=along, absolute=absolute
 
 
  ;---------------------------------------------
@@ -127,12 +131,13 @@ pro pg_repos, bx=bx, _dv, od=od, ref_bx=ref_bx, dd=dd, gd=gd, $
 
 
  ;-----------------------------------------------
- ; translate
+ ; reposition
  ;-----------------------------------------------
- bod_set_pos, bx, bod_pos(bx) + dvv
+ if(keyword_set(absolute)) then bod_set_pos, bx, dvv $
+ else bod_set_pos, bx, bod_pos(bx) + dvv
 
 
- cor_add_task, bx, 'pg_repos'
+ cor_add_task, bx, 'pg_reposition'
 end
 ;=============================================================================
 

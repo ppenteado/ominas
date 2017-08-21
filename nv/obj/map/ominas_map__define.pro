@@ -130,16 +130,16 @@ end
 ;		Methods: map_center, map_set_center
 ;
 ;
-;	range:	2-element array giving the map coordinates of the
-;		lat/lon ranges of the map.
-;
-;		Methods: map_range, map_set_range
-;
-;
 ;	origin:	2-element array giving the image coordinates corresponding
 ;		to the center of the map.
 ;
 ;		Methods: map_origin, map_set_origin
+;
+;
+;	range:	2-element array giving the map coordinates of the
+;		lat/lon ranges of the map.
+;
+;		Methods: map_range, map_set_range
 ;
 ;
 ;	rotate:	Code specifying a rotation to be applied to the map, as in the

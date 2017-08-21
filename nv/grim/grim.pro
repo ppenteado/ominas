@@ -646,7 +646,10 @@
 ;
 ;                  Navigate:
 ;                       Allows the user to modify the camera position and
-;                       orientation usng the mouse.
+;                       orientation using the mouse.
+;
+;                  Target:
+;                       Allows the user to re-target the camera by clicking.
 ;
 ;
 ;            Graphics window
@@ -1959,7 +1962,7 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
                     cd=cd, bx=bx, ltd=ltd, md=md, ddmap=dd_map, map=map, $
                     pht=plane.render_pht_min, $
                     sample=plane.render_sample, $
-                    image_ptd=image_pts)
+                    image_ptd=image_pts);, 		/penumbra)
  dim = size(map, /dim)
  nz = 1
  if(n_elements(dim) EQ 3) then nz = dim[2]
@@ -10333,6 +10336,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  cursor_modes = grim_create_cursor_mode('smooth', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('plane', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('drag', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('target', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('navigate', mode_args, cursor_modes)
 
  ;-------------------------------------------

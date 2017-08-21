@@ -264,17 +264,17 @@ function rdr_piece, data, image_pts
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
         near_matrix=sec_near_matrix, far_matrix=sec_far_matrix, $
-        range_matrix=sec_range_matrix
+        range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
 
 
  ;---------------------------------------------------------------------------
  ; remove primary hits whose sunward secondaries hit other bodies 
  ;---------------------------------------------------------------------------
- if(sec_hit_list[0] NE -1) then $
-  begin
-   w = where(sec_hit_indices NE -1)
-   if(w[0] NE -1) then hit_indices[w] =-1
-  end
+; if(sec_hit_list[0] NE -1) then $
+;  begin
+;   w = where(sec_hit_indices NE -1)
+;   if(w[0] NE -1) then hit_indices[w] =-1
+;  end
 
 
  ;---------------------------------------------
@@ -300,7 +300,11 @@ function rdr_piece, data, image_pts
      rdr_map, data, piece, bx[ii], md, ddmap, hit_matrix, phot, w
     end
   end
+;w = where(shadow_matrix NE 0)
+;if(w[0] NE -1) then stop
 
+f = 0.25
+piece = piece * 1d - f*shadow_matrix#make_array(nz,val=1)
 
  return, piece
 end
