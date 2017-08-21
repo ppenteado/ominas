@@ -212,8 +212,6 @@ function pg_render, cd=cd, ltd=ltd, $
 
  if(keyword_set(nx)) then $
   begin
-;--   image = dblarr(nx, ny)
-;--   if(ii[0] NE -1) then image[ii] = map
    image = dblarr(nx*ny, nz)
    if(ii[0] NE -1) then image[ii,*] = map
    image = reform(image, nx, ny, nz)
@@ -235,7 +233,6 @@ function pg_render, cd=cd, ltd=ltd, $
     ;- - - - - - - - - - - - - - - - - -
     if(NOT keyword_set(psf)) then psf = gauss_2d(0,0, 1, 6,6)
 
-;--    image = convol(image, psf, /center)
     for i=0, nz-1 do image[*,*,i] = convol(image[*,*,i], psf, /center)
    end
 

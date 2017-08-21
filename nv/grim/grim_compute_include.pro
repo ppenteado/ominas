@@ -87,6 +87,8 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
  grim_message, /clear
 
  gbx = cor_select(bx, 'GLOBE', /class)
+;; all_gbx = cor_select(cor_dereference_gd(gd), 'GLOBE', /class)
+;; all_gbx = cor_dereference_gd(gd, 'GLOBE', /class)
  if(NOT keyword_set(gbx)) then return, 0
 
  cd = cor_dereference_gd(gd, /cd)
@@ -263,12 +265,12 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  grim_message, /clear
 
  gbx = cor_select(bx, 'GLOBE', /class)
+ if(NOT keyword_set(gbx)) then return, 0
 
  cd = cor_dereference_gd(gd, /cd)
  od = cor_dereference_gd(gd, /od)
  pd = cor_dereference_gd(gd, /pd)
  rd = cor_dereference_gd(gd, /rd)
-
  ltd = (cor_dereference_gd(gd, /ltd))[0]
 
  ;-------------------------------------------------------------

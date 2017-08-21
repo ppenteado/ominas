@@ -23,7 +23,7 @@
 
 ;-------------------------------------------------------------------------
 ;+
-; OBERVATION PARAMETERS
+; OBSERVATION PARAMETERS
 ;
 ;  Here we set basic parameters of the observation; start and stop times,
 ;  number of time steps, name of instrument.  Note that the times could also
