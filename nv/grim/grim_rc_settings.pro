@@ -32,7 +32,7 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, maxdat=maxdat, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
-        render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
+        render_numbra=render_numbra, render_sampling=render_sampling, render_minimum=render_minimum, slave_overlays=slave_overlays, $
         delay_overlays=delay_overlays, auto_stretch=auto_stretch, lights=lights, $
         render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto
 
@@ -314,15 +314,20 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
  else _channel = channel
  if(keyword_set(_channel)) then channel = fix(_channel)
 
- if(n_elements(render_pht_min) EQ 0) then $
-                        _render_pht_min = extra_value(kv, 'RENDER_PHT_MIN') $
- else _render_pht_min = render_pht_min
- if(keyword_set(_render_pht_min)) then render_pht_min = fix(_render_pht_min)
+ if(n_elements(render_minimum) EQ 0) then $
+                        _render_minimum = extra_value(kv, 'RENDER_MINIMUM') $
+ else _render_minimum = render_minimum
+ if(keyword_set(_render_minimum)) then render_minimum = fix(_render_minimum)
 
- if(n_elements(render_sample) EQ 0) then $
-                        _render_sample = extra_value(kv, 'RENDER_SAMPLE') $
- else _render_sample = render_sample
- if(keyword_set(_render_sample)) then render_sample = fix(_render_sample)
+ if(n_elements(render_numbra) EQ 0) then $
+                        _render_numbra = extra_value(kv, 'RENDER_NUMBRA') $
+ else _render_numbra = render_numbra
+ if(keyword_set(_render_numbra)) then render_numbra = fix(_render_numbra)
+
+ if(n_elements(render_sampling) EQ 0) then $
+                        _render_sampling = extra_value(kv, 'RENDER_SAMPLING') $
+ else _render_sampling = render_sampling
+ if(keyword_set(_render_sampling)) then render_sampling = fix(_render_sampling)
 
  if(n_elements(slave_overlays) EQ 0) then $
                       _slave_overlays = extra_value(kv, 'SLAVE_OVERLAYS') $

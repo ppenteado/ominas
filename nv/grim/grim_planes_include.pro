@@ -475,7 +475,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
                       xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
-                      render_sample=render_sample, render_pht_min=render_pht_min, $
                       overlays=overlays, cmd=cmd0
 
   pns = 0
@@ -490,8 +489,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
   if(NOT keyword_set(hide)) then hide = grim_data.def_hide
   if(NOT keyword_set(filter)) then filter = grim_data.def_filter
   if(NOT keyword_set(visibility)) then visibility = 0
-  if(NOT defined(render_pht_min)) then render_pht_min = 0.02
-  if(NOT keyword_set(render_sample)) then render_sample = 1
 
   if(NOT keyword_set(load_path)) then load_path = grim_data.def_load_path
   if(NOT keyword_set(save_path)) then save_path = grim_data.def_save_path
@@ -583,9 +580,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 		load_path	:	load_path, $
 		save_path	:	save_path, $
 		rendering	:	0, $
-		render_sample	:	render_sample, $
-		render_pht_min	:	render_pht_min, $
-		render_show	:	1b, $
 		prescaled	:	0, $			; overlays always visible?
 		visible		:	0, $			; overlays always visible?
 		image_visible	:	0, $

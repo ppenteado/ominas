@@ -23,6 +23,7 @@ pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd)
 
 grim, dd, cd=cd, order=0, xsize=768, ysize=768, /activate, plt_distmax=const_get('AU'), $
        over=['center', $
+             'terminator:MOON', $
+             'shadow:MOON', $
              'limb:EARTH,MOON', $
-             'terminator:EARTH,MOON', $
              'planet_grid:EARTH,MOON'], frame='limb';, /render_auto

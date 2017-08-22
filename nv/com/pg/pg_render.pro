@@ -66,8 +66,10 @@
 ;	npsf:         Width of psf array to use if PSF is obtained via cd.
 ;	              Default is 10.
 ;
-;	penumbra:     If set, lighting rays are traced to random points on 
-;	              each secondary body rather then the center.
+;	numbra:       Number of rays to trace to the secondary bodies.
+;	              Default is 1.  The first ray is traced to the body
+;	              center; wach additional ray is traced to a random point 
+;	              within the body.
 ;
 ;	no_secondary: If set, no secondary ray tracing is performed,  
 ;	              resulting in no shadows.
@@ -117,7 +119,7 @@ function pg_render, cd=cd, ltd=ltd, $
        bx=bx, ddmap=ddmap, md=md, dd=dd, gd=gd, sample=sample, pc_size=pc_size, $
        show=show, pht_min=pht_min, no_pht=no_pht, map=image, $
        standoff=standoff, limit_source=limit_source, nodd=nodd, $
-       psf=psf, npsf=npsf, penumbra=penumbra, no_secondary=no_secondary, $
+       psf=psf, npsf=npsf, numbra=numbra, no_secondary=no_secondary, $
        image_ptd=_image_ptd, mask_width=mask_width, no_maps=no_maps, $
        no_mask=no_mask
  
@@ -205,7 +207,7 @@ function pg_render, cd=cd, ltd=ltd, $
               bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
               show=show, pht_min=pht_min, no_pht=no_pht, $
               standoff=standoff, limit_source=limit_source, $
-              penumbra=penumbra, no_secondary=no_secondary)
+              numbra=numbra, no_secondary=no_secondary)
  dim = size(map, /dim)
  nz = 1
  if(n_elements(dim) EQ 2) then nz = dim[1]
@@ -215,6 +217,7 @@ function pg_render, cd=cd, ltd=ltd, $
    image = dblarr(nx*ny, nz)
    if(ii[0] NE -1) then image[ii,*] = map
    image = reform(image, nx, ny, nz)
+   if(nz EQ 1) then image = reform(image, nx, ny)
   end
 
  

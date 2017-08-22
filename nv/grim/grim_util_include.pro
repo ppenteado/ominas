@@ -507,6 +507,46 @@ end
 
 
 ;=============================================================================
+; grim_get_menu_value
+;
+;=============================================================================
+function grim_get_menu_value, grim_data, name, suffix=suffix
+
+ if(NOT keyword_set(suffix)) then suffix = ''
+ id = grim_get_menu_id(grim_data, name)
+
+ widget_control, id, get_value=s
+
+ ss = str_ext(s, '[', ']')
+ 
+ return, long(strmid(ss, 0, strlen(ss)-strlen(suffix)))
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_set_menu_value
+;
+;=============================================================================
+pro grim_set_menu_value, grim_data, name, value, suffix=suffix
+
+ if(NOT keyword_set(suffix)) then suffix = ''
+ 
+ id = grim_get_menu_id(grim_data, name)
+
+ widget_control, id, get_value=s
+
+ ss = str_ext(s, '[', ']')
+ sss = strep_s(s, ss, strtrim(value,2)+suffix)
+
+ widget_control, id, set_value=sss
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_update_menu_toggle
 ;
 ;=============================================================================

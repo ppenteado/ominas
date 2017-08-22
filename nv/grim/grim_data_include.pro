@@ -28,7 +28,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
-           render_sample=render_sample, render_pht_min=render_pht_min, $
            overlays=overlays, activate=activate
 @grim_block.include
 
@@ -237,8 +236,9 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		slave_overlays		: slave_overlays, $
 
 		misc_data_p		: ptr_new(0), $
-		lights_p		 : ptr_new(lights), $
+		lights_p		: ptr_new(lights), $
 
+		render_show		: 1b, $
 
 	;---------------
 	; planes
@@ -285,7 +285,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   grim_add_planes, grim_data, dd, $
      xrange=xrange, yrange=yrange, position=position, xtitle=xtitle, ytitle=ytitle, max=max, $
                     color=color, thick=thick, visibility=visibility, channel=channel, $
-                       render_sample=render_sample, render_pht_min=render_pht_min, $
                           overlays=overlays, cmd=cmd
 
  ;----------------------
