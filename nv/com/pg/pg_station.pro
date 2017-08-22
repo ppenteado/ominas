@@ -103,7 +103,8 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, $
    xd = 0
    if(keyword_set(bx)) then $
     begin
-     w = where(get_primary(std[i,0]) EQ bx[*,0])
+     xd0 = get_primary(std[i,0])
+     w = where(xd0[0] EQ bx[*,0])
 
      if(w[0] NE -1) then $
       begin

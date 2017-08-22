@@ -43,8 +43,10 @@
 ;	pc_size:      To save memory, the projection is performed in pieces
 ;	              of this size.  Default is 65536.
 ;
-;	penumbra:     If set, lighting rays are traced to random points on 
-;	              each secondary body rather then the center.
+;	numbra:       Number of rays to trace to the secondary bodies.
+;	              Default is 1.  The first ray is traced to the body
+;	              center; wach additional ray is traced to a random point 
+;	              within the body.
 ;
 ;	no_secondary: If set, no secondary ray tracing is performed, so 
 ;	              resulting in no shadows.
@@ -260,7 +262,7 @@ function rdr_piece, data, image_pts
  if(data.no_secondary) then sec_hit_list = -1
 
  if(sec_hit_list[0] NE -1) then $
-   raytrace, bx=bx, sbx=ltd, penumbra=data.penumbra, $
+   raytrace, bx=bx, sbx=ltd, numbra=data.numbra, $
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
         near_matrix=sec_near_matrix, far_matrix=sec_far_matrix, $
@@ -300,11 +302,9 @@ function rdr_piece, data, image_pts
      rdr_map, data, piece, bx[ii], md, ddmap, hit_matrix, phot, w
     end
   end
-;w = where(shadow_matrix NE 0)
-;if(w[0] NE -1) then stop
 
 f = 0.25
-piece = piece * 1d - f*shadow_matrix#make_array(nz,val=1)
+ piece = piece * 1d - f*shadow_matrix#make_array(nz,val=1)
 
  return, piece
 end
@@ -319,12 +319,12 @@ end
 function render, image_pts, cd=cd, ltd=ltd, $
   bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
   show=show, pht_min=pht_min, no_pht=no_pht, $
-  standoff=standoff, limit_source=limit_source, penumbra=penumbra, $
+  standoff=standoff, limit_source=limit_source, numbra=numbra, $
   no_secondary=no_secondary
 
  nbx = n_elements(bx)
  if(NOT keyword_set(no_secondary)) then no_secondary = 0
- if(NOT keyword_set(penumbra)) then penumbra = 0
+ if(NOT keyword_set(numbra)) then numbra = 1
  if(NOT keyword_set(pht_min)) then pht_min = 0
 
  if(NOT defined(limit_source)) then limit_source = 0
@@ -344,13 +344,14 @@ function render, image_pts, cd=cd, ltd=ltd, $
 
  if(NOT keyword_set(ddmap)) then ddmap = objarr(nbx)
  if(NOT keyword_set(md)) then md = objarr(nbx)
+ ndd = n_elements(ddmap)
 
 
  ;-----------------------------------------------
  ; determine number of channels in output image
  ;-----------------------------------------------
- nz = lonarr(nbx)
- for i=0, nbx-1 do $
+ nz = lonarr(ndd)
+ for i=0, ndd-1 do $
   begin
    dim = dat_dim(ddmap[i])
    if(n_elements(dim EQ 3)) then nz[i] = dim[2]
@@ -373,7 +374,7 @@ function render, image_pts, cd=cd, ltd=ltd, $
 		sample		:	sample, $
 		nz		:	nz, $
 		no_secondary	:	no_secondary, $
-		penumbra	:	penumbra, $
+		numbra		:	numbra, $
 		limit_source	:	limit_source, $
 		standoff	:	standoff, $
 		pht_min		:	pht_min, $
@@ -451,7 +452,6 @@ function render, image_pts, cd=cd, ltd=ltd, $
 
    map[ii,*] = piece
   end
-
 
  return, map
 end

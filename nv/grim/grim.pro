@@ -393,9 +393,9 @@
 ;                          type[:name1,name2,...]
 ;
 ;               where 'type' is one of {limb, terminator, center,
-;               star, ring, planet_grid, array, station} and the names
-;               identify the name of the desired object.  Note that grim
-;               will load more objects than named if required by another
+;               star, ring, planet_grid, array, station, shadow, reflection}
+;               and the names identify the name of the desired object.  Note 
+;               that grim will load more objects than named if required by another
 ;               startup overlay.  For example::
 ;
 ;                        overlays='ring:a_ring'
@@ -423,6 +423,18 @@
 ;               case, the 'name' translator keyword is compared against all
 ;               rings available to the translator.
 ;
+;               Also note that the ordering is significant.  For example:
+;
+;                        overlays=['planet_grid:EARTH,MOON', $
+;                                  'terminator:MOON', $
+;                                  'shadow:MOON']
+;
+;		produces a different result than:
+;
+;                        overlays=['terminator:MOON', $
+;                                  'shadow:MOON'
+;                                  'planet_grid:EARTH,MOON']
+;
 ;
 ;      `*delay_overlays`:
 ;               If set, initial overlays (see 'overlays' above) are not computed
@@ -443,12 +455,15 @@
 ;               controls the maximum number of data descriptors with maintain == 1
 ;               to keep in memory at any given time
 ;
-;      `*render_sample`:
-;               Over-sampling value for rendering.  See PG_RENDER.
+;      `*render_sampling`:
+;               Over-sampling value for rendering.
 ;
-;      `*render_pht_min`:
-;               Minimum value to assign to photometric output in renderings.
-;               See pg_render.
+;      `*render_numbra`:
+;               Number of random rays to trace to light sources when rendering.
+;
+;      `*render_minimum`:
+;               Minimum value (percent) to assign to photometric output in 
+;               renderings.
 ;
 ;      `*render_rgb`:
 ;               If set, renderings are done in color if the source has color
@@ -1958,19 +1973,23 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  ;-----------------------------------------
  ; render
  ;-----------------------------------------
- stat = pg_render(/psf, /nodd, /no_mask, show=plane.render_show, $
+ numbra = grim_get_menu_value(grim_data, 'grim_menu_render_enter_numbra_event')
+ sample = grim_get_menu_value(grim_data, 'grim_menu_render_enter_sampling_event')
+ minimum = grim_get_menu_value(grim_data, $
+                             'grim_menu_render_enter_minimum_event', suffix='%')/100.
+
+ stat = pg_render(/psf, /nodd, /no_mask, show=grim_data.render_show, $
                     cd=cd, bx=bx, ltd=ltd, md=md, ddmap=dd_map, map=map, $
-                    pht=plane.render_pht_min, $
-                    sample=plane.render_sample, $
-                    image_ptd=image_pts);, 		/penumbra)
+                    pht=minimum, sample=sample, numbra=numbra, $
+                    image_ptd=image_pts)
  dim = size(map, /dim)
  nz = 1
  if(n_elements(dim) EQ 3) then nz = dim[2]
 
  image_pts = reform(image_pts, 2, n_elements(map)/nz, /over)
 
- dat_set_data, plane.dd, map
- if(nz EQ 3) then dat_set_dim_fn, plane.dd, 'grim_rgb_dim_fn'
+ dat_set_data, plane.dd, map, /noevent
+ if(nz EQ 3) then dat_set_dim_fn, plane.dd, 'grim_rgb_dim_fn', /noevent
 end
 ;=============================================================================
 
@@ -2013,7 +2032,6 @@ pro grim_render, grim_data, plane=plane
    if(NOT keyword_set(new_plane)) then $
                              new_plane = grim_clone_plane(grim_data, plane=plane)
    new_plane.rendering = 1
-   new_plane.dd = nv_clone(plane.dd)
 
    dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn', /noevent
 
@@ -6973,6 +6991,160 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_render_enter_numbra_event
+;
+;
+; PURPOSE:
+;   This option prompts the user to enter a numbra value for rendering.  Numbra
+;   specifies the number of samples to compute on a light source to produce
+;   accurate shadows.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_enter_numbra_event_help_event, event
+ text = ''
+ nv_help, 'grim_menu_enter_numbra_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_render_enter_numbra_event, event
+@grim_block.include
+ grim_set_primary, event.top
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ done = 0
+ repeat $
+  begin
+   response = dialog_input('New Numbra:', cancelled=cancelled)
+   if(cancelled) then return
+   if(keyword_set(response)) then $
+    begin
+     w = str_isfloat(response)
+     if((n_elements(w) EQ 1) AND (w[0] NE -1)) then done = 1
+    end
+  endrep until(done)
+
+ grim_set_menu_value, grim_data, 'grim_menu_render_enter_numbra_event', response
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_render_enter_sampling_event
+;
+;
+; PURPOSE:
+;   This option prompts the user to enter a sampling value for rendering.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_enter_sampling_event_help_event, event
+ text = ''
+ nv_help, 'grim_menu_enter_sampling_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_render_enter_sampling_event, event
+@grim_block.include
+ grim_set_primary, event.top
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ done = 0
+ repeat $
+  begin
+   response = dialog_input('New Sampling:', cancelled=cancelled)
+   if(cancelled) then return
+   if(keyword_set(response)) then $
+    begin
+     w = str_isfloat(response)
+     if((n_elements(w) EQ 1) AND (w[0] NE -1)) then done = 1
+    end
+  endrep until(done)
+
+ grim_set_menu_value, grim_data, 'grim_menu_render_enter_sampling_event', response
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_render_enter_minimum_event
+;
+;
+; PURPOSE:
+;   This option prompts the user to enter a minimum data value (0-1) for 
+;   renderings.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 8/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_enter_minimum_event_help_event, event
+ text = ''
+ nv_help, 'grim_menu_enter_minimum_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_render_enter_minimum_event, event
+@grim_block.include
+ grim_set_primary, event.top
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+ done = 0
+ repeat $
+  begin
+   response = dialog_input('New Minimum %:', cancelled=cancelled)
+   if(cancelled) then return
+   if(keyword_set(response)) then $
+    begin
+     w = str_isfloat(response)
+     if((n_elements(w) EQ 1) AND (w[0] NE -1)) then done = 1
+    end
+  endrep until(done)
+
+ grim_set_menu_value, $
+           grim_data, 'grim_menu_render_enter_minimum_event', response, suffix='%'
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_render_toggle_current_plane_event
 ;
 ;
@@ -8930,6 +9102,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
  for j=0, nplanes-1 do $
   if(NOT keyword_set(*planes[j].initial_overlays_p)) then $
    begin
+;;    points_ptd = grim_ptd(planes[j])
     points_ptd = grim_cat_points(grim_data, plane=planes[j])
     n = n_elements(points_ptd)
 
@@ -8961,6 +9134,8 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
            ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
            source_ptd = obj_new()
            w = nwhere(points_ptd, source_xd)
+;if(name EQ 'SHADOW') then stop
+;print, cor_gd(points_ptd[i])
            if(w[0] NE -1) then source_ptd = points_ptd[w]
 
            ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -9376,7 +9551,10 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Toggle Axes          \*grim_menu_axes_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
            '1\Render' , $
-            '0\RGB                  [xxx]\grim_menu_render_toggle_rgb_event' , $
+;            '0\RGB                  [xxx]\grim_menu_render_toggle_rgb_event' , $
+            '0\Enter Oversampling   [xxx]\grim_menu_render_enter_sampling_event' , $
+            '0\Enter Numbra         [xxx]\grim_menu_render_enter_numbra_event' , $
+            '0\Minimum Brightness   [xxx]\grim_menu_render_enter_minimum_event' , $
             '0\Current Plane        [xxx]\grim_menu_render_toggle_current_plane_event' , $
 ;            '0\Spawn Plane          [xxx]\grim_menu_render_toggle_spawn_event' , $
             '0\Automatic Rendering  [xxx]\grim_menu_render_toggle_auto_event' , $
@@ -10264,10 +10442,11 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, $
         lgt_trs=lgt_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_xd=assoc_xd, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
-	curve_syncing=curve_syncing, render_sample=render_sample, $
-	render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
+	curve_syncing=curve_syncing, slave_overlays=slave_overlays, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
-	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, $
+	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, $
+	render_auto=render_auto, render_numbra=render_numbra, render_sampling=render_sampling, $
+	render_minimum=render_minimum, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
         xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
@@ -10296,14 +10475,17 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
-	visibility=visibility, channel=channel, render_sample=render_sample, $
-	render_pht_min=render_pht_min, slave_overlays=slave_overlays, rgb=rgb, $
+	visibility=visibility, channel=channel, render_numbra=render_numbra, render_sampling=render_sampling, $
+	render_minimum=render_minimum, slave_overlays=slave_overlays, rgb=rgb, $
 	delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
 	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
 
  if(NOT keyword_set(render_spawn)) then render_spawn = 1
+ if(NOT keyword_set(render_sampling)) then render_sampling = 1
+ if(NOT keyword_set(render_numbra)) then render_numbra = 1
+ if(NOT defined(render_minimum)) then render_minimum = 2
 
  if(NOT keyword_set(lights)) then lights = 'SUN'
 
@@ -10435,8 +10617,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        symsize=symsize, nhist=nhist, maintain=maintain, lights=lights, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
        visibility=visibility, channel=channel, keyvals=keyvals, $
-       title=title, render_sample=render_sample, slave_overlays=slave_overlays, $
-       render_pht_min=render_pht_min, overlays=overlays, activate=activate)
+       title=title, slave_overlays=slave_overlays, $
+       overlays=overlays, activate=activate)
 
 
    ;----------------------------------------------
@@ -10717,9 +10899,9 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 
 
 
- ;----------------------------------------------
- ; if new instance, initialize menu toggles
- ;----------------------------------------------
+ ;---------------------------------------------------------
+ ; if new instance, initialize menu toggles and values
+ ;---------------------------------------------------------
  if(new) then $
   begin
    grim_update_menu_toggle, grim_data, $
@@ -10747,6 +10929,13 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_update_menu_toggle, grim_data, $
          'grim_menu_render_toggle_auto_event', $
           grim_get_toggle_flag(grim_data, 'RENDER_AUTO')
+
+   grim_set_menu_value, grim_data, $
+         'grim_menu_render_enter_numbra_event', render_numbra
+   grim_set_menu_value, grim_data, $
+         'grim_menu_render_enter_sampling_event', render_sampling
+   grim_set_menu_value, grim_data, $
+         'grim_menu_render_enter_minimum_event', render_minimum, suffix='%'
   end
 
 

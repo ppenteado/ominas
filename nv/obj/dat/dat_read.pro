@@ -322,11 +322,6 @@ function drd_read, filename, data, header, $
          output_translators=output_translators, $
          input_keyvals=input_keyvals, $
          output_keyvals=output_keyvals
-
-   ;------------------------
-   ; get data if requested
-   ;------------------------
-   if(arg_present(data)) then dat_load_data, dd, data=data
   end
 
 
@@ -389,8 +384,8 @@ function dat_read, filespec, data, header, $
  ; read each file
  ;----------------------------------------------------------
  for i=0, n_elements(filenames)-1 do $
-   dd = append_array(dd, $
-          drd_read(filenames[i], data, header, $
+  begin
+   ddi = drd_read(filenames[i], data, header, $
 			filetype=filetype, $
 			input_fn=input_fn, $
 			output_fn=output_fn, $
@@ -405,7 +400,11 @@ function dat_read, filespec, data, header, $
 			maintain=maintain, compress=compress, $
 			sample=sample, nodata=nodata, $
 			name=name, nhist=nhist, $
-			extensions=extensions))
+			extensions=extensions)
+   if(arg_present(data)) then $
+                        if(keyword_set(ddi)) then dat_load_data, ddi, data=data
+   dd = append_array(dd, ddi)
+  end
 
  count = n_elements(dd)
  return, dd
