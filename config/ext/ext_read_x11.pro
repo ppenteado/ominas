@@ -3,7 +3,11 @@
 ;
 ;  NOT TESTED
 ;=============================================================================
-function ext_read_x11, filename, dim=dim
+function ext_read_x11, filename, dim=dim, nodata=nodata
+
+ if(keyword_set(nodata)) then $
+               nv_message, /con, 'WARNING: /NO_DATA keyword ignored.
+
 
  read_x11_bitmap, filename, dat, /expand_to_bytes
 

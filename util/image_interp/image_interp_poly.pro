@@ -19,7 +19,7 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;        image:         An array of image point arrays.
+;       image:          Image array, may have multiple planes.
 ;
 ;       grid_x:         The grid of x positions for interpolation
 ;
@@ -43,7 +43,13 @@
 ;=============================================================================
 function image_interp_poly, image, grid_x, grid_y, mask=mask, zmask=zmask, valid=valid
 
- s = size(image)
+ dim = size(grid_x, /dim)
+ dim_image = size(image, /dim)
+ nz = 1
+ if(n_elements(dim_image) EQ 3) then nz = dim_image[2]
+ nxy_image = product(dim_image[0:1])
+
+ nxy = product(dim)
 
  ;----------------------------- 
  ; interpolation points
@@ -56,10 +62,10 @@ function image_interp_poly, image, grid_x, grid_y, mask=mask, zmask=zmask, valid
  ;----------------------------- 
  ; interpolation subscripts
  ;----------------------------- 
- sub_x0y0 = grid_x0 + s[1]*grid_y0
- sub_x0y1 = grid_x0 + s[1]*grid_y1
- sub_x1y0 = grid_x1 + s[1]*grid_y0
- sub_x1y1 = grid_x1 + s[1]*grid_y1
+ sub_x0y0 = grid_x0 + dim_image[0]*grid_y0
+ sub_x0y1 = grid_x0 + dim_image[0]*grid_y1
+ sub_x1y0 = grid_x1 + dim_image[0]*grid_y0
+ sub_x1y1 = grid_x1 + dim_image[0]*grid_y1
 
  ;----------------
  ; interpolation
@@ -71,8 +77,14 @@ function image_interp_poly, image, grid_x, grid_y, mask=mask, zmask=zmask, valid
  y_y1  = grid_y-grid_y1
  y0_y1 = grid_y0-grid_y1
 
- interp = ( x_x1*(y_y1*image[sub_x0y0]-y_y0*image[sub_x0y1]) + $
-            x_x0*(y_y0*image[sub_x1y1]-y_y1*image[sub_x1y0]) ) / (x0_x1*y0_y1)
+
+ interp = dblarr(nxy,nz)
+ for i=0, nz-1 do $
+  begin
+   offset = i*nxy_image
+   interp[*,i] = ( x_x1*(y_y1*image[sub_x0y0+offset]-y_y0*image[sub_x0y1+offset]) + $
+                   x_x0*(y_y0*image[sub_x1y1+offset]-y_y1*image[sub_x1y0+offset]) ) / (x0_x1*y0_y1)
+  end
 
  return, interp
 end

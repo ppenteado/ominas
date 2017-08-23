@@ -43,8 +43,10 @@
 ;	pc_size:      To save memory, the projection is performed in pieces
 ;	              of this size.  Default is 65536.
 ;
-;	penumbra:     If set, lighting rays are traced to random points on 
-;	              each secondary body rather then the center.
+;	numbra:       Number of rays to trace to the secondary bodies.
+;	              Default is 1.  The first ray is traced to the body
+;	              center; wach additional ray is traced to a random point 
+;	              within the body.
 ;
 ;	no_secondary: If set, no secondary ray tracing is performed, so 
 ;	              resulting in no shadows.
@@ -156,14 +158,18 @@ end
 ;=================================================================================
 pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
 
- if(keyword_set(ddmap)) then $
+ nz = data.nz
+ MM = make_array(nz,val=1d)
+
+ if(n_elements(md) EQ 1) then jj = 0 $
+ else if(keyword_set(ddmap)) then $
   begin
    w = where(cor_name(bx) EQ cor_name(md))
    if(w[0] NE -1) then jj = w[0]
   end
 
 ;jj=!null
- if(NOT defined(jj)) then piece[ii] = phot $
+ if(NOT defined(jj)) then piece[ii,*] = phot#MM $
  else $
   begin
    ww = where(phot NE 0)
@@ -182,10 +188,25 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
 ;     map_smoothing_width = rdr_map_smoothing_width(data, ii)
 map_smoothing_width=1
 
-     map = double(dat_data(ddmap[jj])) / dat_max(ddmap[jj])
+     map = double(dat_data(ddmap[jj], /true)) / dat_max(ddmap[jj])
 
      dat = image_interp_cam(cd=md[jj], map, interp='sinc', $
                im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:map_smoothing_width})
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; if 1 channel, copy to all channels
+     ; if more than 1 channel, just leave on those channels 
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     dim = size(dat, /dim)
+     nzz = 1
+     if(n_elements(dim) EQ 2) then nzz = dim[1]
+     if(nzz EQ 1) then dat = dat#MM $
+     else if(nzz NE nz) then $
+      begin
+       _dat = dblarr(dim[0], nz)
+       _dat[*,0:nzz-1] = dat
+       dat = _dat
+      end
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - -
      ; replace unmapped samples with map average
@@ -196,9 +217,10 @@ map_smoothing_width=1
      ;- - - - - - - - - - - - - - - -
      ; apply photometry
      ;- - - - - - - - - - - - - - - -
-     piece[www] = dat * phot
+     piece[www,*] = dat * (phot#MM)
     end
   end
+
 end
 ;=================================================================================
 
@@ -215,10 +237,10 @@ function rdr_piece, data, image_pts
  ddmap = data.ddmap
  cd = data.cd
  ltd = data.ltd
+ nz = data.nz
 
  np = n_elements(image_pts)/2
- piece = dblarr(np)
-
+ piece = dblarr(np,nz)
 
  ;---------------------------------------------
  ; trace primary rays from camera
@@ -240,21 +262,21 @@ function rdr_piece, data, image_pts
  if(data.no_secondary) then sec_hit_list = -1
 
  if(sec_hit_list[0] NE -1) then $
-   raytrace, bx=bx, sbx=ltd, penumbra=data.penumbra, $
+   raytrace, bx=bx, sbx=ltd, numbra=data.numbra, $
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
         near_matrix=sec_near_matrix, far_matrix=sec_far_matrix, $
-        range_matrix=sec_range_matrix
+        range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
 
 
  ;---------------------------------------------------------------------------
  ; remove primary hits whose sunward secondaries hit other bodies 
  ;---------------------------------------------------------------------------
- if(sec_hit_list[0] NE -1) then $
-  begin
-   w = where(sec_hit_indices NE -1)
-   if(w[0] NE -1) then hit_indices[w] =-1
-  end
+; if(sec_hit_list[0] NE -1) then $
+;  begin
+;   w = where(sec_hit_indices NE -1)
+;   if(w[0] NE -1) then hit_indices[w] =-1
+;  end
 
 
  ;---------------------------------------------
@@ -267,7 +289,9 @@ function rdr_piece, data, image_pts
    nw = n_elements(w)
    if(w[0] NE -1) then $
     begin
-     if(data.show) then plots, image_pts[*,w], psym=3, col=ctorange()
+;device, set_graphics=6
+;     if(data.show) then plots, image_pts[*,w], psym=3, col=ctwhite()
+;device, set_graphics=3
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; photometry
@@ -281,6 +305,8 @@ function rdr_piece, data, image_pts
     end
   end
 
+f = 0.25
+ piece = piece * 1d - f*shadow_matrix#make_array(nz,val=1)
 
  return, piece
 end
@@ -295,12 +321,12 @@ end
 function render, image_pts, cd=cd, ltd=ltd, $
   bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
   show=show, pht_min=pht_min, no_pht=no_pht, $
-  standoff=standoff, limit_source=limit_source, penumbra=penumbra, $
+  standoff=standoff, limit_source=limit_source, numbra=numbra, $
   no_secondary=no_secondary
 
  nbx = n_elements(bx)
  if(NOT keyword_set(no_secondary)) then no_secondary = 0
- if(NOT keyword_set(penumbra)) then penumbra = 0
+ if(NOT keyword_set(numbra)) then numbra = 1
  if(NOT keyword_set(pht_min)) then pht_min = 0
 
  if(NOT defined(limit_source)) then limit_source = 0
@@ -320,8 +346,26 @@ function render, image_pts, cd=cd, ltd=ltd, $
 
  if(NOT keyword_set(ddmap)) then ddmap = objarr(nbx)
  if(NOT keyword_set(md)) then md = objarr(nbx)
+ ndd = n_elements(ddmap)
 
 
+ ;-----------------------------------------------
+ ; determine number of channels in output image
+ ;-----------------------------------------------
+ nz = lonarr(ndd)
+ for i=0, ndd-1 do $
+  begin
+   dim = dat_dim(ddmap[i])
+   if(n_elements(dim EQ 3)) then nz[i] = dim[2]
+  end
+ nzmax = max(nz)
+ nz = 1
+ if(nzmax GT 1) then nz = nzmax
+
+
+ ;-----------------------------------------------
+ ; store data
+ ;-----------------------------------------------
  if(nbx EQ 0) then bx = 0
  data = { $
 		cd		:	cd, $
@@ -330,8 +374,9 @@ function render, image_pts, cd=cd, ltd=ltd, $
 		ddmap		:	ddmap, $
 		md		:	md, $
 		sample		:	sample, $
+		nz		:	nz, $
 		no_secondary	:	no_secondary, $
-		penumbra	:	penumbra, $
+		numbra		:	numbra, $
 		limit_source	:	limit_source, $
 		standoff	:	standoff, $
 		pht_min		:	pht_min, $
@@ -340,24 +385,27 @@ function render, image_pts, cd=cd, ltd=ltd, $
 	}
 
 
- map_size = n_elements(image_pts)/2
- pc_size = long(pc_size<map_size)
- npc = map_size/pc_size
- if(map_size mod pc_size NE 0) then npc = npc + 1
+ ;-----------------------------------------------
+ ; set up output map
+ ;-----------------------------------------------
+ render_size = n_elements(image_pts)/2
+ pc_size = long(pc_size<render_size)
+ npc = render_size/pc_size
+ if(render_size mod pc_size NE 0) then npc = npc + 1
 
  sample2 = sample*sample
+ map = dblarr(render_size, nz)
 
  ;----------------------------------------
  ; perform ray tracing piece-by-piece
  ;----------------------------------------
- map = dblarr(map_size)
  for i=0, npc-1 do $
   begin
    ;------------------------------------
    ; determine the size of this piece
    ;------------------------------------
    size = pc_size
-   if(i EQ npc-1) then size = map_size - (npc-1)*pc_size
+   if(i EQ npc-1) then size = render_size - (npc-1)*pc_size
 
    ;------------------------------------
    ; resample this grid piece
@@ -371,7 +419,9 @@ function render, image_pts, cd=cd, ltd=ltd, $
    ;- - - - - - - - - - - - - - - - - - - 
    ; create subsampled grid
    ;- - - - - - - - - - - - - - - - - - - 
-   if(show) then plots, pc_image_pts, psym=1, col=ctred()
+;device, set_graphics=6
+;   if(show) then plots, pc_image_pts, psym=1, col=ctgray()
+;device, set_graphics=3
 
    dxy = gridgen([sample, sample], /double, /center)/sample
    dxy = dxy[linegen3z(2,sample2,pc_size)]
@@ -380,7 +430,7 @@ function render, image_pts, cd=cd, ltd=ltd, $
    pc_image_pts = pc_image_pts[linegen3z(2,pc_size,sample2)]
    pc_image_pts = reform(pc_image_pts + dxy, 2,sample2*pc_size)
 
-   if(show) then plots, pc_image_pts, psym=3, col=ctgreen()
+;   if(show) then plots, pc_image_pts, psym=3, col=ctgreen()
 
    ;- - - - - - - - - - - - - - - - - - - 
    ; trace this piece
@@ -391,17 +441,21 @@ function render, image_pts, cd=cd, ltd=ltd, $
      plots, pc_image_pts, psym=3, col=ctgray(0.25)
      device, set_graphics=3
     end
-   piece = rdr_piece(data, pc_image_pts)
+   piece_sample = rdr_piece(data, pc_image_pts)
 
    ;- - - - - - - - - - - - - - - - - - - - - 
    ; average over samples and add to map
    ;- - - - - - - - - - - - - - - - - - - - -
-   piece = reform(piece, pc_size, sample2, /over)
-   piece = total(piece,2)/(sample2)
+   piece = dblarr(pc_size, nz)
+   for j=0, nz-1 do $
+    begin
+     _piece = reform(piece_sample[*,j], pc_size, sample2, /over)
+     piece[*,j] = total(_piece,2)/(sample2)
+    end
 
-   map[ii] = piece
+
+   map[ii,*] = piece
   end
-
 
  return, map
 end

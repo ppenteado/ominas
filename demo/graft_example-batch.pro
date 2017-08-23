@@ -161,6 +161,12 @@ pg_draw, ring_ptd, col=ctorange()
 ;  GRIM is concerned.  This would have been way better if you had just 
 ;  specified these as overlays in your call to GRIM.  Now you have wasted 
 ;  your time and GRIM's.
+;
+;    graft, center_ptd, col=ctwhite(), psym=1;, plabel=cor_name(pd)
+;    graft, limb_ptd, col=ctyellow()
+;    graft, term_ptd, col=ctred()
+;    graft, ring_ptd, col=ctorange()
+;
 ;-
 ;-------------------------------------------------------------------------
 graft, center_ptd, col=ctwhite(), psym=1;, plabel=cor_name(pd)

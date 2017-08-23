@@ -49,8 +49,9 @@ pro dat_set_dim, dd, dim, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- _dd.dim = 0
- _dd.dim = dim
+ _dd.dim[*] = 0
+ w = where(dim NE 0)
+ _dd.dim[w] = dim[w]
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

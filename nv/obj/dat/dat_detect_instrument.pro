@@ -77,7 +77,7 @@ function dat_detect_instrument, dd
   begin
    detect_fn = table[i,0]
    ftp = table[i,1]
-   if(filetype EQ ftp) then $
+   if((filetype EQ ftp) OR (ftp EQ '-')) then $
     begin
      string = call_function(detect_fn, dd)
      if(string NE '') then return, string

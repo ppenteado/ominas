@@ -120,7 +120,7 @@ function pg_limb_sector_linear, cd=cd, gbx=_gbx, gd=gd, $
  ;-------------------------------------------
  ; Return outline points
  ;-------------------------------------------
- outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'pg_limb_sector_linear')
+ outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'PG_LIMB_SECTOR_LINEAR')
  cor_set_udata, outline_ptd, 'nw', [nalt]
  cor_set_udata, outline_ptd, 'nl', [nrim]
  cor_set_udata, outline_ptd, 'sample', [sample]

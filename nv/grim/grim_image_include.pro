@@ -174,55 +174,6 @@ end
 
 
 ;=============================================================================
-; grim_render_image
-;
-;=============================================================================
-pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
-
- ;-----------------------------------------
- ; load relevant descriptors
- ;-----------------------------------------
- grim_suspend_events
- cd = grim_get_cameras(grim_data, plane=plane)
- pd = grim_get_planets(grim_data, plane=plane)
- rd = grim_get_rings(grim_data, plane=plane)
- ltd = grim_get_lights(grim_data, plane=plane)
- grim_resume_events
-
-
- ;-----------------------------------------
- ; load maps
- ;-----------------------------------------
- if(NOT keyword_set(*grim_data.dd_map_p)) then dd_map = pg_load_maps(md=md, bx=pd)
- if(keyword_set(dd_map)) then $
-  begin
-   *grim_data.dd_map_p = dd_map
-   *grim_data.md_map_p = md
-  end
-
-
- ;-----------------------------------------
- ; render
- ;-----------------------------------------
- bx = append_array(pd, rd)
- dd_map = *grim_data.dd_map_p
- md = *grim_data.md_map_p
-
- stat = pg_render(/psf, /nodd, show=plane.render_show, $
-                    cd=cd, bx=bx, ltd=ltd, md=md, ddmap=dd_map, map=map, $
-                    pht=plane.render_pht_min, $
-                    sample=plane.render_sample, $
-                    image_ptd=image_pts)
-
- 
- image_pts = reform(image_pts, 2, n_elements(map), /over)
- dat_set_data, plane.dd, map
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_image
 ;
 ;=============================================================================

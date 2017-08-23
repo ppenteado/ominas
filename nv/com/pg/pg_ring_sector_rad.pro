@@ -227,7 +227,7 @@ function pg_ring_sector_rad, cd=cd, dkx=dkx, gd=gd, $
  dsk_outline_pts[*,1] = rectify_angles(dsk_outline_pts[*,1])
 
  outline_ptd = pnt_create_descriptors(points = outline_pts, $
-                      desc = 'pg_ring_sector_rad', $
+                      desc = 'PG_RING_SECTOR_RAD', $
                       data = transpose(dsk_outline_pts))
  cor_set_udata, outline_ptd, 'nrad', [nrad]
  cor_set_udata, outline_ptd, 'nlon', [nlon]

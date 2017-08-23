@@ -99,7 +99,7 @@ function pg_bad_data, dd, dropout=dropout, sat=sat, mask=mask, extend=extend, $
  ;---------------------------------------
  ; set up the POINT object
  ;---------------------------------------
-  ptd = pnt_create_descriptors(points = p, desc = 'bad_data')
+  ptd = pnt_create_descriptors(points = p, desc = 'BAD_DATA')
 
  return, ptd
 end

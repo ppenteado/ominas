@@ -89,6 +89,7 @@ function map_image_to_map_rectangular, md, image_pts, valid=valid
  a = sz*sc*units
 
  lon = (image_pts[0,*,*] - origin[0,*,*])/a[1,*,*] + center[1,*,*]
+; maybe validity test should be on image points
 
  valid = where((lon-center[1,*,*] GE -!dpi) AND (lon-center[1,*,*] LE !dpi))
  if(valid[0] EQ -1) then return, 0

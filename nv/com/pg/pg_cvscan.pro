@@ -293,7 +293,7 @@ function pg_cvscan, dd, algorithm=algorithm, cd=cd, bx=bx, gd=gd, object_ptd, $
        if(tsub[0] NE -1) then flags[tsub] = flags[tsub] OR PTD_MASK_INVISIBLE
 
        scan_ptd[i] = pnt_create_descriptors(points = scan_pts_all, $
-                          desc = 'cvscan', $
+                          desc = 'CVSCAN', $
                           data = scan_data, $
                           flags = flags, $
                           tags = tags)

@@ -109,7 +109,7 @@ function pg_footprint, cd=cd, bx=bx, dd=dd, gd=gd, clip=clip, $
 
      footprint_ptd[i] = $
         pnt_create_descriptors(name = cor_name(bx0), $
-              desc = cor_class(bx0) + '_footprint', $
+              desc = cor_class(bx0) + '_FOOTPRINT', $
               gd = {bx:bx0, cd:cd[0]}, $
               assoc_xd = bx0, $
               vectors = inertial_pts, $

@@ -48,6 +48,21 @@ end
 
 
 ;=============================================================================
+; grim_ptd
+;
+;=============================================================================
+function grim_ptd, plane, type=_type, _ref_extra=keys
+
+ ptdps = *plane.overlay_ptdps
+ for i=0, n_elements(ptdps)-1 do ptd = append_array(ptd, *ptdps[i])
+
+ return, ptd
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_gd
 ;
 ;=============================================================================
@@ -486,6 +501,54 @@ function grim_get_menu_id, grim_data, desc
 
  w = where(strpos(menu_desc, desc) NE -1)
  return, menu_ids[w[0]]
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_menu_value
+;
+;=============================================================================
+function grim_get_menu_value, grim_data, name, suffix=suffix
+
+ if(NOT keyword_set(suffix)) then suffix = ''
+ id = grim_get_menu_id(grim_data, name)
+
+ widget_control, id, get_value=s
+
+ ss = str_ext(s, '[', ']')
+
+ return, long(strmid(ss, 0, strlen(ss)-strlen(suffix)))
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_set_menu_value
+;
+;=============================================================================
+pro grim_set_menu_value, grim_data, name, value, suffix=suffix, len=len
+
+ if(NOT keyword_set(suffix)) then suffix = ''
+ 
+ id = grim_get_menu_id(grim_data, name)
+
+ widget_control, id, get_value=s
+
+ ss = str_ext(s, '[', ']')
+
+ sval = strtrim(value,2)
+ if(keyword_set(len)) then $
+  begin
+   sval = strmid(sval, 0, len)
+   if(keyword_set(suffix)) then sval = strmid(sval, 0, len-strlen(suffix))
+  end
+ 
+ sss = strep_s(s, ss, sval+suffix)
+
+ widget_control, id, set_value=sss
 end
 ;=============================================================================
 

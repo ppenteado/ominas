@@ -23,7 +23,7 @@
 
 ;-------------------------------------------------------------------------
 ;+
-; OBERVATION PARAMETERS
+; OBSERVATION PARAMETERS
 ;
 ;  Here we set basic parameters of the observation; start and stop times,
 ;  number of time steps, name of instrument.  Note that the times could also
@@ -109,7 +109,7 @@ grim, dd, cd=cd, order=1, xsize=768, ysize=768, /activate, plt_distmax=const_get
              'limb:SATURN', $
              'terminator:SATURN', $
              'planet_grid:SATURN', $
-             'ring'], frame='ring'
+             'ring'], frame='ring', /render_auto
 
 
 stop, '=== Auto-example complete.  Use cut & paste to continue.'

@@ -536,6 +536,17 @@ pro gr_phttool_event, event
 	  grpht_refresh_fn, data, 'phase'
 	end
 
+  ;-------------------------------------------------------------
+  ; 'Ok' button --
+  ;  Apply the correction using the current settings and exit.
+  ;-------------------------------------------------------------
+  'OK' : $
+	begin
+	  grpht_apply_correction_primary, grim_data, data, phtd
+	  widget_control, data.base, /destroy
+	  return
+	end
+
   ;---------------------------------------------------------
   ; 'Apply' button --
   ;  Apply the correction using the current settings.
@@ -662,6 +673,7 @@ pro gr_phttool, top
 	  '2, TEXT,, LABEL_LEFT=k2 :, WIDTH=20, TAG=phase_parm2', $
 
 	'1, BASE,, ROW', $
+	  '0, BUTTON, Ok,, TAG=ok', $
 	  '0, BUTTON, Apply,, TAG=apply', $
 	  '0, BUTTON, Apply All,, TAG=apply_all', $
 	  '2, BUTTON, Close, QUIT, TAG=close']

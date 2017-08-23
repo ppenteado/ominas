@@ -834,12 +834,15 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
 ;   mg = 0.03
 ;   plot, [0], [0], /noerase, /data, pos=[mg,mg, 1.0-mg,1.0-mg]
 
+   cd = grim_xd(plane, /cd)
 
 
    ;----------------------------
    ; main window image outline
    ;----------------------------
-   dim = dat_dim(plane.dd)
+   if(keyword_set(cd)) then dim = image_size(cd) $
+   else dim = dat_dim(plane.dd)
+
    xsize = dim[0]
    ysize = dim[1]
 
@@ -850,7 +853,6 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
    ;----------------------------
    ; optic axis 
    ;----------------------------
-   cd = grim_xd(plane, /cd)
    if(keyword_set(cd)) then $
     if(cor_class(cd) EQ 'CAMERA') then $
      begin
@@ -1030,8 +1032,6 @@ end
 function grim_match_overlays, ptd, ptd0
 
 
-;print, pnt_desc(ptd)
-;stop
  ;----------------------------------------------------------
  ; narrow by comparing descriptions, names, and assoc xds
  ;----------------------------------------------------------
@@ -1134,6 +1134,9 @@ pro grim_update_points, grim_data, ptd0, ptd, plane=plane
    w = grim_match_overlays(ptd[i], ptd0)
    if(w[0] NE -1) then $
     begin
+;if(cor_name(ptd[i]) EQ 'shadow-MOON') then print, ptd0[w], ptd[i]
+; problem is there are two matches for the overlay; the second one is
+;  overwriting the correct first one.  Why two matches???
      if(n_elements(w) EQ 1) then grim_copy_overlay, ptd0[w], ptd[i]
      nv_free, ptd[i]
     end
