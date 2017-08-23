@@ -158,10 +158,10 @@ function pg_reflection_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
             reflection_ptd[i,j] = $
                  pnt_create_descriptors(points = points, $
          	   flags = flags, $
-                   name = 'reflection-' + cor_name(object_ptd[j]), $
+                   name = 'REFLECTION-' + cor_name(object_ptd[j]), $
                    assoc_xd = xd, $
-                   task = 'pg_reflection_disk', $
-	           desc = 'disk_reflection', $
+                   task = 'PG_REFLECTION_DISK', $
+	           desc = 'DISK_REFLECTION/' + pnt_desc(object_ptd[j]), $
                    gd = {dkx:dkx[i,0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
                    vectors = inertial_pts)
            end

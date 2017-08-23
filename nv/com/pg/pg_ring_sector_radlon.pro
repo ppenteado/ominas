@@ -125,7 +125,7 @@ function pg_ring_sector_radlon, cd=cd, dkx=dkx, gd=gd, $
  if(NOT keyword_set(nodsk)) then dsk_outline_pts = image_to_disk(cd, rd, outline_pts)
 
  outline_ptd = pnt_create_descriptors(points = outline_pts, $
-                      desc = 'pg_ring_sector_rad', $
+                      desc = 'PG_RING_SECTOR_RAD', $
                       data = transpose(dsk_outline_pts))
  cor_set_udata, outline_ptd, 'nrad', [nrad]
  cor_set_udata, outline_ptd, 'nlon', [nlon]

@@ -217,6 +217,12 @@ function drd_read, filename, data, header, $
    _typecode = 1
   end
 
+; if(NOT defined(_dim)) then $
+;  begin
+;   nv_message, /con, 'WARNING: Dimensions not determined.'
+;   _dim = 0
+;  end
+
  ;---------------------------------
  ; check for multiple data arrays
  ;---------------------------------

@@ -265,7 +265,7 @@ function grim_compute_planet_grid, map=map, clip=clip, hide=hide, $
  grim_message, /clear
 
  gbx = cor_select(bx, 'GLOBE', /class)
- if(NOT keyword_set(gbx)) then return, 0
+; if(NOT keyword_set(gbx)) then return, 0
 
  cd = cor_dereference_gd(gd, /cd)
  od = cor_dereference_gd(gd, /od)
@@ -696,6 +696,7 @@ function grim_compute_shadow, map=map, clip=clip, hide=hide, $
  ;-------------------------------------------------------------------
  result = shadow_ptd
  if(NOT hide) then result = append_array(result, hide_ptd)
+;stop
 
  grim_print, 'Done', /append
  return, result

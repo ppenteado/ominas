@@ -215,7 +215,7 @@ _ref_extra=ex
     begin
      dd = cor_cull(append_array(dd, (ddi=plane.dd)))
      cd = cor_cull(append_array(cd, (cdi=grim_xd(plane, /cd))))
-     if(cor_class(cd) EQ 'MAP') then md = cd
+     if(cor_class(cd[0]) EQ 'MAP') then md = cd
      pd = cor_cull(append_array(pd, (pdi=grim_xd(plane, /pd))))
      rd = cor_cull(append_array(rd, (rdi=grim_xd(plane, /rd))))
      sd = cor_cull(append_array(sd, (sdi=grim_xd(plane, /sd))))

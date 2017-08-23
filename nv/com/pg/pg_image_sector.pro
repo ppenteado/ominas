@@ -232,7 +232,7 @@ function pg_image_sector, sample=sample, $
  ;-------------------------------------------
  ; Return outline points
  ;-------------------------------------------
- outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'pg_image_sector')
+ outline_ptd = pnt_create_descriptors(points = outline_pts, desc = 'PG_IMAGE_SECTOR')
  cor_set_udata, outline_ptd, 'nl', [nl]
  cor_set_udata, outline_ptd, 'nw', [nw]
  cor_set_udata, outline_ptd, 'sample', [sample]

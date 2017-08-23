@@ -119,7 +119,7 @@ function pg_resloc, dd, edge=edge, model=model, $
  tags = ['scan_cc']
 
  points_ptd = pnt_create_descriptors(points = points, $
-                     desc = 'reseau_location', $
+                     desc = 'RESEAU_LOCATION', $
                      data = scan_data, $
                      tags = tags)
 

@@ -529,7 +529,7 @@ end
 ; grim_set_menu_value
 ;
 ;=============================================================================
-pro grim_set_menu_value, grim_data, name, value, suffix=suffix
+pro grim_set_menu_value, grim_data, name, value, suffix=suffix, len=len
 
  if(NOT keyword_set(suffix)) then suffix = ''
  
@@ -538,7 +538,15 @@ pro grim_set_menu_value, grim_data, name, value, suffix=suffix
  widget_control, id, get_value=s
 
  ss = str_ext(s, '[', ']')
- sss = strep_s(s, ss, strtrim(value,2)+suffix)
+
+ sval = strtrim(value,2)
+ if(keyword_set(len)) then $
+  begin
+   sval = strmid(sval, 0, len)
+   if(keyword_set(suffix)) then sval = strmid(sval, 0, len-strlen(suffix))
+  end
+ 
+ sss = strep_s(s, ss, sval+suffix)
 
  widget_control, id, set_value=sss
 end

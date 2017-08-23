@@ -42,6 +42,7 @@
 ;	sbx:           Body descriptor for secondary ray tracing.  If set, 
 ;	               image_pts and cd are not used; instead, secondary rays 
 ;	               are traced from the given hit_matrix points to sbx.
+;	               At present, only one sbx is allowed.
 ;
 ;	hit_matrix:    Body-frame points from prior call, to be used as
 ;	               source points for secondary rays.  
@@ -173,46 +174,47 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
      ; trace the rays
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      p = surface_intersect(bx[i], v[ii,*], r[ii,*], hit=hit)
-     nii = n_elements(ii)
-     hits[ii,*] = p[0:nii-1,*]
-     fhits[ii,*] = p[nii:*,*]
-
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; add closest result to intercept map
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     if(hit[0] NE -1) then $
+     if(keyword_set(p)) then $
       begin
-       hit = ii[hit]
+       nii = n_elements(ii)
+       hits[ii,*] = p[0:nii-1,*]
+       fhits[ii,*] = p[nii:*,*]
 
-
-
-;       range = v_mag(v - hits)
-;       xhit = complement(range, hit)
-;       if(xhit[0] NE -1) then range[xhit] = 1d100
-
-;       hit_list = append_array(hit_list, i, /pos)
-;       hit_matrix = $
-;         append_array(hit_matrix, reform(hits, 1,3,nray,/over))
-;       range_matrix = $
-;               append_array(range_matrix, reform(range, 1,nray, /over))
-
-
-
-
-
-       range = v_mag(v[hit,*] - hits[hit,*])
-       ww = where(range LT range_matrix[hit])
-
-       if(ww[0] NE -1) then $
+       ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+       ; add closest result to intercept map
+       ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+       if(hit[0] NE -1) then $
         begin
-         hit_matrix[hit[ww],*] = hits[hit[ww],*]
-         far_matrix[hit[ww],*] = fhits[hit[ww],*]
-         hit_indices[hit[ww]] = i
-         hit_list = append_array(hit_list, i, /pos)
-         range_matrix[hit[ww]] = range[ww]
+         hit = ii[hit]
+
+
+
+;         range = v_mag(v - hits)
+;         xhit = complement(range, hit)
+;         if(xhit[0] NE -1) then range[xhit] = 1d100
+
+;         hit_list = append_array(hit_list, i, /pos)
+;         hit_matrix = $
+;           append_array(hit_matrix, reform(hits, 1,3,nray,/over))
+;         range_matrix = $
+;                 append_array(range_matrix, reform(range, 1,nray, /over))
+
+
+
+
+
+         range = v_mag(v[hit,*] - hits[hit,*])
+         ww = where(range LT range_matrix[hit])
+
+         if(ww[0] NE -1) then $
+          begin
+           hit_matrix[hit[ww],*] = hits[hit[ww],*]
+           far_matrix[hit[ww],*] = fhits[hit[ww],*]
+           hit_indices[hit[ww]] = i
+           hit_list = append_array(hit_list, i, /pos)
+           range_matrix[hit[ww]] = range[ww]
+          end
         end
-
-
       end
     end
   end
@@ -273,7 +275,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
  else if(keyword_set(sbx)) then $
   begin
    ;- - - - - - - - - - - - - - - - - - - - -
-   ; compute rays to secondary center
+   ; select rays to compute
    ;- - - - - - - - - - - - - - - - - - - - -
    w = where(hit_indices NE -1)
    if(w[0] EQ -1) then return
@@ -286,6 +288,13 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
 
    view_pts = dblarr(nray,3)
    ray_pts = dblarr(nray,3)
+
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; select bodies to compute
+   ;- - - - - - - - - - - - - - - - - - - - -
+   w = where(bx NE sbx[0])
+   bx = bx[w]
+   nbx = n_elements(bx)
 
    ;- - - - - - - - - - - - - - - - - 
    ; compute sources

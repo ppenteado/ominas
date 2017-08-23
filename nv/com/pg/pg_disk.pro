@@ -148,8 +148,8 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
 
          outer_disk_ptd[i] = $
             pnt_create_descriptors(name = cor_name(xd) + '-OUTER', $
-		    task = 'pg_disk', $
-		    desc = 'disk_outer', $
+		    task = 'PG_DISK', $
+		    desc = 'DISK_OUTER', $
 ;		    gd = {dkx:dkx[i,0], gbx:gbx[0], cd:cd[0]}, $
 		    gd = {dkx:dkx[i,0], cd:cd[0]}, $
 		    assoc_xd = xd, $
@@ -204,8 +204,8 @@ function pg_disk, cd=cd, dkx=dkx, dd=dd, gd=gd, clip=clip, cull=cull, $
 
          inner_disk_ptd[i] = $
             pnt_create_descriptors(name = cor_name(xd) + '-INNER', $
-		    desc = 'disk_inner', $
-		    task = 'pg_disk', $
+		    desc = 'DISK_INNER', $
+		    task = 'PG_DISK', $
 ;		    gd = {dkx:dkx[i,0], gbx:gbx[0], cd:cd[0]}, $
 		    gd = {dkx:dkx[i,0], cd:cd[0]}, $
 		    assoc_xd = xd, $
