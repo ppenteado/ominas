@@ -109,7 +109,7 @@ function pg_cusps, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, epsilon=epsilon, reveal=
  ;-----------------------------------------------
  ; contruct data set description
  ;-----------------------------------------------
- desc = 'cusp'
+ desc = 'CUSP'
  hide_flags = make_array(npoints, val=PTD_MASK_INVISIBLE)
 
  ;---------------------------------------------------------

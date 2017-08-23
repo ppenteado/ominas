@@ -47,7 +47,7 @@ function get_object_by_name, xds, name
  if(NOT keyword_set(name)) then return, xds
 
  names = cor_name(xds)
- w = where(names EQ strupcase(name[0]))
+ w = nwhere(names, strupcase(name))
  if(w[0] EQ -1) then return, 0
 
  return, xds[w]

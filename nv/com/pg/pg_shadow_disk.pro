@@ -160,10 +160,10 @@ function pg_shadow_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
             shadow_ptd[i,j] = $
                pnt_create_descriptors(points = points, $
          	 flags = flags, $
-           	 name = 'shadow-' + cor_name(object_ptd[j]), $
+           	 name = 'SHADOW-' + cor_name(object_ptd[j]), $
            	 assoc_xd = xd, $
-           	 task = 'pg_shadow_disk', $
-	         desc = 'disk_shadow', $
+           	 task = 'PG_SHADOW_DISK', $
+	         desc = 'DISK_SHADOW/' + pnt_desc(object_ptd[j]), $
            	 gd = {dkx:dkx[i,0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
            	 vectors = inertial_pts)
            end

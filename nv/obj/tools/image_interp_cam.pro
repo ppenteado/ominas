@@ -19,7 +19,7 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	image:	An array of image point arrays.
+;	image:	Image array.
 ;
 ;	grid_x:	The grid of x positions for interpolation
 ;
@@ -85,13 +85,24 @@ function image_interp_cam, cd=cd, image, grid_x, grid_y, args, valid=valid, $
    mean = 0
   end
 
- dim = size(grid_x, /dim)
+ dim_image = size(image, /dim)
+ nz = 1
+ if(n_elements(dim_image) EQ 3) then nz = dim_image[2]
+
+ grid_dim = size(grid_x, /dim)
+ if(n_elements(grid_dim) EQ 1) then $
+  begin
+   if(nz EQ 1) then return, total(image)/product(dim_image) $
+   else return, reform(total(total(image, 1), 1) / $
+                                       product(dim_image[0:1]), 1, nz, /over)
+  end
+
  nxy = n_elements(grid_x)
- result = make_array(dim=dim, val=0d)
+ if(nz EQ 1) then result = dblarr(grid_dim) $
+ else result = dblarr([grid_dim[0:1],nz])
 
  grid_xy = [reform(grid_x, 1, nxy), reform(grid_y, 1, nxy)]
- dim = size(image, /dim)
- w = in_image(0, xmin=0, ymin=0, xmax=dim[0]-1, ymax=dim[1]-1, grid_xy, slop=1)
+ w = in_image(0, xmin=0, ymin=0, xmax=dim_image[0]-1, ymax=dim_image[1]-1, grid_xy, slop=1)
  if(w[0] NE -1) then $
   begin
    _grid_x = grid_x[w]
@@ -101,9 +112,9 @@ function image_interp_cam, cd=cd, image, grid_x, grid_y, args, valid=valid, $
                                        image, _grid_x, _grid_y, args, $
                                        k=k, psf_fn='cam_psf', psf_data=cd, $
                                        maxk=maxk, mask=mask, zmask=zmask, valid=valid)
-   result[w] = _result
+   for i=0, nz-1 do result[w + i*nxy] = _result[*,i]
   end
 
- return, result
+ return, reform(result)
 end
 ;==============================================================================

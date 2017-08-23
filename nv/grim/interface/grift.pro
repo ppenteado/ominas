@@ -91,6 +91,7 @@
 pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
          dd=dd, $
          cd=cd, $
+         md=md, $
          pd=pd, $
          rd=rd, $
          sd=sd, $
@@ -121,6 +122,7 @@ _ref_extra=ex
  ;--------------------------------------------
  dd = !null
  cd = !null
+ md = !null
  pd = !null
  rd = !null
  sd = !null
@@ -213,6 +215,7 @@ _ref_extra=ex
     begin
      dd = cor_cull(append_array(dd, (ddi=plane.dd)))
      cd = cor_cull(append_array(cd, (cdi=grim_xd(plane, /cd))))
+     if(keyword_set(cd)) then if(cor_class(cd[0]) EQ 'MAP') then md = cd
      pd = cor_cull(append_array(pd, (pdi=grim_xd(plane, /pd))))
      rd = cor_cull(append_array(rd, (rdi=grim_xd(plane, /rd))))
      sd = cor_cull(append_array(sd, (sdi=grim_xd(plane, /sd))))

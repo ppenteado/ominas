@@ -66,8 +66,10 @@
 ;	npsf:         Width of psf array to use if PSF is obtained via cd.
 ;	              Default is 10.
 ;
-;	penumbra:     If set, lighting rays are traced to random points on 
-;	              each secondary body rather then the center.
+;	numbra:       Number of rays to trace to the secondary bodies.
+;	              Default is 1.  The first ray is traced to the body
+;	              center; wach additional ray is traced to a random point 
+;	              within the body.
 ;
 ;	no_secondary: If set, no secondary ray tracing is performed,  
 ;	              resulting in no shadows.
@@ -81,6 +83,8 @@
 ;
 ;	mask_width:   Width of trace mask.  Default is 512.  If set to zero, 
 ;	              no masking is performed.
+;
+;	no_mask:      If set, a mask is not used.
 ;
 ;	no_maps:      If set, maps are not loaded.
 ;
@@ -115,8 +119,9 @@ function pg_render, cd=cd, ltd=ltd, $
        bx=bx, ddmap=ddmap, md=md, dd=dd, gd=gd, sample=sample, pc_size=pc_size, $
        show=show, pht_min=pht_min, no_pht=no_pht, map=image, $
        standoff=standoff, limit_source=limit_source, nodd=nodd, $
-       psf=psf, npsf=npsf, penumbra=penumbra, no_secondary=no_secondary, $
-       image_ptd=_image_ptd, mask_width=mask_width, no_maps=no_maps
+       psf=psf, npsf=npsf, numbra=numbra, no_secondary=no_secondary, $
+       image_ptd=_image_ptd, mask_width=mask_width, no_maps=no_maps, $
+       no_mask=no_mask
  
 
  if(keyword_set(_image_ptd)) then image_ptd = _image_ptd
@@ -165,31 +170,32 @@ function pg_render, cd=cd, ltd=ltd, $
  ;----------------------------------------
  ; mask rays
  ;----------------------------------------
- if(keyword_set(mask_width)) then $
-  begin
-   ;- - - - - - - - - - - - - - - - -
-   ; create mask
-   ;- - - - - - - - - - - - - - - - -
-   xmin = min(image_pts[0,*], max=xmax)
-   ymin = min(image_pts[1,*], max=ymax)
-   mask_cd = nv_clone(cd)
-   cam_subimage, mask_cd, [xmin,ymin], [xmax-xmin+1, ymax-ymin+1]
-   r = (mask_width/(cam_size(mask_cd))[0])[0]
-   cam_resize, mask_cd, cam_size(mask_cd)*r
-   result = pg_mask(/nodd, cd=mask_cd, bx=bx, mask=mask, pbx=2, np=100)
+ if(NOT keyword_set(no_mask)) then $
+  if(keyword_set(mask_width)) then $
+   begin
+    ;- - - - - - - - - - - - - - - - -
+    ; create mask
+    ;- - - - - - - - - - - - - - - - -
+    xmin = min(image_pts[0,*], max=xmax)
+    ymin = min(image_pts[1,*], max=ymax)
+    mask_cd = nv_clone(cd)
+    cam_subimage, mask_cd, [xmin,ymin], [xmax-xmin+1, ymax-ymin+1]
+    r = (mask_width/(cam_size(mask_cd))[0])[0]
+    cam_resize, mask_cd, cam_size(mask_cd)*r
+    result = pg_mask(/nodd, cd=mask_cd, bx=bx, mask=mask, pbx=2, np=100)
 
-   ;- - - - - - - - - - - - - - - - -
-   ; apply mask to ray grid
-   ;- - - - - - - - - - - - - - - - -
-   ray_mask_pts = inertial_to_image(mask_cd, $
+    ;- - - - - - - - - - - - - - - - -
+    ; apply mask to ray grid
+    ;- - - - - - - - - - - - - - - - -
+    ray_mask_pts = inertial_to_image(mask_cd, $
                     image_to_inertial(cd, image_pts))
-   ray_mask_pts = reform(ray_mask_pts, /over)
+    ray_mask_pts = reform(ray_mask_pts, /over)
 
-   ii = where(mask[ray_mask_pts[0,*],ray_mask_pts[1,*]] EQ 1)
-   if(ii[0] NE -1) then image_pts = image_pts[*,ii]
+    ii = where(mask[ray_mask_pts[0,*],ray_mask_pts[1,*]] EQ 1)
+    if(ii[0] NE -1) then image_pts = image_pts[*,ii]
 
-   nv_free, mask_cd
-  end
+    nv_free, mask_cd
+   end
 
 
 
@@ -201,12 +207,20 @@ function pg_render, cd=cd, ltd=ltd, $
               bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
               show=show, pht_min=pht_min, no_pht=no_pht, $
               standoff=standoff, limit_source=limit_source, $
-              penumbra=penumbra, no_secondary=no_secondary)
+              numbra=numbra, no_secondary=no_secondary)
+ dim = size(map, /dim)
+ nz = 1
+ if(n_elements(dim) EQ 2) then nz = dim[1]
+
  if(keyword_set(nx)) then $
   begin
-   image = dblarr(nx, ny)
-   if(ii[0] NE -1) then image[ii] = map
+   image = dblarr(nx*ny, nz)
+   if(ii[0] NE -1) then image[ii,*] = map
+   image = reform(image, nx, ny, nz)
+   if(nz EQ 1) then image = reform(image, nx, ny)
   end
+
+ 
 
  ;---------------------------------------
  ; apply PSF
@@ -222,7 +236,7 @@ function pg_render, cd=cd, ltd=ltd, $
     ;- - - - - - - - - - - - - - - - - -
     if(NOT keyword_set(psf)) then psf = gauss_2d(0,0, 1, 6,6)
 
-    image = convol(image, psf, /center)
+    for i=0, nz-1 do image[*,*,i] = convol(image[*,*,i], psf, /center)
    end
 
 

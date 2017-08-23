@@ -46,7 +46,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_get_radius, dkd, ta, one_to_one=one_to_one
+function dsk_get_radius, dkd, ta
 @core.include
 
  r_inner = dsk_get_edge_radius(dkd, ta, /inner)

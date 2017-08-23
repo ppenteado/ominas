@@ -36,9 +36,9 @@
 ;		  keyword.
 ;
 ;	nd:       If set, the samples input is taken to be an ND coordinate
-;	          rather than a 1D subscript.  dat_data can normally tell
+;	          rather than a 1D subscript.  DAT_DATA can normally tell
 ;	          the difference automatically, but there is an ambiguity
-;	          if a single ND point is requested.  In that case, dat_data
+;	          if a single ND point is requested.  In that case, DAT_DATA
 ;	          interprets that as an array of 1D subscripts, unless /nd
 ;	          is set.
 ;

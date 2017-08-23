@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Creates new data descriptors that point to a subarray slices in a given
+;	Creates new data descriptors that point to subarray slices in a given
 ;	data descriptor.
 ;
 ;
