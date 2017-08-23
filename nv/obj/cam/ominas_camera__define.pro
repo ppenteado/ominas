@@ -27,13 +27,12 @@ end_keywords)
  if(keyword_set(fn_image_to_focal)) then $
                           self.fn_image_to_focal=decrapify(fn_image_to_focal[ii]) $
  else self.fn_image_to_focal = decrapify('cam_image_to_focal_linear')
- if(keyword_set(fn_data_p)) then self.fn_data_p=decrapify(fn_data_p[ii])
  if(keyword_set(fn_body_to_image)) then $
    self.fn_body_to_image=decrapify(fn_body_to_image[ii]) 
  if(keyword_set(fn_body_to_inertial)) then $
    self.fn_body_to_inertial=decrapify(fn_body_to_inertial[ii])
 
-;;; if(keyword_set(fi_data)) then cam_set_fi_data, cd0, fi_data[ii], /noevent
+ if(keyword_set(fi_data)) then cam_set_fi_data, cd0, fi_data[ii], /noevent
 
  return, 1
 end
@@ -161,7 +160,6 @@ pro ominas_camera__define
 	fn_psf:		'', $			; Point-spread fn.
 
 	fn_focal_to_image:   '', $		; user procedures to tranform
-	fn_data_p:	 nv_ptr_new(), $		; data for functions
 	fn_body_to_image:'',$
   ;fn_body_to_inertial:'',$
 	fn_image_to_focal:   '' $		; between focal and image
