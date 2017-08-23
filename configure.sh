@@ -1061,8 +1061,6 @@ Mission Packages:
            About 833 MB as of Dec/2016
 	6) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
-	7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
-           Subsetted, about 8 GB as of Jan/2017
 Data:
         8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
            About 22 GB as of Dec/2016
@@ -1164,7 +1162,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 7 8 9 10"
+    ans="1 2 3 4 5 6 8 9 10"
   else
     ans="all"
   fi
@@ -1191,7 +1189,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 7 8 9 10 2 1"
+    ans="3 4 5 6 8 9 10 2 1"
   else
     ans="uall"
   fi
@@ -1211,7 +1209,7 @@ do
       demost="CONFIGURED"
       ominas_auto_u=1
       ominas_nodel=2
-      #ans="3 4 5 6 7 8 9 10"
+      #ans="3 4 5 6 8 9 10"
     fi
     if [ "${ominas_auto_u}" == "1" ] && [ "${ominas_nodel}" != "2" ] ; then
       DFLAG="false"
@@ -1220,7 +1218,7 @@ do
   fi
 done
 if [ "${ominas_nodel}" == "2" ]; then
-  ans="4 5 6 7 8 9 10"
+  ans="4 5 6 8 9 10"
 fi
 for num in $ans
 do
