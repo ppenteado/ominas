@@ -8,31 +8,31 @@ history = 0 / Current history value
 <updates>
 
 / -------------------------------------------------------------------- /
-/ MAP descriptor -- updated Wed Aug 23 10:07:16 2017
+/ MAP descriptor -- updated Wed Aug  2 16:03:48 2017
 / -------------------------------------------------------------------- /
-map_update_time = 2457989.42171296 
+map_update_time = 2457968.66930556 
 map_tasks = '' 
-map_name = 'JUPITER' 
+map_name = 'MOON' 
 map_abbrev = 'MAP' 
 map_tag = 'MD' 
 map_user = '' 
 map_projection = 'RECTANGULAR' 
 map_units(0) = 1.00000000000000 
 map_units(1) = 1.00000000000000 
-map_size(0) = 400 
-map_size(1) = 200 
+map_size(0) = 1440 
+map_size(1) = 720 
 map_scale = 1.00000000000000 
-map_origin(0) = 200.000000000000 
-map_origin(1) = 100.000000000000 
+map_origin(0) = 720.000000000000 
+map_origin(1) = 360.000000000000 
 map_center(0) = 0.00000000000000 
 map_center(1) = 0.00000000000000 
 map_range(0) = -1.00000000000000e+100 
 map_range(1) = 1.00000000000000e+100 
 map_range(2) = -3.14159265358979 
 map_range(3) = 3.14159265358979 
-map_radii(0) = 71492000.0000000 
-map_radii(1) = 71492000.0000000 
-map_radii(2) = 66854000.0000000 
-map_graphic = 0 
-map_west = 0 
-map_rotate = 0 
+map_radii(0) = 1737400.00000000 
+map_radii(1) = 1737400.00000000 
+map_radii(2) = 1737400.00000000 
+map_graphic = 1 
+map_west = 1 
+map_rotate = 5 

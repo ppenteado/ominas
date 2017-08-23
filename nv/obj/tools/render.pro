@@ -289,7 +289,9 @@ function rdr_piece, data, image_pts
    nw = n_elements(w)
    if(w[0] NE -1) then $
     begin
-     if(data.show) then plots, image_pts[*,w], psym=3, col=ctorange()
+;device, set_graphics=6
+;     if(data.show) then plots, image_pts[*,w], psym=3, col=ctwhite()
+;device, set_graphics=3
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; photometry
@@ -417,7 +419,9 @@ function render, image_pts, cd=cd, ltd=ltd, $
    ;- - - - - - - - - - - - - - - - - - - 
    ; create subsampled grid
    ;- - - - - - - - - - - - - - - - - - - 
-   if(show) then plots, pc_image_pts, psym=1, col=ctred()
+;device, set_graphics=6
+;   if(show) then plots, pc_image_pts, psym=1, col=ctgray()
+;device, set_graphics=3
 
    dxy = gridgen([sample, sample], /double, /center)/sample
    dxy = dxy[linegen3z(2,sample2,pc_size)]
@@ -426,7 +430,7 @@ function render, image_pts, cd=cd, ltd=ltd, $
    pc_image_pts = pc_image_pts[linegen3z(2,pc_size,sample2)]
    pc_image_pts = reform(pc_image_pts + dxy, 2,sample2*pc_size)
 
-   if(show) then plots, pc_image_pts, psym=3, col=ctgreen()
+;   if(show) then plots, pc_image_pts, psym=3, col=ctgreen()
 
    ;- - - - - - - - - - - - - - - - - - - 
    ; trace this piece

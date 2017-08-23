@@ -2025,10 +2025,10 @@ pro grim_render, grim_data, plane=plane
  ;------------------------------------------------------------
  if(plane.rendering OR $
       (NOT grim_get_toggle_flag(grim_data, 'RENDER_SPAWN'))) then new_plane = plane $
- else if(NOT keyword_set(new_plane)) then $
-                             new_plane = grim_clone_plane(grim_data, plane=plane)
+ else new_plane = grim_clone_plane(grim_data, plane=plane)
 
  new_plane.rendering = 1
+;; grim_update_menu_toggle, grim_data, 'grim_menu_render_toggle_spawn_event', 0
 
  dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn', /noevent
 
@@ -2057,11 +2057,13 @@ pro grim_render, grim_data, plane=plane
  ;---------------------------------------------------------
  ; perform rendering
  ;---------------------------------------------------------
+ grim_print, grim_data, 'Rendering plane ' + strtrim(plane.pn,2)
  grim_render_image, grim_data, plane=new_plane, image_pts=image_pts
 
  nv_resume_events
 
  grim_refresh, grim_data
+ grim_print, grim_data, 'Done.'
 
 end
 ;=============================================================================
@@ -10752,7 +10754,10 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
    grim_add_xd, grim_data, planes[i].ard_p, ard, assoc_xd=_assoc_xd[i]
    grim_add_xd, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd[i]
    grim_add_xd, grim_data, planes[i].ltd_p, ltd, /one, assoc_xd=_assoc_xd[i]
+
+;   grim_deactivate_xd, planes[i], grim_xd(planes[i])
   end
+
 
 
  ;=========================================================
@@ -10864,12 +10869,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  if(keyword_set(render_auto)) then $
   begin
    grim_set_toggle_flag, grim_data, 'RENDER_AUTO', 1
-;   grim_set_toggle_flag, grim_data, 'RENDER_SPAWN', 0
+   grim_set_toggle_flag, grim_data, 'RENDER_SPAWN', 0
   end
-
-
-; if(grim_get_toggle_flag(grim_data, 'RENDER_AUTO')) then $
-;                                grim_render, grim_data, plane=plane
 
 
  ;----------------------------------------------
@@ -10932,6 +10933,16 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
          'grim_menu_render_enter_sampling_event', render_sampling
    grim_set_menu_value, grim_data, $
          'grim_menu_render_enter_minimum_event', render_minimum, suffix='%'
+  end
+
+
+ ;----------------------------------------------
+ ; initial rendering
+ ;----------------------------------------------
+ if(grim_get_toggle_flag(grim_data, 'RENDER_AUTO')) then $
+  begin
+   for i=0, nplanes-1 do grim_render, grim_data, plane=planes[i]
+   grim_jump_to_plane, grim_data, plane.pn
   end
 
 

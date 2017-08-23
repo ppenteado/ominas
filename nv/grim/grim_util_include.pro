@@ -518,7 +518,7 @@ function grim_get_menu_value, grim_data, name, suffix=suffix
  widget_control, id, get_value=s
 
  ss = str_ext(s, '[', ']')
- 
+
  return, long(strmid(ss, 0, strlen(ss)-strlen(suffix)))
 end
 ;=============================================================================

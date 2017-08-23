@@ -58,7 +58,9 @@ function map_map_to_image, md, _map_pts, valid=valid, nowrap=nowrap, all=all
  pi2 = !dpi/2d
  
  map_pts = _map_pts
- if(_md.west) then map_pts = map_east_to_west(_md, map_pts)
+; if(_md.west) then map_pts = map_east_to_west(_md, map_pts)
+ w = where(_md.west)
+ if(w[0] NE -1) then map_pts[*,*,w] = map_east_to_west(_md, map_pts[*,*,w])
 
  nmap_pts = map_pts
  w = where(finite(_md.pole.lat) + finite(_md.pole.lon) + finite(_md.pole.rot) EQ 3)
