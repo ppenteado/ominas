@@ -26,14 +26,21 @@ function dh_read_pds, dd, label, dim, type, min, max, abscissa=abscissa, $
 
  w = where(names EQ 'IMAGE')
  w = w[0]
+ if (w ne -1) then begin
+   s = pdspar(label, 'LINE_SAMPLES')
+   xsize = long(s[w])
 
- s = pdspar(label, 'LINE_SAMPLES')
- xsize = long(s[w])
+   s = pdspar(label, 'LINES')
+   ysize = long(s[w])
 
- s = pdspar(label, 'LINES')
- ysize = long(s[w])
-
- dim = [xsize, ysize]
+   dim = [xsize, ysize]
+   
+ endif else begin
+   s=strsplit(pdspar(label,'CORE_ITEMS'),'() ,',/extract)
+   xsize=long(s[2])
+   ysize=long(s[1])
+   dim = [xsize, ysize]
+ endelse
 
 ;;; type = pdspar(label, 'SAMPLE_TYPE')
 ;;; need to convert this to IDL type code
@@ -49,7 +56,10 @@ max=0
  ;--------------------------------------------------------
  dat = readpds(filename, /silent)
 
- image = dat.image
+ w=where(tag_names(dat) eq 'IMAGE')
+ if w[0] ne -1 then begin
+   image = dat.image
+ endif else image=dat.qube.core
  type = size(image, /type)
  if(type EQ 8) then image = image.image
  type = size(image, /type)
