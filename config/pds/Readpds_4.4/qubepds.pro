@@ -432,6 +432,7 @@ function obtain_qube_structure, keywds
 	and keywds.axis_name[2] eq 'LINE') then begin order = 2
     endif 
 
+   if array_equal(keywds.axis_name,['BAND','LINE','SAMPLE']) then order=3
    print, 'Order: ',order
 
     ;Qube structure
@@ -440,8 +441,8 @@ function obtain_qube_structure, keywds
     X_line = Make_array(keywds.core_items[0],Type=core_type,/nozero)
     
     ; SX suffix items type
-    suffix_item_type = (order eq 2) ? keywds.band_suffix_type : keywds.sample_suffix_type
-    suffix_item_bytes = (order eq 2) ? keywds.band_suffix_item_bytes : keywds.sample_suffix_item_bytes
+    suffix_item_type = (order ge 2) ? keywds.band_suffix_type : keywds.sample_suffix_type
+    suffix_item_bytes = (order ge 2) ? keywds.band_suffix_item_bytes : keywds.sample_suffix_item_bytes
     suffix_type = obtain_item_idltype(suffix_item_type,suffix_item_bytes)
 
     ; SX suffix plane
@@ -459,9 +460,12 @@ function obtain_qube_structure, keywds
     endif else if (order eq 1) then begin
 	suffix_item_type = keywds.band_suffix_type
 	suffix_item_bytes = keywds.band_suffix_item_bytes
-    endif else begin
+    endif else if (order eq 2) then begin
 	suffix_item_type = keywds.sample_suffix_type
 	suffix_item_bytes = keywds.sample_suffix_item_bytes
+    endif else begin
+      suffix_item_type = keywds.line_suffix_type
+      suffix_item_bytes = keywds.line_suffix_item_bytes      
     endelse
     suffix_type = obtain_item_idltype(suffix_item_type,suffix_item_bytes)
 
@@ -480,6 +484,10 @@ function obtain_qube_structure, keywds
     ; SZ suffix items type
     suffix_item_type = (order eq 0) ? keywds.band_suffix_type : keywds.line_suffix_type
     suffix_item_bytes = (order eq 0) ? keywds.band_suffix_item_bytes : keywds.line_suffix_item_bytes
+    if order eq 3 then begin
+      suffix_item_type=keywds.sample_suffix_type
+      suffix_item_item_bytes=keywds.sample_suffix_item_bytes
+    endif
     suffix_type = obtain_item_idltype(suffix_item_type,suffix_item_bytes)
 
     if (keywds.suffix_items[2] gt 0) then begin
