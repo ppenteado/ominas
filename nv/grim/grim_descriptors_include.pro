@@ -26,13 +26,13 @@ function grim_compute_fov, grim_data, plane, cov=cov
  ;-----------------------------------------------------------------
  cov = (convert_coord(/device, /to_data, !d.x_size/2, !d.y_size/2))[0:1]
 
- p = convert_coord(/device, /to_data, 0, 0)
- q = convert_coord(/device, /to_data, !d.x_size-1, !d.y_size-1)
+ p = (convert_coord(/device, /to_data, 0, 0))[0:1]
+ q = (convert_coord(/device, /to_data, !d.x_size-1, !d.y_size-1))[0:1]
 
  dpq = abs(q-p)
  fov = max(dpq) / min(cam_size(cd))
 
- return, -plane.fov/fov
+ return, -fov/plane.fov
 end
 ;=============================================================================
 
