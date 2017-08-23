@@ -834,12 +834,15 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
 ;   mg = 0.03
 ;   plot, [0], [0], /noerase, /data, pos=[mg,mg, 1.0-mg,1.0-mg]
 
+   cd = grim_xd(plane, /cd)
 
 
    ;----------------------------
    ; main window image outline
    ;----------------------------
-   dim = dat_dim(plane.dd)
+   if(keyword_set(cd)) then dim = image_size(cd) $
+   else dim = dat_dim(plane.dd)
+
    xsize = dim[0]
    ysize = dim[1]
 
@@ -850,7 +853,6 @@ pro grim_draw_axes, grim_data, data, plane=plane, $
    ;----------------------------
    ; optic axis 
    ;----------------------------
-   cd = grim_xd(plane, /cd)
    if(keyword_set(cd)) then $
     if(cor_class(cd) EQ 'CAMERA') then $
      begin

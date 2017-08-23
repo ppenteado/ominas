@@ -49,7 +49,7 @@ function image_size, cd
  case class of 
   'MAP' : return, map_size(cd)
   'CAMERA' : return, cam_size(cd)
-  default :
+  else :
  endcase
 
 
