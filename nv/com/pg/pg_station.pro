@@ -129,7 +129,7 @@ function pg_station, cd=cd, std=std, gbx=gbx, dkx=dkx, bx=bx, dd=dd, gd=gd, $
    ; store grid
    ;-----------------------------------
    station_ptd[i] = pnt_create_descriptors(name = strupcase(name), $
-		           desc = 'station', $
+		           desc = 'STATION', $
 		           gd = gd_input, $
 		           assoc_xd = xd, $
 		           points = points, $

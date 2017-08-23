@@ -1030,8 +1030,6 @@ end
 function grim_match_overlays, ptd, ptd0
 
 
-;print, pnt_desc(ptd)
-;stop
  ;----------------------------------------------------------
  ; narrow by comparing descriptions, names, and assoc xds
  ;----------------------------------------------------------
@@ -1134,6 +1132,9 @@ pro grim_update_points, grim_data, ptd0, ptd, plane=plane
    w = grim_match_overlays(ptd[i], ptd0)
    if(w[0] NE -1) then $
     begin
+;if(cor_name(ptd[i]) EQ 'shadow-MOON') then print, ptd0[w], ptd[i]
+; problem is there are two matches for the overlay; the second one is
+;  overwriting the correct first one.  Why two matches???
      if(n_elements(w) EQ 1) then grim_copy_overlay, ptd0[w], ptd[i]
      nv_free, ptd[i]
     end

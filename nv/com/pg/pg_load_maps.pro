@@ -59,7 +59,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_load_maps, dir, md=mds, bx=bx, dd=dd
+function pg_load_maps, mapdir, md=mds, bx=bx, dd=dd
 common pg_load_maps_block, dd_cache, md_cache
 
  dds = (mds = !null)
@@ -67,8 +67,8 @@ common pg_load_maps_block, dd_cache, md_cache
  ;--------------------------------------------------------------
  ; get map directory
  ;--------------------------------------------------------------
- if(NOT keyword_set(dir)) then dir = getenv('PG_MAPS')
- if(NOT keyword_set(dir)) then $
+ if(NOT keyword_set(mapdir)) then mapdir = getenv('PG_MAPS')
+ if(NOT keyword_set(mapdir)) then $
   begin
    nv_message, /con, 'Map directory not specified.', $
        exp=['The map directory may be specified as the argument to this program', $
@@ -104,7 +104,7 @@ stop
  ;--------------------------------------------------------------
  ; get map files
  ;--------------------------------------------------------------
- dirs = file_search(dir + '/*/*')
+ dirs = file_search(mapdir + '/*/*', /test_dir)
  split_filename, dirs, dir, name
 
  w = nwhere(strupcase(name), strupcase(names))
@@ -112,6 +112,10 @@ stop
 
  dirs = dirs[w]
  files = file_search(dirs + '/*.*')
+ split_filename, files, a, b,  ext
+ w = where(ext NE 'dh')
+ if(w[0] EQ -1) then return, 0
+ files = files[w]
 
  ;------------------------------------------------------------------
  ; load map files

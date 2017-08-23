@@ -224,7 +224,7 @@ function pg_limb_sector, cd=cd, gbx=_gbx, gd=gd, $
       dsk_outline_pts = image_to_disk(cd, dkd, outline_pts)
 
  outline_ptd = pnt_create_descriptors(points = outline_pts, $
-                      desc = 'pg_limb_sector', $
+                      desc = 'PG_LIMB_SECTOR', $
                       data = transpose(dsk_outline_pts))
  cor_set_udata, outline_ptd, 'nrad', [nalt]
  cor_set_udata, outline_ptd, 'nlon', [naz]

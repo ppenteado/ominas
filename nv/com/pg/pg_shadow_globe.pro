@@ -165,10 +165,10 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
           shadow_ptd[i,j] = $
               pnt_create_descriptors(points = points, $
          	 flags = flags, $
-         	 name = 'shadow-' + cor_name(object_ptd[j]), $
+         	 name = 'SHADOW-' + cor_name(object_ptd[j]), $
          	 assoc_xd = xd, $
-         	 task = 'pg_shadow_globe', $
-	         desc = 'globe_shadow', $
+         	 task = 'PG_SHADOW_GLOBE', $
+	         desc = 'GLOBE_SHADOW/' + pnt_desc(object_ptd[j]), $
 	         gd = {gbx:gbx[i,0], od:od[0], srcd:object_ptd[j], cd:cd[0]}, $
 	         vectors = inertial_pts)
          end

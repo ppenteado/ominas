@@ -1954,12 +1954,10 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  ;-----------------------------------------
  grim_suspend_events
  cd = grim_get_cameras(grim_data, plane=plane)
- pd = grim_get_planets(grim_data, plane=plane)
- rd = grim_get_rings(grim_data, plane=plane)
  ltd = grim_get_lights(grim_data, plane=plane)
  grim_resume_events
 
- bx = append_array(pd, rd)
+ bx = cor_select(grim_xd(plane), 'BODY', /class)
 
 
  ;-----------------------------------------
@@ -2027,22 +2025,19 @@ pro grim_render, grim_data, plane=plane
  ;------------------------------------------------------------
  if(plane.rendering OR $
       (NOT grim_get_toggle_flag(grim_data, 'RENDER_SPAWN'))) then new_plane = plane $
- else $
-  begin
-   if(NOT keyword_set(new_plane)) then $
+ else if(NOT keyword_set(new_plane)) then $
                              new_plane = grim_clone_plane(grim_data, plane=plane)
-   new_plane.rendering = 1
 
-   dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn', /noevent
+ new_plane.rendering = 1
 
-   dat_set_dim_fn, new_plane.dd, 'grim_render_dim_fn', /noevent
-   dat_set_dim_data, new_plane.dd, dat_dim(plane.dd), /noevent
+ dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn', /noevent
 
-   grim_set_plane, grim_data, new_plane
+ dat_set_dim_fn, new_plane.dd, 'grim_render_dim_fn', /noevent
+ dat_set_dim_data, new_plane.dd, dat_dim(plane.dd), /noevent
 
-   grim_jump_to_plane, grim_data, new_plane.pn
-   grim_refresh, grim_data, /no_image
-  end
+ grim_set_plane, grim_data, new_plane
+
+ grim_jump_to_plane, grim_data, new_plane.pn
 
 
  ;---------------------------------------------------------
@@ -9135,7 +9130,8 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
            source_ptd = obj_new()
            w = nwhere(points_ptd, source_xd)
 ;if(name EQ 'SHADOW') then stop
-;print, cor_gd(points_ptd[i])
+;help, cor_gd(points_ptd[i])
+; srcd not updated on cloned plane
            if(w[0] NE -1) then source_ptd = points_ptd[w]
 
            ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -9551,13 +9547,13 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Toggle Axes          \*grim_menu_axes_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
            '1\Render' , $
-;            '0\RGB                  [xxx]\grim_menu_render_toggle_rgb_event' , $
-            '0\Enter Oversampling   [xxx]\grim_menu_render_enter_sampling_event' , $
-            '0\Enter Numbra         [xxx]\grim_menu_render_enter_numbra_event' , $
-            '0\Minimum Brightness   [xxx]\grim_menu_render_enter_minimum_event' , $
-            '0\Current Plane        [xxx]\grim_menu_render_toggle_current_plane_event' , $
-;            '0\Spawn Plane          [xxx]\grim_menu_render_toggle_spawn_event' , $
-            '0\Automatic Rendering  [xxx]\grim_menu_render_toggle_auto_event' , $
+;            '0\RGB                         [xxx]\grim_menu_render_toggle_rgb_event' , $
+            '0\Enter Oversampling          [xxx]\grim_menu_render_enter_sampling_event' , $
+            '0\Enter Numbra                [xxx]\grim_menu_render_enter_numbra_event' , $
+            '0\Minimum Brightness          [xxx]\grim_menu_render_enter_minimum_event' , $
+            '0\Toggle Current Plane        [xxx]\grim_menu_render_toggle_current_plane_event' , $
+            '0\Toggle Spawn Plane          [xxx]\grim_menu_render_toggle_spawn_event' , $
+            '0\Toggle Automatic Rendering  [xxx]\grim_menu_render_toggle_auto_event' , $
             '2\Render                 \grim_menu_render_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
            '0\Color Tables         \*grim_menu_view_colors_event', $ 

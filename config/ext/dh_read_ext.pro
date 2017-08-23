@@ -11,6 +11,6 @@ function dh_read_ext, dd, label, dim, type, min, max, abscissa=abscissa, $
 
 min=0
 max=0
- return, read_ext(filename, label, dim=dim, type=type)
+ return, read_ext(filename, label, dim=dim, type=type, nodata=nodata)
 end
 ;=============================================================================

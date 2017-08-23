@@ -964,7 +964,7 @@ end
 ;=============================================================================
 pro grim_menu_toggle_reorigin_event_help_event, event
  text = ''
- nv_help, 'grim_menu_shift_enter_step_event', cap=text
+ nv_help, 'grim_menu_toggle_reorigin_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -980,6 +980,7 @@ pro grim_menu_toggle_reorigin_event, event
  grim_set_toggle_flag, grim_data, 'SHIFT_REORIGIN', flag
  grim_update_menu_toggle, grim_data, $
          'grim_menu_toggle_reorigin_event', flag
+
 
 end
 ;=============================================================================
@@ -1030,6 +1031,8 @@ pro grim_menu_shift_enter_step_event, event
 
  step = double(steps)
  grim_set_user_data, grim_data, 'SHIFT_STEP', step
+
+ grim_set_menu_value, grim_data, 'grim_menu_shift_enter_step_event', step, len=3
 
 end
 ;=============================================================================
@@ -1086,6 +1089,7 @@ pro grim_menu_shift_enter_offset_event, event
 
  shift = double(s)
  grim_reposition, grim_data, plane, cd=grim_xd(plane, /cd), -shift
+
 
 end
 ;=============================================================================
@@ -1463,6 +1467,9 @@ pro grim_default_menus_init, grim_data
  grim_update_menu_toggle, grim_data, $
          'grim_menu_toggle_reorigin_event', $
           grim_get_toggle_flag(grim_data, 'SHIFT_REORIGIN')
+
+   grim_set_menu_value, grim_data, $
+         'grim_menu_shift_enter_step_event', grim_get_shift_step(grim_data)
 end
 ;=============================================================================
 
@@ -1500,8 +1507,8 @@ function grim_default_menus
             '2\<null>               \+*grim_menu_delim_event', $
            '*1\Shift Image' , $
             '0\Toggle Re-origin     [xxx]\*grim_menu_toggle_reorigin_event', $ 
-            '0\Enter Step Size \*grim_menu_shift_enter_step_event', $ 
-            '0\Enter Offset \*grim_menu_shift_enter_offset_event', $ 
+            '0\Enter Step Size      [xxx]\*grim_menu_shift_enter_step_event', $ 
+            '0\Enter Offset  \*grim_menu_shift_enter_offset_event', $ 
             '0\Left \*grim_menu_shift_left_event', $ 
             '0\Right\*grim_menu_shift_right_event', $
             '0\Up   \*grim_menu_shift_up_event', $

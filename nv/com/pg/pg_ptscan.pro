@@ -232,7 +232,7 @@ function pg_ptscan, dd, object_ptd, $
 
    pts_ptd[i] = pnt_create_descriptors(points = scan_pts, $
                        name = name, $
-                       desc = 'ptscan', $
+                       desc = 'PTSCAN', $
                        data = scan_data, $
                        flags = flags, $
                        tags = tags)

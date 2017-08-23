@@ -204,7 +204,7 @@ function pg_ring_sector_box_oblique, p, $
  ; package the result
  ;-----------------------------------------
  outline_ptd = pnt_create_descriptors(points = outline_pts, $
-                      desc = 'pg_ring_sector_box_oblique')
+                      desc = 'PG_RING_SECTOR_BOX_OBLIQUE')
  cor_set_udata, outline_ptd, 'sample', [sample]
 
  return, outline_ptd
