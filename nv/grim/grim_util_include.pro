@@ -1,8 +1,38 @@
 ;=============================================================================
+; grim_select_active
+;
+;=============================================================================
+function grim_select_active, xds, active=active, inactive=inactive
+
+ if(NOT keyword_set(xds)) then return, 0
+; if(NOT obj_valid(xds[0])) then return, 0
+
+ flag = cor_udata(xds, 'GRIM_ACTIVE_FLAG')
+ w = where(flag, complement=ww)
+
+ if(keyword_set(active)) then $
+  begin
+   if(w[0] EQ -1) then return, !null
+   return, xds[w]
+  end
+
+ if(keyword_set(inactive)) then $
+  begin
+   if(ww[0] EQ -1) then return, !null
+   return, xds[ww]
+  end
+
+ return, xds
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_xd
 ;
 ;=============================================================================
-function grim_xd, plane, class=_class, active=active, _ref_extra=keys
+function grim_xd, plane, class=_class, active=active, inactive=inactive, _ref_extra=keys
 
 ;** return, cor_dereference_gd(*plane.gd_p, _ref_extra=keys)
 
@@ -17,18 +47,21 @@ function grim_xd, plane, class=_class, active=active, _ref_extra=keys
    all_xds = grim_xd(plane)
    for i=0, n_elements(class)-1 do $
                   xds = append_array(xds, cor_select(all_xds, class, /class))
-   return, xds
+   return, grim_select_active(xds, active=active, inactive=inactive)
   end
 
 
  if(NOT keyword_set(keys)) then $
-       return, cor_cull([*plane.cd_p, $
-                         *plane.pd_p, $
-                         *plane.rd_p, $
-                         *plane.sd_p, $
-                         *plane.ltd_p, $
-                         *plane.std_p, $
-                         *plane.ard_p])
+  begin
+   xds =  cor_cull([*plane.cd_p, $
+                    *plane.pd_p, $
+                    *plane.rd_p, $
+                    *plane.sd_p, $
+                    *plane.ltd_p, $
+                    *plane.std_p, $
+                    *plane.ard_p])
+   return, grim_select_active(xds, active=active, inactive=inactive)
+  end
 
 
  if((where(keys EQ 'CD'))[0] NE -1) then xds = append_array(xds, *plane.cd_p)
@@ -41,17 +74,17 @@ function grim_xd, plane, class=_class, active=active, _ref_extra=keys
  if((where(keys EQ 'ARD'))[0] NE -1) then xds = append_array(xds, *plane.ard_p)
  if((where(keys EQ 'LTD'))[0] NE -1) then xds = append_array(xds, *plane.ltd_p)
 
+ if((where(keys EQ 'CAMERA'))[0] NE -1) then xds = append_array(xds, *plane.cd_p)
+ if((where(keys EQ 'MAP'))[0] NE -1) then xds = append_array(xds, *plane.md_p)
+ if((where(keys EQ 'OBSERVER'))[0] NE -1) then xds = append_array(xds, *plane.od_p)
+ if((where(keys EQ 'PLANET'))[0] NE -1) then xds = append_array(xds, *plane.pd_p)
+ if((where(keys EQ 'RING'))[0] NE -1) then xds = append_array(xds, *plane.rd_p)
+ if((where(keys EQ 'STAR'))[0] NE -1) then xds = append_array(xds, *plane.sd_p)
+ if((where(keys EQ 'STATION'))[0] NE -1) then xds = append_array(xds, *plane.std_p)
+ if((where(keys EQ 'ARRAY'))[0] NE -1) then xds = append_array(xds, *plane.ard_p)
+ if((where(keys EQ 'LIGHT'))[0] NE -1) then xds = append_array(xds, *plane.ltd_p)
 
- if(keyword_set(active)) then $
-  begin
-;  need to get rid of above rturns, r us grim_filter_by_active...
-   active = cor_udata(xds, 'GRIM_ACTIVE_FLAG')
-   w = where(active)
-   if(w[0] EQ -1) then xds = !null
-   xds = xds[w]
-  end
-
- return, xds
+ return, grim_select_active(xds, active=active, inactive=inactive)
 end
 ;=============================================================================
 
@@ -61,24 +94,29 @@ end
 ; grim_ptd
 ;
 ;=============================================================================
-function grim_ptd, plane, type=type, active=active, _ref_extra=keys
+function grim_ptd, plane, type=type, _ref_extra=keys, $
+                               active=active, inactive=inactive, user=user
 
  if(NOT keyword_set(type)) then if(keyword_set(keys)) then type = keys
 
+ ptdps = *plane.overlay_ptdps
+
  if(NOT keyword_set(type)) then $
   begin
-   ptdps = *plane.overlay_ptdps
    for i=0, n_elements(ptdps)-1 do ptd = append_array(ptd, *ptdps[i])
-   return, ptd
+   return, grim_select_active(ptd, active=active, inactive=inactive)
   end
 
  for i=0, n_elements(type)-1 do $
   begin
-   w = where((*plane.overlays_p).name EQ type)
-   if(w[0] NE -1) then ptd = append_array(ptd, (*plane.overlay_ptdps)[w])
+   w = where((*plane.overlays_p).name EQ type[i])
+   if(w[0] NE -1) then ptd = append_array(ptd, *ptdps[w[0]])
   end
 
- return, ptd
+if(keyword_set(user)) then stop
+ if(keyword_set(user)) then ptd = append_array(ptd, tag_list_get(plane.user_ptd_tlp))
+
+ return, grim_select_active(ptd, active=active, inactive=inactive)
 end
 ;=============================================================================
 
