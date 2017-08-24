@@ -1,18 +1,18 @@
 ;===========================================================================
 ;+
 ; NAME:
-;	cam_get_poly_matrices
+;	cam_get_juno_epo_matrices
 ;
 ;
 ; PURPOSE:
-;       Obtains the camera function data for the polynomial distortion model.
+;       Obtains the camera function data for the JunoCam distortion model.
 ;
 ; CATEGORY:
 ;	NV/LIB/CAM
 ;
 ;
 ; CALLING SEQUENCE:
-;	cam_get_poly_matrices, cd, XX, YY, PP, QQ
+;	cam_get_juno_epo_matrices, cd, XX, YY, PP, QQ
 ;
 ;
 ; ARGUMENTS:
@@ -49,7 +49,7 @@
 ;	
 ;-
 ;===========================================================================
-pro cam_get_poly_matrices, cd, XX, YY, PP, QQ
+pro cam_get_juno_epo_matrices, cd, k1, k2, x0, y0
 @core.include
 
  data = cam_fi_data(cd)
@@ -57,10 +57,10 @@ pro cam_get_poly_matrices, cd, XX, YY, PP, QQ
  ;---------------------------------------------------------
  ; distortion matrices and inverses are in fi_data
  ;---------------------------------------------------------
- XX = data.XX 
- YY = data.YY
- PP = data.PP 
- QQ = data.QQ
+ k1 = data.k1 
+ k2 = data.k2
+ x0 = data.x0 
+ y0 = data.y0
 
 end
 ;===========================================================================

@@ -64,6 +64,30 @@ end
 ;==============================================================================
 
 
+function nv_clone_object,xd
+
+if isa(xd,'ominas_core') then begin
+  _xd = cor_dereference(xd)
+  
+  ntags = n_tags(_xd)
+  tags = tag_names(_xd)
+  
+  for j=0, ntags-1 do if(NOT nv_protected(tags[j])) then $
+    if(NOT nv_clone_match(protect, tags[j])) then $
+    begin
+    val = _xd.(j)
+    nv_clone_recurse, val, protect=protect
+    _xd.(j) = val
+  end
+  
+  nxd = obj_new(obj_class(xd))
+  cor_rereference, nxd, _xd
+  
+endif else nxd=xd[*]
+
+return,nxd
+
+end
 
 ;=============================================================================
 ; nv_clone_recurse
@@ -109,24 +133,12 @@ pro nv_clone_recurse, xd, protect=protect
  ;----------------------------------------------
  else if(type EQ 11) then $
   begin
-   for i=0, n-1 do if(obj_valid(xd[i])) then $
-    begin
-     _xd = cor_dereference(xd[i])
-
-     ntags = n_tags(_xd)
-     tags = tag_names(_xd)
-
-     for j=0, ntags-1 do if(NOT nv_protected(tags[j])) then $
-      if(NOT nv_clone_match(protect, tags[j])) then $
-       begin
-        val = _xd.(j)
-        nv_clone_recurse, val, protect=protect
-        _xd.(j) = val
-       end
-
-     xd[i] = obj_new(obj_class(xd[i]))
-     cor_rereference, xd[i], _xd
-    end
+   isarray=size(obj_valid(xd),/n_dimensions)
+   ;for i=0, n-1 do if(obj_valid(xd[i])) then $
+   if isarray then for i=0, n-1 do if(obj_valid(xd[i])) then begin
+      xd[i]=nv_clone_object(xd[i])
+   endif else xd=nv_clone_object(xd)
+      
   end
 
 end
