@@ -198,7 +198,7 @@ function vgr_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		sc = sc, $
 		inst = inst, $
 		plat = plat, $
-		tol = 100d, $
+		tol = 800d, $
 		orient = orient, $
 		cam_time = time, $
 		cam_scale = scale, $

@@ -2,7 +2,7 @@
 ; grim_xd
 ;
 ;=============================================================================
-function grim_xd, plane, class=_class, _ref_extra=keys
+function grim_xd, plane, class=_class, active=active, _ref_extra=keys
 
 ;** return, cor_dereference_gd(*plane.gd_p, _ref_extra=keys)
 
@@ -41,6 +41,16 @@ function grim_xd, plane, class=_class, _ref_extra=keys
  if((where(keys EQ 'ARD'))[0] NE -1) then xds = append_array(xds, *plane.ard_p)
  if((where(keys EQ 'LTD'))[0] NE -1) then xds = append_array(xds, *plane.ltd_p)
 
+
+ if(keyword_set(active)) then $
+  begin
+;  need to get rid of above rturns, r us grim_filter_by_active...
+   active = cor_udata(xds, 'GRIM_ACTIVE_FLAG')
+   w = where(active)
+   if(w[0] EQ -1) then xds = !null
+   xds = xds[w]
+  end
+
  return, xds
 end
 ;=============================================================================
@@ -51,10 +61,22 @@ end
 ; grim_ptd
 ;
 ;=============================================================================
-function grim_ptd, plane, type=_type, _ref_extra=keys
+function grim_ptd, plane, type=type, active=active, _ref_extra=keys
 
- ptdps = *plane.overlay_ptdps
- for i=0, n_elements(ptdps)-1 do ptd = append_array(ptd, *ptdps[i])
+ if(NOT keyword_set(type)) then if(keyword_set(keys)) then type = keys
+
+ if(NOT keyword_set(type)) then $
+  begin
+   ptdps = *plane.overlay_ptdps
+   for i=0, n_elements(ptdps)-1 do ptd = append_array(ptd, *ptdps[i])
+   return, ptd
+  end
+
+ for i=0, n_elements(type)-1 do $
+  begin
+   w = where((*plane.overlays_p).name EQ type)
+   if(w[0] NE -1) then ptd = append_array(ptd, (*plane.overlay_ptdps)[w])
+  end
 
  return, ptd
 end
