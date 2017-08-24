@@ -196,7 +196,7 @@ pro grim_menu_ring_box_profile_radial_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- rd = grim_get_active_xds(plane, 'RING')
+ rd = grim_xd(plane, /ring, /active)
  if(NOT keyword__set(rd)) then $
   begin
    grim_message, 'There are no active ring points.'
@@ -284,7 +284,7 @@ pro grim_menu_ring_box_profile_longitudinal_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- rd = grim_get_active_xds(plane, 'RING')
+ rd = grim_xd(plane, /ring, /active)
  if(NOT keyword__set(rd)) then $
   begin
    grim_message, 'There are no active ring points.'
@@ -378,7 +378,7 @@ pro grim_menu_ring_profile_radial_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- rd = grim_get_active_xds(plane, 'RING')
+ rd = grim_xd(plane, /ring, /active)
  if(NOT keyword__set(rd)) then $
   begin
    grim_message, 'There are no active ring points.'
@@ -474,7 +474,7 @@ pro grim_menu_ring_profile_longitudinal_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- rd = grim_get_active_xds(plane, 'RING')
+ rd = grim_xd(plane, /ring, /active)
  if(NOT keyword__set(rd)) then $
   begin
    grim_message, 'There are no active ring points.'
@@ -570,7 +570,7 @@ pro grim_menu_limb_profile_azimuthal_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- pd = grim_get_active_xds(plane, 'PLANET')
+ pd = grim_xd(plane, /planet, /active)
  if(NOT keyword__set(pd)) then $
   begin
    grim_message, 'There are no active planets.'
@@ -660,7 +660,7 @@ pro grim_menu_limb_profile_radial_event, event
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
- pd = grim_get_active_xds(plane, 'PLANET')
+ pd = grim_xd(plane, /planet, /active)
  if(NOT keyword__set(pd)) then $
   begin
    grim_message, 'There are no active planets.'
@@ -754,7 +754,7 @@ pro grim_menu_pointing_farfit_event, event
  ;----------------------------------------------------------------------
  ; construct the outlines to use based on currently existing points
  ;----------------------------------------------------------------------
- point_ptd = grim_cat_points(grim_data, /active)
+ point_ptd = grim_ptd(plane, /active)
  if(NOT keyword_set(point_ptd)) then $
   begin
    grim_message, 'No active image points.'

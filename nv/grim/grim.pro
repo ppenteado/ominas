@@ -4449,7 +4449,7 @@ pro grim_menu_plane_coregister_event, event
 
  for i=0, n-1 do $
   begin
-   active_xds = grim_get_active_xds(planes[i])
+   active_xds = grim_xd(planes[i], /active)
    if(keyword_set(active_xds)) then $
     begin
      dd[i] = planes[i].dd
@@ -6701,9 +6701,8 @@ pro grim_menu_view_frame_event, event
 
  widget_control, grim_data.draw, /hourglass
 
- ptd = grim_get_active_overlays(grim_data, plane=plane, 'all')
- if(NOT keyword_set(ptd)) then $
-   ptd = grim_get_all_overlays(grim_data, plane=plane)
+ active_ptd = grim_ptd(plane, /active)
+ if(NOT keyword_set(ptd)) then ptd = grim_ptd(plane)
  if(NOT keyword_set(ptd)) then return
 
  grim_frame_overlays, grim_data, plane, ptd
@@ -9099,8 +9098,7 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
  for j=0, nplanes-1 do $
   if(NOT keyword_set(*planes[j].initial_overlays_p)) then $
    begin
-;;    points_ptd = grim_ptd(planes[j])
-    points_ptd = grim_cat_points(grim_data, plane=planes[j])
+    points_ptd = grim_ptd(planes[j])
     n = n_elements(points_ptd)
 
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -10126,7 +10124,7 @@ pro grim_initial_framing, grim_data, frame, delay_overlays=delay_overlays
   begin
    name = grim_parse_overlay(frame[0], obj_name)
    if(name EQ '1') then name = ''
-   ptd = grim_get_all_overlays(grim_data, plane=planes[i], name=name)
+   ptd = grim_ptd(planes[i], type=name)
    if(NOT keyword_set(ptd)) then return
 
    if(keyword_set(obj_name)) then $

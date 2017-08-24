@@ -113,116 +113,6 @@ end
 
 
 ;=============================================================================
-; grim_get_active_overlays
-;
-;=============================================================================
-function grim_get_active_overlays, grim_data, plane=plane, type, user=user, $
-                                                      inactive_ptd=inactive_ptd
-
- active_ptd = (inactive_ptd = !null)
- if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
- if(NOT keyword_set(type)) then type = 'all'
-
- ;-------------------------------------------------------------------------
- ; if initial overlays exist and have not yet been computed for this
- ; plane and overlays are not to be initially activated, then there
- ; are no active overlays.  In that case, only continue if indices for 
- ; inactive overlays are requested.
- ;-------------------------------------------------------------------------
-; if(NOT arg_present(inactive_indices)) then $
-;      if(keyword_set(plane.initial_overlays_p)) then $
-;                          if(NOT grim_data.activate) then return, 0
-
-
- ;-------------------------------------------
- ; determine which arrays to use
- ;-------------------------------------------
- ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, type)
- for i=0, n_elements(ptdp)-1 do $
-  begin
-   ptd = *ptdp[i]
-   if(keyword_set(ptd)) then $
-    begin
-     ;-------------------------------------------
-     ; check active flags
-     ;-------------------------------------------
-     flag = cor_udata(ptd, 'GRIM_ACTIVE_FLAG', /noevent)
-     active_indices = where(flag EQ 1)
-     inactive_indices = where(flag EQ 0)
-
-     _inactive_ptd = 0
-     if(inactive_indices[0] NE -1) then _inactive_ptd = ptd[inactive_indices]
- 
-     _active_ptd = 0
-     if(active_indices[0] NE -1) then _active_ptd = ptd[active_indices]
- 
-     active_ptd = append_array(active_ptd, _active_ptd)
-     inactive_ptd = append_array(inactive_ptd, _inactive_ptd)
-    end
-  end
-
- if(keyword_set(user)) then $
-  begin
-   active_user_ptd = grim_get_active_user_overlays(plane, inactive_user_ptd)
-   active_ptd = append_array(active_ptd, active_user_ptd)
-   inactive_ptd = append_array(inactive_ptd, inactive_user_ptd)
-  end
-
-
- return, active_ptd
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_get_all_overlays
-;
-;=============================================================================
-function grim_get_all_overlays, grim_data, plane=plane, names=names
-
- if(NOT keyword_set(names)) then names = 'all'
-
- for i=0, n_elements(names)-1 do $
-  begin
-   ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, names[i])
-   for j=0, n_elements(ptdp)-1 do ptd = append_array(ptd, *ptdp[j])
-  end
-
- return, ptd
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_get_active_xds
-;
-;=============================================================================
-function grim_get_active_xds, plane, class
-
- active_xds = !null
-
- ;-------------------------------------------
- ; determine which arrays to use
- ;-------------------------------------------
- xds = grim_xd(plane, class=class)
- if(NOT keyword_set(xds)) then return, 0
-
- ;-------------------------------------------
- ; get the objects
- ;-------------------------------------------
- flag = cor_udata(xds, 'GRIM_ACTIVE_FLAG', /noevent)
- w = where(flag EQ 1)
- if(w[0] NE -1) then active_xds = xds[w]
-
- return, active_xds
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_update_active_xds
 ;
 ;=============================================================================
@@ -375,8 +265,8 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
         if(keyword_set(override_color)) then $
                                color = (inactive_color = override_color)
 
-        active_ptd = grim_get_active_overlays(grim_data, plane=plane, name, $
-                                                       inactive_ptd=inactive_ptd)
+        active_ptd = grim_ptd(plane, type=name, /active)
+        inactive_ptd = grim_ptd(plane, type=name, /inactive)
 
         plabels = make_array(n_elements(*ptdp), val='')
         if(keyword_set(mlab) AND tlab) then plabels = labels
@@ -962,50 +852,6 @@ end
 
 
 ;=============================================================================
-; grim_cat_points
-;
-;=============================================================================
-function grim_cat_points, grim_data, all=all, active=active, plane=plane
-
- if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-
- ptd = [pnt_create_descriptors()]
-
-
- ;------------------------------------
- ; only active points
- ;------------------------------------
- if(keyword_set(active)) then $
-  begin
-   ptd = append_array(ptd, grim_get_active_overlays(grim_data, plane=plane))
-
-  end $
- ;------------------------------------
- ; all points
- ;------------------------------------
- else $
-  begin
-   ptdps = grim_get_overlay_ptdp(grim_data, plane=plane, 'all')
-   if(keyword_set(ptdps)) then $
-    begin
-     n = n_elements(ptdps)
-     for i=0, n-1 do ptd = append_array(ptd, decrapify((*ptdps[i])[*]))
-    end
-
-   user_ptd = grim_get_user_ptd(plane=plane)
-   if(keyword_set(user_ptd)) then ptd = append_array(ptd, user_ptd)
-  end
-
-
- if(n_elements(ptd) EQ 1) then return, 0
-
- return, ptd[1:*]
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_rm_overlay
 ;
 ;=============================================================================
@@ -1250,7 +1096,7 @@ pro grim_clear_active_overlays, grim_data, plane
  for i=0, n_elements(names)-1 do $
   begin
    ptdp = grim_get_overlay_ptdp(grim_data, plane=plane, names[i])
-   active_ptd = grim_get_active_overlays(grim_data, plane=plane, names[i])
+   active_ptd = grim_ptd(plane, type=names[i], /active)
    if(keyword_set(active_ptd)) then $
     begin
      w = nwhere(*ptdp, active_ptd)
@@ -3361,7 +3207,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; compute overlay arrays
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
- active_xds = grim_get_active_xds(plane)
+ active_xds = grim_xd(plane, /active)
  if(keyword_set(obj_name)) then $
   begin
    xds = cor_dereference_gd(gd)
@@ -3374,7 +3220,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
  ptd = call_function(fn, gd=gd, data=data, $
           map=grim_test_map(grim_data), clip=plane.clip, hide=plane.hide, $
           bx=active_xds, $
-          ptd=grim_get_active_overlays(grim_data, plane=plane, /user), $
+          ptd=grim_ptd(plane, /active, /user), $
           npoints=grim_data.npoints)
  ptd = pnt_cull(ptd)
 
