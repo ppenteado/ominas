@@ -1389,16 +1389,7 @@ pro grim_kill_notify, top
 
 ;;;
    nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, $
-             plane.ard_p, plane.ltd_p, plane.od_p,$
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'LIMB'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'RING'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'TERMINATOR'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'STAR'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'STATION'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'ARRAY'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_GRID'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'RING_GRID'), $
-             grim_get_overlay_ptdp(grim_data, plane=plane, 'CENTER'), $
+             plane.ard_p, plane.ltd_p, plane.od_p, *plane.overlay_ptdps, $
              plane.user_ptd_tlp]
   end
 

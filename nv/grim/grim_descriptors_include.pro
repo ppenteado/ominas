@@ -134,6 +134,68 @@ end
 
 
 ;=============================================================================
+; grim_rm_xd
+;
+;=============================================================================
+pro grim_rm_xd, plane, xd
+
+ if(NOT keyword_set(xd)) then xd = grim_xd(plane)
+ if(NOT keyword_set(xd)) then return
+
+ xdps = [plane.cd_p, $
+         plane.pd_p, $
+         plane.rd_p, $
+         plane.sd_p, $
+         plane.ltd_p, $
+         plane.std_p, $
+         plane.ard_p]
+
+
+ ;--------------------------------------------------------
+ ; check each object type
+ ;--------------------------------------------------------
+ for j=0, n_elements(xdps)-1 do if(keyword_set(*xdps[j])) then $
+  begin
+   xdp = xdps[j]
+   w = nwhere((*xdp), xd)
+   if(w[0] NE -1) then $
+    begin
+     *xdp = rm_list_item(*xdp, w, only=obj_new(), /scalar)  
+     xdx = xd[w]
+
+     ;--------------------------------------------------------
+     ; unregister event handler
+     ;--------------------------------------------------------
+     nv_notify_unregister, xdx, 'grim_descriptor_notify'
+     grim_deactivate_xd, plane, xdx
+
+     ;----------------------------------
+     ; remove its overlays
+     ;----------------------------------
+     for i=0, n_elements(xdx)-1 do $
+      begin
+       ptd = grim_get_object_overlays(grim_data, plane, xdx[i])
+       if(keyword_set(ptd)) then nv_notify_unregister, ptd, 'grim_descriptor_notify'
+      end
+
+     ;--------------------------------------------------------
+     ; free descriptors, only if originally created via GRIM
+     ;--------------------------------------------------------
+     if(keyword_set(cor_udata(xd, 'grim_status'))) then nv_free, xdx
+
+     ;--------------------------------------------------------
+     ; cull dd generic descriptor
+     ;--------------------------------------------------------
+     cor_set_gd, plane.dd, cor_create_gd(cor_gd(plane.dd), /explicit), /noevent
+    end
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_rm_descriptor
 ;
 ;=============================================================================
@@ -299,8 +361,9 @@ pro grim_add_xd, grim_data, xdp, _xd, one=one, $
    ww = nwhere(xdx, xd, rev=ii)
    xdx = rm_list_item(xdx, ww, only=obj_new())   
    xd = rm_list_item(xd, ii, only=obj_new())   
-   if(keyword_set(xdx)) then $
-                   grim_rm_descriptor, grim_data, plane=plane, xdp, xdx
+;   if(keyword_set(xdx)) then $
+;                   grim_rm_descriptor, grim_data, plane=plane, xdp, xdx
+   if(keyword_set(xdx)) then grim_rm_xd, plane, xdx
   end
  if(NOT keyword_set(xd)) then return
 
@@ -883,13 +946,13 @@ pro grim_clear_descriptors, grim_data, planes=planes
 
  for i=0, n-1 do $
   begin
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].cd_p
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].pd_p
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].rd_p
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].sd_p
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].std_p
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].ard_p
-   grim_rm_descriptor, grim_data, plane=planes[i], planes[i].ltd_p
+   grim_rm_xd, planes[i], grim_xd(planes[i], /cd)
+   grim_rm_xd, planes[i], grim_xd(planes[i], /pd)
+   grim_rm_xd, planes[i], grim_xd(planes[i], /rd)
+   grim_rm_xd, planes[i], grim_xd(planes[i], /sd)
+   grim_rm_xd, planes[i], grim_xd(planes[i], /std)
+   grim_rm_xd, planes[i], grim_xd(planes[i], /ard)
+   grim_rm_xd, planes[i], grim_xd(planes[i], /ltd)
   end
 
  grim_set_data, grim_data, grim_data.base
@@ -922,8 +985,8 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;-----------------------------------------------------------------------
  ; get dependencies
  ;-----------------------------------------------------------------------
- junk = grim_get_overlay_ptdp(grim_data, name, plane=plane, $
-                                                   class=class, dep=dep)
+ info = grim_ptd_info(plane, type=name, class=class, dep=dep)
+
  dep = append_array(dep, class)
  if(NOT keyword_set(dep)) then return
 
