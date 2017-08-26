@@ -69,19 +69,14 @@ function grim_get_plane_by_overlay, grim_data, xy
 
  for i=0, nplanes-1 do $
   if((planes[i].pn EQ plane.pn) OR planes[i].visible) then $
-  begin
-   ptdp = grim_get_overlay_ptdp(grim_data, plane=planes[i], 'all')
-   nptdp = n_elements(ptdp)
-   for j=0, nptdp-1 do $
-    begin
-     ptd = *ptdp[j]
-     if(keyword_set(ptd)) then $ 
-      begin
-       ii = grim_nearest_overlay(plane, xy, ptd, mm=mm)
-       if(ii[0] NE -1) then if(mm LT dist[i]) then dist[i] = mm
-      end
-    end
-  end
+   begin
+    ptd = grim_ptd(planes[i])
+    for j=0, n_elements(ptd)-1 do $
+     begin
+      ii = grim_nearest_overlay(plane, xy, ptd, mm=mm)
+      if(ii[0] NE -1) then if(mm LT dist[i]) then dist[i] = mm
+     end
+   end
 
  w = where(dist LT 1d100)
  if(w[0] EQ -1) then return, 0
@@ -931,6 +926,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
   end $
  else planes = plane
 
+
  ;-----------------------------------
  ; apply any default activations
  ;-----------------------------------
@@ -971,6 +967,12 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
            /entire, order=tvd.order, /no_back, /no_image, /no_erase, nodraw=nodraw
      grim_wset, grim_data, grim_data.wnum
     end
+
+
+ ;-----------------------------------
+ ; compute any intial overlays
+ ;-----------------------------------
+ grim_initial_overlays, grim_data, plane=planes
 
 
  ;------------------------------------
