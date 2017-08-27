@@ -66,53 +66,6 @@ end
 
 
 ;=============================================================================
-; grim_get_overlay_ptdp
-;
-;=============================================================================
-function grim_get_overlay_ptdp, grim_data, name, plane=plane, $
-                        data=data, class=class, dep_classes=dep_classes, ii=ii, $
-                        color=color, psym=psym, tlab=tlab, tshade=tshade, $
-                        symsize=symsize, shade=shade, genre=genre, $
-                        fast=fast
-
- if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
-;grim_initial_overlays, grim_data, plane=plane
-
- if(keyword_set(name)) then if(name EQ 'all') then return, *plane.overlay_ptdps
-
- if(NOT defined(ii)) then $
-  begin
-   if(keyword_set(name)) then ii = where((*plane.overlays_p).name EQ name) $
-   else if(keyword_set(class)) then ii = where((*plane.overlays_p).class EQ class) $
-   else if(keyword_set(genre)) then ii = where((*plane.overlays_p).genre EQ genre)
-  end
- if(ii[0] EQ -1) then return, 0
- if(keyword_set(fast)) then return, (*plane.overlay_ptdps)[ii]
-
- ii = ii[0]
-
- name = (*plane.overlays_p)[ii].name
- class = (*plane.overlays_p)[ii].class
- 
- dep_classes = *(*plane.overlays_p)[ii].dep_classes_p
-
- color = (*plane.overlays_p)[ii].color
- psym = (*plane.overlays_p)[ii].psym
- symsize = (*plane.overlays_p)[ii].symsize
- shade = (*plane.overlays_p)[ii].shade
- tlab = (*plane.overlays_p)[ii].tlab
- tshade = (*plane.overlays_p)[ii].tshade
-
- data_p = (*plane.overlays_p)[ii].data_p
- if(ptr_valid(data_p)) then data = *data_p
-
- return, (*plane.overlay_ptdps)[ii]
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_update_active_xds
 ;
 ;=============================================================================
@@ -865,26 +818,6 @@ pro grim_rm_ptd, plane, ptd
   end
 
  nv_notify_unregister, ptd, 'grim_descriptor_notify'
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_rm_overlay
-;
-;=============================================================================
-pro grim_rm_overlay, plane, ptdp, ii
-
-
- if(NOT ptr_valid(ptdp)) then return
- ptd = (*ptdp)[ii]
- if(NOT keyword_set(ptd)) then return
-
- nv_notify_unregister, ptd, 'grim_descriptor_notify'
-
- *ptdp = rm_list_item(*ptdp, ii, only=0, /scalar)
 
 end
 ;=============================================================================
@@ -3013,10 +2946,8 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
  for i=0,1 do $
   begin
    ptdp = grim_ptd(plane, info=info, type=name, /pointer) 
-   data = *info.data_p
-   if(keyword_set(ptdp)) then break
-
-   if(strmid(name, strlen(name)-1, 1) EQ 'S') then $
+   if(keyword_set(ptdp)) then data = *info.data_p $
+   else if(strmid(name, strlen(name)-1, 1) EQ 'S') then $
     begin
      name = strmid(name, 0, strlen(name)-1)
      ptdp = grim_ptd(plane, info=info, type=name, /pointer) 
