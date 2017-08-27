@@ -111,7 +111,8 @@ function grim_ptd, plane, type=type, class=class, genre=genre, _ref_extra=keys, 
  else if(keyword_set(class)) then match = class $
  else if(keyword_set(genre)) then match = genre
 
-
+ result = 0
+ info_out = !null
  if(keyword_set(field)) then $
   begin
    for i=0, n_elements(match)-1 do $
@@ -120,8 +121,7 @@ function grim_ptd, plane, type=type, class=class, genre=genre, _ref_extra=keys, 
      if(w[0] NE -1) then $
        for j=0, n_elements(w)-1 do $
         begin  
-         result = append_array(result, $
-                                   pointer_switch(ptdps[w[j]], pointer=pointer))
+         result = append_array(result, pointer_switch(ptdps[w[j]], pointer=pointer))
          info_out = append_array(info_out, info[w[j]])
         end  
     end
