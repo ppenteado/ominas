@@ -60,7 +60,7 @@
 ;-
 ;===============================================================================
 function sao_get_regions, ra1, ra2, dec1, dec2, path_sao=path_sao
- return, file_test(path_sao + 'sao_idl.str') ? path_sao + 'sao_idl.str' : path_sao + 'sao.dat'	; there's only one sao "region"
+ return, file_test(path_sao + '/sao_idl.str') ? path_sao + '/sao_idl.str' : path_sao + '/sao.dat'	; there's only one sao "region"
 end
 ;===============================================================================
 
@@ -131,6 +131,8 @@ function sao_get_stars, dd, filename, $
  _ra2 = ra2
  _dec1 = dec1
  _dec2 = dec2
+  nv_message, verb=1.0, 'ra1 = '+string(ra1)+' ra2= '+string(ra2)+' dec1= '+string(dec1)+' dec2= '+string(dec2)
+
  if (NOT keyword_set(b1950)) then $
    begin
      ; If ra1/ra2 is entire range then do not change
@@ -144,6 +146,9 @@ function sao_get_stars, dd, filename, $
          pos2_1950 = b1950_to_j2000(pos2,/reverse)
          xyz_to_ra, pos1_1950, _ra1, _dec1
          xyz_to_ra, pos2_1950, _ra2, _dec2
+         if (_ra1 LT 0) then _ra1 = _ra1 + 360d
+         if (_ra2 LT 0 ) then _ra2 = _ra2 + 360d
+         nv_message, verb=1.0, 'ra1 = '+string(_ra1)+' ra2= '+string(_ra2)+' dec1= '+string(_dec1)+' dec2= '+string(_dec2)
        end
    end
 
@@ -208,24 +213,28 @@ function sao_get_stars, dd, filename, $
    ;---------------------------------------------------------
    ; Search within segment to find RA limits
    ;---------------------------------------------------------
-   if(end_record-start_record GT 100) then $
+   if(end_record-start_record GT 100 AND _ra1 LE _ra2) then $
      begin
       ra_ptr = ptr(2*i) + lindgen(37)*((ptr(2*i+1)-ptr(2*i))/36)
       ra_ptr[36] = ptr(2*i+1)
       ra_test = fltarr(37)
       for j = 0, 36 do $
        begin
-        _star = record[ra_ptr[j]]
-        ra_test[j] = _star.RA
+        star = record[ra_ptr[j]]
+        ra_test[j] = star.RA
        end
       byteorder, ra_test, /XDRTOF
 
       index = where(ra_test LE _ra1,count)
+print, 'ra1 index ', index
+print, count
       start_record = ra_ptr[0]
       if(count NE 0) then start_record = ra_ptr[count-1]
 
       end_record = ra_ptr[36]
       index = where(ra_test GE _ra2,count)
+print, 'ra2 index ', index
+print, count 
       if(count NE 0) then end_record = ra_ptr[37-count]
      end
 

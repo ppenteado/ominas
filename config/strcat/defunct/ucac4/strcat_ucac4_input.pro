@@ -46,6 +46,7 @@
 ;
 ; :Author:
 ;   Jacqueline Ryan, 8/2016
+;   Modified  Vance Haemmerle, 8/2017
 ;   
 ;-
 
@@ -108,7 +109,7 @@ end
 ;   mag : out, required, type=double
 ;      magnitude of returned stars
 ;   jtime : in, optional, type=double
-;      Years since 1950 (the epoch of catalog) for precession
+;      Years since 2000 (the epoch of catalog) for precession
 ;      and proper motion correction. If not given, it is taken
 ;      from the object descriptor bod_time, which is assumed to
 ;      be seconds past 2000, unless keyword /b1950 is set
@@ -119,6 +120,12 @@ function ucac4_get_stars, dd, filename, $
          faint=faint, bright=bright, nbright=nbright, $
          names=names, mag=mag, jtime=jtime
 
+ ;---------------------------------------------------------
+ ; check whether catalog falls within brightness limits
+ ;---------------------------------------------------------
+ if(keyword_set(faint)) then if(faint LT 8) then return, ''
+ if(keyword_set(bright)) then if(bright GT 16) then return, ''
+
  print, filename
  f = file_search(filename)
  if(f[0] eq '') then $
@@ -126,17 +133,46 @@ function ucac4_get_stars, dd, filename, $
    nv_message, 'File does not exist - ' + filename
    return, ''
   end
+
+ ;---------------------------------------------------------
+ ; For range testing, need to have limits in j2000 since
+ ; star positions in catalog are in j2000 
+ ; If /b1950 is specified, then convert range to j2000
+ ;---------------------------------------------------------
+ _ra1 = ra1
+ _ra2 = ra2
+ _dec1 = dec1
+ _dec2 = dec2
+ if (keyword_set(b1950)) then $
+   begin
+     ; If ra1/ra2 is entire range then do not change
+     ; declination change is not enough to update
+     if (ra1 NE 0. OR ra2 NE 360.) then $
+       begin
+         nv_message, verb=0.9, 'Converting RA/DEC to J2000 (catalog epoch) for range testing'
+         ra_to_xyz, ra1, dec1, pos1
+         ra_to_xyz, ra2, dec2, pos2
+         pos1_1950 = b1950_to_j2000(pos1)
+         pos2_1950 = b1950_to_j2000(pos2)
+         xyz_to_ra, pos1_1950, _ra1, _dec1
+         xyz_to_ra, pos2_1950, _ra2, _dec2
+         if (_ra1 LT 0) then _ra1 = _ra1 + 360d
+         if (_ra2 LT 0 ) then _ra2 = _ra2 + 360d
+       end
+   end
+ nv_message, verb=0.9, '_ra1 = ' + strtrim(string(_ra1),2) + ', _ra2= ' + strtrim(string(_ra2),2)
  
  ; Determine ra bins (j) between 1 and 1440
- jmin = floor(ra1 * 4)
- jmax = ceil(ra2 * 4)
+ jmin = floor(_ra1 * 4)
+ jmax = ceil(_ra2 * 4) + 1
  ; Determine dec zones (zn) between 1 and 900
- zmin = ceil(dec1 * 5) + 450
- zmax = ceil(dec2 * 5) + 450
+ zmin = floor(_dec1 * 5) + 450
+ zmax = ceil(_dec2 * 5) + 450 
  nz = zmax - zmin
+ nv_message, verb=0.9, 'RA zones is ' + string(jmin) + ' to ' + string(jmax)
  
  openr, index, filename, /get_lun
- skip_lun, index, 1440 * zmin + jmin, /lines
+ skip_lun, index, 1440 * zmin + jmin, /line
  line = ''
  bounds = intarr(2, nz)
  rec_bytes = 78
@@ -145,17 +181,27 @@ function ucac4_get_stars, dd, filename, $
   begin
    readf, index, line
    first = long(strmid(line, 0, 6))
-   skip_lun, index, jmax - jmin - 1, /lines
+   nv_message, verb=1.0, 'first line is ' + line
+   skip_lun, index, jmax - jmin - 1, /line
    readf, index, line
    last = long(strmid(line, 0, 6))
-   skip_lun, index, 1439 - jmax + jmin, /lines
+   seg = strmid(line, 14, 4)
+   nv_message, verb=1.0, 'last line is ' + line
+   skip_lun, index, 1439 - jmax + jmin, /line
+   nv_message, verb=0.9, 'RA bounds for zone ' + string(zmin+i) + ' is ' + string(first) + ',' + string(last)
 
    z_fname = 'z' + string(zmin + i, format='(I03)')
    z_strs = last - first
    z_recs = replicate({ucac4_record}, z_strs)
    openr, zone, getenv('NV_UCAC4_DATA') + '/' + z_fname, /get_lun
    point_lun, zone, first * rec_bytes
+   nv_message, verb=0.9, 'Reading ' + string(z_strs) + ' stars from zone file ' + getenv('NV_UCAC4_DATA') + '/' + z_fname 
    readu, zone, z_recs
+   ; store components of name, zone(zzz) and record number (nnnnnn) in pts_key
+   ; star name is ucac4-zzz-nnnnnn
+   z_zone = zmin + i
+   z_number = indgen(z_strs) + first + 1
+   z_recs.pts_key = z_zone*1000000 + z_number
    recs = [recs, z_recs]
    close, zone
    free_lun, zone
@@ -164,160 +210,11 @@ function ucac4_get_stars, dd, filename, $
  free_lun, index
  
  ;-----------------------------------
- ; probe byte order
+ ; catalog is in little endian
  ;-----------------------------------
- ;b = 1l
- ;byteorder, b, /htonl
- ;swap = (b EQ 1)
-
- ;-----------------------------------
- ; open file 
- ;-----------------------------------
- ;openr, unit, filename, /get_lun
-
- ;-----------------------------------
- ; read header
- ;-----------------------------------
- ;hrec = assoc(unit, {ucac4_header})
- ;header = hrec[0]
-
- ;-----------------------------------
- ; read zone directories
- ;-----------------------------------
- ;point_lun, -unit, pos
- ;zrec = assoc(unit, replicate({ucac4_directory},180), pos)
- ;zones = zrec[0]
- ;if(swap) then zones = swap_endian(zones)
-
- ;-------------------------------------------
- ; build a list of star records
- ;-------------------------------------------
- ;point_lun, -unit, pos
- ;srec = assoc(unit, {ucac4_record}, pos)
-
-;;; _z1 = fix(90-dec1)
-;;; _z2 = fix(90-dec2)
- ;_z1 = round(90-dec1)
- ;_z2 = round(90-dec2)
- ;z1 = min([_z1,_z2])
- ;z2 = max([_z1,_z2])
-
-; z = lindgen(z2-z1+1) + z1
-; if(z1 EQ z2) then z = z1
-;;; z = lindgen((z2-z1)>1) + z1
- ;z = lindgen((z2-z1+2)>1) + z1 - 1
-
- ;nz = n_elements(z)
- ;for i=0, nz-1 do $
- ; begin
-;stop
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; starting ra for each star record in this zone
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ;  ra_start = double(zones[z[i]].ra_start[0:zones[z[i]].numrec-1]) / $
- ;                                                     268435456d * 180d/!dpi
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; number of first (2560-byte) star record in this zone
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ; rec_start = zones[z[i]].rec_start - zones[0].rec_start
-  ; if(rec_start[0] NE -1) then $
-  ;  begin
-;w1 = max(where(ra1 GE ra_start))
-;w2 = min(where(ra2 LE ra_start))
-;if(w2[0] EQ -1) then w2 = n_elements(ra_start)-1
-;;;     w1 = min(where(ra_start GE ra1))
-;;;     w2 = max(where(ra_start LE ra2) + 1) 
-;stop
-;     w = lindgen(w2-w1+1) + w1
-;     nw = n_elements(w)
-
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; extract selected records
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;     ps = replicate({ucac4_packed_star}, nw*71)
-;     ns = 0
-;     for j=0, nw-1 do $
-;      begin
-;       recnum = rec_start+w[j]
-;       if(recnum LE 686945) then $
-;        begin
-;         record = srec[recnum]
-;         if(swap) then record = swap_endian(record)
-;
-;         ps[ns:ns+record.nstars-1] = record.stars[0:record.nstars-1]
-;         ns = ns + record.nstars
-;        end
-;      end
-
-;     if(ns GT 0) then $
-;      begin
-;       ps = ps[0:ns-1]
-;
-       ;- - - - - - - - - - - - - - - - - - - -
-       ; select stars within magnitude limits
-       ;- - - - - - - - - - - - - - - - - - - -
-;       mag = ''
-;       if(keyword_set(faint)) then $
-;        begin
-;         ucac4_unpack_stars, ps, mag=mag
-;         w = where(mag LE faint)
-;         if(w[0] NE -1) then $
-;          begin
-;           ps = ps[w]
-;           mag = mag[w]
-;          end else ps = (mag = 0)
-;        end
-;
-;       if(keyword_set(bright)) then $
-;        begin
-;         if(NOT keyword_set(mag)) then ucac4_unpack_stars, ps, mag=mag
-;         w = where(mag GE bright)
-;         if(w[0] NE -1) then $
-;          begin
-;           ps = ps[w]
-;           mag = mag[w]
-;          end else ps = (mag = 0)
-;        end
-;
-       ;- - - - - - - - - - - - - - - - - - - -
-       ; select brightest stars 
-       ;- - - - - - - - - - - - - - - - - - - -
-;       if(keyword_set(nbright)) then $
-;        begin
-;         nps = n_elements(ps)
-;         if(NOT keyword_set(mag)) then ucac4_unpack_stars, ps, mag=mag
-;         ss = sort(mag)
-;         ps = (ps[ss])[0:(nbright<nps)-1]
-;        end
-
-
-
-        ;- - - - - - - - - - - - - - - - - - - -
-        ; add stars 
-        ;- - - - - - - - - - - - - - - - - - - -
-;        packed_stars = append_array(packed_stars, ps)
-;      end
-;    end
-;  end
-
- ;-------------------------------------------
- ; close file
- ;-------------------------------------------
- ;close, unit
- ;free_lun, unit
- 
- ;-------------------------------------------
- ; unpack star records
- ;-------------------------------------------
- ;if(NOT keyword_set(packed_stars)) then return, ''
- ;ucac4_unpack_stars, packed_stars, $
- ; ra=stars_ra, dec=stars_dec, _rapm=stars_rapm, _decpm=stars_decpm, $
- ; mag=stars_mag, px=stars_px, sp=stars_sp, num=stars_num, $
- ; epochra=stars_epochra, epochdec=stars_epochdec
+ recs = swap_endian(recs,/SWAP_IF_BIG_ENDIAN)
 
  mas_deg = 3600000d
-
 
 ; see http://ad.usno.navy.mil/ucac/readme_u4v5...
  nstars = n_elements(recs)
@@ -325,44 +222,39 @@ function ucac4_get_stars, dd, filename, $
  stars.ra = recs.ra / mas_deg                           ; mas -> deg 
  stars.dec = (recs.spd / mas_deg) - 90d                 ; mas above south pole -> deg declination
  cosdec = cos(stars.dec * (!dpi / 180d)) * (180d / !dpi) 
- stars.rapm = recs.pmrac / (cosdec * mas_deg)  ; pmRA * cos(dec) [mas/yr] -> pmRA [deg/yr]
- stars.decpm = recs.pmdc / mas_deg
- stars.mag = recs.apasm[1]/1000
+ stars.rapm = recs.pmrac / (cosdec * mas_deg) /10. ; pmRA * cos(dec) [0.1 mas/yr] -> pmRA [deg/yr]
+ stars.decpm = recs.pmdc / mas_deg /10.
+ stars.mag = recs.apasm[1]/1000.
 
 ;;;		 stars.px = stars_px	;; look up in hipsupl.dat
 ;;;		 stars.sp = recs.objt	;; not in record
- stars.num = recs.pts_key		;;; some are zero
+ stars.num = recs.pts_key		;;; zzznnnnnn for star names
 ;;; stars.epochra = recs.cepra
 ;;; stars.epochdec = recs.cepdc
  href = recs.rnm			;;; for look-up in hipsupl.dat
+                                        ;;; not implemented yet
 
  ;------------------------------------------------------------------
  ; If limits are defined, remove stars that fall outside the limits
  ; Limits in deg, Assumes RA's + DEC's in J2000 (B1950 if /b1950)
  ;------------------------------------------------------------------
-; *** need to use strcat_radec_regions (see strcat_tycho2_input) ***
- if(keyword_set(dec1) AND keyword_set(dec2)) then $
-   begin
-    subs = where((stars.dec GE dec1) AND (stars.dec LE dec2), count)
-    if(count EQ 0) then return, ''
-    stars = stars[subs]
-   end
-
-
- if(keyword_set(ra1) AND keyword_set(ra2)) then $
-   begin
-    subs = where((stars.ra GE ra1) AND (stars.ra LE ra2), count)
-    if(count EQ 0) then return, ''
-    stars = stars[subs]
-   end
+ w = strcat_radec_select([_ra1, _ra2]*!dpi/180d, [_dec1, _dec2]*!dpi/180d, $
+                                     stars.ra*!dpi/180d, stars.dec*!dpi/180d)
+ if(w[0] EQ -1) then return, ''
+ stars = stars[w]
 
  ;--------------------------------------------------------
  ; Apply proper motion to star 
  ; jtime = years past 2000.0
- ; rapm and decpm = radians per year
+ ; rapm and decpm = degrees per year
  ;--------------------------------------------------------
- stars.ra = stars.ra + stars.rapm*(jtime-(stars.epochra-2000))
- stars.dec = stars.dec + stars.decpm*(jtime-(stars.epochdec-2000))
+ _jtime = jtime
+ if(keyword_set(b1950)) then _jtime = jtime - 50
+ nv_message, verb=0.9, 'jtime used is ' + strtrim(string(_jtime),2)
+ ;;stars.ra = stars.ra + stars.rapm*(_jtime-(stars.epochra-2000))
+ ;;stars.dec = stars.dec + stars.decpm*(_jtime-(stars.epochdec-2000))
+ stars.ra = stars.ra + stars.rapm*(_jtime)
+ stars.dec = stars.dec + stars.decpm*(_jtime)
 
  ;-------------------------------------------
  ; work in radians now
@@ -382,37 +274,28 @@ function ucac4_get_stars, dd, filename, $
    stars = stars[w]
   end
 
+ ;---------------------------------------------------------
+ ; apply brightness thresholds
+ ;---------------------------------------------------------
+ if(keyword_set(faint)) then $
+  begin
+   w = where(stars.mag LE faint)
+   if(w[0] EQ -1) then return, ''
+   stars = stars[w]
+  end
+ if(keyword_set(bright)) then $
+  begin
+   w = where(stars.mag GE bright)
+   if(w[0] EQ -1) then return, ''
+   stars = stars[w]
+  end
+
  ;-------------------------------------
  ; select named stars
+ ; name according to section 3j of http://ad.usno.navy.mil/ucac/readme_u4v5
  ;-------------------------------------
- file = file_search(getenv('OMINAS_DIR')+'/config/strcat/stars.txt')
- openr, lun, file, /get_lun
- line = ''
- linarr = strarr(file_lines(file), 7)
- i = 0
- while not eof(lun) do $
-  begin
-   readf, lun, line
-   fields = strsplit(line, ';', /extract)
-   linarr[i, *] = fields
-   i = i + 1
-  endwhile
- free_lun, lun
- 
- n = n_elements(stars)
- matches = intarr(n)
- for i=0, n - 1 do matches[i] = where(strpos(linarr[*,2], stars[i].num) ne -1)
- name = 'ucac4 ' + strtrim(string(stars.num), 2)
- ndx = where(matches ne -1)
- matches = matches[ndx]
- for i = 0, n_elements(matches) - 1 do $
-  begin
-    lin_ndx = matches[i]
-    if strtrim(linarr[lin_ndx, 1], 2) ne '-1' then name[ndx[i]] = linarr[lin_ndx, 1]
-    if strtrim(linarr[lin_ndx, 0], 2) ne '-1' then name[ndx[i]] = linarr[lin_ndx, 0]
-    print, name[ndx[i]]
-  endfor
- 
+ name = 'UCAC4 '+strtrim(string(stars.num/1000000,format='(I03)'),2)+'-'+strtrim(string(stars.num MOD 1000000,format='(I06)'),2)
+
  if(keyword_set(names)) then $
   begin
    w = where(names EQ name)
@@ -462,11 +345,6 @@ function ucac4_get_stars, dd, filename, $
 
  radec = transpose([transpose([stars.ra]), transpose([stars.dec]), transpose([dist])])
  pos = transpose(bod_radec_to_body(bod_inertial(), radec))
-
-; pos = make_array(3,n,value=0d)
-; pos[0,*] = cos(stars.ra)*cos(stars.dec)*dist
-; pos[1,*] = sin(stars.ra)*cos(stars.dec)*dist
-; pos[2,*] = sin(stars.dec)*dist
 
  ;---------------------------------------------------------
  ; compute skyplane velocity from proper motion 
