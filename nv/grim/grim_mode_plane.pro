@@ -50,14 +50,19 @@ pro grim_mode_plane_mouse_event, event, data
  xy = convert_coord(double(event.x), double(event.y), /device, /to_data)
  grim_wset, grim_data, output_wnum
 
- if(event.press EQ 1) then jplane = grim_get_plane_by_xy(grim_data, xy) $
- else if(event.press EQ 4) then jplane = grim_get_plane_by_overlay(grim_data, xy) $
+ if(event.press EQ 1) then $
+  begin
+   jplane = grim_get_plane_by_xy(grim_data, xy)
+   use_pixmap = (noglass = 1)
+  end $
+ else if(event.press EQ 4) then $
+   jplane = grim_get_plane_by_overlay(grim_data, xy) $
  else return
 
  if(NOT keyword_set(jplane)) then return
 
  grim_jump_to_plane, grim_data, jplane.pn
- grim_refresh, grim_data, /use_pixmap, /noglass
+ grim_refresh, grim_data, use_pixmap=use_pixmap, noglass=noglass
 end
 ;=============================================================================
 

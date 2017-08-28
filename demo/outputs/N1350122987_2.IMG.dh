@@ -8,15 +8,15 @@ history = 0 / Current history value
 <updates>
 
 / -------------------------------------------------------------------- /
-/ MAP descriptor -- updated Wed Aug 23 10:07:16 2017
+/ MAP descriptor -- updated Sat Aug 26 19:52:00 2017
 / -------------------------------------------------------------------- /
-map_update_time = 2457989.42171296 
+map_update_time = 2457992.82777778 
 map_tasks = '' 
 map_name = 'JUPITER' 
 map_abbrev = 'MAP' 
 map_tag = 'MD' 
 map_user = '' 
-map_projection = 'RECTANGULAR' 
+map_projection = 'MERCATOR' 
 map_units(0) = 1.00000000000000 
 map_units(1) = 1.00000000000000 
 map_size(0) = 400 
