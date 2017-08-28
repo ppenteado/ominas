@@ -9120,9 +9120,6 @@ pro grim_descriptor_notify_handle, grim_data, xd, refresh=refresh, new=new
            ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
            source_ptd = obj_new()
            w = nwhere(points_ptd, source_xd)
-;if(name EQ 'SHADOW') then stop
-;help, cor_gd(points_ptd[i])
-; srcd not updated on cloned plane
            if(w[0] NE -1) then source_ptd = points_ptd[w]
 
            ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
