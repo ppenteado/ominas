@@ -23,7 +23,11 @@ baseurl="https://github.com/ppenteado/ominas_maps"
 mkdir -p ~/.ominas/timestamps/
 ts=`eval echo "~/.ominas/timestamps/"`
 
-git clone https://github.com/ppenteado/ominas_maps ${1}
+if [ ! -d ${1} ]; then
+  git clone https://github.com/ppenteado/ominas_maps ${1}
+else
+  echo "${1} already exists; skipping git clone, since it requires the destination to be empty"
+fi
 #${wget} "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
 
 
