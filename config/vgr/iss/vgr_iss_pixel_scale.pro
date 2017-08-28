@@ -5,7 +5,8 @@
 function vgr_iss_pixel_scale, sc, cam, geom=geom
 
 
- names = ['vg1na', 'vg1wa', 'vg2na', 'vg2wa'] 
+; names = ['vg1na', 'vg1wa', 'vg2na', 'vg2wa'] 
+ names = ['vg2na', 'vg2wa', 'vg1na', 'vg1wa'] 
  fl = [1503.49d, 200.770d, 1500.19d, 200.465d] ; Focal length of VGR cameras
 
  index = where(names EQ strlowcase(sc+cam))
