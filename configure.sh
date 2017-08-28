@@ -964,7 +964,7 @@ fi
 declare -a mis=("cas" "gll" "vgr" "dawn")
 #declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
 #declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" )
-declare -a Data=("Generic_kernels" "TYCHO2" "SAO" "UCAC4" "GSC" )
+declare -a Data=("Generic_kernels" "TYCHO2" "SAO" "MAPS" "UCAC4" "GSC" )
 declare -a insts=("" "" "" "" "")
 insts[1]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
 #insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
@@ -1068,6 +1068,8 @@ Data:
            About 161 MB download, 665 MB unpacked
        10) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
            Already provided with OMINAS, no download needed
+       11) Maps
+           Map library created for use with OMINAS ${dstatus[3]}
 
 For more information, see
 https://ppenteado.github.io/ominas/guides/userguide.html
@@ -1120,9 +1122,12 @@ Data:
            About 161 MB download, 665 MB unpacked
        10) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
            Already provided with OMINAS, no download needed
-       11) UCAC4 star catalog  . . . . . . . . . . ${dstatus[3]}
+       11) Maps
+           Map library created for use with OMINAS ${dstatus[3]}
+
+       12) UCAC4 star catalog  . . . . . . . . . . ${dstatus[4]}
            About 8.5 GB download
-       12) GSC star catalog  . . . . . . . . . . . ${dstatus[4]}
+       13) GSC star catalog  . . . . . . . . . . . ${dstatus[5]}
 
 For more information, see
 https://ppenteado.github.io/ominas/guides/userguide.html
@@ -1162,7 +1167,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 8 9 10"
+    ans="1 2 3 4 5 6 8 9 10 11"
   else
     ans="all"
   fi
@@ -1189,7 +1194,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 8 9 10 2 1"
+    ans="3 4 5 6 8 9 10 11 2 1"
   else
     ans="uall"
   fi
@@ -1218,7 +1223,7 @@ do
   fi
 done
 if [ "${ominas_nodel}" == "2" ]; then
-  ans="4 5 6 8 9 10"
+  ans="4 5 6 8 9 10 11"
 fi
 for num in $ans
 do
