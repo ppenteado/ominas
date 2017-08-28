@@ -5,7 +5,7 @@
 
 OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 wget=${OWNDIR}/pp_wget
-echo "This script wiill download the OMINAS maps package from Github (https://github.com/ppenteado/ominas_maps). As of August/2017, this adds to  MB of download,"
+echo "This script wiill download the OMINAS maps package from Github (https://github.com/ppenteado/ominas_maps). As of August/2017, this adds to 990 MB of download,"
 
 
 if [ -z ${ominas_auto+x} ] || [ ${ominas_auto} == 0 ] ; then
