@@ -100,7 +100,9 @@ function tag_list_get, tlp, name, $
  if(NOT ptr_valid(tlp)) then return, 0
  ntlp = n_elements(*tlp)
 
- if((NOT keyword__set(name)) AND (n_elements(index) EQ 0)) then return, 0
+; if((NOT keyword__set(name)) AND (n_elements(index) EQ 0)) then return, 0
+ if((NOT keyword__set(name)) $ 
+                     AND (n_elements(index) EQ 0)) then index = indgen(ntlp)
 
  if(n_elements(index) EQ 0) then $
                          index = tag_list_match(tlp, name, prefix=prefix)
