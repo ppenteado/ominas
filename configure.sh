@@ -903,7 +903,7 @@ esac
 }
 
 printf "The setup will guide you through the installation of OMINAS\n"
-printf "More help is in the Install Guide, at https://ppenteado.github.io/ominas_doc/demo/install_guide.html\n"
+printf "More help is in the Install Guide, at https://ppenteado.github.io/ominas/guides/userguide.html\n"
 
 #if ! grep -q "OMINAS_DIR=.*; export OMINAS_DIR" ${setting}; then
 # NOTE: OMINAS is available in repository form. Extraction is no longer needed
@@ -1070,7 +1070,7 @@ Data:
            Already provided with OMINAS, no download needed
 
 For more information, see
-https://ppenteado.github.io/ominas/demo/install_guide.html
+https://ppenteado.github.io/ominas/guides/userguide.html
 PKGS
 
 else
@@ -1125,7 +1125,7 @@ Data:
        12) GSC star catalog  . . . . . . . . . . . ${dstatus[4]}
 
 For more information, see
-https://ppenteado.github.io/ominas/demo/install_guide.html
+https://ppenteado.github.io/ominas/guides/userguide.html
 PKGS
 
 
