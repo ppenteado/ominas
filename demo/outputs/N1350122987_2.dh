@@ -8,9 +8,9 @@ history = 0 / Current history value
 <updates>
 
 / -------------------------------------------------------------------- /
-/ RING descriptor -- updated Wed Aug 23 10:07:06 2017
+/ RING descriptor -- updated Mon Aug 28 13:46:36 2017
 / -------------------------------------------------------------------- /
-rng_update_time = 2457989.42159722 
+rng_update_time = 2457994.57402778 
 rng_tasks = '' 
 rng_name = 'MAIN_RING_SYSTEM' 
 rng_abbrev = 'RNG' 
@@ -1386,9 +1386,9 @@ rng_dlibldt(6)[5] = 0.00000000000000
 rng_dlibldt(7)[5] = 0.00000000000000 
 rng_desc[5] = '' 
 / -------------------------------------------------------------------- /
-/ PLANET descriptor -- updated Wed Aug 23 10:07:06 2017
+/ PLANET descriptor -- updated Mon Aug 28 13:46:37 2017
 / -------------------------------------------------------------------- /
-plt_update_time = 2457989.42159722 
+plt_update_time = 2457994.57403935 
 plt_tasks = '' 
 plt_name = 'JUPITER' 
 plt_abbrev = 'PLT' 
@@ -3154,26 +3154,27 @@ plt_j(8)[17] = 0.00000000000000
 plt_j(9)[17] = 0.00000000000000 
 plt_j(10)[17] = 0.00000000000000 
 / -------------------------------------------------------------------- /
-/ CAMERA descriptor -- updated Wed Aug 23 10:07:08 2017
+/ CAMERA descriptor -- updated Mon Aug 28 13:46:38 2017
 / -------------------------------------------------------------------- /
-cam_update_time = 2457989.42162037 
+cam_update_time = 2457994.57405093 
 cam_tasks(0) = 'pg_repoint' 
 cam_tasks(1) = 'pg_repoint' 
+cam_tasks(2) = 'pg_repoint' 
 cam_name = 'CAS_ISS_NA' 
 cam_abbrev = 'CAM' 
 cam_tag = 'CD' 
 cam_user = '' 
 cam_opaque = 1 
 cam_time = 24703200.5493607 
-cam_orient(0) = 0.667233564830654 
-cam_orient(1) = 0.744472023576478 
-cam_orient(2) = -0.0236807110392076 
-cam_orient(3) = -0.682784344929773 
-cam_orient(4) = 0.624032782319497 
-cam_orient(5) = 0.379985032480765 
-cam_orient(6) = -0.297665766056830 
-cam_orient(7) = 0.237369949030056 
-cam_orient(8) = -0.924689460854437 
+cam_orient(0) = 0.667233103701981 
+cam_orient(1) = 0.744472429689259 
+cam_orient(2) = -0.0236809365691662 
+cam_orient(3) = -0.682784731289615 
+cam_orient(4) = 0.624032474378725 
+cam_orient(5) = 0.379984843958984 
+cam_orient(6) = -0.297665913470102 
+cam_orient(7) = 0.237369484882401 
+cam_orient(8) = -0.924689532548452 
 cam_avel(0) = 0.00000000000000 
 cam_avel(1) = 0.00000000000000 
 cam_avel(2) = 0.00000000000000 
@@ -3240,9 +3241,9 @@ cam_fn_focal_to_image = 'cam_focal_to_image_linear'
 cam_fn_body_to_image = '' 
 cam_fn_image_to_focal = 'cam_image_to_focal_linear' 
 / -------------------------------------------------------------------- /
-/ STAR descriptor -- updated Wed Aug 23 10:07:08 2017
+/ STAR descriptor -- updated Mon Aug 28 13:46:39 2017
 / -------------------------------------------------------------------- /
-str_update_time = 2457989.42162037 
+str_update_time = 2457994.57406250 
 str_tasks = '' 
 str_name = 'SUN' 
 str_abbrev = 'STR' 

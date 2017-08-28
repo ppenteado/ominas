@@ -36,7 +36,7 @@
 ;-------------------------------------------------------------------------
 instrument = 'CAS_ISS_NA'
 times = ['2017-08-21T19:00:00','2017-08-21T20:00:00']
-nt = 2
+nt = 1
 
 
 
@@ -65,7 +65,8 @@ cds = pg_get_cameras(instrument=instrument, time=times)
 t_start = bod_time(cds[0])
 t_stop = bod_time(cds[1])
 
-t = (dindgen(nt)/(nt-1) * (t_stop - t_start)) + t_start
+t = t_start
+if(nt GT 1) then t = (dindgen(nt)/(nt-1) * (t_stop - t_start)) + t_start
 cd = pg_get_cameras(dd, instrument=instrument, time=t)
 
 

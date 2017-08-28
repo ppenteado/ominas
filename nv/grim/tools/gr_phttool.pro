@@ -194,10 +194,12 @@ end
 pro grpht_apply_correction_primary, grim_data, data, phtd
 @pnt_include.pro
 
+ plane = grim_get_plane(grim_data)
+
  ;---------------------------
  ; get data
  ;----------------------------
- limb_ptd = grim_get_active_overlays(grim_data, 'LIMB')
+ limb_ptd = grim_ptd(plane, /limb)
  if(NOT keyword_set(limb_ptd)) then $
   begin
    grim_message, 'No outline points.'
