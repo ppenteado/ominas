@@ -39,7 +39,7 @@ export NV_INS_DETECT=$NV_CONFIG/tab/instrument_detectors.tab
 
 #echo "DFLAG=${DFLAG}"
 unset NV_SAO_DATA
-unset PG_MAPS
+export PG_MAPS=${NV_MAPS_DATA}
 if [ "${DFLAG}" = 'true' ]; then
     #-----------------------------------------------------------------------------------#
     # DEMO configuration: 																#

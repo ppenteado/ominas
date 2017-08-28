@@ -27,6 +27,7 @@ if [ ! -d ${1} ]; then
   git clone https://github.com/ppenteado/ominas_maps ${1}
 else
   echo "${1} already exists; skipping git clone, since it requires the destination to be empty"
+  git -C {$1} pull
 fi
 #${wget} "${baseurl}/ --localdir=${1}/ --absolute --timestamps=$ts $@"
 
