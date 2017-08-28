@@ -63,7 +63,7 @@ ckb=http://pds-rings.seti.org/voyager/ck/
 
 for f in "${cks[@]}"
 do
-  ${wget} "${cb}${f} --localdir=${1}/ck/ --absolute $@"
+  echo ${wget} " ${cb}${f} --localdir=${1}/ck/ --absolute $@"
 done
 
 
