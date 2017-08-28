@@ -518,14 +518,11 @@ common grim_overlay_settings_block, tops
 	  '2, LABEL, Overlay                Color    Psym   Size       Labels         Shading, CENTER']
 
  overlay_label_len = 15
- ptdps = grim_get_overlay_ptdp(grim_data, plane=plane, 'all')
- nptdps = n_elements(ptdps)
+ overlay_info = grim_ptd_info(plane)
 
- for i=0, nptdps-1 do $
+ for i=0, n_elements(overlay_info)-1 do $
   begin
-   name = ''
-   ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, ii=i)
-   label =  str_pad(name, overlay_label_len) + ':'
+   label =  str_pad(overlay_info[i].name, overlay_label_len) + ':'
 
    desc = [desc, $
 	'1, BASE,, ROW, TAG=overlay_base_' + strtrim(i,2), $
