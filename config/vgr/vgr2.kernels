@@ -10,6 +10,11 @@ $VGR_SPICE_CK/vg2_sat_qmw_wa.bc
 $VGR_SPICE_CK/vgr2_super_v2.bc
 #$VGR_SPICE_CK/vg2_nep_version1_type1_iss_sedr.bc
 
+$VGR_SPICE_CK/vgr2_na_neptune_sedr.bc
+$VGR_SPICE_CK/vgr2_na_uranus_sedr.bc
+$VGR_SPICE_CK/vgr2_wa_neptune_sedr.bc
+$VGR_SPICE_CK/vgr2_wa_uranus_sedr.bc
+
 ###############################################################################
 # vgr2_spk.kernels
 #
