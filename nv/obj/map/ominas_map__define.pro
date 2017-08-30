@@ -7,10 +7,10 @@ function ominas_map::init, ii, crd=crd0, md=md0, $
 end_keywords
 @core.include
  
+ if(keyword_set(md0)) then struct_assign, md0, self
  void = self->ominas_core::init(ii, crd=crd0,  $
 @cor__keywords.include
 end_keywords)
- if(keyword_set(md0)) then struct_assign, md0, self
 
  self.abbrev = 'MAP'
  self.tag = 'MD'

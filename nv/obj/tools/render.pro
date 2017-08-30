@@ -218,6 +218,7 @@ map_smoothing_width=1
      ; apply photometry
      ;- - - - - - - - - - - - - - - -
      piece[www,*] = dat * (phot#MM)
+;stop
     end
   end
 
@@ -248,7 +249,7 @@ function rdr_piece, data, image_pts
  raytrace, image_pts, cd=cd, bx=bx, $
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=hit_list, hit_indices=hit_indices, hit_matrix=hit_matrix, $
-        near_matrix=near_matrix, far_matrix=far_matrix, $
+        back_matrix=back_matrix, $
         range_matrix=range_matrix
  if(hit_list[0] EQ -1) then return, piece
 
@@ -265,7 +266,7 @@ function rdr_piece, data, image_pts
    raytrace, bx=bx, sbx=ltd, numbra=data.numbra, $
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
-        near_matrix=sec_near_matrix, far_matrix=sec_far_matrix, $
+        back_matrix=sec_back_matrix, $
         range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
 
 

@@ -43,6 +43,7 @@ end_keywords
 
  self.abbrev = 'COR'
  self.tag = 'CRD'
+
  if(keyword_set(name)) then cor_set_name, self, decrapify(name[ii])
 
  if(keyword_set(udata)) then cor_set_udata, self, uname, udata, /noevent	;;;;

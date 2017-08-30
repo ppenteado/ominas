@@ -1388,7 +1388,7 @@ pro grim_kill_notify, top
    if(keyword_set(ltd)) then nv_notify_unregister, ltd, 'grim_descriptor_notify'
 
 ;;;
-   nv_ptr_free, [plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, $
+   nv_ptr_free, [plane.skd_p, plane.cd_p, plane.pd_p, plane.rd_p, plane.sd_p, plane.std_p, $
              plane.ard_p, plane.ltd_p, plane.od_p, *plane.overlay_ptdps, $
              plane.user_ptd_tlp]
   end
@@ -9558,7 +9558,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Compute arrays         \*grim_menu_points_arrays_event', $ 
            '0\Compute stars          \grim_menu_points_stars_event', $ 
            '0\Compute shadows        \grim_menu_points_shadows_event', $ 
-           '0\Compute reflections    \?grim_menu_points_reflections_event', $ 
+;           '0\Compute reflections    \?grim_menu_points_reflections_event', $ 
            '0\-------------------------\*grim_menu_delim_event', $ 
            '0\Hide/Unhide all        \+*grim_menu_hide_all_event', $ 
            '0\Clear all              \*grim_menu_clear_all_event', $ 

@@ -77,7 +77,7 @@ function pg_sub_body, gbx=gbx, bx=bx, dd=dd, gd=gd
  v = bod_inertial_to_body_pos(gbx, bd_centers)
  r = bod_inertial_to_body(gbx, gb_centers - bd_centers)
 
- surface_pts = glb_body_to_globe(gbx, glb_intersect(gbx, v, r, /near))
+ surface_pts = glb_body_to_globe(gbx, glb_intersect(gbx, v, r))
 
 
  ;----------------------------------------------------------

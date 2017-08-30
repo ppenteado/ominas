@@ -1103,7 +1103,7 @@ end
 ;
 ;=============================================================================
 pro grim_clear_objects, grim_data, all=all, $
-     cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, ltd=ltd, planes=planes
+     cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, ltd=ltd, skd=skd, planes=planes
 
  if(NOT keyword_set(planes)) then planes = grim_get_plane(grim_data)
  n = n_elements(planes)
@@ -1127,6 +1127,8 @@ pro grim_clear_objects, grim_data, all=all, $
                            grim_rm_xd, planes[i], grim_xd(planes[i], /ard)
    if((keyword_set(all)) OR (keyword_set(ltd))) then $
                            grim_rm_xd, planes[i], grim_xd(planes[i], /ltd)
+   if((keyword_set(all)) OR (keyword_set(skd))) then $
+                           grim_rm_xd, planes[i], grim_xd(planes[i], /skd)
 
    ;----------------------------------
    ; clear points arrays
@@ -1792,7 +1794,7 @@ end
 ;=============================================================================
 function grim_image_to_surface, grim_data, plane, image_pts, $
                       body_pts=near_pts, $
-                      far_pts=surf_pts_far, names=names, bx=bx;, valid=valid
+                      back_pts=surf_pts_back, names=names, bx=bx;, valid=valid
 @grim_block.include
 @pnt_include.pro
 
@@ -1821,7 +1823,7 @@ function grim_image_to_surface, grim_data, plane, image_pts, $
    nbx = n_elements(bx)
 
    raytrace, image_pts, cd=cd, bx=bx, hit_indices=ii, $
-                 range_matrix=dist, hit_matrix=near_pts, far_matrix=far_pts
+                 range_matrix=dist, hit_matrix=near_pts, back_matrix=back_pts
    w = -1
 
    bx = bx[ii]
@@ -1832,7 +1834,7 @@ function grim_image_to_surface, grim_data, plane, image_pts, $
     begin
      names = cor_name(bx[w])
      surf_pts = body_to_surface(bx[w], near_pts[w,*])
-     surf_pts_far = body_to_surface(bx[w], far_pts[w,*])
+     surf_pts_back = body_to_surface(bx[w], back_pts[w,*])
     end
 
 
@@ -1924,15 +1926,15 @@ pro grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _plane, _ptdp
  ; convert array to surface points
  ;------------------------------------------
  surf_pts = $
-   grim_image_to_surface(grim_data, plane, pts, names=names, far=surf_pts_far)
+   grim_image_to_surface(grim_data, plane, pts, names=names, back=surf_pts_back)
  if(NOT keyword_set(surf_pts)) then return
 
  ;------------------------------------------
  ; convert surface points to image points
  ;------------------------------------------
  _pts = grim_surface_to_image(_grim_data, _plane, surf_pts, names, valid=valid)
- if(keyword_set(surf_pts_far)) then $
-   far_pts = grim_surface_to_image(_grim_data, _plane, surf_pts_far, names)
+ if(keyword_set(surf_pts_back)) then $
+   back_pts = grim_surface_to_image(_grim_data, _plane, surf_pts_back, names)
 
 
  ;------------------------------------------
@@ -1944,8 +1946,8 @@ pro grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _plane, _ptdp
  if(keyword_set(_pts)) then $
   begin
    grim_add_indexed_array, _ptdp, _pts, label=label
-   if(keyword_set(far_pts)) then $
-       grim_add_indexed_array, _ptdp, far_pts, label='-'+label, spacing=8
+   if(keyword_set(back_pts)) then $
+       grim_add_indexed_array, _ptdp, back_pts, label='-'+label, spacing=8
   end
 
 end
@@ -3000,8 +3002,7 @@ pro grim_overlay, grim_data, name, plane=plane, source_xd=source_xd, ptd=ptd, so
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; make sure relevant descriptors are loaded
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
- grim_load_descriptors, grim_data, name, plane=plane, obj_name=obj_name, $
-       cd=cd, pd=pd, rd=rd, ltd=ltd, sd=sd, ard=ard, std=std, od=od, gd=gd
+ grim_load_descriptors, grim_data, name, plane=plane, obj_name=obj_name, cd=cd, gd=gd
  if(NOT keyword_set(cd)) then return
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - -

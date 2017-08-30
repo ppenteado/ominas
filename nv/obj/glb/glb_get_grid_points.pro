@@ -32,9 +32,7 @@ function glb_get_grid_points, gbd, lat=lat, lon=lon, $
    lats = reform([lat] # $
                      make_array(nplon, val=1), nlat*nplon, /overwrite)#Mt
    lons = reform([scan_lon]##make_array(nlat, val=1), nlat*nplon, /overwrite)#Mt
-;   rads = glb_get_radius(gbd, lats, lons)
 
-;   rlat_surface = tr([tr(lats), tr(lons), tr(rads)])
    rlat_surface = tr([tr(lats), tr(lons), dblarr(1,np)])
    rlat_body = glb_globe_to_body(gbd, rlat_surface)
   end
@@ -50,9 +48,7 @@ function glb_get_grid_points, gbd, lat=lat, lon=lon, $
    lons = reform([lon] # $
                       make_array(nplat, val=1), nlon*nplat, /overwrite)#Mt
    lats = reform([scan_lat]##make_array(nlon, val=1), nlon*nplat, /overwrite)#Mt
-;   rads = glb_get_radius(gbd, lats, lons)
 
-;   rlon_surface = tr([tr(lats), tr(lons), tr(rads)])
    rlon_surface = tr([tr(lats), tr(lons), dblarr(1,np)])
    rlon_body = glb_globe_to_body(gbd, rlon_surface)
   end

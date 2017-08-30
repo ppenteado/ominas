@@ -7,10 +7,10 @@ function ominas_point::init, ii, crd=crd0, ptd=ptd0, $
 end_keywords
 @core.include
  
+ if(keyword_set(ptd0)) then struct_assign, ptd0, self
  void = self->ominas_core::init(ii, crd=crd0, $
 @cor__keywords.include
 end_keywords)
- if(keyword_set(ptd0)) then struct_assign, ptd0, self
 
  self.abbrev = 'PNT'
  self.tag = 'PTD'

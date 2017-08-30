@@ -7,10 +7,10 @@ function ominas_orbit::init, ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, obd=obd0,
 end_keywords
 @core.include
  
+ if(keyword_set(obd0)) then struct_assign, obd0, self
  void = self->ominas_disk::init(ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
 @disk__keywords.include
 end_keywords)
- if(keyword_set(obd0)) then struct_assign, obd0, self
 
  self.abbrev = 'DSK'
 

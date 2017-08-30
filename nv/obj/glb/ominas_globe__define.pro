@@ -7,10 +7,10 @@ function ominas_globe::init, ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, $
 end_keywords
 @core.include
  
+ if(keyword_set(gbd0)) then struct_assign, gbd0, self
  void = self->ominas_solid::init(ii, crd=crd0, bd=bd0, sld=sld0, $
 @sld__keywords_tree.include
 end_keywords)
- if(keyword_set(gbd0)) then struct_assign, gbd0, self
 
  self.abbrev = 'GLB'
  self.tag = 'GBD'

@@ -24,7 +24,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	radius:	 Radius to use for the globe.  Default is 1d100.
+;	radius:	 Radius to use for the globe.  Default is 15 billion light years.
 ;
 ;  OUTPUT: NONE
 ;
@@ -40,14 +40,13 @@
 ;-
 ;=============================================================================
 function pg_get_sky, radius=radius
-
- if(NOT keyword_set(radius)) then radius = 1d100
+ 
+ if(NOT keyword_set(radius)) then radius = const_get('LY')*15d9
 
  gbd = glb_create_descriptors(1, $
 		name='SKY', $
 		bd=bod_inertial(), $
 		radii=[1,1,1]*radius)
-
  return, gbd
 end
 ;===========================================================================

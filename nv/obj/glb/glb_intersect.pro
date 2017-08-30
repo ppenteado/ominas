@@ -29,18 +29,7 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	near:	If set, only the "near" points are returned.  More specifically,
-;		these points correspond to the nearest along the ray from the 
-;		observer to the globe.  If the observer is exterior, these are 
-;		the nearest interesections to the observer; if the observer is 
-;		interior, these intersections are behind the observer.  
-;
-;	far:	If set, only the "far" points are returned.  See above; if the 
-;		observer is exterior, these are the furthest interesections from 
-;		the observer; if the observer is interior, these intersections 
-;		are in front of the observer.
-;
+;  INPUT:
 ;	hit:	Array giving the indices of rays that hit the object.
 ;
 ;	miss:	Array giving the indices of rays that miss the object.
@@ -55,12 +44,15 @@
 ;	discriminant:	Discriminant of the quadriatic equation used to 
 ;			determine the intersections.
 ;
+;	back_pts:
+;		"Back" points.  If the observer is exterior, these are the 
+;		interesections on the back side of the body; if the observer 
+;		is interior, these intersections are behind the observer.
 ;
 ; RETURN: 
-;	Array (2*nv,3,nt) of points in the BODY frame, where 
-;	int_pts[0:nv-1,*,*] correspond to the near-side intersections
-;	and int_pts[nv:2*nv-1,*,1] correspond to the far side.  Zero 
-;	vector is returned for points with no solution.
+;	Array (nv,3,nt) of points in the BODY frame corresponding to the
+;	first intersections with the ray.  Zero vector is returned for points 
+;	with no solution.
 ;
 ;
 ; STATUS:
@@ -73,7 +65,41 @@
 ;	
 ;-
 ;===========================================================================
-function glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, near=near, far=far, $
+function glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, back_pts=back_pts, $
+                      discriminant=discriminant, nosolve=nosolve, valid=valid
+@core.include
+
+ nt = 1
+ dim = size(view_pts, /dim)
+ nv = dim[0]
+ if(n_elements(dim) GT 2) then t = dim[2]
+
+ ;----------------------------
+ ; compute the discriminant
+ ;----------------------------
+ discriminant = glb_intersect_discriminant(gbd, view_pts, ray_pts, $
+                                           alpha=alpha, beta=beta, gamma=gamma)
+
+ ;----------------------------------
+ ; compute the intersection points
+ ;----------------------------------
+ hit_pts = glb_intersect_points(gbd, view_pts, ray_pts, discriminant, alpha, beta, gamma, $
+                          valid=valid, nosolve=nosolve, back_pts=back_pts)
+ if(arg_present(hit)) then hit = where(valid NE 0)
+ if(arg_present(miss)) then miss = where(valid EQ 0)
+
+
+ ;----------------------------------
+ ; select outputs
+ ;----------------------------------
+ return, hit_pts
+end
+;===========================================================================
+
+
+
+;===========================================================================
+function ___glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, near=near, far=far, $
                       discriminant=discriminant, nosolve=nosolve, valid=valid
 @core.include
 
