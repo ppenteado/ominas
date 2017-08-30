@@ -621,6 +621,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 xd_p		:	ptr_new(0), $	; Descriptor array		;++
 gd_p		:	ptr_new(0), $	; Generic descriptor		;**
 
+		skd_p		:	ptr_new(obj_new()), $	; Sky descriptor
 		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
 		od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 		pd_p		:	ptr_new(obj_new()), $	; Planet descriptors

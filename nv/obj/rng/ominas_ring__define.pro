@@ -7,10 +7,10 @@ function ominas_ring::init, ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, rd=rd0, $
 end_keywords
 @core.include
  
+ if(keyword_set(rd0)) then struct_assign, rd0, self
  void = self->ominas_disk::init(ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
 @dsk__keywords_tree.include
 end_keywords)
- if(keyword_set(rd0)) then struct_assign, rd0, self
 
  self.abbrev = 'RNG'
  self.tag = 'RD'

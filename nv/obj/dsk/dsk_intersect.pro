@@ -55,7 +55,7 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_intersect, dkd, v, r, t=t, hit=hit, miss=miss, near=near, far=far, all=all
+function dsk_intersect, dkd, v, r, t=t, hit=hit, miss=miss
 @core.include
  
 
@@ -98,14 +98,6 @@ function dsk_intersect, dkd, v, r, t=t, hit=hit, miss=miss, near=near, far=far, 
    miss = where(mark EQ 0)
   end
 
-
- ;----------------------------------
- ; select outputs
- ;----------------------------------
- near = vv
- far = vv
-
- if(keyword_set(all)) then return, [vv,vv]
 
  return, vv
 end

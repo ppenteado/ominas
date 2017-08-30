@@ -7,10 +7,10 @@ function ominas_body::init, ii, crd=crd0, bd=bd0, $
 end_keywords
 @core.include
  
+ if(keyword_set(bd0)) then struct_assign, bd0, self
  void = self->ominas_core::init(ii, crd=crd0, $
 @cor__keywords.include
 end_keywords)
- if(keyword_set(bd0)) then struct_assign, bd0, self
 
  self.abbrev = 'BOD'
  self.tag = 'BD'

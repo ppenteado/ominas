@@ -76,6 +76,7 @@ function const_get, name, units=units
  if(NOT keyword_set(units)) then units = const_get_units()
 
  result = call_function('const' + '_' + strlowcase(units), name)
+ if(NOT keyword_set(result)) then message, name + ' undefined.'
 
  return, result
 end

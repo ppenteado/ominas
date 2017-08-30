@@ -145,8 +145,8 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
         ; project shadows in body frame
         ;---------------------------------
         shadow_pts = $
-           glb_intersect(/near, $
-               hit=hit, miss=miss, nosolve=nosolve, xd, v_body, r_body, dis=dis)
+           glb_intersect(hit=hit, miss=miss, nosolve=nosolve, $
+                                         xd, v_body, r_body, dis=dis)
 
         ;---------------------------------------------------------------
         ; Compute and store image coords of any valid intersections.

@@ -7,10 +7,10 @@ function ominas_data::init, ii, crd=crd0, dd=dd0, $
 end_keywords
 @core.include
 
+ if(keyword_set(dd0)) then struct_assign, dd0, self
  void = self->ominas_core::init(ii, crd=crd0, $
 @cor__keywords.include
 end_keywords)
- if(keyword_set(dd0)) then struct_assign, dd0, self
 
  self.abbrev = 'DAT'
  self.tag = 'DD'

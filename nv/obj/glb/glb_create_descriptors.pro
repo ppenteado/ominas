@@ -84,7 +84,6 @@ end_keywords
 @core.include
  if(NOT keyword_set(n)) then n = 1
 
-
  gbd = objarr(n)
  for i=0, n-1 do $
   begin

@@ -7,10 +7,10 @@ function ominas_array::init, ii, crd=crd0, ard=ard0, $
 end_keywords
 @core.include
  
+ if(keyword_set(ard0)) then struct_assign, ard0, self
  void = self->ominas_core::init(ii, crd=crd0, $
 @cor__keywords.include
 end_keywords)
- if(keyword_set(ard0)) then struct_assign, ard0, self
 
  self.abbrev = 'ARR'
  self.tag = 'ARD'
