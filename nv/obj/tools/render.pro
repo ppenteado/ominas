@@ -218,7 +218,6 @@ map_smoothing_width=1
      ; apply photometry
      ;- - - - - - - - - - - - - - - -
      piece[www,*] = dat * (phot#MM)
-;stop
     end
   end
 
@@ -270,16 +269,6 @@ function rdr_piece, data, image_pts
         range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
 
 
- ;---------------------------------------------------------------------------
- ; remove primary hits whose sunward secondaries hit other bodies 
- ;---------------------------------------------------------------------------
-; if(sec_hit_list[0] NE -1) then $
-;  begin
-;   w = where(sec_hit_indices NE -1)
-;   if(w[0] NE -1) then hit_indices[w] =-1
-;  end
-
-
  ;---------------------------------------------
  ; map surfaces
  ;---------------------------------------------
@@ -290,9 +279,7 @@ function rdr_piece, data, image_pts
    nw = n_elements(w)
    if(w[0] NE -1) then $
     begin
-;device, set_graphics=6
 ;     if(data.show) then plots, image_pts[*,w], psym=3, col=ctwhite()
-;device, set_graphics=3
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; photometry

@@ -1948,7 +1948,8 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  ltd = grim_get_lights(grim_data, plane=plane)
  grim_resume_events
 
- bx = cor_select(grim_xd(plane), 'BODY', /class)
+; bx = cor_select(grim_xd(plane), 'BODY', /class)
+bx = cor_select(grim_xd(plane), 'BODY', /class, exclude_name='SKY')
 
 
  ;-----------------------------------------

@@ -35,54 +35,52 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	cd:	       Camera descriptor.
+;	cd:	        Camera descriptor.
 ;
-;	bx:	       Array of object descriptors; must be a subclass of BODY.
+;	bx:	        Array of object descriptors; must be a subclass of BODY.
 ;
-;	sbx:           Body descriptor for secondary ray tracing.  If set, 
-;	               image_pts and cd are not used; instead, secondary rays 
-;	               are traced from the given hit_matrix points to sbx.
-;	               At present, only one sbx is allowed.
+;	sbx:            Body descriptor for secondary ray tracing.  If set, 
+;	                image_pts and cd are not used; instead, secondary rays 
+;	                are traced from the given hit_matrix points to sbx.
+;	                At present, only one sbx is allowed.
 ;
-;	hit_matrix:    Body-frame points from prior call, to be used as
-;	               source points for secondary rays.  
+;	hit_matrix:     Body-frame points from prior call, to be used as
+;	                source points for secondary rays.  
 ;
-;	hit_indices:   Body index for each secondary ray.
+;	hit_indices:    Body index for each secondary ray.
 ;
-;	limit_source : If set, secondary vectors originating on a given
-;	               body are not considered for targets that are the
-;	               same body.  Default is off.
+;	limit_source :  If set, secondary vectors originating on a given
+;	                body are not considered for targets that are the
+;	                same body.  Default is off.
 ;
-;	standoff:      If given, secondary vectors are advanced by this distance
-;	               before tracing in order to avoid hitting target bodies
-;	               through round-off error.  Default is 1 unit.
+;	standoff:       If given, secondary vectors are advanced by this distance
+;	                before tracing in order to avoid hitting target bodies
+;	                through round-off error.  Default is 1 unit.
 ;
-;	numbra:        Number of rays to trace to the secondary bodies.
-;	               Default is 1.  The first ray is traced to the body
-;	               center; wach additional ray is traced to a random point 
-;	               within the body.
+;	numbra:         Number of rays to trace to the secondary bodies.
+;	                Default is 1.  The first ray is traced to the body
+;	                center; wach additional ray is traced to a random point 
+;	                within the body.
 ;
 ;  OUTPUT: 
-;	hit_list:     Array (nhit) giving indices of all bx that have ray 
-;	              intersections.  
+;	hit_list:      Array (nhit) giving indices of all bx that have ray 
+;	               intersections.  
 ;
-;	hit_indices:  Array (nray) of body indices corresponding to the first 
-;	              intersection for each ray.  
+;	hit_indices:   Array (nray) of body indices corresponding to the first 
+;	               intersection for each ray.  
 ;
-;	hit_matrix:   Array (nray,3,nhit) of body-frame points for nearest 
-;	              ray intersections. 
+;	hit_matrix:    Array (nray,3,nhit) of body-frame points for nearest 
+;	               ray intersections. 
 ;
-;	range_matrix: Array (nhit,nray) giving distance to the near-side
-;	              ray intersection for each body in the hit_matrix.  
+;	range_matrix:  Array (nhit,nray) giving distance to the near-side
+;	               ray intersection for each body in the hit_matrix.  
 ;
-;	back_matrix:  Array (nray,3,nhit) of body-frame points for all
-;	              "back"-side intersections with bodies in the hit_list.
-;	              These intersections occur either behind the observer
-;	              (if viewing from inside the body) or on theback side of
-;	              the body (if viewed externally).
+;	back_matrix:   Array (nray,3,nhit) of body-frame points for additional
+;	               intersections with bodies in the hit_list, in order
+;	               of distance.
 ;
-;	shadow_matrix:Array (nray) of "shadow levels" for each ray, based
-;	              on mulitple ray tracings to the secondary bodies.
+;	shadow_matrix: Array (nray) of "shadow levels" for each ray, based
+;	               on mulitple ray tracings to the secondary bodies.
 ;
 ;
 ; RETURN: NONE
@@ -173,11 +171,11 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; trace the rays
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     near_pts = surface_intersect(bx[i], v[ii,*], r[ii,*], hit=hit, back_pts=back_pts)
-     if(keyword_set(near_pts)) then $
+     hit_pts = surface_intersect(bx[i], v[ii,*], r[ii,*], hit=hit, back_pts=back_pts)
+     if(keyword_set(hit_pts)) then $
       begin
        nii = n_elements(ii)
-       hits[ii,*] = near_pts
+       hits[ii,*] = hit_pts
        bhits[ii,*] = back_pts
 
        ;- - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -186,23 +184,6 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
        if(hit[0] NE -1) then $
         begin
          hit = ii[hit]
-
-
-
-;         range = v_mag(v - hits)
-;         xhit = complement(range, hit)
-;         if(xhit[0] NE -1) then range[xhit] = 1d100
-
-;         hit_list = append_array(hit_list, i, /pos)
-;         hit_matrix = $
-;           append_array(hit_matrix, reform(hits, 1,3,nray,/over))
-;         range_matrix = $
-;                 append_array(range_matrix, reform(range, 1,nray, /over))
-
-
-
-
-
          range = v_mag(v[hit,*] - hits[hit,*])
          ww = where(range LT range_matrix[hit])
 
@@ -252,7 +233,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
 
 
  ;---------------------------------------------
- ; set up for primary trace
+ ; primary trace
  ;---------------------------------------------
  if(keyword_set(cd)) then $
   begin
@@ -270,7 +251,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
       standoff=standoff, limit_source=limit_source, show=show
   end $
  ;---------------------------------------------
- ; set up for secondary trace
+ ; secondary trace
  ;---------------------------------------------
  else if(keyword_set(sbx)) then $
   begin
