@@ -30,29 +30,29 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	hit:	Array giving the indices of rays that hit the object.
+;	nosolve: If set, the intersections are not computed, though the
+;		 discriminant is.
+;
+;  OUTPUT: 
+;	hit:	Array giving the indices of rays that hit the object in 
+;		the forward direction.
 ;
 ;	miss:	Array giving the indices of rays that miss the object.
 ;
-;	valid:	Array in which each element indicates whether the object
-;		was hit.
+;	score:	Array in which each element indicates the number of forward hits. 
 ;
-;	nosolve: If set, the intersections are not computed, though the
-;		 discrimiant is.
-;
-;  OUTPUT: 
 ;	discriminant:	Discriminant of the quadriatic equation used to 
 ;			determine the intersections.
 ;
 ;	back_pts:
-;		"Back" points.  If the observer is exterior, these are the 
-;		interesections on the back side of the body; if the observer 
-;		is interior, these intersections are behind the observer.
+;		Array (nv,3,nt) of additional intersections in order of distance 
+;		from the observer.  
+;	
 ;
 ; RETURN: 
 ;	Array (nv,3,nt) of points in the BODY frame corresponding to the
 ;	first intersections with the ray.  Zero vector is returned for points 
-;	with no solution.
+;	with no solution, including those behind the viewer.
 ;
 ;
 ; STATUS:
@@ -66,7 +66,7 @@
 ;-
 ;===========================================================================
 function glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, back_pts=back_pts, $
-                      discriminant=discriminant, nosolve=nosolve, valid=valid
+                      discriminant=discriminant, nosolve=nosolve, score=score
 @core.include
 
  nt = 1
@@ -84,9 +84,9 @@ function glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, back_pts=bac
  ; compute the intersection points
  ;----------------------------------
  hit_pts = glb_intersect_points(gbd, view_pts, ray_pts, discriminant, alpha, beta, gamma, $
-                          valid=valid, nosolve=nosolve, back_pts=back_pts)
- if(arg_present(hit)) then hit = where(valid NE 0)
- if(arg_present(miss)) then miss = where(valid EQ 0)
+                          score=score, nosolve=nosolve, back_pts=back_pts)
+ if(arg_present(hit)) then hit = where(score GT 0)
+ if(arg_present(miss)) then miss = where(score EQ 0)
 
 
  ;----------------------------------

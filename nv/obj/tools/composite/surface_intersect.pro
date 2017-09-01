@@ -36,7 +36,17 @@
 ;		of the body (if applicable); if the observer is interior, these 
 ;		intersections are behind the observer.
 ;
-;  OUTPUT: NONE
+;  OUTPUT:
+;	hit:	Array giving the indices of rays that hit the object in 
+;		the forward direction.
+;
+;
+;	back_pts:
+;		Array (nb,3,nt) of "back" points in order of distance from
+;		the observer.  If the observer is exterior, these are the 
+;		intersections on the back side of the body, or those behind
+;		the observer; if the observer is interior, these intersections 
+;		are behind the observer.
 ;
 ;
 ; RETURN: 
