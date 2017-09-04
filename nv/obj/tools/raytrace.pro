@@ -134,7 +134,7 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
  ;- - - - - - - - - - - - - - - - - - -
  ; check each body
  ;- - - - - - - - - - - - - - - - - - -
- for i=0, nbx-1 do $
+ for i=0, nbx-1 do if(obj_valid(bx[i])) then $
   begin
    mark[select] = 1
 
@@ -199,9 +199,6 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
       end
     end
   end
-
-;if(keyword_set(hit_matrix)) then $
-;                            hit_matrix = transpose(hit_matrix)
 
 
 end

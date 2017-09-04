@@ -194,6 +194,7 @@ map_smoothing_width=1
 
      dat = image_interp_cam(cd=md[jj], map, interp='sinc', $
                im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:map_smoothing_width})
+;;;;dat = dat/max(dat)
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; if 1 channel, copy to all channels
@@ -248,11 +249,17 @@ function rdr_piece, data, image_pts
  ;---------------------------------------------
  ; trace primary rays from camera
  ;---------------------------------------------
- raytrace, image_pts, cd=cd, bx=bx, $
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; include sky in primary trace
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ prim_bx = bx
+ if(keyword_set(skd)) then prim_bx = append_array(prim_bx, skd)
+
+ raytrace, image_pts, cd=cd, bx=prim_bx, $
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=hit_list, hit_indices=hit_indices, hit_matrix=hit_matrix, $
-        back_matrix=back_matrix, $
-        range_matrix=range_matrix
+        back_matrix=back_matrix, range_matrix=range_matrix
  if(hit_list[0] EQ -1) then return, piece
 
 
@@ -264,12 +271,18 @@ function rdr_piece, data, image_pts
  sec_hit_list = hit_list
  if(data.no_secondary) then sec_hit_list = -1
 
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; exclude sky from secondary trace
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ sec_bx = prim_bx
+ w = where(sec_bx EQ skd)
+ if(w[0] NE -1) then sec_bx[w] = obj_new()
+
  if(sec_hit_list[0] NE -1) then $
-   raytrace, bx=bx, sbx=ltd, numbra=data.numbra, $
+   raytrace, bx=sec_bx, sbx=ltd, numbra=data.numbra, $
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
-        back_matrix=sec_back_matrix, $
-        range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
+        back_matrix=sec_back_matrix, range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
 
 
  ;---------------------------------------------
@@ -285,14 +298,16 @@ function rdr_piece, data, image_pts
 ;     if(data.show) then plots, image_pts[*,w], psym=3, col=ctwhite()
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; photometry
+     ; photometry -- exclude sky
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     phot = rdr_photometry(data, cd, ltd, bx[ii], hit_matrix[w,*])
+     phot = make_array(nw, val=1d)
+     if(obj_valid(sec_bx[ii])) then $
+           phot = rdr_photometry(data, cd, ltd, sec_bx[ii], hit_matrix[w,*])
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; map
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     rdr_map, data, piece, bx[ii], md, ddmap, hit_matrix, phot, w
+     rdr_map, data, piece, prim_bx[ii], md, ddmap, hit_matrix, phot, w
     end
   end
 

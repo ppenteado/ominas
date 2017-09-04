@@ -1948,16 +1948,23 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  ltd = grim_get_lights(grim_data, plane=plane)
  grim_resume_events
 
- bx = cor_select(grim_xd(plane), 'SOLID', /class, exclude_name='SKY')
- skd = cor_select(grim_xd(plane), 'SKY')
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; Get bodies to render: exclude background stars by angular size
+ ; and treat sky separately.
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ _bx = cor_select(grim_xd(plane), 'SOLID', /class, exclude_name='SKY')
+ sel = pg_select_bodies(_bx, od=cd, pix=0.1)
+ if(sel[0] NE -1) then bx= _bx[sel]
 
+ skd = cor_select(grim_xd(plane), 'SKY')
 
  ;-----------------------------------------
  ; load maps
  ;-----------------------------------------
  md = plane.render_cd
  dd_map = plane.render_dd
- if(NOT keyword_set(dd_map)) then dd_map = pg_load_maps(md=md, bx=bx)
+ if(NOT keyword_set(dd_map)) then $
+                 dd_map = pg_load_maps(md=md, bx=append_array(bx, skd))
 
 
  ;-----------------------------------------
