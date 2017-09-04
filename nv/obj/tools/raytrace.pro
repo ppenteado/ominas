@@ -111,7 +111,7 @@
 ;=============================================================================
 pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
         hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-        back_matrix=back_matrix, $
+        back_matrix=back_matrix, src_hit_indices=src_hit_indices, $
         standoff=standoff, limit_source=limit_source, show=show
 
 ;hit_matrix = 0
@@ -128,7 +128,7 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
  v = dblarr(nray,3)
  r = dblarr(nray,3)
  hits = dblarr(nray,3)
- bhits = dblarr(nray,3)
+ back_hits = dblarr(nray,3)
  mark = bytarr(nray)
 
  ;- - - - - - - - - - - - - - - - - - -
@@ -176,7 +176,7 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
       begin
        nii = n_elements(ii)
        hits[ii,*] = hit_pts
-       bhits[ii,*] = back_pts
+       if(keyword_set(back_pts)) then back_hits[ii,*] = back_pts
 
        ;- - - - - - - - - - - - - - - - - - - - - - - - - -
        ; add closest result to intercept map
@@ -190,7 +190,7 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
          if(ww[0] NE -1) then $
           begin
            hit_matrix[hit[ww],*] = hits[hit[ww],*]
-           back_matrix[hit[ww],*] = bhits[hit[ww],*]
+           back_matrix[hit[ww],*] = back_hits[hit[ww],*]
            hit_indices[hit[ww]] = i
            hit_list = append_array(hit_list, i, /pos)
            range_matrix[hit[ww]] = range[ww]
@@ -306,7 +306,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
         cloud_pts_body = point_cloud(sbx, nselect)
         cloud_pts = bod_body_to_inertial_pos(sbx, cloud_pts_body)
        end
-     ray_pts[select,*] = v_unit(cloud_pts - view_pts_select)
+     ray_pts[select,*] = cloud_pts - view_pts_select
      src_hit_indices = hit_indices
 
      ;- - - - - - - - - - - - - - - - - - - - -
@@ -314,7 +314,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
      ;- - - - - - - - - - - - - - - - - - - - -
      rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
         hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-        back_matrix=back_matrix, $
+        back_matrix=back_matrix, src_hit_indices=src_hit_indices, $
         standoff=standoff, limit_source=limit_source, show=show
 
      ;- - - - - - - - - - - - - - - - - - - - -

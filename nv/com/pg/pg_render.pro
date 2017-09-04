@@ -115,7 +115,7 @@
 ;	
 ;-
 ;=============================================================================
-function pg_render, cd=cd, ltd=ltd, $
+function pg_render, cd=cd, ltd=ltd, skd=skd, $
        bx=bx, ddmap=ddmap, md=md, dd=dd, gd=gd, sample=sample, pc_size=pc_size, $
        show=show, pht_min=pht_min, no_pht=no_pht, map=image, $
        standoff=standoff, limit_source=limit_source, nodd=nodd, $
@@ -133,6 +133,7 @@ function pg_render, cd=cd, ltd=ltd, $
  ;-----------------------------------------------
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(bx)) then bx = dat_gd(gd, dd=dd, /bx)
+ if(NOT keyword_set(skd)) then skd = dat_gd(gd, dd=dd, /skd)
  if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
  if(NOT keyword_set(md)) then md = dat_gd(gd, dd=dd, /md)
 
@@ -203,7 +204,7 @@ function pg_render, cd=cd, ltd=ltd, $
  ; create the rendering
  ;---------------------------------------
  if(ii[0] NE -1) then $
-   map = render(image_pts, cd=cd, ltd=ltd, $
+   map = render(image_pts, cd=cd, ltd=ltd, skd=skd, $
               bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
               show=show, pht_min=pht_min, no_pht=no_pht, $
               standoff=standoff, limit_source=limit_source, $

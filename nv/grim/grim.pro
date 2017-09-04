@@ -1948,8 +1948,8 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  ltd = grim_get_lights(grim_data, plane=plane)
  grim_resume_events
 
-; bx = cor_select(grim_xd(plane), 'BODY', /class)
-bx = cor_select(grim_xd(plane), 'BODY', /class, exclude_name='SKY')
+ bx = cor_select(grim_xd(plane), 'SOLID', /class, exclude_name='SKY')
+ skd = cor_select(grim_xd(plane), 'SKY')
 
 
  ;-----------------------------------------
@@ -1968,8 +1968,8 @@ bx = cor_select(grim_xd(plane), 'BODY', /class, exclude_name='SKY')
  minimum = grim_get_menu_value(grim_data, $
                              'grim_menu_render_enter_minimum_event', suffix='%')/100.
 
- stat = pg_render(/psf, /nodd, /no_mask, show=grim_data.render_show, $
-                    cd=cd, bx=bx, ltd=ltd, md=md, ddmap=dd_map, map=map, $
+ stat = pg_render(/psf, /nodd, /no_mask, /limit_source, show=grim_data.render_show, $
+                    cd=cd, bx=bx, skd=skd, ltd=ltd, md=md, ddmap=dd_map, map=map, $
                     pht=minimum, sample=sample, numbra=numbra, $
                     image_ptd=image_pts)
  dim = size(map, /dim)
