@@ -13,17 +13,17 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	int_pts = surface_intersect(bx, v, r)
+;	int_pts = surface_intersect(bx, view_pts, ray_pts)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	bx:	Array (nt) of any subclass of BODY descriptors with
-;		the expected surface parameters.
+;	bx:		Array (nt) of any subclass of BODY descriptors with
+;			the expected surface parameters.
 ;
-;	v:	Array (nv,3,nt) giving ray origins in the BODY frame.
+;	view_pts:	Array (nv,3,nt) giving ray origins in the BODY frame.
 ;
-;	r:	Array (nv,3,nt) giving ray directions in the BODY frame.
+;	ray_pts:	Array (nv,3,nt) giving ray directions in the BODY frame.
 ;
 ;
 ;  OUTPUT: NONE
@@ -64,13 +64,14 @@
 ;	
 ;-
 ;===========================================================================
-function surface_intersect, bx, v, r, hit=hit, back_pts=back_pts
+function surface_intersect, bx, view_pts, ray_pts, hit=hit, back_pts=back_pts
 
  body_pts = !null
+ back_pts = !null
  if(cor_isa(bx[0], 'GLOBE')) then $
-          body_pts = glb_intersect(bx, v, r, back_pts=back_pts, hit=hit) $
+          body_pts = glb_intersect(bx, view_pts, ray_pts, back_pts=back_pts, hit=hit) $
  else if(cor_isa(bx[0], 'DISK')) then $
-          body_pts = dsk_intersect(bx, v, r, hit=hit)
+          body_pts = dsk_intersect(bx, view_pts, ray_pts, hit=hit)
 
  return, body_pts
 end

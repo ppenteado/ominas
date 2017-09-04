@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	map = render(cd=cd, bx=bx, ltd=ltd)
+;	map = render(cd=cd, bx=bx, ltd=ltd, skd=skd)
 ;
 ;
 ;
@@ -32,6 +32,8 @@
 ;	bx:	      Array of object descriptors; must be a subclass of BODY.
 ;
 ;	ltd:          Body descriptors for the light sources.
+;
+;	skd:          Globe descriptor for the sky.
 ;
 ;	md:           Array of map descriptors, one for each body.
 ;
@@ -237,6 +239,7 @@ function rdr_piece, data, image_pts
  ddmap = data.ddmap
  cd = data.cd
  ltd = data.ltd
+ skd = data.skd
  nz = data.nz
 
  np = n_elements(image_pts)/2
@@ -306,7 +309,7 @@ end
 ; render
 ;
 ;=================================================================================
-function render, image_pts, cd=cd, ltd=ltd, $
+function render, image_pts, cd=cd, ltd=ltd, skd=skd, $
   bx=bx, ddmap=ddmap, md=md, sample=sample, pc_size=pc_size, $
   show=show, pht_min=pht_min, no_pht=no_pht, $
   standoff=standoff, limit_source=limit_source, numbra=numbra, $
@@ -320,6 +323,7 @@ function render, image_pts, cd=cd, ltd=ltd, $
  if(NOT defined(limit_source)) then limit_source = 0
  if(NOT defined(standoff)) then standoff = 1
 
+ if(NOT keyword_set(skd)) then skd = 0
  if(NOT keyword_set(ltd)) then $
   begin
    ltd = 0
@@ -358,6 +362,7 @@ function render, image_pts, cd=cd, ltd=ltd, $
  data = { $
 		cd		:	cd, $
 		ltd		:	ltd, $
+		skd		:	skd, $
 		bx		:	bx, $
 		ddmap		:	ddmap, $
 		md		:	md, $
