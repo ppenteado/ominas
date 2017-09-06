@@ -226,15 +226,11 @@ function sao_get_stars, dd, filename, $
       byteorder, ra_test, /XDRTOF
 
       index = where(ra_test LE _ra1,count)
-print, 'ra1 index ', index
-print, count
       start_record = ra_ptr[0]
       if(count NE 0) then start_record = ra_ptr[count-1]
 
       end_record = ra_ptr[36]
       index = where(ra_test GE _ra2,count)
-print, 'ra2 index ', index
-print, count 
       if(count NE 0) then end_record = ra_ptr[37-count]
      end
 
