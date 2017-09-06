@@ -17,6 +17,12 @@ $DEMO_SPICE_FK/vg1_v02.tf
 $DEMO_SPICE_CK/vg1_sat_qmw_na.bc
 $DEMO_SPICE_CK/vg1_sat_qmw_wa.bc
 $DEMO_SPICE_CK/vgr1_super.bc
+$DEMO_SPICE_CK/vgr2_na_neptune_sedr.bc
+$DEMO_SPICE_CK/vgr2_na_uranus_sedr.bc
+$DEMO_SPICE_CK/vgr2_wa_neptune_sedr.bc
+$DEMO_SPICE_CK/vgr2_wa_uranus_sedr.bc
+
+
 
 $DEMO_SPICE_SPK/vgr2_sat337.bsp
 $DEMO_SPICE_SPK/voyager_2.ST+1992_m05208u.merged.bsp
