@@ -53,7 +53,8 @@ mkdir -p ~/.ominas/timestamps/GENERIC
 
 for dir in "${dirs[@]}"
 do
- ${wget} "${baseurl}${dir}/ --localdir=${1}/../Generic_kernels/$dir/ --absolute $@"
+ #${wget} "${baseurl}${dir}/ --localdir=${1}/../Generic_kernels/$dir/ --absolute $@"
+ ${wget} "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute $@"
 done
 
 #cks from rings node
