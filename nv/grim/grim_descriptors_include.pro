@@ -325,12 +325,15 @@ pro grim_add_xd, grim_data, xdp, _xd, one=one, $
  xd = cor_associate_gd(_xd, assoc_xd)
  if(NOT keyword_set(xd)) then return
 
+ all_xd = grim_xd(plane)
+
  ;------------------------------------------------------------------------
  ; Cull descriptors such that names are unique.  Remove older
  ; duplicates (unless they are the same object), so new ones replace them. 
  ; If only one descriptor allowed, force remove.
  ;------------------------------------------------------------------------
  if(keyword_set(one)) then xd = xd[0]
+; if(keyword_set(all_xd)) then $
  if(keyword_set(*xdp)) then $
   begin
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -339,6 +342,11 @@ pro grim_add_xd, grim_data, xdp, _xd, one=one, $
    ; Removing originals would cause a problem if any other
    ; objects have them as dependencies.
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;stop
+;all_names = cor_name(all_xd)
+
+
+
    old_names = cor_name(*xdp)
    new_names = cor_name(xd)
 
@@ -361,8 +369,6 @@ pro grim_add_xd, grim_data, xdp, _xd, one=one, $
    ww = nwhere(xdx, xd, rev=ii)
    xdx = rm_list_item(xdx, ww, only=obj_new())   
    xd = rm_list_item(xd, ii, only=obj_new())   
-;   if(keyword_set(xdx)) then $
-;                   grim_rm_descriptor, grim_data, plane=plane, xdp, xdx
    if(keyword_set(xdx)) then grim_rm_xd, plane, xdx
   end
  if(NOT keyword_set(xd)) then return

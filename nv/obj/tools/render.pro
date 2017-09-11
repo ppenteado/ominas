@@ -170,7 +170,6 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
    if(w[0] NE -1) then jj = w[0]
   end
 
-;jj=!null
  if(NOT defined(jj)) then piece[ii,*] = phot#MM $
  else $
   begin
@@ -194,7 +193,6 @@ map_smoothing_width=1
 
      dat = image_interp_cam(cd=md[jj], map, interp='sinc', $
                im_pts_map[0,*], im_pts_map[1,*], {k:4,fwhm:map_smoothing_width})
-;;;;dat = dat/max(dat)
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; if 1 channel, copy to all channels
@@ -338,7 +336,7 @@ function render, image_pts, cd=cd, ltd=ltd, skd=skd, $
  if(NOT defined(limit_source)) then limit_source = 0
  if(NOT defined(standoff)) then standoff = 1
 
- if(NOT keyword_set(skd)) then skd = 0
+ if(NOT keyword_set(skd)) then skd = obj_new()
  if(NOT keyword_set(ltd)) then $
   begin
    ltd = 0

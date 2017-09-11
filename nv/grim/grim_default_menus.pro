@@ -1506,8 +1506,8 @@ function grim_default_menus
             '0\Least Squares\grim_menu_pointing_lsq_event', $
             '2\<null>               \+*grim_menu_delim_event', $
            '*1\Shift Image' , $
-            '0\Toggle Re-origin     [xxx]\*grim_menu_toggle_reorigin_event', $ 
-            '0\Enter Step Size      [xxx]\*grim_menu_shift_enter_step_event', $ 
+            '0\Re-origin      [xxx]\*grim_menu_toggle_reorigin_event', $ 
+            '0\Step Size      [xxx]\*grim_menu_shift_enter_step_event', $ 
             '0\Enter Offset  \*grim_menu_shift_enter_offset_event', $ 
             '0\Left \*grim_menu_shift_left_event', $ 
             '0\Right\*grim_menu_shift_right_event', $

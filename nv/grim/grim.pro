@@ -477,9 +477,13 @@
 ;               If set, renderings from an image (as opposed to a rendering) are 
 ;		placed on a new plane.  Default is on, except for rendering planes.
 ;
+;      `*render_sky`:
+;               If set, the sky is included in the rendering.  Default is off.
+;
 ;      `*render_auto`:
 ;               If set, automatically render whenever there is an object event. 
-;               Default is off, except for rendering planes.
+;               Default is off, though note that rendering planes always 
+;		automatically re-render.
 ;
 ;      `*rendering`:
 ;               If set, perform a rendering on the initial descriptor set.
@@ -1940,6 +1944,16 @@ end
 ;=============================================================================
 pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
 
+ if(NOT plane.image_visible) then return
+
+ ;-----------------------------------------
+ ; get settings
+ ;-----------------------------------------
+ sky = plane.render_sky
+ numbra = plane.render_numbra
+ sample = plane.render_sampling
+ minimum = plane.render_minimum/100.
+
  ;-----------------------------------------
  ; load relevant descriptors
  ;-----------------------------------------
@@ -1956,25 +1970,19 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  sel = pg_select_bodies(_bx, od=cd, pix=0.1)
  if(sel[0] NE -1) then bx= _bx[sel]
 
- skd = cor_select(grim_xd(plane), 'SKY')
+ if(sky) then skd = cor_select(grim_xd(plane), 'SKY')
 
- ;-----------------------------------------
- ; load maps
- ;-----------------------------------------
+ ;-----------------------------------------------
+ ; load maps; for now use only rectangular maps
+ ;-----------------------------------------------
  md = plane.render_cd
  dd_map = plane.render_dd
  if(NOT keyword_set(dd_map)) then $
-                 dd_map = pg_load_maps(md=md, bx=append_array(bx, skd))
-
+     dd_map = pg_load_maps(md=md, bx=append_array(bx, skd), projection='RECTANGULAR')
 
  ;-----------------------------------------
  ; render
  ;-----------------------------------------
- numbra = grim_get_menu_value(grim_data, 'grim_menu_render_enter_numbra_event')
- sample = grim_get_menu_value(grim_data, 'grim_menu_render_enter_sampling_event')
- minimum = grim_get_menu_value(grim_data, $
-                             'grim_menu_render_enter_minimum_event', suffix='%')/100.
-
  stat = pg_render(/psf, /nodd, /no_mask, /limit_source, show=grim_data.render_show, $
                     cd=cd, bx=bx, skd=skd, ltd=ltd, md=md, ddmap=dd_map, map=map, $
                     pht=minimum, sample=sample, numbra=numbra, $
@@ -2022,12 +2030,11 @@ pro grim_render, grim_data, plane=plane
  ; rendering to appear in the correct location in the display 
  ; relative to the data coordinate system.
  ;------------------------------------------------------------
- if(plane.rendering OR $
-      (NOT grim_get_toggle_flag(grim_data, 'RENDER_SPAWN'))) then new_plane = plane $
+ if(NOT plane.render_spawn) then new_plane = plane $
  else new_plane = grim_clone_plane(grim_data, plane=plane)
 
  new_plane.rendering = 1
-;; grim_update_menu_toggle, grim_data, 'grim_menu_render_toggle_spawn_event', 0
+ new_plane.render_spawn = 0
 
  dat_set_sampling_fn, new_plane.dd, 'grim_render_sampling_fn', /noevent
 
@@ -6972,12 +6979,17 @@ pro grim_menu_render_toggle_rgb_event, event
 
  flag = grim_get_toggle_flag(grim_data, 'RENDER_RGB')
  flag = 1 - flag
+
  
  grim_set_toggle_flag, grim_data, 'RENDER_RGB', flag
  grim_update_menu_toggle, grim_data, $
                        'grim_menu_render_toggle_rgb_event', flag
 
 
+ plane.render_rgb = flag
+ grim_set_plane, grim_data, plane
+
+ grim_update_menu, grim_data
 end
 ;=============================================================================
 
@@ -7029,7 +7041,12 @@ pro grim_menu_render_enter_numbra_event, event
     end
   endrep until(done)
 
- grim_set_menu_value, grim_data, 'grim_menu_render_enter_numbra_event', response
+; grim_set_menu_value, grim_data, 'grim_menu_render_enter_numbra_event', response
+
+ plane.render_numbra = long(response)
+ grim_set_plane, grim_data, plane
+
+ grim_update_menu, grim_data
 end
 ;=============================================================================
 
@@ -7080,6 +7097,11 @@ pro grim_menu_render_enter_sampling_event, event
   endrep until(done)
 
  grim_set_menu_value, grim_data, 'grim_menu_render_enter_sampling_event', response
+
+ plane.render_sampling = long(response)
+ grim_set_plane, grim_data, plane
+
+ grim_update_menu, grim_data
 end
 ;=============================================================================
 
@@ -7132,6 +7154,11 @@ pro grim_menu_render_enter_minimum_event, event
 
  grim_set_menu_value, $
            grim_data, 'grim_menu_render_enter_minimum_event', response, suffix='%'
+
+ plane.render_minimum = double(response)
+ grim_set_plane, grim_data, plane
+
+ grim_update_menu, grim_data
 end
 ;=============================================================================
 
@@ -7182,6 +7209,7 @@ pro grim_menu_render_toggle_current_plane_event, event
  grim_update_menu_toggle, grim_data, $
                        'grim_menu_render_toggle_current_plane_event', flag
 
+ plane.render_current = flag
 
 
  if(flag EQ 0) then $
@@ -7197,6 +7225,8 @@ pro grim_menu_render_toggle_current_plane_event, event
  plane.render_cd = nv_clone(grim_xd(plane, /cd))
  grim_set_plane, grim_data, plane
 
+
+ grim_update_menu, grim_data
 end
 ;=============================================================================
 
@@ -7244,7 +7274,61 @@ pro grim_menu_render_toggle_spawn_event, event
  grim_update_menu_toggle, grim_data, $
                        'grim_menu_render_toggle_spawn_event', flag
 
+ plane.render_spawn = flag
+ grim_set_plane, grim_data, plane
 
+ grim_update_menu, grim_data
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_render_toggle_sky_event
+;
+;
+; PURPOSE:
+;	Toggles sky rendering on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 9/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_render_toggle_sky_help_event, event
+ text = ''
+ nv_help, 'grim_menu_render_toggle_sky_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_render_toggle_sky_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+
+ flag = grim_get_toggle_flag(grim_data, 'RENDER_SKY')
+ flag = 1 - flag
+ 
+ grim_set_toggle_flag, grim_data, 'RENDER_SKY', flag
+ grim_update_menu_toggle, grim_data, $
+                       'grim_menu_render_toggle_sky_event', flag
+
+ plane.render_sky = flag
+ grim_set_plane, grim_data, plane
+
+ grim_update_menu, grim_data
 end
 ;=============================================================================
 
@@ -7295,6 +7379,10 @@ pro grim_menu_render_toggle_auto_event, event
  if(grim_get_toggle_flag(grim_data, 'RENDER_AUTO')) then $
                                 grim_render, grim_data, plane=plane
 
+ plane.render_auto = flag
+ grim_set_plane, grim_data, plane
+
+ grim_update_menu, grim_data
 end
 ;=============================================================================
 
@@ -8458,6 +8546,7 @@ end
 pro grim_settings_event, event
 
  grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
 
  ;---------------------------------------------------------
  ; if tracking event, just print usage info
@@ -9543,13 +9632,14 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Toggle Axes          \*grim_menu_axes_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
            '1\Render' , $
-;            '0\RGB                         [xxx]\grim_menu_render_toggle_rgb_event' , $
-            '0\Enter Oversampling          [xxx]\grim_menu_render_enter_sampling_event' , $
-            '0\Enter Numbra                [xxx]\grim_menu_render_enter_numbra_event' , $
-            '0\Minimum Brightness          [xxx]\grim_menu_render_enter_minimum_event' , $
-            '0\Toggle Current Plane        [xxx]\grim_menu_render_toggle_current_plane_event' , $
-            '0\Toggle Spawn Plane          [xxx]\grim_menu_render_toggle_spawn_event' , $
-            '0\Toggle Automatic Rendering  [xxx]\grim_menu_render_toggle_auto_event' , $
+;            '0\RGB                  [xxx]\grim_menu_render_toggle_rgb_event' , $
+            '0\Oversampling         [xxx]\grim_menu_render_enter_sampling_event' , $
+            '0\Numbra               [xxx]\grim_menu_render_enter_numbra_event' , $
+            '0\Minimum Brightness   [xxx]\grim_menu_render_enter_minimum_event' , $
+            '0\From Current Plane   [xxx]\grim_menu_render_toggle_current_plane_event' , $
+            '0\Spawn New Plane      [xxx]\grim_menu_render_toggle_spawn_event' , $
+            '0\Render Sky           [xxx]\grim_menu_render_toggle_sky_event' , $
+            '0\Automatic            [xxx]\grim_menu_render_toggle_auto_event' , $
             '2\Render                 \grim_menu_render_event' , $
            '0\---------------------\*grim_menu_delim_event', $ 
            '0\Color Tables         \*grim_menu_view_colors_event', $ 
@@ -10437,7 +10527,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	curve_syncing=curve_syncing, slave_overlays=slave_overlays, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
 	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, $
-	render_auto=render_auto, render_numbra=render_numbra, render_sampling=render_sampling, $
+	render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
 	render_minimum=render_minimum, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
@@ -10470,14 +10560,21 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	visibility=visibility, channel=channel, render_numbra=render_numbra, render_sampling=render_sampling, $
 	render_minimum=render_minimum, slave_overlays=slave_overlays, rgb=rgb, $
 	delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
-	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto
+	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, render_sky=render_sky
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
 
- if(NOT keyword_set(render_spawn)) then render_spawn = 1
- if(NOT keyword_set(render_sampling)) then render_sampling = 1
- if(NOT keyword_set(render_numbra)) then render_numbra = 1
- if(NOT defined(render_minimum)) then render_minimum = 2
+; move to grim_add_planes...
+if(NOT keyword_set(render_spawn)) then render_spawn = 1
+if(NOT keyword_set(render_sampling)) then render_sampling = 1
+if(NOT keyword_set(render_numbra)) then render_numbra = 1
+if(NOT defined(render_minimum)) then render_minimum = 2
+if(NOT defined(render_rgb)) then render_rgb = 1
+if(NOT defined(render_current)) then render_current = 0
+if(NOT defined(render_sky)) then render_sky = 0
+if(NOT defined(render_auto)) then render_auto = 0
+
+
 
  if(NOT keyword_set(lights)) then lights = 'SUN'
 
@@ -10610,6 +10707,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
        visibility=visibility, channel=channel, keyvals=keyvals, $
        title=title, slave_overlays=slave_overlays, $
+       render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_minimum=render_minimum, $
+       render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
        overlays=overlays, activate=activate)
 
 
@@ -10854,18 +10953,6 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
  if(keyword_set(highlght)) then $
                    grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', 1
 
- if(keyword_set(render_rgb)) then $
-                   grim_set_toggle_flag, grim_data, 'RENDER_RGB', 1
- if(keyword_set(render_current)) then $
-                   grim_set_toggle_flag, grim_data, 'RENDER_CURRENT', 1
- if(keyword_set(render_spawn)) then $
-                   grim_set_toggle_flag, grim_data, 'RENDER_SPAWN', 1
- if(keyword_set(render_auto)) then $
-  begin
-   grim_set_toggle_flag, grim_data, 'RENDER_AUTO', 1
-   grim_set_toggle_flag, grim_data, 'RENDER_SPAWN', 0
-  end
-
 
  ;----------------------------------------------
  ; if new instance, initialize menu extensions
@@ -10889,51 +10976,10 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
             call_procedure, cursor_modes[i].name+'_init', grim_data, cursor_modes[i].data_p
 
 
-
- ;---------------------------------------------------------
- ; if new instance, initialize menu toggles and values
- ;---------------------------------------------------------
- if(new) then $
-  begin
-   grim_update_menu_toggle, grim_data, $
-         'grim_menu_plane_toggle_plane_syncing_event', $
-          grim_get_toggle_flag(grim_data, 'PLANE_SYNCING')
-   grim_update_menu_toggle, grim_data, $
-         'grim_menu_plane_toggle_tiepoint_syncing_event', $
-          grim_get_toggle_flag(grim_data, 'TIEPOINT_SYNCING')
-   grim_update_menu_toggle, grim_data, $
-         'grim_menu_plane_toggle_curve_syncing_event', $
-          grim_get_toggle_flag(grim_data, 'CURVE_SYNCING')
-   grim_update_menu_toggle, grim_data, $
-         'grim_menu_plane_highlight_event', $
-          grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
-
-   grim_update_menu_toggle, grim_data, $
-         'grim_menu_render_toggle_rgb_event', $
-          grim_get_toggle_flag(grim_data, 'RENDER_RGB')
-   grim_update_menu_toggle, grim_data, $
-         'grim_menu_render_toggle_current_plane_event', $
-          grim_get_toggle_flag(grim_data, 'RENDER_CURRENT')
-   grim_update_menu_toggle, grim_data, $
-         'grim_menu_render_toggle_spawn_event', $
-          grim_get_toggle_flag(grim_data, 'RENDER_SPAWN')
-   grim_update_menu_toggle, grim_data, $
-         'grim_menu_render_toggle_auto_event', $
-          grim_get_toggle_flag(grim_data, 'RENDER_AUTO')
-
-   grim_set_menu_value, grim_data, $
-         'grim_menu_render_enter_numbra_event', render_numbra
-   grim_set_menu_value, grim_data, $
-         'grim_menu_render_enter_sampling_event', render_sampling
-   grim_set_menu_value, grim_data, $
-         'grim_menu_render_enter_minimum_event', render_minimum, suffix='%'
-  end
-
-
  ;----------------------------------------------
  ; initial rendering
  ;----------------------------------------------
- if(grim_get_toggle_flag(grim_data, 'RENDER_AUTO')) then $
+ if(plane.render_auto) then $
   begin
    for i=0, nplanes-1 do grim_render, grim_data, plane=planes[i]
    grim_jump_to_plane, grim_data, plane.pn
