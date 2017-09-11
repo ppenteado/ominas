@@ -213,8 +213,7 @@ end
 pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
                hit_matrix=hit_matrix, show=show, numbra=numbra, $
                hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-               back_matrix=back_matrix, $
-               shadow_matrix=shadow_matrix, $
+               back_matrix=back_matrix, shadow_matrix=shadow_matrix, $
                back=back, standoff=standoff, limit_source=limit_source
 
  show = keyword_set(show)
@@ -277,7 +276,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
    ;- - - - - - - - - - - - - - - - - 
    ; compute sources
    ;- - - - - - - - - - - - - - - - - 
-   for i=0, nbx-1 do $
+   for i=0, nbx-1 do if(obj_valid(bx[i])) then $
     begin
      w = where(hit_indices EQ i)
      if(w[0] NE -1) then $

@@ -103,7 +103,7 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
  ; validate descriptors
  ;-----------------------------------
  cor_count_descriptors, od, nd=n_observers, nt=nt
- if(n_observers GT 1) then nv_message, 'Only one observer decsriptor allowed.'
+ if(n_observers GT 1) then nv_message, 'Only one observer descriptor allowed.'
  cor_count_descriptors, gbx, nd=n_globes, nt=nt1
  if(nt NE nt1) then nv_message, 'Inconsistent timesteps.'
 
@@ -145,8 +145,8 @@ function pg_shadow_globe, cd=cd, od=od, gbx=gbx, dd=dd, gd=gd, object_ptd, $
         ; project shadows in body frame
         ;---------------------------------
         shadow_pts = $
-           glb_intersect(hit=hit, miss=miss, nosolve=nosolve, $
-                                         xd, v_body, r_body, dis=dis)
+               glb_intersect(hit=hit, miss=miss, nosolve=nosolve, $
+                                                   xd, v_body, r_body, dis=dis)
 
         ;---------------------------------------------------------------
         ; Compute and store image coords of any valid intersections.

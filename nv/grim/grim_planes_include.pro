@@ -87,6 +87,35 @@ end
 
 
 ;=============================================================================
+; grim_update_menu
+;
+;=============================================================================
+pro grim_update_menu, grim_data
+@grim_block.include
+
+ if(NOT keyword_set(_top)) then return
+ 
+ plane = grim_get_plane(grim_data)
+
+ if(plane.render_auto) then plane.render_spawn = 0
+
+ grim_update_menu_toggle, grim_data, 'grim_menu_render_toggle_rgb_event', plane.render_rgb
+ grim_update_menu_toggle, grim_data, 'grim_menu_render_toggle_current_plane_event', plane.render_current
+ grim_update_menu_toggle, grim_data, 'grim_menu_render_toggle_spawn_event', plane.render_spawn
+ grim_update_menu_toggle, grim_data, 'grim_menu_render_toggle_sky_event', plane.render_sky
+ grim_update_menu_toggle, grim_data, 'grim_menu_render_toggle_auto_event', plane.render_auto
+
+ grim_set_menu_value, grim_data, 'grim_menu_render_enter_numbra_event', string(plane.render_numbra)
+ grim_set_menu_value, grim_data, 'grim_menu_render_enter_sampling_event', string(plane.render_sampling)
+ grim_set_menu_value, grim_data, 'grim_menu_render_enter_minimum_event', string(plane.render_minimum), suffix='%'
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_test_map
 ;
 ;=============================================================================
@@ -419,10 +448,12 @@ function grim_clone_plane, grim_data, plane=plane, spawn=spawn
  cor_substitute_xd, new_ptd, xd, new_xd, /use_gd, /noevent
  cor_substitute_xd, new_ptd, ptd, new_ptd, /use_gd, /noevent
 
- assoc_xds = pnt_assoc_xd(ptd)
- cor_substitute_xd, assoc_xds, xd, new_xd, /noevent
- pnt_set_assoc_xd, new_ptd, assoc_xds
-
+ if(keyword_set(ptd)) then $
+  begin
+   assoc_xds = pnt_assoc_xd(ptd)
+   cor_substitute_xd, assoc_xds, xd, new_xd, /noevent
+   pnt_set_assoc_xd, new_ptd, assoc_xds
+  end
 
  grim_set_plane, grim_data, new_plane
  grim_set_data, grim_data
@@ -476,6 +507,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
                       xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
+                      render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_minimum=render_minimum, $
+                      render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
                       overlays=overlays, cmd=cmd0
 
   pns = 0
@@ -484,6 +517,15 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
   n_planes = n_elements(dd) 
 
   if(NOT keyword_set(max)) then max = 0
+
+  if(NOT keyword_set(render_spawn)) then render_spawn = 1
+  if(NOT keyword_set(render_sampling)) then render_sampling = 1
+  if(NOT keyword_set(render_numbra)) then render_numbra = 1
+  if(NOT defined(render_minimum)) then render_minimum = 2
+  if(NOT defined(render_rgb)) then render_rgb = 1
+  if(NOT defined(render_current)) then render_current = 0
+  if(NOT defined(render_sky)) then render_sky = 0
+  if(NOT defined(render_auto)) then render_auto = 0
 
   if(NOT keyword_set(fov)) then fov = grim_data.def_fov
   if(NOT keyword_set(clip)) then clip = grim_data.def_clip
@@ -608,6 +650,15 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 		render_dd	:	obj_new(), $
 		render_cd	:	obj_new(), $
 
+ 		render_sampling	:	render_sampling, $
+ 		render_numbra	:	render_numbra, $
+ 		render_minimum	:	render_minimum, $
+ 		render_rgb	:	render_rgb, $
+ 		render_current	:	render_current, $
+ 		render_spawn	:	render_spawn, $
+ 		render_sky	:	render_sky, $
+ 		render_auto	:	render_auto, $
+
 	;---------------
 	; descriptors
 	;---------------
@@ -618,8 +669,8 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 
 ; should put these in a gd or xds...
 ; --> gd = grim_gd(plane)
-xd_p		:	ptr_new(0), $	; Descriptor array		;++
-gd_p		:	ptr_new(0), $	; Generic descriptor		;**
+xd_p		:	ptr_new(0), $	; Descriptor array
+gd		:	ptr_new(0), $	; Generic descriptor
 
 		skd_p		:	ptr_new(obj_new()), $	; Sky descriptor
 		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
