@@ -96,9 +96,10 @@ function grim_test_map, grim_data, plane=plane
 
  if(dat_instrument(plane.dd) EQ 'MAP') then return, 1
 
- if(NOT keyword_set(*plane.cd_p)) then return, 0
+ cd = grim_xd(plane, /cd)
+ if(NOT keyword_set(cd)) then return, 0
 
- if(cor_class(*plane.cd_p) EQ 'MAP') then return, 1
+ if(cor_class(cd) EQ 'MAP') then return, 1
 
  return, 0
 end
@@ -138,7 +139,7 @@ function grim_get_image, grim_data, plane=plane, abscissa=abscissa, $
  if(grim_test_rgb(grim_data, plane)) then $
   begin
    true = 0
-   if(NOT keyword_set(channel)) then true = 1 $
+   if(NOT defined(channel)) then true = 1 $
    else slice = channel
   end
 
@@ -340,7 +341,7 @@ pro grim_crop_plane, grim_data, plane
    ;- - - - - - - - - - - - - - - - - - - - - - 
    if(NOT grim_test_map(grim_data)) then $
     begin
-     cd = *plane.cd_p
+     cd = grim_xd(plane, /cd)
      if(keyword_set(cd)) then cam_set_oaxis, cd, cam_oaxis(cd) - [xxmin,yymin]
     end
 
@@ -394,6 +395,9 @@ function grim_clone_plane, grim_data, plane=plane, spawn=spawn
 ; if(keyword_set(spawn)) then 
  grim_add_planes, grim_data, plane.dd, pn=pn
 
+ xd = grim_xd(plane)
+ ptd = grim_ptd(plane)
+
  new_plane = nv_clone(plane)
 
  new_plane.pn = pn
@@ -401,6 +405,24 @@ function grim_clone_plane, grim_data, plane=plane, spawn=spawn
 
  new_plane.cmd = colormap_descriptor(data=new_plane.pn, $
                                 n_colors=grim_n_colors(dat_typecode(new_plane.dd)))
+
+ new_xd = grim_xd(new_plane)
+ new_ptd = grim_ptd(new_plane)
+
+
+ nv_notify_register, new_plane.dd, 'grim_descriptor_notify', scalar_data=grim_data.base
+ nv_notify_register, new_xd, 'grim_descriptor_notify', scalar_data=grim_data.base
+
+
+ cor_substitute_xd, new_xd, plane.dd, new_plane.dd, /use_gd, /noevent
+
+ cor_substitute_xd, new_ptd, xd, new_xd, /use_gd, /noevent
+ cor_substitute_xd, new_ptd, ptd, new_ptd, /use_gd, /noevent
+
+ assoc_xds = pnt_assoc_xd(ptd)
+ cor_substitute_xd, assoc_xds, xd, new_xd, /noevent
+ pnt_set_assoc_xd, new_ptd, assoc_xds
+
 
  grim_set_plane, grim_data, new_plane
  grim_set_data, grim_data
@@ -450,11 +472,10 @@ end
 pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, hide=hide, $
                       path=path, save_path=save_path, load_path=load_path, $
                       cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
-                      sun_trs=sun_trs, color=color, position=_position, $
+                      lgt_trs=lgt_trs, color=color, position=_position, $
                       xrange=_xrange, yrange=_yrange, $
                       thick=thick, nsum=nsum, xtitle=xtitle, ytitle=ytitle, $
                       psym=psym, symsize=symsize, max=max, visibility=visibility, channel=channel, $
-                      render_sample=render_sample, render_pht_min=render_pht_min, $
                       overlays=overlays, cmd=cmd0
 
   pns = 0
@@ -469,8 +490,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
   if(NOT keyword_set(hide)) then hide = grim_data.def_hide
   if(NOT keyword_set(filter)) then filter = grim_data.def_filter
   if(NOT keyword_set(visibility)) then visibility = 0
-  if(NOT defined(render_pht_min)) then render_pht_min = 0.02
-  if(NOT keyword_set(render_sample)) then render_sample = 1
 
   if(NOT keyword_set(load_path)) then load_path = grim_data.def_load_path
   if(NOT keyword_set(save_path)) then save_path = grim_data.def_save_path
@@ -481,7 +500,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
   if(NOT keyword_set(str_trs)) then str_trs = grim_data.def_str_trs
   if(NOT keyword_set(stn_trs)) then stn_trs = grim_data.def_stn_trs
   if(NOT keyword_set(arr_trs)) then arr_trs = grim_data.def_arr_trs
-  if(NOT keyword_set(sun_trs)) then sun_trs = grim_data.def_sun_trs
+  if(NOT keyword_set(lgt_trs)) then lgt_trs = grim_data.def_lgt_trs
 
   if(NOT keyword_set(color)) then color = grim_data.def_color
   if(NOT keyword_set(thick)) then thick = grim_data.def_thick
@@ -562,9 +581,6 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 		load_path	:	load_path, $
 		save_path	:	save_path, $
 		rendering	:	0, $
-		render_sample	:	render_sample, $
-		render_pht_min	:	render_pht_min, $
-		render_show	:	1b, $
 		prescaled	:	0, $			; overlays always visible?
 		visible		:	0, $			; overlays always visible?
 		image_visible	:	0, $
@@ -587,31 +603,32 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 		parm		:	parm[i], $
 
 	;---------------
+	; rendering
+	;---------------
+		render_dd	:	obj_new(), $
+		render_cd	:	obj_new(), $
+
+	;---------------
 	; descriptors
 	;---------------
-; should put these in a gd...
-; --> gd = grim_gd(plane)
-gd_p		:	ptr_new(0), $	; Generic descriptor
 		dd		:	dd[i], $		; Data descriptor
+;;;		cd		:	obj_new(), $		; Camera descriptor
+;;;		od		:	obj_new(), $		; Observer descriptor
 		sibling_dd	:	obj_new(), $		; Last sibling dd
+
+; should put these in a gd or xds...
+; --> gd = grim_gd(plane)
+xd_p		:	ptr_new(0), $	; Descriptor array		;++
+gd_p		:	ptr_new(0), $	; Generic descriptor		;**
+
 		cd_p		:	ptr_new(obj_new()), $	; Camera descriptor
+		od_p		:	ptr_new(obj_new()), $	; Observer descriptor
 		pd_p		:	ptr_new(obj_new()), $	; Planet descriptors
 		rd_p		:	ptr_new(obj_new()), $	; Ring descriptors
 		sd_p		:	ptr_new(obj_new()), $	; Star descriptors
-		sund_p		:	ptr_new(obj_new()), $	; Sun descriptor
+		ltd_p		:	ptr_new(obj_new()), $	; Light descriptor
 		std_p		:	ptr_new(obj_new()), $	; Station descriptors
 		ard_p		:	ptr_new(obj_new()), $	; Array descriptors
-		od_p		:	ptr_new(obj_new()), $	; Observer descriptor
-
-	;----------------------------
-	; active objects
-	;----------------------------
-; it may be simpler to implement these as udata on each overlay ptd or xd
-		active_xd_p	:	ptr_new(obj_new()), $	; Descriptors of
-								;  active objects
-		active_overlays_ptdp :	ptr_new(obj_new()), $	; Active overlays
-
-		active_user_tags_p	:	ptr_new(''), $	
 
 	;-----------------------------------------------------------
 	; overlay points arrays  -- 
@@ -624,13 +641,6 @@ gd_p		:	ptr_new(0), $	; Generic descriptor
 		overlays_p		:	ptr_new(0), $	; Overlay global
 								; attributes
 		override_color		:	'', $
-
-;	;-----------------------------------------------------------
-;	; fill arrays
-;	;-----------------------------------------------------------
-;		fill_poly_ptdps		:	ptr_new(0), $
-;		fill_color_p		:	ptr_new(0), $
-;		fill_names_p		:	ptr_new(''), $
 
 	;-----------------------------------------------------------
 	; special arrays
@@ -667,7 +677,7 @@ gd_p		:	ptr_new(0), $	; Generic descriptor
 		str_trs		:	str_trs, $ 
 		stn_trs		:	stn_trs, $ 
 		arr_trs		:	arr_trs, $ 
-		sun_trs		:	sun_trs $ 
+		lgt_trs		:	lgt_trs $ 
 	     }
 
 

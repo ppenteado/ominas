@@ -53,8 +53,6 @@
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
 ;
-;	all:	 If set, all points are returned, even if invalid.
-;
 ;  OUTPUT: NONE
 ;
 ;
@@ -79,7 +77,7 @@
 ;=============================================================================
 function pg_reflection_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
                            nocull=nocull, all_ptd=all_ptd, reveal=reveal, $
-                           clip=clip, cull=cull, all=all
+                           clip=clip, cull=cull
 @pnt_include.pro
 
 
@@ -88,7 +86,7 @@ function pg_reflection_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
  ;-----------------------------------------------
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
  if(NOT keyword_set(od)) then od = dat_gd(gd, dd=dd, /od)
 
  if(NOT keyword_set(od)) then $
@@ -141,51 +139,31 @@ function pg_reflection_disk, cd=cd, od=od, dkx=dkx, dd=dd, gd=gd, object_ptd, $
           ;---------------------------------
           ; project reflections in body frame
           ;---------------------------------
-          reflection_pts = dsk_reflect(xd, v_body, r_body, hit=hit)
+          reflection_pts = dsk_reflect(xd, v_body, r_body, hit=hit, miss=miss)
 
           ;---------------------------------------------------------------
           ; compute and store image coords of intersections
           ;---------------------------------------------------------------
           if(hit[0] NE -1) then $
            begin
-            flags = bytarr(n_elements(reflection_pts[*,0]))
+            flags = bytarr(n_vectors)
+            flags[miss] = flags[miss] OR PTD_MASK_INVISIBLE
+
             points = $
-                 degen(body_to_image_pos(cd, xd, reflection_pts, $
-                                         inertial=inertial_pts, valid=valid))
+               degen(body_to_image_pos(cd, xd, reflection_pts, inertial=inertial_pts))
 
             ;---------------------------------
             ; store points
             ;---------------------------------
             reflection_ptd[i,j] = $
                  pnt_create_descriptors(points = points, $
-                   name = 'reflection-' + cor_name(object_ptd[j]), $
+         	   flags = flags, $
+                   name = 'REFLECTION-' + cor_name(object_ptd[j]), $
                    assoc_xd = xd, $
-                   task = 'pg_reflection_disk', $
-	           desc = 'disk_reflection', $
+                   task = 'PG_REFLECTION_DISK', $
+	           desc = 'DISK_REFLECTION/' + pnt_desc(object_ptd[j]), $
                    gd = {dkx:dkx[i,0], srcd:object_ptd[j], od:od[0], cd:cd[0]}, $
                    vectors = inertial_pts)
-
-            ;-----------------------------------------------
-            ; flag points that missed the ring as invisible
-            ;-----------------------------------------------
-            flags = pnt_flags(reflection_ptd[i,j])
-            hh = complement(rr[*,0,0], hit)
-            if(hh[0] NE -1) then flags[hh] = flags[hh] OR PTD_MASK_INVISIBLE
-
-            ;-----------------------------------------------------------
-            ; flag invalid image points as invisible unless /all
-            ;-----------------------------------------------------------
-            if(NOT keyword_set(all)) then $
-             if(keyword_set(valid)) then $
-              begin
-               invalid = complement(reflection_pts[*,0], valid)
-               if(invalid[0] NE -1) then flags[invalid] = PTD_MASK_INVISIBLE
-              end
-
-            ;---------------------------------------------------------------
-            ; store flags
-            ;---------------------------------------------------------------
-            pnt_set_flags, _shadow_ptd[i,j], flags
            end
          end
        end

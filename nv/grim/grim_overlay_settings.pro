@@ -57,8 +57,10 @@ pro gros_update_form, grim_data, plane, base
    ;-----------------------------------------------------
    ; if no user overlays, unmap that section
    ;-----------------------------------------------------
-   user_ptd = grim_get_user_ptd(plane=plane, $
-                 utags, color=user_colors, psym=user_psyms, symsize=user_psizes)
+   user_ptd = grim_get_user_ptd(plane=plane, utags, user_struct=user_struct)
+   user_colors = user_struct.color
+   user_psyms = user_struct.psym
+   user_psizes = user_struct.symsize
 
    if(NOT keyword_set(user_ptd)) then $
     begin 
@@ -198,7 +200,7 @@ pro gros_update_form, grim_data, plane, base
  grim_set_form_entry, data.ids, data.tags, 'STR_TRS', plane.str_trs
  grim_set_form_entry, data.ids, data.tags, 'STN_TRS', plane.stn_trs
  grim_set_form_entry, data.ids, data.tags, 'STN_TRS', plane.arr_trs
- grim_set_form_entry, data.ids, data.tags, 'SUN_TRS', plane.sun_trs
+ grim_set_form_entry, data.ids, data.tags, 'LGT_TRS', plane.lgt_trs
 
 
  widget_control, base, set_uvalue=data
@@ -324,8 +326,8 @@ pro gros_apply_settings, data
                         data.ids, data.tags, 'STN_TRS', /string), 2)
    arr_trs = strtrim(grim_parse_form_entry($
                         data.ids, data.tags, 'ARR_TRS', /string), 2)
-   sun_trs = strtrim(grim_parse_form_entry($
-                        data.ids, data.tags, 'SUN_TRS', /string), 2)
+   lgt_trs = strtrim(grim_parse_form_entry($
+                        data.ids, data.tags, 'LGT_TRS', /string), 2)
 
    planes[i].cam_trs = cam_trs
    planes[i].plt_trs = plt_trs
@@ -333,7 +335,7 @@ pro gros_apply_settings, data
    planes[i].str_trs = str_trs
    planes[i].stn_trs = stn_trs
    planes[i].arr_trs = arr_trs
-   planes[i].sun_trs = sun_trs
+   planes[i].lgt_trs = lgt_trs
 
 
    ;-----------------------
@@ -344,8 +346,10 @@ pro gros_apply_settings, data
    if(keyword__set(utags)) then $
     for j=0, n_utags-1 do $
      begin
-      user_ptd = grim_get_user_ptd(plane=planes[i], utags[j], shade_fn=shade_fn, $
-                          graphics_fn=graphics_fn, xgraphics=xgraphics)
+      user_ptd = grim_get_user_ptd(plane=planes[i], utags[j], user_struct=user_struct)
+      shade_fn = user_struct.shade_fn
+      graphics_fn = user_struct.graphics_fn
+      xgraphics = user_struct.xgraphics
 
       psym = ''
       _psym = grim_parse_form_entry(data.ids, data.tags, $
@@ -514,14 +518,11 @@ common grim_overlay_settings_block, tops
 	  '2, LABEL, Overlay                Color    Psym   Size       Labels         Shading, CENTER']
 
  overlay_label_len = 15
- ptdps = grim_get_overlay_ptdp(grim_data, plane=plane, 'all')
- nptdps = n_elements(ptdps)
+ overlay_info = grim_ptd_info(plane)
 
- for i=0, nptdps-1 do $
+ for i=0, n_elements(overlay_info)-1 do $
   begin
-   name = ''
-   ptdp = grim_get_overlay_ptdp(grim_data, name, plane=plane, ii=i)
-   label =  str_pad(name, overlay_label_len) + ':'
+   label =  str_pad(overlay_info[i].name, overlay_label_len) + ':'
 
    desc = [desc, $
 	'1, BASE,, ROW, TAG=overlay_base_' + strtrim(i,2), $
@@ -552,7 +553,7 @@ common grim_overlay_settings_block, tops
 	  '0, TEXT,, LABEL_LEFT= Star   :, WIDTH=60, TAG=str_trs', $
 	  '0, TEXT,, LABEL_LEFT= Station:, WIDTH=60, TAG=stn_trs', $
 	  '0, TEXT,, LABEL_LEFT= Array  :, WIDTH=60, TAG=arr_trs', $
-	  '2, TEXT,, LABEL_LEFT= Sun    :, WIDTH=60, TAG=sun_trs']
+	  '2, TEXT,, LABEL_LEFT= Light    :, WIDTH=60, TAG=lgt_trs']
 
  ;- - - - - - - - - - - - - - - - - - - - - -
  ; settings for user overlays

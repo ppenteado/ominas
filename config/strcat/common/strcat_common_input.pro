@@ -133,7 +133,6 @@ function strcat_common_input, dd, keyword, values=values, status=status, $
   end
 
 
-
  status = 0
  return, ''
 end

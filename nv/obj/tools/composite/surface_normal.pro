@@ -52,6 +52,8 @@
 ;===========================================================================
 function surface_normal, bx, v, r, north=north
 
+; this needs to handle both kinds of bodies in one call.  See body_to_surface, e.g.
+
  gbx = cor_select(bx, 'GLOBE', /class)
  dkx = cor_select(bx, 'DISK', /class)
 

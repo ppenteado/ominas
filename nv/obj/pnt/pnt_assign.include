@@ -1,5 +1,5 @@
 ; _pnt_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(points)) then pnt_set_points, _xd, points, /noevent

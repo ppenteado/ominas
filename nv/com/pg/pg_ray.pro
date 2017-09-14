@@ -143,7 +143,7 @@ function pg_ray, r=r, v=v, len=_len, cd=cd, bx=bx, dd=dd, gd=gd, clip=clip, cull
  ;-----------------------------------------------
  ; contruct data set description
  ;-----------------------------------------------
- desc = 'ray'
+ desc = 'RAY'
 
 
  ;---------------------------------------------------------

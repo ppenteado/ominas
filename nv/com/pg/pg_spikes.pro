@@ -130,7 +130,7 @@ function pg_spikes, dd, nsig=nsig, grad=grad, mask=mask, umask=umask, extend=ext
  ;---------------------------------------
  ; set up the POINT object
  ;---------------------------------------
-  ptd = pnt_create_descriptors(points = p, desc = 'spikes')
+  ptd = pnt_create_descriptors(points = p, desc = 'SPIKES')
 
  return, ptd
 end

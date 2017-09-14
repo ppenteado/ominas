@@ -38,6 +38,8 @@ export NV_SPICE_KER=:
 export NV_INS_DETECT=$NV_CONFIG/tab/instrument_detectors.tab
 
 #echo "DFLAG=${DFLAG}"
+unset NV_SAO_DATA
+export PG_MAPS=${NV_MAPS_DATA}
 if [ "${DFLAG}" = 'true' ]; then
     #-----------------------------------------------------------------------------------#
     # DEMO configuration: 																#
@@ -66,6 +68,7 @@ if [ "${DFLAG}" = 'true' ]; then
     export DEMO_SPICE_CK=$OMINAS_DIR/demo/data/kernels/ck/
     export DEMO_SPICE_SPK=$OMINAS_DIR/demo/data/kernels/spk/
     export DEMO_SPICE_XK=$NV_SPICE/
+    export PG_MAPS=$OMINAS_DIR/demo/data/maps
 fi
 
 #-----------------------------------------------------------------------------------#

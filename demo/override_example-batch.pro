@@ -10,11 +10,11 @@
 ;  want to do this, but it's a useful way to test OMINAS without needing
 ;  any translator packages installed. 
 ;
-;  This example file can be executed from the UNIX command line using
+;  This example file can be executed from the UNIX command line using::
 ;
 ;  	ominas override_example-batch
 ;
-;  or from within IDL using
+;  or from within IDL using::
 ;
 ;  	@override_example-batch
 ;
@@ -34,13 +34,13 @@
 ;  DAT_READ is OMINAS' program for reading data files.  It figures out 
 ;  file readers, sorts out translators (or lack thereof), etc.  It returns
 ;  a data descriptor (dd) -- an object containing the data array and a whole 
-;  bunch of other stuff, most of which you'll probably never use.
+;  bunch of other stuff, most of which you'll probably never use::
 ;
 ;    dd = dat_read('./data/c3440346.gem', im, label)
 ;
 ;  TVIM is OMINAS' basic image display program.  It's like WINDOW, except 
 ;  it sets up the data coordinate system so that all of your points will 
-;  display properly.
+;  display properly::
 ;
 ;    tvim, im, zoom=0.5, /order, /new
 ;
@@ -105,7 +105,7 @@ tvim, im, zoom=0.5, /order, /new
 ;       
 ;    rd = pg_get_rings(dd, pd=pd, od=cd, /override, $
 ;           name='MAIN_RING_SYSTEM', $
-;           gd={xd0:pd}, $
+;           gd={bx0:pd}, $
 ;           orient= $
 ;                [ [-0.254669368,  0.963251789,  0.085378596], $
 ;                  [-0.962535206, -0.260997177,  0.073528563], $
@@ -121,7 +121,7 @@ tvim, im, zoom=0.5, /order, /new
 ;           
 ;   Star descriptor::
 ;   
-;    sund = pg_get_stars(dd, od=cd, /override, $
+;    ltd = pg_get_stars(dd, od=cd, /override, $
 ;           name='SUN', $
 ;           pos=tr([1.421392d12,4.3105676d10,-4.3613585d10]) $
 ;      )
@@ -173,7 +173,7 @@ pd = pg_get_planets(dd, od=cd, /override, $
 ;- - - - - - - - - - - - - 
 rd = pg_get_rings(dd, pd=pd, od=cd, /override, $
        name='MAIN_RING_SYSTEM', $
-       gd={xd0:pd}, $
+       gd={bx0:pd}, $
        orient= $
             [ [-0.254669368,  0.963251789,  0.085378596], $
               [-0.962535206, -0.260997177,  0.073528563], $
@@ -190,7 +190,7 @@ rd = pg_get_rings(dd, pd=pd, od=cd, /override, $
 ;- - - - - - - - - - - - - 
 ; star descriptor for sun
 ;- - - - - - - - - - - - - 
-sund = pg_get_stars(dd, od=cd, /override, $
+ltd = pg_get_stars(dd, od=cd, /override, $
        name='SUN', $
        pos=tr([1.421392d12,4.3105676d10,-4.3613585d10]) $
   )
@@ -205,9 +205,9 @@ sund = pg_get_stars(dd, od=cd, /override, $
 ;  accept individual descriptor as well as generic descriptors as 
 ;  arguments.  GBX means any subclass of GLOBE, DKX means any SUBCLASS
 ;  of DSK.  These are arguments to the PG programs that we'll be working 
-;  with.
+;  with::
 ;
-;    gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+;    gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 ;
 ;  Here are a couple of tips regarding generic descriptors:
 ;
@@ -218,7 +218,7 @@ sund = pg_get_stars(dd, od=cd, /override, $
 ;      the core.
 ;-
 ;-------------------------------------------------------------------------
-gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 
 
 ;-------------------------------------------------------------------------
@@ -230,7 +230,7 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;  that the generic descriptor does not always contain enough information 
 ;  to get the job done.  PG_CENTER requires an explicit bx (arbitrary body) 
 ;  argument to tell it which of the bodies in gd are intended.  PG_HIDE
-;  hide the given points with respect to whatever bodies you give it.
+;  hide the given points with respect to whatever bodies you give it::
 ;
 ;    limb_ptd = pg_limb(gd=gd, count=nlimb) & pg_hide, limb_ptd, gd=gd
 ;    ring_ptd = pg_disk(gd=gd, count=nring) & pg_hide, ring_ptd, gd=gd
@@ -255,7 +255,7 @@ center_ptd = pg_center(gd=gd, bx=pd)
 ;  symbols, etc.  
 ;
 ;  The CT programs are used to get color indices for some basic colors 
-;  without having to know what type of visual class you're using. 
+;  without having to know what type of visual class you're using::
 ;
 ;    object_ptd = [center_ptd,limb_ptd,ring_ptd,shadow_ptd]
 ;    colors = [!p.color,ctyellow(),ctred(),ctred(),ctblue()]
@@ -281,7 +281,7 @@ plabels = [cor_name(pd), '', '']
 ;  PG_DRAW is the basic program for drawing overlays in OMINAS.  It does
 ;  the same thing as PLOTS (which you could use instead), but it accepts
 ;  POINT objects are arguments and allows you to use specify multiple colors
-;  symbols, etc.  PG_DRAW also accepts raw points arrays (i.e. 2 x np).
+;  symbols, etc.  PG_DRAW also accepts raw points arrays (i.e. 2 x np)::
 ;
 ;    pg_draw, object_ptd, $
 ;                colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
@@ -304,7 +304,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;  systems in OMINAS.  Because their representations are analogous, their
 ;  corresponding objects can be pretty much interchanged all over the place.  
 ;  This is such a place.  On that topic, coordinate systems using image
-;  points (i.e., CAMERA and MAP image systems) are similarly interchangeable. 
+;  points (i.e., CAMERA and MAP image systems) are similarly interchangeable::
 ; 
 ;    grid_ptd = pg_grid(gd=gd, bx=pd) 
 ;       pg_hide, grid_ptd, gd=gd, bx=pd, /assoc
@@ -341,7 +341,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;  or longitude.  First, we'll specify the longitude and radius limits 
 ;  explicitly.  Note that we're working in meters here because all of our
 ;  inputs for the descriptors were in meters.  Units in OMINAS are
-;  determined by the translators.  Of course, all angles are in radians.
+;  determined by the translators.  Of course, all angles are in radians::
 ;
 ;    lon = [175,177] * !dpi/180d
 ;    rad = [65000,138000] * 1000d
@@ -365,7 +365,7 @@ pg_draw, outline_ptd, col=ctgreen()
 ;
 ;  You can also define the ring sector using the mouse.  Just leave out
 ;  the bounds in the call to PG_RING_SECTOR.  Have we fixed that thing 
-;  where the sector wraps around wrong?  You'd think so by now.
+;  where the sector wraps around wrong?  You'd think so by now::
 ;
 ;    tvim,im
 ;    outline_ptd = pg_ring_sector(gd=gd)
@@ -391,21 +391,22 @@ pg_draw, outline_ptd, col=ctgreen()
 ;  in the profile so you don't have to dereference the data descriptor.
 ;
 ;  Radial scan::
-;     .. image:: graphics/saturn_sector_2.jpeg
 ;
 ;    dd_prof = pg_profile_ring(dd, gd=gd, outline_ptd, $
 ;                                            dsk_pts=dsk_pts, profile=profile)
 ;    window, /free, xs=500, ys=300
 ;    plot, dsk_pts[*,0], profile
 ;
+;     .. image:: graphics/saturn_sector_2.jpeg
 ;
-;  Azimuthal scan:
-;     .. image:: graphics/saturn_sector_3.jpeg
 ;
+;  Azimuthal scan::
 ;    dd_prof = pg_profile_ring(dd, gd=gd, outline_ptd, /azimuthal, $
 ;                                            dsk_pts=dsk_pts, profile=profile)
 ;    window, /free, xs=500, ys=300
 ;    plot, dsk_pts[*,1], profile, /yno
+;
+;     .. image:: graphics/saturn_sector_3.jpeg
 ;
 ;-     
 ;-------------------------------------------------------------------------

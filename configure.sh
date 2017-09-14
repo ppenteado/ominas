@@ -181,23 +181,50 @@ if [ ! -d "$HOME/.ominas/config" ]; then
 else
   printf "~/.ominas/config directory already exists\n"
 fi
+ans=u
 if [ ! -e "$HOME/.ominas/config/ominas_env_def.sh" ]; then
   cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_def.sh already exists\n"
+  read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
+  case $ans in
+   [Yy]*) 
+     echo "aaa"
+     mv -v $HOME/.ominas/config/ominas_env_def.sh $HOME/.ominas/config/ominas_env_def.sh.old
+     cp -av config/ominas_env_def.sh $HOME/.ominas/config/ ;;
+   *) ans=n ;;
+  esac
 fi
 if [ ! -e "$HOME/.ominas/config/ominas_env_strcat.sh" ]; then
-  cp -avn config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
+  cp -av config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_strcat.sh already exists\n"
+  if [ $ans == u ]; then
+    read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
+  fi
+    case $ans in
+     [Yy]*) 
+       mv -v $HOME/.ominas/config/ominas_env_strcat.sh $HOME/.ominas/config/ominas_env_strcat.sh.old
+       cp -av config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/ ;;
+     *) ans=n ;;
+    esac
 fi
 for mis in  cas dawn gll vgr 
 do
   if [ ! -e "$HOME/.ominas/config/ominas_env_$mis.sh" ]; then
-    cp -avn config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
+    cp -av config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
   else
     printf "$HOME/.ominas/config/ominas_env_$mis.sh already exists\n"
-  fi
+    if [ $ans == u ]; then
+      read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
+    fi
+      case $ans in
+       [Yy]*)
+         mv -v $HOME/.ominas/config/ominas_env_$mis.sh $HOME/.ominas/config/ominas_env_$mis.sh.old
+         cp -av config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/ ;;
+       *) ans=n ;;
+      esac
+    fi
 done
 
 
@@ -353,7 +380,7 @@ function dins()
 		case $ans in 
 		[Yy]*)
                         #echo "!path+=':./util/downloader'& delete_ominas_files,'${tmpa[1]}' & exit"
-                        $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${tmpa[1]}',conf=${ominas_auto_u} & exit"
+                        $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${tmpa[1]}',conf=${ominas_auto_u}+${ominas_nodel} & exit"
                         
                         unset inst[${1}]
                         return 1;;
@@ -495,7 +522,7 @@ function pkins()
                 [Yy]*)
                      #echo "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}' & exit"
                      #$idlbin -e "!path+=':./util/downloader'& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
-                     $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u} & exit"
+                     $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& delete_ominas_files,'${loc[2]}',conf=${ominas_auto_u}+${ominas_nodel} & exit"
 
                      #unset insp[${3}]
                      #unset ins[${3}]
@@ -504,8 +531,8 @@ function pkins()
                      #echo "${insp}"
                      #export insp
                      #export ins
-                     DFLAG="false"
-                     demost="NOT CONFIGURED"
+                     #DFLAG="false"
+                     #demost="NOT CONFIGURED"
                      return 1 ;;
 
                     *)
@@ -571,6 +598,8 @@ function pkins()
 #	  esac
           ins[${4}]=${pstr}
           insp[${4}]=${datapath}
+          DFLAG="false"
+          demost="NOT CONFIGURED"
         fi
 	dstr=""
 	#grep -v ".*$1.*" $setting >$HOME/temp
@@ -874,7 +903,7 @@ esac
 }
 
 printf "The setup will guide you through the installation of OMINAS\n"
-printf "More help is in the Install Guide, at https://ppenteado.github.io/ominas_doc/demo/install_guide.html\n"
+printf "More help is in the Install Guide, at https://ppenteado.github.io/ominas/guides/userguide.html\n"
 
 #if ! grep -q "OMINAS_DIR=.*; export OMINAS_DIR" ${setting}; then
 # NOTE: OMINAS is available in repository form. Extraction is no longer needed
@@ -935,7 +964,7 @@ fi
 declare -a mis=("cas" "gll" "vgr" "dawn")
 #declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
 #declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" )
-declare -a Data=("Generic_kernels" "TYCHO2" "SAO" "UCAC4" "GSC" )
+declare -a Data=("Generic_kernels" "TYCHO2" "SAO" "MAPS" "UCAC4" "GSC" )
 declare -a insts=("" "" "" "" "")
 insts[1]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
 #insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
@@ -1032,8 +1061,6 @@ Mission Packages:
            About 833 MB as of Dec/2016
 	6) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
-	7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
-           Subsetted, about 8 GB as of Jan/2017
 Data:
         8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
            About 22 GB as of Dec/2016
@@ -1041,9 +1068,12 @@ Data:
            About 161 MB download, 665 MB unpacked
        10) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
            Already provided with OMINAS, no download needed
+       11) Maps
+           Map library created for use with OMINAS ${dstatus[3]}
+           About 990 MB as of August/2017
 
 For more information, see
-https://ppenteado.github.io/ominas/demo/install_guide.html
+https://ppenteado.github.io/ominas/guides/userguide.html
 PKGS
 
 else
@@ -1093,12 +1123,15 @@ Data:
            About 161 MB download, 665 MB unpacked
        10) SAO star catalog  . . . . . . . . . . . ${dstatus[2]}
            Already provided with OMINAS, no download needed
-       11) UCAC4 star catalog  . . . . . . . . . . ${dstatus[3]}
+       11) Maps
+           Map library created for use with OMINAS ${dstatus[3]}
+           About 990 MB as of August/2017
+       12) UCAC4 star catalog  . . . . . . . . . . ${dstatus[4]}
            About 8.5 GB download
-       12) GSC star catalog  . . . . . . . . . . . ${dstatus[4]}
+       13) GSC star catalog  . . . . . . . . . . . ${dstatus[5]}
 
 For more information, see
-https://ppenteado.github.io/ominas/demo/install_guide.html
+https://ppenteado.github.io/ominas/guides/userguide.html
 PKGS
 
 
@@ -1135,7 +1168,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 7 8 9 10"
+    ans="1 2 3 4 5 6 8 9 10 11"
   else
     ans="all"
   fi
@@ -1143,6 +1176,7 @@ fi
 export ominas_auto
 
 ominas_auto_u=0
+ominas_nodel=0
 if [ ${aans[0]} == "uninstall" ] || [ ${aans[0]} == "u" ] || [ ${aans[0]} == "U" ] || [ ${aans[0]} == "Uninstall" ] || [ ${aans[0]} == "UNINSTALL" ]; then
 
   cat <<AUTOP
@@ -1161,7 +1195,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 7 8 9 10 2 1"
+    ans="3 4 5 6 8 9 10 11 2 1"
   else
     ans="uall"
   fi
@@ -1173,19 +1207,25 @@ pr=0
 for num in $ans
 do
   if [ $num == "2" ]; then
-    if [ $DFLAG  == "true" ] && [ ${ominas_auto} == 0 ] ; then
+    if [ $DFLAG  == "true" ] && [ "${ominas_auto}" == "0" ]  ; then
       DFLAG="false"
       demost="NOT CONFIGURED"
     else
       DFLAG="true"
       demost="CONFIGURED"
+      ominas_auto_u=1
+      ominas_nodel=2
+      #ans="3 4 5 6 8 9 10"
     fi
-    if [ ${ominas_auto_u} == 1 ] ; then
+    if [ "${ominas_auto_u}" == "1" ] && [ "${ominas_nodel}" != "2" ] ; then
       DFLAG="false"
       demost="NOT CONFIGURED"
     fi
   fi
 done
+if [ "${ominas_nodel}" == "2" ]; then
+  ans="4 5 6 8 9 10 11"
+fi
 for num in $ans
 do
 	case $num in
@@ -1220,7 +1260,7 @@ do
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 #corest=${yes}
-                                dins $(($num-8)) ASK DEMO;;
+                                dins $(($num-8)) ASK NODEMO;;
 		[9]|11|12)
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))

@@ -69,19 +69,14 @@ function grim_get_plane_by_overlay, grim_data, xy
 
  for i=0, nplanes-1 do $
   if((planes[i].pn EQ plane.pn) OR planes[i].visible) then $
-  begin
-   ptdp = grim_get_overlay_ptdp(grim_data, plane=planes[i], 'all')
-   nptdp = n_elements(ptdp)
-   for j=0, nptdp-1 do $
-    begin
-     ptd = *ptdp[j]
-     if(keyword_set(ptd)) then $ 
-      begin
-       ii = grim_nearest_overlay(plane, xy, ptd, mm=mm)
-       if(ii[0] NE -1) then if(mm LT dist[i]) then dist[i] = mm
-      end
-    end
-  end
+   begin
+    ptd = grim_ptd(planes[i])
+    for j=0, n_elements(ptd)-1 do $
+     begin
+      ii = grim_nearest_overlay(plane, xy, ptd, mm=mm)
+      if(ii[0] NE -1) then if(mm LT dist[i]) then dist[i] = mm
+     end
+   end
 
  w = where(dist LT 1d100)
  if(w[0] EQ -1) then return, 0
@@ -168,55 +163,6 @@ pro grim_toggle_image_overlays, grim_data, plane, no_refresh=no_refresh
 
 
  if(NOT keyword_set(no_refresh)) then grim_refresh, grim_data, /use_pixmap
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_render_image
-;
-;=============================================================================
-pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
-
- ;-----------------------------------------
- ; load relevant descriptors
- ;-----------------------------------------
- grim_suspend_events
- cd = grim_get_cameras(grim_data, plane=plane)
- pd = grim_get_planets(grim_data, plane=plane)
- rd = grim_get_rings(grim_data, plane=plane)
- sund = grim_get_sun(grim_data, plane=plane)
- grim_resume_events
-
-
- ;-----------------------------------------
- ; load maps
- ;-----------------------------------------
- if(NOT keyword_set(*grim_data.dd_map_p)) then dd_map = pg_load_maps(md=md, bx=pd)
- if(keyword_set(dd_map)) then $
-  begin
-   *grim_data.dd_map_p = dd_map
-   *grim_data.md_map_p = md
-  end
-
-
- ;-----------------------------------------
- ; render
- ;-----------------------------------------
- bx = append_array(pd, rd)
- dd_map = *grim_data.dd_map_p
- md = *grim_data.md_map_p
-
- stat = pg_render(/psf, /nodd, show=plane.render_show, $
-                    cd=cd, bx=bx, sund=sund, md=md, ddmap=dd_map, map=map, $
-                    pht=plane.render_pht_min, $
-                    sample=plane.render_sample, $
-                    image_ptd=image_pts)
-
- 
- image_pts = reform(image_pts, 2, n_elements(map), /over)
- dat_set_data, plane.dd, map
 end
 ;=============================================================================
 
@@ -757,7 +703,7 @@ end
 ; grim_show_axes
 ;
 ;  inertial axes:	blue
-;  sun direction:	yellow
+;  light direction:	yellow
 ;  camera axes:		red
 ;  dir. to primary:	green
 ;
@@ -781,9 +727,12 @@ pro grim_show_axes, grim_data, plane
  ;---------------------------------
  ; draw axis vectors
  ;---------------------------------
+ cd = grim_xd(plane, /cd)
+ ltd = grim_xd(plane, /ltd)
+ pd = get_primary(cd, grim_xd(plane, /pd))
  if(NOT grim_test_map(grim_data)) then $
   if(grim_data.axes_flag) then $
-   if(keyword_set(*plane.cd_p)) then $ 
+   if(keyword_set(cd)) then $ 
     begin
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; compute source location
@@ -791,7 +740,6 @@ pro grim_show_axes, grim_data, plane
      device_pt = [AXES_SIZE/2, AXES_SIZE/2]
      image_pt = (convert_coord(device_pt[0], device_pt[1], /device, /to_data))[0:1]
 
-     cd = *plane.cd_p
      dir = image_to_inertial(cd, image_pt)
      source = bod_pos(cd) + dir*100000d 
 
@@ -819,20 +767,19 @@ pro grim_show_axes, grim_data, plane
          label_shade=0.75
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; draw sun vector
+     ; draw primary light vector
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-     if(keyword_set(*plane.sund_p)) then $
+     if(keyword_set(ltd)) then $
        pg_draw_vector, cd=cd, source, /noshort, /fix, $
-         v_unit(bod_pos(*plane.sund_p) - bod_pos(cd)), $
-         plab=['SUN'], col='yellow', len=len, draw_wnum=grim_data.axes_wnum, $
+         v_unit(bod_pos(ltd[0]) - bod_pos(cd)), $
+         plab=['LIGHT'], col='yellow', len=len, draw_wnum=grim_data.axes_wnum, $
          label_shade=0.75
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; draw primary planet vector
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
-     if(keyword_set(*plane.pd_p)) then $
+     if(keyword_set(pd)) then $
       begin
-       pd = get_primary(cd, *plane.pd_p)
        pg_draw_vector, cd=cd, source, /noshort, /fix, $
          v_unit(bod_pos(pd) - bod_pos(cd)), $
          plab=cor_name(pd), col='green', len=len, draw_wnum=grim_data.axes_wnum, $
@@ -960,7 +907,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  no_context=no_context, no_callback=no_callback, no_back=no_back, $
  no_coord=no_coord, tvimage=tvimage, no_plot=no_plot, just_image=just_image, $
  dx=dx, dy=dy, update=update, current=current, no_copy=no_copy, no_main=no_main, $
- no_user=no_user
+ no_user=no_user, overlay_color=overlay_color
 @grim_block.include
 
 
@@ -978,6 +925,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
    planes = grim_get_visible_planes(grim_data)
   end $
  else planes = plane
+
 
  ;-----------------------------------
  ; apply any default activations
@@ -1021,6 +969,12 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
     end
 
 
+ ;-----------------------------------
+ ; compute any intial overlays
+ ;-----------------------------------
+ grim_initial_overlays, grim_data, plane=planes
+
+
  ;------------------------------------
  ; redisplay grids
  ;------------------------------------
@@ -1032,7 +986,8 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ; redraw overlays
  ;-----------------------------------
  if(NOT keyword_set(no_objects)) then $
-          grim_draw, grim_data, plane=planes, /all, update=update, no_user=no_user
+          grim_draw, grim_data, plane=planes, /all, $
+                 update=update, no_user=no_user, override_color=overlay_color
 
 
  ;------------------------------------
@@ -1086,7 +1041,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
    ; allowed menu items
    ;- - - - - - - - - - - - - - - - - - - - -
    md_items = *grim_data.map_items_p
-   if(keyword_set(*plane.od_p)) then $
+   if(keyword_set(grim_xd(plane, /od))) then $
        md_items = append_array(md_items, *grim_data.od_map_items_p)
    mark = bytarr(n_elements(menu_ids))
 
@@ -1136,7 +1091,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ;-----------------------------------
  ; update active and primary arrays
  ;-----------------------------------
- grim_update_activated, grim_data, plane=plane
+ grim_update_active_xds, grim_data, plane=plane
 
 
  ;-----------------------------------

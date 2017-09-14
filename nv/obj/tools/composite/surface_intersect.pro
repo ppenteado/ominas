@@ -53,11 +53,11 @@
 ;===========================================================================
 function surface_intersect, bx, v, r, hit=hit, near=near, far=far
 
+ body_pts = !null
  if(cor_isa(bx[0], 'GLOBE')) then $
           body_pts = glb_intersect(bx, v, r, near=near, far=far, hit=hit) $
  else if(cor_isa(bx[0], 'DISK')) then $
           body_pts = dsk_intersect(bx, v, r, near=near, far=far, hit=hit, /all)
-
 
  return, body_pts
 end

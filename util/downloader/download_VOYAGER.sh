@@ -53,7 +53,18 @@ mkdir -p ~/.ominas/timestamps/GENERIC
 
 for dir in "${dirs[@]}"
 do
- ${wget} "${baseurl}${dir}/ --localdir=${1}/../Generic_kernels/$dir/ --absolute $@"
+ #${wget} "${baseurl}${dir}/ --localdir=${1}/../Generic_kernels/$dir/ --absolute $@"
+ ${wget} "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute $@"
+done
+
+#cks from rings node
+cks=( vg1_jup_version1_type1_iss_sedr.txt vg1_jup_version1_type1_iss_sedr.bc vg2_jup_version1_type1_iss_sedr.txt vg2_jup_version1_type1_iss_sedr.bc vg1_sat_version1_type1_iss_sedr.txt vg1_sat_version1_type1_iss_sedr.bc V1SAT_VERSION2_TYPE3_UVS_SEDR.txt 1SAT_VERSION2_TYPE3_UVS_SEDR.ck V1SAT_VERSION3_TYPE3_MERGED_SEDR.txt V1SAT_VERSION3_TYPE3_MERGED_SEDR.ck V1SAT_VERSION4_TYPE1_ISS_CSMITHED.txt V1SAT_VERSION4_TYPE1_ISS_CSMITHED.ck V1SAT_VERSION5_TYPE3_MERGED_CSMITHED.txt V1SAT_VERSION5_TYPE3_MERGED_CSMITHED.ck vg2_sat_version1_type1_iss_sedr.txt vg2_sat_version1_type1_iss_sedr.bc vg2_ura_version1_type1_iss_sedr.txt vg2_ura_version1_type1_iss_sedr.bc vg2_nep_version1_type1_iss_sedr.txt vg2_nep_version1_type1_iss_sedr.bc )
+
+ckb=http://pds-rings.seti.org/voyager/ck/
+
+for f in "${cks[@]}"
+do
+  ${wget} " ${ckb}${f} --localdir=${1}/ck/ --absolute $@"
 done
 
 

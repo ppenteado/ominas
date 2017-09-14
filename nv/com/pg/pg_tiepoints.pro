@@ -125,7 +125,7 @@ function pg_tiepoints, cd=cd, bx=bx, gbx=gbx, dkx=dkx, dd=dd, gd=gd, ptd, body_p
 
    tie_ptd[i] = pnt_create_descriptors(points=p[*,i], $
                        name=name, $
-                       desc='tiepoints', $
+                       desc='TIEPOINTS', $
                        data=scan_data, $
                        tags=tags, $
                        flags=flags)

@@ -1,5 +1,5 @@
 ; _cam_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(fn_focal_to_image)) then cam_set_fn_focal_to_image, _xd, fn_focal_to_image, /noevent

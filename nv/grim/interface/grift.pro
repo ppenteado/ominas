@@ -49,6 +49,9 @@
 ;
 ;	<xd>:	Any descriptor maintained by GRIM.
 ;
+;	<xdx>:	Returnds all descriptors containing the given class, e.g., 
+;		bx, gbx, dkx.   Not implemented.
+;
 ;	<overlay>_ptd:
 ;		POINT object giving the points for the overlay of type <overlay>.
 ;
@@ -88,13 +91,17 @@
 pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
          dd=dd, $
          cd=cd, $
+         md=md, $
          pd=pd, $
          rd=rd, $
          sd=sd, $
          std=std, $
          ard=ard, $
-         sund=sund, $
+         ltd=ltd, $
          od=od, $
+         bx=bx, $
+         bbx=bbx, $
+         dkx=dkx, $
          limb_ptd=limb_ptd, $
          ring_ptd=ring_ptd, $
          star_ptd=star_ptd, $
@@ -107,21 +114,25 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
          reflection_ptd=reflection_ptd, $
          object_ptd=object_ptd, $
          tie_ptd=tie_ptd, $
-         curve_ptd=curve_ptd
-
+         curve_ptd=curve_ptd, $
+_ref_extra=ex
 
  ;--------------------------------------------
  ; clear output arrays
  ;--------------------------------------------
  dd = !null
  cd = !null
+ md = !null
  pd = !null
  rd = !null
  sd = !null
  std = !null
  ard = !null
- sund = !null
+ ltd = !null
  od = !null
+ bx = !null
+ gbx = !null
+ dkx = !null
  limb_ptd = !null
  ring_ptd = !null
  star_ptd = !null
@@ -178,24 +189,24 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(active)) then $
     begin
-     ddi = (cdi = (sundi = (odi = !null)))
-     pd = append_array(active_pd, (pdi=grim_get_active_xds(plane, 'PLANET')))
-     rd = append_array(active_rd, (rdi=grim_get_active_xds(plane, 'RING')))
-     sd = append_array(active_sd, (sdi=grim_get_active_xds(plane, 'STAR')))
-     std = append_array(active_std, (stdi=grim_get_active_xds(plane, 'STATION')))
-     ard = append_array(active_ard, (ardi=grim_get_active_xds(plane, 'ARRAY')))
+     ddi = (cdi = (ltdi = (odi = !null)))
+     pd = append_array(active_pd, (pdi=grim_xd(plane, /planet, /active)))
+     rd = append_array(active_rd, (rdi=grim_xd(plane, /ring, /active)))
+     sd = append_array(active_sd, (sdi=grim_xd(plane, /star, /active)))
+     std = append_array(active_std, (stdi=grim_xd(plane, /station, /active)))
+     ard = append_array(active_ard, (ardi=grim_xd(plane, /array, /active)))
 
-     limb_ptd = append_array(limb_ptd, grim_get_active_overlays(grim_data, 'LIMB'))
-     ring_ptd = append_array(ring_ptd, grim_get_active_overlays(grim_data, 'RING'))
-     star_ptd = append_array(star_ptd, grim_get_active_overlays(grim_data, 'STAR'))
-     term_ptd = append_array(term_ptd, grim_get_active_overlays(grim_data, 'TERMINATOR'))
-     plgrid_ptd = append_array(plgrid_ptd, grim_get_active_overlays(grim_data, 'PLANET_GRID'))
-     center_ptd = append_array(center_ptd, grim_get_active_overlays(grim_data, 'PLANET_CENTER'))
-     shadow_ptd = append_array(shadow_ptd, grim_get_active_overlays(grim_data, 'SHADOW'))
-     reflection_ptd = append_array(reflection_ptd, grim_get_active_overlays(grim_data, 'REFLECTION'))
-     station_ptd = append_array(station_ptd, grim_get_active_overlays(grim_data, 'STATION'))
-     array_ptd = append_array(array_ptd, grim_get_active_overlays(grim_data, 'ARRAY'))
-     object_ptd = append_array(object_ptd, *plane.active_xd_p)
+     limb_ptd = append_array(limb_ptd, grim_ptd(plane, /limb, /active))
+     ring_ptd = append_array(ring_ptd, grim_ptd(plane, /ring, /active))
+     star_ptd = append_array(star_ptd, grim_ptd(plane, /star, /active))
+     term_ptd = append_array(term_ptd, grim_ptd(plane, /terminator, /active))
+     plgrid_ptd = append_array(plgrid_ptd, grim_ptd(plane, /planet_grid, /active))
+     center_ptd = append_array(center_ptd, grim_ptd(plane, /center, /active))
+     shadow_ptd = append_array(shadow_ptd, grim_ptd(plane, /shadow, /active))
+     reflection_ptd = append_array(reflection_ptd, grim_ptd(plane, /reflection, /active))
+     station_ptd = append_array(station_ptd, grim_ptd(plane, /station, /active))
+     array_ptd = append_array(array_ptd, grim_ptd(plane, /array, /active))
+     object_ptd = append_array(object_ptd, grim_xd(plane, /active))
     end $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; all objects
@@ -203,26 +214,27 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
    else $
     begin
      dd = cor_cull(append_array(dd, (ddi=plane.dd)))
-     cd = cor_cull(append_array(cd, (cdi=*plane.cd_p)))
-     pd = cor_cull(append_array(pd, (pdi=*plane.pd_p)))
-     rd = cor_cull(append_array(rd, (rdi=*plane.rd_p)))
-     sd = cor_cull(append_array(sd, (sdi=*plane.sd_p)))
-     std = cor_cull(append_array(std, (stdi=*plane.std_p)))
-     ard = cor_cull(append_array(ard, (ardi=*plane.ard_p)))
-     sund = cor_cull(append_array(sund, (sundi=*plane.sund_p)))
-     od = cor_cull(append_array(od, (odi=*plane.od_p)))
+     cd = cor_cull(append_array(cd, (cdi=grim_xd(plane, /cd))))
+     if(keyword_set(cd)) then if(cor_class(cd[0]) EQ 'MAP') then md = cd
+     pd = cor_cull(append_array(pd, (pdi=grim_xd(plane, /pd))))
+     rd = cor_cull(append_array(rd, (rdi=grim_xd(plane, /rd))))
+     sd = cor_cull(append_array(sd, (sdi=grim_xd(plane, /sd))))
+     std = cor_cull(append_array(std, (stdi=grim_xd(plane, /std))))
+     ard = cor_cull(append_array(ard, (ardi=grim_xd(plane, /ard))))
+     ltd = cor_cull(append_array(ltd, (ltdi=grim_xd(plane, /ltd))))
+     od = cor_cull(append_array(od, (odi=grim_xd(plane, /od))))
 
-     limb_ptd = append_array(limb_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'LIMB')))
-     ring_ptd = append_array(ring_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'RING')))
-     star_ptd = append_array(star_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'STAR'))) 
-     term_ptd = append_array(term_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'TERMINATOR'))) 
-     plgrid_ptd = append_array(plgrid_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_GRID'))) 
-     center_ptd = append_array(center_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'PLANET_CENTER'))) 
-     shadow_ptd = append_array(shadow_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'SHADOW'))) 
-     reflection_ptd = append_array(reflection_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'REFLECTION'))) 
-     station_ptd = append_array(station_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'STATION'))) 
-     array_ptd = append_array(array_ptd, *(grim_get_overlay_ptdp(grim_data, plane=plane, 'ARRAY'))) 
-     object_ptd = append_array(object_ptd, grim_cat_points(grim_data))
+     limb_ptd = append_array(limb_ptd, grim_ptd(plane, /limb))
+     ring_ptd = append_array(ring_ptd, grim_ptd(plane, /ring))
+     star_ptd = append_array(star_ptd, grim_ptd(plane, /star))
+     term_ptd = append_array(term_ptd, grim_ptd(plane, /terminator)) 
+     plgrid_ptd = append_array(plgrid_ptd, grim_ptd(plane, /planet_grid)) 
+     center_ptd = append_array(center_ptd, grim_ptd(plane, /center)) 
+     shadow_ptd = append_array(shadow_ptd, grim_ptd(plane, /shadow)) 
+     reflection_ptd = append_array(reflection_ptd, grim_ptd(plane, /reflection)) 
+     station_ptd = append_array(station_ptd, grim_ptd(plane, /station)) 
+     array_ptd = append_array(array_ptd, grim_ptd(plane, /array)) 
+     object_ptd = append_array(object_ptd, grim_ptd(planes[i]))
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -235,7 +247,7 @@ pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
    ; generic descriptor
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
    gd[i] = cor_create_gd(dd=ddi, cd=cdi, pd=pdi, rd=rdi, $
-                            sund=sundi, sd=sdi, ard=ardi, std=stdi, od=odi)
+                            ltd=ltdi, sd=sdi, ard=ardi, std=stdi, od=odi)
   end
 
  ;------------------------------------------------------------------

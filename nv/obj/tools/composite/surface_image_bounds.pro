@@ -59,6 +59,8 @@ pro surface_image_bounds, cd, bx, slop=slop, $
        border_pts_im=border_pts_im, $
        latmin=latmin, latmax=latmax, lonmin=lonmin, lonmax=lonmax, status=status
 
+; this needs to handle all kinds of bodies in one call.  See body_to_surface, e.g.
+
  gbx = cor_select(bx, 'GLOBE', /class)
  dkx = cor_select(bx, 'DISK', /class)
 

@@ -31,7 +31,9 @@
 ;
 ;	arg2:	Transient translator argument, if present.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	arg1:	If present and undefined, any newly created data descriptor 
+;		is returnedin this argument. 
 ;
 ;
 ; KEYWORDS:
@@ -77,8 +79,8 @@
 ;	Descriptor select keywords are combined with OR logic.  They are 
 ;	implemented in this routine after the translators have been called, 
 ;	but they are also added to the translator keywords.  The purpose of 
-;	sending then to the translators as well is to give the  translators 
-;	an opportunity to filter their outputs before potentially  generating 
+;	sending then to the translators as well is to give the translators 
+;	an opportunity to filter their outputs before potentially generating 
 ;	a huge array of descriptors that would mostly be filtered out by this 
 ;	routine.  Named bodies are exempted.  See pg_select_bodies for a 
 ;	description of the standard keywords.  Additional keywords specific 
@@ -196,7 +198,8 @@ function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=keyvals, $
  ;------------------------------------------------------------------------
  ; sort out arguments
  ;------------------------------------------------------------------------
- pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+ pg_sort_args, arg1, arg2, dd=dd, od=od, time=time, $
+                          trs=trs, free=free, $
                           @dat__keywords.include
                           end_keywords
 

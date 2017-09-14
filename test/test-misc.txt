@@ -8,6 +8,10 @@ pd = pg_get_planets(time=3d7, name='MOON')
 
 cd = pg_get_cameras(inst='CAS_ISS_NA')
 cd = pg_get_cameras(inst='CAS_ISS_NA', time=5*3.5d7)	
+cd = pg_get_cameras(inst='CAS_ISS_NA', time='2016-028T15:37:00')	
+
+cd = pg_get_cameras(inst='CAS_ISS_NA', time=[4,5,6]*3.5d7)	
+
 
 
 
@@ -40,7 +44,6 @@ cd0 = pg_get_cameras(dd[0])		;fail
 
 ;==============================================================================
 ; 
-;  And no data at all....  Poor old lonely GRIM. 
 ;
 ;==============================================================================
 ;grim, /new, inst='CAS_ISS_NA', cam_trs='time=5*3.5d7', $

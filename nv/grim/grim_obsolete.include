@@ -178,8 +178,8 @@ pro grim_compute_limb, grim_data, limb_ps, dep, plane=plane, w=w
    if(keyword__set(*plane.rd_p)) then pg_hide, _limb_ps, gd=gd, /disk
    grim_message
 
-   if(keyword__set(*plane.sund_p)) then $
-                          pg_hide, _limb_ps, gd=gd, od=gd.sund, /limb
+   if(keyword__set(*plane.ltd_p)) then $
+                          pg_hide, _limb_ps, gd=gd, od=gd.ltd, /limb
    grim_message
 
    n = n_elements(_limb_ps)
@@ -208,8 +208,8 @@ pro grim_compute_limb, grim_data, limb_ps, dep, plane=plane, w=w
                                                             gbx=*plane.pd_p
    grim_message
 
-   if(keyword__set(*plane.sund_p)) then $
-     pg_hide, limb_ps, cd=*plane.cd_p, gbx=pds, od=*plane.sund_p, /limb
+   if(keyword__set(*plane.ltd_p)) then $
+     pg_hide, limb_ps, cd=*plane.cd_p, gbx=pds, od=*plane.ltd_p, /limb
    grim_message
   end
 
@@ -290,8 +290,8 @@ pro grim_compute_planet_grid, grim_data, grid_ps, dep, plane=plane, w=w
    if(keyword__set(*plane.rd_p)) then pg_hide, _grid_ps, gd=gd, /disk
    grim_message
 
-   if(keyword__set(*plane.sund_p)) then $
-                          pg_hide, _grid_ps, gd=gd, od=gd.sund, /limb
+   if(keyword__set(*plane.ltd_p)) then $
+                          pg_hide, _grid_ps, gd=gd, od=gd.ltd, /limb
    grim_message
 
    n = n_elements(_grid_ps)
@@ -324,8 +324,8 @@ pro grim_compute_planet_grid, grim_data, grid_ps, dep, plane=plane, w=w
                                                             gbx=*plane.pd_p
    grim_message
 
-   if(keyword__set(*plane.sund_p)) then $
-     pg_hide, grid_ps, cd=*plane.cd_p, gbx=pds, od=*plane.sund_p, /limb
+   if(keyword__set(*plane.ltd_p)) then $
+     pg_hide, grid_ps, cd=*plane.cd_p, gbx=pds, od=*plane.ltd_p, /limb
    grim_message
   end
 
@@ -358,7 +358,7 @@ pro grim_compute_ring_grid, grim_data, grid_ps, dep, plane=plane, w=w
    pg_hide, _grid_ps, cd=*plane.cd_p, gbx=*plane.pd_p, /globe
    grim_message
 
-   pg_hide, _grid_ps, cd=*plane.cd_p, od=*plane.sund_p, gbx=*plane.pd_p, /globe
+   pg_hide, _grid_ps, cd=*plane.cd_p, od=*plane.ltd_p, gbx=*plane.pd_p, /globe
    grim_message
 
    n = n_elements(_grid_ps)
@@ -385,7 +385,7 @@ pro grim_compute_ring_grid, grim_data, grid_ps, dep, plane=plane, w=w
    pg_hide, grid_ps, cd=*plane.cd_p, gbx=*plane.pd_p, /globe
    grim_message
 
-   pg_hide, grid_ps, cd=*plane.cd_p, od=*plane.sund_p, gbx=*plane.pd_p, /globe
+   pg_hide, grid_ps, cd=*plane.cd_p, od=*plane.ltd_p, gbx=*plane.pd_p, /globe
    grim_message
 
   end
@@ -428,7 +428,7 @@ pro grim_compute_ring, grim_data, ring_ps, dep, plane=plane
  pg_hide, _ring_ps, cd=*plane.cd_p, gbx=*plane.pd_p, /globe
  grim_message
 
- pg_hide, _ring_ps, cd=*plane.cd_p, od=*plane.sund_p, gbx=*plane.pd_p, /globe
+ pg_hide, _ring_ps, cd=*plane.cd_p, od=*plane.ltd_p, gbx=*plane.pd_p, /globe
  grim_message
 
 
@@ -516,13 +516,13 @@ pro grim_compute_term, grim_data, term_ps, dep, plane=plane, w=w
  ;----------------------------------------------------------------------------   
  if(keyword__set(term_ps)) then $
   begin
-   xd = [*plane.cd_p, *plane.pd_p, *plane.sund_p]
+   xd = [*plane.cd_p, *plane.pd_p, *plane.ltd_p]
    if(keyword__set(*plane.rd_p)) then xd = [xd, *plane.rd_p]
 
    gd = pgs_idp_to_gd(dep, xd)
 
    grim_message, /clear
-   _term_ps = pg_limb(gd=gd, od=gd.sund, gbx=gd.pd, fov=plane.points_settings.fov)
+   _term_ps = pg_limb(gd=gd, od=gd.ltd, gbx=gd.pd, fov=plane.points_settings.fov)
    grim_message
 
    pg_hide, _term_ps, gd=gd, /limb, /disk
@@ -544,7 +544,7 @@ pro grim_compute_term, grim_data, term_ps, dep, plane=plane, w=w
    if(NOT keyword__set(pds)) then pds = *plane.pd_p
 
    grim_message, /clear
-   term_ps = pg_limb(cd=*plane.cd_p, od=*plane.sund_p, gbx=pds, fov=plane.points_settings.fov)
+   term_ps = pg_limb(cd=*plane.cd_p, od=*plane.ltd_p, gbx=pds, fov=plane.points_settings.fov)
    grim_message
 
    if(NOT grim_test_map(grim_data)) then $
@@ -575,7 +575,7 @@ pro grim_compute_shadows, grim_data, shadow_ps, dep, plane=plane, w=w
  ;----------------------------------------------------------------------------   
  if(keyword__set(shadow_ps)) then $
   begin
-   xd = [*plane.cd_p, *plane.pd_p, *plane.sund_p]
+   xd = [*plane.cd_p, *plane.pd_p, *plane.ltd_p]
    if(keyword__set(*plane.rd_p)) then xd = [xd, *plane.rd_p]
    all_ps = grim_cat_points(grim_data, plane=plane, /all)
 
@@ -585,7 +585,7 @@ pro grim_compute_shadows, grim_data, shadow_ps, dep, plane=plane, w=w
    if(NOT keyword__set(ps)) then return
 
    grim_message, /clear
-   _shadow_ps = pg_shadow(ps, gd=gd, od=gd.sund, gbx=gd.pd, dkx=gd.rd, $
+   _shadow_ps = pg_shadow(ps, gd=gd, od=gd.ltd, gbx=gd.pd, dkx=gd.rd, $
                                                     fov=plane.points_settings.fov)
    grim_message
 
@@ -612,7 +612,7 @@ pro grim_compute_shadows, grim_data, shadow_ps, dep, plane=plane, w=w
    if(keyword__set(*plane.rd_p)) then rds = *plane.rd_p
 
    shadow_ps = pg_shadow(active_ps, $
-                 cd=*plane.cd_p, od=*plane.sund_p, dkx=rds, gbx=pds, $
+                 cd=*plane.cd_p, od=*plane.ltd_p, dkx=rds, gbx=pds, $
                                                     fov=plane.points_settings.fov)
    grim_message
 

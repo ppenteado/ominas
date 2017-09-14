@@ -37,7 +37,7 @@
 ;	od:	Array (n_timesteps) of descriptors of objects 
 ;		which must be a subclass of BODY.  These objects are used
 ;		as the source from which points are projected.  If no observer
-;		descriptor is given, then the sun descriptor in gd is used.
+;		descriptor is given, then the light descriptor in gd is used.
 ;		Only one observer is allowed.
 ;
 ;	gd:	Generic descriptor.  If given, the cd and bx inputs 
@@ -50,11 +50,6 @@
 ;	cull:	 If set, POINT objects excluded by the clip keyword
 ;		 are not returned.  Normally, empty POINT objects
 ;		 are returned as placeholders.
-;
-;   backshadow:	 If set, only backshadows (shadows cast between the object and
-; 		 observer) are considered.
-;
-;	both:	 If set, both shadows and backshadows are returned.
 ;
 ;	edge:	 If set, only points near the edge of the shadow are returned.
 ;
@@ -83,15 +78,14 @@
 ;=============================================================================
 pro pg_shadow_points, cd=cd, od=od, bx=bx, gd=gd, object_ptd, shadow_ptd, $
                            nocull=nocull, edge=edge, nosolve=nosolve, $
-                           clip=clip, cull=cull, both=both, backshadow=_backshadow
+                           clip=clip, cull=cull
                            
 @pnt_include.pro
 
 
  backshadow = 1 - keyword_set(_backshadow)
 
- shad_ptd = pg_shadow(both=both, backshadow=backshadow, $
-                       object_ptd, cd=cd, od=od, bx=bx, gd=gd, $
+ shad_ptd = pg_shadow(object_ptd, cd=cd, od=od, bx=bx, gd=gd, $
                        all=all, clip=clip, nocull=NOT keyword_set(cull), $
                        nosolve=nosolve)
 

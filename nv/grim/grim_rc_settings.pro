@@ -26,15 +26,16 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
         overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
 	fov=fov, clip=clip, menu_extensions=menu_extensions, button_extensions=button_extensions, $
-	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, sun_trs=sun_trs, $
+	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, lgt_trs=lgt_trs, $
 	filetype=filetype, hide=hide, mode_args=mode_args, xzero=xzero, rgb=rgb, $
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, maxdat=maxdat, $
 	arg_extensions=arg_extensions, extensions=extensions, beta=beta, rendering=rendering, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
-        render_sample=render_sample, render_pht_min=render_pht_min, slave_overlays=slave_overlays, $
-        delay_overlays=delay_overlays, auto_stretch=auto_stretch
-	
+        render_numbra=render_numbra, render_sampling=render_sampling, render_minimum=render_minimum, slave_overlays=slave_overlays, $
+        delay_overlays=delay_overlays, auto_stretch=auto_stretch, lights=lights, $
+        render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto
+
 
  ;----------------------------------------------------
  ; return if no resource file
@@ -165,6 +166,10 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
  else _retain = retain
  if(keyword_set(_retain)) then retain = fix(_retain)
 
+ if(n_elements(lights) EQ 0) then _lights = extra_value(kv, 'LIGHTS') $
+ else _lights = lights
+ if(keyword_set(_lights)) then lights = _lights
+
  if(n_elements(overlays) EQ 0) then _overlays = extra_value(kv, 'OVERLAYS') $
  else _overlays = overlays
  if(keyword_set(_overlays)) then overlays = _overlays
@@ -217,9 +222,9 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
  else _arr_trs = arr_trs
  if(keyword_set(_arr_trs)) then arr_trs = _arr_trs
 
- if(n_elements(sun_trs) EQ 0) then _sun_trs = extra_value(kv, 'SUN_TRS') $
- else _sun_trs = sun_trs
- if(keyword_set(_sun_trs)) then sun_trs = _sun_trs
+ if(n_elements(lgt_trs) EQ 0) then _lgt_trs = extra_value(kv, 'LGT_TRS') $
+ else _lgt_trs = lgt_trs
+ if(keyword_set(_lgt_trs)) then lgt_trs = _lgt_trs
 
  if(n_elements(filetype) EQ 0) then _filetype = extra_value(kv, 'FILETYPE') $
  else _filetype = filetype
@@ -309,20 +314,45 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
  else _channel = channel
  if(keyword_set(_channel)) then channel = fix(_channel)
 
- if(n_elements(render_pht_min) EQ 0) then $
-                        _render_pht_min = extra_value(kv, 'RENDER_PHT_MIN') $
- else _render_pht_min = render_pht_min
- if(keyword_set(_render_pht_min)) then render_pht_min = fix(_render_pht_min)
+ if(n_elements(render_minimum) EQ 0) then $
+                        _render_minimum = extra_value(kv, 'RENDER_MINIMUM') $
+ else _render_minimum = render_minimum
+ if(keyword_set(_render_minimum)) then render_minimum = fix(_render_minimum)
 
- if(n_elements(render_sample) EQ 0) then $
-                        _render_sample = extra_value(kv, 'RENDER_SAMPLE') $
- else _render_sample = render_sample
- if(keyword_set(_render_sample)) then render_sample = fix(_render_sample)
+ if(n_elements(render_numbra) EQ 0) then $
+                        _render_numbra = extra_value(kv, 'RENDER_NUMBRA') $
+ else _render_numbra = render_numbra
+ if(keyword_set(_render_numbra)) then render_numbra = fix(_render_numbra)
+
+ if(n_elements(render_sampling) EQ 0) then $
+                        _render_sampling = extra_value(kv, 'RENDER_SAMPLING') $
+ else _render_sampling = render_sampling
+ if(keyword_set(_render_sampling)) then render_sampling = fix(_render_sampling)
 
  if(n_elements(slave_overlays) EQ 0) then $
                       _slave_overlays = extra_value(kv, 'SLAVE_OVERLAYS') $
  else _slave_overlays = slave_overlays
  if(keyword_set(_slave_overlays)) then slave_overlays = fix(_slave_overlays)
+
+ if(n_elements(render_rgb) EQ 0) then $
+                      _render_rgb = extra_value(kv, 'RENDER_RGB') $
+ else _render_rgb = render_rgb
+ if(keyword_set(_render_rgb)) then render_rgb = fix(_render_rgb)
+
+ if(n_elements(render_current) EQ 0) then $
+                _render_current = extra_value(kv, 'RENDER_CURRENT') $
+ else _render_current = render_current
+ if(keyword_set(_render_current)) then render_current = fix(_render_current)
+
+ if(n_elements(render_spawn) EQ 0) then $
+                      _render_spawn = extra_value(kv, 'RENDER_SPAWN') $
+ else _render_spawn = render_spawn
+ if(keyword_set(_render_spawn)) then render_spawn = fix(_render_spawn)
+
+ if(n_elements(render_auto) EQ 0) then $
+                      _render_auto = extra_value(kv, 'RENDER_AUTO') $
+ else _render_auto = render_auto
+ if(keyword_set(_render_auto)) then render_auto = fix(_render_auto)
 
 
  ;-----------------------------------------------------------------

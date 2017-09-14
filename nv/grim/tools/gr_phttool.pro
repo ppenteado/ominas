@@ -169,7 +169,7 @@ end
 ; grpht_apply_correction
 ;
 ;=============================================================================
-pro grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ptd
+pro grpht_apply_correction, data, phtd, dd, cd, pd, ltd, outline_ptd
 
  ;-----------------------------------
  ; compute correction
@@ -178,7 +178,7 @@ pro grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ptd
  phase_fn = grpht_get_prefix('phase') + phtd.phase_fn
 
  widget_control, /hourglass
- dd_cor = pg_photom(dd, cd=cd, gbx=pd[0], sund=sund, outline=outline_ptd, $
+ dd_cor = pg_photom(dd, cd=cd, gbx=pd[0], ltd=ltd[0], outline=outline_ptd, $
              refl_fn=refl_fn, refl_parm=*phtd.refl_parm_p, $
              phase_fn=phase_fn, phase_parm=*phtd.phase_parm_p, /over)
 
@@ -194,10 +194,12 @@ end
 pro grpht_apply_correction_primary, grim_data, data, phtd
 @pnt_include.pro
 
+ plane = grim_get_plane(grim_data)
+
  ;---------------------------
  ; get data
  ;----------------------------
- limb_ptd = grim_get_active_overlays(grim_data, 'LIMB')
+ limb_ptd = grim_ptd(plane, /limb)
  if(NOT keyword_set(limb_ptd)) then $
   begin
    grim_message, 'No outline points.'
@@ -207,7 +209,7 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
  outline_ptd = nv_clone(limb_ptd[0])
  flags = pnt_flags(outline_ptd) & flags[*] = NOT PTD_MASK_INVISIBLE & pnt_set_flags, outline_ptd, flags
 
- grift, dd=dd, cd=cd, sund=sund
+ grift, dd=dd, cd=cd, ltd=ltd
  grift, /active, pd=pd
 
  if(NOT keyword_set(cd)) then $
@@ -222,16 +224,16 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
    return
   end
 
- if(NOT keyword_set(sund)) then $
+ if(NOT keyword_set(ltd)) then $
   begin
-   grim_message, 'No sun descriptor.'
+   grim_message, 'No light descriptor.'
    return
   end
 
  ;----------------------------
  ; apply correction
  ;----------------------------
- grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ptd
+ grpht_apply_correction, data, phtd, dd, cd, pd, ltd, outline_ptd
 
  nv_free, outline_ptd
 end
@@ -250,7 +252,7 @@ pro grpht_apply_correction_all, grim_data, data, phtd
 
  for i=0, nplanes-1 do $
   begin
-   grift, pn=i, dd=dd, cd=cd, sund=sund
+   grift, pn=i, dd=dd, cd=cd, ltd=ltd
    grift, pn=i, /active, pd=pd, limb_ptd=limb_ptd
    apply = 1
 
@@ -262,13 +264,13 @@ pro grpht_apply_correction_all, grim_data, data, phtd
 
    if(NOT keyword__set(cd)) then apply = 0
    if(NOT keyword__set(pd)) then apply = 0 
-   if(NOT keyword__set(sund)) then apply = 0
+   if(NOT keyword__set(ltd)) then apply = 0
 
    ;----------------------------
    ; apply correction
    ;----------------------------
    if(apply) then $
-         grpht_apply_correction, data, phtd, dd, cd, pd, sund, outline_ptd
+         grpht_apply_correction, data, phtd, dd, cd, pd, ltd, outline_ptd
   end
 
 
@@ -536,6 +538,17 @@ pro gr_phttool_event, event
 	  grpht_refresh_fn, data, 'phase'
 	end
 
+  ;-------------------------------------------------------------
+  ; 'Ok' button --
+  ;  Apply the correction using the current settings and exit.
+  ;-------------------------------------------------------------
+  'OK' : $
+	begin
+	  grpht_apply_correction_primary, grim_data, data, phtd
+	  widget_control, data.base, /destroy
+	  return
+	end
+
   ;---------------------------------------------------------
   ; 'Apply' button --
   ;  Apply the correction using the current settings.
@@ -662,6 +675,7 @@ pro gr_phttool, top
 	  '2, TEXT,, LABEL_LEFT=k2 :, WIDTH=20, TAG=phase_parm2', $
 
 	'1, BASE,, ROW', $
+	  '0, BUTTON, Ok,, TAG=ok', $
 	  '0, BUTTON, Apply,, TAG=apply', $
 	  '0, BUTTON, Apply All,, TAG=apply_all', $
 	  '2, BUTTON, Close, QUIT, TAG=close']

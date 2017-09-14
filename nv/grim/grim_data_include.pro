@@ -16,10 +16,10 @@ end
 function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            retain=retain, user_callbacks=user_callbacks, $
            user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, $
-           cursor_swap=cursor_swap, cmd=cmd, $
+           cursor_swap=cursor_swap, cmd=cmd, lights=lights, $
            path=path, save_path=save_path, load_path=load_path, fov=fov, clip=clip, $
            cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
-           sun_trs=sun_trs, hide=hide, type=type, $
+           lgt_trs=lgt_trs, hide=hide, type=type, $
 	   cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
 	   sun_select=sun_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
            color=color, xrange=xrange, yrange=yrange, position=position, npoints=npoints, $
@@ -28,7 +28,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            symsize=symsize, nhist=nhist, maintain=maintain, workdir=workdir, $
            compress=compress, extensions=extensions, max=max, beta=beta, $
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
-           render_sample=render_sample, render_pht_min=render_pht_min, $
            overlays=overlays, activate=activate
 @grim_block.include
 
@@ -46,6 +45,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   if(NOT keyword_set(slave_overlays)) then slave_overlays = 0
   if(NOT defined(cursor_swap)) then cursor_swap = -1
   if(NOT keyword_set(overlays)) then overlays = ''
+  if(NOT keyword_set(lights)) then lights = ''
 
   if(NOT keyword_set(cursor_modes)) then cursor_modes_p = ptr_new(0) $
   else cursor_modes_p = ptr_new(cursor_modes)
@@ -74,7 +74,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   if(NOT keyword_set(str_trs)) then str_trs = ''
   if(NOT keyword_set(stn_trs)) then stn_trs = ''
   if(NOT keyword_set(arr_trs)) then arr_trs = ''
-  if(NOT keyword_set(sun_trs)) then sun_trs = ''
+  if(NOT keyword_set(lgt_trs)) then lgt_trs = ''
 
   if(NOT keyword_set(color)) then color = ctwhite()
   if(NOT keyword_set(thick)) then thick = 1
@@ -230,15 +230,15 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		cursor_modes_p		: cursor_modes_p, $
 		workdir			: workdir, $
 		tvd_init_p		: ptr_new(0), $
-		dd_map_p		: ptr_new(0), $
-		md_map_p		: ptr_new(0), $
 		dd0			: dd0, $
 		data_xy_p		: ptr_new(0), $		; data coords of viewport indices
 
 		slave_overlays		: slave_overlays, $
 
 		misc_data_p		: ptr_new(0), $
+		lights_p		: ptr_new(lights), $
 
+		render_show		: 1b, $
 
 	;---------------
 	; planes
@@ -258,7 +258,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		def_str_trs	: str_trs, $
 		def_stn_trs	: stn_trs, $
 		def_arr_trs	: arr_trs, $
-		def_sun_trs	: sun_trs, $
+		def_lgt_trs	: lgt_trs, $
 
 		def_load_path	: load_path, $
 		def_save_path	: save_path, $
@@ -285,7 +285,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   grim_add_planes, grim_data, dd, $
      xrange=xrange, yrange=yrange, position=position, xtitle=xtitle, ytitle=ytitle, max=max, $
                     color=color, thick=thick, visibility=visibility, channel=channel, $
-                       render_sample=render_sample, render_pht_min=render_pht_min, $
                           overlays=overlays, cmd=cmd
 
  ;----------------------

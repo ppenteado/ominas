@@ -13,11 +13,11 @@
 ;  a better result by specifying the desired overlays in the call to GRIM,
 ;  as in grim_example, but let's live a little.
 ;
-;  This example file can be executed from the UNIX command line using
+;  This example file can be executed from the UNIX command line using::
 ;
 ;  	ominas graft_example-batch
 ;
-;  or from within IDL using
+;  or from within IDL using::
 ;
 ;  	@graft_example-batch
 ;
@@ -47,13 +47,13 @@ grim, './data/n1350122987.2', zoom=0.75, /order
 ; GRIFT
 ;
 ;  First, GRIFT the data descriptor out of poor old GRIM.  Note that the 
-;  returned object is a reference to the same object as GRIM is using.  
+;  returned object is a reference to the same object as GRIM is using::
 ;
 ;    grift, dd=dd				
 ;
 ;  Be warned that GRIM jealously watches over its objects and updates whenever 
 ;  it detects any changes, so you can simultaneously operate on objects from 
-;  within GRIM and from the command line.  For example, try:
+;  within GRIM and from the command line.  For example, try::
 ;
 ;	dat_set_data, dd, rotate(dat_data(dd),7)
 ;
@@ -77,14 +77,14 @@ grift, dd=dd
 ;    pd = pg_get_planets(dd, od=cd, $
 ;           name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
 ;    rd = pg_get_rings(dd, pd=pd, od=cd)
-;    sund = pg_get_stars(dd, od=cd, name='SUN')
+;    ltd = pg_get_stars(dd, od=cd, name='SUN')
 ;- 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cd = pg_get_cameras(dd, 'ck_in=auto')
 pd = pg_get_planets(dd, od=cd, $
        name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
 rd = pg_get_rings(dd, pd=pd, od=cd)
-sund = pg_get_stars(dd, od=cd, name='SUN')
+ltd = pg_get_stars(dd, od=cd, name='SUN')
 
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -94,10 +94,10 @@ sund = pg_get_stars(dd, od=cd, name='SUN')
 ;  And of course we shove everything into a generic descriptor because it
 ;  makes everything so much easier::
 ;
-;    gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+;    gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 ;-
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 
 
 ;-------------------------------------------------------------------------
@@ -108,17 +108,17 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;  happy to do this for you::
 ;
 ;    limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
-;              pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;              pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ;    ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
-;    term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+;    term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;    center_ptd = pg_center(gd=gd, bx=pd)
 
 ;-
 ;-------------------------------------------------------------------------
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, /rm, bx=rd
-          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 center_ptd = pg_center(gd=gd, bx=pd)
 
 
@@ -156,11 +156,17 @@ pg_draw, ring_ptd, col=ctorange()
 ;+
 ; GRAFT
 ;
-;  GRAFT crams the POINT objects into GRIM.  Note that these are entered
+;  GRAFT "grafts" the POINT objects into GRIM.  Note that these are entered
 ;  as user arrays in GRIM, so they're pretty much second class as far as
 ;  GRIM is concerned.  This would have been way better if you had just 
 ;  specified these as overlays in your call to GRIM.  Now you have wasted 
 ;  your time and GRIM's.
+;
+;    graft, center_ptd, col=ctwhite(), psym=1;, plabel=cor_name(pd)
+;    graft, limb_ptd, col=ctyellow()
+;    graft, term_ptd, col=ctred()
+;    graft, ring_ptd, col=ctorange()
+;
 ;-
 ;-------------------------------------------------------------------------
 graft, center_ptd, col=ctwhite(), psym=1;, plabel=cor_name(pd)

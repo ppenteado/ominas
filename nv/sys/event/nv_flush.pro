@@ -85,8 +85,7 @@ pro nv_flush, events, clear=clear
      ; remove event from buffer before calling handler, in case
      ; the handler generates more events
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     events = rm_list_item(events, w)
-     if(NOT keyword_set(events)) then events = 0
+     events = rm_list_item(events, w, /scalar)
      if(global) then buf = events
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

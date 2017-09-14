@@ -164,26 +164,26 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
   end
 
  ;------------------------------------------------------------------------ 
- ; distmax -- select all bodies whose distance is GE this value
+ ; distmax -- select all bodies whose distance is LE this value
  ;------------------------------------------------------------------------
  distmax = extra_value(keyvals, 'distmax', prefix)
  if(keyword_set(distmax)) then $
   if(keyword_set(cd)) then $
    begin
     distmax = double(distmax[0])
-    w = where(dist GE distmax)
+    w = where(dist LE distmax)
     sel = append_array(sel, w)
    end
 
  ;------------------------------------------------------------------------ 
- ; distmin -- select all bodies whose distance is LE this value
+ ; distmin -- select all bodies whose distance is GE this value
  ;------------------------------------------------------------------------
  distmin = extra_value(keyvals, 'distmin', prefix)
  if(keyword_set(distmin)) then $
   if(keyword_set(cd)) then $
    begin
     distmin = double(distmin[0])
-    w = where(dist LE distmin)
+    w = where(dist GE distmin)
     sel = append_array(sel, w)
    end
 

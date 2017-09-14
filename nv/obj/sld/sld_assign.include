@@ -1,5 +1,5 @@
 ; _sld_assign.include
-;  implemented as a .include because arg_present does not propogate to 
+;  implemented as a .include because arg_present does not propagate to 
 ;  lower-level calls
 
  if(defined(opacity)) then sld_set_opacity, _xd, opacity, /noevent

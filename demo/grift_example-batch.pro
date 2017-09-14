@@ -9,11 +9,11 @@
 ;  GRIFT.  GRIFT swindles GRIM into giving up references to its descriptor set
 ;  so they can be used against it by some foreign agent.  
 ;
-;  This example file can be executed from the UNIX command line using
+;  This example file can be executed from the UNIX command line using::
 ;
 ;  	ominas grim_example-batch
 ;
-;  or from within IDL using
+;  or from within IDL using::
 ;
 ;  	@grim_example-batch
 ;-
@@ -28,14 +28,15 @@
 ;  computes whatever overlays you specify.  NHIST specifies the number
 ;  how far back the data descriptor history should go for the purpose
 ;  of undoing.  So now you're finished.  Have fun!
-;
+;::
 ;     grim, '~/casIss/1350/N1350122987_2.IMG', $
-;                over=['planet_center','limb','terminator','ring'], nhist=5
+;                over=['center','limb','terminator','ring'], nhist=5
 ;
 ;-
 ;-------------------------------------------------------------------------
 grim, './data/N1350122987_2.IMG', $
-                  over=['planet_center','limb','terminator','ring'], nhist=5
+;                  light=['SUN', 'JUPITER'], $
+                  over=['center','limb','terminator','ring'], nhist=5
 
 
 stop, '=== Auto-example complete.  Use cut & paste to continue.'
@@ -51,7 +52,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;  GRIFT the descriptors out of GRIM, scan for edges and do a farfit.
 ;  GRIM sees the update to the camera descriptor and takes the liberty of 
 ;  recomputing everything that depends on that descriptor.  Neato!
-;
+;::
 ;    grift, cd=cd, dd=dd, limb_ptd=limb_ptd
 ;
 ;    edge_ptd = pg_edges(dd, edge=10, np=4000)

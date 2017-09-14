@@ -41,7 +41,7 @@
 ;	dkx:	Object descriptors, subclass of 'DISK'.  Must be included for 
 ;		ring coordinate output.
 ;
-;	sund:	Star descriptor specifying the state of the sun.
+;	ltd:	Body descriptor specifying the lighting.
 ;
 ;	sd:	Star descriptors.  Must be included for star otput.
 ;
@@ -239,6 +239,7 @@ function _pgc_globe, p, dd, gd=gd, format=format, label=label, name=name
  name = cor_name(gbx)
  nt = n_elements(name)
 
+; problem is cor_select screws up the ordering of gbx
  v = image_to_surface(cd, gbx, p, dis=dis, body_pts=body_pts)
  if(NOT keyword_set(v)) then return, 0
 
@@ -453,7 +454,8 @@ function _pgc_photom_globe, p, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /gbx)
- sund = cor_dereference_gd(gd, name='SUN')
+; ltd = cor_dereference_gd(gd, name='SUN')
+ ltd = cor_dereference_gd(gd, /ltd)
 
  format = ['(1d10.5)', '(1d10.5)', '(1d10.5)']
  label = ''
@@ -461,7 +463,7 @@ function _pgc_photom_globe, p, dd, gd=gd, format=format, label=label, name=name
  name = cor_name(pd)
  nt = n_elements(name)
 
- pht_angles, p, cd, pd, sund, emm=emm, inc=inc, g=g, valid=valid
+ pht_angles, p, cd, pd, ltd, emm=emm, inc=inc, g=g, valid=valid
 
  if(valid[0] EQ -1) then return, 0
 
@@ -489,20 +491,21 @@ function _pgc_photom_disk, p, dd, gd=gd, format=format, label=label, name=name
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /gbx)
  rd = cor_dereference_gd(gd, /dkx)
- sund = cor_dereference_gd(gd, name='SUN')
+; ltd = cor_dereference_gd(gd, name='SUN')
+ ltd = cor_dereference_gd(gd, /ltd)
 
  format = ['(1d10.5)', '(1d10.5)', '(1d10.5)']
  label = ''
 
  if((NOT keyword_set(cd)) OR $
-    (NOT keyword_set(sund)) OR $
+    (NOT keyword_set(ltd)) OR $
     (NOT keyword_set(rd)) OR $
     (NOT keyword_set(pd))) then return, 0
 
  name = cor_name(rd)
  nt = n_elements(name)
 
- pht_angles, p, cd, rd, sund, emm=emm, inc=inc, g=g, valid=valid
+ pht_angles, p, cd, rd, ltd, emm=emm, inc=inc, g=g, valid=valid
 
  if(valid[0] EQ -1) then return, 0
 
@@ -529,7 +532,8 @@ function _pgc_photom_eqplane, p, dd, gd=gd, format=format, label=label, name=nam
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /gbx)
- sund = cor_dereference_gd(gd, name='SUN')
+; ltd = cor_dereference_gd(gd, name='SUN')
+ ltd = cor_dereference_gd(gd, /ltd)
 
  gbx = get_primary(cd, pd)
  if(NOT obj_valid(gbx[0])) then return, 0
@@ -542,7 +546,7 @@ function _pgc_photom_eqplane, p, dd, gd=gd, format=format, label=label, name=nam
  sma[0,1] = 1d20
  dsk_set_sma, dkd, sma
  
- _gd = {cd:cd, gbx:pd, dkx:dkd, sund:sund}
+ _gd = {cd:cd, gbx:pd, dkx:dkd, ltd:ltd}
 
 
  return, _pgc_photom_disk(p, dd, gd=_gd, format=format, label=label, name=name)
@@ -608,7 +612,7 @@ end
 ; pg_cursor
 ;
 ;=============================================================================
-pro pg_cursor, dd, ptd, cd=cd, gbx=gbx, dkx=dkx, sund=sund, sd=sd, gd=_gd, fn=_fn, $
+pro pg_cursor, dd, ptd, cd=cd, gbx=gbx, dkx=dkx, ltd=ltd, sd=sd, gd=_gd, fn=_fn, $
            radec=radec, photom=photom, xy=xy, string=string, $
            silent=silent, values=values
 common pgc_table_block, last_labels, first
@@ -623,7 +627,7 @@ common pgc_table_block, last_labels, first
  if(NOT keyword_set(cd)) then cd = dat_gd(_gd, dd=dd, /cd)
  if(NOT keyword_set(gbx)) then gbx = dat_gd(_gd, dd=dd, /gbx)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(_gd, dd=dd, /dkx)
- if(NOT keyword_set(sund)) then sund = dat_gd(_gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(_gd, dd=dd, /ltd)
  if(NOT keyword_set(sd)) then sd = dat_gd(_gd, dd=dd, /sd)
 
  ;-----------------------------------------------
@@ -658,7 +662,7 @@ common pgc_table_block, last_labels, first
 	 if(keyword_set(radec)) then fn = [fn, '_pgc_radec']
 	 if(keyword_set(gbx)) then fn = [fn, '_pgc_globe']
 	 if(keyword_set(photom)) then $
-	        if(keyword_set(gbx) AND keyword_set(sund)) then $
+	        if(keyword_set(gbx) AND keyword_set(ltd)) then $
                                                   fn = [fn, '_pgc_photom_globe']
 	 if(keyword_set(gbx)) then $
                 fn = [fn, '_pgc_eqplane', '_pgc_eqplane_scale', '_pgc_photom_eqplane']

@@ -2,7 +2,7 @@
 ; west_to_east_longitude
 ;
 ;=============================================================================
-function west_to_east_longitude, lon
- return, reduce_angle(2d*!dpi - lon)
+function west_to_east_longitude, lon, max=max
+ return, reduce_angle(2d*!dpi - lon, max=max)
 end
 ;=============================================================================

@@ -294,7 +294,7 @@ function tycho2_get_stars, dd, filename, $
  avel = make_array(1,3,n,value=0d)
  vel = make_array(1,3,n,value=0d)
  time = make_array(n,value=0d)
- radii = make_array(3,n,value=1d)
+ radii = make_array(3,n,value=0d)
  lora = make_array(n, value=0d)
 
 

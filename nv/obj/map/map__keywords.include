@@ -7,6 +7,7 @@ range=range, $
 scale=scale, $
 units=units, $
 graphic=graphic, $
+west=west, $
 rotate=rotate, $
 radii=radii, $
 pole=pole, $

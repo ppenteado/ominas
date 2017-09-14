@@ -31,7 +31,9 @@
 ;
 ;	arg2:	Transient translator argument, if present.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	arg1:	If present and undefined, any newly created data descriptor 
+;		is returnedin this argument. 
 ;
 ;
 ; KEYWORDS:
@@ -55,9 +57,9 @@
 ;			table are called, but the translators keywords
 ;			from the table are still used.  
 ;
-;	default_orient:		Default orientation matrix to use if camera
-;				orientation is not available.  If not specified, 
-;				the identity matrix is used.
+;	default_orient:	Default orientation matrix to use if camera
+;			orientation is not available.  If not specified, 
+;			the identity matrix is used.
 ;
 ;
 ;	CAMERA Keywords
@@ -107,7 +109,8 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
  ;------------------------------------------------------------------------
  ; sort out arguments
  ;------------------------------------------------------------------------
- pg_sort_args, arg1, arg2, dd=dd, trs=trs, free=free, $
+ pg_sort_args, arg1, arg2, dd=dd, od=od, time=time, $
+                          trs=trs, free=free, $
                           @dat__keywords.include
                           end_keywords
 
@@ -133,25 +136,10 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
   begin
    n = n_elements(name)
 
-   cd=cam_create_descriptors(n, $
-	gd=dd, $
-	name=name, $
-	orient=orient, $
-	avel=avel, $
-	pos=pos, $
-	vel=vel, $
-	time=time, $
-	fn_focal_to_image=fn_focal_to_image, $
-	fn_image_to_focal=fn_image_to_focal, $
-	fi_data=fi_data, $
-;	fn_filter=fn_filter, $
-	filters=filters, $
-	scale=scale, $
-	fn_psf=fn_psf, $
-	size=size, $
-	opaque=opaque, $
-	exposure=exposure, $
-	oaxis=oaxis)
+   if(keyword_set(dd)) then gd = cor_create_gd(dd, gd=gd)
+   cd = cam_create_descriptors(n, $
+               @cam__keywords_tree.include
+               end_keywords)
 
    if(keyword_set(free)) then nv_free, dd
   end $

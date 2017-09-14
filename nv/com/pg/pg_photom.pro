@@ -32,7 +32,7 @@
 ;
 ;	dkx:	Disk descriptor
 ;
-;	sund:	Sun descriptor
+;	ltd:	Sun descriptor
 ;
 ;	gd:	Generic descriptor.  If present, cd, dkx, and gbx are taken 
 ;		from here if contained.
@@ -80,7 +80,7 @@
 ;-
 ;=============================================================================
 function pg_photom, dd, outline_ptd=outline_ptd, $
-                  cd=cd, gbx=gbx, dkx=dkx, sund=sund, gd=gd, $
+                  cd=cd, gbx=gbx, dkx=dkx, ltd=ltd, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
                   emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, $
@@ -94,7 +94,7 @@ function pg_photom, dd, outline_ptd=outline_ptd, $
  if(NOT keyword_set(cd)) then cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(gbx)) then gbx = dat_gd(gd, dd=dd, /gbx)
  if(NOT keyword_set(dkx)) then dkx = dat_gd(gd, dd=dd, /dkx)
- if(NOT keyword_set(sund)) then sund = dat_gd(gd, dd=dd, /sund)
+ if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
 
 
  ;-----------------------------------------------
@@ -102,13 +102,13 @@ function pg_photom, dd, outline_ptd=outline_ptd, $
  ;-----------------------------------------------
  if(keyword__set(gbx)) then $
   return, pg_photom_globe(dd, outline_ptd=outline_ptd, $
-                  cd=cd, gbx=gbx, sund=sund, gd=gd, $
+                  cd=cd, gbx=gbx, ltd=ltd, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
                   emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite)
   
  return, pg_photom_disk(dd, outline_ptd=outline_ptd, $
-                  cd=cd, dkx=dkx, sund=sund, gd=gd, $
+                  cd=cd, dkx=dkx, ltd=ltd, gd=gd, $
                   refl_fn=refl_fn, phase_fn=phase_fn, $
                   refl_parm=refl_parm, phase_parm=phase_parm, $
                   emm_out=emm_out, inc_out=inc_out, phase_out=phase_out, overwrite=overwrite)

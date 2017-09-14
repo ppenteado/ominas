@@ -89,7 +89,7 @@ pro vgr_iss_spice_parse_labels, dd, _time, $
 
  ndd = n_elements(dd)
 
- name = cor_name(dd[0])
+ sc_name = vgr_parse_inst(dat_instrument(dd), cam=name)
 
  time = dblarr(ndd)
  exposure = dblarr(ndd)
@@ -130,7 +130,7 @@ pro vgr_iss_spice_parse_labels, dd, _time, $
  
      if((geom)) then $
       begin
-       scale[*,i] = vgr_iss_pixel_scale(name, /geom)
+       scale[*,i] = vgr_iss_pixel_scale(sc_name, name, /geom)
        size[0,i] = 1000d
        size[1,i] = 1000d
       end $
@@ -141,8 +141,7 @@ pro vgr_iss_spice_parse_labels, dd, _time, $
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      else $
       begin
-       scale[*,i] = vgr_iss_pixel_scale(name)
-;       scale = scale / 0.85d			; just a guess!!
+       scale[*,i] = vgr_iss_pixel_scale(sc_name, name)
        size[0,i] = 800d
        size[1,i] = 800d
       end
@@ -199,7 +198,7 @@ function vgr_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		sc = sc, $
 		inst = inst, $
 		plat = plat, $
-		tol = 100d, $
+		tol = 800d, $
 		orient = orient, $
 		cam_time = time, $
 		cam_scale = scale, $

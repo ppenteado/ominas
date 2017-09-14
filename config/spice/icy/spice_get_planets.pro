@@ -109,6 +109,15 @@ function spice_get_planets, names, ref, et, $
      if(failed EQ 0) then cspice_spkgeo, id, et, ref, obs, targ_state, ltime
      catch, /cancel
 
+     if(keyword_set(failed)) then $
+      begin
+       help, /last_message, output=message
+       w = where(strmid(message, 0, 1) EQ '%')
+       message = message[0:w[1]-1]
+       nv_message, verb=0.7, 'SPKGEO failed with the following message:', $
+            exp=message
+      end
+
      if(failed EQ 0) then $
       begin
        found[i] = 1

@@ -69,19 +69,19 @@ tvim, im, zoom=0.75, /order, /new
 ;   appears before the Cassini Spice input translator in the default 
 ;   translators table, the descriptors are taken from the detached header 
 ;   if it exists, and if the relevant descriptors are present.  Otherwise, 
-;   they are obtained from the SPICE kernels.
+;   they are obtained from the SPICE kernels::
 ;
 ;     cd = pg_get_cameras(dd)                        ; CAMERA descriptor
 ;     pd = pg_get_planets(dd, od=cd, count=npd)      ; PLANET descriptor(s)
 ;     rd = pg_get_rings(dd, pd=pd, od=cd, count=nrd) ; RING descriptor(s)
-;     sund = pg_get_stars(dd, od=cd, name='SUN')     ; STAR descriptor for Sun
+;     ltd = pg_get_stars(dd, od=cd, name='SUN')     ; STAR descriptor for Sun
 ;
 ;   The calls to PG_GET_PLANETS, PG_GET_RINGS, and PG_GET_STARS include
 ;   an observer descriptor, od.  Without this, it would not be possible 
 ;   to perform aberration corrections on the returned objects.  In that
 ;   case, the returned descriptors would represent the real states of the
 ;   bodies at the time of observation at their respective positions rather
-;   than from the point of view of the observer.  
+;   than from the point of view of the observer:: 
 ;
 ;   Note the 'name' keyword in the call to PG_GET_STARS. This is a CORE
 ;   attribute, so it may be applied to any body.  For example, if you are 
@@ -95,7 +95,7 @@ tvim, im, zoom=0.75, /order, /new
 cd = pg_get_cameras(dd)	
 pd = pg_get_planets(dd, od=cd, count=npd)
 rd = pg_get_rings(dd, pd=pd, od=cd, count=nrd)
-sund = pg_get_stars(dd, od=cd, name='SUN')
+ltd = pg_get_stars(dd, od=cd, name='SUN')
 
 
 ;-------------------------------------------------------------------------
@@ -159,10 +159,10 @@ sund = pg_get_stars(dd, od=cd, name='SUN')
 ;   way.  They live on because it turns out they have amazing utility in 
 ;   other ways.  So anyway, it's like this::
 ;
-;     gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+;     gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 ;-
 ;-------------------------------------------------------------------------
-gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
+gd = {cd:cd, gbx:pd, dkx:rd, ltd:ltd}
 
 
 ;-------------------------------------------------------------------------
@@ -171,19 +171,19 @@ gd = {cd:cd, gbx:pd, dkx:rd, sund:sund}
 ;
 ;   These commands compute the center, limb, and terminator of each planet, 
 ;   as well as the edges of the rings.  Note that the terminator is computed 
-;   using PG_LIMB with the Sun as the observer.::
+;   using PG_LIMB with the Sun as the observer::
 ;
 ;     limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-;               pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;               pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ;     ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
-;     term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+;     term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;     center_ptd = pg_center(gd=gd, bx=pd)
 ;-
 ;-------------------------------------------------------------------------
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+          pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 center_ptd = pg_center(gd=gd, bx=pd)
 
 
@@ -194,7 +194,7 @@ center_ptd = pg_center(gd=gd, bx=pd)
 ;  This just makes the calls to PG_DRAW a little easier, since they will 
 ;  need to be repeated every time we change things and recompute.  We put
 ;  all of the POINT descriptors in one array and then make corresponding 
-;  arrays for the plot parameters.
+;  arrays for the plot parameters::
 ;
 ;    object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 ;    colors=[make_array(npd,value=!p.color), $
@@ -249,6 +249,10 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 
 
 
+
+
+
+
 ;-------------------------------------------------------------------------
 ;+
 ; FIRST-CUT AUTOMATIC REPOINTING
@@ -270,7 +274,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;     dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])
 ;
 ;   BTW, you have been duped.  PG_FARFIT fails a lot because the search 
-;   is pretty sparse.  We cherry-picked an image that usually works pretty 
+;   is pretty sparse.  I cherry-picked an image that usually works pretty 
 ;   well.  The sparse search makes PG_FARFIT pretty fast, though.  Ok,
 ;   now repoint using the farfit solution::
 ;
@@ -281,10 +285,10 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;
 ;
 ;    limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-;           pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+;           pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ;    ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 ;    center_ptd = pg_center(gd=gd, bx=pd)
-;    term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+;    term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 ;    object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 ;
 ;   And now we can see the result:
@@ -305,10 +309,10 @@ dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])
 pg_repoint, dxy, gd=gd
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -346,10 +350,10 @@ pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+       pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -375,7 +379,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;   pg_this and gd_that and all manner of other whatnot.  
 ;
 ;   Anyway, here we are staying 30 pixels from the image edge, and scanning 
-;   with a width of 80 pixels.  The lzero and mzero are coordinating the
+;   with a width of 80 pixels.  lzero and mzero are coordinating the
 ;   zero pointing of the model::
 ;   
 ;    cvscan_ptd=pg_cvscan(dd, gd=gd, limb_ptd[0], edge=30, width=80, $
@@ -477,10 +481,10 @@ dxy = pg_fit(cvscan_cf)
 pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
-        pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=sund
+        pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
 ring_ptd = pg_disk(gd=gd) & pg_hide, ring_ptd, gd=gd, bx=pd
 center_ptd = pg_center(gd=gd, bx=pd)
-term_ptd = pg_limb(gd=gd, od=gd.sund) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
+term_ptd = pg_limb(gd=gd, od=gd.ltd) & pg_hide, term_ptd, gd=gd, bx=pd, /assoc
 object_ptd = [center_ptd,limb_ptd,ring_ptd,term_ptd]
 
 tvim, im
@@ -522,7 +526,7 @@ print, dxy, chisq, covar
 ;
 ;     grid_ptd = pg_grid(gd=gd, lat=lat, lon=lon) 
 ;     pg_hide, grid_ptd, cd=cd, bx=pd, /assoc
-;     pg_hide, grid_ptd, cd=cd, bx=pd, od=sund, /assoc
+;     pg_hide, grid_ptd, cd=cd, bx=pd, od=ltd, /assoc
 ;     pg_hide, grid_ptd, gd=gd, bx=rd
 ;     pg_draw, grid_ptd, color=ctblue()
 ;
@@ -541,7 +545,7 @@ print, dxy, chisq, covar
 ;-------------------------------------------------------------------------
 grid_ptd = pg_grid(gd=gd, lat=lat, lon=lon) 
 pg_hide, grid_ptd, cd=cd, bx=pd, /assoc
-pg_hide, grid_ptd, cd=cd, bx=pd, od=sund, /assoc
+pg_hide, grid_ptd, cd=cd, bx=pd, od=ltd, /assoc
 pg_hide, grid_ptd, gd=gd, bx=rd
 pg_draw, grid_ptd, color=ctblue()
 
@@ -705,10 +709,10 @@ pg_draw, plon_ptd, psym=7, plabel=strmid(strtrim(lon*180d/!dpi,2),0,3), /label_p
 ; OBSERVATION-SPECIFIC OVERLAYS
 ;
 ;   Use PG_LIMB to compute a limb and a terminator by specifying an 
-;   observer descriptor.
+;   observer descriptor::
 ;
 ;    map_limb_ptd = pg_limb(gd=gdm, od=cd)
-;    map_term_ptd = pg_limb(gd=gdm, od=sund)
+;    map_term_ptd = pg_limb(gd=gdm, od=ltd)
 ;
 ;    pg_draw, map_limb_ptd, col=ctred()
 ;    pg_draw, map_term_ptd, col=ctyellow()
@@ -716,7 +720,7 @@ pg_draw, plon_ptd, psym=7, plabel=strmid(strtrim(lon*180d/!dpi,2),0,3), /label_p
 ;-
 ;-------------------------------------------------------------------------
 map_limb_ptd = pg_limb(gd=gdm, od=cd)
-map_term_ptd = pg_limb(gd=gdm, od=sund)
+map_term_ptd = pg_limb(gd=gdm, od=ltd)
 
 pg_draw, map_limb_ptd, col=ctred()
 pg_draw, map_term_ptd, col=ctyellow()
@@ -759,12 +763,12 @@ tvim, /new, map1
 ;   These commands write the descriptor information out through the 
 ;   translators.  The exact behavior is translator-dependent.  In the default
 ;   configuration, the detached header translator modifies the detached header 
-;   stored in the data descriptor.  It is not written until DAT_WRITE is called.
+;   stored in the data descriptor.  It is not written until DAT_WRITE is called::
 ;   
 ;     pg_put_rings, dd, od=cd, rd=rd
 ;     pg_put_planets, dd, od=cd, pd=pd
 ;     pg_put_cameras, dd, cd=cd
-;     pg_put_stars, dd, sd=sund, od=cd
+;     pg_put_stars, dd, sd=ltd, od=cd
 ;
 ;
 ;   The detached head may be viewed using::
@@ -784,7 +788,7 @@ tvim, /new, map1
 pg_put_rings, dd, od=cd, rd=rd
 pg_put_planets, dd, od=cd, pd=pd
 pg_put_cameras, dd, cd=cd
-pg_put_stars, dd, sd=sund, od=cd
+pg_put_stars, dd, sd=ltd, od=cd
 print, transpose(dat_dh(dd))
 
 
@@ -796,7 +800,7 @@ print, transpose(dat_dh(dd))
 ;   output function was given in the I/O table.  The detached header is
 ;   is also written into a file with the same name as the image file except 
 ;   with the extension '.dh'.  If this file does not already exist, it is 
-;   created.
+;   created::
 ;
 ;     dat_write, './outputs/' + cor_name(dd), dd
 ;
