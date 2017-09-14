@@ -326,13 +326,13 @@ end
 ; nv_help_doc
 ;
 ;===========================================================================
-pro nv_help_doc, name, capture=capture
+pro nv_help_doc, iname, capture=capture
 
  ;------------------------------------------------------
  ; find the doc files
  ;------------------------------------------------------
- doc_dir = getenv('OMINAS_DIR') + '/doc/'
- doc_files = file_search(doc_dir+'doc_*.txt')
+ doc_dir = getenv('OMINAS_DIR') + '/docs/rst/'
+ doc_files = file_search(doc_dir+'*','*.rst')
  doc_pfs = str_nnsplit(str_flip(str_nnsplit(str_flip(doc_files), '_')), '.')
 
 
@@ -344,18 +344,32 @@ pro nv_help_doc, name, capture=capture
  for i=0, n-1 do $
   begin
    lines = read_txt_file(doc_files[i], /raw)
+   lines=strtrim(lines,2)
+   nlines=list()
+   prevl='a'
+   foreach line,lines,iline do begin
+    if (strlen(line) eq 0) && (strlen(prevl) eq 0) then continue
+    nlines.add,strjoin(strsplit(line,'\\_',/regex,/extract),'_')
+    prevl=line
+   endforeach
+   lines=nlines.toarray()
 
-   name = strupcase(name)
+   ;name = strupcase(name)
+   name=strlowcase(iname)
+   ;name=strjoin(strsplit(name,'_',/extract),'\_')
 
    p = strpos(lines, name)
    w = where(p EQ 0)
+   w=where(stregex(lines,'^'+name+'(\.pro)?',/boolean))
    if(w[0] NE -1) then $
     begin
      ii = w[0]
-     if(strtrim(lines[ii],2) EQ name) then $
+     if stregex(strtrim(lines[ii],2),'^'+name+'(\.pro)?',/boolean) then $
       begin
-       p = strpos(lines[ii+2:*], '-')
+       ;p = strpos(lines[ii+2:*], '-')
        nn = min(where(p EQ 0))
+       w=where(stregex(lines,'^(__)|(==)',/boolean))
+       nn=min(w)
        if(nn EQ -1) then nn = n_elements(lines) - ii
 
        ;- - - - - - - - - - - - - - - - - - - - - - -
