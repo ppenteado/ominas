@@ -133,9 +133,9 @@ pro nv_clone_recurse, xd, protect=protect
  ;----------------------------------------------
  else if(type EQ 11) then $
   begin
-   isarray=size(obj_valid(xd),/n_dimensions)
+   ;isarray=size(obj_valid(xd),/n_dimensions)
    ;for i=0, n-1 do if(obj_valid(xd[i])) then $
-   if isarray then for i=0, n-1 do if(obj_valid(xd[i])) then begin
+   if isa(xd,'ominas_core') then for i=0, n-1 do if(obj_valid(xd[i])) then begin
       xd[i]=nv_clone_object(xd[i])
    endif else xd=nv_clone_object(xd)
       

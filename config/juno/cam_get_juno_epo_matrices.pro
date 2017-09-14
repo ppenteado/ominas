@@ -49,7 +49,7 @@
 ;	
 ;-
 ;===========================================================================
-pro cam_get_juno_epo_matrices, cd, k1, k2, x0, y0
+pro cam_get_juno_epo_matrices, cd, k1, k2, cx, cy, fl
 @core.include
 
  data = cam_fi_data(cd)
@@ -59,8 +59,9 @@ pro cam_get_juno_epo_matrices, cd, k1, k2, x0, y0
  ;---------------------------------------------------------
  k1 = data.k1 
  k2 = data.k2
- x0 = data.x0 
- y0 = data.y0
+ cx = data.cx 
+ cy = data.cy
+ fl = data.fl
 
 end
 ;===========================================================================

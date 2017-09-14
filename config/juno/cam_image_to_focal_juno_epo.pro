@@ -50,23 +50,27 @@
 function cam_image_to_focal_juno_epo, cd, v
 @core.include
 
- cam_get_juno_epo_matrices, cd, k1, k2, x0, y0
+ cam_get_juno_epo_matrices, cd, k1, k2, cx, cy, fl
 
- camvx= v[0,*] - x0[0]
- camvy= v[1,*] - y0[0]
+ camvx= v[0,*] - cx[0]
+ camvy= v[1,*] - cy[0]
  camv=[camvx,camvy]
  cami = camv
+ xx=cami[0,*]
+ yy=cami[1,*]
  FOR i=0,4 DO BEGIN
-  x2=cami[0,*]*cami[0,*]
-  y2=cami[1,*]*cami[1,*]
+  x2=xx*xx
+  y2=yy*yy
   r2=x2+y2
   dr=1+k1[0]*r2+k2[0]*r2*r2
-  x2=x2/dr
-  y2=y2/dr
-  cami=[x2,y2]
+  xx=cami[0,*]/dr
+  yy=cami[1,*]/dr
  ENDFOR
+
+ cami=[xx,yy]
+ s=size(xx)
  
- v=cami
+ v=[cami[0,*],cami[1,*],fl[0]*make_array(s[1],val=1)]
  
  return, v
 ; return, poly_transform(PP, QQ, double(v))

@@ -73,9 +73,19 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
  sc=-61l
 ;;  inst
 ;; inst=-61500l, 501=blu, 502=grn, 503=red
+ _dd=cor_dereference(dd[0])
+ picn=_dd.name.Substring(31,34)
+ clri=picn MOD 3
+ 
  inst=-61500l
 ;; instc is the spice number for the filter
- instc=-61501l
+;; instc=-61501l
+ CASE clri OF
+  0: instc=-61501l
+  1: instc=-61502l
+  2: instc=-61503l
+  ELSE: PRINT, 'Not RED, GREEN, or BLUE'
+ENDCASE
 ;;  plat (in cas_spice_inpu, this is defined as sc000, e.g. sc=-82, plat=-82000
  plat=-61000l
 ;;  ref (must be J2000)
@@ -84,6 +94,7 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
  @loadjunokerns ;load in the kernels
  h=dat_header(dd); Need to read in header info first.
  cspice_str2et,h['START_TIME'],et
+ et=et+60./1000
 ;;  tol (must be 0)
  tol=0
 ;;  pos_only (should be 0)
@@ -106,12 +117,17 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
  
  instVARk1='INS'+strtrim(string(instc),1)+'_DISTORTION_K1'
  instVARk2='INS'+strtrim(string(instc),1)+'_DISTORTION_K2'
- instVARx0='INS'+strtrim(string(instc),1)+'_DISTORTION_X'
- instVARy0='INS'+strtrim(string(instc),1)+'_DISTORTION_Y'
+ instVARcx='INS'+strtrim(string(instc),1)+'_DISTORTION_X'
+ instVARcy='INS'+strtrim(string(instc),1)+'_DISTORTION_Y'
+ instVARfo='INS'+strtrim(string(instc),1)+'_FOCAL_LENGTH'
+ instVARpx='INS'+strtrim(string(instc),1)+'_PIXEL_SIZE'
  cspice_gdpool, instVARk1, 0, 25, k1, k1found
  cspice_gdpool, instVARk2, 0, 25, k2, k2found
- cspice_gdpool, instVARx0, 0, 25, x0, x0found
- cspice_gdpool, instVARy0, 0, 25, y0, y0found
+ cspice_gdpool, instVARcx, 0, 25, cx, cxfound
+ cspice_gdpool, instVARcy, 0, 25, cy, cyfound
+ cspice_gdpool, instVARfo, 0, 25, fo, fofound
+ cspice_gdpool, instVARpx, 0, 25, px, pxfound
+;; print,cx,cy
 ; XX=[[0,1,0,k1,0,k2],[0,0,0,0,0,0],[0,k1,0,2*k2,0,0],[0,0,0,0,0,0],[0,k2,0,0,0,0],[0,0,0,0,0,0]]
 ; YY=transpose(XX)
 ; XX[0]=x0
@@ -119,7 +135,8 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
 ; PP=XX
 ; QQ=YY
 ; fi_data={XX:XX, YY:YY, PP:PP, QQ:QQ}
- fi_data={k1:k1, k2:k2, x0:x0, y0:y0}
+ fl=fo/px
+ fi_data={k1:k1, k2:k2, cx:cx, cy:cy, fl:fl}
  cd = cam_create_descriptors(ndd, $
    gd=dd, $
    ; cam name dat_instrument(dd)
@@ -153,7 +170,7 @@ function juno_epo_cameras, dd, ref, pos=pos, constants=constants, $
    size=[1648,128], $
    ; cam_oaxis pixel x y value for optical axis (from documentation)
    ;oaxis=cam_oaxis)
-   oaxis=[824,64])
+   oaxis=[cx,cy])
 ;   oaxis=[824,72])
  cam_set_fi_data, cd, fi_data, /noevent
  bod_set_orient, cd, call_function('juno_epo_cmat_to_orient', bod_orient(cd))
@@ -201,6 +218,7 @@ function juno_epo_spice_planets, dd, ref, time=time, planets=planets, $
  @loadjunokerns
  h=dat_header(dd)
  cspice_str2et,h['START_TIME'],et
+ et=et+60./1000
  expoms=strsplit(h['EXPOSURE_DURATION'],' ',/EXTRACT)
  expos=double(expoms[0])/1000
  time=et+expos/2
@@ -229,6 +247,7 @@ function juno_epo_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
  @loadjunokerns
  h=dat_header(dd)
  cspice_str2et,h['START_TIME'],et
+ et=et+60./1000
  expoms=strsplit(h['EXPOSURE_DURATION'],' ',/EXTRACT)
  expos=double(expoms[0])/1000
  time=et+expos/2
