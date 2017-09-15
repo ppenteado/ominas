@@ -136,7 +136,7 @@ end
 ;		Methods: map_origin, map_set_origin
 ;
 ;
-;	range:	2-element array giving the map coordinates of the
+;	range:	2x2-element array giving the map coordinates of the
 ;		lat/lon ranges of the map.
 ;
 ;		Methods: map_range, map_set_range

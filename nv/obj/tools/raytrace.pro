@@ -319,7 +319,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
      w = where(hit_indices NE -1)
      if(w[0] NE -1) then shadow_matrix[w] = shadow_matrix[w] + 1
     end
-   shadow_matrix = shadow_matrix / numbra
+   shadow_matrix = shadow_matrix / double(numbra)
  
   end $
  else nv_message, 'Either cd or sbx must be specified. '

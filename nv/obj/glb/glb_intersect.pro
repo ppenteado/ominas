@@ -65,14 +65,16 @@
 ;	
 ;-
 ;===========================================================================
-function glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, back_pts=back_pts, $
-                      discriminant=discriminant, nosolve=nosolve, score=score
+function glb_intersect, gbd, view_pts, _ray_pts, hit=hit, miss=miss, back_pts=back_pts, $
+                      discriminant=discriminant, nosolve=nosolve, score=score, epsilon=epsilon
 @core.include
 
  nt = 1
  dim = size(view_pts, /dim)
  nv = dim[0]
  if(n_elements(dim) GT 2) then t = dim[2]
+
+ ray_pts = v_unit(_ray_pts)
 
  ;----------------------------
  ; compute the discriminant
@@ -84,7 +86,7 @@ function glb_intersect, gbd, view_pts, ray_pts, hit=hit, miss=miss, back_pts=bac
  ; compute the intersection points
  ;----------------------------------
  hit_pts = glb_intersect_points(gbd, view_pts, ray_pts, discriminant, alpha, beta, gamma, $
-                          score=score, nosolve=nosolve, back_pts=back_pts)
+                          score=score, nosolve=nosolve, epsilon=epsilon, back_pts=back_pts)
  if(arg_present(hit)) then hit = where(score GT 0)
  if(arg_present(miss)) then miss = where(score EQ 0)
 
