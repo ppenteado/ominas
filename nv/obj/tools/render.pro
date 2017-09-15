@@ -163,6 +163,9 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, shade, ii
  nz = data.nz
  MM = make_array(nz,val=1d)
 
+ ;-------------------------------------------------------
+ ; determine which map to use
+ ;-------------------------------------------------------
  if(n_elements(md) EQ 1) then jj = 0 $
  else if(keyword_set(ddmap)) then $
   begin
@@ -170,7 +173,14 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, shade, ii
    if(w[0] NE -1) then jj = w[0]
   end
 
+ ;-------------------------------------------------------
+ ; if no map, just shade
+ ;-------------------------------------------------------
  if(NOT defined(jj)) then piece[ii,*] = shade#MM $
+
+ ;-------------------------------------------------------
+ ; otherwise interpolate from map
+ ;-------------------------------------------------------
  else $
   begin
    ww = where(shade NE 0)
@@ -297,16 +307,15 @@ function rdr_piece, data, image_pts
     begin
 ;     if(data.show) then plots, image_pts[*,w], psym=3, col=ctwhite()
 
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; photometry -- exclude sky
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; photometry -- exclude sky; apply only to illuminated points
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      shade = make_array(nw, val=1d)
      if(obj_valid(sec_bx[ii])) then $
       begin
-           phot = rdr_photometry(data, cd, ltd, sec_bx[ii], hit_matrix[w,*])
-;stop
-shade = phot; > shade_matrix[w]
-;shade = shade_matrix[w]
+       ww = where(v_mag(sec_hit_matrix[w,*]) EQ 0)
+       if(ww[0] NE -1) then $
+         shade[ww] = rdr_photometry(data, cd, ltd, sec_bx[ii], hit_matrix[w[ww],*])
       end
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -320,7 +329,7 @@ shade = phot; > shade_matrix[w]
  ;---------------------------------------------
  ; apply shadows
  ;---------------------------------------------
- shade_matrix = 1d - 0.75*shadow_matrix#make_array(nz,val=1)
+ shade_matrix = 1d - (1d - pht_min)*shadow_matrix#make_array(nz,val=1)
  piece = piece * shade_matrix
 
  return, piece
