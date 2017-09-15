@@ -9,9 +9,11 @@
 ;
 ;===========================================================================
 function glb_intersect_points, gbd, view_pts, ray_pts, $
-                  discriminant, alpha, beta, gamma, $
+                  discriminant, alpha, beta, gamma, epsilon=epsilon, $
                   score=score, nosolve=nosolve, back_pts=back_pts
 @core.include
+
+ if(NOT keyword_set(epsilon)) then epsilon = 1d 
 
  nt = n_elements(gbd)
  nv = (size(view_pts))[1]
@@ -57,7 +59,7 @@ function glb_intersect_points, gbd, view_pts, ray_pts, $
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ; if t- in front, then t- are hits and t+ are backs
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    w = where(tminus GT 0)
+    w = where(tminus GT epsilon)
     if(w[0] NE -1) then $
      begin
       score[sub[w]] = 2
@@ -68,7 +70,7 @@ function glb_intersect_points, gbd, view_pts, ray_pts, $
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ; if t- behind, but t+ in front, then t+ are hits; no backs
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    w = where((tminus LE 0) AND (tplus GT 0))
+    w = where((tminus LE epsilon) AND (tplus GT epsilon))
     if(w[0] NE -1) then $
      begin
       score[sub[w]] = 1

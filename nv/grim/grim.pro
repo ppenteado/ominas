@@ -1980,13 +1980,16 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  if(NOT keyword_set(dd_map)) then $
      dd_map = pg_load_maps(md=md, bx=append_array(bx, skd), projection='RECTANGULAR')
 
+ if(cor_class(plane.render_cd) EQ 'CAMERA') then no_pht = 1
+
  ;-----------------------------------------
  ; render
  ;-----------------------------------------
- stat = pg_render(/psf, /nodd, /no_mask, /limit_source, show=grim_data.render_show, $
+; stat = pg_render(/psf, /nodd, /no_mask, /limit_source, show=grim_data.render_show, $
+ stat = pg_render(/psf, /nodd, /no_mask, show=grim_data.render_show, $
                     cd=cd, bx=bx, skd=skd, ltd=ltd, md=md, ddmap=dd_map, map=map, $
                     pht=minimum, sample=sample, numbra=numbra, $
-                    image_ptd=image_pts)
+                    image_ptd=image_pts, no_pht=no_pht)
  dim = size(map, /dim)
  nz = 1
  if(n_elements(dim) EQ 3) then nz = dim[2]
@@ -4479,9 +4482,9 @@ pro grim_menu_plane_coregister_event, event
  ; recenter image
  ;------------------------------------------------
 ; we don't want one event for every registration here....
-; nv_suspend_events;, /flush
+ nv_suspend_events;, /flush
  pg_coregister, dd, cd=cd, bx=bx
-; nv_resume_events;, /flush
+ nv_resume_events;, /flush
 
  grim_refresh, grim_data
 end
@@ -10953,7 +10956,6 @@ if(NOT defined(render_auto)) then render_auto = 0
  if(keyword_set(highlght)) then $
                    grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', 1
 
-
  ;----------------------------------------------
  ; if new instance, initialize menu extensions
  ;----------------------------------------------
@@ -10976,6 +10978,28 @@ if(NOT defined(render_auto)) then render_auto = 0
             call_procedure, cursor_modes[i].name+'_init', grim_data, cursor_modes[i].data_p
 
 
+
+ ;---------------------------------------------------------
+ ; if new instance, initialize menu toggles and values
+ ;---------------------------------------------------------
+ if(new) then $
+  begin
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_toggle_plane_syncing_event', $
+          grim_get_toggle_flag(grim_data, 'PLANE_SYNCING')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_toggle_tiepoint_syncing_event', $
+          grim_get_toggle_flag(grim_data, 'TIEPOINT_SYNCING')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_toggle_curve_syncing_event', $
+          grim_get_toggle_flag(grim_data, 'CURVE_SYNCING')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_highlight_event', $
+          grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
+  end
+
+
+
  ;----------------------------------------------
  ; initial rendering
  ;----------------------------------------------
@@ -10995,6 +11019,13 @@ if(NOT defined(render_auto)) then render_auto = 0
  ; draw initial image
  ;-------------------------
  if(NOT keyword_set(no_refresh)) then grim_refresh, grim_data, no_erase=no_erase
+
+ ;-------------------------
+ ; initial overlays
+ ;-------------------------
+ if(NOT keyword_set(delay_overlays)) then $
+  for i=0, nplanes-1 do $
+         grim_initial_overlays, grim_data, plane=planes[i], overlays
 
 
 end

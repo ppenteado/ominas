@@ -13,17 +13,17 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	v_int = dsk_intersect(dkd, v, r)
+;	v_int = dsk_intersect(dkd, view_pts, ray_pts)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dkd:	 Array (nt) of any subclass of DISK.
 ;
-;	v:	 Array (nv x 3 x nt) of column vectors giving the origins
+;	view_pts:Array (nv x 3 x nt) of column vectors giving the origins
 ;		 of the rays in the body frame.
 ;
-;	r:	 Array (nv x 3 x nt) of column vectors giving the directions
+;	ray_pts: Array (nv x 3 x nt) of column vectors giving the directions
 ;		 of the rays in the body frame.
 ;
 ;  OUTPUT: NONE
@@ -55,22 +55,25 @@
 ;	
 ;-
 ;=============================================================================
-function dsk_intersect, dkd, v, r, t=t, hit=hit, miss=miss
+function dsk_intersect, dkd, view_pts, _ray_pts, t=t, hit=hit, miss=miss, epsilon=epsilon
 @core.include
  
+ if(NOT keyword_set(epsilon)) then epsilon = 1d 
 
  nt = n_elements(dkd)
- nv = (size(v))[1]
+ nv = (size(view_pts))[1]
+
+ ray_pts = v_unit(_ray_pts)
 
  ;--------------------------------------
  ; compute intersection with disk plane
  ;--------------------------------------
  sub = linegen3y(nv,3,nt)
- vz = (v[*,2,*])[sub]
- rz = (r[*,2,*])[sub]
+ vz = (view_pts[*,2,*])[sub]
+ rz = (ray_pts[*,2,*])[sub]
 
  t = - vz/rz
- vv = v + r*t
+ vv = view_pts + ray_pts*t
 
  ;---------------------------------------------------------------
  ; determine where intersection lies within radial limits
@@ -87,7 +90,7 @@ function dsk_intersect, dkd, v, r, t=t, hit=hit, miss=miss
    mark = bytarr(nv, nt)
    if(hit[0] NE -1) then mark[hit] = 1
  
-   w = where(t[*,0] LT 0)
+   w = where(t[*,0] LT epsilon)
    if(w[0] NE -1) then mark[w] = 0
 
    sma = (dsk_sma(dkd))[0,*,*]

@@ -158,7 +158,7 @@ end
 ; rdr_map
 ;
 ;=================================================================================
-pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
+pro rdr_map, data, piece, bx, md, ddmap, body_pts, shade, ii
 
  nz = data.nz
  MM = make_array(nz,val=1d)
@@ -170,10 +170,10 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
    if(w[0] NE -1) then jj = w[0]
   end
 
- if(NOT defined(jj)) then piece[ii,*] = phot#MM $
+ if(NOT defined(jj)) then piece[ii,*] = shade#MM $
  else $
   begin
-   ww = where(phot NE 0)
+   ww = where(shade NE 0)
    if(ww[0] NE -1) then $
     begin
      www = ii[ww]
@@ -181,7 +181,7 @@ pro rdr_map, data, piece, bx, md, ddmap, body_pts, phot, ii
      ;- - - - - - - - - - - - - - - -
      ; compute map points
      ;- - - - - - - - - - - - - - - -
-     im_pts_map = body_to_image_pos(md[jj], bx, body_pts[www,*])
+     im_pts_map = body_to_image_pos(md[jj], bx, body_pts[www,*], valid=valid)
 
      ;- - - - - - - - - - - - - - - -
      ; sample map
@@ -216,9 +216,9 @@ map_smoothing_width=1
      if(w[0] NE -1) then dat[w] = mean(map)
 
      ;- - - - - - - - - - - - - - - -
-     ; apply photometry
+     ; apply shading
      ;- - - - - - - - - - - - - - - -
-     piece[www,*] = dat * (phot#MM)
+     piece[www,*] = dat * (shade#MM)
     end
   end
 
@@ -240,6 +240,7 @@ function rdr_piece, data, image_pts
  ltd = data.ltd
  skd = data.skd
  nz = data.nz
+ pht_min = data.pht_min
 
  np = n_elements(image_pts)/2
  piece = dblarr(np,nz)
@@ -281,6 +282,7 @@ function rdr_piece, data, image_pts
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
         back_matrix=sec_back_matrix, range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
+ shade_matrix = 1d - shadow_matrix
 
 
  ;---------------------------------------------
@@ -298,19 +300,28 @@ function rdr_piece, data, image_pts
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; photometry -- exclude sky
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     phot = make_array(nw, val=1d)
+     shade = make_array(nw, val=1d)
      if(obj_valid(sec_bx[ii])) then $
+      begin
            phot = rdr_photometry(data, cd, ltd, sec_bx[ii], hit_matrix[w,*])
+;stop
+shade = phot; > shade_matrix[w]
+;shade = shade_matrix[w]
+      end
 
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
      ; map
      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
-     rdr_map, data, piece, prim_bx[ii], md, ddmap, hit_matrix, phot, w
+     rdr_map, data, piece, prim_bx[ii], md, ddmap, hit_matrix, shade, w
     end
   end
 
-f = 0.25
- piece = piece * 1d - f*shadow_matrix#make_array(nz,val=1)
+
+ ;---------------------------------------------
+ ; apply shadows
+ ;---------------------------------------------
+ shade_matrix = 1d - 0.75*shadow_matrix#make_array(nz,val=1)
+ piece = piece * shade_matrix
 
  return, piece
 end
