@@ -1070,7 +1070,7 @@ Data:
            Already provided with OMINAS, no download needed
        11) Maps
            Map library created for use with OMINAS ${dstatus[3]}
-           About 990 MB as of August/2017
+           About 813 MB as of August/2017
 
 For more information, see
 https://ppenteado.github.io/ominas/guides/userguide.html
@@ -1125,7 +1125,7 @@ Data:
            Already provided with OMINAS, no download needed
        11) Maps
            Map library created for use with OMINAS ${dstatus[3]}
-           About 990 MB as of August/2017
+           About 813 MB as of August/2017
        12) UCAC4 star catalog  . . . . . . . . . . ${dstatus[4]}
            About 8.5 GB download
        13) GSC star catalog  . . . . . . . . . . . ${dstatus[5]}
