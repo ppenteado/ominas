@@ -51,3 +51,17 @@
                                                         xk_in=extra.tpc  \
                                                         /spk_strict \
                                                         spk_in=auto
+
+                                                        
+  CAS_UVIS		cas_uvis_spice_input	cas_uvis_spice_output \
+#			                          klist=cassini.kernels \
+						  spk_in=auto \
+							ck_in=auto \
+							pck_in=auto \
+							lsk_in=auto \
+							fk_in=auto \
+							ik_in=auto \
+							sck_in=auto \
+							xk_in=extra.tpc  \
+							/spk_strict
+                                                        

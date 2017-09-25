@@ -6,7 +6,7 @@
 ;
 ;
 ; PURPOSE:
-;	NAIF/SPICE input translator for Cassini. 
+;	NAIF/SPICE input translator for Cassini UVIS. 
 ;
 ;
 ; CATEGORY:
@@ -82,10 +82,10 @@
 
 
 ;===========================================================================
-; cas_iss_spice_parse_labels
+; cas_uvis_spice_parse_labels
 ;
 ;===========================================================================
-pro cas_iss_spice_parse_labels, dd, _time, $
+pro cas_uvis_spice_parse_labels, dd, _time, $
      exposure=exposure, size=size, filters=filters, oaxis=oaxis, target=target
 
  ndd = n_elements(dd)
@@ -105,7 +105,7 @@ pro cas_iss_spice_parse_labels, dd, _time, $
      ;-----------------------------------
      ; time
      ;-----------------------------------
-     if(NOT keyword_set(_time)) then time[i] = cas_iss_spice_time(label)
+     if(NOT keyword_set(_time)) then time[i] = cas_uvis_spice_time(label)
 
      ;-----------------------------------
      ; exposure time
@@ -147,10 +147,10 @@ end
 
 
 ;===========================================================================
-; cas_iss_spice_cameras
+; cas_uvis_spice_cameras
 ;
 ;===========================================================================
-function cas_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
+function cas_uvis_spice_cameras, dd, ref, pos=pos, constants=constants, $
          n_obj=n_obj, dim=dim, status=status, time=time, orient=orient, obs=obs
 
  ndd = n_elements(dd)
@@ -158,22 +158,16 @@ function cas_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
  sc = -82l
  plat = -82000l
 
- cas_iss_spice_parse_labels, dd, time, $
+ cas_uvis_spice_parse_labels, dd, time, $
        exposure=exposure, size=size, filters=filters, oaxis=oaxis
 
  bin = 1024./size[0]
 
  case dat_instrument(dd[0]) of
-	'CAS_ISS_NA': $
+	'CAS_UVIS': $
 	  begin
 	   inst = -82360l
-	   scale = cas_iss_nac_scale() * bin
-	   orient_fn = 'cas_cmat_to_orient'
-	  end
-	'CAS_ISS_WA': $
-	  begin
-	   inst = -82361l
-	   scale = cas_iss_wac_scale() * bin
+	   ;scale = cas_uvis_nac_scale() * bin
 	   orient_fn = 'cas_cmat_to_orient'
 	  end
  endcase
@@ -203,14 +197,14 @@ end
 
 
 ;===========================================================================
-; cas_iss_spice_planets
+; cas_uvis_spice_planets
 ;
 ;===========================================================================
-function cas_iss_spice_planets, dd, ref, time=time, planets=planets, $
+function cas_uvis_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- cas_iss_spice_parse_labels, dd, time, target=target
+ cas_uvis_spice_parse_labels, dd, time, target=target
 
  return, gen_spice_planets(dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
@@ -223,13 +217,13 @@ end
 
 
 ;===========================================================================
-; cas_iss_spice_sun
+; cas_uvis_spice_sun
 ;
 ;===========================================================================
-function cas_iss_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
+function cas_uvis_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
                                    status=status, time=time, obs=obs
 
- cas_iss_spice_parse_labels, dd, time
+ cas_uvis_spice_parse_labels, dd, time
 
  return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
             status=status, time=time, constants=constants, obs=obs)
@@ -240,16 +234,16 @@ end
 
 
 ;===========================================================================
-; cas_iss_spice_input.pro
+; cas_uvis_spice_input.pro
 ;
 ;
 ;===========================================================================
-function cas_iss_spice_input, dd, keyword, values=values, status=status, $
+function cas_uvis_spice_input, dd, keyword, values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords
 
- return, spice_input(dd, keyword, 'cas', 'iss', values=values, status=status, $
+ return, spice_input(dd, keyword, 'cas', 'uvis', values=values, status=status, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 	end_keywords)
