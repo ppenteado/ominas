@@ -6,9 +6,9 @@ function detect_cas_uvis, dd
 
  label = dat_header(dd) 
 
- w = where(strpos(label, 'CAS_UVIS') NE -1)
- if(w[0] NE -1) then return, 'CAS_UVIS'
+  if total(stregex(label,'^INSTRUMENT_((NAME)|(ID))[[:blank:]]*=[[:blank:]]*"?((UVIS)|(ULTRAVIOLET IMAGING SPECTROGRAPH))"?',/boolean,/fold_case)) then return, 'CAS_UVIS'
 
  return, ''
 end
 ;===========================================================================
+
