@@ -81,71 +81,6 @@
 
 
 ;===========================================================================
-; cas_iss_spice_parse_labels
-;
-;===========================================================================
-pro cas_iss_spice_parse_labels, dd, _time, $
-     exposure=exposure, size=size, filters=filters, oaxis=oaxis, target=target
-
- ndd = n_elements(dd)
-
- time = dblarr(ndd)
- exposure = dblarr(ndd)
- size = make_array(2,ndd, val=1024)
- filters = strarr(2,ndd)
- target = strarr(ndd)
- oaxis = dblarr(2,ndd)
-
- for i=0, ndd-1 do $
-  begin
-   label = dat_header(dd[i])
-   if(keyword_set(label)) then $
-    begin
-     ;-----------------------------------
-     ; time
-     ;-----------------------------------
-     if(NOT keyword_set(_time)) then time[i] = cas_iss_spice_time(label)
-
-     ;-----------------------------------
-     ; exposure time
-     ;-----------------------------------
-     exposure[i] = vicgetpar(label, 'EXPOSURE_DURATION')/1000d
-
-     ;-----------------------------------
-     ; image size
-     ;-----------------------------------
-     size[0,i] = double(vicgetpar(label, 'NS'))
-     size[1,i] = double(vicgetpar(label, 'NL'))
-
-     ;-----------------------------------
-     ; filters
-     ;-----------------------------------
-     filters[*,i] = vicgetpar(label, 'FILTER_NAME')
-
-     ;-----------------------------------
-     ; target
-     ;-----------------------------------
-     target_name = strupcase(vicgetpar(label, 'TARGET_NAME'))
-     target_desc = strupcase(vicgetpar(label, 'TARGET_DESC') )
-     target[i] = target_name
-     obs_id = vicgetpar(label, 'OBSERVATION_ID')
-     if((strpos(strupcase(obs_id), 'OPNAV'))[0] NE -1) then target[i] = target_desc
-    end
-
-   ;-----------------------------------
-   ; optic axis
-   ;-----------------------------------
-   oaxis[*,i] = size[*,i]/2d
-  end
-
- if(NOT keyword_set(_time)) then _time = time
-
-end 
-;=============================================================================
-
-
-
-;===========================================================================
 ; cas_iss_spice_cameras
 ;
 ;===========================================================================
@@ -157,10 +92,9 @@ function cas_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
  sc = -82l
  plat = -82000l
 
- cas_iss_spice_parse_labels, dd, time, $
-       exposure=exposure, size=size, filters=filters, oaxis=oaxis
+ meta = dat_header_info(dd)
 
- bin = 1024./size[0]
+ bin = 1024./meta.size[0]
 
  case dat_instrument(dd[0]) of
 	'CAS_ISS_NA': $
@@ -183,13 +117,13 @@ function cas_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		inst = inst, $
 		plat = plat, $
 		orient = orient, $
-		cam_time = time, $
+		cam_time = meta.time, $
 		cam_scale = make_array(2,ndd, val=scale), $
-		cam_oaxis = oaxis, $
+		cam_oaxis = meta.oaxis, $
 		cam_fn_psf = make_array(ndd, val='cas_iss_psf'), $
-		cam_filters = filters, $
-		cam_size = size, $
-		cam_exposure = exposure, $
+		cam_filters = meta.filters, $
+		cam_size = meta.size, $
+		cam_exposure = meta.exposure, $
 		cam_fn_focal_to_image = make_array(ndd, val='cam_focal_to_image_linear'), $
 		cam_fn_image_to_focal = make_array(ndd, val='cam_image_to_focal_linear'), $
 		cam_fi_data = [ptrarr(ndd)], $
@@ -209,12 +143,12 @@ function cas_iss_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- cas_iss_spice_parse_labels, dd, time, target=target
+ meta = dat_header_info(dd)
 
- return, gen_spice_planets(dd, ref, time=time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=meta.time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
-                            target=target, constants=constants, obs=obs)
+                            target=meta.target, constants=constants, obs=obs)
 
 end
 ;===========================================================================
@@ -228,10 +162,10 @@ end
 function cas_iss_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
                                    status=status, time=time, obs=obs
 
- cas_iss_spice_parse_labels, dd, time
+ meta = dat_header_info(dd)
 
  return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
-            status=status, time=time, constants=constants, obs=obs)
+            status=status, time=meta.time, constants=constants, obs=obs)
 
 end
 ;===========================================================================

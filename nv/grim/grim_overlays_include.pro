@@ -416,7 +416,7 @@ pro grim_draw_roi, grim_data, plane
 if(pnt_valid(plane.roi_ptd)) then $
  begin
   p = pnt_points(plane.roi_ptd)
-  plots, p, psym=-3, col=ctblue()
+  plots, p, psym=-3, col=ctyellow()
  end
 
 end
