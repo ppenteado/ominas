@@ -15,6 +15,7 @@
  if(defined(header)) then dat_set_header, _xd, header, /noevent
  if(defined(filename)) then dat_set_filename, _xd, filename, /noevent
  if(defined(filetype)) then dat_set_filetype, _xd, filetype, /noevent
+ if(defined(htype)) then dat_set_htype, _xd, htype, /noevent
  if(defined(dim)) then dat_set_dim, _xd, dim, /noevent
  if(defined(typecode)) then dat_set_typecode, _xd, typecode, /noevent
  if(defined(gff)) then dat_set_gff, _xd, gff, /noevent

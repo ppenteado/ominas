@@ -13,6 +13,7 @@ nhist=nhist, $
 header=header, $
 dh=dh, $
 filetype=filetype, $
+htype=htype, $
 input_fn=input_fn, $
 output_fn=output_fn, $
 keyword_fn=keyword_fn, $

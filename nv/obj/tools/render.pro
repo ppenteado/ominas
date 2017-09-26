@@ -292,7 +292,6 @@ function rdr_piece, data, image_pts
 	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
 	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
         back_matrix=sec_back_matrix, range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
- shade_matrix = 1d - shadow_matrix
 
 
  ;---------------------------------------------

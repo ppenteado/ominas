@@ -45,6 +45,8 @@
 ;	true:     If set, the actual data array is returned, even if there is
 ;	          a sampling function.
 ;
+;	abscissa: If set to 1, the abscissa is rurned instead of the data.
+;
 ;  OUTPUT: 
 ;	abscissa: The abscissa is returned in this array.
 ;
@@ -74,6 +76,11 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
+
+ return_abscissa = 0
+ if(keyword_set(_abscissa)) then $
+      if(n_elements(_abscissa) EQ 1) then $
+           if(_abscissa[0] EQ 1) then return_abscissa = 1
 
  dim = dat_dim(_dd)
  nelm = product(dim)
@@ -216,7 +223,7 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  ;-------------------------------------------------------------------------
  _dat_compress_data, _dd, cdata=cdata, cabscissa=cabscissa
 
-
+ if(return_abscissa) then return, abscissa
  return, data
 end
 ;===========================================================================

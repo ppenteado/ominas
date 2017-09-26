@@ -668,7 +668,7 @@ common pgc_table_block, last_labels, first
                 fn = [fn, '_pgc_eqplane', '_pgc_eqplane_scale', '_pgc_photom_eqplane']
 	 if(keyword_set(dkx)) then $
                 fn = [fn, '_pgc_disk', '_pgc_disk_scale', '_pgc_photom_disk']
-	 if(keyword_set(sd)) then fn = [fn, '_pgc_star']
+;;;	 if(keyword_set(sd)) then fn = [fn, '_pgc_star']
 	end
    'MAP' : fn = [fn, '_pgc_map']
    else :

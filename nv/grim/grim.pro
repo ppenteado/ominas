@@ -2011,6 +2011,8 @@ pro grim_render, grim_data, plane=plane
 
  if(grim_data.type EQ 'PLOT') then return
 
+ if(plane.render_auto) then plane.render_spawn = 0
+
  ;---------------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;---------------------------------------------------------
@@ -2028,10 +2030,10 @@ pro grim_render, grim_data, plane=plane
 
 
  ;------------------------------------------------------------
- ; Create new plane unless a rendering plane or no spawning.  
- ; The new plane will include a transformation that allows the 
- ; rendering to appear in the correct location in the display 
- ; relative to the data coordinate system.
+ ; Create new plane unless no spawning. The new plane will 
+ ; include a transformation that allows the rendering to 
+ ; appear in the correct location in the display relative 
+ ; to the data coordinate system.
  ;------------------------------------------------------------
  if(NOT plane.render_spawn) then new_plane = plane $
  else new_plane = grim_clone_plane(grim_data, plane=plane)

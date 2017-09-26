@@ -80,78 +80,6 @@
 
 
 ;===========================================================================
-; gll_ssi_spice_parse_labels
-;
-;===========================================================================
-pro gll_ssi_spice_parse_labels, dd, _time, $
-      exposure=exposure, size=size, filters=filters, oaxis=oaxis, scale=scale, $
-      target=target
-
- ndd = n_elements(dd)
-
- time = dblarr(ndd)
- exposure = dblarr(ndd)
- size = make_array(2,ndd, val=1024)
- filters = strarr(2,ndd)
- target = strarr(ndd)
- oaxis = dblarr(2,ndd)
- scale = dblarr(2,ndd)
-
- for i=0, ndd-1 do $
-  begin
-   label = dat_header(dd[i])
-   if(keyword_set(label)) then $
-    begin
-     ;------------------------------
-     ; time
-     ;------------------------------
-     if(NOT keyword_set(_time)) then time[i] = gll_ssi_spice_time(label)
-
-     ;------------------------------
-     ; exposure time
-     ;------------------------------
-     exposure[i] = vicgetpar(label, 'EXP')
-
-     ;------------------------------------------------
-     ; image size
-     ;------------------------------------------------
-     size[0,i] = double(vicgetpar(label, 'NS'))
-     size[1,i] = double(vicgetpar(label, 'NL'))
-
-     ;------------------------------------------------
-     ; nominal optic axis coordinate, camera scale
-     ;------------------------------------------------
-     oaxis[*,i] = size[*,i]/2d
-     scale[*,i] = [1.016d-05, 1.016d-05]		; from trial and error
-
-     ;------------------------------------------------
-     ; detect summation modes
-     ;------------------------------------------------
-     mode = vicgetpar(label, 'TLMFMT')
-     if((mode EQ 'HIS') OR (mode EQ 'AI8')) then $
-      begin
-       oaxis[*,i] = oaxis[*,i] / 2d
-       scale[*,i] = scale[*,i]*2d
-      end
-
-;     filters[*,i] = vicgetpar(label, 'FILTER_NAME')
-
-
-     ;------------------------------------------------
-     ; target
-     ;------------------------------------------------
-     target[i] = strupcase(vicgetpar(label, 'TARGET_NAME'))
-
-    end
-  end
-
- if(NOT keyword_set(_time)) then _time = time
-
-end 
-;=============================================================================
-
-
-;===========================================================================
 ; gll_ssi_spice_cameras
 ;
 ;===========================================================================
@@ -171,9 +99,7 @@ function gll_ssi_spice_cameras, dd, ref, pos=pos, constants=constants, $
  inst= -77001l
  orient_fn = 'gll_ssi_cmat_to_orient'
 
- gll_ssi_spice_parse_labels, dd, time, $
-    exposure=exposure, size=size, filters=filters, oaxis=oaxis, scale=scale
-
+ meta = dat_header_info(dd)
 
  return, gll_to_ominas( $
            spice_cameras(dd, ref, '', '', pos=pos, $
@@ -181,12 +107,12 @@ function gll_ssi_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		inst = inst, $
 		plat = plat, $
 		orient = orient, $
-		cam_time = time, $
-		cam_scale = scale, $
-		cam_oaxis = oaxis, $
+		cam_time = meta.time, $
+		cam_scale = meta.scale, $
+		cam_oaxis = meta.oaxis, $
 		cam_fn_psf = make_array(ndd, val='gll_ssi_psf'), $
-		cam_size = size, $
-		cam_exposure = exposure, $
+		cam_size = meta.size, $
+		cam_exposure = meta.exposure, $
 		cam_fn_focal_to_image = make_array(ndd, val='cam_focal_to_image_linear'), $
 		cam_fn_image_to_focal = make_array(ndd, val='cam_image_to_focal_linear'), $
 		cam_fi_data = [ptrarr(ndd)], $
@@ -206,12 +132,12 @@ function gll_ssi_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- gll_ssi_spice_parse_labels, dd, time, target=target
+ meta = dat_header_info(dd)
 
- return, gen_spice_planets(dd, ref, time=time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=meta.time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
-                            target=target, constants=constants, obs=obs)
+                            target=meta.target, constants=constants, obs=obs)
 
 end
 ;===========================================================================
@@ -225,10 +151,10 @@ end
 function gll_ssi_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
                    status=status, time=time, constants=constants, obs=obs
 
- gll_ssi_spice_parse_labels, dd, time
+ meta = dat_header_info(dd)
 
  return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
-             status=status, time=time, constants=constants, obs=obs)
+             status=status, time=meta.time, constants=constants, obs=obs)
 
 end
 ;===========================================================================

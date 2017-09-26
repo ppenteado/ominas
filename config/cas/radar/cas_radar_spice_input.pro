@@ -101,41 +101,6 @@ end
 
 
 ;===========================================================================
-; cas_radar_spice_parse_labels
-;
-;===========================================================================
-pro cas_radar_spice_parse_labels, dd, _time, target=target
-
- ndd = n_elements(dd)
-
- time = dblarr(ndd)
- target = strarr(ndd)
-
- for i=0, ndd-1 do $
-  begin
-   label = dat_header(dd[i])
-   if(keyword_set(label)) then $
-    begin
-     ;-----------------------------------
-     ; time
-     ;-----------------------------------
-     if(NOT keyword_set(_time)) then time[i] = cas_radar_spice_time(label)
-
-     ;-----------------------------------
-     ; target
-     ;-----------------------------------
-     target[i] = pdspar(label, 'TARGET_NAME')
-    end
-  end
-
- if(NOT keyword_set(_time)) then _time = time
-
-end 
-;=============================================================================
-
-
-
-;===========================================================================
 ; cas_radar_spice_cameras
 ;
 ;===========================================================================
@@ -151,7 +116,8 @@ inst = -82813;   ;;;;82 810--814
 ; each data file contains all 5 beams: -82810 - -82814
 ; --> return 5 cds?  use middle beam (3)?
  
- cas_radar_spice_parse_labels, dd, time, target=target
+; cas_radar_spice_parse_labels, dd, time, target=target
+ meta = dat_header_info(dd)
 
  orient_fn = 'cas_cmat_to_orient'
 
@@ -161,7 +127,7 @@ inst = -82813;   ;;;;82 810--814
 		inst = inst, $
 		plat = plat, $
 		orient = orient, $
-		cam_time = time, $
+		cam_time = meta.time, $
 		n_obj=n_obj, dim=dim, status=status, constants=constants, obs=obs), $
                   orient_fn )
 
@@ -178,12 +144,12 @@ function cas_radar_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- cas_radar_spice_parse_labels, dd, time, target=target
+ meta = dat_header_info(dd)
 
- return, gen_spice_planets(dd, ref, time=time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=meta.time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
-                            target=target, constants=constants, obs=obs)
+                            target=meta.target, constants=constants, obs=obs)
 
 end
 ;===========================================================================
@@ -197,10 +163,10 @@ end
 function cas_radar_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
                                    status=status, time=time, obs=obs
 
- cas_radar_spice_parse_labels, dd, time
+ meta = dat_header_info(dd)
 
  return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
-            status=status, time=time, constants=constants, obs=obs)
+            status=status, time=meta.time, constants=constants, obs=obs)
 
 end
 ;===========================================================================

@@ -30,9 +30,13 @@
 ;			The default filetype is the first item in the table
 ;			whose action is not 'IGNORE'.
 ;
-;	all:	If set, all filetypes in the table are returned.
+;	header:		I set, the header is being tested rather than the 
+;			file.
 ;
-;  OUTPUT: NONE
+;	all:		If set, all filetypes in the table are returned.
+;
+;  OUTPUT: 
+;	action:		Action string from matched file type entry.
 ;
 ;
 ; RETURN: 
@@ -48,7 +52,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_detect_filetype, dd, default=default, all=all, action=action
+function dat_detect_filetype, dd, default=default, all=all, action=action, header=header
 @nv_block.common
 @core.include
 
@@ -94,6 +98,7 @@ function dat_detect_filetype, dd, default=default, all=all, action=action
  for i=0, n_ftp-1 do $
   begin
    detect_fn = table[i,0]
+;   if(call_function(detect_fn, dd, header=header)) then $
    if(call_function(detect_fn, dd)) then $
     begin
      filetype = table[i,1]
