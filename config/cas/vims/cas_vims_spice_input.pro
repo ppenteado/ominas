@@ -167,14 +167,6 @@ compile_opt idl2
  cas_vims_spice_parse_labels, dd, time, $
        exposure=exposure, size=size, filters=filters, oaxis=oaxis,$
        endjd=endjd,startjd=startjd
-meta = {time: time, $
-          endjd: endjd, $
-          startjd: startjd, $
-          exposure: exposure, $
-          size: size, $
-          filters: filters, $
-          oaxis: oaxis}
-; meta = dat_header_info(dd)
 
  bin = 1
  
@@ -184,16 +176,16 @@ meta = {time: time, $
 	     inst=-82370L
 	     cam_scale=5d-4 ;rad/pix
 	     orient_fn = 'cas_cmat_to_orient_vims'
-	     cam_nx=meta.size[0,0]
-	     cam_ny=meta.size[1,0]
+	     cam_nx=size[0,0]
+	     cam_ny=size[1,0]
 	     npixels=long(cam_nx)*long(cam_ny)
-	     times=dindgen(npixels)*(meta.endjd-meta.startjd)*86400d0/(npixels*1d0)
+	     times=dindgen(npixels)*(endjd-startjd)*86400d0/(npixels*1d0)
 ;	     cam_time+=times
 	     orients=dblarr(3,3,npixels)+!values.d_nan
 	     poss=dblarr(1,3,npixels)+!values.d_nan
 	     vels=poss
 	     inds=array_indices([cam_nx,cam_ny],dindgen(npixels),/dimensions)
-	     fnd={t0:meta.startjd,times:times,orients:orients,inds:inds,poss:poss,vels:vels}
+	     fnd={t0:startjd,times:times,orients:orients,inds:inds,poss:poss,vels:vels}
 	     fn_data=[ptr_new(fnd)]
 	   end
 	   'CAS_VIMS_VIS': begin
@@ -213,11 +205,11 @@ meta = {time: time, $
     orient = orient, $
     cam_time = time, $
     cam_scale = make_array(2,ndd, val=cam_scale), $
-    cam_oaxis = meta.oaxis, $
+    cam_oaxis = oaxis, $
     cam_fn_psf = make_array(ndd, val='cas_iss_psf'), $
     cam_filters = dat_instrument(dd[0]), $
-    cam_size = meta.size, $
-    cam_exposure = meta.exposure, $
+    cam_size = size, $
+    cam_exposure = exposure, $
     cam_fn_focal_to_image = make_array(ndd, val='cas_vims_focal_to_image_linear'), $
     cam_fn_image_to_focal = make_array(ndd, val='cas_vims_image_to_focal_linear'), $
     cam_fi_data = [ptrarr(ndd)], $
@@ -229,8 +221,8 @@ meta = {time: time, $
     cds=objarr((dat_dim(dd[icd]))[2])
     foreach cdsf,cds,ifi do begin
       cds[ifi]=nv_clone(ccd)
-      cam_set_filters,cds[ifi],meta.filters[ifi]
-      cor_set_name,cds[ifi],dat_instrument(dd[0])+'_'+(strsplit(meta.filters[ifi],'_',/extract))[0]
+      cam_set_filters,cds[ifi],filters[ifi]
+      cor_set_name,cds[ifi],dat_instrument(dd[0])+'_'+(strsplit(filters[ifi],'_',/extract))[0]
     endforeach
     ret.add,cds,/extract
   endforeach

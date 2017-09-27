@@ -79,6 +79,63 @@
 ;=============================================================================
 
 
+
+;===========================================================================
+; vgr_iss_spice_label_struct__define
+;
+;===========================================================================
+pro vgr_iss_spice_label_struct__define
+
+ struct = {vgr_iss_spice_label_struct, $
+		time: 0d, $
+		exposure: 0d, $
+		size: [0,0], $
+		filters: ['',''], $
+		scale: [0d,0d], $
+		target: '', $
+		oaxis: [0d,0d] $
+           }
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; vgr_iss_spice_parse_labels
+;
+;===========================================================================
+pro vgr_iss_spice_parse_labels, dd, _time, $
+     exposure=exposure, size=size, filters=filters, oaxis=oaxis, scale=scale, $
+     target=target
+
+ ndd = n_elements(dd)
+
+ meta0 = {vgr_iss_spice_label_struct}
+
+ for i=0, ndd-1 do $
+  begin
+   _meta = dat_header_info(dd[i])
+   if(NOT keyword_set(_meta)) then _meta = meta0
+   meta = append_array(meta, _meta)
+  end
+
+ if(NOT keyword_set(_time)) then _time = meta.time
+ exposure = meta.exposure
+ size = meta.size
+ filters = meta.filters
+ target = meta.target
+ scale = meta.scale
+ oaxis = meta.oaxis
+
+print, _time, $
+     exposure, size, filters, oaxis, scale, $
+     target
+
+end 
+;=============================================================================
+
+
+
 ;===========================================================================
 ; vgr_iss_spice_cameras
 ;
@@ -98,7 +155,9 @@ function vgr_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
  orient_fn = 'vgr_cmat_to_orient_iss'
 
 
- meta = dat_header_info(dd)
+ vgr_iss_spice_parse_labels, dd, time, $
+    exposure=exposure, size=size, filters=filters, oaxis=oaxis, scale=scale
+
 
  return, vgr_to_ominas( $
            spice_cameras(dd, ref, '', '', pos=pos, $
@@ -107,12 +166,12 @@ function vgr_iss_spice_cameras, dd, ref, pos=pos, constants=constants, $
 		plat = plat, $
 		tol = 800d, $
 		orient = orient, $
-		cam_time = meta.time, $
-		cam_scale = meta.scale, $
-		cam_oaxis = meta.oaxis, $
+		cam_time = time, $
+		cam_scale = scale, $
+		cam_oaxis = oaxis, $
 		cam_fn_psf = make_array(ndd, val='vgr_iss_psf'), $
-		cam_size = meta.size, $
-		cam_exposure = meta.exposure, $
+		cam_size = size, $
+		cam_exposure = exposure, $
 		cam_fn_focal_to_image = make_array(ndd, val='cam_focal_to_image_linear'), $
 		cam_fn_image_to_focal = make_array(ndd, val='cam_image_to_focal_linear'), $
 		cam_fi_data = [ptrarr(ndd)], $
@@ -132,12 +191,12 @@ function vgr_iss_spice_planets, dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, constants=constants, obs=obs
 
- meta = dat_header_info(dd)
+ vgr_iss_spice_parse_labels, dd, time, target=target
 
- return, gen_spice_planets(dd, ref, time=meta.time, planets=planets, $
+ return, gen_spice_planets(dd, ref, time=time, planets=planets, $
                             n_obj=n_obj, dim=dim, status=status, $ 
                             targ_list=targ_list, $
-                            target=meta.target, constants=constants, obs=obs)
+                            target=target, constants=constants, obs=obs)
 
 end
 ;===========================================================================
@@ -151,10 +210,10 @@ end
 function vgr_iss_spice_sun, dd, ref, n_obj=n_obj, dim=dim, $
                    status=status, time=time, constants=constants, obs=obs
 
- meta = dat_header_info(dd)
+ vgr_iss_spice_parse_labels, dd, time
 
  return, gen_spice_sun(dd, ref, n_obj=n_obj, dim=dim, $
-                    status=status, time=meta.time, constants=constants, obs=obs)
+                    status=status, time=time, constants=constants, obs=obs)
 
 end
 ;===========================================================================

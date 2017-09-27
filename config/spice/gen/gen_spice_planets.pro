@@ -10,6 +10,8 @@ function gen_spice_planets, dd, ref, target=target, time=sc_time, $
  ndd = n_elements(dd)
  if(NOT keyword_set(sc)) then sc = 0l
 
+ if(NOT defined(sc_time)) then sc_time = dblarr(ndd)
+
  ;----------------------------------------------------------------
  ; request all relevant planets if none specified
  ; if no targ_list file, then spice interface will get all bodies
