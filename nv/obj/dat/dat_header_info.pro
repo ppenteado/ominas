@@ -5,8 +5,8 @@
 ;
 ;
 ; PURPOSE:
-;	Obtains header info specific to the given data descriptorby calling
-;	an application-speciic header program.
+;	Obtains header info specific to the given data descriptor by calling
+;	an application-specific header program.
 ;
 ;
 ; CATEGORY:
@@ -19,7 +19,7 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:	Data descriptor.
+;	dd:	Data descriptor.  
 ;
 ;  OUTPUT: NONE
 ;
@@ -41,10 +41,6 @@
 ;	Complete
 ;
 ;
-; SEE ALSO:
-;	dat_set_header
-;
-;
 ; MODIFICATION HISTORY:
 ; 	Written by:	Spitale, 9/2017
 ;	
@@ -56,13 +52,12 @@ function dat_header_info, dd, noevent=noevent
 
  _dd = cor_dereference(dd)
 
- header = dat_header(_dd, noevent=noevent)
- if(NOT keyword_set(header)) then return, 0
-
  instrument = dat_instrument(_dd, noevent=noevent)
  htype = dat_htype(_dd, noevent=noevent)
 
- fn = strupcase(instrument) + '_' + strupcase(htype) + '_' + 'header_info'
+ fn = strlowcase(instrument) + '_' + strlowcase(htype) + '_' + 'header_info'
+ 
+ if(NOT routine_exists(fn)) then return, 0
  return, call_function(fn, dd)
 end
 ;===========================================================================
