@@ -110,26 +110,29 @@ pro cas_uvis_spice_parse_labels, dd, _time, $
      ;-----------------------------------
      ; exposure time
      ;-----------------------------------
-     exposure[i] = vicgetpar(label, 'EXPOSURE_DURATION')/1000d
+     tim=cas_uvis_spice_time(label,exposure=exp)
+     exposure[i] = exp
 
      ;-----------------------------------
      ; image size
      ;-----------------------------------
-     size[0,i] = double(vicgetpar(label, 'NS'))
-     size[1,i] = double(vicgetpar(label, 'NL'))
+     axisname=strsplit(pdspar(label,'AXIS_NAME'),' ,()',/extract)
+     coreitems=long(strsplit(pdspar(label,'CORE_ITEMS'),' ,()',/extract))
+     size[0,i] = coreitems[where(strmatch(axisname,'*SAMPLE*',/fold_case))]
+     size[1,i] = coreitems[where(strmatch(axisname,'*LINE*',/fold_case))]
 
      ;-----------------------------------
      ; filters
      ;-----------------------------------
-     filters[*,i] = vicgetpar(label, 'FILTER_NAME')
+     filters[*,i] = strmid(pdspar(label,'PRODUCT_ID'),1,3)
 
      ;-----------------------------------
      ; target
      ;-----------------------------------
-     target_name = strupcase(vicgetpar(label, 'TARGET_NAME'))
-     target_desc = strupcase(vicgetpar(label, 'TARGET_DESC') )
+     target_name = strupcase(pdspar(label, 'TARGET_NAME'))
+     target_desc = strupcase(pdspar(label, 'TARGET_DESC') )
      target[i] = target_name
-     obs_id = vicgetpar(label, 'OBSERVATION_ID')
+     obs_id = pdspar(label, 'OBSERVATION_ID')
      if((strpos(strupcase(obs_id), 'OPNAV'))[0] NE -1) then target[i] = target_desc
     end
 
@@ -161,13 +164,14 @@ function cas_uvis_spice_cameras, dd, ref, pos=pos, constants=constants, $
  cas_uvis_spice_parse_labels, dd, time, $
        exposure=exposure, size=size, filters=filters, oaxis=oaxis
 
- bin = 1024./size[0]
+ bin = 1
 
  case dat_instrument(dd[0]) of
 	'CAS_UVIS': $
 	  begin
-	   inst = -82360l
-	   ;scale = cas_uvis_nac_scale() * bin
+	   inst = -82840l ;FUV_HI
+	   scale=0.08594d0*!dpi/180d0
+	   
 	   orient_fn = 'cas_cmat_to_orient'
 	  end
  endcase
