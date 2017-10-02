@@ -967,12 +967,9 @@ declare -a mis=("cas" "gll" "vgr" "dawn")
 declare -a Data=("Generic_kernels" "TYCHO2" "SAO" "MAPS" "UCAC4" "GSC" )
 declare -a insts=("" "" "" "" "")
 insts[1]=". ${OMINAS_RC}/config/ominas_env_strcat.sh tycho2"
-#insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
-#insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
-#insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
-insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
-insts[3]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
-insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
+insts[2]=". ${OMINAS_RC}/config/ominas_env_strcat.sh sao"
+insts[4]=". ${OMINAS_RC}/config/ominas_env_strcat.sh ucac4"
+insts[5]=". ${OMINAS_RC}/config/ominas_env_strcat.sh gsc"
 for ((d=0; d<${#mis[@]}; d++));
 do
 	#mstatus[$d]=`pkst ${OMINAS_DIR}/config/${mis[$d]}/`
@@ -1071,6 +1068,8 @@ Data:
        11) Maps
            Map library created for use with OMINAS ${dstatus[3]}
            About 813 MB as of August/2017
+       12) UCAC4 star catalog  . . . . . . . . . . ${dstatus[4]}
+           About 8.5 GB download
 
 For more information, see
 https://ppenteado.github.io/ominas/guides/userguide.html
@@ -1168,7 +1167,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 8 9 10 11"
+    ans="1 2 3 4 5 6 8 9 10 11 12"
   else
     ans="all"
   fi
@@ -1195,7 +1194,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 8 9 10 11 2 1"
+    ans="3 4 5 6 8 9 10 11 12 2 1"
   else
     ans="uall"
   fi
@@ -1224,7 +1223,7 @@ do
   fi
 done
 if [ "${ominas_nodel}" == "2" ]; then
-  ans="4 5 6 8 9 10 11"
+  ans="4 5 6 8 9 10 11 12"
 fi
 for num in $ans
 do
