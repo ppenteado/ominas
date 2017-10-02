@@ -3,6 +3,6 @@
 #				 filetype are called)
 
   detect_cas_iss		VICAR
-  detect_cas_uvis		VICAR
+  detect_cas_uvis		PDS
   detect_cas_radar              PDS
   detect_cas_vims               ISIS
