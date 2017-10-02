@@ -48,7 +48,8 @@
 ;   for more information on URS authentication. 
 ;     
 ; 
-; :Requires: IDL 8.2, `pp_ursurl__define`, `pp_readtxt`, `pp_parsenetrc`, mg_getpassword
+; :Requires: IDL 8.2, `pp_ursurl__define`, `pp_readtxt`, `pp_parsenetrc`, $
+; mg_getpassword, password, `pp_label2hash`
 ; 
 ; :Todo: Caching, retrieving only selected indices, parsing file metadata
 ; to provide a variable tree.
