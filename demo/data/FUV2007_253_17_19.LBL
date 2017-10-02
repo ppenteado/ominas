@@ -1,0 +1,103 @@
+PDS_VERSION_ID                  = PDS3
+RECORD_TYPE                     = FIXED_LENGTH
+RECORD_BYTES                    = 131072
+FILE_RECORDS                    = 52
+PRODUCT_ID                      = "FUV2007_253_17_19"
+SPACECRAFT_CLOCK_START_COUNT    = "1/1568138094.192"
+SPACECRAFT_CLOCK_STOP_COUNT     = "UNK"
+START_TIME                      = 2007-253T17:19:53.647
+STOP_TIME                       = 2007-253T17:45:53.647
+DATA_SET_ID                     = "CO-S-UVIS-2-CUBE-V1.2"
+TARGET_NAME                     = "IAPETUS"
+INSTRUMENT_HOST_NAME            = "CASSINI_ORBITER"
+INSTRUMENT_NAME                 = "ULTRAVIOLET IMAGING SPECTROGRAPH"
+INSTRUMENT_ID                   = "UVIS"
+OBSERVATION_ID                  = 91201
+MISSION_PHASE_NAME              = TOUR
+PRODUCT_CREATION_TIME           = 2011-255
+INTEGRATION_DURATION            = 30.000 <SECOND>
+COMPRESSION_TYPE                = "SQRT_9"
+HI_VOLTAGE_POWER_SUPPLY_STATE   = ON
+OCCULTATION_PORT_STATE          = "N/A"
+SLIT_STATE                      = HIGH_RESOLUTION
+TEST_PULSE_STATE                = OFF
+ODC_ID                          = 1091
+DESCRIPTION                     = "
+  This file was produced by the Cassini UVIS team at the Laboratory
+  for Atmospheric and Space Physics (LASP) at the University of Colorado
+  at Boulder.  For a description of hardware and scientific objectives,
+  refer to the Cassini UVIS instrument paper The Cassini Ultraviolet
+  Imaging Spectrograph Investigation, Space Science Reviews, 115, 299-361,
+  by L. W. Esposito et. al."
+ 
+RIGHT_ASCENSION           = 122.15560 <DEGREE>
+DECLINATION               = 26.761725 <DEGREE>
+SUB_SOLAR_LATITUDE        = 1.5051594 <DEGREE>
+SUB_SOLAR_LONGITUDE       = 214.86429 <DEGREE>
+SUB_SPACECRAFT_LATITUDE   = -11.029408 <DEGREE>
+SUB_SPACECRAFT_LONGITUDE  = 241.96827 <DEGREE>
+PHASE_ANGLE               = 30.811357 <DEGREE>
+EMISSION_ANGLE            = 59.097901 <DEGREE>
+INCIDENCE_ANGLE           = 37.209944 <DEGREE>
+CENTRAL_BODY_DISTANCE     = 25331.392 <KM>
+SC_PLANET_POSITION_VECTOR =   
+(-3385051.0<KM>, -484703.67<KM>, 594815.64<KM>)
+SC_PLANET_VELOCITY_VECTOR =   
+(-0.59434670<KM/S>, -1.3766659<KM/S>, 0.32443874<KM/S>)
+SC_SUN_POSITION_VECTOR    =   
+(-1.1823617e+09<KM>, 6.3695228e+08<KM>, 3.1333349e+08<KM>)
+SC_SUN_VELOCITY_VECTOR    =   
+(-4.8552110<KM/S>, -6.3933492<KM/S>, -3.3023530<KM/S>)
+SC_TARGET_POSITION_VECTOR =   
+(-12786.761<KM>, 19700.432<KM>, 11267.766<KM>)
+SC_TARGET_VELOCITY_VECTOR =   
+(-0.97356301<KM/S>, 1.8921967<KM/S>, 0.98821792<KM/S>)
+PLANET_CENTER_POSITION_VECTOR =   
+(-1.1856398e+09<KM>, 6.3710574e+08<KM>, 3.1418907e+08<KM>)
+PLANET_CENTER_VELOCITY_VECTOR =   
+(-5.4750511<KM/S>, -7.7687110<KM/S>, -2.9736516<KM/S>)
+^QUBE                           = "FUV2007_253_17_19.DAT"
+OBJECT                          = QUBE
+  AXES                          = 3
+  AXIS_NAME                     = (BAND, LINE, SAMPLE)
+  CORE_ITEMS                    = (1024, 64, 52)
+  CORE_ITEM_BYTES               = 2
+  CORE_ITEM_TYPE                = MSB_UNSIGNED_INTEGER
+  CORE_BASE                     = 0.0
+  CORE_MULTIPLIER               = 1.0
+  CORE_VALID_MINIMUM            = "N/A"
+  CORE_NULL                     = -1
+  CORE_LOW_REPR_SATURATION      = "N/A"
+  CORE_LOW_INSTR_SATURATION     = "N/A"
+  CORE_HIGH_INSTR_SATURATION    = "N/A"
+  CORE_HIGH_REPR_SATURATION     = "N/A"
+  CORE_NAME                     = RAW_DATA_NUMBER
+  CORE_UNIT                     = "COUNTS/BIN"
+  BAND_BIN_CENTER               = "N/A"
+  SUFFIX_BYTES                  = 4
+  SUFFIX_ITEMS                  = (0,0,0)
+  DESCRIPTION                   = "This UVIS Qube is a 3 dimensional matrix
+    of 2 byte integers.  The Qube represents a time series of two dimensional
+    (spectral x spatial) matrices.  Each two dimensional matrix is made up of
+    counts taken by the detector during a fixed time interval.  The fixed
+    time interval is specified in the INTEGRATION_DURATION keyword.  If the
+    two dimensional matrix has a LINE magnitude of 1 then the Qube is a time
+    series of spectra.  The region of the detector in which data was taken is
+    defined by the ...CORNER keywords.
+       This object is organized so that a sequence of 1024 2-byte numbers
+    forms a horizontal line (the BAND dimension), a sequence of 64 lines
+    forms an BANDxLINE spectral-spatial matrix, and sequence of 52 of
+    these matrices, forms a (1024x64x52)  Qube.
+        The purpose of this observation is to acquire close range data in
+    order to map UV albedo of the surface for studies of composition
+    and surface properties, and to search for emission features
+    indicative of tenuous atmospheres.  FUV and EUV use the low
+    resolution slit."
+  UL_CORNER_LINE                = 0
+  UL_CORNER_BAND                = 0
+  LR_CORNER_LINE                = 63
+  LR_CORNER_BAND                = 1023
+  BAND_BIN                      = 1
+  LINE_BIN                      = 1
+END_OBJECT                      = QUBE
+END
