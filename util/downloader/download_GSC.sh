@@ -54,4 +54,4 @@ echo "Using IDL at ${idlbin}"
 
 
 
-#$idlbin -e '!path+=":./util/downloader"& unpack_gsc' -args $@
+$idlbin -e '!path+=":"+file_expand_path("./util/downloader")& unpack_gsc' -args $@
