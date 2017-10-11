@@ -1260,7 +1260,7 @@ do
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 #corest=${yes}
                                 dins $(($num-8)) ASK NODEMO;;
-		[9]|11|12)
+		[9]|11|12|13)
                                 pr=0
                                 pkins ominas_env_def.sh "${corest}" $(($num-8))
                                 #corest=${yes}
