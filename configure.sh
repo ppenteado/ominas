@@ -701,7 +701,7 @@ echo "export DFLAG=${DFLAG}" >> $setting
 echo $ins_ominas_env_def >> $setting
 #echo "export CAM_NFILTERS=256" >> $setting
 
-for ((d=1; d<5; d++));
+for ((d=1; d<${#Data[@]}; d++));
 do
         dat=${Data[$d]}
         #echo "$d: ${inst[$d]}"
