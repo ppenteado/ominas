@@ -16,6 +16,8 @@
 ;		 Declination J2000 in degrees R*4
 ;	  MAG : type=float
 ;		 Visual Magnitude R*4
+;         Multiple: type=integer
+;                0=unique, 1=Multiple entries
 ;
 ;- 
 pro gsc_record__define
@@ -26,7 +28,8 @@ pro gsc_record__define
      CLASS:   0, $
      RA_DEG:  float(0), $
      DEC_DEG: float(0), $
-     MAG:     float(0) $
+     MAG:     float(0), $
+     MULTIPLE: 0 $
   }
 
 end
