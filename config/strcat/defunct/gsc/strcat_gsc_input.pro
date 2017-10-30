@@ -34,8 +34,8 @@
 ; Stars are found in a square area in RA and DEC around a given
 ; or calculated center.  The star descriptor is filled with stars
 ; that fit in this area.  If B1950 is selected, input ods orient 
-;	matrix is assumed to be B1950 also, if not, input is assumed to be
-;	J2000, like the catalog.  
+; matrix is assumed to be B1950 also, if not, input is assumed to be
+; J2000, like the catalog.  
 ;
 ; :Private:
 ;
@@ -46,6 +46,8 @@
 ;    Written by:     Vance Haemmerle, 3/2000 (pg_get_stars_gsc.pro)
 ;
 ;    Modified:       Spitale 9/2001 - changed to strcat_gsc_input.pro
+;
+;    Modified:       Vance Haemmerle, 9/2017 - changed to compressed GSC format
 ;
 ;-
 ;===============================================================================
@@ -115,6 +117,212 @@ end
 
 
 
+;===============================================================================
+;+
+; :Private:
+; :Hidden:
+;
+; Read GSC regions.dat database (collection of file headers)
+; gsc_unit an IDL file unit number
+;-
+;===============================================================================
+function gsc_read_regions, gsc_unit
+
+ temp = make_array(80,value=32b)
+ stemp = string(temp)
+ int_val = 0
+ dbl_val = double(0)
+ region = {gsc_region}
+
+ while ~EOF(gsc_unit) do begin
+   readf, gsc_unit, stemp
+   values = STRSPLIT(stemp, /EXTRACT)
+   reads, values(2), int_val
+   region.REG_NO = int_val
+   reads, values(4), dbl_val
+   region.RA_LOW = dbl_val
+   reads, values(5), dbl_val
+   region.RA_HI = dbl_val
+   reads, values(6), dbl_val
+   region.DEC_LO = dbl_val
+   reads, values(7), dbl_val
+   region.DEC_HI = dbl_val
+   if (gsc_region_table EQ !NULL) then gsc_region_table = region $
+   else gsc_region_table = [gsc_region_table, region]
+ endwhile
+
+ return, gsc_region_table
+end
+;===============================================================================
+
+
+
+
+;===============================================================================
+;+
+; :Private:
+; :Hidden:
+;
+; Given a GSC region filename, read the header
+; gsc_unit is IDL file unit number
+;-
+;===============================================================================
+function gsc_read_header, gsc_unit
+
+ point_lun, gsc_unit, 0
+ header = {gsc_header}
+
+ temp = make_array(256,value=32b)
+ stemp = string(temp)
+ readf, gsc_unit, stemp
+ point_lun, gsc_unit, 0
+
+ int_val = 0
+ dbl_val = double(0)
+
+ values = STRSPLIT(stemp, /EXTRACT)
+ reads, values(0), int_val
+ header.LEN = int_val
+ reads, values(1), int_val
+ header.VERS = int_val
+ reads, values(2), int_val
+ header.REGION = int_val
+ reads, values(3), int_val
+ header.NOBJ = int_val
+ reads, values(4), dbl_val
+ header.AMIN = dbl_val
+ reads, values(5), dbl_val
+ header.AMAX = dbl_val
+ reads, values(6), dbl_val
+ header.DMIN = dbl_val
+ reads, values(7), dbl_val
+ header.DMAX = dbl_val
+ reads, values(8), dbl_val
+ header.MAGOFF = dbl_val
+ reads, values(9), dbl_val
+ header.SCALE_RA = dbl_val
+ reads, values(10), dbl_val
+ header.SCALE_DEC = dbl_val
+ reads, values(11), dbl_val
+ header.SCALE_POS = dbl_val
+ reads, values(12), dbl_val
+ header.SCALE_MAG = dbl_val
+ reads, values(13), int_val
+ header.NPL = int_val
+ header.LIST = values(14)
+ for i = 15, n_elements(values)-1 DO header.LIST = header.LIST + ' ' + values(i) 
+
+ return, header
+end
+;===============================================================================
+
+
+
+
+;===============================================================================
+;+
+; :Private:
+; :Hidden:
+;
+; Given a GSC region filename, read the stars
+; gsc_unit is IDL file unit number
+;-
+;===============================================================================
+function gsc_read_stars, gsc_unit
+
+ header = gsc_read_header(gsc_unit)
+ nstars = header.nobj
+ stars = replicate({gsc_record},nstars)
+
+ point_lun, gsc_unit, header.len
+ data = bytarr(12)
+
+ FOR i = 0, nstars-1 DO BEGIN
+   readu, gsc_unit, data
+   ; Decode GSC_ID, 15 bits (documentation says 14), data 0, 1
+   part1 = data(0) MOD 127
+   stars(i).GSC_ID = part1*2^7 + data(1)/2
+
+   ; Decode RA, 22 bits, data 1, 2, 3, 4
+   part1 = data(1) AND 1
+   RA = LONG(part1)*(LONG(2)^21) + LONG(data(2))*(LONG(2)^13) + LONG(data(3))*2^5 + LONG(data(4))/2^3
+   stars(i).RA_DEG = RA/header.SCALE_RA + header.AMIN
+   if (stars(i).RA_DEG LT 0.) then stars(i).RA_DEG = stars(i).RA_DEG + 360.
+   if (stars(i).RA_DEG GE 360.) then stars(i).RA_DEG = stars(i).RA_DEG - 360.
+
+   ; Decode DEC, 19 bits, data, 4, 5, 6
+   part1 = data(4) AND 7
+   DEC = LONG(part1)*(LONG(2)^16) + LONG(data(5))*2^8 + LONG(data(6))
+   stars(i).DEC_DEG = DEC/header.SCALE_DEC + header.DMIN
+
+   ; Pos-error 9 bits, data 7, 8
+   ; mag-error 7 bits, data 8
+   ; Decode magnitude, data 9, 10
+   MAG = data(9)*2^3 + data(10)/2^5
+   stars(i).MAG = MAG/header.SCALE_MAG + header.MAGOFF
+
+   ; mag-band 4 bits, data 10
+   ; multiple 1 bit, data 10
+   stars(i).MULTIPLE = data(10) AND 1
+   ; Decode class 3 bits, data 11
+   part1 = data(11)/2^4
+   stars(i).CLASS = part1 MOD 7
+
+   ; plate-id 4 bits, data 11
+
+ ENDFOR
+
+ return, stars
+end
+;===============================================================================
+
+
+
+
+;===============================================================================
+;+
+; :Private:
+; :Hidden:
+;
+; Given a GSC region star records, average the duplicates 
+; records is an array of GSC star records, MULTIPLE indicates muliples 
+;-
+;===============================================================================
+function gsc_remove_dups, records
+
+ ; Find unique IDs
+ w = WHERE(records.MULTIPLE EQ 0, count)
+ if(count NE 0) then stars = records[w]
+
+ ; Find duplicates
+ w = WHERE(records.MULTIPLE EQ 1, count)
+ if(count EQ 0) then return, stars
+ dups = records[w]
+
+ ; Find unique IDs
+ w = uniq(dups.GSC_ID, sort(dups.GSC_ID))
+ ids = dups[w].GSC_ID
+
+ FOR i = 0, n_elements(ids)-1 DO BEGIN
+   new_record = {gsc_record}
+   entry = WHERE(dups.GSC_ID EQ ids[i], count)
+   new_record.GSC_ID = ids[i]
+   new_record.CLASS = dups(entry(0)).CLASS
+   new_record.RA_DEG = total(dups(entry).RA_DEG)/n_elements(entry)
+   new_record.DEC_DEG = total(dups(entry).DEC_DEG)/n_elements(entry)
+   new_record.MAG = total(dups(entry).MAG)/n_elements(entry) 
+   new_record.MULTIPLE = 1
+   if(stars EQ !NULL) then stars = new_record $
+   else stars = [stars, new_record]
+ ENDFOR
+
+ return, stars
+end
+;===============================================================================
+
+
+
+
 ;==============================================================================
 ;+
 ; :Private:
@@ -125,7 +333,34 @@ end
 ; these regions.
 ;-
 ;==============================================================================
-function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
+function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc, b1950=b1950
+
+  ;---------------------------------------------------------
+  ; For range testing, need to have limits in j2000 since
+  ; star positions in catalog are in j2000 
+  ; If /b1950 is specified, then convert range to j2000
+  ;---------------------------------------------------------
+  _ra1 = ra1
+  _ra2 = ra2
+  _dec1 = dec1
+  _dec2 = dec2
+  if (keyword_set(b1950)) then $
+    begin
+     ; If ra1/ra2 is entire range then do not change
+     ; declination change is not enough to update
+     if (ra1 NE 0. OR ra2 NE 360.) then $
+       begin
+         nv_message, verb=0.9, 'Converting RA/DEC to J2000 (catalog epoch) for range testing'
+         ra_to_xyz, ra1, dec1, pos1
+         ra_to_xyz, ra2, dec2, pos2
+         pos1_1950 = b1950_to_j2000(pos1)
+         pos2_1950 = b1950_to_j2000(pos2)
+         xyz_to_ra, pos1_1950, _ra1, _dec1
+         xyz_to_ra, pos2_1950, _ra2, _dec2
+         if (_ra1 LT 0) then _ra1 = _ra1 + 360d
+         if (_ra2 LT 0 ) then _ra2 = _ra2 + 360d
+       end
+    end
 
   ; Initialize the directory name for each zone
   zdir = strarr(24)
@@ -134,7 +369,7 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
   num_regions = 0
 
   if(NOT keyword__set(path_gsc)) then path_gsc = getenv('NV_GSC_DATA')
-  region_file = path_gsc + "/" + "regions.index"
+  region_file = path_gsc + "/" + "regions.dat"
   if(!VERSION.OS eq 'vms') then $
    begin
     len = strlen(path_gsc)
@@ -142,12 +377,12 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
     if(lastchar eq ']' or lastchar eq ':') then $
       region_file = path_gsc + "regions.index"
     if(lastchar eq '.') then region_file = $
-     strmid(path_gsc,0,len-1) + "]" + "regions.index"
+     strmid(path_gsc,0,len-1) + "]" + "regions.dat"
    end
 
   get_lun, lun
   openr, lun, region_file
-  gsc_region_table = assoc(lun,{gsc_region})
+  gsc_region_table = gsc_read_regions(lun)
 
   region_list = ''
   for row = 0, rows-1 do begin
@@ -157,70 +392,63 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc
     ; Declination range of the GS region
     ; Note:  southern dechi and declow are reversed
     dechi = region_table.DEC_HI
-    byteorder, dechi, /XDRTOF
 
-    if (dechi gt 0 and dechi lt dec1) then begin
+    if (dechi gt 0 and dechi lt _dec1) then begin
       goto,next
-    endif else if (dechi lt 0 and dechi gt dec2) then begin
+    endif else if (dechi lt 0 and dechi gt _dec2) then begin
       goto,next
     endif
 
     ; Limit of GS region closer to equator
     declow = region_table.DEC_LO
-    byteorder, declow, /XDRTOF
 
     if (declow gt 0) then begin
       ; North
-      if (declow gt dec2) then goto,next
+      if (declow gt _dec2) then goto,next
     endif else if (declow lt 0) then  begin
       ; South
-      if (declow le dec1) then goto, next
+      if (declow le _dec1) then goto, next
     endif else begin
       ; Lower limit of GS region ON equator
       if (dechi gt 0) then begin
         ; North
-        if (dechi lt dec1 or declow gt dec2) then goto, next
+        if (dechi lt _dec1 or declow gt _dec2) then goto, next
       endif else if (dechi < 0) then begin
         ; South
-        if (dechi gt dec2 or declow lt dec1) then goto, next
+        if (dechi gt _dec2 or declow lt _dec1) then goto, next
       endif
     endelse
 
     ; Right ascension range of the GS region
-    if (ra1 lt ra2) then begin
+    if (_ra1 lt _ra2) then begin
       ; 0 R.A. not in region
 
       ralow = region_table.RA_LOW
-      byteorder, ralow, /XDRTOF
-      if (ralow gt ra2) then goto, next
+      if (ralow gt _ra2) then goto, next
 
       rahi = region_table.RA_HI
-      byteorder, rahi, /XDRTOF
       if (ralow gt rahi) then rahi = rahi + 360.0
-      if (rahi lt ra1) then goto, next
+      if (rahi lt _ra1) then goto, next
 
     endif else begin
 
       ; 0 R.A. in region
       ralow = region_table.RA_LOW
-      byteorder, ralow, /XDRTOF
       rahi = region_table.RA_HI
-      byteorder, rahi, /XDRTOF
 
       if (ralow gt rahi) then rahi = rahi + 360.0
-      if (ralow gt ra2 and rahi lt ra1) then goto, next
+      if (ralow gt _ra2 and rahi lt _ra1) then goto, next
 
     endelse
 
     ; Region number
     regnum = region_table.REG_NO
-    byteorder, regnum, /NTOHS
 
     ; Zone number => directory name
     zone = gsc_fzone (declow, dechi)
 
     ; Build the file name
-    root = string(format='(i4.4,".str")',regnum)
+    root = string(format='(i4.4,".GSC")',regnum)
 
     path = string(format='(a,"/",a,"/")',path_gsc,zdir(zone-1))
     if(!VERSION.OS eq 'vms') then $
@@ -260,7 +488,7 @@ end
 ; region (ra1 - ra2) and (dec1 - dec2) into a star descriptor.
 ;-
 ;===============================================================================
-function gsc_get_stars, filename, $
+function gsc_get_stars, dd, filename, $
          b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
          faint=faint, bright=bright, nbright=nbright, $
          names=names, mag=mag, jtime=jtime
@@ -272,19 +500,46 @@ function gsc_get_stars, filename, $
    return, ''
   end
 
+ ;---------------------------------------------------------
+ ; For range testing, need to have limits in j2000 since
+ ; star positions in catalog are in j2000 
+ ; If /b1950 is specified, then convert range to j2000
+ ;---------------------------------------------------------
+ _ra1 = ra1
+ _ra2 = ra2
+ _dec1 = dec1
+ _dec2 = dec2
+ if (keyword_set(b1950)) then $
+   begin
+     ; If ra1/ra2 is entire range then do not change
+     ; declination change is not enough to update
+     if (ra1 NE 0. OR ra2 NE 360.) then $
+       begin
+         nv_message, verb=0.9, 'Converting RA/DEC to J2000 (catalog epoch) for range testing'
+         ra_to_xyz, ra1, dec1, pos1
+         ra_to_xyz, ra2, dec2, pos2
+         pos1_1950 = b1950_to_j2000(pos1)
+         pos2_1950 = b1950_to_j2000(pos2)
+         xyz_to_ra, pos1_1950, _ra1, _dec1
+         xyz_to_ra, pos2_1950, _ra2, _dec2
+         if (_ra1 LT 0) then _ra1 = _ra1 + 360d
+         if (_ra2 LT 0 ) then _ra2 = _ra2 + 360d
+       end
+   end
+ nv_message, verb=0.9, '_ra1 = ' + strtrim(string(_ra1),2) + ', _ra2= ' + strtrim(string(_ra2),2)
+
  ;----------------------------------------------
- ; Open file, expected name ends with "nnnn.str"
+ ; Open file, expected name ends with "nnnn.GSC"
  ; where nnnn is the gsc region
  ;----------------------------------------------
- start = strpos(filename,'.str') - 4
+ start = strpos(filename,'.GSC') - 4
  gsc_region = strmid(filename,start,4)
  openr, gsc_unit, filename, /get_lun
- info = fstat(gsc_unit)
- nstars = info.size/16
- stars = replicate({gsc_record},nstars)
- readu, gsc_unit, stars
+ records = gsc_read_stars(gsc_unit)
  close, gsc_unit
  free_lun, gsc_unit
+ stars = gsc_remove_dups(records)
+ nstars = n_elements(stars)
 
  ;-------------------------------------
  ; select within magnitude limits
@@ -292,9 +547,7 @@ function gsc_get_stars, filename, $
  if(n_elements(faint) NE 0) then $
   begin
    faint = double(faint)
-   mag = stars.mag
-   byteorder, mag, /XDRTOF
-   w = where(mag LE faint)
+   w = where(stars.mag LE faint)
    if(w[0] NE -1) then _stars = stars[w]
    if(NOT keyword__set(_stars)) then return, ''
    stars = _stars
@@ -303,86 +556,35 @@ function gsc_get_stars, filename, $
  if(n_elements(bright) NE 0) then $
   begin
    bright = double(bright)
-   mag = stars.mag
-   byteorder, mag, /XDRTOF
-   w = where(mag GE bright)
+   w = where(stars.mag GE bright)
    if(w[0] NE -1) then __stars = stars[w]
    if(NOT keyword__set(__stars)) then return, ''
    stars = __stars
   end
 
- ;-------------------------
- ; Unpack the star array
- ;-------------------------
- RA_DEG = stars.RA_DEG
- DEC_DEG = stars.DEC_DEG
- Mag = stars.MAG
- ID = stars.GSC_ID
- CLASS = stars.CLASS
- byteorder, RA_DEG, /XDRTOF
- byteorder, DEC_DEG, /XDRTOF
- byteorder, Mag, /XDRTOF
- byteorder, ID, /NTOHS
- byteorder, CLASS, /NTOHS
-
  ;------------------------------------------------------------------
  ; If limits are defined, remove stars that fall outside the limits
  ; Limits in deg, Assumes RA's + DEC's in J2000 (B1950 if /b1950)
  ;------------------------------------------------------------------
-; *** need to use strcat_radec_regions (see strcat_tycho2_input) ***
- if(keyword__set(dec1) and keyword__set(dec2)) then $
-   begin
-    subs = where(DEC_DEG ge dec1 and DEC_DEG le dec2, count)
-    if(count eq 0) then return, ''
-    RA_DEG = RA_DEG[subs]
-    DEC_DEG = DEC_DEG[subs]
-    Mag = Mag[subs]
-    ID = ID[subs]
-    CLASS = CLASS[subs]
-    stars = stars[subs]
-   end
-
- if(keyword__set(ra1) and keyword__set(ra2)) then $
-   begin
-    if(ra1 lt ra2) then begin
-      ; 0 R.A. not in the region
-      subs = where(RA_DEG ge ra1 and RA_DEG le ra2, count)      
-      ; Outside R.A. limits
-    endif else begin
-      ; 0 R.A. is in the region
-      subs = where(RA_DEG ge ra1 or RA_DEG le ra2, count)
-      ; Outside R.A. limits
-    endelse
-    if(count eq 0) then return, ''
-    RA_DEG = RA_DEG[subs]
-    DEC_DEG = DEC_DEG[subs]
-    Mag = Mag[subs]
-    ID = ID[subs]
-    CLASS = CLASS[subs]
-    stars = stars[subs]
-   end
-
- RA = RA_DEG*!DPI/180d0
- DEC = DEC_DEG*!DPI/180d0
- gsc_id = STRING(ID+100000)
- gsc_id = strmid(strtrim(gsc_id,2),1,5) 
- Name = "GSC " + gsc_region + " " + gsc_id
- Sp = strtrim(STRING(CLASS),2)
+ w = strcat_radec_select([_ra1, _ra2]*!dpi/180d, [_dec1, _dec2]*!dpi/180d, $
+                                     stars.ra_deg*!dpi/180d, stars.dec_deg*!dpi/180d)
+ if(w[0] EQ -1) then return, ''
+ stars = stars[w]
 
  ;-----------------------------------------------------------
  ; if desired, select only nbright brightest stars
  ;-----------------------------------------------------------
  if(keyword__set(nbright)) then $
   begin
-   mag = stars.mag
-   byteorder, mag, /XDRTOF
-   w = strcat_nbright(mag, nbright)
+   w = strcat_nbright(stars.mag, nbright)
    stars = stars[w]
   end
 
  ;-------------------------------------
  ; select named stars
  ;-------------------------------------
+ gsc_id = strtrim(string(stars.GSC_ID,format='(I05)'),2)
+ Name = "GSC " + gsc_region + " " + gsc_id
  if(keyword__set(names)) then $
   begin
    w = where(names EQ name)
@@ -390,6 +592,12 @@ function gsc_get_stars, filename, $
    if(NOT keyword__set(_stars)) then return, ''
    stars = _stars
   end
+
+ RA = stars.RA_DEG*!DPI/180d0
+ DEC = stars.DEC_DEG*!DPI/180d0
+ gsc_id = strtrim(string(stars.GSC_ID,format='(I05)'),2)
+ Name = "GSC " + gsc_region + " " + gsc_id
+ Sp = strtrim(STRING(stars.CLASS),2)
 
  ;----------------------
  ; Fill star descriptors
@@ -411,12 +619,12 @@ function gsc_get_stars, filename, $
  lora = make_array(n, value=0d)
 
  ;--------------------------------------------------------
- ; Apply proper motion to star 
+ ; Apply proper motion to star (no proper motion info for GSC)
  ; JTIME = years past 2000.0
  ; RApm and DECpm = milliarcseconds per year
  ;--------------------------------------------------------
- RA = RA + ((double(RApm)*JTIME/3.6e6)*!DTOR) / cos(DEC)
- DEC = DEC + (double(DECpm)*JTIME/3.6e6)*!DTOR
+ ;RA = RA + ((double(RApm)*JTIME/3.6e6)*!DTOR) / cos(DEC)
+ ;DEC = DEC + (double(DECpm)*JTIME/3.6e6)*!DTOR
 
 
  ;-----------------------------------------------------
@@ -445,9 +653,11 @@ function gsc_get_stars, filename, $
  ; distance is 10pc mv = Mv
  ;-------------------------------------------------------
  Lsun = const_get('Lsun')
- lum = Lsun * 10.d^( (4.83d0-double(Mag))/2.5d ) 
+ mag = stars.mag
+ lum = Lsun * 10.d^( (4.83d0-double(mag))/2.5d ) 
 
  _sd = str_create_descriptors( n, $
+        gd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
         avel=avel, $
