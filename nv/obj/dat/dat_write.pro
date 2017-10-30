@@ -21,11 +21,14 @@
 ;  INPUT:
 ;	filespec:	Array of strings giving file specifications for
 ;			file to write.  Data descriptor filespec is
-;			updated unless /override.
+;			updated unless /override. 
 ;
 ;	dd:		Array of data descriptors.  dd can also be given as the
 ;			first argument, in which case, the file specifications
-;			are taken from the filename field of dd.
+;			are taken from the filename field of dd.  If number of
+;			dd does not match the number of filespecs, then it is
+;			assumed that all dd are intended to be written to the
+;			first file resulting from the first filespec.
 ;
 ;  OUTPUT: NONE
 ;

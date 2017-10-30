@@ -62,9 +62,9 @@ function detect_pds, dd
  ;===================================
  ; check for pds label 
  ;===================================
- if(strpos(s,'PDS_VERSION_ID') NE -1) then status = 1
- if(strpos(s,'SFDU_LABEL') NE -1) then status = 1
- if(strpos(s,'XV_COMPATIBILITY') NE -1) then status = 1
+ if(strpos(s[0], 'PDS_VERSION_ID') NE -1) then status = 1
+ if(strpos(s[0], 'SFDU_LABEL') NE -1) then status = 1
+ if(strpos(s[0], 'XV_COMPATIBILITY') NE -1) then status = 1
 
 
  return, status

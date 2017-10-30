@@ -62,7 +62,7 @@ function detect_mask, dd
  ;===================================
  ; check for indicator string
  ;===================================
- if(s EQ 'mask') then status=1
+ if(s[0] EQ 'mask') then status=1
 
 
  return, status

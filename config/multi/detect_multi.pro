@@ -60,7 +60,7 @@ function detect_multi, dd
  ;===================================
  ; check for indicator string
  ;===================================
- if(s EQ '___MULTI___') then status = 1
+ if(s[0] EQ '___MULTI___') then status = 1
 
 
  return, status

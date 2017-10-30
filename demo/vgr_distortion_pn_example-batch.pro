@@ -1,5 +1,5 @@
 ;=======================================================================
-;                            VOYAGER_PN_EXAMPLE.PRO
+;                            VOYAGER_DISTORTION_PN_EXAMPLE.PRO
 ;
 ;  Created by Joe Spitale
 ;

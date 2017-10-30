@@ -61,7 +61,7 @@ function detect_isis, dd
  ;==============================
  ; check for indicator string
  ;==============================
- if(strpos(s, 'CCSD') EQ 0) then status=1
+ if(strpos(s[0], 'CCSD') EQ 0) then status=1
 
 
 

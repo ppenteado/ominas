@@ -27,7 +27,7 @@ function detect_tdl, dd
  ;===================================
  ; check for label field
  ;===================================
- if(strpos(s, 'TDL_LBLSIZE') NE -1) then status=1
+ if(strpos(s[0], 'TDL_LBLSIZE') NE -1) then status=1
 
 
  return, status
