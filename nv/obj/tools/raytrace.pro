@@ -35,54 +35,49 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	cd:	       Camera descriptor.
+;	cd:	        Camera descriptor.
 ;
-;	bx:	       Array of object descriptors; must be a subclass of BODY.
+;	bx:	        Array of object descriptors; must be a subclass of BODY.
 ;
-;	sbx:           Body descriptor for secondary ray tracing.  If set, 
-;	               image_pts and cd are not used; instead, secondary rays 
-;	               are traced from the given hit_matrix points to sbx.
-;	               At present, only one sbx is allowed.
+;	sbx:            Body descriptor for secondary ray tracing.  If set, 
+;	                image_pts and cd are not used; instead, secondary rays 
+;	                are traced from the given hit_matrix points to sbx.
+;	                At present, only one sbx is allowed.
 ;
-;	hit_matrix:    Body-frame points from prior call, to be used as
-;	               source points for secondary rays.  
+;	hit_matrix:     Body-frame points from prior call, to be used as
+;	                source points for secondary rays.  
 ;
-;	hit_indices:   Body index for each secondary ray.
+;	hit_indices:    Body index for each secondary ray.
 ;
-;	limit_source : If set, secondary vectors originating on a given
-;	               body are not considered for targets that are the
-;	               same body.  Default is off.
+;	limit_source :  If set, secondary vectors originating on a given
+;	                body are not considered for targets that are the
+;	                same body.  Default is off.
 ;
-;	standoff:      If given, secondary vectors are advanced by this distance
-;	               before tracing in order to avoid hitting target bodies
-;	               through round-off error.  Default is 1 unit.
+;	standoff:       If given, secondary vectors are advanced by this distance
+;	                before tracing in order to avoid hitting target bodies
+;	                through round-off error.  Default is 1 unit.
 ;
-;	numbra:        Number of rays to trace to the secondary bodies.
-;	               Default is 1.  The first ray is traced to the body
-;	               center; wach additional ray is traced to a random point 
-;	               within the body.
+;	cloud_pts:	If present and (defined), secondary rays are traced to 
+;			random points within in the secondary body rather than 
+;			its center, and their inertial coordinates are returned 
+;			in this output.
 ;
 ;  OUTPUT: 
-;	hit_list:     Array (nhit) giving indices of all bx that have ray 
-;	              intersections.  
+;	hit_list:      Array (nhit) giving indices of all bx that have ray 
+;	               intersections.  
 ;
-;	hit_indices:  Array (nray) of body indices corresponding to the first 
-;	              intersection for each ray.  
+;	hit_indices:   Array (nray) of body indices corresponding to the first 
+;	               intersection for each ray.  
 ;
-;	hit_matrix:   Array (nray,3,nhit) of body-frame points for nearest 
-;	              ray intersections. 
+;	hit_matrix:    Array (nray,3,nhit) of body-frame points for nearest 
+;	               ray intersections. 
 ;
-;	range_matrix: Array (nhit,nray) giving distance to the near-side
-;	              ray intersection for each body in the hit_matrix.  
+;	range_matrix:  Array (nhit,nray) giving distance to the near-side
+;	               ray intersection for each body in the hit_matrix.  
 ;
-;	far_matrix:   Array (nray,3,nhit) of body-frame points for all
-;	              far-side intersections with bodies in the hit_list.
-;
-;	near_matrix:  Array (nray,3,nhit) of body-frame points for all
-;	              near-side intersections with bodies in the hit_list.
-;
-;	shadow_matrix:Array (nray) of "shadow levels" for each ray, based
-;	              on mulitple ray tracings to the secondary bodies.
+;	back_matrix:   Array (nray,3,nhit) of body-frame points for additional
+;	               intersections with bodies in the hit_list, in order
+;	               of distance.
 ;
 ;
 ; RETURN: NONE
@@ -113,8 +108,8 @@
 ;=============================================================================
 pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
         hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-        far_matrix=far_matrix, near_matrix=near_matrix, $
-        back=back, standoff=standoff, limit_source=limit_source, show=show
+        back_matrix=back_matrix, src_hit_indices=src_hit_indices, $
+        standoff=standoff, limit_source=limit_source, show=show
 
 ;hit_matrix = 0
 ;range_matrix =0
@@ -123,20 +118,20 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
  nbx = n_elements(bx)
 
  hit_matrix = dblarr(nray,3)
- far_matrix = dblarr(nray,3)
+ back_matrix = dblarr(nray,3)
  range_matrix = make_array(nray, val=1d100)
  hit_indices = make_array(nray,val=-1)
 
  v = dblarr(nray,3)
  r = dblarr(nray,3)
  hits = dblarr(nray,3)
- fhits = dblarr(nray,3)
+ back_hits = dblarr(nray,3)
  mark = bytarr(nray)
 
  ;- - - - - - - - - - - - - - - - - - -
  ; check each body
  ;- - - - - - - - - - - - - - - - - - -
- for i=0, nbx-1 do $
+ for i=0, nbx-1 do if(obj_valid(bx[i])) then $
   begin
    mark[select] = 1
 
@@ -173,12 +168,12 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; trace the rays
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     p = surface_intersect(bx[i], v[ii,*], r[ii,*], hit=hit)
-     if(keyword_set(p)) then $
+     hit_pts = surface_intersect(bx[i], v[ii,*], r[ii,*], hit=hit, back_pts=back_pts)
+     if(keyword_set(hit_pts)) then $
       begin
        nii = n_elements(ii)
-       hits[ii,*] = p[0:nii-1,*]
-       fhits[ii,*] = p[nii:*,*]
+       hits[ii,*] = hit_pts
+       if(keyword_set(back_pts)) then back_hits[ii,*] = back_pts
 
        ;- - - - - - - - - - - - - - - - - - - - - - - - - -
        ; add closest result to intercept map
@@ -186,30 +181,13 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
        if(hit[0] NE -1) then $
         begin
          hit = ii[hit]
-
-
-
-;         range = v_mag(v - hits)
-;         xhit = complement(range, hit)
-;         if(xhit[0] NE -1) then range[xhit] = 1d100
-
-;         hit_list = append_array(hit_list, i, /pos)
-;         hit_matrix = $
-;           append_array(hit_matrix, reform(hits, 1,3,nray,/over))
-;         range_matrix = $
-;                 append_array(range_matrix, reform(range, 1,nray, /over))
-
-
-
-
-
          range = v_mag(v[hit,*] - hits[hit,*])
          ww = where(range LT range_matrix[hit])
 
          if(ww[0] NE -1) then $
           begin
            hit_matrix[hit[ww],*] = hits[hit[ww],*]
-           far_matrix[hit[ww],*] = fhits[hit[ww],*]
+           back_matrix[hit[ww],*] = back_hits[hit[ww],*]
            hit_indices[hit[ww]] = i
            hit_list = append_array(hit_list, i, /pos)
            range_matrix[hit[ww]] = range[ww]
@@ -218,9 +196,6 @@ pro rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
       end
     end
   end
-
-;if(keyword_set(hit_matrix)) then $
-;                            hit_matrix = transpose(hit_matrix)
 
 
 end
@@ -233,11 +208,10 @@ end
 ;
 ;=============================================================================
 pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
-               hit_matrix=hit_matrix, show=show, numbra=numbra, $
-               hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-               far_matrix=far_matrix, near_matrix=near_matrix, $
-               shadow_matrix=shadow_matrix, $
-               back=back, standoff=standoff, limit_source=limit_source
+               hit_matrix=hit_matrix, show=show, cloud_pts=cloud_pts, $
+               hit_indices=hit_indices, range_matrix=range_matrix, $
+               hit_list=hit_list, back_matrix=back_matrix, $
+               standoff=standoff, limit_source=limit_source
 
  show = keyword_set(show)
  if(NOT keyword_set(all_bx)) then return
@@ -248,11 +222,10 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
 
  if(NOT defined(standoff)) then standoff = 1d
  if(NOT defined(limit_source)) then limit_source = 0
- if(NOT defined(numbra)) then numbra = 1
 
 
  ;---------------------------------------------
- ; set up for primary trace
+ ; primary trace
  ;---------------------------------------------
  if(keyword_set(cd)) then $
   begin
@@ -266,14 +239,16 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
 
    rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
       hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-      far_matrix=far_matrix, near_matrix=near_matrix, $
-      back=back, standoff=standoff, limit_source=limit_source, show=show
+      back_matrix=back_matrix, $
+      standoff=standoff, limit_source=limit_source, show=show
   end $
  ;---------------------------------------------
- ; set up for secondary trace
+ ; secondary trace
  ;---------------------------------------------
  else if(keyword_set(sbx)) then $
   begin
+   cloud = arg_present(cloud_pts) AND defined(cloud_pts)
+
    ;- - - - - - - - - - - - - - - - - - - - -
    ; select rays to compute
    ;- - - - - - - - - - - - - - - - - - - - -
@@ -299,7 +274,7 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
    ;- - - - - - - - - - - - - - - - - 
    ; compute sources
    ;- - - - - - - - - - - - - - - - - 
-   for i=0, nbx-1 do $
+   for i=0, nbx-1 do if(obj_valid(bx[i])) then $
     begin
      w = where(hit_indices EQ i)
      if(w[0] NE -1) then $
@@ -307,46 +282,33 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; compute termini; for the penumbra calculation, each source traces
+   ; compute termini; for the cloud calculation, each source traces
    ; to a random terminus within the secondary body
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   shadow_matrix = dblarr(nray)
-
    view_pts_select = view_pts[select,*]
    cloud_pts_center = sbx_pos[select,*]
-   for i=0, numbra-1 do $
-    begin
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; compute random termini for numbra > 1
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     if(numbra EQ 1) then cloud_pts = cloud_pts_center $
-      else $
-       begin
-        cloud_pts_body = point_cloud(sbx, nselect)
-        cloud_pts = bod_body_to_inertial_pos(sbx, cloud_pts_body)
-       end
-     ray_pts[select,*] = v_unit(cloud_pts - view_pts_select)
-     src_hit_indices = hit_indices
 
-     ;- - - - - - - - - - - - - - - - - - - - -
-     ; trace
-     ;- - - - - - - - - - - - - - - - - - - - -
-     rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
-        hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-        far_matrix=far_matrix, near_matrix=near_matrix, $
-        back=back, standoff=standoff, limit_source=limit_source, show=show
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; compute random termini for numbra > 1
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(NOT cloud) then cloud_pts = cloud_pts_center $
+    else $
+     begin
+      cloud_pts_body = point_cloud(sbx, nselect)
+      cloud_pts = bod_body_to_inertial_pos(sbx, cloud_pts_body)
+     end
+   ray_pts[select,*] = cloud_pts - view_pts_select
+   src_hit_indices = hit_indices
 
-     ;- - - - - - - - - - - - - - - - - - - - -
-     ; add to shadow matrix
-     ;- - - - - - - - - - - - - - - - - - - - -
-     w = where(hit_indices NE -1)
-     if(w[0] NE -1) then shadow_matrix[w] = shadow_matrix[w] + 1
-    end
-   shadow_matrix = shadow_matrix / numbra
- 
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; trace
+   ;- - - - - - - - - - - - - - - - - - - - -
+   rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
+      hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
+      back_matrix=back_matrix, src_hit_indices=src_hit_indices, $
+      standoff=standoff, limit_source=limit_source, show=show 
   end $
  else nv_message, 'Either cd or sbx must be specified. '
-
 
 
 end

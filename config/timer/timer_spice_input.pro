@@ -95,7 +95,7 @@ function timer_spice_cameras, dd, ref, pos=pos, constants=constants, $
 
  if(NOT keyword_set(time)) then $
   begin
-;;;;   time = timer_spice_time(label, dt=dt, status=status)
+;;;;   time = timer_spice_time(dd, dt=dt, status=status)
    if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    cam_time = time + dt
@@ -168,7 +168,7 @@ function timer_spice_planets, dd, ref, time=time, planets=planets, $
 
  if(NOT keyword_set(time)) then $
   begin
-;;;   time = timer_spice_time(label, dt=dt, status=status)
+;;;   time = timer_spice_time(dd, dt=dt, status=status)
    if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    plt_time = time + dt
@@ -207,7 +207,7 @@ function timer_spice_sun, dd, ref, n_obj=n_obj, dim=dim, constants=constants, $
 
  if(NOT keyword__set(time)) then $
   begin
-;;;   time = timer_spice_time(label, dt=dt, status=status)
+;;;   time = timer_spice_time(dd, dt=dt, status=status)
    if(status NE 0) then return, obj_new()
    time = spice_str2et(time)
    sun_time = time + dt

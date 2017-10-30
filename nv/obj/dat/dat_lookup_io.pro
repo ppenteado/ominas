@@ -51,7 +51,7 @@ pro dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
 
 
  ;=====================================================
- ; read the io table if it doesn't exist
+ ; read the I/O table if it doesn't exist
  ;=====================================================
  stat = 0
  if(NOT keyword_set(*nv_state.io_table_p)) then $
@@ -77,7 +77,7 @@ pro dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
 
 
  ;==============================================================
- ; extract all given translators for this instrument
+ ; extract I/O functions for this instrument
  ;==============================================================
  if(w NE -1) then $
   begin

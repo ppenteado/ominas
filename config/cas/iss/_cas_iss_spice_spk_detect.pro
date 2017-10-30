@@ -170,7 +170,7 @@ common cas_iss_spice_spk_block, data
  ;--------------------------------
  ; get image jd
  ;--------------------------------
-;;; if(NOT keyword_set(time)) then time = cas_iss_spice_time(label)
+;;; if(NOT keyword_set(time)) then time = cas_iss_spice_time(dd)
  jd = spice_et2jed(time)
 
  jd = jd[0]

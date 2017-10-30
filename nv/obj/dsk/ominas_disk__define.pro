@@ -7,10 +7,10 @@ function ominas_disk::init, ii, crd=crd0, bd=bd0, sld=sld0, dkd=dkd0, $
 end_keywords
 @core.include
  
+ if(keyword_set(dkd0)) then struct_assign, dkd0, self
  void = self->ominas_solid::init(ii, crd=crd0, bd=bd0, sld=sld0, $
 @sld__keywords_tree.include
 end_keywords)
- if(keyword_set(dkd0)) then struct_assign, dkd0, self
 
  self.abbrev = 'DSK'
  self.tag = 'DKD'

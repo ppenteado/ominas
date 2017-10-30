@@ -178,7 +178,11 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
  ctmod, top=top
- dim = (dat_dim(plane.dd))[0:1]
+
+;;; dim = (dat_dim(plane.dd))[0:1]
+ dim = dat_dim(plane.dd)
+ if(NOT keyword_set(dim)) then return, 0
+ dim = dim[0:1]
 
  ;---------------------------------------
  ; get all visible planes
@@ -1033,6 +1037,8 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ;-----------------------------------
  ; update menu item sensitivity
  ;-----------------------------------
+ grim_update_menu, grim_data
+
  menu_ids = *grim_data.menu_ids_p
  menu_desc = *grim_data.menu_desc_p
  if(grim_test_map(grim_data, plane=plane)) then $

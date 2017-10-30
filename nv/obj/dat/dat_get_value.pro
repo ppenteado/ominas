@@ -131,7 +131,6 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
 @nv_trs_keywords1_include.pro
 		    end_keywords)
 
-
    ;--------------------------------------
    ; add values to list
    ;--------------------------------------

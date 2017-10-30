@@ -128,4 +128,5 @@ grim, dd, cd=cd, order=0, xsize=768, ysize=768, /activate, $
              'shadow:MOON', $
              'center', $
              'limb:EARTH,MOON', $
-             'planet_grid:EARTH,MOON'], frame='limb', /render_auto
+             'planet_grid:EARTH,MOON'], frame='limb', $
+             /render_auto, /render_sky

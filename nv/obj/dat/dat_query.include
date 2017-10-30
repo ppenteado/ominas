@@ -15,6 +15,7 @@
  if(arg_present(header)) then header = dat_header(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(filename)) then filename = dat_filename(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(filetype)) then filetype = dat_filetype(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(htype)) then htype = dat_htype(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(dim)) then dim = dat_dim(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(typecode)) then typecode = dat_typecode(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(gff)) then gff = dat_gff(_xd, cat=cat, condition=condition, /noevent)

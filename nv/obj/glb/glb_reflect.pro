@@ -34,18 +34,13 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: 
-;	near:	If set, near-side reflections are computed.  This is the default.
-;
-;	far: 	If set, far-side reflections are computed.
+;  INPUT: NONE
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; RETURN: 
-;	Array (2*nv,3,nt) of points in the BODY frame, where 
-;	int_pts[0:nv-1,*,*] correspond to the near-side reflections
-;	and int_pts[nv:2*nv-1,*,1] correspond to the far side.  Zero 
+;	Array (nv,3,nt) of points in the BODY frame.  Zero 
 ;	vector is returned for points with no solution.
 ;
 ;
@@ -58,7 +53,7 @@
 ;	
 ;-
 ;===========================================================================
-function glb_reflect, gbd, v, r, hit=hit, miss=miss, near=near, far=far, all=all, $
+function glb_reflect, gbd, v, r, hit=hit, miss=miss, all=all, $
           valid=valid, epsilon, niter
 @core.include
 
@@ -66,8 +61,8 @@ function glb_reflect, gbd, v, r, hit=hit, miss=miss, near=near, far=far, all=all
  if(NOT keyword_set(niter)) then niter = 1000
 
  near = keyword_set(near)
- far = keyword_set(far)
- if(NOT far) then near = 1
+ back = keyword_set(back)
+ if(NOT back) then near = 1
 
  nt = 1
  dim = size(v, /dim)
@@ -82,10 +77,7 @@ function glb_reflect, gbd, v, r, hit=hit, miss=miss, near=near, far=far, all=all
  ; initial guess: assume sphere
  ;---------------------------------------------------------
  n = v_unit(ru + vu)				; sphere normal
- p = glb_intersect(gbd, origin, n, $		; trial point on ellipsoid
-                    far=~far, near=~near)	; near, far reversed because 
-						; we're inside the sphere
-
+ p = glb_intersect(gbd, origin, n)
 
  ;---------------------------------------------------------
  ; iterate to find accurate reflection points
@@ -119,8 +111,7 @@ done = 1
      nw = n_elements(w)
      rad = v_mag(p)#make_array(3, val=1d)
      p[w,*,*] = p[w,*,*] + dn[w,*,*]*rad[w,*]
-     p[w,*,*] = glb_intersect(gbd, $
-                         origin[w,*,*], v_unit(p[w,*,*]), far=~far, near=~near)
+     p[w,*,*] = glb_intersect(gbd, origin[w,*,*], v_unit(p[w,*,*]))
     end
 
    nit = nit + 1

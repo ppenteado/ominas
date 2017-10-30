@@ -53,7 +53,8 @@ function grim_xd, plane, class=_class, active=active, inactive=inactive, _ref_ex
 
  if(NOT keyword_set(keys)) then $
   begin
-   xds =  cor_cull([*plane.cd_p, $
+   xds =  cor_cull([*plane.skd_p, $
+                    *plane.cd_p, $
                     *plane.pd_p, $
                     *plane.rd_p, $
                     *plane.sd_p, $
@@ -64,6 +65,7 @@ function grim_xd, plane, class=_class, active=active, inactive=inactive, _ref_ex
   end
 
 
+ if((where(keys EQ 'SKD'))[0] NE -1) then xds = append_array(xds, *plane.skd_p)
  if((where(keys EQ 'CD'))[0] NE -1) then xds = append_array(xds, *plane.cd_p)
  if((where(keys EQ 'MD'))[0] NE -1) then xds = append_array(xds, *plane.md_p)
  if((where(keys EQ 'OD'))[0] NE -1) then xds = append_array(xds, *plane.od_p)
@@ -74,6 +76,7 @@ function grim_xd, plane, class=_class, active=active, inactive=inactive, _ref_ex
  if((where(keys EQ 'ARD'))[0] NE -1) then xds = append_array(xds, *plane.ard_p)
  if((where(keys EQ 'LTD'))[0] NE -1) then xds = append_array(xds, *plane.ltd_p)
 
+ if((where(keys EQ 'SKY'))[0] NE -1) then xds = append_array(xds, *plane.skd_p)
  if((where(keys EQ 'CAMERA'))[0] NE -1) then xds = append_array(xds, *plane.cd_p)
  if((where(keys EQ 'MAP'))[0] NE -1) then xds = append_array(xds, *plane.md_p)
  if((where(keys EQ 'OBSERVER'))[0] NE -1) then xds = append_array(xds, *plane.od_p)
@@ -265,7 +268,8 @@ function grim_gd, plane, class=_class, _ref_extra=keys
 
 ;** return, *plane.gd_p
 
-   gd = {cd:grim_xd(plane, /cd), $
+   gd = {skd:grim_xd(plane, /skd), $
+         cd:grim_xd(plane, /cd), $
          pd:grim_xd(plane, /pd), $
          rd:grim_xd(plane, /rd), $
          ltd:grim_xd(plane, /ltd), $
@@ -380,6 +384,9 @@ function grim_get_body_by_name, name, plane=plane
  if(keyword_set(bx)) then return, bx
 
  bx = grim_get_body_by_name_single(plane.sd_p, name)
+ if(keyword_set(bx)) then return, bx
+
+ bx = grim_get_body_by_name_single(plane.skd_p, name)
  if(keyword_set(bx)) then return, bx
 
  bx = grim_get_body_by_name_single(plane.ltd_p, name)

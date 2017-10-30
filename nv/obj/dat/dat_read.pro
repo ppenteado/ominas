@@ -33,7 +33,9 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	filetype:	Overrides automatic filetype detection.
+;	filetype:	Overrides automatic file type detection.
+;
+;	htype:		Overrides automatic  header type detection.
 ;
 ;	input_fn:	Overrides input function lookup.
 ;
@@ -119,6 +121,7 @@
 ;=============================================================================
 function drd_read, filename, data, header, $
 		  filetype=_filetype, $
+		  htype=_htype, $
 		  input_fn=_input_fn, $
 		  output_fn=_output_fn, $
 		  keyword_fn=_keyword_fn, $
@@ -170,7 +173,6 @@ function drd_read, filename, data, header, $
  if(NOT keyword_set(_filetype)) then $
 	       filetype = dat_detect_filetype(dd, action=action) $
  else filetype = _filetype
-
  if(keyword_set(action)) then if(action EQ 'IGNORE') then return, 0
 
  if(filetype EQ '') then $
@@ -179,11 +181,12 @@ function drd_read, filename, data, header, $
    return, 0
   end
 
+
  ;------------------------
  ; look up I/O functions
  ;------------------------
  if(NOT keyword_set(_input_fn) OR NOT keyword__set(_output_fn)) then $
-		dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
+		     dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
 
  if(keyword_set(_input_fn)) then input_fn = _input_fn
  if(keyword_set(_output_fn)) then output_fn = _output_fn
@@ -266,6 +269,15 @@ function drd_read, filename, data, header, $
          max=max, $
          dim=dim, $
          typecode=typecode
+
+
+   ;------------------------------
+   ; get header type
+   ;------------------------------
+   if(NOT keyword_set(_htype)) then htype = dat_detect_filetype(dd) $
+   else htype = _htype
+   dat_set_htype, dd, htype, /noevent
+
 
    ;-----------------------
    ; instrument

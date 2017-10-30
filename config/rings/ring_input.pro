@@ -341,7 +341,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
 
            dkds = append_array(dkds, dkd_peak[j])
            primaries = append_array(primaries, pds[i])
-           gd = append_array(gd, cor_create_gd(cor_gd(pds[i]), bx0=pds[i]))
+           gd = append_array(gd, cor_create_gd(cor_gd(pds[i]), bx0=pds[i], dd=dd))
            ppds = append_array(ppds, pds[i])
           end
 
@@ -355,7 +355,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
 
            dkds = append_array(dkds, dkd_trough[j])
            primaries = append_array(primaries, pds[i])
-           gd = append_array(gd, cor_create_gd(cor_gd(pds[i]), bx0=pds[i]))
+           gd = append_array(gd, cor_create_gd(cor_gd(pds[i]), bx0=pds[i], dd=dd))
            ppds = append_array(ppds, pds[i])
           end
         end
@@ -392,7 +392,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
          ndkd = n_elements(dkd)
          dkds = append_array(dkds, dkd)
          primaries = append_array(primaries, make_array(n_elements(dkd), val=pds[i]))
-         gd = append_array(gd, make_array(ndkd, val=cor_create_gd(cor_gd(pds[i]), bx0=pds[i])))
+         gd = append_array(gd, make_array(ndkd, val=cor_create_gd(cor_gd(pds[i]), bx0=pds[i], dd=dd)))
          ppds = append_array(ppds, make_array(n_elements(dkd), val=pds[i]))
         end
       end

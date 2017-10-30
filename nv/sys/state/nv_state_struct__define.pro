@@ -36,9 +36,9 @@
 ;
 ;	io_table_p:	Pointer to loaded I/O table.
 ;
-;	ftp_detectors_filenames_p:	Pointer to names of filetypes tables.
+;	ftp_detectors_filenames_p:	Pointer to names of file types tables.
 ;
-;	ftp_table_p:	Pointer to loaded filetypes table.
+;	ftp_table_p:	Pointer to loaded s table.
 ;
 ;	ins_detectors_filenames_p:	Pointer to names of instruments 
 ;					tables.
@@ -74,8 +74,8 @@ pro nv_state_struct__define
 	trf_table_p:			ptr_new(), $	; Pointer to transforms table
 	io_filenames_p:			ptr_new(), $	; I/O filename
 	io_table_p:			ptr_new(), $	; Pointer to I/O table
-	ftp_detectors_filenames_p:	ptr_new(), $	; Filetype detectors filename
-	ftp_table_p:			ptr_new(), $	; Pointer to filetypes table
+	ftp_detectors_filenames_p:	ptr_new(), $	; File type detectors filename
+	ftp_table_p:			ptr_new(), $	; Pointer to file types table
 	ins_detectors_filenames_p:	ptr_new(), $	; Instrument detectors filename
 	ins_table_p:			ptr_new(), $	; Pointer to instruments table
 

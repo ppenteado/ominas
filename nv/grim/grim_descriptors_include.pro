@@ -142,7 +142,8 @@ pro grim_rm_xd, plane, xd
  if(NOT keyword_set(xd)) then xd = grim_xd(plane)
  if(NOT keyword_set(xd)) then return
 
- xdps = [plane.cd_p, $
+ xdps = [plane.skd_p, $
+         plane.cd_p, $
          plane.pd_p, $
          plane.rd_p, $
          plane.sd_p, $
@@ -274,7 +275,6 @@ end
 ;
 ;=============================================================================
 pro grim_mark_descriptors, grim_data, all=all, $
-;--     cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, planes=planes, $
      cd=cd, pd=pd, rd=rd, sd=sd, std=std, ard=ard, ltd=ltd, planes=planes, $
      val
 
@@ -325,12 +325,15 @@ pro grim_add_xd, grim_data, xdp, _xd, one=one, $
  xd = cor_associate_gd(_xd, assoc_xd)
  if(NOT keyword_set(xd)) then return
 
+ all_xd = grim_xd(plane)
+
  ;------------------------------------------------------------------------
  ; Cull descriptors such that names are unique.  Remove older
  ; duplicates (unless they are the same object), so new ones replace them. 
  ; If only one descriptor allowed, force remove.
  ;------------------------------------------------------------------------
  if(keyword_set(one)) then xd = xd[0]
+; if(keyword_set(all_xd)) then $
  if(keyword_set(*xdp)) then $
   begin
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -339,6 +342,11 @@ pro grim_add_xd, grim_data, xdp, _xd, one=one, $
    ; Removing originals would cause a problem if any other
    ; objects have them as dependencies.
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;stop
+;all_names = cor_name(all_xd)
+
+
+
    old_names = cor_name(*xdp)
    new_names = cor_name(xd)
 
@@ -361,8 +369,6 @@ pro grim_add_xd, grim_data, xdp, _xd, one=one, $
    ww = nwhere(xdx, xd, rev=ii)
    xdx = rm_list_item(xdx, ww, only=obj_new())   
    xd = rm_list_item(xd, ii, only=obj_new())   
-;   if(keyword_set(xdx)) then $
-;                   grim_rm_descriptor, grim_data, plane=plane, xdp, xdx
    if(keyword_set(xdx)) then grim_rm_xd, plane, xdx
   end
  if(NOT keyword_set(xd)) then return
@@ -377,6 +383,36 @@ pro grim_add_xd, grim_data, xdp, _xd, one=one, $
               nv_notify_register, xd, 'grim_descriptor_notify', $
                                                    scalar_data=grim_data.base
 
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_get_sky
+;
+;=============================================================================
+function grim_get_sky, grim_data, plane=plane
+@grim_constants.common
+
+ if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
+
+ ;------------------------------------------------
+ ; get sky descriptor
+ ;------------------------------------------------
+ grim_message, /clear
+ grim_print, grim_data, 'Getting sky descriptor...'
+ cd = pg_get_sky()
+ grim_message
+
+ ;------------------------------------------------
+ ; if not a map, then cd is camera descriptor
+ ;------------------------------------------------
+ grim_add_xd, grim_data, plane.skd_p, cd, /one 
+ grim_set_plane, grim_data, plane;, pn=plane.pn
+
+
+ return, grim_xd(plane, /skd)
 end
 ;=============================================================================
 
@@ -398,7 +434,7 @@ function grim_get_cameras, grim_data, plane=plane
  cd = grim_xd(plane, /cd)
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if the translator keywords have change, then need to load
+ ; if the translator keywords have changed, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_CAM_TRS')
  if(NOT grim_compare(_trs, plane.cam_trs)) then load = 1
@@ -497,7 +533,7 @@ function grim_get_planets, grim_data, plane=plane, names=names
  if(NOT grim_compare(_names, names)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if the translator keywords have change, then need to load
+ ; if the translator keywords have changed, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_PLT_TRS')
  if(NOT grim_compare(_trs, plane.plt_trs)) then load = 1
@@ -683,7 +719,7 @@ function grim_get_stars, grim_data, plane=plane, names=names
  if(NOT grim_compare(_names, names)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if the translator keywords have change, then need to load
+ ; if the translator keywords have changed, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_STR_TRS')
  if(NOT grim_compare(_trs, trs)) then load = 1
@@ -760,7 +796,7 @@ function grim_get_rings, grim_data, plane=plane, names=names
  if(NOT grim_compare(_names, names)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if the translator keywords have change, then need to load
+ ; if the translator keywords have changed, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_RNG_TRS')
  if(NOT grim_compare(_trs, plane.rng_trs)) then load = 1
@@ -828,7 +864,7 @@ function grim_get_stations, grim_data, plane=plane, names=names
  if(NOT grim_compare(_names, names)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if the translator keywords have change, then need to load
+ ; if the translator keywords have changed, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_STN_TRS')
  if(NOT grim_compare(_trs, plane.stn_trs)) then load = 1
@@ -894,7 +930,7 @@ function grim_get_arrays, grim_data, plane=plane, names=names
  if(NOT grim_compare(_names, names)) then load = 1
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; if the translator keywords have change, then need to load
+ ; if the translator keywords have changed, then need to load
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  _trs = cor_udata(plane.dd, 'GRIM_ARR_TRS')
  if(NOT grim_compare(_trs, plane.arr_trs)) then load = 1
@@ -976,7 +1012,7 @@ end
 ;
 ;=============================================================================
 pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
-       cd=cd, pd=pd, rd=rd, ltd=ltd, sd=sd, ard=ard, std=std, od=od, $
+       skd=skd, cd=cd, pd=pd, rd=rd, ltd=ltd, sd=sd, ard=ard, std=std, od=od, $
        obj_name=obj_name, gd=gd
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
@@ -995,7 +1031,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;----------------------------------------------------------------
  ; load descriptors based on dependencies for this type of object
  ;----------------------------------------------------------------
- cd = (pd = (rd = (ltd = (sd = (std = (ard = (od = 0)))))))
+ skd = (cd = (pd = (rd = (ltd = (sd = (std = (ard = (od = 0))))))))
 
  cd = grim_get_cameras(grim_data, plane=plane)
  if(NOT keyword_set(cd[0])) then return
@@ -1007,6 +1043,8 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
  ;----------------------------------------------------------------
  if(NOT map) then $
   begin
+   skd = grim_get_sky(grim_data, plane=plane)
+
    if((where(dep EQ 'PLANET'))[0] NE -1) then $
     begin
      names = ''
@@ -1031,6 +1069,9 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
    if((where(dep EQ 'LIGHT'))[0] NE -1) then $
            ltd = grim_get_lights(grim_data, plane=plane)
   end $
+ ;----------------------------------------------------------------
+ ; map-only descriptors...
+ ;----------------------------------------------------------------
  else $
   begin
    pd = grim_xd(plane, /pd)
@@ -1058,6 +1099,7 @@ pro grim_load_descriptors, grim_data, name, plane=plane, class=class, $
 
 
  gd = {cd: cd, $
+       skd: skd, $
        pd: pd, $
        rd: rd, $
        ltd: ltd, $
