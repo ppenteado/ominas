@@ -72,7 +72,7 @@ function detect_occ, dd
  ;===================================
  ; check for vicar label 
  ;===================================
- if(strpos(s, 'LBLSIZE') EQ 0) then status = 1
+ if(strpos(s[0], 'LBLSIZE') EQ 0) then status = 1
 
  ;==============================================
  ; if vicar file, then reopen and look at label

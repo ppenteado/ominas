@@ -4,7 +4,7 @@
 ;===========================================================================
 function detect_cas_vims, dd
 
- label = dat_header(dd) 
+ label = (dat_header(dd))[0]
  
  groupre='([[:<:]]GROUP[[:space:]]*=[[:space:]]*ISIS_INSTRUMENT[[:>:]])(.*)'+$
    '([[:<:]]END_GROUP[[:space:]]*=[[:space:]]*ISIS_INSTRUMENT[[:>:]])'

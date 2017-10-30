@@ -4,7 +4,7 @@
 ;===========================================================================
 function detect_cas_iss, dd
 
- label = dat_header(dd) 
+ label = (dat_header(dd))[0]
 
  if( (strpos(label, 'CAS-ISS1') NE -1) $
       OR ((strpos(label, "'ISSNA'") NE -1) AND $
