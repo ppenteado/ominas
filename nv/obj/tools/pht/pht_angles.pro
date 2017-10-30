@@ -30,7 +30,7 @@ pro pht_angles, image_pts, cd, bx, ltd, inertial=inertial, $
    ;-------------------------------
    ; compute points on surface
    ;-------------------------------
-   body_pts = surface_intersect(bx, v, r, hit=valid, /near)
+   body_pts = surface_intersect(bx, v, r, hit=valid)
    if(valid[0] EQ -1) then return
   end
 

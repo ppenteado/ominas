@@ -7,10 +7,10 @@ function ominas_data::init, ii, crd=crd0, dd=dd0, $
 end_keywords
 @core.include
 
+ if(keyword_set(dd0)) then struct_assign, dd0, self
  void = self->ominas_core::init(ii, crd=crd0, $
 @cor__keywords.include
 end_keywords)
- if(keyword_set(dd0)) then struct_assign, dd0, self
 
  self.abbrev = 'DAT'
  self.tag = 'DD'
@@ -61,6 +61,10 @@ end_keywords)
  ;-----------------------
  if(keyword_set(filetype)) then (*self.dd0p).filetype = filetype $
  else (*self.dd0p).filetype = dat_detect_filetype(/default)
+
+ if(keyword_set(htype)) then (*self.dd0p).htype = htype $
+ else (*self.dd0p).htype = dat_detect_filetype(/default)
+
  if(keyword_set(input_fn)) then self.input_fn = input_fn
  if(keyword_set(output_fn)) then self.output_fn = output_fn
  if(keyword_set(keyword_fn)) then self.keyword_fn = keyword_fn
@@ -70,12 +74,9 @@ end_keywords)
  ; instrument
  ;-----------------------
  if(keyword_set(instrument)) then self.instrument = instrument $
- else if(keyword_set(filetype) AND keyword_set(header)) then $
-  begin
-   self.instrument = dat_detect_instrument(header, udata, filetype)
-   if(self.instrument EQ '') then $
+ else self.instrument = dat_detect_instrument(self)
+ if(self.instrument EQ '') then $
                    nv_message, /continue, 'Unable to detect instrument.'
-  end
 
 
  ;-----------------------
@@ -245,7 +246,9 @@ end
 ;
 ;	filename:	Name of data file.
 ;
-;	filetype:	Filetype string determined by dat_detect_filetype.
+;	filetype:	File type string determined by dat_detect_filetype.
+;
+;	htype:		Header type string determined by dat_detect_filetype.
 ;
 ;	input_transforms_p:	Pointer to list of input transform 
 ;				functions determined by dat_lookup_transforms.
@@ -344,8 +347,9 @@ pro dat_dd0_struct__define
 	order_p:		nv_ptr_new(), $	; Pointer to the sample load order array
 
 	filename:		'', $		; Name of source file.
-	filetype:		'', $		; Filetype string
-	typecode:		0b, $		; data type code
+	filetype:		'', $		; File type string
+	htype:			'', $		; Header type string
+	typecode:		0b, $		; Data type code
 
 	gffp:			nv_ptr_new(), $	; GFF pointer
 

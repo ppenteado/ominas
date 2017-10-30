@@ -4,7 +4,7 @@
 ;  Returns ET of center of observation
 ;
 ;===========================================================================
-function cas_radar_spice_time, label, dt=dt, string=string, status=status
+function __cas_radar_spice_time, label, dt=dt, string=string, status=status
 
  status = -1
  startt = pdspar(label, 'START_TIME')
@@ -20,6 +20,28 @@ function cas_radar_spice_time, label, dt=dt, string=string, status=status
 
  if(keyword_set(string)) then return, endt
  return, mean([spice_str2et(startt), spice_str2et(endt)])
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; cas_radar_spice_time
+;
+;  Returns ET of center of observation
+;  dt returns offset applied from shutter close
+;
+;===========================================================================
+function cas_radar_spice_time, dd, dt=dt, string=string, status=status
+
+ status = -1
+ meta = dat_header_info(dd)
+ if(NOT keyword_set(meta)) then return, -1d100
+ status = 0
+
+ dt = meta.dt
+ if(keyword_set(string)) then return, meta.stime
+ return, meta.time
 end
 ;===========================================================================
 

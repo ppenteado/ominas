@@ -28,7 +28,7 @@ function grim_compute_center, map=map, clip=clip, hide=hide, $
 
  grim_message, /clear
 
- gbx = cor_select(bx, 'GLOBE', /class)
+ gbx = cor_select(bx, 'GLOBE', /class, exclude_name='SKY')
  if(NOT keyword_set(gbx)) then return, 0
 
  cd = cor_dereference_gd(gd, /cd)
@@ -86,7 +86,7 @@ function grim_compute_limb, map=map, clip=clip, hide=hide, $
 
  grim_message, /clear
 
- gbx = cor_select(bx, 'GLOBE', /class)
+ gbx = cor_select(bx, 'GLOBE', /class, exclude_name='SKY')
 ;; all_gbx = cor_select(cor_dereference_gd(gd), 'GLOBE', /class)
 ;; all_gbx = cor_dereference_gd(gd, 'GLOBE', /class)
  if(NOT keyword_set(gbx)) then return, 0

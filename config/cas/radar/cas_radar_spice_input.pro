@@ -101,6 +101,23 @@ end
 
 
 ;===========================================================================
+; cas_radar_spice_label_struct__define
+;
+;===========================================================================
+pro cas_radar_spice_label_struct__define
+
+ struct = {cas_radar_spice_label_struct, $
+		dt: 0d, $
+		time: 0d, $
+		stime: '', $
+		target: '' $
+           }
+end
+;===========================================================================
+
+
+
+;===========================================================================
 ; cas_radar_spice_parse_labels
 ;
 ;===========================================================================
@@ -108,27 +125,17 @@ pro cas_radar_spice_parse_labels, dd, _time, target=target
 
  ndd = n_elements(dd)
 
- time = dblarr(ndd)
- target = strarr(ndd)
+ meta0 = {cas_radar_spice_label_struct}
 
  for i=0, ndd-1 do $
   begin
-   label = dat_header(dd[i])
-   if(keyword_set(label)) then $
-    begin
-     ;-----------------------------------
-     ; time
-     ;-----------------------------------
-     if(NOT keyword_set(_time)) then time[i] = cas_radar_spice_time(label)
-
-     ;-----------------------------------
-     ; target
-     ;-----------------------------------
-     target[i] = pdspar(label, 'TARGET_NAME')
-    end
+   _meta = dat_header_info(dd[i])
+   if(NOT keyword_set(_meta)) then _meta = meta0
+   meta = append_array(meta, _meta)
   end
 
- if(NOT keyword_set(_time)) then _time = time
+ if(NOT keyword_set(_time)) then _time = meta.time
+ target = meta.target
 
 end 
 ;=============================================================================

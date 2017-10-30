@@ -7,10 +7,10 @@ function ominas_solid::init, ii, crd=crd0, bd=bd0, sld=sld0, $
 end_keywords
 @core.include
  
+ if(keyword_set(sld0)) then struct_assign, sld0, self
  void = self->ominas_body::init(ii, crd=crd0, bd=bd0, $
 @bod__keywords_tree.include
 end_keywords)
- if(keyword_set(sld0)) then struct_assign, sld0, self
 
  self.abbrev = 'SLD'
  self.tag = 'SLD'
@@ -44,8 +44,8 @@ end_keywords)
    self.albedo = albedo[ii]
   end
 
- if(keyword_set(opacity)) then self.opacity = decrapify(opacity[ii]) $
- else self.opacity = 1d
+; if(keyword_set(opacity)) then self.opacity = decrapify(opacity[ii]) $
+; else self.opacity = 1d
 
 
  return, 1
@@ -130,6 +130,24 @@ end
 ;		  Methods: sld_refl_parm, sld_set_refl_parm
 ;
 ;
+;	extn_fn:  String giving the name of a extinction function to be defined as 
+;		  follows:
+;
+;		  function <name>, p1, p2, parm
+;
+;		  The function should return a value corresponding to the 
+;		  degree of extinction of a light ray traveling between
+;		  body vectrs p1 and p2.
+;
+;		  Methods: sld_extn_fn, sld_set_extn_fn
+;
+;
+;	extn_parm:	Array (npht) of parameters to pass to the extnection
+;			function.
+;
+;		  Methods: sld_extn_parm, sld_set_extn_parm
+;
+;
 ;	albedo:	Bond albedo.
 ;
 ;
@@ -157,9 +175,10 @@ pro ominas_solid__define
 	refl_parm:	 dblarr(npht), $
 	phase_fn:	 '', $	
 	phase_parm:	 dblarr(npht), $
+	extn_fn:	 '', $	
+	extn_parm: 	 dblarr(npht), $
 
 	albedo:		 0d, $			; Bond albedo
-	opacity:	 0d, $			; Opacity 
 
 	;----------------------------------------
 	; dynamical parameters

@@ -7,10 +7,10 @@ function ominas_planet::init, ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, pd=pd0, 
 end_keywords
 @core.include
  
+ if(keyword_set(pd0)) then struct_assign, pd0, self
  void = self->ominas_globe::init(ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, $
 @glb__keywords_tree.include
 end_keywords)
- if(keyword_set(pd0)) then struct_assign, pd0, self
 
  self.abbrev = 'PLT'
  self.tag = 'PD'

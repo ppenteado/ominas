@@ -81,7 +81,7 @@ epsion = 0
  ;------------------------------------------------------------------
  ; determine which rays intersect the body
  ;------------------------------------------------------------------
- int_pts = glb_intersect(gbd, view_pts, ray_pts, /near, hit=sub)
+ int_pts = glb_intersect(gbd, view_pts, ray_pts, hit=sub)
 
  ;---------------------------------------------------------------------
  ; retain intersecting rays that are in front of the body unless /rm

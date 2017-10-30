@@ -18,6 +18,8 @@ function const_mks, name
   'LSUN'  	: return, 3.826d26		; Solar luminosity W
   'MSUN'  	: return, 1.98892d30		; Solar mass kg
   'PARSEC'	: return, 3.085678d16		; Parsec m
+  'LY'	  	: return, 9.2636319d15		; One light year (m)
+   else		: return, !null
  endcase
 
 end

@@ -5,8 +5,9 @@
 ;
 ;
 ; PURPOSE:
-;	Attempts to detect the type of the given file by calling the 
-;	detectors in the filetype detectors table.
+;	Attempts to detect the type of the file (or header) associated with the
+;	given data descriptor by calling the detectors in the filetype detectors 
+;	table.
 ;
 ;
 ; CATEGORY:
@@ -26,17 +27,23 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	default:	If set, the 'default' filetype is returned.
+;	default:	If set, the 'DEFAULT' filetype is returned.
 ;			The default filetype is the first item in the table
 ;			whose action is not 'IGNORE'.
 ;
-;	all:	If set, all filetypes in the table are returned.
+;	all:		If set, all filetypes in the table are returned.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	action:		Action string from matched file type entry.
 ;
 ;
 ; RETURN: 
-;	String giving the filetype, or null string if none detected.
+;	String giving the type, or null string if none detected.  Detector 
+;	functions take a single data descriptor argument and return a string
+;	specifying the type.  If the data descriptor contains a header, then
+;	the header type (htype) must be returned, otherwise the file type
+;	is expected.
+;	
 ;
 ;
 ; STATUS:

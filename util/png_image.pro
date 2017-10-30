@@ -3,16 +3,18 @@
 ;
 ;
 ;==============================================================================
-pro png_image, filename, wnum=wnum, mono=mono, quantize=quantize, order=order
+pro png_image, filename, wnum=wnum, mono=mono, quantize=quantize, order=order, channel=channel
 
  if(defined(wnum)) then wset, wnum
+
+ if(NOT keyword_set(channel)) then channel = 1
 
  if(NOT keyword_set(order)) then order = 1 $
  else order = 0
 
  if(idl_v_chrono(!version.release) GT (idl_v_chrono('5.3'))) then order = 1-order
 
- if(keyword_set(mono)) then xx = tvrd(ch=1, order=order) $
+ if(keyword_set(mono)) then xx = tvrd(ch=channel, order=order) $
  else if(keyword_set(quantize)) then $
   begin
    xx1 = tvrd(ch=1, order=order)
@@ -31,6 +33,7 @@ pro png_image, filename, wnum=wnum, mono=mono, quantize=quantize, order=order
    xx[1,*,*] = xx2
    xx[2,*,*] = xx3
   end
+
 
  write_png, filename, xx, r, g, b
 

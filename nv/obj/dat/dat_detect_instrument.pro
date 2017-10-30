@@ -19,9 +19,7 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:		Data descriptor containing header an filetype.  
-;
-;	filetype:	Filetype from dat_detect_filetype.
+;	dd:		Data descriptor.  
 ;
 ;  OUTPUT: NONE
 ;
@@ -49,8 +47,6 @@ function dat_detect_instrument, dd
 @nv_block.common
 @core.include
 
- filetype = dat_filetype(dd)
-
  ;=====================================================
  ; read the instrument table if it doesn't exist
  ;=====================================================
@@ -76,12 +72,8 @@ function dat_detect_instrument, dd
  for i=0, n_ins-1 do $
   begin
    detect_fn = table[i,0]
-   ftp = table[i,1]
-   if((filetype EQ ftp) OR (ftp EQ '-')) then $
-    begin
-     string = call_function(detect_fn, dd)
-     if(string NE '') then return, string
-    end
+   string = call_function(detect_fn, dd)
+   if(string NE '') then return, string
   end
 
 

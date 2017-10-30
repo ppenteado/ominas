@@ -13,33 +13,46 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	int_pts = surface_intersect(bx, v, r)
+;	int_pts = surface_intersect(bx, view_pts, ray_pts)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	bx:	Array (nt) of any subclass of BODY descriptors with
-;		the expected surface parameters.
+;	bx:		Array (nt) of any subclass of BODY descriptors with
+;			the expected surface parameters.
 ;
-;	v:	Array (nv,3,nt) giving ray origins in the BODY frame.
+;	view_pts:	Array (nv,3,nt) giving ray origins in the BODY frame.
 ;
-;	r:	Array (nv,3,nt) giving ray directions in the BODY frame.
+;	ray_pts:	Array (nv,3,nt) giving ray directions in the BODY frame.
 ;
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	back:	If set, only the "back" points are returned.  If the observer 
+;		is exterior, these are the interesections on the back side
+;		of the body (if applicable); if the observer is interior, these 
+;		intersections are behind the observer.
 ;
-;  OUTPUT: NONE
+;  OUTPUT:
+;	hit:	Array giving the indices of rays that hit the object in 
+;		the forward direction.
+;
+;
+;	back_pts:
+;		Array (nb,3,nt) of "back" points in order of distance from
+;		the observer.  If the observer is exterior, these are the 
+;		intersections on the back side of the body, or those behind
+;		the observer; if the observer is interior, these intersections 
+;		are behind the observer.
 ;
 ;
 ; RETURN: 
-;	Array (2*nv,3,nt) of points in the BODY frame, where 
-;	int_pts[0:nv-1,*,*] correspond to the near-side intersections
-;	and int_pts[nv:2*nv-1,*,1] correspond to the far side.  Zero 
-;	vector is returned for points with no solution.
+;	Array (nv,3,nt) of points in the BODY frame corresponding to the
+;	first intersections with the ray.  Zero vector is returned for points 
+;	with no solution.
 ;
 ;
 ; STATUS:
@@ -51,13 +64,14 @@
 ;	
 ;-
 ;===========================================================================
-function surface_intersect, bx, v, r, hit=hit, near=near, far=far
+function surface_intersect, bx, view_pts, ray_pts, hit=hit, back_pts=back_pts
 
  body_pts = !null
+ back_pts = !null
  if(cor_isa(bx[0], 'GLOBE')) then $
-          body_pts = glb_intersect(bx, v, r, near=near, far=far, hit=hit) $
+          body_pts = glb_intersect(bx, view_pts, ray_pts, back_pts=back_pts, hit=hit) $
  else if(cor_isa(bx[0], 'DISK')) then $
-          body_pts = dsk_intersect(bx, v, r, near=near, far=far, hit=hit, /all)
+          body_pts = dsk_intersect(bx, view_pts, ray_pts, hit=hit)
 
  return, body_pts
 end

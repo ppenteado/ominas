@@ -95,9 +95,12 @@ pro cor_substitute_xd, xd0, xd, xd_new, use_gd=use_gd, noevent=noevent
  for i=0, n_elements(xd0)-1 do $ 
   begin
    gd = cor_gd(xd0[i], noevent=noevent)
-   tags = tag_names(gd)
-   for j=0, n_elements(tags)-1 do gd.(j) = crgd_replace(gd.(j), xd, xd_new)
-   cor_set_gd, xd0[i], gd, noevent=noevent
+   if(keyword_set(gd)) then $
+    begin 
+     tags = tag_names(gd)
+     for j=0, n_elements(tags)-1 do gd.(j) = crgd_replace(gd.(j), xd, xd_new)
+     cor_set_gd, xd0[i], gd, noevent=noevent
+    end 
   end
 
 

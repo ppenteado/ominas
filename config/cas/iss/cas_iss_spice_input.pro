@@ -81,6 +81,27 @@
 
 
 ;===========================================================================
+; cas_iss_spice_label_struct__define
+;
+;===========================================================================
+pro cas_iss_spice_label_struct__define
+
+ struct = {cas_iss_spice_label_struct, $
+		dt: 0d, $
+		time: 0d, $
+		stime: '', $
+		exposure: 0d, $
+		size: [0,0], $
+		filters: ['',''], $
+		target: '', $
+		oaxis: [0d,0d] $
+           }
+end
+;===========================================================================
+
+
+
+;===========================================================================
 ; cas_iss_spice_parse_labels
 ;
 ;===========================================================================
@@ -89,56 +110,22 @@ pro cas_iss_spice_parse_labels, dd, _time, $
 
  ndd = n_elements(dd)
 
- time = dblarr(ndd)
- exposure = dblarr(ndd)
- size = make_array(2,ndd, val=1024)
- filters = strarr(2,ndd)
- target = strarr(ndd)
- oaxis = dblarr(2,ndd)
+ meta0 = {cas_iss_spice_label_struct}
+ meta0.size = [1024,1024]
 
  for i=0, ndd-1 do $
   begin
-   label = dat_header(dd[i])
-   if(keyword_set(label)) then $
-    begin
-     ;-----------------------------------
-     ; time
-     ;-----------------------------------
-     if(NOT keyword_set(_time)) then time[i] = cas_iss_spice_time(label)
-
-     ;-----------------------------------
-     ; exposure time
-     ;-----------------------------------
-     exposure[i] = vicgetpar(label, 'EXPOSURE_DURATION')/1000d
-
-     ;-----------------------------------
-     ; image size
-     ;-----------------------------------
-     size[0,i] = double(vicgetpar(label, 'NS'))
-     size[1,i] = double(vicgetpar(label, 'NL'))
-
-     ;-----------------------------------
-     ; filters
-     ;-----------------------------------
-     filters[*,i] = vicgetpar(label, 'FILTER_NAME')
-
-     ;-----------------------------------
-     ; target
-     ;-----------------------------------
-     target_name = strupcase(vicgetpar(label, 'TARGET_NAME'))
-     target_desc = strupcase(vicgetpar(label, 'TARGET_DESC') )
-     target[i] = target_name
-     obs_id = vicgetpar(label, 'OBSERVATION_ID')
-     if((strpos(strupcase(obs_id), 'OPNAV'))[0] NE -1) then target[i] = target_desc
-    end
-
-   ;-----------------------------------
-   ; optic axis
-   ;-----------------------------------
-   oaxis[*,i] = size[*,i]/2d
+   _meta = dat_header_info(dd[i])
+   if(NOT keyword_set(_meta)) then _meta = meta0
+   meta = append_array(meta, _meta)
   end
 
- if(NOT keyword_set(_time)) then _time = time
+ if(NOT keyword_set(_time)) then _time = meta.time
+ exposure = meta.exposure
+ size = meta.size
+ filters = meta.filters
+ target = meta.target
+ oaxis = meta.oaxis
 
 end 
 ;=============================================================================

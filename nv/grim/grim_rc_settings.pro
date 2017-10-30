@@ -34,7 +34,7 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, visibility=visibility, channel=channel, $
         render_numbra=render_numbra, render_sampling=render_sampling, render_minimum=render_minimum, slave_overlays=slave_overlays, $
         delay_overlays=delay_overlays, auto_stretch=auto_stretch, lights=lights, $
-        render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto
+        render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, render_sky=render_sky
 
 
  ;----------------------------------------------------
@@ -353,6 +353,11 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
                       _render_auto = extra_value(kv, 'RENDER_AUTO') $
  else _render_auto = render_auto
  if(keyword_set(_render_auto)) then render_auto = fix(_render_auto)
+
+ if(n_elements(render_sky) EQ 0) then $
+                      _render_sky = extra_value(kv, 'RENDER_SKY') $
+ else _render_sky = render_sky
+ if(keyword_set(_render_sky)) then render_sky = fix(_render_sky)
 
 
  ;-----------------------------------------------------------------

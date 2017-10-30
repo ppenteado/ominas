@@ -14,7 +14,7 @@ function spice_time, dd, prefix=prefix, inst=inst, string=string, status=status
 
  for i=0, ndd-1 do $
     time = append_array(time, $
-         call_function(fn_spice_time, dat_header(dd[i]), string=string, status=status))
+         call_function(fn_spice_time, dd[i], string=string, status=status))
 
  return, time
 end

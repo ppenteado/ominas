@@ -7,10 +7,10 @@ function ominas_station::init, ii, crd=crd0, bd=bd0, std=std0, $
 end_keywords
 @core.include
  
+ if(keyword_set(bd0)) then struct_assign, bd0, self
  void = self->ominas_body::init(ii, crd=crd0, bd=bd0,  $
 @bod__keywords_tree.include
 end_keywords)
- if(keyword_set(bd0)) then struct_assign, bd0, self
 
  self.abbrev = 'STN'
  self.tag = 'STD'

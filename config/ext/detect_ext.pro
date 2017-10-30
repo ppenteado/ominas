@@ -5,6 +5,7 @@
 function detect_ext, dd
 
  filename = dat_filename(dd)
+ header = dat_header(dd)
 
  ;=============================
  ; determine function name

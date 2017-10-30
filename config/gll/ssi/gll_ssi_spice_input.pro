@@ -79,6 +79,29 @@
 ;=============================================================================
 
 
+
+;===========================================================================
+; gll_ssi_spice_label_struct__define
+;
+;===========================================================================
+pro gll_ssi_spice_label_struct__define
+
+ struct = {gll_ssi_spice_label_struct, $
+		dt: 0d, $
+		time: 0d, $
+		stime: '', $
+		exposure: 0d, $
+		size: [1024,1024], $
+		filters: ['',''], $
+		scale: [0d,0d], $
+		target: '', $
+		oaxis: [0d,0d] $
+           }
+end
+;===========================================================================
+
+
+
 ;===========================================================================
 ; gll_ssi_spice_parse_labels
 ;
@@ -89,66 +112,27 @@ pro gll_ssi_spice_parse_labels, dd, _time, $
 
  ndd = n_elements(dd)
 
- time = dblarr(ndd)
- exposure = dblarr(ndd)
- size = make_array(2,ndd, val=1024)
- filters = strarr(2,ndd)
- target = strarr(ndd)
- oaxis = dblarr(2,ndd)
- scale = dblarr(2,ndd)
+ meta0 = {gll_ssi_spice_label_struct}
+ meta0.size = [1024,1024]
 
  for i=0, ndd-1 do $
   begin
-   label = dat_header(dd[i])
-   if(keyword_set(label)) then $
-    begin
-     ;------------------------------
-     ; time
-     ;------------------------------
-     if(NOT keyword_set(_time)) then time[i] = gll_ssi_spice_time(label)
-
-     ;------------------------------
-     ; exposure time
-     ;------------------------------
-     exposure[i] = vicgetpar(label, 'EXP')
-
-     ;------------------------------------------------
-     ; image size
-     ;------------------------------------------------
-     size[0,i] = double(vicgetpar(label, 'NS'))
-     size[1,i] = double(vicgetpar(label, 'NL'))
-
-     ;------------------------------------------------
-     ; nominal optic axis coordinate, camera scale
-     ;------------------------------------------------
-     oaxis[*,i] = size[*,i]/2d
-     scale[*,i] = [1.016d-05, 1.016d-05]		; from trial and error
-
-     ;------------------------------------------------
-     ; detect summation modes
-     ;------------------------------------------------
-     mode = vicgetpar(label, 'TLMFMT')
-     if((mode EQ 'HIS') OR (mode EQ 'AI8')) then $
-      begin
-       oaxis[*,i] = oaxis[*,i] / 2d
-       scale[*,i] = scale[*,i]*2d
-      end
-
-;     filters[*,i] = vicgetpar(label, 'FILTER_NAME')
-
-
-     ;------------------------------------------------
-     ; target
-     ;------------------------------------------------
-     target[i] = strupcase(vicgetpar(label, 'TARGET_NAME'))
-
-    end
+   _meta = dat_header_info(dd[i])
+   if(NOT keyword_set(_meta)) then _meta = meta0
+   meta = append_array(meta, _meta)
   end
 
- if(NOT keyword_set(_time)) then _time = time
+ if(NOT keyword_set(_time)) then _time = meta.time
+ exposure = meta.exposure
+ size = meta.size
+ filters = meta.filters
+ target = meta.target
+ scale = meta.scale
+ oaxis = meta.oaxis
 
 end 
 ;=============================================================================
+
 
 
 ;===========================================================================

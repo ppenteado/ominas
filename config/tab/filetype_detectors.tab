@@ -13,5 +13,6 @@
   detect_isis                   ISIS            read
   detect_pds			PDS		read
   detect_ext			EXT		read
+  detect_pds_w10n		PDS_W10N	read
 
 
