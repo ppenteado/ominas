@@ -35,6 +35,10 @@ free_lun,luns
 ;ominas_setup=pp_readtxt(getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh')
 sep='--------------------------------------------------------------------------------'
 
+
+printf,lun,'OMINAS version:'
+printf,lun,ominas_version(),format='(A)'
+printf,lun,sep
 printf,lun,'OMINAS variables:'
 printf,lun,ominas_vars,format='(A)'
 printf,lun,sep
