@@ -1894,6 +1894,7 @@ function grim_surface_to_image, grim_data, plane, surf_pts, names, valid=valid
      w = where(names EQ all_names[k])
      if(w[0] NE -1) then $
 	 image_pts = surface_to_image(cd, bx[k], surf_pts[w,*], body_pts=body_pts)
+help, cd
      r = bod_inertial_to_body_pos(bx[k], bod_pos(cd))
     end
 

@@ -10,11 +10,6 @@ function cas_iss_vicar_header_info, dd
  if(NOT keyword_set(label)) then return, 0
 
  ;-----------------------------------
- ; time
- ;-----------------------------------
- meta.time = cas_iss_spice_time(label)
-
- ;-----------------------------------
  ; exposure time
  ;-----------------------------------
  meta.exposure = vicgetpar(label, 'EXPOSURE_DURATION')/1000d
@@ -43,6 +38,17 @@ function cas_iss_vicar_header_info, dd
  ; optic axis
  ;-----------------------------------
  meta.oaxis = meta.size/2d
+
+ ;-----------------------------------
+ ; time
+ ;-----------------------------------
+ meta.time = -1d100
+ close_time = vicgetpar(label, 'IMAGE_TIME')
+ if(strmid(close_time,strlen(close_time)-1,1) EQ 'Z') then $
+        	      close_time = strmid(close_time,0,strlen(close_time)-1)
+ meta.dt = -0.5d*meta.exposure
+ meta.stime = close_time
+ if(spice_test_lsk()) then meta.time = spice_str2et(close_time) + meta.dt
 
  return, meta
 end 

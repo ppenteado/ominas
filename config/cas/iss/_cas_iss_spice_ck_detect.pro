@@ -327,9 +327,9 @@ function ____cas_iss_spice_ck_detect, dd, ckpath, djd=djd, time=time, $
  ;--------------------------------
  ; get image jd
  ;--------------------------------
-; if(NOT keyword_set(time)) then jd = spice_str2jed(cas_iss_spice_time(label)) $
+; if(NOT keyword_set(time)) then jd = spice_str2jed(cas_iss_spice_time(dd)) $
 ; else jd = spice_et2jed(time)
- if(NOT keyword_set(time)) then time = cas_iss_spice_time(label)
+ if(NOT keyword_set(time)) then time = cas_iss_spice_time(dd)
  jd = spice_et2jed(time)
 
  jd = jd[0]

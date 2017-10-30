@@ -100,7 +100,7 @@ pro dawn_spice_parse_labels, dd, _time, $
    label = dat_header(dd[i])
    if(keyword_set(label)) then $
     begin
-     if(NOT keyword_set(_time)) then time[i] = dawn_spice_time(label)
+     if(NOT keyword_set(_time)) then time[i] = dawn_spice_time(dd)
 
      exposure[i] = pdspar(label, 'EXPOSURE_DURATION')/1000d
      size[0,i] = double((pdspar(label, 'LINE_SAMPLES'))[0])

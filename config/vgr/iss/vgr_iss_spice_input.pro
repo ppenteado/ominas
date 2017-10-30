@@ -87,7 +87,9 @@
 pro vgr_iss_spice_label_struct__define
 
  struct = {vgr_iss_spice_label_struct, $
+		dt: 0d, $
 		time: 0d, $
+		stime: '', $
 		exposure: 0d, $
 		size: [0,0], $
 		filters: ['',''], $

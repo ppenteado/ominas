@@ -57,10 +57,10 @@
 ;	                before tracing in order to avoid hitting target bodies
 ;	                through round-off error.  Default is 1 unit.
 ;
-;	numbra:         Number of rays to trace to the secondary bodies.
-;	                Default is 1.  The first ray is traced to the body
-;	                center; wach additional ray is traced to a random point 
-;	                within the body.
+;	cloud_pts:	If present and (defined), secondary rays are traced to 
+;			random points within in the secondary body rather than 
+;			its center, and their inertial coordinates are returned 
+;			in this output.
 ;
 ;  OUTPUT: 
 ;	hit_list:      Array (nhit) giving indices of all bx that have ray 
@@ -78,9 +78,6 @@
 ;	back_matrix:   Array (nray,3,nhit) of body-frame points for additional
 ;	               intersections with bodies in the hit_list, in order
 ;	               of distance.
-;
-;	shadow_matrix: Array (nray) of "shadow levels" for each ray, based
-;	               on mulitple ray tracings to the secondary bodies.
 ;
 ;
 ; RETURN: NONE
@@ -211,10 +208,10 @@ end
 ;
 ;=============================================================================
 pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
-               hit_matrix=hit_matrix, show=show, numbra=numbra, $
-               hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-               back_matrix=back_matrix, shadow_matrix=shadow_matrix, $
-               back=back, standoff=standoff, limit_source=limit_source
+               hit_matrix=hit_matrix, show=show, cloud_pts=cloud_pts, $
+               hit_indices=hit_indices, range_matrix=range_matrix, $
+               hit_list=hit_list, back_matrix=back_matrix, $
+               standoff=standoff, limit_source=limit_source
 
  show = keyword_set(show)
  if(NOT keyword_set(all_bx)) then return
@@ -225,7 +222,6 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
 
  if(NOT defined(standoff)) then standoff = 1d
  if(NOT defined(limit_source)) then limit_source = 0
- if(NOT defined(numbra)) then numbra = 1
 
 
  ;---------------------------------------------
@@ -251,6 +247,8 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
  ;---------------------------------------------
  else if(keyword_set(sbx)) then $
   begin
+   cloud = arg_present(cloud_pts) AND defined(cloud_pts)
+
    ;- - - - - - - - - - - - - - - - - - - - -
    ; select rays to compute
    ;- - - - - - - - - - - - - - - - - - - - -
@@ -284,46 +282,33 @@ pro raytrace, image_pts, cd=cd, bx=all_bx, sbx=sbx, $
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; compute termini; for the penumbra calculation, each source traces
+   ; compute termini; for the cloud calculation, each source traces
    ; to a random terminus within the secondary body
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   shadow_matrix = dblarr(nray)
-
    view_pts_select = view_pts[select,*]
    cloud_pts_center = sbx_pos[select,*]
-   for i=0, numbra-1 do $
-    begin
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     ; compute random termini for numbra > 1
-     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     if(numbra EQ 1) then cloud_pts = cloud_pts_center $
-      else $
-       begin
-        cloud_pts_body = point_cloud(sbx, nselect)
-        cloud_pts = bod_body_to_inertial_pos(sbx, cloud_pts_body)
-       end
-     ray_pts[select,*] = cloud_pts - view_pts_select
-     src_hit_indices = hit_indices
 
-     ;- - - - - - - - - - - - - - - - - - - - -
-     ; trace
-     ;- - - - - - - - - - - - - - - - - - - - -
-     rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
-        hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
-        back_matrix=back_matrix, src_hit_indices=src_hit_indices, $
-        standoff=standoff, limit_source=limit_source, show=show
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; compute random termini for numbra > 1
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(NOT cloud) then cloud_pts = cloud_pts_center $
+    else $
+     begin
+      cloud_pts_body = point_cloud(sbx, nselect)
+      cloud_pts = bod_body_to_inertial_pos(sbx, cloud_pts_body)
+     end
+   ray_pts[select,*] = cloud_pts - view_pts_select
+   src_hit_indices = hit_indices
 
-     ;- - - - - - - - - - - - - - - - - - - - -
-     ; add to shadow matrix
-     ;- - - - - - - - - - - - - - - - - - - - -
-     w = where(hit_indices NE -1)
-     if(w[0] NE -1) then shadow_matrix[w] = shadow_matrix[w] + 1
-    end
-   shadow_matrix = shadow_matrix / double(numbra)
- 
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; trace
+   ;- - - - - - - - - - - - - - - - - - - - -
+   rt_trace, bx, view_pts, ray_pts, select, hit_matrix=hit_matrix, $
+      hit_indices=hit_indices, range_matrix=range_matrix, hit_list=hit_list, $
+      back_matrix=back_matrix, src_hit_indices=src_hit_indices, $
+      standoff=standoff, limit_source=limit_source, show=show 
   end $
  else nv_message, 'Either cd or sbx must be specified. '
-
 
 
 end

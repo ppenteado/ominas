@@ -46,9 +46,8 @@
 ;	              of this size.  Default is 65536.
 ;
 ;	numbra:       Number of rays to trace to the secondary bodies.
-;	              Default is 1.  The first ray is traced to the body
-;	              center; wach additional ray is traced to a random point 
-;	              within the body.
+;	              Default is 1.  If greater than one, rays are traced 
+;                     to random points within the body.
 ;
 ;	no_secondary: If set, no secondary ray tracing is performed, so 
 ;	              resulting in no shadows.
@@ -117,35 +116,39 @@ end
 function rdr_photometry, data, cd, ltd, bx, body_pts, no_pht=no_pht
 
  n = n_elements(body_pts)/3
+ phot = make_array(n, val=1d)
+ if(data.no_pht) then return, phot
 
- if(data.no_pht) then phot = make_array(n, val=1d) $
- else $
+
+ pht_angles, 0, cd, bx, ltd, body_pts=body_pts, emm=mu, inc=mu0, g=g
+ w = where(mu0 GT 0)
+;w = lindgen(n)
+ if(w[0] EQ -1) then return, phot
+
+
+ refl_fn = sld_refl_fn(bx)
+ refl_parm = sld_refl_parm(bx)
+ if(NOT keyword_set(refl_fn)) then $
   begin
-   pht_angles, 0, cd, bx, ltd, body_pts=body_pts, emm=mu, inc=mu0, g=g
-
-   refl_fn = sld_refl_fn(bx)
-   refl_parm = sld_refl_parm(bx)
-   if(NOT keyword_set(refl_fn)) then $
-    begin
-     refl_fn = 'pht_refl_lunar_lambert'
-     refl_parm = [0.5,0.5]
-    end
-
-   phase_fn = sld_phase_fn(bx)
-   phase_parm = sld_phase_parm(bx)
-   if(NOT keyword_set(phase_fn)) then $
-    begin
-     phase_fn = 'pht_phase_isotropic'
-     phase_parm = 0
-    end
-
-   refl_corr = call_function(refl_fn, mu, mu0, refl_parm)
-   phase_corr = call_function(phase_fn, g, phase_parm)
-
-   albedo = sld_albedo(bx)
-
-   phot = refl_corr*phase_corr*albedo
+   refl_fn = 'pht_refl_lunar_lambert'
+   refl_parm = [0.5,0.5]
   end
+
+ phase_fn = sld_phase_fn(bx)
+ phase_parm = sld_phase_parm(bx)
+ if(NOT keyword_set(phase_fn)) then $
+  begin
+   phase_fn = 'pht_phase_isotropic'
+   phase_parm = 0
+  end
+
+
+ refl_corr = call_function(refl_fn, mu[w], mu0[w], refl_parm)
+ phase_corr = call_function(phase_fn, g[w], phase_parm)
+
+ albedo = sld_albedo(bx)
+
+ phot[w] = refl_corr*phase_corr*albedo
 
 
  return, phot > data.pht_min
@@ -243,6 +246,7 @@ end
 ;=================================================================================
 function rdr_piece, data, image_pts
 
+ numbra = data.numbra
  bx = data.bx
  md = data.md
  ddmap = data.ddmap
@@ -275,23 +279,49 @@ function rdr_piece, data, image_pts
  ;---------------------------------------------
  ; trace secondary rays to light source
  ;---------------------------------------------
- sec_hit_indices = hit_indices
- sec_hit_matrix = hit_matrix
- sec_hit_list = hit_list
- if(data.no_secondary) then sec_hit_list = -1
+ illumination_matrix = dblarr(np,nz)
 
- ;- - - - - - - - - - - - - - - - - - - - - - - -
- ; exclude sky from secondary trace
- ;- - - - - - - - - - - - - - - - - - - - - - - -
- sec_bx = prim_bx
- w = where(sec_bx EQ skd)
- if(w[0] NE -1) then sec_bx[w] = obj_new()
+ if(NOT data.no_secondary) then $
+  if(hit_list[0] NE -1) then $
+   begin
+    ;- - - - - - - - - - - - - - - - - - - - - - - -
+    ; exclude sky from secondary trace
+    ;- - - - - - - - - - - - - - - - - - - - - - - -
+    sec_bx = prim_bx
+    w = where(sec_bx EQ skd)
+    if(w[0] NE -1) then sec_bx[w] = obj_new()
 
- if(sec_hit_list[0] NE -1) then $
-   raytrace, bx=sec_bx, sbx=ltd, numbra=data.numbra, $
-	show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
-	hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
-        back_matrix=sec_back_matrix, range_matrix=sec_range_matrix, shadow_matrix=shadow_matrix
+    ;- - - - - - - - - - - - - - - - - - - - - - - -
+    ; perform secondary trace(s)
+    ;- - - - - - - - - - - - - - - - - - - - - - - -
+    if(numbra GT 1) then cloud_pts = 1
+    for i=0, numbra-1 do $
+     begin
+      sec_hit_indices = hit_indices
+      sec_hit_matrix = hit_matrix
+      sec_hit_list = hit_list
+
+      ;- - - - - - - - - - - - - - - - - - - - - - - -
+      ; trace rays
+      ;- - - - - - - - - - - - - - - - - - - - - - - -
+      raytrace, bx=sec_bx, sbx=ltd, cloud_pts=cloud_pts, $
+       show=data.show, standoff=data.standoff, limit_source=data.limit_source, $
+       hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
+       back_matrix=sec_back_matrix, range_matrix=sec_range_matrix
+
+; photometry needs to be done here because each light ray comes from a differnt
+; part of the sun and so has different photometric angles.  That's probably why 
+; there are bright points along the terminator for numbra > 1
+
+      ;- - - - - - - - - - - - - - - - - - - - - - - -
+      ; update illumination matrix
+      ;- - - - - - - - - - - - - - - - - - - - - - - -
+      w = where(sec_hit_indices EQ -1)
+      if(w[0] NE -1) then illumination_matrix[w,*] = illumination_matrix[w,*] + 1
+     end
+
+    illumination_matrix = illumination_matrix / double(numbra)
+   end
 
 
  ;---------------------------------------------
@@ -312,7 +342,10 @@ function rdr_piece, data, image_pts
      shade = make_array(nw, val=1d)
      if(obj_valid(sec_bx[ii])) then $
       begin
-       ww = where(v_mag(sec_hit_matrix[w,*]) EQ 0)
+       test = illumination_matrix
+       if(nz GT 1) then test = total(illumination_matrix[w,*],2)
+       ww = where(test GT 0)
+
        if(ww[0] NE -1) then $
          shade[ww] = rdr_photometry(data, cd, ltd, sec_bx[ii], hit_matrix[w[ww],*])
       end
@@ -326,10 +359,9 @@ function rdr_piece, data, image_pts
 
 
  ;---------------------------------------------
- ; apply shadows
+ ; apply illumination
  ;---------------------------------------------
- shade_matrix = 1d - (1d - pht_min)*shadow_matrix#make_array(nz,val=1)
- piece = piece * shade_matrix
+ piece = piece * (illumination_matrix > pht_min)
 
  return, piece
 end

@@ -6,9 +6,9 @@ function detect_mirac, dd
 
  header = dat_header(dd) 
 
- instrument = sxpar(header, 'INSTRUME')
- if(strpos(instrument, 'MIRAC') NE -1) then return, 'MIRAC'
- 
+ w = where(strpos(header, 'MIRAC') NE -1)
+ if(w[0] NE -1) then return, 'MIRAC'
+
  return, ''
 end
 ;===========================================================================

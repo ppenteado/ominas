@@ -12,11 +12,6 @@ function vgr_iss_vicar_header_info, dd
  sc_name = vgr_parse_inst(dat_instrument(dd), cam=name)
 
  ;-----------------------------------
- ; time
- ;-----------------------------------
- meta.time = vgr_iss_spice_time(label)
-
- ;-----------------------------------
  ; exposure time
  ;-----------------------------------
  meta.exposure = vicar_vgrkey(label, 'EXP') / 1000d
@@ -67,6 +62,21 @@ function vgr_iss_vicar_header_info, dd
  ; target
  ;-----------------------------------
  meta.target = strupcase(vicgetpar(label, 'TARGET_NAME'))
+
+ ;-----------------------------------
+ ; time
+ ;-----------------------------------
+ meta.time = -1d100
+ scet = vicar_vgrkey(label, 'SCET')
+ p = strpos(strupcase(scet), 'UNKNOWN')
+ if(p[0] EQ -1) then $
+  begin
+   close_time = vgr_scet_to_image_time(scet)
+   meta.dt = -0.5d*meta.exposure
+   meta.stime = close_time
+   if(spice_test_lsk()) then meta.time = spice_str2et(close_time) + meta.dt
+  end
+
 
  return, meta
 end 

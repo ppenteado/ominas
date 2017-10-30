@@ -349,7 +349,7 @@ pro dat_dd0_struct__define
 	filename:		'', $		; Name of source file.
 	filetype:		'', $		; File type string
 	htype:			'', $		; Header type string
-	typecode:		0b, $		; data type code
+	typecode:		0b, $		; Data type code
 
 	gffp:			nv_ptr_new(), $	; GFF pointer
 
