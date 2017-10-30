@@ -1,9 +1,9 @@
-# detector fn			filetype
-# (returns instrument string)	(only detectors for the correct
-#				 filetype are called, if specified)
+# detector fn			
+# (returns instrument string)	
+#				
 
-  detect_mirac			FITS
-  detect_map			-
-  detect_ctio			FITS
-  detect_spdr			FITS
+  detect_map			
+  detect_mirac			
+  detect_ctio			
+  detect_spdr			
 

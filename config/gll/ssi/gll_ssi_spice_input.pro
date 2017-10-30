@@ -87,7 +87,9 @@
 pro gll_ssi_spice_label_struct__define
 
  struct = {gll_ssi_spice_label_struct, $
+		dt: 0d, $
 		time: 0d, $
+		stime: '', $
 		exposure: 0d, $
 		size: [1024,1024], $
 		filters: ['',''], $

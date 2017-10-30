@@ -1,8 +1,8 @@
-# detector fn			filetype
-# (returns instrument string)	(only detectors for the correct
-#				 filetype are called)
+# detector fn			
+# (returns instrument string)	
+#				
 
-  detect_cas_iss		VICAR
-  detect_cas_uvis		VICAR
-  detect_cas_radar              PDS
-  detect_cas_vims               ISIS
+  detect_cas_iss		
+  detect_cas_uvis		
+  detect_cas_radar              
+  detect_cas_vims               

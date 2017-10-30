@@ -1,14 +1,15 @@
 ;===========================================================================
-; detect_ctio.pro
+; detect_w10n_pds.pro
 ;
 ;===========================================================================
-function detect_ctio, dd
+function detect_w10n_pds, dd
 
- header = dat_header(dd) 
+ header = dat_header(dd)
+ if(keyword_set(header)) then return, 0
 
- w = where(strpos(header, 'CERRO TOLOLO') NE -1)
- if(w[0] NE -1) then return, 'CTIO'
+ filename = dat_filename(dd)
+ if(filename EQ 'www......') then return, 1
 
- return, ''
+ return, 0
 end
 ;===========================================================================

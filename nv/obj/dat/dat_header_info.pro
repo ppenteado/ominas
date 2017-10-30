@@ -32,7 +32,7 @@
 ;
 ; RETURN:
 ;	Anonymous structure containing info relevant to the calling application.
-;	An application specific program named <instrument>_<filetype>_header_info()
+;	An application specific program named <instrument>_<htype>_header_info()
 ;	Is called with the header as the only argmuent.  The output of that
 ;	program is returned by DAT_HEADER_INFO.
 ;

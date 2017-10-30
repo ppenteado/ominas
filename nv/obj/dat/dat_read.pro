@@ -181,17 +181,12 @@ function drd_read, filename, data, header, $
    return, 0
   end
 
- ;------------------------------
- ; get header type
- ;------------------------------
- if(NOT keyword_set(_htype)) then htype = dat_detect_filetype(dd, /header) $
- else htype = _htype
 
  ;------------------------
  ; look up I/O functions
  ;------------------------
  if(NOT keyword_set(_input_fn) OR NOT keyword__set(_output_fn)) then $
-		dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
+		     dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
 
  if(keyword_set(_input_fn)) then input_fn = _input_fn
  if(keyword_set(_output_fn)) then output_fn = _output_fn
@@ -206,7 +201,6 @@ function drd_read, filename, data, header, $
  ;-----------------------------------------
  dat_assign, dd, /noevent, $
           filetype=filetype, $
-          htype=htype, $
           input_fn=input_fn, $
           output_fn=output_fn, $
           keyword_fn=keyword_fn
@@ -275,6 +269,15 @@ function drd_read, filename, data, header, $
          max=max, $
          dim=dim, $
          typecode=typecode
+
+
+   ;------------------------------
+   ; get header type
+   ;------------------------------
+   if(NOT keyword_set(_htype)) then htype = dat_detect_filetype(dd) $
+   else htype = _htype
+   dat_set_htype, dd, htype, /noevent
+
 
    ;-----------------------
    ; instrument

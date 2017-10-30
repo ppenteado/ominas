@@ -42,7 +42,7 @@ common dawn_spice_ck_block, all_files, all_names_block, ckpath_block, $
  ;--------------------------------
  ; get image jd
  ;--------------------------------
- if(NOT keyword_set(time)) then jd = spice_str2jed(dawn_spice_time(label)) $
+ if(NOT keyword_set(time)) then jd = spice_str2jed(dawn_spice_time(dd)) $
  else jd = spice_et2jed(time)
 
  jd = jd[0]
