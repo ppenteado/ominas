@@ -129,10 +129,6 @@ pro vgr_iss_spice_parse_labels, dd, _time, $
  scale = meta.scale
  oaxis = meta.oaxis
 
-print, _time, $
-     exposure, size, filters, oaxis, scale, $
-     target
-
 end 
 ;=============================================================================
 

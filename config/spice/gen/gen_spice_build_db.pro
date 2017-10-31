@@ -255,20 +255,19 @@ function gen_spice_build_db, _kpath, type, nocheck=nocheck
  n_new = n_elements(wnew)
  if(n_new GT 0) then $
   begin
-
    verb = 'Updating' & explanation = ''
    if(new_db) then $
-    begin
-     verb = 'Creating'
      explanation = $
         ['This database expedites the search for the appropriate kernels.', $
          'It is only updated when kernels are added or deleted from the kernel', $
          'directory.  The initial creation may take a minute or two.']
-    end
 
    verb = new_db ? 'Creating' : 'Updating'
-   nv_message, /con, verb + ' ' + strupcase(type) + ' kernel database...', $
-    explanation=explanation
+;   nv_message, /con, verb + ' ' + strupcase(type) + ' kernel database...', $
+;                                                        explanation=explanation
+   nv_message, /con, verb + ' kernel database for ' + kpath + '...', $
+                                                        explanation=explanation
+
 
    new_files = all_files[wnew]
 
