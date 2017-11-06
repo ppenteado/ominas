@@ -753,8 +753,7 @@ if [ -e "/opt/X11/lib/flat_namespace/" ]; then
 LDCMD
 fi
 tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idl/g" >> ~/.ominas/ominas
-#cat ~/.ominas/ominas | sed -e "s|exec \$BIN_DIR/\$APPLICATION|exec \$BIN_DIR/\$APPLICATION -IDL_STARTUP \${OMINAS_DIR}/util/printver.pro |g" > ~/.ominas/ominas_tmp
-cat ~/.ominas/ominas | sed -e "s|\"\$@\" \$APP_ARGS|\"\$@\" \$APP_ARGS -IDL_STARTUP \${OMINAS_DIR}/util/printver.pro -IDL_PROMPT 'OMINAS\>' |g" > ~/.ominas/ominas_tmp
+cat ~/.ominas/ominas | sed -e "s|\"\$@\" \$APP_ARGS|\"\$@\" \$APP_ARGS -IDL_STARTUP \${OMINAS_DIR}/util/printver.pro -IDL_PROMPT \"'OMINAS\> '\" |g" > ~/.ominas/ominas_tmp
 mv -f ~/.ominas/ominas_tmp ~/.ominas/ominas
 if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
   ldp="LD_PRELOAD=${OMINAS_DIR}/util/downloader/libcurl.so.4"
@@ -779,8 +778,7 @@ if [ -e "/opt/X11/lib/flat_namespace/" ]; then
 LDCMD
 fi
 tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idlde/g" >> ~/.ominas/ominasde
-#cat ~/.ominas/ominasde | sed -e "s|exec \$BIN_DIR/\$APPLICATION|exec \$BIN_DIR/\$APPLICATION -IDL_STARTUP \${OMINAS_DIR}/util/printver.pro |g" > ~/.ominas/ominasde_tmp
-cat ~/.ominas/ominasde | sed -e "s|\"\$@\" \$APP_ARGS|\"\$@\" \$APP_ARGS -IDL_STARTUP \${OMINAS_DIR}/util/printver.pro -IDL_PROMPT 'OMINAS\>' |g" > ~/.ominas/ominasde_tmp
+cat ~/.ominas/ominasde | sed -e "s|\"\$@\" \$APP_ARGS|\"\$@\" \$APP_ARGS -IDL_STARTUP \${OMINAS_DIR}/util/printver.pro -IDL_PROMPT \"'OMINAS\> '\" |g" > ~/.ominas/ominasde_tmp
 mv -f ~/.ominas/ominasde_tmp ~/.ominas/ominasde
 if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
   ldp="LD_PRELOAD=${OMINAS_DIR}/util/downloader/libcurl.so.4"
