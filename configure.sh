@@ -743,6 +743,7 @@ echo "#!/usr/bin/env bash" > ~/.ominas/ominas
 #head -1 ${idlbin} > ~/.ominas/ominas
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominas
+echo "if [ "\$#" -eq 0 ]; then args=\"\${OMINAS_DIR}/util/printver.pro\"; else args=("\$@"); fi" >> ~/.ominas/ominas
 if [ -e "/opt/X11/lib/flat_namespace/" ]; then
   cat <<LDCMD >> ~/.ominas/ominas
     if [ "\${DYLD_LIBRARY_PATH}" = "" ]; then
@@ -753,7 +754,7 @@ if [ -e "/opt/X11/lib/flat_namespace/" ]; then
 LDCMD
 fi
 tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idl/g" >> ~/.ominas/ominas
-cat ~/.ominas/ominas | sed -e "s|\"\$@\" \$APP_ARGS|-IDL_STARTUP \${OMINAS_DIR}/util/printver.pro -IDL_PROMPT \"'OMINAS\> '\" \"\$@\" \$APP_ARGS |g" > ~/.ominas/ominas_tmp
+cat ~/.ominas/ominas | sed -e "s|\"\$@\" \$APP_ARGS|-IDL_PROMPT \"'OMINAS\> '\" \"\${args[@]/#/}\" \$APP_ARGS |g" > ~/.ominas/ominas_tmp
 mv -f ~/.ominas/ominas_tmp ~/.ominas/ominas
 if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
   ldp="LD_PRELOAD=${OMINAS_DIR}/util/downloader/libcurl.so.4"
@@ -768,6 +769,7 @@ echo "#!/usr/bin/env bash" > ~/.ominas/ominasde
 #head -1 ${idlbin} > ~/.ominas/ominasde
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominasde
+echo "if [ "\$#" -eq 0 ]; then args=\"\${OMINAS_DIR}/util/printver.pro\"; else args=("\$@"); fi" >> ~/.ominas/ominasde
 if [ -e "/opt/X11/lib/flat_namespace/" ]; then
   cat <<LDCMD >> ~/.ominas/ominasde
     if [ "\${DYLD_LIBRARY_PATH}" = "" ]; then
@@ -778,7 +780,7 @@ if [ -e "/opt/X11/lib/flat_namespace/" ]; then
 LDCMD
 fi
 tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idlde/g" >> ~/.ominas/ominasde
-cat ~/.ominas/ominasde | sed -e "s|\"\$@\" \$APP_ARGS|-IDL_STARTUP \${OMINAS_DIR}/util/printver.pro -IDL_PROMPT \"'OMINAS\> '\" \"\$@\" \$APP_ARGS |g" > ~/.ominas/ominasde_tmp
+cat ~/.ominas/ominasde | sed -e "s|\"\$@\" \$APP_ARGS|-IDL_PROMPT \"'OMINAS\> '\" \"\${args[@]/#/}\" \$APP_ARGS |g" > ~/.ominas/ominasde_tmp
 mv -f ~/.ominas/ominasde_tmp ~/.ominas/ominasde
 if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
   ldp="LD_PRELOAD=${OMINAS_DIR}/util/downloader/libcurl.so.4"
