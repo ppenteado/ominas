@@ -1076,6 +1076,7 @@ Data:
            About 813 MB as of August/2017
        12) UCAC4 star catalog  . . . . . . . . . . ${dstatus[4]}
            About 8.5 GB download
+       13) GSC star catalog  . . . . . . . . . . . ${dstatus[5]}
 
 For more information, see
 https://ppenteado.github.io/ominas/guides/userguide.html
