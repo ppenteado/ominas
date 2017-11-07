@@ -65,6 +65,9 @@
 ;			NV_SPICE environment variable.
 ;
 ;	ck_out:		String giving the name of the new C-kernel to write.
+;			If the file base name is 'auto', then the name is
+;			taken from the core name property of the data descriptor,
+;			with the extension '.bc' added.
 ;
 ;	reload:		If set, new kernels are loaded, as specified by the
 ;			klist keyword.
@@ -117,6 +120,11 @@ pro spice_output, dd, keyword, value, prefix, inst, status=status, $
    status = -1
    return
   end
+ ck_dir = file_dirname(ck_file)
+ ck_name = file_basename(ck_file)
+ if(strupcase(ck_name) EQ 'AUTO') then ck_name = cor_name(dd) + '.bc'
+ ck_file = ck_dir + '/' + ck_name
+
 
  reload = tr_keyword_value(dd, 'reload')
 
