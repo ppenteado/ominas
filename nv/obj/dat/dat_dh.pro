@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Returns the maintenance value associated with a data descriptor.
+;	Returns the detached header associated with a data descriptor.
 ;
 ;
 ; CATEGORY:
@@ -30,7 +30,7 @@
 ;
 ;
 ; RETURN:
-;	The maintenance value associated with the data descriptor.
+;	Detached header associated with the data descriptor.
 ;
 ;
 ; STATUS:
