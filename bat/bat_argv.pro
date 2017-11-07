@@ -49,16 +49,6 @@ function bat_argv, i
 
  if(n_elements(argv) EQ 0) then return, ''
 
-
-
-; temporary work-around for prompt/idl_startup bug...
-p = strpos(argv, '-IDL_')
-ii = min(where(p NE -1))
-if(ii EQ 0) then return, ''
-if(ii GT 0) then argv = argv[0:ii-1]
-
-
-
  first = strmid(argv, 0, 1)
  w = where(first EQ '-')
  if(w[0] NE -1) then argv[w] = strmid(argv[w],1,1024) + '=1'
