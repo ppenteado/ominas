@@ -169,7 +169,7 @@ pro dh_std_output, dd, keyword, value, status=status, $
  dh_file = tr_keyword_value(dd, 'dh_out')
  if(keyword_set(dh_file)) then $
   begin
-   dh_dir = file_dirname(dh_file)
+   dh_dir = (file_search(file_dirname(dh_file)))[0]
    dh_name = file_basename(dh_file)
    if(strupcase(dh_name) EQ 'AUTO') then dh_name = dh_fname(/write, cor_name(dd))
    dh_file = dh_dir + '/' + dh_name
