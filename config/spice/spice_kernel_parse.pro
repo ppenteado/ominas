@@ -103,7 +103,7 @@ function spice_kernel_parse, dd, prefix, inst, type, ext=ext, time=_time, $
        if(NOT keyword_set(_ff)) then $
         begin
          nv_message, verb=0.9, 'Calling kernel auto-detect ' + fn
-         _ff = call_function(fn, dd, path, sc=sc, all=all, strict=strict, time=time)
+         _ff = call_function(fn, dd, kpath, sc=sc, all=all, strict=strict, time=time)
         end
 
       if(keyword_set(_ff)) then ff = _ff $
