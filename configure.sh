@@ -736,7 +736,7 @@ do
           echo "${ins[$d]}" >>${setting}
         fi
 done
-echo export PG_MAPS=${NV_MAPS_DATA}
+echo "export PG_MAPS=\${NV_MAPS_DATA}" >> ${setting}
 echo ". ~/.ominas/ominas_postsetup.sh" >> ${setting}
 
 #make ominas script
