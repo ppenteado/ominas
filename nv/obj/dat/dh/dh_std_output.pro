@@ -42,6 +42,11 @@
 ;			Default is OMINAS internal representation.  The null  
 ;			string, '', indicates the default.
 ;
+;	dh_out:		String giving the name of the new detached header to 
+;			write.  If the file base name is 'auto', then the name is
+;			taken from the core name property of the data descriptor,
+;			with any extension replaced by '.dh'.
+;
 ;
 ; SIDE EFFECTS:
 ;	The detached header in the data descriptor is modified.
@@ -161,6 +166,17 @@ pro dh_std_output, dd, keyword, value, status=status, $
  _ods =  cor_dereference(ods)
  prefix = strlowcase(str_nnsplit(keyword, '_'))
 
+ dh_file = tr_keyword_value(dd, 'dh_out')
+ if(keyword_set(dh_file)) then $
+  begin
+   dh_dir = (file_search(file_dirname(dh_file)))[0]
+   dh_name = file_basename(dh_file)
+   if(strupcase(dh_name) EQ 'AUTO') then dh_name = dh_fname(/write, cor_name(dd))
+   dh_file = dh_dir + '/' + dh_name
+  end
+
+
+
  ;--------------------------
  ; add update comment
  ;--------------------------
@@ -185,6 +201,12 @@ pro dh_std_output, dd, keyword, value, status=status, $
  ; modify detached header
  ;--------------------------
  dat_set_dh, dd, dh
+
+ ;-------------------------------------------
+ ; write detached header if file name given
+ ;-------------------------------------------
+ if(keyword_set(dh_file)) then dh_write, dh_file, dh
+
 
 end
 ;===========================================================================

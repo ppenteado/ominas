@@ -40,6 +40,12 @@
 ;			specified, the keyowrd with the highest history index
 ;			is matched.
 ;
+;	dh_in:		String giving the name of a detached header to load,
+;			replacing any current detached header.  If the base name
+;			is 'auto', then the name is taken from the core name 
+;			property of the data descriptor, with any extension 
+;			replaced by '.dh'.
+;
 ;
 ; RETURN:
 ;	Data associated with the requested keyword.
@@ -175,6 +181,7 @@ common dhsi_block, all_xds
  history = tr_keyword_value(dd, 'history')
  if(keyword_set(history)) then hi = fix(history)
 
+ dh_file = tr_keyword_value(dd, 'dh_in')
 
  ;------------------------------------------------------------
  ; primary planet descriptors (key4) must not be present
@@ -196,6 +203,17 @@ common dhsi_block, all_xds
    ;- - - - - - - - - - - - - - - - -
    ; get detached header
    ;- - - - - - - - - - - - - - - - -
+   if(keyword_set(dh_file)) then $
+    begin
+     dh_dir = file_dirname(dh_file)
+     dh_name = file_basename(dh_file)
+     if(strupcase(dh_name) EQ 'AUTO') then $
+                                 dh_name = dh_fname(/write, cor_name(dd[j]))
+     dh_file = dh_dir + '/' + dh_name
+     dh = dh_read(dh_file)
+     dat_set_dh, dd[j], dh
+    end
+
    dh = dat_dh(dd[j])
    if(NOT keyword_set(dh)) then return, 0
 
