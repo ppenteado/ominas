@@ -38,7 +38,7 @@ function dh_fname, filename, write=write
 
 
  ;------------------------------------------------------------------
- ; Otherwise try various posbilities to find an existing dh file...
+ ; Otherwise try various possibilities to find an existing dh file...
  ;------------------------------------------------------------------
  split_filename, filename, dir, name, ext
  if(NOT keyword_set(dir[0])) then dir = './'
