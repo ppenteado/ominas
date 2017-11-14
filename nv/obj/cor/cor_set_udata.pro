@@ -23,7 +23,9 @@
 ;	crx:	 Any subclass of CORE.  Only one descriptor may be provided.
 ;
 ;	name:	 Name to associate with the data.  If the name already exists,
-;		 then the data is overwritten.
+;		 then the data are overwritten.  If null string given, it is
+;		 assumed that a udata pointer is given in the udata argument
+;		 and the current pointer is replaced. 
 ;
 ;	data:	 Data to store.  If multiple crx supplied, then the trailing 
 ;		 dimension must match the number of descriptors unless /all.

@@ -7,12 +7,13 @@ pro grim_user_ptd_struct__define
  struct = $
     { grim_user_ptd_struct, $
 	color		:	'', $
-	shade_fn	:	'', $
+	fn_color	:	'', $
+	fn_shade	:	'', $
 	psym		:	0, $
 	thick		:	1, $
 	line		:	1, $
 	shade_threshold	:	0d, $
-	graphics_fn	:	3, $
+	fn_graphics	:	3, $
 	xgraphics	:	0b, $
 	symsize		:	0. $
     }
@@ -28,13 +29,14 @@ end
 ;
 ;=============================================================================
 pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
-                  color=color, shade_fn=shade_fn, psym=psym, thick=thick, line=line, symsize=symsize, $
-                  shade_threshold=shade_threshold, graphics_fn=graphics_fn, xgraphics=xgraphics, nodraw=nodraw, inactive=inactive, $
+                  color=color, fn_color=fn_color, fn_shade=fn_shade, psym=psym, thick=thick, line=line, symsize=symsize, $
+                  shade_threshold=shade_threshold, fn_graphics=fn_graphics, xgraphics=xgraphics, nodraw=nodraw, inactive=inactive, $
                   no_refresh=no_refresh, plane=plane
 
  if(NOT keyword_set(tag)) then tag = 'no_name'
  if(NOT keyword_set(symsize)) then symsize = 1
- if(NOT keyword_set(shade_fn)) then shade_fn = ''
+ if(NOT keyword_set(fn_shade)) then fn_shade = ''
+ if(NOT keyword_set(fn_color)) then fn_color = ''
  if(NOT keyword_set(shade_threshold)) then shade_threshold = 0d
 
  if(NOT defined(grn)) then if(keyword_set(plane)) then grn = plane.grn
@@ -47,7 +49,7 @@ pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
 
  if(NOT keyword_set(color)) then color = 'purple' 
 
- if(NOT keyword_set(graphics_fn)) then graphics_fn = grim_data.default_user_graphics_fn
+ if(NOT keyword_set(fn_graphics)) then fn_graphics = grim_data.default_user_fn_graphics
  if(NOT keyword_set(xgraphics)) then xgraphics = 0
  if(NOT keyword_set(psym)) then psym = grim_data.default_user_psym
  if(NOT keyword_set(thick)) then thick = grim_data.default_user_thick
@@ -55,10 +57,11 @@ pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
 
  user_struct = {grim_user_ptd_struct}
  user_struct.color = color
- user_struct.shade_fn = shade_fn
+ user_struct.fn_color = fn_color
+ user_struct.fn_shade = fn_shade
  user_struct.psym = psym
  user_struct.shade_threshold = shade_threshold
- user_struct.graphics_fn = graphics_fn
+ user_struct.fn_graphics = fn_graphics
  user_struct.xgraphics = xgraphics
  user_struct.thick = thick
  user_struct.line = line

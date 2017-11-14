@@ -411,7 +411,7 @@ end
 ; grim_shade_threshold
 ;
 ;=============================================================================
-function grim_shade_threshold, ptd, shade, threshold
+function grim_shade_threshold, ptd, shade, threshold, sub=w
 
  pp = pnt_points(ptd, /vis)
  w = where(shade GT threshold)

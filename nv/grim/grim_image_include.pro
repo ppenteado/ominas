@@ -543,17 +543,22 @@ pro grim_display_plot, grim_data, plane=plane, doffset=doffset, $
    xdat = transpose((convert_coord(/device, /to_data, axis))[0,*])
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; Alough this can greatly peed up the plotting, it is not ideal 
-   ; because it causes the full array to be read rather than just the 
-   ; samples needed to display it in the current view
+   ; This causes the full array to be read rather than just the 
+   ; samples needed to display it in the current view...
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    yarr = dat_data(planes[i].dd, abscissa=xarr)
-   ydat = interpol(yarr, xarr, xdat)
+   w = where((xdat GE min(xarr)) AND (xdat LE max(xarr)))
+   if(w[0] NE -1) then $
+    begin
+     xdat = xdat[w]
 
-   ;---------------------
-   ; display plot(s)
-   ;---------------------
-   tvgr, wnum, xdat, ydat
+     ydat = interpol(yarr, xarr, xdat)
+
+     ;---------------------
+     ; display plot(s)
+     ;---------------------
+     tvgr, wnum, xdat, ydat
+    end
   end
 
  ;----------------------------

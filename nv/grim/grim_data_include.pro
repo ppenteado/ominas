@@ -15,7 +15,7 @@ end
 ;=============================================================================
 function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            retain=retain, user_callbacks=user_callbacks, $
-           user_psym=user_psym, user_graphics_fn=user_graphics_fn, user_thick=user_thick, user_line=user_line, $
+           user_psym=user_psym, user_fn_graphics=user_fn_graphics, user_thick=user_thick, user_line=user_line, $
            cursor_swap=cursor_swap, cmd=cmd, lights=lights, $
            path=path, save_path=save_path, load_path=load_path, fov=fov, clip=clip, $
            cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
@@ -41,7 +41,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   activate = keyword_set(activate)
 
   if(NOT keyword_set(user_psym)) then user_psym = 3
-  if(NOT keyword_set(user_graphics_fn)) then user_graphics_fn = 3
+  if(NOT keyword_set(user_fn_graphics)) then user_fn_graphics = 3
   if(NOT keyword_set(user_thick)) then user_thick = 1
   if(NOT keyword_set(user_line)) then user_line = 0
   if(NOT keyword_set(slave_overlays)) then slave_overlays = 0
@@ -223,7 +223,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		tracking		: 1, $		
 		min_p			: ptr_new(0), $
 		max_p			: ptr_new(0), $
-		default_user_graphics_fn	: user_graphics_fn, $
+		default_user_fn_graphics	: user_fn_graphics, $
 		default_user_psym	: user_psym, $
 		default_user_thick	: user_thick, $
 		default_user_line	: user_line, $

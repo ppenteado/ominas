@@ -347,8 +347,8 @@ pro gros_apply_settings, data
     for j=0, n_utags-1 do $
      begin
       user_ptd = grim_get_user_ptd(plane=planes[i], utags[j], user_struct=user_struct)
-      shade_fn = user_struct.shade_fn
-      graphics_fn = user_struct.graphics_fn
+      fn_shade = user_struct.fn_shade
+      fn_graphics = user_struct.fn_graphics
       xgraphics = user_struct.xgraphics
 
       psym = ''
@@ -365,7 +365,7 @@ pro gros_apply_settings, data
       col = data.colors[grim_parse_form_entry(data.ids, data.tags, $
                                        gros_user_tag(j, 'color'), /drop)]
       grim_add_user_points, /update, /nodraw, user_ptd, utags[j], plane=planes[i], $
-         color=col, psym=psym, symsize=psize, shade_fn=shade_fn, graphics_fn=graphics_fn, xgraphics=xgraphics
+         color=col, psym=psym, symsize=psize, fn_shade=fn_shade, fn_graphics=fn_graphics, xgraphics=xgraphics
      end
 
 

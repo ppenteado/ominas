@@ -1985,7 +1985,6 @@ pro grim_render_image, grim_data, plane=plane, image_pts=image_pts
  ;-----------------------------------------
  ; render
  ;-----------------------------------------
-; stat = pg_render(/psf, /nodd, /no_mask, /limit_source, show=grim_data.render_show, $
  stat = pg_render(/psf, /nodd, /no_mask, show=grim_data.render_show, $
                     cd=cd, bx=bx, skd=skd, ltd=ltd, md=md, ddmap=dd_map, map=map, $
                     pht=minimum, sample=sample, numbra=numbra, $
@@ -10675,12 +10674,15 @@ if(NOT defined(render_auto)) then render_auto = 0
   end
 
 
- if(NOT keyword_set(xsize)) then xsize = 768
- if(NOT keyword_set(ysize)) then ysize = 768
  if(type EQ 'PLOT') then $
   begin
    if(NOT keyword_set(xsize)) then xsize = 500
    if(NOT keyword_set(ysize)) then ysize = 500
+  end $
+ else $
+  begin
+   if(NOT keyword_set(xsize)) then xsize = 768
+   if(NOT keyword_set(ysize)) then ysize = 768
   end
 
 

@@ -103,7 +103,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    if(NOT ptr_valid(_dd[0].input_translators_p)) then $
     begin
      nv_message, /con, name='dat_get_value', $
-	    'No input translator available for '+keyword+'.'
+	                      'No input translator available for '+keyword+'.'
      return, 0
     end
    translators = *_dd[0].input_translators_p
@@ -116,7 +116,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ; call all translators, building a list of returned values
  ;----------------------------------------------------------------
  nv_suspend_events
- nv_message, verb=0.9, 'Data descriptor ' + cor_name(dd)
+ nv_message, verb=0.9, 'Data descriptors ' + str_comma_list(cor_name(dd))
  nv_message, verb=0.9, 'Keyword ' + keyword
 
  for i=0, n-1 do $
@@ -134,13 +134,23 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    ;--------------------------------------
    ; add values to list
    ;--------------------------------------
+;;;stop, translators[i]
+;; prob is bad stat if first file has no dh
    if(stat EQ 0) then $
     begin
      nv_message, verb=0.9, 'Returned descriptors: ' + $
                                            str_comma_list([cor_name(xd)])
-     xds = append_array(xds, xd)
-     sort_names = append_array(sort_names, $
+
+; need to check/sort each xd separately...
+     if(keyword_set(xd)) then $
+      begin 
+       for jj = 0, n_elements(xd)-1 do $
+                           cor_set_udata, xd[jj], 'TRANSLATOR', translators[i]
+       xds = append_array(xds, xd)
+       sort_names = append_array(sort_names, $
                cor_name(xd) + '-' + str_pad(strtrim(i,2), 4, c='0', align=1))
+      end
+
      if(keyword_set(tr_first)) then i=n
     end $
    else nv_message, verb=0.9, 'No value.' 
@@ -159,13 +169,13 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
     for i=0, ndd-1 do $
      begin
       w = where(cor_gd(xds, /dd) EQ dd[i])
-      nw = n_elements(w)
       if(w[0] NE -1) then $
        begin
         if(NOT keyword_set(tr_order)) then w = rotate(w,2)		
 				; uniq chooses highest index, so this ensures
 				; that earliest xd gets selected unless /tr_order
-        names = cor_name(xds[w])
+        xdw = xds[w]
+        names = cor_name(xdw)
         sort_names = sort_names[w]
 	ss = sort(sort_names)
         uu = uniq(names[ss])
@@ -174,14 +184,18 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
         ii = ii[w[ss[uu]]]
         ii = ii[sort(ii)]
 
-        result = append_array(result, xds[ii])
+        xdw = xdw[ii]
+
+        nv_message, verb=0.9, $
+           'Selecting results from translator ' + cor_udata(xdw, 'TRANSLATOR')
+
+        result = append_array(result, xdw)
        end
      end $
     else result = xds
   end
 
- nv_message, verb=0.9, 'Output descriptors: ' + $
-                                           str_comma_list([cor_name(result)])
+ nv_message, verb=0.9, 'Output descriptors: ' + str_comma_list([cor_name(result)])
 
  nv_resume_events
  return, result

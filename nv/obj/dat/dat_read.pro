@@ -259,7 +259,6 @@ function drd_read, filename, data, header, $
      max = _max
     end 
 
-
    ;-----------------------------------------
    ; add data parameters and header to dd
    ;-----------------------------------------
@@ -270,14 +269,12 @@ function drd_read, filename, data, header, $
          dim=dim, $
          typecode=typecode
 
-
    ;------------------------------
    ; get header type
    ;------------------------------
    if(NOT keyword_set(_htype)) then htype = dat_detect_filetype(dd) $
    else htype = _htype
    dat_set_htype, dd, htype, /noevent
-
 
    ;-----------------------
    ; instrument
@@ -290,7 +287,6 @@ function drd_read, filename, data, header, $
      nv_message, verb=0.9, 'Instrument = ' + instrument
     end $
    else instrument = _instrument
-
 
    ;---------------------------------
    ; translators
@@ -312,7 +308,6 @@ function drd_read, filename, data, header, $
      output_keyvals = dat_parse_keyvals(output_keyvals)
     end
 
-
    ;---------------------------------
    ; transforms
    ;--------------------------------- 
@@ -326,7 +321,6 @@ function drd_read, filename, data, header, $
      if(keyword_set(_output_transforms)) then $
 				   output_transforms = _output_transforms
     end
-
 
    ;--------------------------
    ; complete data descriptor
