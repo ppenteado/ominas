@@ -274,7 +274,7 @@ end
 ;
 ;=============================================================================
 pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap, $
-                                                      override_color=override_color
+                                                    override_color=override_color
 
  ;-------------------------------------
  ; draw each user array
@@ -289,9 +289,10 @@ pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap, $
    user_color = user_struct.color
    if(keyword_set(override_color)) then user_color = override_color
 
-   user_shade_fn = user_struct.shade_fn
+   user_fn_shade = user_struct.fn_shade
+   user_fn_color = user_struct.fn_color
    user_shade_threshold = user_struct.shade_threshold
-   user_graphics_fn = user_struct.graphics_fn
+   user_fn_graphics = user_struct.fn_graphics
    user_xgraphics = user_struct.xgraphics
    user_psym = user_struct.psym
    user_thick = user_struct.thick
@@ -317,14 +318,15 @@ pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap, $
        ;- - - - - - - - - - - - - - - - - -
        shade = 1d
 
-       if(keyword_set(user_shade_fn[j])) then $
-                shade = call_function(user_shade_fn[j], user_ptd[j], grim_data, plane)
+       if(keyword_set(user_fn_shade[j])) then $
+                shade = call_function(user_fn_shade[j], user_ptd[j], grim_data, plane)
+
 
        ;- - - - - - - - - - - - - - - - - - - -
        ; determine which points are visible
        ;- - - - - - - - - - - - - - - - - - - -
-       if(keyword_set(user_shade_fn[j]) AND defined(user_shade_threshold[j])) then $
-               p = grim_shade_threshold(user_ptd[j], shade, user_shade_threshold[j]) $
+       if(keyword_set(user_fn_shade[j]) AND defined(user_shade_threshold[j])) then $
+               p = grim_shade_threshold(user_ptd[j], shade, user_shade_threshold[j], sub=sub) $
        else p = pnt_points(user_ptd[j], /visible)
 
        ;- - - - - - - - - - - - - - - - - - - -
@@ -339,9 +341,14 @@ pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap, $
           begin
             ucol = ctcolor(user_color[j], shade)
             uxcol = ctcolor(user_color[j])
-          end $ 
-         else $
-          ucol = (uxcol = long(user_color[j]))
+          end $
+         else ucol = (uxcol = long(user_color[j]))
+
+         if(keyword_set(user_fn_color[j])) then $
+          begin
+           uxcol = call_function(user_fn_color[j], user_ptd[j], grim_data, plane)
+           uxcol = uxcol[sub]
+          end
 
          ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
          ; draw points using standard plotting or add to xgraphics map
@@ -351,7 +358,7 @@ pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap, $
          else $
           pg_draw, p, col=ucol, psym=user_psym[j], $
                thick=user_thick[j], line=user_line[j], psize=user_symsize[j], $
-               graphics=user_graphics_fn[j]
+               graphics=user_fn_graphics[j]
         end
       end
     end
@@ -1798,6 +1805,7 @@ function grim_image_to_surface, grim_data, plane, image_pts, $
 @grim_block.include
 @pnt_include.pro
 
+ if(grim_data.type EQ 'PLOT') then return, 0
 
  cd = grim_xd(plane, /cd)
  surf_pts = 0
@@ -1865,6 +1873,8 @@ function grim_surface_to_image, grim_data, plane, surf_pts, names, valid=valid
 @grim_block.include
 @pnt_include.pro
 
+ if(grim_data.type EQ 'PLOT') then return, 0
+
  cd = grim_xd(plane, /cd)
  image_pts = 0
 
@@ -1894,7 +1904,6 @@ function grim_surface_to_image, grim_data, plane, surf_pts, names, valid=valid
      w = where(names EQ all_names[k])
      if(w[0] NE -1) then $
 	 image_pts = surface_to_image(cd, bx[k], surf_pts[w,*], body_pts=body_pts)
-help, cd
      r = bod_inertial_to_body_pos(bx[k], bod_pos(cd))
     end
 

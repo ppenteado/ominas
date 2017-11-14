@@ -11,7 +11,6 @@ radius=1d
  if(NOT defined(radius)) then radius = 2d
  if(NOT defined(weight)) then weight = 0.1d
 
- color = color[0]
  nlevels = 100d
 
  if(NOT keyword_set(map)) then $ 
@@ -103,9 +102,9 @@ radius=1d
           fshade = exp(alog(weight)*dr2/radius^2)
          end
 
-        rmap[jj] = rmap[jj] + r*shade[ww]*fshade
-        gmap[jj] = gmap[jj] + g*shade[ww]*fshade
-        bmap[jj] = bmap[jj] + b*shade[ww]*fshade
+        rmap[jj] = rmap[jj] + r[ww]*shade[ww]*fshade
+        gmap[jj] = gmap[jj] + g[ww]*shade[ww]*fshade
+        bmap[jj] = bmap[jj] + b[ww]*shade[ww]*fshade
        end
     end
 

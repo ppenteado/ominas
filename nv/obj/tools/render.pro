@@ -309,9 +309,10 @@ function rdr_piece, data, image_pts
        hit_list=sec_hit_list, hit_indices=sec_hit_indices, hit_matrix=sec_hit_matrix, $
        back_matrix=sec_back_matrix, range_matrix=sec_range_matrix
 
-; photometry needs to be done here because each light ray comes from a differnt
-; part of the sun and so has different photometric angles.  That's probably why 
-; there are bright points along the terminator for numbra > 1
+; photometry needs to be done here instead of below because each light ray 
+; comes from a different part of the sun and so has different photometric 
+; angles.  That's probably why there are bright points along the terminator for 
+; numbra > 1
 
       ;- - - - - - - - - - - - - - - - - - - - - - - -
       ; update illumination matrix
@@ -409,7 +410,7 @@ function render, image_pts, cd=cd, ltd=ltd, skd=skd, $
  ; determine number of channels in output image
  ;-----------------------------------------------
  nz = lonarr(ndd)
- for i=0, ndd-1 do $
+ for i=0, ndd-1 do if(cor_test(ddmap[i])) then $
   begin
    dim = dat_dim(ddmap[i])
    if(n_elements(dim EQ 3)) then nz[i] = dim[2]

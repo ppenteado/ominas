@@ -21,7 +21,8 @@
 ;	crx:	 Any subclass of CORE.  If multiple crx are provided, then
 ;		 the trailing dimension represents each each descriptor.
 ;
-;	name:	 Name associated with the data.
+;	name:	 Name associated with the data.  If not given, the udata
+;		 pointer is returned.
 ;
 ;  OUTPUT: NONE
 ;

@@ -175,13 +175,6 @@ common dhsi_block, all_xds
  prefix = strlowcase(str_nnsplit(keyword, '_'))
  fn = prefix + '_create_descriptors'
 
- ;-----------------------------------------------
- ; translator keywords
- ;-----------------------------------------------
- history = tr_keyword_value(dd, 'history')
- if(keyword_set(history)) then hi = fix(history)
-
- dh_file = tr_keyword_value(dd, 'dh_in')
 
  ;------------------------------------------------------------
  ; primary planet descriptors (key4) must not be present
@@ -201,6 +194,14 @@ common dhsi_block, all_xds
  for j=0, ndd-1 do $
   begin
    ;- - - - - - - - - - - - - - - - -
+   ; translator keywords
+   ;- - - - - - - - - - - - - - - - -
+   history = tr_keyword_value(dd[j], 'history')
+   if(keyword_set(history)) then hi = fix(history)
+
+   dh_file = tr_keyword_value(dd[j], 'dh_in')
+
+   ;- - - - - - - - - - - - - - - - -
    ; get detached header
    ;- - - - - - - - - - - - - - - - -
    if(keyword_set(dh_file)) then $
@@ -215,31 +216,33 @@ common dhsi_block, all_xds
     end
 
    dh = dat_dh(dd[j])
-   if(NOT keyword_set(dh)) then return, 0
+   if(keyword_set(dh)) then $
+    begin
 
-   ;- - - - - - - - - - - - - - - - -
-   ; determine # objects
-   ;- - - - - - - - - - - - - - - - -
-   name = dh_get_string(dh, prefix + '_name', n_obj=n_obj, hi=hi, status=status)
+     ;- - - - - - - - - - - - - - - - -
+     ; determine # objects
+     ;- - - - - - - - - - - - - - - - -
+     name = dh_get_string(dh, prefix + '_name', n_obj=n_obj, hi=hi, status=status)
 
-   ;- - - - - - - - - - - - - - - - -
-   ; get descriptors
-   ;- - - - - - - - - - - - - - - - -
-   for i=0, n_obj-1 do $
+     ;- - - - - - - - - - - - - - - - -
+     ; get descriptors
+     ;- - - - - - - - - - - - - - - - -
+     for i=0, n_obj-1 do $
            _xd = append_array(_xd, $
                           dhsi_get(dh, prefix, dd[j], all_xds, obj=i, hi=hi))
 
-   xd = !null
-   if(keyword_set(_xd)) then $
-    begin
-     xd = call_function(fn, n_obj, gd=dd)
-     cor_rereference, xd, _xd
-    end
+     xd = !null
+     if(keyword_set(_xd)) then $
+      begin
+       xd = call_function(fn, n_obj, gd=make_array(n_obj, val=dd[j]))
+       cor_rereference, xd, _xd
+      end
 
-   ;- - - - - - - - - - - - - - - - -
-   ; add to output list
-   ;- - - - - - - - - - - - - - - - -
-   xds = append_array(xds, xd)
+     ;- - - - - - - - - - - - - - - - -
+     ; add to output list
+     ;- - - - - - - - - - - - - - - - -
+     xds = append_array(xds, xd)
+    end
   end
 
 
