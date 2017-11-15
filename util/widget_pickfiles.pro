@@ -414,7 +414,7 @@ end
 function widget_pickfiles, parent, path=_path, one=one, filter=filter, $
         cancel_callback=cancel_callback, ok_callback=ok_callback, $
         must_exist=must_exist, button_base=button_base, default=_default, $
-        ok_button=ok_button
+        ok_button=ok_button, nofile=nofile
 
  if(NOT keyword__set(cancel_callback)) then cancel_callback = 'wpf_cancel_event'
  if(NOT keyword__set(ok_callback)) then ok_callback = ''
@@ -423,7 +423,11 @@ function widget_pickfiles, parent, path=_path, one=one, filter=filter, $
 
  if(keyword_set(_path)) then path = (file_search(_path, /fully_qualify_path))[0]
  if(keyword_set(_default)) then $
-                  default = (file_search(_default, /fully_qualify_path))[0]
+  begin
+   default = _default
+   if(keyword_set(must_exist)) then $
+                default = (file_search(_default, /fully_qualify_path))[0]
+  end
 
  if(NOT keyword_set(path)) then path = ''
  sel = path + '/'
@@ -460,7 +464,7 @@ function widget_pickfiles, parent, path=_path, one=one, filter=filter, $
  file_label = widget_label(file_base, value='Files:', /align_left)
  file_list = widget_list(file_base, xsize=35, ysize=10, multi=multi, $
                                              event_pro='wpf_file_list_event')
-
+ if(keyword_set(nofile)) then widget_control, file_list, sensitive=0
 
  sel_list = 0
 

@@ -76,6 +76,8 @@ pro pg_put_maps, dd, trs, md=_md, $
 		end_keywords
 
 
+ if(NOT keyword_set(_md)) then return
+
  ;-------------------------------------------------------------------
  ; override the specified values 
  ;-------------------------------------------------------------------

@@ -134,14 +134,11 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    ;--------------------------------------
    ; add values to list
    ;--------------------------------------
-;;;stop, translators[i]
-;; prob is bad stat if first file has no dh
    if(stat EQ 0) then $
     begin
      nv_message, verb=0.9, 'Returned descriptors: ' + $
-                                           str_comma_list([cor_name(xd)])
+                                                 str_comma_list([cor_name(xd)])
 
-; need to check/sort each xd separately...
      if(keyword_set(xd)) then $
       begin 
        for jj = 0, n_elements(xd)-1 do $
@@ -168,21 +165,27 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    if(NOT keyword_set(tr_nosort)) then $
     for i=0, ndd-1 do $
      begin
+      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
+      ; get xds related to dd[i]
+      ;- - - - - - - - - - - - - - - - - - - - - - - - - -
       w = where(cor_gd(xds, /dd) EQ dd[i])
       if(w[0] NE -1) then $
        begin
-        if(NOT keyword_set(tr_order)) then w = rotate(w,2)		
-				; uniq chooses highest index, so this ensures
-				; that earliest xd gets selected unless /tr_order
         xdw = xds[w]
-        names = cor_name(xdw)
-        sort_names = sort_names[w]
-	ss = sort(sort_names)
-        uu = uniq(names[ss])
 
-        ii = lindgen(nxds)
-        ii = ii[w[ss[uu]]]
-        ii = ii[sort(ii)]
+        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        ; sort by name in order of translator 
+        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        names = cor_name(xdw)
+	ss = sort(sort_names[w])
+
+        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        ; uniq chooses highest index, so this ensures
+        ; that earliest xd gets selected unless /tr_order
+        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        if(NOT keyword_set(tr_order)) then ss = rotate(ss,2)	
+        uu = uniq(names[ss])
+        ii = ss[uu]
 
         xdw = xdw[ii]
 
