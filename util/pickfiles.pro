@@ -126,7 +126,7 @@ end
 function pickfiles, get_path=get_path, path=path, title=title, one=one, $
     filter=filter, must_exist=must_exist, button_base=button_base, $
     options=options, selected_option=selected_option, default=default, $
-    filename=filename
+    filename=filename, nofile=nofile
 common pickfiles_block, files, base, out_path, options_dl, options_i
 
  files = ''

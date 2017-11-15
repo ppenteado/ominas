@@ -32,7 +32,7 @@
 ;	NONE
 ;
 ;  OUTPUT:
-;	status:		Zero if valid data is returned
+;	status:		Zero if valid descriptors are returned
 ;
 ;
 ;  TRANSLATOR KEYWORDS:
@@ -108,6 +108,7 @@ function dhsi_get, dh, prefix, dd, all_xds, obj=obj, hi=hi
  ;------------------------------------------------------
  ; read fields from dh; first 3 fields are internal
  ;------------------------------------------------------
+ nval = 0
  for i=3, nfields-1 do $
   begin
    field = fields[i]
@@ -139,6 +140,7 @@ function dhsi_get, dh, prefix, dd, all_xds, obj=obj, hi=hi
 
      if(keyword_set(val)) then $
       begin
+       nval = nval + 1
        if(type LE 7) then _xd.(i) = val $
        else if(type EQ 11) then $
                        _xd.(i) = dhsi_associate_object(val[0], dd, all_xds) $
@@ -153,7 +155,10 @@ function dhsi_get, dh, prefix, dd, all_xds, obj=obj, hi=hi
     end   
   end
 
- return, _xd
+  if(nval GT 0) then return, _xd
+
+  nv_free, xd
+  return, !null
 end
 ;=============================================================================
 
@@ -193,6 +198,8 @@ common dhsi_block, all_xds
  ndd = n_elements(dd)
  for j=0, ndd-1 do $
   begin
+   xd = !null
+
    ;- - - - - - - - - - - - - - - - -
    ; translator keywords
    ;- - - - - - - - - - - - - - - - -
@@ -218,7 +225,6 @@ common dhsi_block, all_xds
    dh = dat_dh(dd[j])
    if(keyword_set(dh)) then $
     begin
-
      ;- - - - - - - - - - - - - - - - -
      ; determine # objects
      ;- - - - - - - - - - - - - - - - -
@@ -227,11 +233,11 @@ common dhsi_block, all_xds
      ;- - - - - - - - - - - - - - - - -
      ; get descriptors
      ;- - - - - - - - - - - - - - - - -
+     _xd = !null
      for i=0, n_obj-1 do $
            _xd = append_array(_xd, $
                           dhsi_get(dh, prefix, dd[j], all_xds, obj=i, hi=hi))
 
-     xd = !null
      if(keyword_set(_xd)) then $
       begin
        xd = call_function(fn, n_obj, gd=make_array(n_obj, val=dd[j]))

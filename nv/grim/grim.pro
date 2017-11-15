@@ -1608,6 +1608,35 @@ end
 
 
 ;=============================================================================
+; grim_write_detached_header
+;
+;=============================================================================
+pro grim_write_detached_header, grim_data, plane, fname=_fname
+
+ if(NOT keyword_set(_fname)) then fname = 'auto' $
+ else fname = _fname
+
+ grim_print, grim_data, 'Writing ' + fname[0]
+
+ dd = plane.dd
+ cd = grim_xd(plane, /cd)
+ if(grim_test_map(grim_data)) then pg_put_maps, dd, md=cd, 'dh_out=' + fname $
+ else $
+  begin
+   pg_put_planets, dd, od=cd, pd=grim_xd(plane, /pd)
+   pg_put_arrays, dd, od=cd, ard=grim_xd(plane, /ard)
+   pg_put_stations, dd, od=cd, std=grim_xd(plane, /std)
+   pg_put_rings, dd, od=cd, rd=grim_xd(plane, /rd)
+   pg_put_stars, dd, od=cd, sd=grim_xd(plane, /sd)
+   pg_put_cameras, dd, cd=cd, 'dh_out=' + fname
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mask_fname
 ;
 ;=============================================================================
@@ -2926,6 +2955,110 @@ pro grim_menu_file_save_all_user_ptd_event, event
  for i=0, n_elements(planes)-1 do $
                           grim_write_user_points, grim_data, planes[i], fname=fname
  grim_print, grim_data, 'All user points saved.'
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_file_save_detached_header_event
+;
+;
+; PURPOSE:
+;	Saves a detached header for the current plane.  User is prompted
+;	to select the location, and name.  Default name is [image name].dh.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 11/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_file_save_detached_header_help_event, event
+ text = ''
+ nv_help, 'grim_menu_file_save_detached_header_ptd_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_file_save_detached_header_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_set_primary, grim_data.base
+ plane = grim_get_plane(grim_data)
+ grim_message, /clear
+
+ dd = plane.dd
+
+ ;------------------------------------------------------
+ ; get filename
+ ;------------------------------------------------------
+ fname = pickfiles(default=dh_fname(cor_name(dd), /write), $
+                                title='Select filename for saving', /one)
+ if(NOT keyword_set(fname)) then return
+
+
+ ;------------------------------------------------------
+ ; write data
+ ;------------------------------------------------------
+ grim_write_detached_header, grim_data, plane, fname=fname
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_file_save_all_detached_headers_event
+;
+;
+; PURPOSE:
+;	Writes detached headers for all planes to files called [image name].dh
+;	User is prompted for the directory name.
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 11/2017
+;	
+;-
+;=============================================================================
+pro grim_menu_file_save_all_detached_headers_help_event, event
+ text = ''
+ nv_help, 'grim_menu_file_save_all_detached_headers_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_file_save_all_detached_headers_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_set_primary, grim_data.base
+ planes = grim_get_plane(grim_data, /all)
+ grim_message, /clear
+
+ ;------------------------------------------------------
+ ; get directory
+ ;------------------------------------------------------
+ dir = pickfiles(default=dh_fname(cor_name(dd), /write), /nofile, $
+                                title='Select directory for saving', /one)
+ if(NOT keyword_set(dir)) then return
+
+ ;------------------------------------------------------
+ ; write data
+ ;------------------------------------------------------
+ for i=0, n_elements(planes)-1 do $
+          grim_write_detached_header, grim_data, planes[i], fname=dir + '/auto'
 
 end
 ;=============================================================================
@@ -9511,6 +9644,9 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Save                \+*grim_menu_file_save_event', $
            '0\Save As             \+*grim_menu_file_save_as_event', $
            '0\Open As RGB          \+*grim_menu_open_as_rgb_event', $
+           '0\--------------------\+grim_menu_delim_event', $ 
+           '0\Save Detached Header    \+*grim_menu_file_save_detached_header_event', $
+           '0\Save All Detached Headers\+*grim_menu_file_save_all_detached_headers_event', $
            '0\--------------------\+grim_menu_delim_event', $ 
            '0\Save User Points    \+*grim_menu_file_save_user_ptd_event', $
            '0\Save All User Points\+*grim_menu_file_save_all_user_ptd_event', $

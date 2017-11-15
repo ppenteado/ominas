@@ -29,13 +29,14 @@
 ;			The routine is faster with larger values of buflen, but
 ;			less memory efficient.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	status:		0 if file found, -1 if not.
 ;
 ;
 ; RETURN:
 ;	String array in which each line is a line of the detached header.
 ;	a blank detached header is created and returned if the file is 
-;	not found.
+;	not found.  In that case, status is set to -1.
 ;
 ;
 ; STATUS:
@@ -51,7 +52,9 @@
 ;	
 ;-
 ;=============================================================================
-function dh_read, filename, buflen=buflen
+function dh_read, filename, buflen=buflen, status=status
+
+ status = -1
 
  ;----------------------------
  ; open file
@@ -63,6 +66,7 @@ function dh_read, filename, buflen=buflen
    return, dh_create()
   end
 
+ status = 0
  nv_message, verb=0.1, 'Reading ' + filename + '.', /continue
 
 
