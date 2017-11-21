@@ -3007,7 +3007,9 @@ pro grim_menu_file_save_detached_header_event, event
  ;------------------------------------------------------
  ; write data
  ;------------------------------------------------------
+ nv_suspend_events
  grim_write_detached_header, grim_data, plane, fname=fname
+ nv_resume_events
 
 end
 ;=============================================================================
@@ -3057,8 +3059,10 @@ pro grim_menu_file_save_all_detached_headers_event, event
  ;------------------------------------------------------
  ; write data
  ;------------------------------------------------------
+ nv_suspend_events
  for i=0, n_elements(planes)-1 do $
           grim_write_detached_header, grim_data, planes[i], fname=dir + '/auto'
+ nv_resume_events
 
 end
 ;=============================================================================
@@ -10810,15 +10814,17 @@ if(NOT defined(render_auto)) then render_auto = 0
   end
 
 
- if(type EQ 'PLOT') then $
-  begin
-   if(NOT keyword_set(xsize)) then xsize = 500
-   if(NOT keyword_set(ysize)) then ysize = 500
-  end $
+ if(keyword_set(xsize)) then default_xsize = xsize $
  else $
   begin
-   if(NOT keyword_set(xsize)) then xsize = 768
-   if(NOT keyword_set(ysize)) then ysize = 768
+   if(type EQ 'PLOT') then xsize = 500 $
+   else default_xsize = 768
+  end
+ if(keyword_set(ysize)) then default_ysize = ysize $
+ else $
+  begin
+   if(type EQ 'PLOT') then ysize = 500 $
+   else default_ysize = 768
   end
 
 
@@ -10832,7 +10838,7 @@ if(NOT defined(render_auto)) then render_auto = 0
    ;-----------------------------
    if(NOT keyword_set(dd)) then $
     begin
-     dd = dat_create_descriptors(1, data=grim_blank(xsize, ysize), $
+     dd = dat_create_descriptors(1, data=grim_blank(default_xsize, default_ysize), $
           name='BLANK', nhist=nhist, maintain=maintain, compress=compress)
     end
    if(NOT keyword_set(zoom)) then zoom = grim_get_default_zoom(dd[0])
