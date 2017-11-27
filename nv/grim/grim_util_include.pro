@@ -285,6 +285,39 @@ end
 
 
 ;===============================================================================
+; grim_get_body_by_point
+;
+;  Returns all bodies hit by p, in order of distance.
+;
+;===============================================================================
+function grim_get_body_by_point, grim_data, plane, p
+
+ cd = grim_xd(plane, /cd)
+ cam_pos = bod_pos(cd)
+
+ xds = grim_xd(plane)
+ w = where(cor_isa(xds, 'SOLID'))
+ xds = xds[w]
+
+ for i=0, n_elements(xds)-1 do $
+  begin
+   body_pt = image_to_body(cd, xds[i], p, hit=hit)
+   if(hit[0] NE -1) then $
+    begin
+     hit_xds = append_array(hit_xds, xds[i])
+     inertial_pt = bod_body_to_inertial(xds[i], body_pt)
+     dist = append_array(dist, v_mag(cam_pos-inertial_pt))
+    end
+  end
+
+ if(NOT keyword_set(hit_xds)) then return, !null
+ return, hit_xds[sort(dist)]
+end
+;===============================================================================
+
+
+
+;===============================================================================
 ; grim_sort_by_flux
 ;
 ;  This just puts stars before planets.  To be correct, must look at 

@@ -90,7 +90,7 @@ end
 pro grim_mode_target_pointer, grim_data, plane, event
  cd = grim_xd(plane, /cd)
  p = (convert_coord(/device, /to_data, [event.x, event.y]))[0:1]
- pg_repoint, cd=cd, image_to_inertial(cd, p), /absolute
+ pg_repoint, cd=cd, image_to_inertial(cd, p)
 end
 ;=============================================================================
 
@@ -101,6 +101,12 @@ end
 ;
 ;=============================================================================
 pro grim_mode_target_body, grim_data, plane, event
+ cd = grim_xd(plane, /cd)
+ pp = (convert_coord(/device, /to_data, [event.x, event.y]))[0:1]
+ xds = grim_get_body_by_point(grim_data, plane, pp)
+ if(cor_name(xds[0]) EQ 'SKY') then return
+ p = inertial_to_image_pos(cd, bod_pos(xds[0]))
+ pg_repoint, cd=cd, image_to_inertial(cd, p)
 end
 ;=============================================================================
 
@@ -158,31 +164,17 @@ end
 ;	Selects the target cursor mode.  
 ;
 ;	 Camera orientation: 
-;	   Left button:		Allows the optic axis to be repointed.
+;	   Left button:		Repoints the optic axis at the cursor.
 ;
-;	   Right button:	Allows the camera to twist about an axis 
-;				corresponding to the selected pixel location.
-;
-;	 Camera position:
-;	   <Shift> Left:	Allows the camera to be repositioned in the 
-;				X-Z plane (image plane).  Speeds depend on
-;				the object under the cursor.
-;
-;	   <Shift> Right:	Allows the camera to be repositioned and 
-;				reoriented simultaneosly by tracking the
-;				object under the cursor.
-;
-;	   <Shift> Wheel:	Allows the camera to be repositioned in the 
-;				Y (optic axis) direction.  Speeds depend on
-;				the object under the cursor.
-;
+;	   Right button:	Repoints the optic axis at the center of the
+;				selected body.
 ;
 ; CATEGORY:
 ;	NV/GR
 ;
 ;
 ; OPERATION:
-;	Allow the user to fly around the system.
+;	Repoints the camera at the cursor position or a selected body.
 ;
 ;
 ; MODIFICATION HISTORY:
