@@ -183,20 +183,19 @@ else
 fi
 ans=u
 if [ ! -e "$HOME/.ominas/config/ominas_env_def.sh" ]; then
-  cp -avn config/ominas_env_def.sh $HOME/.ominas/config/
+  cp -avf config/ominas_env_def.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_def.sh already exists\n"
   read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
   case $ans in
    [Yy]*) 
-     echo "aaa"
-     mv -v $HOME/.ominas/config/ominas_env_def.sh $HOME/.ominas/config/ominas_env_def.sh.old
-     cp -av config/ominas_env_def.sh $HOME/.ominas/config/ ;;
+     mv -vf $HOME/.ominas/config/ominas_env_def.sh $HOME/.ominas/config/ominas_env_def.sh.old
+     cp -avf config/ominas_env_def.sh $HOME/.ominas/config/ ;;
    *) ans=n ;;
   esac
 fi
 if [ ! -e "$HOME/.ominas/config/ominas_env_strcat.sh" ]; then
-  cp -av config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
+  cp -avf config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_strcat.sh already exists\n"
   if [ $ans == u ]; then
@@ -204,15 +203,15 @@ else
   fi
     case $ans in
      [Yy]*) 
-       mv -v $HOME/.ominas/config/ominas_env_strcat.sh $HOME/.ominas/config/ominas_env_strcat.sh.old
-       cp -av config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/ ;;
+       mv -vf $HOME/.ominas/config/ominas_env_strcat.sh $HOME/.ominas/config/ominas_env_strcat.sh.old
+       cp -avf config/strcat/ominas_env_strcat.sh $HOME/.ominas/config/ ;;
      *) ans=n ;;
     esac
 fi
 for mis in  cas dawn gll vgr 
 do
   if [ ! -e "$HOME/.ominas/config/ominas_env_$mis.sh" ]; then
-    cp -av config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
+    cp -avf config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
   else
     printf "$HOME/.ominas/config/ominas_env_$mis.sh already exists\n"
     if [ $ans == u ]; then
@@ -220,8 +219,8 @@ do
     fi
       case $ans in
        [Yy]*)
-         mv -v $HOME/.ominas/config/ominas_env_$mis.sh $HOME/.ominas/config/ominas_env_$mis.sh.old
-         cp -av config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/ ;;
+         mv -vf $HOME/.ominas/config/ominas_env_$mis.sh $HOME/.ominas/config/ominas_env_$mis.sh.old
+         cp -avf config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/ ;;
        *) ans=n ;;
       esac
     fi
@@ -240,7 +239,7 @@ for f in grimrc Xdefaults-grim
 do
   if [ ! -e ${OMINAS_RC}/${f} ]; then
     echo "Copying default ${f} to ${OMINAS_RC}"
-    cp -avn config/${f} ${OMINAS_RC}/
+    cp -avf config/${f} ${OMINAS_RC}/
   else
     echo "${f} already exists in ${OMINAS_RC}, not changing it"
   fi
@@ -256,7 +255,7 @@ if [ ! -e ${setting} ]; then
 fi
 if [ -e "${setting}" ]; then
   rm -f ${osetting}
-  cp -av ${setting} ${osetting}
+  cp -avf ${setting} ${osetting}
   ins_ominas_env_def=`grep "ominas_env_def\.sh" ${setting}` 
 else
   touch $osetting
@@ -655,7 +654,7 @@ echo 'alias rim="ominas rim.bat -args "' >> ~/.ominas/ominasrc
 echo "writing "$setting
 if [ -e "$setting" ]; then
   rm -f ${osetting}
-  cp -av $setting $osetting
+  cp -avf $setting $osetting
 else
   touch $osetting
 fi
