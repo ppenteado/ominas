@@ -186,7 +186,8 @@ if [ ! -e "$HOME/.ominas/config/ominas_env_def.sh" ]; then
   cp -avf config/ominas_env_def.sh $HOME/.ominas/config/
 else
   printf "$HOME/.ominas/config/ominas_env_def.sh already exists\n"
-  read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
+  #read -rp "Would you like to overwrite the files in ${HOME}/.ominas/config with the default ominas_env_def.sh? A copy will be made of the old files. (y/n)[n]" ans
+  ans='Y'
   case $ans in
    [Yy]*) 
      mv -vf $HOME/.ominas/config/ominas_env_def.sh $HOME/.ominas/config/ominas_env_def.sh.old
@@ -372,7 +373,7 @@ function dins()
                 IFS='=' read -ra tmpa <<< "$tmp"
 		#read -rp "Would you like to overwrite this location (y/n)? " ans
                 if [ ${ominas_auto_u} != 1 ] ; then
-                  read -rp "Would you like to uninstall $dat from this location (y/n)[n]? " ans
+                  read -rp "Would you like to unconfigure $dat from this location (y/n)[n]? " ans
                 else
                   ans=y
                 fi
@@ -485,7 +486,7 @@ function pkins()
 #                pstr=". ${OMINAS_RC}/config/$1"
                   if grep -q $1 ${setting}; then
                     if [ ${ominas_auto_u} != 1 ] ; then
-                      read -rp "Would you like to uninstall the OMINAS core (y/n)[n]? " ans
+                      read -rp "Would you like to unconfigure the OMINAS core (y/n)[n]? " ans
                     else
                       ans="y"
                     fi
@@ -512,7 +513,7 @@ function pkins()
             loc=(`grep ${1} ${setting}`)
             echo "${3} seems to be already installed at ${loc[2]}"
             if [ ${ominas_auto_u} != 1 ] ; then
-              read -rp "Would you like to uninstall ${3} (y/n)[n]? " ans
+              read -rp "Would you like to unconfigure ${3} (y/n)[n]? " ans
             else
               ans="y"
             fi
@@ -643,6 +644,9 @@ function setdir() {
 function writesetting() {
 
 echo "#!/usr/bin/env bash" > ~/.ominas/ominasrc
+
+cat ${OMINAS_DIR}/config/bashcomments.txt >> ~/.ominas/ominasrc
+
 echo "alias ominas=~/.ominas/ominas" >> ~/.ominas/ominasrc
 echo "alias ominasde=~/.ominas/ominasde" >> ~/.ominas/ominasrc
 echo ". ~/.ominas/idlpath.sh" >> ~/.ominas/ominasrc
@@ -661,6 +665,9 @@ fi
 chmod a+rx $setting
 
 echo "#!/usr/bin/env bash" > ${setting}
+
+cat ${OMINAS_DIR}/config/bashcomments.txt >> ${setting}
+
 cat ${OMINAS_RC}/idlpath.sh >> ${setting}
 echo "#The following line, to load the new Xdefaults definition, is commented to avoid problems in systems where xrdb is not available." >> ${setting}
 echo "#If you would like to enable it, copy this line to you ~/.bashrc  /  ~/.bash_profile" >> ${setting}
@@ -740,6 +747,9 @@ echo ". ~/.ominas/ominas_postsetup.sh" >> ${setting}
 
 #make ominas script
 echo "#!/usr/bin/env bash" > ~/.ominas/ominas
+
+cat ${OMINAS_DIR}/config/bashcomments.txt >> ~/.ominas/ominas
+
 #head -1 ${idlbin} > ~/.ominas/ominas
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominas
@@ -766,6 +776,9 @@ chmod a+rx ~/.ominas/ominas
 #make ominasde script
 
 echo "#!/usr/bin/env bash" > ~/.ominas/ominasde
+
+cat ${OMINAS_DIR}/config/bashcomments.txt >> ~/.ominas/ominasde
+
 #head -1 ${idlbin} > ~/.ominas/ominasde
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominasde
@@ -909,7 +922,7 @@ esac
 }
 
 printf "The setup will guide you through the installation of OMINAS\n"
-printf "More help is in the Install Guide, at https://ppenteado.github.io/ominas/guides/userguide.html\n"
+printf "More help is in the Install Guide, at https://nasa.github.io/ominas/guides/userguide.html\n"
 
 #if ! grep -q "OMINAS_DIR=.*; export OMINAS_DIR" ${setting}; then
 # NOTE: OMINAS is available in repository form. Extraction is no longer needed
@@ -1079,7 +1092,7 @@ Data:
        13) GSC star catalog  . . . . . . . . . . . ${dstatus[5]}
 
 For more information, see
-https://ppenteado.github.io/ominas/guides/userguide.html
+https://nasa.github.io/ominas/guides/userguide.html
 PKGS
 
 else
@@ -1137,7 +1150,7 @@ Data:
        13) GSC star catalog  . . . . . . . . . . . ${dstatus[5]}
 
 For more information, see
-https://ppenteado.github.io/ominas/guides/userguide.html
+https://nasa.github.io/ominas/guides/userguide.html
 PKGS
 
 
@@ -1450,5 +1463,5 @@ while [ 1 ]; do
 done
 . ~/.ominas/ominasrc
 printf "Setup has completed. It is recommended to restart your terminal session before using OMINAS.\n"
-printf "You may want to try some of the tutorials at https://ppenteado.github.io/ominas/demo/\n"
-printf "For documentation on how OMINAS works, see the User Guide at https://ppenteado.github.io/ominas/user_guide\n"
+printf "You may want to try some of the tutorials at https://nasa.github.io/ominas/demo/\n"
+printf "For documentation on how OMINAS works, see the User Guide at https://nasa.github.io/ominas/user_guide\n"
