@@ -93,13 +93,11 @@ pro pg_repoint, cd=cd, gd=gd, _arg, _dtheta, axis_ptd=axis_ptd, $
                 bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy, $
 		absolute=absolute
 
-
  arg = 0
  if(keyword_set(_arg)) then arg = _arg
 
  dtheta = 0
  if(keyword_set(_dtheta)) then dtheta = _dtheta
-
 
  ;-----------------------------------------------
  ; dereference the generic descriptor if given
@@ -119,8 +117,8 @@ pro pg_repoint, cd=cd, gd=gd, _arg, _dtheta, axis_ptd=axis_ptd, $
  ; if vector argument, then point along that vector
  ;-------------------------------------------------------
  if(keyword_set(v)) then $
-   bod_set_orient, cd, radec_to_orient($
-                            bod_body_to_radec(bod_inertial(nt), v)) $
+   bod_set_orient, cd, cam_radec_to_orient(y=(bod_orient(cd))[2,*,*], $
+                                 bod_body_to_radec(bod_inertial(nt), v)) $
  else $
   begin
    ;---------------------------------------
@@ -145,7 +143,6 @@ pro pg_repoint, cd=cd, gd=gd, _arg, _dtheta, axis_ptd=axis_ptd, $
      if(n_elements(dtheta) EQ 1) then dtheta = replicate(dtheta[0], nt) 
      if(n_elements(dxy) EQ 2) then dxy = dxy[linegen3z(2,1,nt)]
 
-
      ;------------------------------------------------
      ; modify camera pointing for all times
      ;------------------------------------------------
@@ -155,10 +152,6 @@ pro pg_repoint, cd=cd, gd=gd, _arg, _dtheta, axis_ptd=axis_ptd, $
     end
   end
 
-
  cor_add_task, cd, 'pg_repoint'
-
-
-
 end
 ;=============================================================================

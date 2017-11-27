@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       radec_to_orient
+;       cam_radec_to_orient
 ;
 ;
 ; PURPOSE:
@@ -11,11 +11,11 @@
 ;
 ;
 ; CATEGORY:
-;       NV/LIB/TOOLS
+;       NV/LIB/CAM
 ;
 ;
 ; CALLING SEQUENCE:
-;       M = radec_to_orient(radec)
+;       M = cam_radec_to_orient(radec)
 ;
 ;
 ; ARGUMENTS:
@@ -27,7 +27,9 @@
 ;
 ;
 ; KEYOWRDS:
-;  INPUT: NONE
+;  INPUT: 
+;	y:	If set, axis 2 is set to point in this direction instead of 
+;		celestial north.
 ;
 ;  OUTPUT: NONE
 ;
@@ -42,7 +44,10 @@
 ;
 ;-
 ;=============================================================================
-function radec_to_orient, _radec
+function cam_radec_to_orient, _radec, y=y
+
+ zz = [[0],[0],[1d]]
+ if(keyword_set(y)) then zz = y
 
  radec = _radec
  dim = size(radec, /dim)
@@ -51,15 +56,15 @@ function radec_to_orient, _radec
  nv = n_elements(radec)/3
 
  v1 = v_unit(bod_radec_to_body(bod_inertial(), radec))
- zz = [[0],[0],[1d]]##make_array(nv,val=1d)
+ zz = zz##make_array(nv,val=1d)
  
  v0 = v_unit(v_cross(v1, zz))
  v2 = v_unit(v_cross(v0, v1))
 
  orient = dblarr(3,3,nv)
- orient[0,*,*] = tr(v0)
- orient[1,*,*] = tr(v1)
- orient[2,*,*] = tr(v2)
+ orient[0,*,*] = -v0
+ orient[1,*,*] = v1
+ orient[2,*,*] = v2
 
  return, orient
 end

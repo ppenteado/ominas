@@ -76,6 +76,8 @@ pro pg_put_rings, dd, trs, rd=_rd, ods=ods, $
 		end_keywords
 
 
+ if(NOT keyword_set(_rd)) then return
+
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------

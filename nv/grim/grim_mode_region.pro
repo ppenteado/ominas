@@ -117,11 +117,11 @@ end
 ;	
 ;-
 ;=============================================================================
-;pro grim_region_mode_help_event, event
-; text = ''
-; nv_help, 'grim_region_mode_event', cap=text
-; if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-;end
+pro grim_mode_region_button_help_event, event
+ text = ''
+ nv_help, 'grim_mode_region_button_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
 ;----------------------------------------------------------------------------
 pro grim_mode_region_button_event, event
 
