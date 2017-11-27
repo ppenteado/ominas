@@ -1,8 +1,9 @@
 #!/bin/sh
 # ominas_env_dawn.sh
 #-----------------------------------------------------------------------------------#
-#	OMINAS Dawn setup for bash														#
-#																					#
+#	OMINAS Dawn setup for bash				                    #
+#       The copy of this file at ~/.ominas/config is overwritten by the installer   #
+#										    #
 #-----------------------------------------------------------------------------------#
 
 OMINAS_DAWN=${OMINAS_DIR}/config/dawn/

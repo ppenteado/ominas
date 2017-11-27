@@ -1,8 +1,8 @@
 #!/bin/sh
 # ominas_env_gll.sh
 #-----------------------------------------------------------------------------------#
-#	OMINAS Galileo setup for sh														#
-#																					#
+#	OMINAS Galileo setup for sh					            #
+#       The copy of this file at ~/.ominas/config is overwritten by the installer   #
 #-----------------------------------------------------------------------------------#
 
 OMINAS_GLL=${OMINAS_DIR}/config/gll/
