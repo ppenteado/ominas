@@ -78,6 +78,8 @@ pro pg_put_planets, dd, trs, pd=_pd, ods=ods, raw=raw, $
 		end_keywords
 
 
+ if(NOT keyword_set(_pd)) then return
+
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------

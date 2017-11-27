@@ -118,6 +118,9 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 
 
 
+
+
+
 ;------------------------------------------------------------------------------
 ; +
 ;  You have too many GRIM windows open.  Let's take care of that::
@@ -154,7 +157,7 @@ grim, /new, './data/n*.2', /order, overlay='center'
 ;    grim, /new, './data/GamAra037_2_bin50_031108.vic'
 ;-
 ;------------------------------------------------------------------------------
-grim, /new, './data/GamAra037_2_bin50_031108.vic'
+grim, /new, './data/GamAra037_2_bin50_031108.vic', xsize=1200, ysize=300
 
 
 

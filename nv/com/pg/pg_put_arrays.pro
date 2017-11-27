@@ -76,6 +76,8 @@ pro pg_put_arrays, dd, trs, ard=_ard, ods=ods, $
 		end_keywords
 
 
+ if(NOT keyword_set(_ard)) then return
+
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------

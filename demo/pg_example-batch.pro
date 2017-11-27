@@ -90,6 +90,12 @@ tvim, im, zoom=0.75, /order, /new
 ;
 ;     pd = pg_get_planets(dd, od=cd, $
 ;              name=['JUPITER', 'IO', 'EUROPA', 'GANYMEDE', 'CALLISTO'])
+;
+;   Instead, we just search the returned descriptors for the on named
+;   'JUPITER'::
+;
+;     ii = where(cor_name(pd) EQ 'JUPITER') 
+;
 ;-
 ;-------------------------------------------------------------------------
 cd = pg_get_cameras(dd)	
@@ -97,6 +103,7 @@ pd = pg_get_planets(dd, od=cd, count=npd)
 rd = pg_get_rings(dd, pd=pd, od=cd, count=nrd)
 ltd = pg_get_stars(dd, od=cd, name='SUN')
 
+ii = where(cor_name(pd) EQ 'JUPITER') 
 
 ;-------------------------------------------------------------------------
 ;+
@@ -268,10 +275,9 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;   .. image:: graphics/jupiter_ex_edge.jpeg
 ;   
 ;   Next, use PG_FARFIT to find the x/y offset that best matches the limb of 
-;   planet 0 (which is Jupiter because the translators return the observation
-;   target as number 0 if it is known)::
+;   Jupiter (planet index ii)::
 ;
-;     dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])
+;     dxy = pg_farfit(dd, edge_ptd, [limb_ptd[ii]])
 ;
 ;   BTW, you have been duped.  PG_FARFIT fails a lot because the search 
 ;   is pretty sparse.  I cherry-picked an image that usually works pretty 
@@ -304,7 +310,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 edge_ptd = pg_edges(dd, edge=10)
 pg_draw, edge_ptd
 
-dxy = pg_farfit(dd, edge_ptd, [limb_ptd[0]])
+dxy = pg_farfit(dd, edge_ptd, [limb_ptd[ii]])
 
 pg_repoint, dxy, gd=gd
 
@@ -332,21 +338,21 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;   the directions::
 ;
 ;    tvim, im
-;    dxy = pg_drag(object_ptd, dtheta=dtheta, axis=center_ptd[0])
+;    dxy = pg_drag(object_ptd, dtheta=dtheta, axis=center_ptd[ii])
 ;
 ;   Like PG_FARFIT, PG_DRAG returns an x/y offset that can be input to
 ;   PG_REPOINT, but it also returns a twist offset, so we need to input
 ;   that and an axis to PG_REPOINT::
 ;
-;    pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
+;    pg_repoint, dxy, dtheta, axis=center_ptd[ii], gd=gd
 ;
 ;   And now you have to recompute and redraw again.  It's the same as 
 ;   above.  Please don't make me write it out.
 ;-
 ;-------------------------------------------------------------------------
 tvim, im
-dxy = pg_drag(object_ptd, dtheta=dtheta, axis=center_ptd[0])
-pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
+dxy = pg_drag(object_ptd, dtheta=dtheta, axis=center_ptd[ii])
+pg_repoint, dxy, dtheta, axis=center_ptd[ii], gd=gd
 
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
@@ -382,7 +388,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;   with a width of 80 pixels.  lzero and mzero are coordinating the
 ;   zero pointing of the model::
 ;   
-;    cvscan_ptd=pg_cvscan(dd, gd=gd, limb_ptd[0], edge=30, width=80, $
+;    cvscan_ptd=pg_cvscan(dd, gd=gd, limb_ptd[ii], edge=30, width=80, $
 ;       model=[make_array(npd,val=ptr_new(edge_model_nav_limb(zero=lzero)))], $
 ;       mzero=[make_array(npd,val=lzero)] )
 ;
@@ -395,7 +401,7 @@ pg_draw, object_ptd, colors=colors, psyms=psyms, psizes=psizes, plabel=plabels
 ;
 ;-
 ;-------------------------------------------------------------------------
-cvscan_ptd=pg_cvscan(dd, gd=gd, limb_ptd[0], edge=30, width=80, $
+cvscan_ptd=pg_cvscan(dd, gd=gd, limb_ptd[ii], edge=30, width=80, $
    model=[make_array(npd,val=ptr_new(edge_model_nav_limb(zero=lzero)))], $
    mzero=[make_array(npd,val=lzero)] )
 
@@ -478,7 +484,7 @@ cvscan_cf = pg_cvscan_coeff(cvscan_ptd, fix=2)
 dxy = pg_fit(cvscan_cf)
 
 
-pg_repoint, dxy, dtheta, axis=center_ptd[0], gd=gd
+pg_repoint, dxy, dtheta, axis=center_ptd[ii], gd=gd
 
 limb_ptd = pg_limb(gd=gd) & pg_hide, limb_ptd, gd=gd, bx=rd, /rm
         pg_hide, limb_ptd, /assoc, gd=gd, bx=pd, od=ltd
@@ -531,12 +537,12 @@ print, dxy, chisq, covar
 ;     pg_draw, grid_ptd, color=ctblue()
 ;
 ;     plat_ptd = pg_grid(gd=gd, slon=!dpi/2d, lat=lat, nlon=0) 
-;     pg_hide, plat_ptd[0], cd=cd, bx=pd[0], /, bx=pd
-;     pg_draw, plat_ptd[0], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
+;     pg_hide, plat_ptd[ii], cd=cd, bx=pd[ii], /, bx=pd
+;     pg_draw, plat_ptd[ii], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
 ;
 ;     plon_ptd = pg_grid(gd=gd, slat=0d, lon=lon, nlat=0) 
-;     pg_hide, plon_ptd[0], cd=cd, bx=pd[0], /assoc
-;     pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
+;     pg_hide, plon_ptd[ii], cd=cd, bx=pd[ii], /assoc
+;     pg_draw, plon_ptd[ii], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 ;
 ;     dgrid_ptd=pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, bx=pd
 ;     pg_draw, dgrid_ptd, color=ctpurple()
@@ -550,12 +556,12 @@ pg_hide, grid_ptd, gd=gd, bx=rd
 pg_draw, grid_ptd, color=ctblue()
 
 plat_ptd = pg_grid(gd=gd, slon=!dpi/2d, lat=lat, nlon=0) 
-pg_hide, plat_ptd[0], cd=cd, bx=pd[0], /assoc
-pg_draw, plat_ptd[0], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
+pg_hide, plat_ptd[ii], cd=cd, bx=pd[ii], /assoc
+pg_draw, plat_ptd[ii], psym=3, plabel=strtrim(round(lat*180d/!dpi),2), /label_p
 
 plon_ptd = pg_grid(gd=gd, slat=0d, lon=lon, nlat=0) 
-pg_hide, plon_ptd[0], cd=cd, bx=pd[0], /assoc
-pg_draw, plon_ptd[0], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
+pg_hide, plon_ptd[ii], cd=cd, bx=pd[ii], /assoc
+pg_draw, plon_ptd[ii], psym=3, plabel=strtrim(round(lon*180d/!dpi),2), /label_p
 
 
 dgrid_ptd=pg_grid(gd=gd, bx=rd) & pg_hide, dgrid_ptd, gd=gd, bx=pd
@@ -572,7 +578,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;    Rectangular::
 ;
-;      md = pg_get_maps(/over, bx=pd[0], $
+;      md = pg_get_maps(/over, bx=pd[ii], $
 ;             projection='RECTANGULAR', $
 ;             /map_graphic,
 ;             size=[400,200])
@@ -582,7 +588,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;    Orthographic::
 ;
-;       md = pg_get_maps(/over, bx=pd[0], $
+;       md = pg_get_maps(/over, bx=pd[ii], $
 ;             projection='ORTHOGRAPHIC', $
 ;             size=[400,400], $
 ;             center=[!dpi/6d,!dpi])
@@ -592,7 +598,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;    Stereographic::
 ;
-;       md = pg_get_maps(/over, bx=pd[0], $
+;       md = pg_get_maps(/over, bx=pd[ii], $
 ;              projection='STEREOGRAPHIC', $
 ;              scale=0.5, $
 ;              size=[400,400], center=[!dpi/2d,0d])
@@ -602,7 +608,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;    Mercator::
 ;
-;       md = pg_get_maps(/over, bx=pd[0], $
+;       md = pg_get_maps(/over, bx=pd[ii], $
 ;             projection='MERCATOR', $	
 ;              size=[400,200])
 ;
@@ -610,22 +616,22 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;
 ;-
 ;-------------------------------------------------------------------------
-md = pg_get_maps(/over, bx=pd[0], $
+md = pg_get_maps(/over, bx=pd[ii], $
        projection='RECTANGULAR', $
        /map_graphic, $
        size=[400,200])
 
-md = pg_get_maps(/over, bx=pd[0], $
+md = pg_get_maps(/over, bx=pd[ii], $
        projection='ORTHOGRAPHIC', $
        size=[400,400], $
        center=[!dpi/6d,!dpi])
 	
-md = pg_get_maps(/over, bx=pd[0], $
+md = pg_get_maps(/over, bx=pd[ii], $
        projection='STEREOGRAPHIC', $
        scale=0.5, $
        size=[400,400], center=[!dpi/2d,0d])
 
-md = pg_get_maps(/over, bx=pd[0], $
+md = pg_get_maps(/over, bx=pd[ii], $
        projection='MERCATOR', $	
        size=[400,200])
 
@@ -637,7 +643,7 @@ md = pg_get_maps(/over, bx=pd[0], $
 ;   PG_MAP creates a map projection and returns it in a data descriptor.
 ;   The map is also returned a a keyword for convenience::
 ;
-;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=map)
+;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[ii], map=map)
 ;     tvim, /new, map
 ;
 ;    Rectangular::
@@ -656,17 +662,17 @@ md = pg_get_maps(/over, bx=pd[0], $
 ;
 ;   You could bound the map like this::
 ;
-;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=map, $
+;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[ii], map=map, $
 ;                      bounds=bounds = [-30,30,-180,180]*!dpi/180d)
 ;
 ;
 ;   Or exclude the areas covered by the rings::
 ;
-;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], gbx=pd[0], $
+;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[ii], gbx=pd[ii], $
 ;                        hide_fn='pm_hide_ring', hide_bx=rd, map=map)
 ;-
 ;-------------------------------------------------------------------------
-dd_map = pg_map(dd, md=md, gd=gd, bx=pd[0], map=map, bounds=bounds)
+dd_map = pg_map(dd, md=md, gd=gd, bx=pd[ii], map=map, bounds=bounds)
 tvim, /new, map
 
 
@@ -681,7 +687,7 @@ tvim, /new, map
 ;
 ;   First, define a new generic descriptor.  ::
 ;
-;     gdm={cd:md, od:cd, gbx:pd[0], dkx:rd}
+;     gdm={cd:md, od:cd, gbx:pd[ii], dkx:rd}
 ;
 ;     map_grid_ptd = pg_grid(gd=gdm, lat=lat, lon=lon)
 ;     plat_ptd = pg_grid(gd=gdm, slon=!dpi/2d, lat=lat, nlon=0)
@@ -693,7 +699,7 @@ tvim, /new, map
 ;
 ;-
 ;-------------------------------------------------------------------------
-gdm={cd:md, gbx:pd[0], dkx:rd}
+gdm={cd:md, gbx:pd[ii], dkx:rd}
 
 map_grid_ptd = pg_grid(gd=gdm, lat=lat, lon=lon)
 plat_ptd = pg_grid(gd=gdm, slon=!dpi/2d, lat=lat, nlon=0)
@@ -734,7 +740,7 @@ pg_draw, map_term_ptd, col=ctyellow()
 ;   A map can be reprojected using a second map descriptor with the
 ;   original map descriptor in place of the camera descriptor::
 ;
-;     md1 = pg_get_maps(/over, bx=pd[0], $
+;     md1 = pg_get_maps(/over, bx=pd[ii], $
 ;        projection='ORTHOGRAPHIC', $
 ;        size=[400,400], $
 ;        center=[!dpi/6d,!dpi])
@@ -746,7 +752,7 @@ pg_draw, map_term_ptd, col=ctyellow()
 ;
 ;-
 ;-------------------------------------------------------------------------
-md1 = pg_get_maps(/over, bx=pd[0], $
+md1 = pg_get_maps(/over, bx=pd[ii], $
 	projection='STEREOGRAPHIC', $
 	size=[400,400], $
 	center=[!dpi/2d,!dpi])

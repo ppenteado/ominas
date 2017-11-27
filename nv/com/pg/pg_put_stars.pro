@@ -76,6 +76,8 @@ pro pg_put_stars, dd, trs, sd=_sd, ods=ods, $
 		end_keywords
 
 
+ if(NOT keyword_set(_sd)) then return
+
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
  ;-------------------------------------------------------------------

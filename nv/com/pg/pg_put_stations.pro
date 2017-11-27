@@ -75,6 +75,7 @@ pro pg_put_stations, dd, trs, std=_std, ods=ods, $
 @nv_trs_keywords_include.pro
 		end_keywords
 
+ if(NOT keyword_set(_std)) then return
 
  ;-------------------------------------------------------------------
  ; override the specified values (name cannot be overridden)
