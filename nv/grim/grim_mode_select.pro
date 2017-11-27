@@ -165,11 +165,11 @@ end
 ;	
 ;-
 ;=============================================================================
-;pro grim_select_mode_help_event, event
-; text = ''
-; nv_help, 'grim_select_mode_event', cap=text
-; if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
-;end
+pro grim_mode_select_button_help_event, event
+ text = ''
+ nv_help, 'grim_mode_select_button_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
 ;----------------------------------------------------------------------------
 pro grim_mode_select_button_event, event
 

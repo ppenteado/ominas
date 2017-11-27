@@ -9812,6 +9812,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Overlay Settings       \+*grim_menu_points_settings_event', $
            '2\<null>               \+*grim_menu_delim_event']
 
+
  ;----------------------------------------------
  ; Insert cursor mode menu items
  ;----------------------------------------------
