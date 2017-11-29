@@ -1,8 +1,9 @@
 #!/bin/sh
 # ominas_env_vgr.sh
 #-----------------------------------------------------------------------------------#
-#	OMINAS Voyager setup for bash													#
-#																					#
+#	OMINAS Voyager setup for bash						    #
+#       The copy of this file at ~/.ominas/config is overwritten by the installer   #
+#										    #
 #-----------------------------------------------------------------------------------#
 
 OMINAS_VGR=${OMINAS_DIR}/config/vgr/

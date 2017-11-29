@@ -2,7 +2,7 @@
 # ominas_env_strcat.sh
 #-----------------------------------------------------------------------------------#
 #	OMINAS Star catalogs setup for sh                                           #
-#										    #
+#	The copy of this file at ~/.ominas/config is overwritten by the installer   #
 #-----------------------------------------------------------------------------------#
 
 #declare OMINAS_${1}=${OMINAS_DIR}/config/${1}
