@@ -112,7 +112,7 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------------------
  ; get catalog path
  ;----------------------------------------------
- catpath = getenv('NV_ORBIT_DATA')
+ catpath = getenvs('NV_ORBIT_DATA')
  if(NOT keyword_set(catpath)) then $
   begin
     nv_message, /con, $
