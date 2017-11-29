@@ -92,7 +92,7 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
  n = n_elements(bx)
  if(cor_class(od) EQ 'CAMERA') then cd = od
 
- sel = !null
+ sel = !null 
 
  nv_message, verb=0.2, 'Selection Criteria:'
  help, keyvals, out=s &  nv_message, /anon, verb=0.2, transpose(s[1:*])
