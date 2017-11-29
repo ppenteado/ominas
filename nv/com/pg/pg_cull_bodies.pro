@@ -62,10 +62,12 @@ pro pg_cull_bodies, bx, sel, name=name
    sel = unique(sel)
 
    w = complement(bx, sel)
-   nv_message, verb=0.2, $
-      'The following objects were deleted: ' + str_comma_list(cor_name(bx[w]))
-
-   if(w[0] NE -1) then nv_free, bx[w]
+   if(w[0] NE -1) then $
+    begin
+     nv_free, bx[w]
+     nv_message, verb=0.2, 'The following objects were deleted:'
+     nv_message, verb=0.2, /anon, transpose('   ' + [cor_name(bx[w])])
+    end
 
    if(sel[0] EQ -1) then bx = obj_new() $
    else bx = bx[sel]

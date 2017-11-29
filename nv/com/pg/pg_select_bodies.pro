@@ -87,10 +87,15 @@
 ;=============================================================================
 function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
 
+ if(NOT keyword_set(keyvals)) then return, !null
+
  n = n_elements(bx)
  if(cor_class(od) EQ 'CAMERA') then cd = od
 
  sel = !null
+
+ nv_message, verb=0.2, 'Selection Criteria:'
+ help, keyvals, out=s &  nv_message, /anon, verb=0.2, transpose(s[1:*])
 
  ;------------------------------------------------------------------------ 
  ; parameters
@@ -126,7 +131,12 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
     image_pts = inertial_to_image_pos(cd, pos)
 
     w = where(p_mag(image_pts-cov)-mpix LE fov*cam_fov/cam_scale*1.1)
-    sel = append_array(sel, w)
+    if(w[0] NE -1) then $
+     begin
+      sel = append_array(sel, w)
+      nv_message, verb=0.2, 'Selected based on field of view:'
+      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+     end
    end
 
  ;---------------------------------------------------------------------------- 
@@ -137,8 +147,14 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
   if(keyword_set(cd)) then $
    begin
     pix = double(pix[0])
+
     w = where(mpix GE pix)
-    if(w[0] NE -1) then sel = append_array(sel, w)
+    if(w[0] NE -1) then $
+     begin
+      sel = append_array(sel, w)
+      nv_message, verb=0.2, 'Selected based on apparent size:'
+      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+     end
    end
 
  ;------------------------------------------------------------------------ 
@@ -148,8 +164,14 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
  if(keyword_set(radmax)) then $
   begin
    radmax = double(radmax[0])
+
    w = where(rad GE radmax)
-   sel = append_array(sel, w)
+   if(w[0] NE -1) then $
+    begin
+     sel = append_array(sel, w)
+     nv_message, verb=0.2, 'Selected based on maximim radius:'
+     nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+    end
   end
 
  ;------------------------------------------------------------------------ 
@@ -159,8 +181,14 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
  if(keyword_set(radmin)) then $
   begin
    radmin = double(radmin[0])
+
    w = where(rad LE radmin)
-   sel = append_array(sel, w)
+   if(w[0] NE -1) then $
+    begin
+     sel = append_array(sel, w)
+     nv_message, verb=0.2, 'Selected based on minimum radius:'
+     nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+    end
   end
 
  ;------------------------------------------------------------------------ 
@@ -171,8 +199,14 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
   if(keyword_set(cd)) then $
    begin
     distmax = double(distmax[0])
+
     w = where(dist LE distmax)
-    sel = append_array(sel, w)
+    if(w[0] NE -1) then $
+     begin
+      sel = append_array(sel, w)
+      nv_message, verb=0.2, 'Selected based on maximum distance:'
+      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+     end
    end
 
  ;------------------------------------------------------------------------ 
@@ -183,8 +217,14 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
   if(keyword_set(cd)) then $
    begin
     distmin = double(distmin[0])
+
     w = where(dist GE distmin)
-    sel = append_array(sel, w)
+    if(w[0] NE -1) then $
+     begin
+      sel = append_array(sel, w)
+      nv_message, verb=0.2, 'Selected based on minimum distance:'
+      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+     end
    end
 
  ;------------------------------------------------------------------------ 
@@ -194,8 +234,14 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
  if(keyword_set(nlarge)) then $
   begin
     nlarge = long(nlarge[0])
+
 ;    w = ...
-   sel = append_array(sel, w)
+;    if(w[0] NE -1) then $
+;     begin
+;      sel = append_array(sel, w)
+;      nv_message, verb=0.2, 'Selected based on N largest:'
+;      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+;     end
   end
 
  ;------------------------------------------------------------------------ 
@@ -205,8 +251,14 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
  if(keyword_set(nsmall)) then $
   begin
     nsmall = long(nsmall[0])
+
 ;    w = ...
-   sel = append_array(sel, w)
+    if(w[0] NE -1) then $
+     begin
+      sel = append_array(sel, w)
+      nv_message, verb=0.2, 'Selected based on N smallest:'
+      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+     end
   end
 
  ;------------------------------------------------------------------------ 
@@ -217,8 +269,14 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
   if(keyword_set(cd)) then $
    begin
     nclose = long(nclose[0])
+
 ;     w = ...
-    sel = append_array(sel, w)
+    if(w[0] NE -1) then $
+     begin
+      sel = append_array(sel, w)
+      nv_message, verb=0.2, 'Selected based on N closest:'
+      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+     end
    end
 
  ;------------------------------------------------------------------------ 
@@ -230,7 +288,12 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
    begin
     nfar = long(nfar[0])
 ;     w = ...
-    sel = append_array(sel, w)
+    if(w[0] NE -1) then $
+     begin
+      sel = append_array(sel, w)
+      nv_message, verb=0.2, 'Selected based on N farthest:'
+      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+     end
    end
 
 
