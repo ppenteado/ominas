@@ -1,8 +1,8 @@
 #!/bin/sh
 # ominas_env_cas.sh
 #-----------------------------------------------------------------------------------#
-#	OMINAS Cassini setup for sh   													#
-#																					#
+#	OMINAS Cassini setup for sh   						    #
+#       The copy of this file at ~/.ominas/config is overwritten by the installer   #
 #-----------------------------------------------------------------------------------#
 
 OMINAS_CAS=${OMINAS_DIR}/config/cas

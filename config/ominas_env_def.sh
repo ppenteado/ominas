@@ -8,9 +8,9 @@
 #  to your preferred shell.                                                  #
 #                                                                            #
 #  This file will is copied into ~/.ominas/config when you upgrade your      #
-#  OMINAS installation, so you should copy it to another location before     #      #
-#  customizing it for your system.  Then you can configure OMINAS using:     #                    #
-#                                                                            #                                                                            #
+#  OMINAS installation, so you should copy it to another location before     #
+#  customizing it for your system.                                           #
+#                                                                            #                                               
 #----------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------#
