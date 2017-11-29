@@ -182,7 +182,7 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------------------
  ; get catalog path
  ;----------------------------------------------
- catpath = getenv('NV_RING_DATA')
+ catpath = getenvs('NV_RING_DATA')
  if(NOT keyword_set(catpath)) then $
    begin
     nv_message, /con, $

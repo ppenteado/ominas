@@ -75,7 +75,7 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------------------
  ; check array catalog
  ;----------------------------------------------
- catpath = getenv('NV_ARRAY_DATA')
+ catpath = getenvs('NV_ARRAY_DATA')
  if(NOT keyword_set(catpath)) then $
   begin
    nv_message, /con, $
