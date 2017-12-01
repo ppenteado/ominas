@@ -225,7 +225,6 @@ function tycho2_get_stars, dd, filename, $
  if(w[0] EQ -1) then return, ''
  stars = stars[w]
 
-
  ;--------------------------------------------------------
  ; Apply proper motion to stars
  ; jtime = years past 2000.0

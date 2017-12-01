@@ -306,12 +306,12 @@ function grim_get_body_by_point, grim_data, plane, p
     begin
      hit_xds = append_array(hit_xds, xds[i])
      inertial_pt = bod_body_to_inertial(xds[i], body_pt)
-     dist = append_array(dist, v_mag(cam_pos-inertial_pt))
+     hit_dist = append_array(hit_dist, v_mag(cam_pos-inertial_pt))
     end
   end
 
  if(NOT keyword_set(hit_xds)) then return, !null
- return, hit_xds[sort(dist)]
+ return, hit_xds[sort(hit_dist)]
 end
 ;===============================================================================
 

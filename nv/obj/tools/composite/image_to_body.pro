@@ -50,7 +50,6 @@ function image_to_body, cd, bx, p, hit=hit, back=back, all=all
   'MAP' : return, surface_to_body(bx, $
 	            image_to_surface(cd, bx, p))
 
-
   'CAMERA' : $
 	begin
 	 np = n_elements(p)/2
