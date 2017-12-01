@@ -167,7 +167,7 @@ end
 ;	   Left button:		Repoints the optic axis at the cursor.
 ;
 ;	   Right button:	Repoints the optic axis at the center of the
-;				selected body.
+;				nearest selected body.
 ;
 ; CATEGORY:
 ;	NV/GR

@@ -74,7 +74,7 @@ function station_input, dd, keyword, prefix, values=values, status=status, $
  ;----------------------------------------------
  ; check station catalog
  ;----------------------------------------------
- catpath = getenv('NV_STATION_DATA')
+ catpath = getenvs('NV_STATION_DATA')
  if(NOT keyword_set(catpath)) then $
   begin
    nv_message, /con, $
