@@ -60,6 +60,10 @@
 ;	absolute: If set, the dxy argument represents an absolute image
 ;		  position rather than an offset.
 ;
+;	north:	  If set, orientations set by vector input are aligned
+;		  with celestial north.  Otherwise the original north alignment
+;		  is retained.
+;
 ;  OUTPUT:
 ;	cd:	 If given, the camera descriptor is modified with a new
 ;		 orientation matrix.
@@ -91,7 +95,7 @@
 ;=============================================================================
 pro pg_repoint, cd=cd, gd=gd, _arg, _dtheta, axis_ptd=axis_ptd, $
                 bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy, $
-		absolute=absolute
+		absolute=absolute, north=north
 
  arg = 0
  if(keyword_set(_arg)) then arg = _arg
@@ -117,8 +121,12 @@ pro pg_repoint, cd=cd, gd=gd, _arg, _dtheta, axis_ptd=axis_ptd, $
  ; if vector argument, then point along that vector
  ;-------------------------------------------------------
  if(keyword_set(v)) then $
-   bod_set_orient, cd, cam_radec_to_orient(y=(bod_orient(cd))[2,*,*], $
-                                 bod_body_to_radec(bod_inertial(nt), v)) $
+  begin
+   y = 0
+   if(NOT keyword_set(north)) then y = (bod_orient(cd))[2,*,*]
+   bod_set_orient, cd, cam_radec_to_orient(y=y, $
+                                        bod_body_to_radec(bod_inertial(nt), v))
+  end $
  else $
   begin
    ;---------------------------------------
@@ -155,3 +163,6 @@ pro pg_repoint, cd=cd, gd=gd, _arg, _dtheta, axis_ptd=axis_ptd, $
  cor_add_task, cd, 'pg_repoint'
 end
 ;=============================================================================
+
+
+

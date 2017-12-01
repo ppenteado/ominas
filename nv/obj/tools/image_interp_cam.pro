@@ -90,12 +90,14 @@ function image_interp_cam, cd=cd, image, grid_x, grid_y, args, valid=valid, $
  if(n_elements(dim_image) EQ 3) then nz = dim_image[2]
 
  grid_dim = size(grid_x, /dim)
+
  if(n_elements(grid_dim) EQ 1) then $
-  begin
-   if(nz EQ 1) then return, total(image)/product(dim_image) $
-   else return, reform(total(total(image, 1), 1) / $
-                                       product(dim_image[0:1]), 1, nz, /over)
-  end
+  if(grid_dim[0] EQ 1) then $
+   begin
+    if(nz EQ 1) then return, total(image)/product(dim_image) $
+    else return, reform(total(total(image, 1), 1) / $
+                                        product(dim_image[0:1]), 1, nz, /over)
+   end
 
  nxy = n_elements(grid_x)
  if(nz EQ 1) then result = dblarr(grid_dim) $
