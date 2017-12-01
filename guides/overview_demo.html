@@ -1,0 +1,615 @@
+<h1>OMINAS Examples</h1>
+
+      <h3>Introduction</h3>
+      <p>OMINAS example scripts demonstrate various ways to use the software, and may form the basis for your own OMINAS scripts.  The examples are also useful for testing an installation.  The OVERRIDE example is a good way to test the basic installation, as it requires no translators.  The PG example is a good way to test your ICY installation, assuming you're using the basic demo coniguration, which uses the NAIF/SPICE translator.  
+
+      <p>To navigate using the sidebar, click on a directory in the upper frame and then a program in the lower frame. When you click on a directory, the lower frame will display every .pro file in that directory. Clicking on the .pro file will take you to that program's documentation.</p>
+
+
+      <h3>Running the Examples</h3>
+Before running the examples, make sure you have configured the demo package using the installer.  Examples named *-batch.pro are IDL batch files, and may be run from the IDL command line as:</p>
+      <br>
+IDL> @&ltname&gt_example-batch.pro
+      <br>
+      <p>or from the shell prompt as:.</p>
+      <br>
+% ominas &ltname&gt_example-batch.pro
+      <br>
+      <p>Examples named *.pro are $MAIN$ programs that may be run as:</p>
+      <br>
+IDL> .run &ltname&gt_example.pro
+      <br>
+      <p>or from the shell prompt as:.</p>
+      <br>
+% ominas -e ".run &ltname&gt_example.pro"
+      <br>
+      <p>The two types of scripts have their own avantages and disadvantages.  Batch files are more easily executed from the shell prompt, and may be pasted line-by-line into IDL from a text editor.  $MAIN$ programs are witten more like programs files and do not require line extensions in blocks of code.</p>
+
+
+
+
+
+
+
+
+
+      <h2 id="directories">Directories</h2>
+
+      <table class="attribute box small" summary="Directories">
+
+
+        <tr>
+          <td class="name"><a href="bat/dir-overview.html">bat/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/arr/dir-overview.html">config/arr/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/arr/dat/earth/dir-overview.html">config/arr/dat/earth/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/cas/dir-overview.html">config/cas/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/cas/detectors/dir-overview.html">config/cas/detectors/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/cas/iss/dir-overview.html">config/cas/iss/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/cas/radar/dir-overview.html">config/cas/radar/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/cas/vims/dir-overview.html">config/cas/vims/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/dawn/dir-overview.html">config/dawn/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/dawn/detectors/dir-overview.html">config/dawn/detectors/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/detectors/dir-overview.html">config/detectors/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/ext/dir-overview.html">config/ext/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/fits/dir-overview.html">config/fits/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/gff/dir-overview.html">config/gff/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/gll/dir-overview.html">config/gll/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/gll/detectors/dir-overview.html">config/gll/detectors/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/gll/ssi/dir-overview.html">config/gll/ssi/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/include/dir-overview.html">config/include/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/isis/dir-overview.html">config/isis/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/mask/dir-overview.html">config/mask/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/multi/dir-overview.html">config/multi/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/occ/dir-overview.html">config/occ/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/orb/dir-overview.html">config/orb/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/pds/dir-overview.html">config/pds/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/pds/Readpds_4.4/dir-overview.html">config/pds/Readpds_4.4/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/rings/dir-overview.html">config/rings/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/sedr/dir-overview.html">config/sedr/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/sedr/create/dir-overview.html">config/sedr/create/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/spice/dir-overview.html">config/spice/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/spice/eph/dir-overview.html">config/spice/eph/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/spice/icy/dir-overview.html">config/spice/icy/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/spice/icy/bug/dir-overview.html">config/spice/icy/bug/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/stn/dir-overview.html">config/stn/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/dir-overview.html">config/strcat/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/common/dir-overview.html">config/strcat/common/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/common/old/dir-overview.html">config/strcat/common/old/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/defunct/gsc/dir-overview.html">config/strcat/defunct/gsc/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/defunct/gsc2/dir-overview.html">config/strcat/defunct/gsc2/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/defunct/sao/dir-overview.html">config/strcat/defunct/sao/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/defunct/tycho/dir-overview.html">config/strcat/defunct/tycho/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/defunct/ucac4/dir-overview.html">config/strcat/defunct/ucac4/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/defunct/ucact/dir-overview.html">config/strcat/defunct/ucact/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/strcat/tycho2/dir-overview.html">config/strcat/tycho2/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/tdl/dir-overview.html">config/tdl/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/timer/dir-overview.html">config/timer/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/trk/dir-overview.html">config/trk/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/util/dir-overview.html">config/util/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/vgr/dir-overview.html">config/vgr/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/vgr/detectors/dir-overview.html">config/vgr/detectors/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/vgr/iss/dir-overview.html">config/vgr/iss/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/vgr_cd/dir-overview.html">config/vgr_cd/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="config/vicar/dir-overview.html">config/vicar/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="demo/dir-overview.html">demo/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="demo/defunct/dir-overview.html">demo/defunct/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/com/pg/dir-overview.html">nv/com/pg/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/grim/dir-overview.html">nv/grim/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/grim/dred/dir-overview.html">nv/grim/dred/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/grim/interface/dir-overview.html">nv/grim/interface/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/grim/scripts/dir-overview.html">nv/grim/scripts/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/grim/tools/dir-overview.html">nv/grim/tools/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/arr/dir-overview.html">nv/obj/arr/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/bod/dir-overview.html">nv/obj/bod/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/cam/dir-overview.html">nv/obj/cam/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/cor/dir-overview.html">nv/obj/cor/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/dat/dir-overview.html">nv/obj/dat/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/dat/dh/dir-overview.html">nv/obj/dat/dh/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/dat/dh/util/dir-overview.html">nv/obj/dat/dh/util/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/dsk/dir-overview.html">nv/obj/dsk/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/glb/dir-overview.html">nv/obj/glb/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/map/dir-overview.html">nv/obj/map/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/plt/dir-overview.html">nv/obj/plt/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/pnt/dir-overview.html">nv/obj/pnt/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/rng/dir-overview.html">nv/obj/rng/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/sld/dir-overview.html">nv/obj/sld/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/stn/dir-overview.html">nv/obj/stn/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/str/dir-overview.html">nv/obj/str/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/tools/dir-overview.html">nv/obj/tools/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/tools/composite/dir-overview.html">nv/obj/tools/composite/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/tools/icv/dir-overview.html">nv/obj/tools/icv/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/tools/ipt/dir-overview.html">nv/obj/tools/ipt/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/tools/orb/dir-overview.html">nv/obj/tools/orb/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/tools/orb/old/dir-overview.html">nv/obj/tools/orb/old/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/obj/tools/pht/dir-overview.html">nv/obj/tools/pht/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/sys/event/dir-overview.html">nv/sys/event/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/sys/state/dir-overview.html">nv/sys/state/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="nv/sys/util/dir-overview.html">nv/sys/util/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/dir-overview.html">util/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/abbrev/dir-overview.html">util/abbrev/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/colormap/dir-overview.html">util/colormap/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/const/dir-overview.html">util/const/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/ct/dir-overview.html">util/ct/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/data_archive/dir-overview.html">util/data_archive/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/dd/dir-overview.html">util/dd/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/downloader/dir-overview.html">util/downloader/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/gen/dir-overview.html">util/gen/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/idl_parse/dir-overview.html">util/idl_parse/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/image_interp/dir-overview.html">util/image_interp/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/p/dir-overview.html">util/p/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/set/dir-overview.html">util/set/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/str/dir-overview.html">util/str/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/tag_list/dir-overview.html">util/tag_list/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/tvgr/dir-overview.html">util/tvgr/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/tvim/dir-overview.html">util/tvim/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/v/dir-overview.html">util/v/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="util/w10n/dir-overview.html">util/w10n/</a></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td class="name"><a href="vims_src_tmp/dir-overview.html">vims_src_tmp/</a></td>
+          <td></td>
+        </tr>
+
+
+      </table>
+
+
+
+
+
+      <h2 id="statistics">Project statistics</h2>
+
+      <table class="attribute small" summary="Project statistics">
+        <tr>
+          <td class="name">Directories:</td>
+          <td>106</td>
+        </tr>
+
+        <tr>
+          <td class="name">.pro files:</td>
+          <td>1898</td>
+        </tr>
+
+        <tr>
+          <td class="name">.sav files:</td>
+          <td>0</td>
+        </tr>
+
+        <tr>
+          <td class="name">Routines:</td>
+          <td>3,354</td>
+        </tr>
+
+        <tr>
+          <td class="name">Lines:</td>
+          <td>66,756</td>
+        </tr>
+
+
+        <tr>
+          <td class="name">Required IDL version:</td>
+          <td>8.2</td>
+        </tr>
+
+      </table>
+
+
+    </div>
