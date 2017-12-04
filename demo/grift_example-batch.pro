@@ -9,7 +9,8 @@
 ;  GRIFT.  GRIFT swindles GRIM into giving up references to its descriptor set
 ;  so they can be used against it by some foreign agent.  
 ;
-;  This example file can be executed from the UNIX command line using::
+;  This example file can be executed from the shell prompt from the ominas/demo
+;  directory using::
 ;
 ;  	ominas grim_example-batch
 ;

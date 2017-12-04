@@ -10,7 +10,8 @@
 ;  want to do this, but it's a useful way to test OMINAS without needing
 ;  any translator packages installed. 
 ;
-;  This example file can be executed from the UNIX command line using::
+;  This example file can be executed from the shell prompt from the ominas/demo
+;  directory using::
 ;
 ;  	ominas override_example-batch
 ;

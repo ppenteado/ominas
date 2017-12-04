@@ -31,10 +31,10 @@
 ;	=========
 ;
 ;	1. Please ensure that OMINAS has been properly downloaded from the
-;	`Github repository <https://github.com/ppenteado/ominas>` by creating a 
+;	`Github repository <https://github.com/nasa/ominas>` by creating a 
 ;	directory for the installation and entering the following command at the terminal::
 ;
-;	 git clone https://github.com/ppenteado/ominas
+;	 git clone https://github.com/nasa/ominas
 ;
 ;	A local copy of the OMINAS source will be cloned automatically.
 ;
@@ -79,10 +79,10 @@
 ; From a fresh account (that never had OMINAS, Icy or any IDL libraries setup
 ; before), for the 3 main packages (Core, Demo and Icy)::
 ; 
-;   ;[ominas_test_8@cmp ~]$ git clone https://github.com/ppenteado/ominas.git
+;   ;[ominas_test_8@cmp ~]$ git clone https://github.com/nasa/ominas.git
 ;   ;Cloning into 'ominas'...
 ;   ;Username for 'https://github.com': ppenteado
-;   ;Password for 'https://ppenteado@github.com':
+;   ;Password for 'https://nasa@github.com':
 ;   ;remote: Counting objects: 13377, done.
 ;   ;remote: Compressing objects: 100% (85/85), done.
 ;   ;remote: Total 13377 (delta 51), reused 71 (delta 34), pack-reused 13258
@@ -167,7 +167,7 @@
 ;   ;13) UCAC4 star catalog . . . . . . . . . . NOT CONFIGURED
 ;   ;About 8.5 GB download
 ;   ;For more information, see
-;   ;https://ppenteado.github.io/ominas_doc/demo/install_guide.html
+;   ;https://nasa.github.io/ominas_doc/demo/install_guide.html
 ;   ;Modify Current OMINAS configuration (Exit/Auto/Uninstall 1 2 ...)?  1 2 3
 ;   ;Settiing OMINAS Core...
 ;   ;OMINAS requires the NAIF Icy toolkit to process SPICE kernels.
@@ -281,10 +281,10 @@
 ;   ;13) UCAC4 star catalog . . . . . . . . . . NOT CONFIGURED
 ;   ;About 8.5 GB download
 ;   ;For more information, see
-;   ;https://ppenteado.github.io/ominas_doc/demo/install_guide.html
+;   ;https://nasa.github.io/ominas_doc/demo/install_guide.html
 ;   ;Modify Current OMINAS configuration (Exit/Auto/Uninstall 1 2 ...)?  e
 ;   ;Setup has completed. It is recommended to restart your terminal session before using OMINAS.
-;   ;You may want to try some of the tutorials at https://ppenteado.github.io/ominas_doc/demo/
+;   ;You may want to try some of the tutorials at https://nasa.github.io/ominas_doc/demo/
 ;   
 ;   
 ; At this point, one can run a few tests of the enviroment::

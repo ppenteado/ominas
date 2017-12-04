@@ -527,6 +527,7 @@ end
 pro grim_wset, grim_data, wnum, get_info=get_info, $
     save=save, noplot=noplot
 
+ if(!window EQ -1) then return
 
  if(grim_data.type EQ 'PLOT') then tvgr, wnum, get_info=get_info, $
      save=save, noplot=noplot, /silent $

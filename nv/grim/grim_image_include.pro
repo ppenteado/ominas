@@ -729,6 +729,8 @@ pro grim_show_axes, grim_data, plane
  ; clear axes window
  ;---------------------------------
  wnum = !d.window
+ if(wnum EQ -1) then return
+
  wset, grim_data.axes_wnum
  erase
  wset, wnum

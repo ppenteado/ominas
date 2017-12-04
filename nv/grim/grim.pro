@@ -858,6 +858,9 @@
 ;
 ;	Target mode flips the camera orientation in the X direction.
 ;
+;	File-> Save Postscript doesn't work right: the image order is
+;	sometimes wrong, and the overlays don't line up
+;
 ;
 ;
 ;      SEE ALSO
@@ -1162,8 +1165,7 @@ pro grim_write_ptd, grim_data, filename
  ; set coord. sys and get clipped, scaled image
  ;--------------------------------------------------------------
  grim_wset, grim_data, grim_data.wnum, get_info=tvd
- grim_refresh, grim_data, tvimage=_tvimage, $
-                                    /no_back, /no_context, /no_callback
+ grim_refresh, grim_data, tvimage=_tvimage, /no_back, /no_context, /no_callback
 
  ;--------------------------------------------------------------
  ; find device coords of image corners
@@ -1231,11 +1233,11 @@ pro grim_write_ptd, grim_data, filename
  ; Without this step, the overlays may be drawn incorrectly
  ; the first time in a session.  I don't know why.
  ;--------------------------------------------------------------
- set_plot, 'PS'
- device, /color, filename=filename, bits_per_pixel=bits_per_pixel, $
-         xsize=xsize, ysize=ysize, /inches, xoffset=xoff, yoffset=yoff
- device, /close
- set_plot, 'X'
+; set_plot, 'PS'
+; device, /color, filename=filename, bits_per_pixel=bits_per_pixel, $
+;         xsize=xsize, ysize=ysize, /inches, xoffset=xoff, yoffset=yoff
+; device, /close
+; set_plot, 'X'
 
 
  ;--------------------------------------------------------------
@@ -4773,7 +4775,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Copies all tieppoints from the current plane to all other planes.  
+;	Copies tie points from the current plane to all other planes.  
 ;
 ;
 ; CATEGORY:
