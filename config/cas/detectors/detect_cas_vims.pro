@@ -4,7 +4,7 @@
 ;===========================================================================
 function detect_cas_vims, dd
 
- label = (dat_header(dd))[0]
+ label = strjoin(dat_header(dd),string(10B));[0]
  
  groupre='([[:<:]]GROUP[[:space:]]*=[[:space:]]*ISIS_INSTRUMENT[[:>:]])(.*)'+$
    '([[:<:]]END_GROUP[[:space:]]*=[[:space:]]*ISIS_INSTRUMENT[[:>:]])'
@@ -17,12 +17,7 @@ function detect_cas_vims, dd
    endif
  endif
 
- if( (strpos(label, 'CAS-ISS1') NE -1) $
-      OR ((strpos(label, "'ISSNA'") NE -1) AND $
-          (strpos(label, 'CASSINI') NE -1)) ) then return, 'CAS_ISS_NA'
- if( (strpos(label, 'CAS-ISS2') NE -1) $
-      OR ((strpos(label, "'ISSWA'") NE -1) AND $
-          (strpos(label, 'CASSINI') NE -1)) ) then return, 'CAS_ISS_WA'
+
 
 
  return, ''

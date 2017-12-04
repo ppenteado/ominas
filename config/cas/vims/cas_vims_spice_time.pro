@@ -2,19 +2,22 @@
 ; cas_vims_spice_time
 ;
 ;===========================================================================
-function cas_vims_spice_time, label, dt=dt, string=string, status=status,startjd=startjd,endjd=endjd
+function cas_vims_spice_time, dd, dt=dt, string=string, status=status,startjd=startjd,endjd=endjd
 
  status = -1
+ 
+ label=dat_header(dd)
 
- start_time=pp_get_label_value(label,'START_TIME')
+ start_time=strtrim(pdspar(label,'START_TIME'),2)
+ if stregex(start_time,'^"[^"]+"$',/boolean) then start_time=strmid(start_time,1,strlen(start_time)-2)
  if(NOT keyword_set(start_time)) then return, -1d100
  status = 0
 
- close_time=pp_get_label_value(label,'STOP_TIME')
- ;close_time = vicgetpar(label, 'IMAGE_TIME')
+ close_time=strtrim(pdspar(label,'STOP_TIME'),2)
+ if stregex(close_time,'^"[^"]+"$',/boolean) then close_time=strmid(close_time,1,strlen(close_time)-2)
+
  if(strmid(close_time,strlen(close_time)-1,1) EQ 'Z') then $
                  close_time = strmid(close_time,0,strlen(close_time)-1)
- ;exposure = vicgetpar(label, 'EXPOSURE_DURATION')/1000d
  endjd=julday(1,strmid(close_time,5,3),strmid(close_time,0,4),$
   strmid(close_time,9,2),strmid(close_time,12,2),strmid(close_time,15,6))
   startjd=julday(1,strmid(start_time,5,3),strmid(start_time,0,4),$

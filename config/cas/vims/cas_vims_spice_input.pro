@@ -105,7 +105,7 @@ pro cas_vims_spice_parse_labels, dd, _time, $
     llabel=strsplit(label,string(10B),/extract)
     if(keyword_set(label)) then $
       begin
-      ttime=cas_vims_spice_time(label,dt=dt,status=status,startjd=startjd,endjd=endjd)
+      ttime=cas_vims_spice_time(dd[i],dt=dt,status=status,startjd=startjd,endjd=endjd)
       ;-----------------------------------
       ; time
       ;-----------------------------------
@@ -121,8 +121,8 @@ pro cas_vims_spice_parse_labels, dd, _time, $
       ;-----------------------------------
       ; image size
       ;-----------------------------------
-      size[1,i] = fix(pp_get_label_value(label,'SWATH_LENGTH'))
-      size[0,i] = fix(pp_get_label_value(label,'SWATH_WIDTH'))
+      size[1,i] = fix(pdspar(label,'SWATH_LENGTH'))
+      size[0,i] = fix(pdspar(label,'SWATH_WIDTH'))
 
       ;-----------------------------------
       ; optic axis
@@ -133,15 +133,15 @@ pro cas_vims_spice_parse_labels, dd, _time, $
       ;-----------------------------------
       ; filters
       ;-----------------------------------
-      filters[*,i] = pp_getcubeheadervalue(llabel,'BAND_BIN_CENTER',/not_trimmed)+'_'+pp_getcubeheadervalue(llabel,'BAND_BIN_UNIT',/not_trimmed)
+      filters[*,i] = pp_getcubeheadervalue(label,'BAND_BIN_CENTER',/not_trimmed)+'_'+(pdspar(label,'BAND_BIN_UNIT'))[0]
 
       ;-----------------------------------
       ; target
       ;-----------------------------------
-      target_name = strupcase(pp_get_label_value(label, 'TARGET_NAME'))
-      target_desc = strupcase(pp_get_label_value(label, 'TARGET_DESC'))
+      target_name = strsplit((strupcase(pdspar(label, 'TARGET_NAME')))[0],'"',/extract)
+      target_desc = strsplit((strupcase(pdspar(label, 'TARGET_DESC')))[0],'"',/extract)
       target[i] = target_name
-      obs_id = pp_get_label_value(label, 'OBSERVATION_ID')
+      obs_id = strsplit((pdspar(label, 'OBSERVATION_ID'))[0],'"',/extract)
       if((strpos(strupcase(obs_id), 'OPNAV'))[0] NE -1) then target[i] = target_desc
     end
   end
@@ -259,7 +259,7 @@ compile_opt idl2
 
  if(NOT keyword_set(time)) then $
   begin
-   time = cas_vims_spice_time(label, dt=dt, status=status)
+   time = cas_vims_spice_time(dd, dt=dt, status=status)
    if(status NE 0) then return, ptr_new()
    time = spice_str2et(time)
    plt_time = time + dt
@@ -268,15 +268,12 @@ compile_opt idl2
 
  if(keyword_set(label)) then $
   begin
-   ;target_name = strupcase(vicgetpar(label, 'TARGET_NAME'))
-   ;target_desc = strupcase(vicgetpar(label, 'TARGET_DESC'))
-   target_name = strupcase(pp_get_label_value(label, 'TARGET_NAME'))
-   target_desc = strupcase(pp_get_label_value(label, 'TARGET_DESC'))
+    target_name = strsplit((strupcase(pdspar(label, 'TARGET_NAME')))[0],'"',/extract)
+    target_desc = strsplit((strupcase(pdspar(label, 'TARGET_DESC')))[0],'"',/extract)
 
    target = target_name
 
-   ;obs_id = vicgetpar(label, 'OBSERVATION_ID')
-   obs_id = pp_get_label_value(label, 'OBSERVATION_ID')
+   obs_id = strsplit((pdspar(label, 'OBSERVATION_ID'))[0],'"',/extract)
    if((strpos(strupcase(obs_id), 'OPNAV'))[0] NE -1) then target = target_desc
   end
 
@@ -302,7 +299,7 @@ compile_opt idl2
 
  if(NOT keyword__set(time)) then $
   begin
-   time = cas_vims_spice_time(label, dt=dt, status=status)
+   time = cas_vims_spice_time(dd, dt=dt, status=status)
    if(status NE 0) then return, ptr_new()
    time = spice_str2et(time)
    sun_time = time + dt
