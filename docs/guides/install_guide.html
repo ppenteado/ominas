@@ -194,13 +194,13 @@
 	Mac OS.
 </p>
 
-<p>	To process images from a particular mission, that mission's kernels will
+<p>	To process data from a particular mission, that mission's kernels will
 	need to be available. The OMINAS installer can automatically download sets of
-	kernels for several missions (Cassini, Galileo, Voyager, Dawn).
+	kernels for several missions (currently Cassini, Galileo, Voyager, Dawn).
 </p>
 
-<p>	OMINAS makes use of the NAIF Icy Toolkit to process SPICE kernels. The Icy
-	toolkit may optionally be obtained manually from
+<p>	OMINAS' SPICE translator makes use of the NAIF Icy Toolkit to process SPICE kernels. 
+	The Icy toolkit may optionally be obtained manually from
 	<a href="https://naif.jpl.nasa.gov/naif/toolkit_IDL.html">NAIF</a>. However, the
 	installer utility provided with OMINAS can download and compile Icy
 	automatically. Installation of Icy is somewhat platform-dependent, so
@@ -210,10 +210,10 @@
 <h1>	Procedure</h1>
 
 <p>	1. Please ensure that OMINAS has been properly downloaded from the
-	<a href="https://github.com/ppenteado/ominas">Github repository</a> by entering
-	the following command at the terminal:
+	<a href="https://github.com/ppenteado/ominas">Github repository</a> by creating a 
+	directory for the installation and entering the following command at the terminal:
 <div><div><code class="listing"><span class="code-output"> git clone https://github.com/ppenteado/ominas</span>
-</code></div></div>	A local copy of the OMINAS source will be cloned automatically.
+</code></div></div>	A local copy of the OMINAS source will be cloned into your current directory.
 </p>
 
 <p>	2. Configuration of OMINAS should be performed using the configuration
@@ -231,10 +231,10 @@
 	or tell the installer to download them.
 </p>
 
-<p>	5. Test the install of OMINAS has been completed correctly by running the
+<p>	5. Test that the installation of OMINAS has been completed correctly by running the
 	the following example scripts:
-<div><div><code class="listing"><span class="code-output"> ominas saturn_example.pro</span>
-<span class="code-output"> ominas jupiter_example.pro</span>
+<div><div><code class="listing"><span class="code-output"> ominas override_example.pro</span>
+<span class="code-output"> ominas pg_example.pro</span>
 </code></div></div>	6. A successful Icy installation can be tested with the following IDL
 	command from within an OMINAS IDL session:
 <div><div><code class="listing"><span class="code-output"> help, 'icy', /dlm</span>
@@ -514,8 +514,8 @@
 <span class="code-output"> ;</span>
 <span class="code-output"> ;&lt;IDL_DEFAULT&gt;:+/home/ominas_test_8/ominas_data/icy/lib</span>
 </code></div></div> With this environment, one can run some demo scripts, such as:
-<div><div><code class="listing"><span class="code-output"> ;ominas saturn_example</span>
-<span class="code-output"> ;ominas jupiter_example</span>
+<div><div><code class="listing"><span class="code-output"> ;ominas override_example</span>
+<span class="code-output"> ;ominas pg_example</span>
 
 
 </code></div></div></p>
@@ -615,8 +615,16 @@
 
 <h1>	Troubleshooting</h1>
 
-<p>	This section outlines several common sources of error which are due to
-	OMINAS not being configured correctly.
+<p>	This section outlines several common sources of error that are due to
+	OMINAS being configured incorrectly.  
+</p>
+
+<p>	Note that OMINAS' diagnostic output may be controlled using the "verbosity" 
+	keyword to nv_message, e.g.:
+<div><div><code class="listing"><span class="code-output"> nv_message, verbosity=0.5(/verb)r</span>
+</code></div></div>	Verbosity levels range from 0 to 1, with 0 being the least 
+	and 1 being the most verbose.  Verbosity may also be controlled using the 
+	NV_VERBOSITY environment variable.
 </p>
 
 <p>	One of the most common configuration problems manifests as this error:
@@ -630,13 +638,12 @@
 
 <p>	You can check which kernels have been loaded by entering the following
 	IDL commands:
-<div><div><code class="listing"><span class="code-output"> cspice_ktotal, 'ALL', count</span>
-<span class="code-output"> for i=0,count-1 do begin & cspice_kdata,i,'ALL',file,type,source,handle,found & print,i,file & endfor</span>
+<div><div><code class="listing"><span class="code-output"> print, spice_loaded(/verb)r</span>
 </code></div></div>	A list will be populated with the currently loaded SPICE kernels, and
 	their load order. If no kernels are loaded, then it is likely that a bad
 	path was supplied to the kernel pools. Ensure that the kernel pool was
 	successfully entered into the environemnt by using the "env" command at
-	the terminal prompt. The kernel pool variable names follow a convention
+	the shell prompt. The kernel pool variable names follow a convention
 	like so: &lt;MIS&gt;_SPICE_&lt;*K&gt;, where &lt;MIS&gt; is the abbreviated mission name,
 	and &lt;*K&gt; is the type of kernel. Therefore, for Cassini, the IDL command:
 <div><div><code class="listing"><span class="code-output"> spawn,"env | grep CAS_SPICE"</span>
@@ -668,7 +675,7 @@
 </code></div></div>	If Icy is not installed, and a script is run, something similar to the
 	following error may occur:
 <div><div><code class="listing"><span class="code-output"> % Attempt to call undefined procedure: 'CSPICE_STR2ET'.</span>
-</code></div></div>	In general, the undefined procudure may have any cspice prefix. Icy is
+</code></div></div>	In general, the undefined procdure may have any cspice prefix. Icy is
 	either not configured correctly, or not installed. In IDL, check that
 	the Icy path has been added to the IDL path as follows:
 <div><div><code class="listing"><span class="code-output"> path = pref_get('IDL_PATH')</span>

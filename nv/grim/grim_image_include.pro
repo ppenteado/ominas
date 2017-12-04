@@ -902,6 +902,51 @@ end
 
 
 ;=============================================================================
+; grim_update_menu_sensitvity
+;
+;=============================================================================
+pro grim_update_menu_sensitvity, grim_data, plane=plane
+
+ menu_ids = *grim_data.menu_ids_p
+ menu_desc = *grim_data.menu_desc_p
+ if(grim_test_map(grim_data, plane=plane)) then $
+  begin
+   ;- - - - - - - - - - - - - - - - - - - - -
+   ; allowed menu items
+   ;- - - - - - - - - - - - - - - - - - - - -
+   md_items = *grim_data.map_items_p
+   if(keyword_set(grim_xd(plane, /od))) then $
+       md_items = append_array(md_items, *grim_data.od_map_items_p)
+   mark = bytarr(n_elements(menu_ids))
+
+   n = n_elements(md_items)
+   for i=0, n-1 do $
+    begin
+     w = where(strpos(menu_desc, md_items[i]) NE -1)
+     if(w[0] NE -1) then $
+      begin
+       widget_control, menu_ids[w[0]], sensitive=1
+       mark[w[0]] = 1
+      end
+    end
+
+   w = where(mark EQ 0)
+   if(w[0] NE -1) then for i=0, n_elements(w)-1 do $
+               widget_control, menu_ids[w[i]], sensitive=0
+  end $
+ else $
+  begin
+   n = n_elements(menu_ids)
+   for i=0, n-1 do widget_control, menu_ids[i], sensitive=1
+  end
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_refresh
 ;
 ;=============================================================================
@@ -1043,39 +1088,8 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ; update menu item sensitivity
  ;-----------------------------------
  grim_update_menu, grim_data
+ grim_update_menu_sensitvity, grim_data, plane=plane
 
- menu_ids = *grim_data.menu_ids_p
- menu_desc = *grim_data.menu_desc_p
- if(grim_test_map(grim_data, plane=plane)) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - - -
-   ; allowed menu items
-   ;- - - - - - - - - - - - - - - - - - - - -
-   md_items = *grim_data.map_items_p
-   if(keyword_set(grim_xd(plane, /od))) then $
-       md_items = append_array(md_items, *grim_data.od_map_items_p)
-   mark = bytarr(n_elements(menu_ids))
-
-   n = n_elements(md_items)
-   for i=0, n-1 do $
-    begin
-     w = where(strpos(menu_desc, md_items[i]) NE -1)
-     if(w[0] NE -1) then $
-      begin
-       widget_control, menu_ids[w[0]], sensitive=1
-       mark[w[0]] = 1
-      end
-    end
-
-   w = where(mark EQ 0)
-   if(w[0] NE -1) then for i=0, n_elements(w)-1 do $
-               widget_control, menu_ids[w[i]], sensitive=0
-  end $
- else $
-  begin
-   n = n_elements(menu_ids)
-   for i=0, n-1 do widget_control, menu_ids[i], sensitive=1
-  end
 
  ;-----------------------------------
  ; update undo/redo sensitivity

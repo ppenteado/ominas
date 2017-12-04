@@ -112,7 +112,7 @@ function file_manage, fn, catpath, catfile, reload=reload
  else $
   begin
    ;- - - - - - - - - - - - -
-   ; read the catalog
+   ; read the file
    ;- - - - - - - - - - - - -
    files = catdirs + '/' + catfile
 
@@ -121,7 +121,7 @@ function file_manage, fn, catpath, catfile, reload=reload
   end
 
  ;--------------------------------------------------------------------
- ; cache catalog data
+ ; cache file data
  ;--------------------------------------------------------------------
  cl_cache_put, catfile, dat
 
