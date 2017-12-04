@@ -20,7 +20,8 @@
 ;   in the corresponding tables, as is in `config/tab/filetype_detectors.tab`
 ;   and `config/tab/io.tab`.
 ;
-;   This example requires SPICE/Icy to have been setup. It can be run just by doing::
+;  This example file can be executed from the shell prompt from the ominas/demo
+;  directory using::
 ;
 ;     .run multiinstrument_example
 ;     

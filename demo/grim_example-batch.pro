@@ -17,7 +17,8 @@
 ;  GRIM refreshing itself several times.  See GRIM.PRO for information
 ;  on usage, or just play around with it.
 ;
-;  This example file can be executed from the UNIX command line using::
+;  This example file can be executed from the shell prompt from the ominas/demo
+;  directory using::
 ;
 ;  	ominas grim_examples-batch
 ;

@@ -8,7 +8,8 @@
 ;  This example script demonstrates  OMINAS' rendering functionality using the
 ;  2017 total Solar eclipse as an example. 
 ;
-;  This example file can be executed from the UNIX command line using::
+;  This example file can be executed from the shell prompt from the ominas/demo
+;  directory using::
 ;
 ;  	ominas eclipse_example-batch
 ;

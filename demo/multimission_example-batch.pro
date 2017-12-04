@@ -10,7 +10,8 @@
 ;    GRIM window and computes the centers of all available planets for each
 ;    image to demonstrates OMINAS' multi-mission capabilities.  
 ;
-;    This example file can be executed from the UNIX command line using::
+;    This example file can be executed from the shell prompt from the ominas/demo
+;    directory using::
 ;
 ;     ominas multimission_example.pro
 ;
