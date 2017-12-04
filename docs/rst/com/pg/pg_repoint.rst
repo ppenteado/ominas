@@ -36,7 +36,7 @@ ________________________________________________________________________________
 
 .. code:: IDL
 
- pg_repoint, _arg, _dtheta, cd=cd, gd=gd, axis_ptd=axis_ptd, bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy, absolute=absolute
+ pg_repoint, _arg, _dtheta, cd=cd, gd=gd, axis_ptd=axis_ptd, bore_cd=bore_cd, bore_rot=bore_rot, bore_dxy=bore_dxy, absolute=absolute, north=north
 
 
 
@@ -180,6 +180,16 @@ Boresight offset in pixels.
 
 If set, the dxy argument represents an absolute image
 		  position rather than an offset.
+
+
+
+
+.. _north
+- north *in* 
+
+  If set, orientations set by vector input are aligned
+		  with celestial north.  Otherwise the original north alignment
+		  is retained.
 
 
 

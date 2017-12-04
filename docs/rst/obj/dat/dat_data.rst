@@ -159,7 +159,7 @@ Keywords
 
 
 .. _abscissa
-- abscissa 
+- abscissa *in* 
 
 The abscissa is returned in this array.
 

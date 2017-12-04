@@ -36,7 +36,7 @@ ________________________________________________________________________________
 
 .. code:: IDL
 
- result = pg_render(cd=cd, ltd=ltd, bx=bx, ddmap=ddmap, md=md, dd=dd, gd=gd, sample=sample, pc_size=pc_size, show=show, pht_min=pht_min, no_pht=no_pht, map=map, standoff=standoff, limit_source=limit_source, nodd=nodd, psf=psf, npsf=npsf, numbra=numbra, no_secondary=no_secondary, image_ptd=image_ptd, mask_width=mask_width, no_maps=no_maps, no_mask=no_mask)
+ result = pg_render(cd=cd, ltd=ltd, skd=skd, bx=bx, ddmap=ddmap, md=md, dd=dd, gd=gd, sample=sample, pc_size=pc_size, show=show, pht_min=pht_min, no_pht=no_pht, map=map, standoff=standoff, limit_source=limit_source, nodd=nodd, psf=psf, npsf=npsf, numbra=numbra, no_secondary=no_secondary, image_ptd=image_ptd, mask_width=mask_width, no_maps=no_maps, no_mask=no_mask)
 
 
 
@@ -88,6 +88,11 @@ Keywords
 
         Star descriptor for the Sun.
 
+
+
+
+.. _skd
+- skd 
 
 
 
