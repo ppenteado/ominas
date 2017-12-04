@@ -75,16 +75,17 @@ cd = pg_get_cameras(dd, instrument=instrument, time=t)
 ;
 ;  If left alone, the camera pointing will be whatever was returned by the
 ;  translators.  Here we force the cameras to point at the center of Saturn
-;  by inputting the S/C -- Saturn vectors to PG_REPOINT.  Note the use of 
-;  the data descriptor created by PG_GET_CAMERAS:: 
+;  (with the camera Y vector pointed to celestial north) by inputting the 
+;  S/C -- Saturn vectors to PG_REPOINT.  Note the use of the data descriptor 
+;  created by PG_GET_CAMERAS:: 
 ;
 ;     pd0 = pg_get_planets(dd, od=cd, name='SATURN')
-;     pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd)
+;     pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd), /north
 ;
 ;-
 ;-------------------------------------------------------------------------
 pd0 = pg_get_planets(dd, od=cd, name='SATURN')
-pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd)
+pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd), /north
 
 
 ;-------------------------------------------------------------------------

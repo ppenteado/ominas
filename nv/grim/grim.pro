@@ -854,7 +854,9 @@
 ;       The help menu is currently not working because it relied on the old
 ;       documentation system.
 ;
-;       Navigation mode control is poor for the Shift-Right motion
+;       Navigation mode control is poor for the Shift-Right motion.
+;
+;	Target mode flips the camera orientation in the X direction.
 ;
 ;
 ;
@@ -9648,36 +9650,36 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Save                \+*grim_menu_file_save_event', $
            '0\Save As             \+*grim_menu_file_save_as_event', $
            '0\Open As RGB          \+*grim_menu_open_as_rgb_event', $
-           '0\--------------------\+grim_menu_delim_event', $ 
+           '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Detached Header    \+*grim_menu_file_save_detached_header_event', $
            '0\Save All Detached Headers\+*grim_menu_file_save_all_detached_headers_event', $
-           '0\--------------------\+grim_menu_delim_event', $ 
+           '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save User Points    \+*grim_menu_file_save_user_ptd_event', $
            '0\Save All User Points\+*grim_menu_file_save_all_user_ptd_event', $
            '0\Load User Points    \+*grim_menu_file_load_user_ptd_event', $
            '0\Load All User Points\+*grim_menu_file_load_all_user_ptd_event', $
-           '0\--------------------\grim_menu_delim_event', $ 
+           '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Tie Points     \*grim_menu_file_save_tie_ptd_event', $
            '0\Save All Tie Points \*grim_menu_file_save_all_tie_ptd_event', $
            '0\Load Tie Points     \*grim_menu_file_load_tie_ptd_event', $
            '0\Load All Tie Points \*grim_menu_file_load_all_tie_ptd_event', $
-           '0\--------------------\grim_menu_delim_event', $ 
+           '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Curves         \*grim_menu_file_save_curves_event', $
            '0\Save All Curves     \*grim_menu_file_save_all_curves_event', $
            '0\Load Curves         \*grim_menu_file_load_curves_event', $
            '0\Load All Curves     \*grim_menu_file_load_all_curves_event', $
-           '0\--------------------\grim_menu_delim_event', $ 
+           '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Mask           \*grim_menu_file_save_mask_event', $
            '0\Save All Masks      \*grim_menu_file_save_all_masks_event', $
            '0\Load Mask           \*grim_menu_file_load_mask_event', $
            '0\Load All Masks      \*grim_menu_file_load_all_masks_event', $
-           '0\--------------------\+grim_menu_delim_event', $ 
+           '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Postscript     \+*grim_menu_file_save_ps_event', $
-           '0\--------------------\+grim_menu_delim_event', $ 
+           '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Repeat              \+*grim_menu_repeat_event', $
            '0\Undo                \+*grim_menu_undo_event', $
            '0\Redo                \+*grim_menu_redo_event', $
-           '0\--------------------\+grim_menu_delim_event', $ 
+           '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Select              \+*grim_select_event', $
            '0\Identify            \+*grim_identify_event', $
            '0\Close               \+*grim_menu_file_close_event', $
@@ -9699,20 +9701,20 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Coadd              \grim_menu_plane_coadd_event', $
            '0\Syncing            [xxx]\*grim_menu_plane_toggle_plane_syncing_event', $
            '0\Highlight          [xxx]\*grim_menu_plane_highlight_event', $
-           '0\------------------------\*grim_menu_delim_event', $ 
+           '0\------------------------\+*grim_menu_delim_event', $ 
            '0\Copy Tie Points     \*grim_menu_plane_copy_tiepoints_event', $
 ;           '0\Propagate Tie Points\*grim_menu_plane_propagate_tiepoints_event', $
            '0\Tie Point Syncing  [xxx]\*grim_menu_plane_toggle_tiepoint_syncing_event', $
            '0\Clear Tie Points    \*grim_menu_plane_clear_tiepoints_event', $
-           '0\------------------------\*grim_menu_delim_event', $ 
+           '0\------------------------\+*grim_menu_delim_event', $ 
            '0\Copy Curves        \*grim_menu_plane_copy_curves_event', $
 ;           '0\Propagate Curves    \*grim_menu_plane_propagate_curves_event', $
            '0\Curves Syncing     [xxx]\*grim_menu_plane_toggle_curve_syncing_event', $
            '0\Clear Curves        \*grim_menu_plane_clear_curves_event', $
-           '0\------------------------\*grim_menu_delim_event', $ 
+           '0\------------------------\+*grim_menu_delim_event', $ 
            '0\Copy Mask          \*grim_menu_plane_copy_mask_event', $
            '0\Clear Mask         \*grim_menu_plane_clear_mask_event', $
-           '0\------------------------\*grim_menu_delim_event', $ 
+           '0\------------------------\+*grim_menu_delim_event', $ 
            '0\Settings           \+*grim_menu_plane_settings_event', $
            '2\<null>               \+*grim_menu_delim_event', $
 
@@ -9766,15 +9768,15 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Initial              \+*grim_menu_view_initial_event', $
            '0\Reverse Order        \*grim_menu_view_flip_event', $ 
            '0\Frame Overlays\*grim_menu_view_frame_event', $ 
-           '0\---------------------\*grim_menu_delim_event', $ 
+           '0\---------------------\+*grim_menu_delim_event', $ 
            '0\Header               \grim_menu_view_header_event', $
            '0\Notes                \grim_menu_notes_event', $
-           '0\---------------------\*grim_menu_delim_event', $ 
+           '0\---------------------\+*grim_menu_delim_event', $ 
            '0\Toggle Image         \+*grim_menu_toggle_image_event' , $
            '0\Toggle Image/Overlays \+*grim_menu_toggle_image_overlays_event' , $
            '0\Toggle Context       \+*grim_menu_context_event' , $
            '0\Toggle Axes          \*grim_menu_axes_event' , $
-           '0\---------------------\*grim_menu_delim_event', $ 
+           '0\---------------------\+*grim_menu_delim_event', $ 
            '1\Render' , $
 ;            '0\RGB                  [xxx]\grim_menu_render_toggle_rgb_event' , $
             '0\Oversampling         [xxx]\grim_menu_render_enter_sampling_event' , $
@@ -9785,7 +9787,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
             '0\Render Sky           [xxx]\grim_menu_render_toggle_sky_event' , $
             '0\Automatic            [xxx]\grim_menu_render_toggle_auto_event' , $
             '2\Render                 \grim_menu_render_event' , $
-           '0\---------------------\*grim_menu_delim_event', $ 
+           '0\---------------------\+*grim_menu_delim_event', $ 
            '0\Color Tables         \*grim_menu_view_colors_event', $ 
            '2\<null>               \+*grim_menu_delim_event', $
 
@@ -9801,14 +9803,14 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Compute stars          \grim_menu_points_stars_event', $ 
            '0\Compute shadows        \grim_menu_points_shadows_event', $ 
 ;           '0\Compute reflections    \?grim_menu_points_reflections_event', $ 
-           '0\-------------------------\*grim_menu_delim_event', $ 
+           '0\-------------------------\+*grim_menu_delim_event', $ 
            '0\Hide/Unhide all        \+*grim_menu_hide_all_event', $ 
            '0\Clear all              \*grim_menu_clear_all_event', $ 
            '0\Clear active           \*grim_menu_clear_active_event', $ 
            '0\Activate all           \*grim_menu_activate_all_event', $ 
            '0\Deactivate all         \*grim_menu_deactivate_all_event', $ 
            '0\Invert activations     \*grim_menu_invert_event', $ 
-           '0\-------------------------\*grim_menu_delim_event', $ 
+           '0\-------------------------\+*grim_menu_delim_event', $ 
            '0\Overlay Settings       \+*grim_menu_points_settings_event', $
            '2\<null>               \+*grim_menu_delim_event']
 
@@ -9929,7 +9931,6 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
      beta_only_indices=beta_only_indices)
 
 
-;;;;; problem is consecutive 2/<null> lines....
  menu_desc = grim_cull_menu_desc(menu_desc, plot, map, beta, $
      map_items=map_items, map_indices=map_indices, $
      od_map_items=od_map_items, od_map_indices=od_map_indices, $

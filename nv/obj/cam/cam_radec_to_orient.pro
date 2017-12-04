@@ -62,13 +62,12 @@ function cam_radec_to_orient, _radec, y=y
  v2 = v_unit(v_cross(v0, v1))
 
  orient = dblarr(3,3,nv)
- orient[0,*,*] = -v0
- orient[1,*,*] = v1
- orient[2,*,*] = v2
+ orient[0,*,*] = transpose(v0)
+ orient[1,*,*] = transpose(v1)
+ orient[2,*,*] = transpose(v2)
 
  return, orient
 end
 ;===========================================================================
-
 
 

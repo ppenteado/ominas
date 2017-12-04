@@ -16,23 +16,23 @@
 ;	Currently OMINAS requires IDL 8.2.3 or above, and a bash shell, on Linux or
 ;	Mac OS.
 ;	
-;	To process images from a particular mission, that mission's kernels will
+;	To process data sets from a particular mission, that mission's kernels will
 ;	need to be available. The OMINAS installer can automatically download sets of
-;	kernels for several missions (Cassini, Galileo, Voyager, Dawn).
+;	kernels for several missions (e.g. Cassini, Galileo, Voyager, Dawn).
 ;
-;	OMINAS makes use of the NAIF Icy Toolkit to process SPICE kernels. The Icy
-;	toolkit may optionally be obtained manually from 
+;	OMINAS' SPICE translator makes use of the NAIF Icy Toolkit to process SPICE kernels. 
+;	The Icy toolkit may optionally be obtained manually from 
 ;	`NAIF <https://naif.jpl.nasa.gov/naif/toolkit_IDL.html>`. However, the
 ;	installer utility provided with OMINAS can download and compile Icy
-;	automatically. Installation of Icy is somewhat platform-dependent, so
-;	troubleshooting information can be found in `Troubleshooting`.
+;	into your current directory. Installation of Icy is somewhat platform-dependent, 
+;	so troubleshooting information can be found in `Troubleshooting`.
 ;
 ;	Procedure
 ;	=========
 ;
 ;	1. Please ensure that OMINAS has been properly downloaded from the
-;	`Github repository <https://github.com/ppenteado/ominas>` by entering
-;	the following command at the terminal::
+;	`Github repository <https://github.com/ppenteado/ominas>` by creating a 
+;	directory for the installation and entering the following command at the terminal::
 ;
 ;	 git clone https://github.com/ppenteado/ominas
 ;
@@ -56,8 +56,8 @@
 ;	5. Test the install of OMINAS has been completed correctly by running the
 ;	the following example scripts::
 ;
-;	 ominas saturn_example.pro
-;	 ominas jupiter_example.pro
+;	 ominas override_example.pro
+;	 ominas pg_example.pro
 ;
 ;	6. A successful Icy installation can be tested with the following IDL
 ;	command from within an OMINAS IDL session::
@@ -354,8 +354,8 @@
 ;
 ; With this environment, one can run some demo scripts, such as::
 ; 
-;   ;ominas saturn_example
-;   ;ominas jupiter_example
+;   ;ominas override_example
+;   ;ominas pg_example
 ;
 ;
 ;
@@ -458,8 +458,17 @@
 ;	Troubleshooting
 ;	===============
 ;
-;	This section outlines several common sources of error which are due to
-;	OMINAS not being configured correctly.
+;	This section outlines several common sources of error that are due to
+;	OMINAS being configured incorrectly.
+;
+;	Note that OMINAS' diagnostic output may be controlled using the "verbosity" 
+;	keyword to nv_message, e.g.::
+;
+;	 nv_message, verbosity=0.5
+;
+;	Verbosity levels range from 0 to 1, with 0 being the least and 1 being 
+;	the most verbose.  Verbosity may also be controlled using the NV_VERBOSITY 
+;	environment variable.
 ;
 ;	One of the most common configuration problems manifests as this error::
 ;
@@ -472,16 +481,15 @@
 ;	is loaded, this error generally means that no kernels are being loaded.
 ;
 ;	You can check which kernels have been loaded by entering the following
-;	IDL commands::
+;	IDL command::
 ;
-;	 cspice_ktotal, 'ALL', count
-;	 for i=0,count-1 do begin & cspice_kdata,i,'ALL',file,type,source,handle,found & print,i,file & endfor
-;	
+;	 print, spice_loaded(/verb)
+;
 ;	A list will be populated with the currently loaded SPICE kernels, and
 ;	their load order. If no kernels are loaded, then it is likely that a bad
 ;	path was supplied to the kernel pools. Ensure that the kernel pool was
 ;	successfully entered into the environemnt by using the "env" command at
-;	the terminal prompt. The kernel pool variable names follow a convention
+;	the shell prompt. The kernel pool variable names follow a convention
 ;	like so: <MIS>_SPICE_<*K>, where <MIS> is the abbreviated mission name,
 ;	and <*K> is the type of kernel. Therefore, for Cassini, the IDL command::
 ;

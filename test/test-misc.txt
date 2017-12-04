@@ -15,7 +15,7 @@ cd = pg_get_cameras(inst='CAS_ISS_NA', time=[4,5,6]*3.5d7)
 
 
 
-grim ~/projects/maps/enceladus/EN_120828_DLR_south_equator.vic \
+grim $PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png \
                                            over=planet_grid,station,array
 
 
