@@ -36,7 +36,7 @@ ________________________________________________________________________________
 
 .. code:: IDL
 
- result = glb_intersect(gbd, view_pts, ray_pts, hit=hit, miss=miss, near=near, far=far, discriminant=discriminant, nosolve=nosolve, valid=valid)
+ result = glb_intersect(gbd, view_pts, _ray_pts, hit=hit, miss=miss, back_pts=back_pts, discriminant=discriminant, nosolve=nosolve, score=score, epsilon=epsilon)
 
 
 
@@ -56,10 +56,9 @@ Description
 Returns
 -------
 
-	Array (2*nv,3,nt) of points in the BODY frame, where
-	int_pts[0:nv-1,*,*] correspond to the near-side intersections
-	and int_pts[nv:2*nv-1,*,1] correspond to the far side.  Zero
-	vector is returned for points with no solution.
+	Array (nv,3,nt) of points in the BODY frame corresponding to the
+	first intersections with the ray.  Zero vector is returned for points
+	with no solution, including those behind the viewer.
 
 
  STATUS:
@@ -105,7 +104,7 @@ Array (nv,3,nt) giving ray origins in the BODY frame.
 
 
 
-ray\_pts
+\_ray\_pts
 -----------------------------------------------------------------------------
 
 *in* 
@@ -127,40 +126,29 @@ Keywords
 
 
 .. _hit
-- hit *in* 
+- hit 
 
-Array giving the indices of rays that hit the object.
+Array giving the indices of rays that hit the object in
+		the forward direction.
 
 
 
 
 .. _miss
-- miss *in* 
+- miss 
 
 Array giving the indices of rays that miss the object.
 
 
 
 
-.. _near
-- near *in* 
-
-If set, only the "near" points are returned.  More specifically,
-		these points correspond to the nearest along the ray from the
-		observer to the globe.  If the observer is exterior, these are
-		the nearest interesections to the observer; if the observer is
-		interior, these intersections are behind the observer.
+.. _back\_pts
+- back\_pts 
 
 
+		Array (nv,3,nt) of additional intersections in order of distance
+		from the observer.
 
-
-.. _far
-- far *in* 
-
-If set, only the "far" points are returned.  See above; if the
-		observer is exterior, these are the furthest interesections from
-		the observer; if the observer is interior, these intersections
-		are in front of the observer.
 
 
 
@@ -174,22 +162,25 @@ Discriminant of the quadriatic equation used to
 
 
 
-
 .. _nosolve
 - nosolve *in* 
 
 If set, the intersections are not computed, though the
-		 discrimiant is.
+		 discriminant is.
 
 
 
 
-.. _valid
-- valid *in* 
+.. _score
+- score 
 
-Array in which each element indicates whether the object
-		was hit.
+Array in which each element indicates the number of forward hits.
 
+
+
+
+.. _epsilon
+- epsilon 
 
 
 

@@ -36,7 +36,7 @@ ________________________________________________________________________________
 
 .. code:: IDL
 
- result = cor_select(crx, key, indices=indices, rm=rm, noevent=noevent, name=name, class=class)
+ result = cor_select(crx, key, indices=indices, rm=rm, noevent=noevent, name=name, class=class, exclude_name=exclude_name, exclude_class=exclude_class)
 
 
 
@@ -97,7 +97,7 @@ key
 
 *in* 
 
- Array of key to select.
+ Array of keys to select.
 
 
 
@@ -134,6 +134,16 @@ Keywords
 
 .. _class
 - class 
+
+
+
+.. _exclude\_name
+- exclude\_name 
+
+
+
+.. _exclude\_class
+- exclude\_class 
 
 
 
