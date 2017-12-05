@@ -7,8 +7,10 @@
 ;  Edited by Mark Moretto for manual
 ;
 ;   This example demonstrates various capabilities of the PG programming
-;   interface, OMINAS' command-line API.  It can be executed from the UNIX 
-;   command line using::
+;   interface, OMINAS' command-line API.  
+;
+;   This example file can be executed from the shell prompt from the ominas/demo
+;   directory using::
 ;
 ;     ominas pg_example-batch
 ;

@@ -158,11 +158,11 @@ pro grim_rm_xd, plane, xd
  for j=0, n_elements(xdps)-1 do if(keyword_set(*xdps[j])) then $
   begin
    xdp = xdps[j]
-   w = nwhere((*xdp), xd)
+   w = nwhere((*xdp), xd, rev=ww)
    if(w[0] NE -1) then $
     begin
      *xdp = rm_list_item(*xdp, w, only=obj_new(), /scalar)  
-     xdx = xd[w]
+     xdx = xd[ww]
 
      ;--------------------------------------------------------
      ; unregister event handler
@@ -182,7 +182,7 @@ pro grim_rm_xd, plane, xd
      ;--------------------------------------------------------
      ; free descriptors, only if originally created via GRIM
      ;--------------------------------------------------------
-     if(keyword_set(cor_udata(xd, 'grim_status'))) then nv_free, xdx
+     if(keyword_set(cor_udata(xdx, 'grim_status'))) then nv_free, xdx
 
      ;--------------------------------------------------------
      ; cull dd generic descriptor
