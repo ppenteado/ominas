@@ -47,6 +47,20 @@
 #                                                       ik_in=auto \
 #                                                       sck_in=auto \
 
+
+
+  CAS_UVIS     cas_uvis_spice_input                  - \
+                                                        klist=cas_demo.kernels
+                                                       ck_in=auto \
+#                                                       spk_in=auto \
+#                                                       pck_in=auto \
+#                                                       lsk_in=auto \
+#                                                       fk_in=auto \
+#                                                       ik_in=auto \
+#                                                       sck_in=auto \
+
+
+
 # Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
