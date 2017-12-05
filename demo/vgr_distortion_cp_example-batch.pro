@@ -9,7 +9,8 @@
 ;  the control points to match exactly), but it requires the image to be
 ;  geometrically corrected.
 ;
-;  This example file can be executed from the UNIX command line using::
+;  This example file can be executed from the shell prompt from the ominas/demo
+;  directory using::
 ;
 ;  	ominas voyager-cp_example.pro
 ;

@@ -13,7 +13,8 @@
 ;  a better result by specifying the desired overlays in the call to GRIM,
 ;  as in grim_example, but let's live a little.
 ;
-;  This example file can be executed from the UNIX command line using::
+;  This example file can be executed from the shell prompt from the ominas/demo
+;  directory using::
 ;
 ;  	ominas graft_example-batch
 ;
