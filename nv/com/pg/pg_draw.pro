@@ -67,6 +67,7 @@ pro pg_draw, object_ptd, target_ptd, $
              shade_threshold=shade_threshold
 common pg_draw_block, pixmap
 
+ if(windows_output()) then $
  if(keyword_set(graphics)) then $
   begin
    device, get_graphics=graphics_orig
@@ -92,7 +93,8 @@ common pg_draw_block, pixmap
 
 
  if(defined(orig_wnum)) then wset, orig_wnum
- if(keyword_set(graphics)) then device, set_graphics=graphics_orig
+ if(windows_output()) then $
+    if(keyword_set(graphics)) then device, set_graphics=graphics_orig
 
 end
 ;=============================================================================
