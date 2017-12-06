@@ -8,7 +8,7 @@
 ;  Edited for manual by Mark Moretto
 ;
 ;  This example file demonstrates how to construct a mosaic using OMINAS.
-;  This example file can be executed from the shell prompt from the ominas/demo
+;  This example file can be executed from the shell prompt in the ominas/demo
 ;  directory using::
 ;
 ;  	  ominas mosaic_example-batch
