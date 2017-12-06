@@ -37,9 +37,13 @@ function dh_read_pds, dd, label, dim, type, min, max, abscissa=abscissa, $
    
  endif else begin
    s=strsplit(pdspar(label,'CORE_ITEMS'),'() ,',/extract)
-   xsize=long(s[2])
+;   xsize=long(s[2])
+;   ysize=long(s[1])
+;   dim = [xsize, ysize]
+   zsize=long(s[2])
+   xsize=long(s[0])
    ysize=long(s[1])
-   dim = [xsize, ysize]
+   dim = [xsize, ysize, zsize]
  endelse
 
 ;;; type = pdspar(label, 'SAMPLE_TYPE')

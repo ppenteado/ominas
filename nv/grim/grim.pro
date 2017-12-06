@@ -9651,15 +9651,15 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Browse              \*grim_menu_file_browse_event', $
            '0\Save                \+*grim_menu_file_save_event', $
            '0\Save As             \+*grim_menu_file_save_as_event', $
-           '0\Open As RGB          \+*grim_menu_open_as_rgb_event', $
+           '0\Open As RGB          \*grim_menu_open_as_rgb_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Detached Header    \+*grim_menu_file_save_detached_header_event', $
            '0\Save All Detached Headers\+*grim_menu_file_save_all_detached_headers_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
-           '0\Save User Points    \+*grim_menu_file_save_user_ptd_event', $
-           '0\Save All User Points\+*grim_menu_file_save_all_user_ptd_event', $
-           '0\Load User Points    \+*grim_menu_file_load_user_ptd_event', $
-           '0\Load All User Points\+*grim_menu_file_load_all_user_ptd_event', $
+           '0\Save User Points    \*grim_menu_file_save_user_ptd_event', $
+           '0\Save All User Points\*grim_menu_file_save_all_user_ptd_event', $
+           '0\Load User Points    \*grim_menu_file_load_user_ptd_event', $
+           '0\Load All User Points\*grim_menu_file_load_all_user_ptd_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Tie Points     \*grim_menu_file_save_tie_ptd_event', $
            '0\Save All Tie Points \*grim_menu_file_save_all_tie_ptd_event', $
