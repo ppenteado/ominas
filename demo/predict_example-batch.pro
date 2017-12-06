@@ -9,7 +9,7 @@
 ;  of reading a data file using DAT_READ, the geometry is tied to a set of
 ;  observation times.
 ;
-;  This example file can be executed from the shell prompt from the ominas/demo
+;  This example file can be executed from the shell prompt in the ominas/demo
 ;  directory using::
 ;
 ;  	ominas predict_example-batch
