@@ -7,10 +7,18 @@ foreach rout,routs,ir do begin
   ex[ir]=routine_exists(rout)
 endforeach
 nex=total(ex,/int)
+if getenv('NV_VERBOSITY') then begin
+  print,'idlastro_download:'
+  print,'Current IDL_PATH: ',pref_get('IDL_PATH')
+endif
 if nex eq n_elements(routs) then begin
   print,'All needed IDLAstro routines are already present'
+  if getenv('NV_VERBOSITY') then foreach rout,routs,ir do print,file_which(rout+'.pro')
 endif else begin
-  print,'There are missing IDLAstro routines.'
+  print,'There are missing IDLAstro routines:'
+  foreach rout,routs,ir do begin
+    if ex[ir] then print,rout,' found: ',file_which(rout+'.pro') else print,rout,' not found'
+  endforeach
   if auto then begin
     print,'Auto installing'
     inst='y'
