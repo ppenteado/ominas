@@ -20,7 +20,7 @@
 ;   in the corresponding tables, as is in `config/tab/filetype_detectors.tab`
 ;   and `config/tab/io.tab`.
 ;
-;   There is no need for SPICE/Icy for this example. It can be run just by doing::
+;   There is no need for SPICE/Icy for this example. It can be run by doing::
 ;
 ;     .run cas_radar_example
 ;     

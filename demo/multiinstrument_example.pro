@@ -20,7 +20,7 @@
 ;   in the corresponding tables, as is in `config/tab/filetype_detectors.tab`
 ;   and `config/tab/io.tab`.
 ;
-;  This example file can be executed from the shell prompt from the ominas/demo
+;  This example file can be executed from the shell prompt in the ominas/demo
 ;  directory using::
 ;
 ;     .run multiinstrument_example

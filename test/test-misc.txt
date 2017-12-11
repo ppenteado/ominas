@@ -1,23 +1,23 @@
-pd = pg_get_planets()
-pd = pg_get_planets(inst='CAS_ISS_NA')
-pd = pg_get_planets(time=3d7)
-pd = pg_get_planets(name='SATURN')
-pd = pg_get_planets(inst='CAS_ISS_NA', time=3d7)
-pd = pg_get_planets(inst='CAS_ISS_NA', name='SATURN')
-pd = pg_get_planets(time=3d7, name='MOON')
+pd = pg_get_planets()                                             & help, pd
+pd = pg_get_planets(inst='CAS_ISS_NA')                            & help, pd
+pd = pg_get_planets(time=3d7)                                     & help, pd
+pd = pg_get_planets(name='SATURN')                                & help, pd
+pd = pg_get_planets(inst='CAS_ISS_NA', time=3d7)                  & help, pd
+pd = pg_get_planets(inst='CAS_ISS_NA', name='SATURN')             & help, pd
+pd = pg_get_planets(time=3d7, name='MOON')                        & help, pd
 
-cd = pg_get_cameras(inst='CAS_ISS_NA')
-cd = pg_get_cameras(inst='CAS_ISS_NA', time=5*3.5d7)	
-cd = pg_get_cameras(inst='CAS_ISS_NA', time='2016-028T15:37:00')	
-
-cd = pg_get_cameras(inst='CAS_ISS_NA', time=[4,5,6]*3.5d7)	
-
+cd = pg_get_cameras(inst='CAS_ISS_NA')                            & help, cd
+cd = pg_get_cameras(inst='CAS_ISS_NA', time=5*3.5d7)	          & help, cd
+cd = pg_get_cameras(inst='CAS_ISS_NA', time='2016-028T15:37:00')  & help, cd
+cd = pg_get_cameras(inst='CAS_ISS_NA', time=[4,5,6]*3.5d7)	  & help, cd
 
 
 
-grim $PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png \
+
+grim '$PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png' \
                                            over=planet_grid,station,array
 
+grim ~/casIss/1800/N1800458665_1.IMG.cal str_trs=faint=12 -auto_stretch over=stars
 
 
 
