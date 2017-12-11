@@ -135,7 +135,7 @@ function pg_select_bodies, bx, od=od, prefix=prefix, _extra=keyvals
      begin
       sel = append_array(sel, w)
       nv_message, verb=0.2, 'Selected based on field of view:'
-      nv_message, verb=0.2, /anon, transpose('   ' + cor_name(bx[w]))
+      nv_message, verb=0.2, /anon, transpose(['   ' + cor_name(bx[w])])
      end
    end
 

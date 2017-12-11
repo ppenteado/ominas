@@ -214,6 +214,7 @@ function drd_read, filename, data, header, $
  _data = call_function(input_fn, dd, $
         	  _header, _dim, _typecode, _min, _max, $
         			   /nodata, sample=sample, gff=gff)
+
  if(NOT defined(_typecode)) then $
   begin
    nv_message, /con, 'WARNING: Type code not determined, converting to byte.'

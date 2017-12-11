@@ -1050,8 +1050,8 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  ; redisplay axes
  ;------------------------------------
  if(NOT keyword_set(no_axes)) then $
-           grim_draw_axes, grim_data, data, plane=plane, $
-                                   no_context=no_context, no_wset=no_wset
+	   grim_draw_axes, grim_data, data, plane=plane, $
+				   no_context=no_context, no_wset=no_wset
 
 
  ;------------------------------------------

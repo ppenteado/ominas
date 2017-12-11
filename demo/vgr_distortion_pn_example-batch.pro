@@ -10,7 +10,7 @@
 ;  raw image without the need for a geometric correction.  The disadvantage
 ;  is that it may not be as precise as the control-point approach.
 ;
-;  This example file can be executed from the shell prompt from the ominas/demo
+;  This example file can be executed from the shell prompt in the ominas/demo
 ;  directory using::
 ;
 ;  	ominas voyager-pn_example.pro

@@ -13,7 +13,7 @@
 ;   VIMS definitions, as is included in `demo/data/instrument_detectors.tab`,
 ;   `demo/data/translators.tab`, and `demo/data/transforms.tab`.
 ;
-;   This example requires SPICE/Icy to have been setup. It can be run just by doing::
+;   This example requires SPICE/Icy to have been setup. It can be run by doing::
 ;
 ;     .run cas_vims_example
 ;
