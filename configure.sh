@@ -401,6 +401,7 @@ function dins()
           datapath=`eval echo ${datapath}`
           inst[${1}]=${datapath}
           dins=${datapath}
+          ./util/downloader/download_$dat.sh ${datapath} -lm --quiet=${OMINAS_INST_QUIET}
           if [ ${3} == "NODEMO" ]; then
            DFLAG="false"
            demost="NOT CONFIGURED"
