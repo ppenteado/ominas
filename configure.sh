@@ -783,7 +783,7 @@ cat ${OMINAS_DIR}/config/bashcomments.txt >> ~/.ominas/ominasde
 #head -1 ${idlbin} > ~/.ominas/ominasde
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominasde
-echo "if [ "\$#" -eq 0 ]; then args=\"\${OMINAS_DIR}/util/printver.pro\"; else args=("\$@"); fi" >> ~/.ominas/ominasde
+echo "args=("\$@")" >> ~/.ominas/ominasde
 if [ -e "/opt/X11/lib/flat_namespace/" ]; then
   cat <<LDCMD >> ~/.ominas/ominasde
     if [ "\${DYLD_LIBRARY_PATH}" = "" ]; then
