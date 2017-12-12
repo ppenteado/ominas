@@ -84,6 +84,10 @@ printf,lun,sep
 printf,lun,'preferences IDL_DLM_PATH'
 printf,lun,pref_get('IDL_DLM_PATH')
 printf,lun,sep
+printf,lun,'!path'
+printf,lun,!path
+printf,lun,sep
+
 
 ;libraries
 printf,lun,''
@@ -104,7 +108,6 @@ printf,lun,sep
 
 ;IDL_STARTUP
 printf,lun,''
-printf,lun,sep
 if file_test(pref_get('IDL_STARTUP'),/read) then begin
   nl=strarr(file_lines(pref_get('IDL_STARTUP')))
   openr,luns,pref_get('IDL_STARTUP'),/get_lun
@@ -113,6 +116,7 @@ if file_test(pref_get('IDL_STARTUP'),/read) then begin
   printf,lun,'IDL_STARTUP: ',pref_get('IDL_STARTUP')
   printf,lun,nl,format='(A0)'
 endif else printf,lun,'No IDL_STARTUP set'
+printf,lun,sep
 
 ;OMINAS repo
 printf,lun,''
