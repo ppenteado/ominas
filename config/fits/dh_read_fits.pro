@@ -9,8 +9,6 @@ function dh_read_fits, dd, label, dim, type, min, max, abscissa=abscissa, $
  if(keyword_set(sample)) then return, 0
  filename = dat_filename(dd)
 
-min=0
-max=0
  return, read_fits(filename, label, silent=silent, nax=dim, type=type)
 end
 ;=============================================================================
