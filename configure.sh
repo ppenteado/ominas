@@ -1042,6 +1042,7 @@ echo "OMINAS_TMP=${OMINAS_TMP}"
 export OMINAS_TMP
 if [ ${OMINAS_INST_QUIET} == "1" ]; then
 
+echo "IDL_PATH: ${IDL_PATH}"
 # Print the configuration list with all statuses to stdout
 cat <<PKGS
 =============================================================================

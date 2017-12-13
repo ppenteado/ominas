@@ -26,6 +26,7 @@ spawn,'env | grep OMINAS_',ominas_vars
 spawn,'env | grep NV_',nv_vars
 spawn,'env | grep _SPICE_',spice_vars
 spawn,'env | grep PG_',pg_vars
+spawn,'env | grep IDL_',idl_vars
 
 count=file_lines(getenv('HOME')+path_sep()+'.ominas'+path_sep()+'ominas_setup.sh')
 ominas_setup=strarr(count)
@@ -54,6 +55,9 @@ printf,lun,sep
 printf,lun,'PG variables:'
 printf,lun,pg_vars,format='(A)'
 printf,lun,sep
+printf,lun,'IDL variables:'
+printf,lun,idl_vars,format='(A)'
+printf,lun,sep
 printf,lun,'ominas_setup.sh:'
 printf,lun,ominas_setup,format='(A)'
 printf,lun,sep
@@ -80,6 +84,10 @@ printf,lun,sep
 printf,lun,'preferences IDL_DLM_PATH'
 printf,lun,pref_get('IDL_DLM_PATH')
 printf,lun,sep
+printf,lun,'!path'
+printf,lun,!path
+printf,lun,sep
+
 
 ;libraries
 printf,lun,''
@@ -95,7 +103,19 @@ routs=['cntrd','minmax']
 printf,lun,''
 printf,lun,sep
 printf,lun,'IDLAstro routines:'
-foreach r,routs do print,r,':',routine_exists(r)
+foreach r,routs do print,r,':',file_which(r+'.pro')
+printf,lun,sep
+
+;IDL_STARTUP
+printf,lun,''
+if file_test(pref_get('IDL_STARTUP'),/read) then begin
+  nl=strarr(file_lines(pref_get('IDL_STARTUP')))
+  openr,luns,pref_get('IDL_STARTUP'),/get_lun
+  readf,luns,nl
+  free_lun,luns
+  printf,lun,'IDL_STARTUP: ',pref_get('IDL_STARTUP')
+  printf,lun,nl,format='(A0)'
+endif else printf,lun,'No IDL_STARTUP set'
 printf,lun,sep
 
 ;OMINAS repo
