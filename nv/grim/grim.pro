@@ -20,7 +20,6 @@
 ; 
 ;  INPUT:
 ;  ~~~~~~
-; 
 ;      arg1, arg2:
 ; 
 ;            Grim accepts up to two arguments, which can appear in either
@@ -495,8 +494,8 @@
 ;      None
 ;
 ;
-;      Resource File
-;      -------------
+;  Resource File
+;  -------------
 ;       The keywords marked above with an asterisk may be overridden using
 ;       the file $HOME/.ominas/grimrc.  Keyword=value pairs may be entered, one per
 ;       line, using the same syntax as if the keyword were entered on the IDL
@@ -504,8 +503,8 @@
 ;       Keywords entered in the resource file override the default values, and
 ;       are themselves overridden by keywords entered on the command line.
 ;
-;      Shell Interface
-;      ---------------
+;  Shell Interface
+;  ---------------
 ;       The `grim` alias may be used to start grim from the shell prompt
 ;       via the XIDL interface.  The shell interface accepts all keywords
 ;       marked above with an asterisk.  See grim.bat.
@@ -515,28 +514,28 @@
 ;            % grim -beta data/*.img overlay=center,limb:JUPITER
 ;
 ;
-;      Environment Variables
-;      ---------------------
+;  Environment Variables
+;  ---------------------
 ;       Grim currently defines no environment variables..
 ;
 ;
-;      Common Blocks
-;      -------------
+;  Common Blocks
+;  -------------
 ;        grim_block:
 ;         Keeps track of most recent grim instance and which ones are
 ;         selected.
 ;
 ;
-;      Side Effects
-;      ------------
+;  Side Effects
+;  ------------
 ;       Grim operates directly on the memory images of the descriptors that
 ;       it is given.  Therefore, those descriptors are modified during
 ;       a session.  This architecture allows data to be operated on concurrently
 ;       through grim and from the command line; see grift.pro for details.
 ;
 ;
-;      Layout
-;      ------
+;  Layout
+;  ------
 ;       The philosphy that drives GRIM's layout is that the maximum possible
 ;       screen space should be devoted to displaying the data.  This policy
 ;       allows for many GRIM windows to be used simultaneously without being
@@ -688,16 +687,16 @@
 ;               The message line displays short messages pertaining GRIM's
 ;                current state, or displayng button functions.
 ;
-;      Callback Procedures
-;      -------------------
+;  Callback Procedures
+;  -------------------
 ;       GRIM callback procedures are called with one or two arguments:
 ;       the first argument is a pointer to data that was provided
 ;       when the callback was added.  The second argument, if present, depends
 ;       on the applicatation.
 ;
 ;
-;      Resource Names
-;      --------------
+;  Resource Names
+;  --------------
 ;       The following X-windows resource names apply to grim:
 ; 
 ;        grim_base:   top level base
@@ -713,8 +712,8 @@
 ;            Idl*grim_modes_base*highlightThickness:  0
 ;
 ;
-;      Operation
-;      ---------
+;  Operation
+;  ---------
 ;       GRIM displays 1-, 2-, and 3-dimensional data sets.  1-dimensional
 ;       data arrays are displayed as plots.  In that case, the abscissa is
 ;       the sample number unless the data descriptor contains an abscissa.
@@ -791,8 +790,8 @@
 ;                  IDL> grim, cd=cd
 ;
 ;
-;      Known bugs
-;      ----------
+;  Known bugs
+;  ----------
 ;       Window resizing is not precise.  GRIM tries to resize to the selected
 ;       size, but typically overshoots.  This is probably platform-dependent.
 ;
@@ -863,8 +862,8 @@
 ;
 ;
 ;
-;      SEE ALSO
-;      --------
+;  SEE ALSO
+;  --------
 ;       `GRIFT`, `GRAFT`
 ;
 ;
