@@ -217,15 +217,43 @@ function drd_read, filename, data, header, $
 
  if(NOT defined(_typecode)) then $
   begin
-   nv_message, /con, 'WARNING: Type code not determined, converting to byte.'
-   _typecode = 1
+   if(defined(_data)) then _typecode = size(_data, /type) $
+   else $
+    begin
+     nv_message, /con, 'WARNING: Type code not determined, converting to byte.'
+     _typecode = 1
+    end
   end
 
-; if(NOT defined(_dim)) then $
-;  begin
-;   nv_message, /con, 'WARNING: Dimensions not determined.'
-;   _dim = 0
-;  end
+ if(NOT defined(_dim)) then $
+  begin
+   if(defined(_data)) then _dim = size(_data, /dim) $
+   else $
+    begin
+     nv_message, /con, 'WARNING: Dimensions not determined.'
+     _dim = 0
+    end
+  end
+
+ if(NOT defined(_min)) then $
+  begin
+   if(defined(_data)) then _min = min(_data) $
+   else $
+    begin
+     nv_message, /con, 'WARNING: Minimum data value not determined.'
+     _min = 0
+    end
+  end
+
+ if(NOT defined(_max)) then $
+  begin
+   if(defined(_data)) then _max = max(_data) $
+   else $
+    begin
+     nv_message, /con, 'WARNING: Maximum data value not determaxed.'
+     _max = 0
+    end
+  end
 
  ;---------------------------------
  ; check for multiple data arrays
