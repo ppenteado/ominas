@@ -1,0 +1,87 @@
+pg_renderfit.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_renderfit
+
+
+ NAME:
+	pg_renderfit
+
+
+ PURPOSE:
+	Searches for the offset (dx,dy) that gives the best agreement between
+	two uncorrelated sets of image points.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	dxy = pg_renderfit(dd, cd=cd, ltd=ltd, bx=bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd: 		Camera descriptor.
+
+	ltd:		Sun descriptor.
+
+	bx:		Array of body descriptors describing objects in the scene.
+
+	show:		If specified, some graphics are displayed illustrating
+			aspects of the search.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	2-element array giving the fit offset as [dx,dy].
+
+
+ PROCEDURE:
+	pg_renderfit finds the offset that gives the best correlation between
+	the given image and a simulated image.
+
+
+ STATUS:
+	Some bugs.  One problem is that the current search grid wraps pixels
+	instead of truncating them.  This causes problems for images where
+	a large body is not entirly within the FOV.
+
+
+ NOTES:
+	This could be improved by iterating, starting with a broader, more
+	coarsely sampled scene.
+
+
+ SEE ALSO:
+	pg_farfit
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

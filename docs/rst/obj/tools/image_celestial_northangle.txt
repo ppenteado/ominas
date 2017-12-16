@@ -1,0 +1,59 @@
+image_celestial_northangle.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+image_celestial_northangle
+
+
+ NAME:
+       image_celestial_northangle
+
+
+ PURPOSE:
+	Computes the image azimuth (see image_azimuth.pro) of celestial north.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       result = image_celestial_northangle(cd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT:
+	orient:	Orientation matrix to use instead of cd.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Angle in radians.
+
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

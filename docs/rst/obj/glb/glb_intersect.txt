@@ -1,0 +1,87 @@
+glb_intersect.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_intersect
+
+
+ NAME:
+	glb_intersect
+
+
+ PURPOSE:
+	Computes the intersection of rays with GLOBE objects.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	int_pts = glb_intersect(gbd, view_pts, ray_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:		Array (nt) of any subclass of GLOBE descriptors.
+
+	view_pts:	Array (nv,3,nt) giving ray origins in the BODY frame.
+
+	ray_pts:	Array (nv,3,nt) giving ray directions in the BODY frame.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	nosolve: If set, the intersections are not computed, though the
+		 discriminant is.
+
+  OUTPUT:
+	hit:	Array giving the indices of rays that hit the object in
+		the forward direction.
+
+	miss:	Array giving the indices of rays that miss the object.
+
+	score:	Array in which each element indicates the number of forward hits.
+
+	discriminant:	Discriminant of the quadriatic equation used to
+			determine the intersections.
+
+	back_pts:
+		Array (nv,3,nt) of additional intersections in order of distance
+		from the observer.
+
+
+ RETURN:
+	Array (nv,3,nt) of points in the BODY frame corresponding to the
+	first intersections with the ray.  Zero vector is returned for points
+	with no solution, including those behind the viewer.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

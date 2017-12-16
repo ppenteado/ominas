@@ -1,0 +1,59 @@
+dsk_get_ranges.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_get_ranges
+
+
+ NAME:
+	dsk_get_ranges
+
+
+ PURPOSE:
+	Returns ranges of valid coordinates for the given DISK object.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	ranges = dsk_get_ranges(dkd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Any subclass of DISK.  One descriptor only.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2 x 3) giving the ranges in radius, true anomaly and altitude.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,71 @@
+dat_set_data.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_set_data
+
+
+ NAME:
+	dat_set_data
+
+
+ PURPOSE:
+	Replaces the data array associated with a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_set_data, dd, data
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+	data:	New data array.
+
+  OUTPUT:
+	dd:	Modified data descriptor.
+
+
+ KEYWORDS:
+  INPUT:
+	abscissa: If set, the given array is taken as the abscissa.
+
+	update:	Update mode flag.  If not given, it will be taken from dd.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Does not yet support sampling.
+
+
+ SEE ALSO:
+	dat_data
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

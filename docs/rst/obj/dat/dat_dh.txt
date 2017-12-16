@@ -1,0 +1,63 @@
+dat_dh.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_dh
+
+
+ NAME:
+	dat_dh
+
+
+ PURPOSE:
+	Returns the detached header associated with a data descriptor.
+
+
+ CATEGORY:
+	NV/OBJ/DAT
+
+
+ CALLING SEQUENCE:
+	data = dat_dh(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Detached header associated with the data descriptor.
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2008
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

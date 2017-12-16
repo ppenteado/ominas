@@ -1,0 +1,69 @@
+surface_normal.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+surface_normal
+
+
+ NAME:
+	surface_normal
+
+
+ PURPOSE:
+	Computes the normal at points on a surface.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+	norm_pts = surface_normal(bx, v, r)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	Array (nt) of any subclass of BODY descriptors with
+		the expected surface parameters.
+
+	v:	Array (nv,3,nt) giving observer positions in the BODY frame.
+
+	r:	Array (nv,3,nt) giving surface positions in the BODY frame.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	north:     Passed to dsk_surface_normal.  Causes surface normal
+	           to point north regardless of observer position.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv, 3, nt) of surface unit normals in the BODY frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

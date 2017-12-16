@@ -1,0 +1,64 @@
+str_get_flux.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+str_get_flux
+
+
+ NAME:
+       str_get_flux
+
+
+ PURPOSE:
+       Calculates the flux (power/area) for each given star relative to
+	a given observer.
+
+
+ CATEGORY:
+       NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+       result = str_get_flux(sd, od=od)
+
+
+ ARGUMENTS:
+  INPUT:
+       sd:    Array (nt) of star descriptors.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:
+	od:	Observer descriptor.
+
+  OUTPUT: NONE
+
+ RETURN:
+       An array (nt) of fluxes.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 8/2017
+
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

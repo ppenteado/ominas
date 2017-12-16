@@ -1,0 +1,69 @@
+dat_set_sampling_fn.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_set_sampling_fn
+
+
+ NAME:
+	dat_set_sampling_fn
+
+
+ PURPOSE:
+	Replaces the sampling function associated with a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_set_sampling_fn, dd, sampling_fn
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	sampling_fn:	New sampling function.
+
+  OUTPUT:
+	dd:	Modified data descriptor.
+
+
+ KEYWORDS:
+  INPUT:
+	data 	Data to be sent to the sampling function.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dat_sampling_fn
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2015
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

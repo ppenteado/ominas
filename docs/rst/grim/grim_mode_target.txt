@@ -1,0 +1,72 @@
+grim_mode_target.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_target_button_help_event
+
+
+ NAME:
+	grim_mode_target_button_event
+
+
+ PURPOSE:
+	Selects the target cursor mode.
+
+	 Camera orientation:
+	   Left button:		Repoints the optic axis at the cursor.
+
+	   Right button:	Repoints the optic axis at the center of the
+				nearest selected body.
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Repoints the camera at the cursor position or a selected body.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

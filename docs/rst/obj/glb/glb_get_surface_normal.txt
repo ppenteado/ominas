@@ -1,0 +1,71 @@
+glb_get_surface_normal.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_get_surface_normal
+
+
+ NAME:
+	glb_get_surface_normal
+
+
+ PURPOSE:
+	Computes the surface normal of a GLOBE object at the given
+	globe position.
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	n = glb_get_surface_normal_body(gbd, p)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	Array (nt) of any subclass of GLOBE descriptors.
+
+	p:	Array (nv,3,nt) of points in the GLOBE system.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	nonorm:	If set, the returned vectors are not normalized.
+
+	body:	If set, the inputs given in the BODY system instead of GLOBE.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv, 3, nt) of surface normals in the BODY frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

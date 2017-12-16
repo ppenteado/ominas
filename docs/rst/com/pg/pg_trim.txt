@@ -1,0 +1,74 @@
+pg_trim.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_trim
+
+
+ NAME:
+	pg_trim
+
+
+ PURPOSE:
+	For each given object, excludes points contained in the given region
+	by setting the PTD_MASK_INVISIBLE.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	pg_trim, dd, object_ptd, region
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor containing the image.
+
+	object_ptd:	Array (n_objects) of POINT containing the
+			image points to be trimmed.
+
+	region:		Array of subscripts of image points to be trimmed.
+
+  OUTPUT:
+	object_ptd:	The input points are be modified on return.
+
+
+ KEYWORDS:
+  INPUT:
+	mask:		Mask to use instead of PTD_MASK_INVISIBLE.
+
+	off:		If set, the masked flag bit will be turned off.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pg_select
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

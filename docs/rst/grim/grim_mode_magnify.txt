@@ -1,0 +1,74 @@
+grim_mode_magnify.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_magnify_button_help_event
+
+
+ NAME:
+	grim_mode_magnify_button_event
+
+
+ PURPOSE:
+	Selects the magnify cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Image pixels in the graphics window may be magnifed using
+	either the left or right mouse buttons.  The left button
+	magnifies the displayed pixels, directly from the graphics
+	window.  The right button magnifies the data itself, without
+	the overlays.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

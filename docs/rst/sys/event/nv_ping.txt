@@ -1,0 +1,61 @@
+nv_ping.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+nv_ping
+
+
+ NAME:
+	nv_ping
+
+
+ PURPOSE:
+	Generates a write event on a set of descriptors.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_ping, xd
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	Array of descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2014
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

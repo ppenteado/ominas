@@ -1,0 +1,68 @@
+dat_gd.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_gd
+
+
+ NAME:
+	dat_gd
+
+
+ PURPOSE:
+	Dereferences a given generic descriptor, or the generic descriptor
+	contained in a data descriptor.  Similar to cor_gd, but data
+	descriptors are handled specially.
+
+
+ CATEGORY:
+	NV/OBJ/DAT
+
+
+ CALLING SEQUENCE:
+	xd = dat_gd(gd, <descriptor keywords>)
+
+
+ ARGUMENTS:
+  INPUT:
+	gd:	Generic descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	dd:	Data descriptor.  If gd is undefined, the generic descriptor
+		contained in this data descriptor is used instead.  If this
+		keyword is set (i.e., /dd), then it is treated like the
+		other descriptor keywords and a data desctipro is returned
+		if one exists in the generic descriptor.
+
+	<x>d:	Standard descriptor keywords.  Setting a keyword causes the
+		corresponding field of the generic descriptor to be returned
+		in the output array.
+
+  OUTPUT: NONE
+
+
+ RETURN: Array of descriptors corresponding to the selected keywords.
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

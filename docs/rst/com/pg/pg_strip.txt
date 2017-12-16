@@ -1,0 +1,75 @@
+pg_strip.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_strip
+
+
+ NAME:
+       pg_strip
+
+
+ PURPOSE:
+	Plots the portion of an image between two chosen points.
+
+
+ CATEGORY:
+       COM/PG
+
+
+ CALLING SEQUENCE:
+       pg_strip, im
+
+
+ ARGUMENTS:
+  INPUT:
+       im:		The two-dimensional array from which the
+			plotted strip will be extracted.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:
+       width:		An odd integer giving the width in pixels of the
+			extracted strip (default=5).  This width is rebinned
+			to a single pixel for plotting.
+
+	nw:		When set, each plot is done in a new window.
+
+	nomarks:	Suppresses the marks that show the locations of
+			the chosen points, which are difficult to
+			entirely erase.
+
+	xs:		Specifies the x-dimension of the window, in pixels.
+			Default is 400.
+
+	ys:		Specifies the y-dimension of the window, in pixels.
+			Default is 300.
+
+  OUTPUT:
+       NONE
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Tiscareno, 7/00
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

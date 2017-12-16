@@ -1,0 +1,71 @@
+dh_read.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dh_read
+
+
+ NAME:
+	dh_read
+
+
+ PURPOSE:
+	Reads a detached header file.
+
+
+ CATEGORY:
+	UTIL/DH
+
+
+ CALLING SEQUENCE:
+	result = dh_read(filename)
+
+
+ ARGUMENTS:
+  INPUT:
+	filename:	Name of file to be read.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	buflen:		Number of lines to allocate at a time.  Default is 1000.
+			The routine is faster with larger values of buflen, but
+			less memory efficient.
+
+  OUTPUT:
+	status:		0 if file found, -1 if not.
+
+
+ RETURN:
+	String array in which each line is a line of the detached header.
+	a blank detached header is created and returned if the file is
+	not found.  In that case, status is set to -1.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dh_write
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

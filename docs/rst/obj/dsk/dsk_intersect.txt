@@ -1,0 +1,77 @@
+dsk_intersect.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_intersect
+
+
+ NAME:
+	dsk_intersect
+
+
+ PURPOSE:
+	Computes ray intersections with a DISK object.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	v_int = dsk_intersect(dkd, view_pts, ray_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Array (nt) of any subclass of DISK.
+
+	view_pts:Array (nv x 3 x nt) of column vectors giving the origins
+		 of the rays in the body frame.
+
+	ray_pts: Array (nv x 3 x nt) of column vectors giving the directions
+		 of the rays in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	t:	Array(nv x 3 x nt) giving the distances to each intersection.
+		Values down each column are identical, i.e., this array
+		is a stack of three identical (nv x 1 x nt) arrays.
+
+	hit: 	Array giving the subscripts of the input rays that actually
+	 	intersect the disk.
+
+	miss: 	Array giving the subscripts of the input rays that do not
+	 	intersect the disk.
+
+
+ RETURN:
+	Array (nv x 3 x nt) of column vectors giving the ray/disk
+	intersections in the body frame.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

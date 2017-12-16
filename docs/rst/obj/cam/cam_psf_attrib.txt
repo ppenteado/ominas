@@ -1,0 +1,65 @@
+cam_psf_attrib.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cam_psf_attrib
+
+
+ NAME:
+	cam_psf_attrib
+
+
+ PURPOSE:
+	Computes attributes of a point-spread function.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_psf_attrib, cd, <attribute keywords...>
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	 Camera descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT:
+	fwhm:	Full-width at half maximum of the point-spread function.
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

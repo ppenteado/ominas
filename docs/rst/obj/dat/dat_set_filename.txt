@@ -1,0 +1,64 @@
+dat_set_filename.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_set_filename
+
+
+ NAME:
+	dat_set_filename
+
+
+ PURPOSE:
+	Changes the file name associated with a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_set_filename, dd, filename
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	filename:	New file name.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

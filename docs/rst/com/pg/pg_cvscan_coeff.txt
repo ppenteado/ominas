@@ -1,0 +1,99 @@
+pg_cvscan_coeff.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_cvscan_coeff
+
+
+ NAME:
+	pg_cvscan_coeff
+
+
+ PURPOSE:
+	Computes linear least-squares coefficients for a fit to the image
+	coordinate translation and rotation that matches a computed curve to
+	a scanned curve in an image.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	scan_cf = pg_cvscan_coeff(scan_ptd, axis_ptd=axis_ptd)
+
+
+ ARGUMENTS:
+  INPUT:
+	scan_ptd:	Array (n_curves) of POINT output from
+			pg_cvscan containing scanned image points as well as
+			other necessary scan data.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	axis_ptd:	POINT containing a single image  point
+			to be used as the axis of rotation in the fit for
+			every curve.
+
+	fix:		Array specifying which parameters to fix in the
+			fit as [dx,dy,dtheta].
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n_curves) of pg_fit_coeff_struct containing coefficients for
+	the least-square fit to be input to pg_fit.
+
+
+ RESTRICTIONS:
+	Currently does not work for multiple time steps.
+
+
+ PROCEDURE:
+	pg_cvscan_coeff extracts the scan data from the given
+	scan_ptd structure and uses icv_coeff to compute the coefficients.
+	See the documentation for that routine for details.
+
+
+ EXAMPLE:
+	The following command uses scan data from pg_cvscan to compute
+	least square coefficients for a fit such that only dx and dtheta
+	will be allowed to vary:
+
+	cvscan_cf = pg_cvscan_coeff(scan_ptd, axis=center_ptd, fix=[1])
+
+	In this call, scan_ptd is a POINT containing the scan data
+	from pg_cvscan and center_ptd is a POINT giving the center
+	of the planet as computed by pg_center.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pg_cvscan, pg_cvchisq, pg_ptscan, pg_ptscan_coeff, pg_ptchisq,
+	pg_fit, pg_threshold
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

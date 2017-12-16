@@ -1,0 +1,95 @@
+pg_ring_sector_oblique.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_ring_sector_oblique
+
+
+ NAME:
+	pg_ring_sector_oblique
+
+ PURPOSE:
+	Allows the user to select a ring sector by clicking and dragging.
+	The top and bottom of the sector are defined along lines of constant
+	radius, while the sides are perpendicular to the image-projected
+	radial direction.
+
+ CATEGORY:
+       NV/PG
+
+ CALLING SEQUENCE:
+     outline_ptd=pg_ring_sector_oblique(cd=cd, dkx=dkx)
+
+
+ ARGUMENTS:
+  INPUT:
+      NONE
+
+  OUTPUT:
+	NONE
+
+
+
+ KEYWORDS:
+  INPUT:
+           cd:     Camera descriptor.
+
+	   dkx:     Disk descriptor describing the ring.
+
+           gd:     Generic descriptor containnig the above descriptors.
+
+      win_num:     Window number of IDL graphics window in which to select
+                   box, default is current window.
+
+      restore:     Do not leave the box in the image.
+
+           p0:     First corner of box.  If set, then the routine immediately
+                   begins to drag from that point until a button is released.
+
+        color:     Color to use for rectangle, default is !color.
+
+        slope:     This keyword allows the longitude to vary from the
+                   perpendicular direction as a function of radius as:
+                   lon = slope*(rad - rad0).
+
+ xor_graphics:     If set, the sector outline is drawn and erased using xor
+                   graphics instead of a pixmap.
+
+       silent:     If set, messages are suppressed.
+
+       sample:     Grid sampling, default is 1.
+
+        nodsk:     If set, image points will not be included in the output
+                   POINT.
+
+  OUTPUT:
+         NONE
+
+
+ RETURN:
+      POINT containing points on the sector outline.  The point
+      spacing is determined by the sample keyword.  The POINT object
+      also contains the disk coordinate for each point and the user fields
+      'nrad' and 'nlon' giving the number of points in radius and longitude.
+
+ KNOWN BUGS:
+	The sector flips when it hits zero azimuth rather than retaining a
+	consistent sense.
+
+
+ ORIGINAL AUTHOR : J. Spitale ; 5/2005
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

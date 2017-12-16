@@ -1,0 +1,65 @@
+map_to_surface.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+map_to_surface
+
+
+ NAME:
+       map_to_surface
+
+
+ PURPOSE:
+       Transforms points in map coordinates to surface coordinates.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       result = map_to_surface(md, bx, map_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:	Array of nt map descriptors.
+
+	bx:	Array of nt object descriptors (subclass of BODY.
+
+	map_pts:	Array (2 x nv x nt) of map points
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+   INPUT:
+	alt:	If set, atitudes are set to this value instead of 0.
+
+   OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv x 3 x nt) of surface coordinates, with the altitude coordinate
+	set to zero.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,107 @@
+pg_get_maps.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_get_maps
+
+
+ NAME:
+	pg_get_maps
+
+
+ PURPOSE:
+	Obtains a map descriptor for the given data descriptor.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_get_maps(arg1, arg2)
+
+
+ ARGUMENTS:
+  INPUT:
+	arg1:	Data descriptor or transient translator argument.  In the
+		latter case, a string containing keywords and values to be
+		passed directly to the translators as if they appeared as
+		arguments in the translators table.  Keywords passed using
+		this mechanism take precedence over keywords appearing in
+		the translators table.  If no data descriptor is given,
+		one may be constructed using DATA keywords (see below).  The
+		newly created data descriptor is freed unless this argument
+		is an undefined named variable, in which case the new
+		descriptor is returned in this variable.
+
+	arg2:	Transient translator argument, if present.
+
+  OUTPUT:
+	arg1:	If present and undefined, any newly created data descriptor
+		is returnedin this argument.
+
+
+ KEYWORDS:
+  INPUT:
+	md:		Input map descriptors; used by some translators.
+
+	override:	Create a data descriptor and initilaize with the
+			given values.  Translators will not be called.
+
+	verbatim:	If set, the descriptors requested using name
+			are returned in the order requested.  Otherwise, the
+			order is determined by the translators.
+
+	tr_override:	String giving a comma-separated list of translators
+			to use instead of those in the translators table.  If
+			this keyword is specified, no translators from the
+			table are called, but the translators keywords
+			from the table are still used.
+
+
+	MAP Keywords
+	---------------
+	All MAP override keywords are accepted.  See map__keywords.include.
+	If 'name' is specified, then only descriptors with those names are
+	returned.
+
+	DATA Keywords
+	-------------
+	All DATA override keywords are accepted.  See dat__keywords.include.
+
+  OUTPUT:
+	count:	Number of descriptors returned
+
+
+ RETURN:
+	Array of map descriptors, 0 if an error occurs.
+
+
+ PROCEDURE:
+	If /override, then a map descriptor is created and initialized
+	using the specified values.  Otherwise, the descriptor is obtained
+	through the translators.  Note that if /override is not used,
+	values (except name) can still be overridden by specifying
+	them as keyword parameters.  If name is specified, then
+	only descriptors corresponding to those names will be returned.
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1998
+	Modified:	Spitale, 8/2001
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

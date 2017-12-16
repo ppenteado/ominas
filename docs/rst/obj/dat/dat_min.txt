@@ -1,0 +1,63 @@
+dat_min.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_min
+
+
+ NAME:
+	dat_min
+
+
+ PURPOSE:
+	Returns the min value associated with a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	data = dat_min(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	The min value associated with the data descriptor.
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2012
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

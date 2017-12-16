@@ -1,0 +1,64 @@
+dat_set_nhist.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_set_nhist
+
+
+ NAME:
+	dat_set_nhist
+
+
+ PURPOSE:
+	Changes the number of past states archived in a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_set_nhist, dd, nhist
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+	nhist:	New nhist value.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

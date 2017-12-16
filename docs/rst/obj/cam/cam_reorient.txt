@@ -1,0 +1,71 @@
+cam_reorient.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cam_reorient
+
+
+ NAME:
+	cam_reorient
+
+
+ PURPOSE:
+       Repoints the camera orientiation matrix based on x,y, and theta
+	image offsets.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_reorient, cd, image_axis, dxy, dtheta
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Array (nt) of CAMERA descriptors.
+
+	image_axis:	Array (2,1,nt) of image points corresponding to the
+			rotation axis for each descriptor.
+
+	dxy:	Array (2,1,nt) of image offsets in x and y.
+
+	dheta:	Array (1,1,nt) of rotation angles.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	absolute: If set, the dxy argument represents an absolute image
+		  position rather than an offset.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

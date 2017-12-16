@@ -1,0 +1,72 @@
+grim_mode_readout.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_readout_button_help_event
+
+
+ NAME:
+	grim_mode_readout_button_event
+
+
+ PURPOSE:
+	Selects the readout cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	A text window appears and displays data about the pixel selected
+	using the left mouse button.  The amount and type of information
+	displayed depends on which descriptors are loaded.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

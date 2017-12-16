@@ -1,0 +1,62 @@
+dsk_set_taanl.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_set_taanl
+
+
+ NAME:
+	dsk_set_taanl
+
+
+ PURPOSE:
+	Replaces taanl in each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	dsk_set_taanl, bx, taanl
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Array (nt) of any subclass of DISK.
+
+	taanl:	 New taanl value.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

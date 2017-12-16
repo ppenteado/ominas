@@ -1,0 +1,60 @@
+get_solar_ref.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+get_solar_ref
+
+
+ NAME:
+       get_solar_ref
+
+
+ PURPOSE:
+	Produces inertial unit vectors corresponding to the projection
+	of the sun direction into the given disk plane.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       v = get_solar_ref(dkx, ltd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkx:	Array (nt) of any subclass of DISK.
+
+	ltd:	Array (nt) of any subclass of STAR representing the sun.
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (1,3,nt) of inertial vectors.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

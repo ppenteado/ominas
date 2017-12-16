@@ -1,0 +1,68 @@
+bod_radec_to_body_vel.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+bod_radec_to_body_vel
+
+
+ NAME:
+	bod_radec_to_body_vel
+
+
+ PURPOSE:
+	Transforms the given column velocity vectors from the RA/DEC coordinate
+       system associated to the body to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	body_pts = bod_radec_to_body_vel(bx, radec_pos, radec_vel)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	radec_pos:	Array (nv,3,nt) of column vectors in the bx radec frame.
+
+	radec_vel:	Array (nv,3,nt) of column velocity vectors in the bx
+			radec frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) of column velocity vectors in the bx body frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2015
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,78 @@
+get_image_profile.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+get_image_profile
+
+
+ NAME:
+       get_image_profile
+
+
+ PURPOSE:
+	Extracts a profile from a rectangular, but not necessarily axis-aligned,
+	image region using interpolation.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       profile = get_image_profile(image, cd, p, nl, nw, sample)
+
+
+ ARGUMENTS:
+  INPUT:
+	image:	Image array.
+
+	cd:	Camera descriptor.
+
+	p:	Array (2,2) of image points giving the start and end points
+		for the scan.
+
+	nl:	Number of samples along the scan.
+
+	nw:	Number of samples across the scan.
+
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT:
+	interp:		Type of interpolation, see image_interp_cam.
+
+	arg_interp:	Interpolation argument, see image_interp_cam.
+
+  OUTPUT:
+	image_pts:	Array (2,nl) of image points along the center of
+			the scan.
+
+	distance:	Array (nl) giving the distance along the scan.
+
+	sigma:		Standard deviation across the profile at each sample
+			along the profile.
+
+
+ RETURN:
+	Array (nl) containing the profile.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

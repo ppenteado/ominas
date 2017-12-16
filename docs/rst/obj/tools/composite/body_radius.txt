@@ -1,0 +1,61 @@
+body_radius.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+body_radius
+
+
+ NAME:
+       body_radius
+
+
+ PURPOSE:
+	Returns the sizes of the given bodies.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       body_radius(bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:      Globe or Disk descriptor; nt.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+   INPUT: NONE
+
+   OUTPUT: NONE
+
+
+ RETURN:
+	nt-element array giving the size of each body.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

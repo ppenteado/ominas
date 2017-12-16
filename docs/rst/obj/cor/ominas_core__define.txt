@@ -1,0 +1,83 @@
+ominas_core__define.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ominas_core__define
+
+
+ NAME:
+	ominas_core__define
+
+
+ PURPOSE:
+	Class structure for the CORE class.
+
+
+ CATEGORY:
+	NV/OBJ/COR
+
+
+ CALLING SEQUENCE:
+	N/A
+
+
+ FIELDS:
+	name:	Name of the object.
+
+		Methods: cor_name, cor_set_name
+
+
+	user:	Username.
+
+		Methods: cor_user
+
+
+	tasks_p:
+		Pointer to tasks list.
+
+		Methods: cor_tasks, cor_add_task
+
+
+	udata_tlp:
+		Tag list containing user data.
+
+		Methods: cor_set_udata, cor_test_udata, cor_udata
+
+	abbrev:	Abbreviation for this descriptor class, e.g., COR.
+
+	tag:	Tag for this descriptor class, e.g., CRD.
+
+	gdp:	Pointer to generic descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

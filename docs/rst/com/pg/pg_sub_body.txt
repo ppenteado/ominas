@@ -1,0 +1,65 @@
+pg_sub_body.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_sub_body
+
+
+ NAME:
+	pg_sub_body
+
+
+ PURPOSE:
+	Computes surface coordinates of sub-body point.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	range = pg_sub_body(gbx=gbx, bx=bx, gd=gd)
+
+
+ KEYWORD:
+  INPUT:
+	gbx:	Array (n_objects, n_timesteps) of descriptors of objects
+		which must be a subclass of GLOBE.
+
+	bx:	Array (n_objects, n_timesteps) of descriptors of objects
+		which must be a subclass of BODY.
+
+	gd:	Generic descriptor.  If given, the descriptor inputs
+		are taken from this structure if not explicitly given.
+
+	dd:	Data descriptor containing a generic descriptor to use
+		if gd not given.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n_objects,3) of surface coordinate vectors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2001
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

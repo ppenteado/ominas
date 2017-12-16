@@ -1,0 +1,69 @@
+dat_set_header.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_set_header
+
+
+ NAME:
+	dat_set_header
+
+
+ PURPOSE:
+	Replaces the header array associated with a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_set_header, dd, header
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+	header:	New header array.
+
+  OUTPUT:
+	dd:	Modified data descriptor.
+
+
+ KEYWORDS:
+  INPUT:
+	update:	Update mode flag.  If not given, it will be taken from dd.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dat_header
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

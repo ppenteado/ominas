@@ -1,0 +1,75 @@
+rng_create_descriptors.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+rng_create_descriptors
+
+
+ NAME:
+       rng_create_descriptors
+
+
+ PURPOSE:
+	Init method for the RING class.
+
+
+ CATEGORY:
+       NV/LIB/RNG
+
+
+ CALLING SEQUENCE:
+       rd = rng_create_descriptors(n)
+
+
+ ARGUMENTS:
+  INPUT:
+       n:      Number of ring descriptors.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:
+	rd:	Ring descriptor(s) to initialize, instead of creating new
+		ones.
+
+	dkd:	Disk descriptor(s) to pass to dsk_create_descriptors.
+
+	sld:	Solid descriptor(s) to pass to sld_create_descriptors.
+
+	bd:	Body descriptor(s) to pass to bod_create_descriptors.
+
+	crd:	Core descriptor(s) to pass to cor_create_descriptors.
+
+	primary:	Array (n) of primary descriptors.
+
+	desc:	Array (n) of description strings.
+
+  OUTPUT: NONE
+
+ RETURN:
+       An array (n) of ring descriptors.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,81 @@
+pg_load_maps.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_load_maps
+
+
+ NAME:
+	pg_load_maps
+
+
+ PURPOSE:
+	Loads maps and descriptors from a map directory.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	ddmap = pg_load_maps(md=md)
+
+
+ ARGUMENTS:
+  INPUT:
+	dir :   Top directory for map library.  If not set, the directory
+		is obtained from the PG_MAPS environment varable.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	bx:	Body descriptors indicating which maps to load.
+
+	projection:
+		If set, only maps with this projection will be returned.
+
+
+  OUTPUT:
+	md:	Map descriptor for each map.
+
+
+ ENVIRONMENT VARIABLES:
+	PG_MAPS:
+		Sets the map directory; overrides the dir keyword.  Maps are
+		organized into subdirectories named for each body.
+
+
+ RETURN:
+	Data descriptor containing the rendered image.
+
+
+ PROCEDURE:
+
+
+
+ EXAMPLE:
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale  7/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

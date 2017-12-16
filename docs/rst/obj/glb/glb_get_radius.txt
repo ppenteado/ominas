@@ -1,0 +1,67 @@
+glb_get_radius.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_get_radius
+
+
+ NAME:
+	glb_get_radius
+
+
+ PURPOSE:
+	Computes the local radius of a GLOBE object at the given lat/lon.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	radius = glb_get_radius(gbd, lat, lon)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	Array (nt) of any subclass of GLOBE descriptors.
+
+	lat:	Array (nv) of latitudes.
+
+	lon:	Array (nv) of longitudes.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv, nt) of radius values.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

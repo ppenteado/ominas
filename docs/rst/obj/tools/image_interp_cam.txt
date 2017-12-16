@@ -1,0 +1,76 @@
+image_interp_cam.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+image_interp_cam
+
+
+ NAME:
+       image_interp_cam
+
+
+ PURPOSE:
+       Extracts a region from an image using the desired interpolation,
+	accouting for the camera point-spread function is applicable.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       result = image_interp_cam(image, grid_x, grid_y, args)
+
+
+ ARGUMENTS:
+  INPUT:
+	image:	Image array.
+
+	grid_x:	The grid of x positions for interpolation
+
+	grid_y:	The grid of y positions for interpolation
+
+	args:	Arguments to pass to the interpolation function.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	interp:	Type of interpolation to use.  Options are:
+		'nearest', 'mean', 'bilinear', 'cubic', 'sinc'.
+
+	k:	"Half-width" of the convolution window.  The
+		window actually covers the central pixel, plus
+		k pixel in each direction.  Default is 3, which
+		gives a 7x7 window.
+
+	kmax:	Maximum value for k.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array of interpolated points at the (grid_x, grid_y) points.
+
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

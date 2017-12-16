@@ -1,0 +1,63 @@
+dat_sibling.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_sibling
+
+
+ NAME:
+	dat_sibling
+
+
+ PURPOSE:
+	Returns the sibling data descriptor associated with a data
+	descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	sibling_dd = dat_sibling(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Data descriptor of the sibling.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,70 @@
+plt_create_descriptors.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+plt_create_descriptors
+
+
+ NAME:
+       plt_create_descriptors
+
+
+ PURPOSE:
+	Init method for the PLANET class.
+
+
+ CATEGORY:
+       NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+       pd = plt_create_descriptors(n)
+
+
+ ARGUMENTS:
+  INPUT:
+       n:      Number of planet descriptors.
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:
+	pd:	Planet descriptor(s) to initialize, instead of creating new ones.
+
+	gbd:	Globe descriptor(s) to pass to glb_create_descriptors.
+
+	sld:	Solid descriptor(s) to pass to sld_create_descriptors.
+
+	bd:	Body descriptor(s) to pass to bod_create_descriptors.
+
+	crd:	Core descriptor(s) to pass to cor_create_descriptors.
+
+  OUTPUT: NONE
+
+ RETURN:
+       An array (n) of planet descriptors.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

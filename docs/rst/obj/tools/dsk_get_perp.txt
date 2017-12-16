@@ -1,0 +1,62 @@
+dsk_get_perp.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_get_perp
+
+
+ NAME:
+       dsk_get_perp
+
+
+ PURPOSE:
+	Computes vectors in the direction perpendicular to the azimuthal
+	direction at a point on a disk.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       dir = dsk_get_perp(cd, dkx, p)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	dkx:	Any subclass of DISK.
+
+	p:	Point on the disk n inertial coordinates.
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3) of inertial direction vectors.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

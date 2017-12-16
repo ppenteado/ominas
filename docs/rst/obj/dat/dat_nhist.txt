@@ -1,0 +1,63 @@
+dat_nhist.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_nhist
+
+
+ NAME:
+	dat_nhist
+
+
+ PURPOSE:
+	Returns the number of archived data states.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nhist = dat_nhist(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Integer giving the number of past data states archived
+	in the data descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

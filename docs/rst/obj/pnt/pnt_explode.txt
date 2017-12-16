@@ -1,0 +1,68 @@
+pnt_explode.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_explode
+
+
+ NAME:
+	pnt_explode
+
+
+ PURPOSE:
+	Explodes a POINT object into single-point objects.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	xptd = pnt_explode(ptd)
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:		POINT object.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	n:	If given, new objects will have nv = n instead of nv = 1.
+		nv must be divisible by n.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv/n x nt) of POINT objects, each containing a n points.
+
+
+ STATUS:
+	Complete
+
+
+
+
+ MODIFICATION HISTORY:
+ 	Adapted from pgs_explode:	Spitale, 11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

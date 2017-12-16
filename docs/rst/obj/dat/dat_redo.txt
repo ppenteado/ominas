@@ -1,0 +1,61 @@
+dat_redo.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_redo
+
+
+ NAME:
+	dat_redo
+
+
+ PURPOSE:
+	Decrements the data archive index in the data descriptor.
+
+
+ CATEGORY:
+	NV/OBJ/DAT
+
+
+ CALLING SEQUENCE:
+	dat_redo, dd
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 7/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

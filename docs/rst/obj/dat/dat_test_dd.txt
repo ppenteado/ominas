@@ -1,0 +1,63 @@
+dat_test_dd.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_test_dd
+
+
+ NAME:
+	dat_test_dd
+
+
+ PURPOSE:
+	Determines whether the argument is a valid data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	test = dat_test_dd(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor to test.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	True if the argument is present, is a valid pointer, and
+	points to a data descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,67 @@
+glb_sub_point.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_sub_point
+
+
+ NAME:
+	glb_sub_point
+
+
+ PURPOSE:
+	Computes the planetocentric sub-point in body coordinates.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	n = glb_sub_point(gbd, r)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	Array (nt) of any subclass of GLOBE descriptors.
+
+	r:	Array (nv,3,nt) of points in the BODY frame.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) points in the BODY frame that lie on the surface
+	of each globe, directly 'beneath' r, i.e., such that each
+	planetocentric surface normal points at each r.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

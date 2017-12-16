@@ -1,0 +1,61 @@
+map_units_disk.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+map_units_disk
+
+
+ NAME:
+       map_units_disk
+
+
+ PURPOSE:
+	Computes units for a map descriptor given pixel scales for
+	the map center.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       v = map_units_disk(md, resrad=resrad, reslon=reslon)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:	Map descriptor.
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT:
+	resrad:	Scale (length/pixel) in radial direction.
+
+	reslon:	Scale (radians/pixel) in longitude direction.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2) giving the map units.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

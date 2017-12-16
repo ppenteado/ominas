@@ -1,0 +1,60 @@
+edge_model_nav_limb.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+edge_model_nav_limb
+
+
+ NAME:
+       edge_model_nav_limb
+
+
+ PURPOSE:
+	Returns the edge model used by the VICAR program NAV for limb fits.
+
+ CATEGORY:
+       NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+       result = edge_model_nav_limb()
+
+
+ ARGUMENTS:
+  INPUT:
+	    NONE
+
+  OUTPUT:
+	 zero:  The array element corresponding to the physical edge.
+
+	delta:	The number of pixels represented by each element
+		Currently = 1.0
+
+	cd:	Not used.
+
+
+ RETURN:
+	An array containing the model.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 6/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

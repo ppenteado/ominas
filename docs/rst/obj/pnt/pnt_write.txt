@@ -1,0 +1,64 @@
+pnt_write.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_write
+
+
+ NAME:
+ 	pnt_write
+
+
+ PURPOSE:
+ 	Writes a POINT object to a file.
+
+
+ CATEGORY:
+ 	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+ 	pnt_write, filename, ptd
+
+
+ ARGUMENTS:
+  INPUT:
+ 	filename:	Name of the file to write.
+
+	ptd:		POINT object to write.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+ 	bin:	If set, a binary POINT object file is written;
+ 		not currently implemented.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ SEE ALSO:
+	pnt_read
+
+
+ MODIFICATION HISTORY:
+  Spitale, 11/2015; 	Adapted from pgs_write_ps
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

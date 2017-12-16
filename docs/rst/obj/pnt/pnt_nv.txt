@@ -1,0 +1,63 @@
+pnt_nv.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_nv
+
+
+ NAME:
+	pnt_nv
+
+
+ PURPOSE:
+	Returns the nv dimension of a POINT object.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	nv = pnt_nv(ptd)
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:	POINT object.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	The nv dimensions of the POINT object.
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

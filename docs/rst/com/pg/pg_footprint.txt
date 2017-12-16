@@ -1,0 +1,76 @@
+pg_footprint.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_footprint
+
+
+ NAME:
+	pg_footprint
+
+
+ PURPOSE:
+	Computes the footprint of a camera on a given body.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+       footprint_ptd = footprint(cd=cd, bx=bx)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	Array (n_timesteps) of camera descriptors.
+
+	bx:	Array (n_objects, n_timesteps) of descriptors of objects
+		which must be a subclass of BODY.
+
+	gd:	Generic descriptor.  If given, the descriptor inputs
+		are taken from this structure if not explicitly given.
+
+	dd:	Data descriptor containing a generic descriptor to use
+		if gd not given.
+
+	clip:	 If set, points are computed only within this many camera
+		 fields of view.
+
+	sample:	 Sampling rate; default is 1 pixel.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n_objects) of POINT containing image points and
+	the corresponding inertial vectors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2014
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,135 @@
+pg_draw_vector.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_draw_vector
+
+
+ NAME:
+	pg_draw_vector
+
+
+
+ PURPOSE:
+         Draws vectors on an image from a source towards a
+         target. Very useful for locating off-image objects
+         (planets, say) in an image for referencing.  By default,
+         vectors are foreshortened to their projections onto the image
+         plane so that vectors with large  out-of-plane components
+         will be shorter.  (This can be deactivated with the
+         /noshorten keyword.)  Also by default, vectors that point
+         away from the camera will be drawn as dotted lines while
+         vectors which point towards the camera will be drawn solid.
+         (This can be controlled with the /solid keyword.)
+
+
+
+ CATEGORY:
+         NV/PG
+
+
+ CALLING SEQUENCE:
+                 pg_draw_vector, sources, targets,
+                 (cd=cd| gd=gd)[, /literal, thick=thick, lengths=lengths,
+                  colors=colors, plabels=plabels, csizes=csizes]
+
+
+
+ INPUTS:
+        sources:         Inertial positions of sources.  Either an array
+                         of column vectors (nv x 3 x nt) or an array of
+                         POINT objects containing the inertial vectors.
+
+        targets:         Inertial positions of targets, or inertial unit
+                         vectors giving directions to targets.  Either an
+                         array of column vectors (nv x 3 xnt) or an array
+                         of POINT objects.  There must either be a single
+                         target point or a one-to-one match between source
+                         and target points.
+
+
+
+ OPTIONAL INPUTS:
+
+
+
+ KEYWORD PARAMETERS:
+
+       cd or gd        A camera descriptor or a generic descriptor
+                       containing a camera descriptor.  Required unless
+			source and target given as image points.
+
+	literal:	All of the following input keywords accept an array
+			where each element corresponds to an element in the
+			object_ptd array.  By default, if the keyword array is
+			shorter than the object_ptd array, then the last element
+	  		is used to fill out the array.  /literal suppresses
+			this behavior and causes unspecified elements to
+			take their default values
+
+       lengths:        Lengths of the vectors.  (Default: 50 pixels)
+
+       thick:         Line thicknesses.  (Default: 1)
+
+       colors:         Colors to use in drawing.  (Default: current
+                       default color)
+
+       plabels:         Text with which to label vectors.  (Default:
+                       no label)
+
+       csizes:      Character sizes for plabels.  (Default: 1)
+
+       solid:         All lines are to be drawn solid (linestyle=0)
+                       rather than allow vectors pointing into the
+                       image plane to be dotted.
+
+       noshorten:     If set, vectors will not be foreshortened
+                       depending on how much they point into/out
+                       of the image plane.
+
+       fixedheads:     If set, arrowheads will not be scaled to
+                        match the foreshortening of the vector.
+
+ OUTPUTS:
+        None
+
+
+ EXAMPLE:
+       Say moon_points is a POINT object containing the center
+       data for the four Galilean satellites and jupiter_points has
+       Jupiter's center data.  Then
+
+       IDL> pg_draw_vector, moon_points, jupiter_points, colors=[100, $
+             150, 200, 250], thick=1.25, length=70, plabels="Jupiter", $
+             csizes=1.5
+
+       will draw vectors from each towards the planet.  Conversely,
+
+       IDL> pg_draw_vector, jupiter_points, moon_points, colors=[100, $
+             150, 200, 250], thick=1.25, length=70, plabels=["Io", "Europa", $
+             "Ganymede", "Callisto"], csizes=1.5
+
+       will draw vectors from Jupiter's center towards each moon,
+       labelling each by the moon's name.
+
+
+ MODIFICATION HISTORY:
+
+     Written: John W. Weiss, 5/05
+     Consolidated some functionality into plot_arrow; Spitale 9/2005
+
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

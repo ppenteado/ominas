@@ -1,0 +1,67 @@
+nv_notify_list_struct__define.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+nv_notify_list_struct__define
+
+
+ NAME:
+	nv_notify_list_struct__define
+
+
+ PURPOSE:
+	Structure defining an entry in the NV event registry.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	N/A
+
+
+ FIELDS:
+	xd:		Descriptor affected by this event.
+
+	handler:	Name of event handler procedure, which should accept
+			an array of events as its only argument.
+
+	data_p:		Pointer to associated user data.
+
+	data:		Scalar user data.
+
+	desc:		String giving a description of the event.
+
+	type:		Event type: 0 = set value, 1 = get_value.
+
+	compress:	If 1, compress events.
+
+	dynamic:	1 if a pointer was allocated for the descriptor
+			in this entry.
+
+
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

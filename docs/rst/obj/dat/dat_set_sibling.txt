@@ -1,0 +1,64 @@
+dat_set_sibling.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_set_sibling
+
+
+ NAME:
+	dat_set_sibling
+
+
+ PURPOSE:
+	Changes the sibling in a data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_set_sibling, dd, dd_sibling
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	dd_sibling:	Data descriptor of new sibling.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

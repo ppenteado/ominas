@@ -1,0 +1,77 @@
+cor_set_gd.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_set_gd
+
+
+ NAME:
+	cor_set_gd
+
+
+ PURPOSE:
+	Sets the generic descriptor in a CORE object.
+
+
+ CATEGORY:
+	NV/OBJ/COR
+
+
+ CALLING SEQUENCE:
+	cor_set_gd, crd, gd
+
+
+ ARGUMENTS:
+  INPUT:
+	crd:		CORE object.  The fields from any existing generic
+			descriptor in this object are retained in the new one.
+			Only one object allowed.
+
+	gd:		New gd.  If no other inputs are given, then the current
+			gd is overwritten with this one.  Otherwise, fields are
+			appended as specified.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	<x>d:		Input keyword for each descriptor type.
+
+	xds:		Array of objects to put in generic descriptor.  Generic
+			descriptors in these objects are considered as well.
+
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	cor_gd
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

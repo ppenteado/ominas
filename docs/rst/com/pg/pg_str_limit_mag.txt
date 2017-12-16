@@ -1,0 +1,68 @@
+pg_str_limit_mag.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_str_limit_mag
+
+
+ NAME:
+	pg_str_limit_mag
+
+
+ PURPOSE:
+	Removes stars whose visual magnitude falls outside the given minimum
+	and maximum values.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_str_limit_mag(sd, max=max, min=min)
+
+
+ ARGUMENTS:
+  INPUT:
+	sd:	Array of star descriptors.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	max:	Maximum visual magnitude.
+
+	min:	Minimum visual magnitude.
+
+  OUTPUT:
+	NONE
+
+
+ RETURN:
+	Array of star descriptors whose visual magnitudes fall within the
+	specified range.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Haemmerle, 1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

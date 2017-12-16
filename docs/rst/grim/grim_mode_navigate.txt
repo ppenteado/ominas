@@ -1,0 +1,107 @@
+grim_mode_navigate.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_navigate_button_help_event
+
+
+ NAME:
+	grim_mode_navigate_button_event
+
+
+ PURPOSE:
+	Selects the navigate cursor mode.
+
+	 Camera orientation:
+	   Left button:		Allows the optic axis to be repointed.
+
+	   Right button:	Allows the camera to twist about an axis
+				corresponding to the selected pixel location.
+
+	 Camera position:
+	   <Shift> Left:	Allows the camera to be repositioned in the
+				X-Z plane (image plane).  Speeds depend on
+				the object under the cursor.
+
+	   <Shift> Right:	Allows the camera to be repositioned and
+				reoriented simultaneosly by tracking the
+				object under the cursor.
+
+	   <Shift> Wheel:	Allows the camera to be repositioned in the
+				Y (optic axis) direction.  Speeds depend on
+				the object under the cursor.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Allow the user to fly around the system.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2009
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

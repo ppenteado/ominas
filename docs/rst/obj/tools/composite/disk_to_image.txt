@@ -1,0 +1,68 @@
+disk_to_image.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+disk_to_image
+
+
+ NAME:
+       disk_to_image
+
+
+ PURPOSE:
+       Transforms points in disk coordinates to image coordinates
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       result = disk_to_image(cd, dkx, p)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:       Array of nt camera or map descriptors.
+
+	dkx:      Array of nt object descriptors (subclass of DISK).
+
+	p:       Array (nv x 3 x nt) of image points.
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+   INPUT:
+	ltd:	If given, longitudes are assumed to be referenced to the
+		light direction.
+
+   OUTPUT:
+	valid:	Indices of valid output points.
+
+	body_pts:	Body coordinates of output points.
+
+
+ RETURN:
+       Array (nv x 3 x nt) of image coordinates.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 9/2002
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

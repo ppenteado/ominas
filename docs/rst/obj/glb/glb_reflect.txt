@@ -1,0 +1,72 @@
+glb_reflect.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_reflect
+
+
+ NAME:
+	glb_reflect
+
+
+ PURPOSE:
+	Computes the reflection of rays with GLOBE objects.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	int_pts = glb_reflect(gbd, v, r)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	Array (nt) of any subclass of GLOBE descriptors.
+
+	v:	Array (nv,3,nt) giving observer positions in the BODY frame.
+
+	r:	Array (nv,3,nt) giving point positions in the BODY frame.
+
+	epsilon:	Controls the precision of the iteration.  Default
+			is 1d-3.
+
+	niter:	Maximum number of iterations, default is 1000
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) of points in the BODY frame.  Zero
+	vector is returned for points with no solution.
+
+
+ STATUS:
+	Not well tested
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

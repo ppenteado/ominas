@@ -1,0 +1,73 @@
+cor_set_udata.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_set_udata
+
+
+ NAME:
+	cor_set_udata
+
+
+ PURPOSE:
+	Stores user data in a descriptor and associates it with the
+	specified name. If multiple descriptors, then the trailing dimension
+	must match the number of descriptors.
+
+
+ CATEGORY:
+	NV/LIB/COR
+
+
+ CALLING SEQUENCE:
+	cor_set_udata, crx, name, data
+
+
+ ARGUMENTS:
+  INPUT:
+	crx:	 Any subclass of CORE.  Only one descriptor may be provided.
+
+	name:	 Name to associate with the data.  If the name already exists,
+		 then the data are overwritten.  If null string given, it is
+		 assumed that a udata pointer is given in the udata argument
+		 and the current pointer is replaced.
+
+	data:	 Data to store.  If multiple crx supplied, then the trailing
+		 dimension must match the number of descriptors unless /all.
+
+	all:	 If set, the data array applied to every descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

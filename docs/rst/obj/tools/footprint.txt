@@ -1,0 +1,74 @@
+footprint.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+footprint
+
+
+ NAME:
+       footprint
+
+
+ PURPOSE:
+	Computes the footprint of a camera on a given body.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       surface_pts = footprint(cd, bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:		Camera descripor.  Only one allowed.
+
+	bx:		Body descriptors.
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT:
+	corners:	Array(2,2) giving corers of image region to consider.
+
+	slop:		Number of pixels by which to expand the image in each
+			direction.
+
+	image_pts:	Array (2,np) of points along the edge of the image.
+
+	sample:		Sampling rate; default is 1 pixel.
+
+
+  OUTPUT:
+	image_pts:	Footprint points in the image frame.
+
+	body_p:		Array (nhit) of pointers to body footprint points for
+			each body hit.
+
+	hit_indices:	Array (nhit) of bx indices.
+
+ RETURN:
+	Array (nhit) of pointers to inertial footprint points for each body hit.
+	Zero is returned if no bodies are hit.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale		5/2014
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

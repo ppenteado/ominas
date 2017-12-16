@@ -1,0 +1,63 @@
+dat_valid_descriptor.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_valid_descriptor
+
+
+ NAME:
+	dat_valid_descriptor
+
+
+ PURPOSE:
+	Determines whether the argument is a valid data descriptor,
+	or data descriptor structure.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	test = dat_valid_descriptor(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor to test.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	True if the argument is a data descriptor structure or a
+	pointer to one.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

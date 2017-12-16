@@ -1,0 +1,68 @@
+pnt_set_points.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_set_points
+
+
+ NAME:
+	pnt_set_points
+
+
+ PURPOSE:
+	Replaces the points in a POINT object.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	pnt_set_points, ptd, points
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:		POINT object.
+
+	points:		New points array.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pnt_points
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

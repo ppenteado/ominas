@@ -1,0 +1,72 @@
+cor_gd.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_gd
+
+
+ NAME:
+	cor_gd
+
+
+ PURPOSE:
+	Returns the generic descriptor for a CORE object.
+
+
+ CATEGORY:
+	NV/PGS
+
+
+ CALLING SEQUENCE:
+	gd = cor_gd(crd)
+
+
+ ARGUMENTS:
+  INPUT:
+	crd:	Subclass of CORE.  Multiple descriptors may be given,
+		but an error will result if their generic descriptors
+		are incompatible.
+
+	name:	If given, only descriptors whose names appear in this array
+		will be returned.  If no descriptor keywords are
+		specified (see below), then all fields are searched for
+		descriptors with these names.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	<x>d:	Standard descriptor keywords.  Setting a keyword causes
+		the corresponding field of the generic descriptor to be
+		returned instead of the generic descriptor.
+
+	noevent:
+		If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+
+ RETURN:
+	Generic descriptor.
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

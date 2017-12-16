@@ -1,0 +1,66 @@
+dsk_valid_edges.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_valid_edges
+
+
+ NAME:
+	dsk_valid_edges
+
+
+ PURPOSE:
+	Determines which edges (i.e., inner/outer) in the input DISK objects
+	are valid.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	sub = dsk_valid_edges(dkd, </inner|/outer|/all>)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Array (nt) of any subclass of DISK.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	inner:	If set, only the inner edges are tested.
+
+	outer:	If set, only the outer edges are tested.
+
+	all:	If set, the inner and outer edges are tested, and must
+		both be valid to be selected.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of subscripts of the descriptors whose edges meet the criteria
+	defined by the input keyowrds.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

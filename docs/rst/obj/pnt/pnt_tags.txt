@@ -1,0 +1,67 @@
+pnt_tags.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_tags
+
+
+ NAME:
+	pnt_tags
+
+
+ PURPOSE:
+	Returns the tags associated with a POINT object.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	tags = pnt_tags(ptd)
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:	POINT object.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	The tags associated with the POINT object.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pnt_set_tags
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

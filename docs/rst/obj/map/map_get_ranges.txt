@@ -1,0 +1,59 @@
+map_get_ranges.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+map_get_ranges
+
+
+ NAME:
+	map_get_ranges
+
+
+ PURPOSE:
+	Returns ranges of valid coordinates for the given MAP object.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	ranges = map_get_ranges(md)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:	 MAP descriptor.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2 x 2) giving the ranges in latitude, longitude.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,66 @@
+dsk_get_inner_disk_points.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_get_inner_disk_points
+
+
+ NAME:
+	dsk_get_inner_disk_points
+
+
+ PURPOSE:
+	Computes points on the inner edge of a disk.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	disk_pts = dsk_get_inner_disk_points(dkd, np)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Array (nt) of any subclass of DISK.
+
+	np:	 Number of points on the edge.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	ta:	True anomalies for the points.  Default is the full circle.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (np x 3 x nt) of points on the outer edge of each disk,
+	in disk body coordinates.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

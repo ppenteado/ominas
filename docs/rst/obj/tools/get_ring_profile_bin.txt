@@ -1,0 +1,82 @@
+get_ring_profile_bin.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+get_ring_profile_bin
+
+
+ NAME:
+       get_ring_profile_bin
+
+
+ PURPOSE:
+       Generates a ring profile in radius or longitude using binning.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       result = get_ring_profile_bin(image, cd, dkd, dlon, rad)
+
+ ARGUMENTS:
+  INPUT:
+           image:      The image to scan
+
+              cd:      Camera descriptor
+
+             dkd:      Disk descriptor
+
+            dlon:      Array of disk longitudes of which to sample image
+
+             rad:      Array of disk radii of which to sample image
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+  INPUT:
+       azimuthal:      If set, a longitudinal scan is done instead.
+
+  OUTPUT:
+       NONE
+
+
+ RETURN:
+       An array of averaged dn values that match the given rad or
+       match the given dlon if /azimuthal selected.
+
+
+ PROCEDURE:
+       A ring sector polygon is calculated from the given dlon and rad
+       arrays.  All the pixels of the image within this polygon are
+       binned in an equally-spaced histogram in radius or longitude.
+
+ RESTRICTIONS:
+       The dlon and rad arrays are treated as equally spaced, that is,
+       the binsize is calculated by dividing the spacing in radius by
+       number of points minus one.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 6/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

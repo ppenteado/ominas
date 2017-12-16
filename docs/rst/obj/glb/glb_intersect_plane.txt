@@ -1,0 +1,69 @@
+glb_intersect_plane.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_intersect_plane
+
+
+ NAME:
+	glb_intersect_plane
+
+
+ PURPOSE:
+	Computesthe intersection of a plane with a GLOBE object.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	int_pts = glb_intersect_plane(gbd, v, n)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	Array (nt) of any subclass of GLOBE descriptors.
+
+	v:	Array (1,3,nt) giving plane origins in the BODY frame.
+
+	n:	Array (1,3,nt) giving the plane unit normals in the
+		BODY frame.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (np,3,nt) of points in the BODY frame, np is the number of
+	points on the curve of intersection.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

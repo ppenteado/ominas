@@ -1,0 +1,63 @@
+sld_extn_parm.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+sld_extn_parm
+
+
+ NAME:
+	sld_extn_parm
+
+
+ PURPOSE:
+       Returns the extinction function parameters for each given solid
+	descriptor.
+
+
+ CATEGORY:
+	NV/LIB/SLD
+
+
+ CALLING SEQUENCE:
+	mass = sld_extn_parm(sld)
+
+
+ ARGUMENTS:
+  INPUT:
+	sld:	 Array (nt) of any subclass of SOLID descriptors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (npht,nt) of extinction function parameters associated with
+	each given solid descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 9/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

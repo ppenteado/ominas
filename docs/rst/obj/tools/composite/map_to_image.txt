@@ -1,0 +1,75 @@
+map_to_image.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+map_to_image
+
+
+ NAME:
+       map_to_image
+
+
+ PURPOSE:
+       Transforms points from map coordinates to image coordinates.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+
+       result = map_to_image(md, cd, bx, map_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	md:	Array of nt map descriptors describing the initial coordinate system.
+		If bx is given, then this descriptor is not needed, though
+		it may still be used to select between graphic/centric
+		latitudes.
+
+	cd:	Array of nt camera or map descriptor describing the final
+		coordinate system.
+
+	bx:	Array of nt Object descriptors (subclass of BODY).
+
+	map_pts:       Array (2 x nv x nt) of map points
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+   INPUT:
+	valid:		Indices of valid output points.
+
+	body_pts:	Body coordinates of output points.
+
+	alt:		If set, atitudes are set to this value instead of 0.
+
+   OUTPUT: NONE
+
+
+ RETURN:
+       Array (2 x nv x nt) of image points.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,67 @@
+grim_mode_remove.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_remove_button_help_event
+
+
+ NAME:
+	grim_mode_remove_button_event
+
+
+ PURPOSE:
+	Selects the remove cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	A single click on an overlay causes it to be deleted.  A
+       double click causes the entire object to be deleted.  The left
+	button applies to standard overlays; the right button applies
+	to user overlays.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2006
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

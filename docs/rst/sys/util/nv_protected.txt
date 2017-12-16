@@ -1,0 +1,65 @@
+nv_protected.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+nv_protected
+
+
+ NAME:
+	nv_protected
+
+
+ PURPOSE:
+	Tests whether a structure or field is protected.  Protected fields
+	are not freed by nv_free, nor are they descended by nv_free
+	or nv_clone.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	test = nv_protected(tag)
+
+
+ ARGUMENTS:
+  INPUT:
+	tag:		Structure tag to test.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	1 if protected, 0 if not.
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,63 @@
+bod_set_opaque.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+bod_set_opaque
+
+
+ NAME:
+	bod_set_opaque
+
+
+ PURPOSE:
+	Replaces the opaque flag of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_opaque, bx, opaque
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	avel:	 Array (nt) of new opaque values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,69 @@
+glb_local_to_body.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_local_to_body
+
+
+ NAME:
+	glb_local_to_body
+
+ PURPOSE:
+       Converts the given column vectors from the local coordinate
+       system to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	body_dir = glb_local_to_body(gbd, body_pts, local_dir)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	        Array (nt) of any subclass of GLOBE descriptors.
+
+	body_pts:	Array (nv,3,nt) of column vectors in the body
+                       frame (representing points on the surface of
+                       the globe).
+
+       local_dir:      Array (3,nt) of column vectors in the local
+                       system, giving the direction from each surface point.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column vectors in the body frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

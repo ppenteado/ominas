@@ -1,0 +1,63 @@
+grim_mode_trim.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_trim_button_help_event
+
+
+ NAME:
+	grim_mode_trim_button_event
+
+
+ PURPOSE:
+	Selects the trim cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Overlay points are trimmed by clicking and dragging and curve around
+	the desired points.  The left button trims standard overlays, the right
+	trims user overlay points.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2006
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

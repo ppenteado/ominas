@@ -1,0 +1,134 @@
+pg_render.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_render
+
+
+ NAME:
+	pg_render
+
+
+ PURPOSE:
+	Performs rendering on an array of bodies.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_render(cd=cd, bx=bx, ltd=ltd, ddmap=dd_render, md=md)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	      Camera descriptor.
+
+	bx:	      Array of object descriptors; must be a subclass of BODY.
+
+	ltd:         Star descriptor for the Sun.
+
+	md:           Array of map descriptors for each ddmap.
+
+	gd:		Generic descriptor.  If given, the descriptor inputs
+			are taken from this structure if not explicitly given.
+
+	dd:		Data descriptor containing a generic descriptor to use
+			if gd not given.
+
+	ddmap:        Array of data descriptors containing the body maps,
+	              one for each body.  If not given, maps are loaded using
+		      pg_load_maps.
+
+	sample:       Amount by which to subsample pixels.
+
+	pc_size:      To save memory, the projection is performed in pieces
+	              of this size.  Default is 65536.
+
+	limit_source: If set, secondary vectors originating on a given
+	              body are not considered for targets that are the
+	              same body.  Default is on.
+
+	standoff:     If given, secondary vectors are advanced by this distance
+	              before tracing in order to avoid hitting target bodies
+	              through round-off error.
+
+	nodd:         If set, no data descrptor is produced.  The return value
+	              is zero and the rendering is returned via the IMAGE
+	              keyword.
+
+	psf:          If set, the rendering is convolved with a point-spread
+	              function.  If /psf, then the PSF is obtained via cd; if
+	              psf is a 2D array, then is is used as the PSF.
+
+	npsf:         Width of psf array to use if PSF is obtained via cd.
+	              Default is 10.
+
+	numbra:       Number of rays to trace to the secondary bodies.
+	              Default is 1.  The first ray is traced to the body
+	              center; wach additional ray is traced to a random point
+	              within the body.
+
+	no_secondary: If set, no secondary ray tracing is performed,
+	              resulting in no shadows.
+
+	image_ptd:    POINT or array with image points
+	              specifying the grid to trace.  If not set, the entire
+	              image described by cd is used.  The array can have
+	              dimensions of (2,np) or (2,nx,ny).  If the latter,
+	              the output map will have dimensions (nx,ny).  Note
+	              that a PSF cannot be applied if nx and ny are not known.
+
+	mask_width:   Width of trace mask.  Default is 512.  If set to zero,
+	              no masking is performed.
+
+	no_mask:      If set, a mask is not used.
+
+	no_maps:      If set, maps are not loaded.
+
+	pht_min:      Minimum value to assign to photometric output.
+
+
+  OUTPUT:
+	map:	       2-D array containing the rendered scene.
+
+
+ RETURN:
+	Data descriptor containing the rendered image.
+
+
+ PROCEDURE:
+
+
+
+ EXAMPLE:
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,63 @@
+pnt_nt.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_nt
+
+
+ NAME:
+	pnt_nt
+
+
+ PURPOSE:
+	Returns the nt dimension of a POINT object.
+
+
+ CATEGORY:
+	nt/SYS/PS
+
+
+ CALLING SEQUENCE:
+	nt = pnt_nt(ptd)
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:	POINT object.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	The nt dimensions of the POINT object.
+
+
+ STATUS:
+	Complete
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

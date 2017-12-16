@@ -1,0 +1,63 @@
+rng_set_desc.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+rng_set_desc
+
+
+ NAME:
+	rng_set_desc
+
+
+ PURPOSE:
+	Replaces the description string in each given ring descriptor.
+
+
+ CATEGORY:
+	NV/LIB/RNG
+
+
+ CALLING SEQUENCE:
+	rng_set_desc, rd, desc
+
+
+ ARGUMENTS:
+  INPUT:
+	rd:	Array (nt) of STATION descriptors.
+
+	desc:	Array (nt) of description strings.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

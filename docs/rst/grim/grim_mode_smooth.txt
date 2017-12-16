@@ -1,0 +1,62 @@
+grim_mode_smooth.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_smooth_button_help_event
+
+
+ NAME:
+	grim_mode_smooth_button_event
+
+
+ PURPOSE:
+	Selects the smooth cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	The user selects a box, which is used to determine the kernel
+	size for smothing the data set.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2006
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

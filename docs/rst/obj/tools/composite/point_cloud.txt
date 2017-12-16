@@ -1,0 +1,62 @@
+point_cloud.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+point_cloud
+
+
+ NAME:
+       point_cloud
+
+
+ PURPOSE:
+	Returns the sizes of the given bodies.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       point_cloud(bx, nv)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:     BODY descriptor; nt.
+
+	nv:	Number of points to generate.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+   INPUT: NONE
+
+   OUTPUT: NONE
+
+
+ RETURN:
+	nt-element array giving random points within the body.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

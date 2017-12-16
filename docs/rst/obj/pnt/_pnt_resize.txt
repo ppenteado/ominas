@@ -1,0 +1,66 @@
+_pnt_resize.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+_pnt_resize
+
+
+ NAME:
+	_pnt_resize
+
+
+ PURPOSE:
+	Resizes a POINT structure.  Arrays are padded with zeroes or truncated
+	as needed.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	pnt_resize, _ptd, nv=nv, nt=nt
+
+
+ ARGUMENTS:
+  INPUT:
+	_ptd:		POINT struct.  Note this is an actual POINT structure
+			rather than an object, as this routine is only
+			meant to be called internally.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	nv.nt:		New nv, nt.
+
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete;
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		12/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

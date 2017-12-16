@@ -1,0 +1,93 @@
+pg_select_region.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_select_region
+
+
+ NAME:
+	pg_select_region
+
+
+ PURPOSE:
+	Allows the user to select regions in an image using the mouse.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	region = pg_select_region(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor containing an image.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	silent: 	If set, turns off the notification that cursor
+			movement is required.
+
+	color:		Color to use for graphics overlays.
+
+
+	p0:		First point of line.  If set, then the routine
+			immediately begins to drag from that point until a
+			button is released.
+
+	select_button:	Index of button to use as the select button instead
+			of the left button (1).
+
+	end_button:	Index of button to use as the end button instead
+			of the right button (4).
+
+	cancel_button:	Index of mouse button to be used as a cancel
+			button instead of left+middle, (3).
+
+	points:		If set, the selected points are returned instead
+			of enclosed indices.
+
+	autoclose:	If set, the region is automaticaly closed when the
+			end button is pressed.
+
+	box:		If set, a rectanguar region is selected.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of subscripts of all image points which lie within the selected
+	region.  -1 is returned if the cancel button is pressed.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pg_trim
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

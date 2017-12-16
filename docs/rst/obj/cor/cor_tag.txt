@@ -1,0 +1,62 @@
+cor_tag.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_tag
+
+
+ NAME:
+	cor_tag
+
+
+ PURPOSE:
+	Returns the tag name for the given object class.
+
+
+ CATEGORY:
+	NV/OBJ/COR
+
+
+ CALLING SEQUENCE:
+	tag = cor_tag(xd)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	 Descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	x:	If set, the generic form is returned, e.g, 'CRX'.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	String giving the standard tag for the given class, e.g., 'CRD'.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

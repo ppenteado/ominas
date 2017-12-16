@@ -1,0 +1,66 @@
+cor_dereference_gd.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_dereference_gd
+
+
+ NAME:
+	cor_dereference_gd
+
+
+ PURPOSE:
+	Dereferences a generic descriptor.
+
+
+ CATEGORY:
+	NV/PGS
+
+
+ CALLING SEQUENCE:
+	xds = cor_dereference_gd(gd, <descriptor output keywords>)
+
+
+ ARGUMENTS:
+  INPUT:
+	gd:	Generic descriptor or object containing a generic descriptor.
+
+	name:	If given, only descriptors whose names appear in this array
+		will be returned.  If no descriptor keywords are
+		speciied (see below), then all fields are searched for
+		descriptors with these names.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	<x>d:	Standard descriptor keywords.  Setting a keyword causes the
+		corresponding field of the generic descriptor to be returned.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of descriptors or zero if no fields found.  If no keywords
+	are given, then all descriptors are returned.
+
+
+
+ MODIFICATION HISTORY:
+	Moved to CORE	Spitale		2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

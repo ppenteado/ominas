@@ -1,0 +1,58 @@
+grim_mode_region.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_region_button_help_event
+
+
+ NAME:
+	grim_mode_region_button_event
+
+
+ PURPOSE:
+	Selects the 'region' cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	An image region is defined by clicking and dragging a box or curve.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2014
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,69 @@
+get_primary.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+get_primary
+
+
+ NAME:
+       get_primary
+
+
+ PURPOSE:
+	Attempts to determine the primary planet from a list of descriptors
+	based on their names and proximity to the observer, or extracts
+	the observer descriptor from an object's generic descriptor.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       bx0 = get_primary(xd)
+       bx0 = get_primary(od, bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	Array of objects from which to extract primary descriptors
+		using their generic descriptors.
+
+	od:	Array (nt) of any subclass of BODY, describing the observer.
+
+	bx:	Array (nd,nt) of any subclass of BODY, specifying a
+		system of candidate primary objects.
+
+  OUTPUT:
+       NONE
+
+
+ KEYOWRDS:
+  INPUT:
+	planets:	Array of names of objects to consider as planets.
+			Default is the planets of the Solar System, or the
+			primary planet of rx, if provided.
+
+  OUTPUT: NONE
+
+
+ RETURN: BODY descriptor for the selected primary.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

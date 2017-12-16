@@ -1,0 +1,60 @@
+image_ansa_far.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+image_ansa_far
+
+
+ NAME:
+       image_ansa_far
+
+
+ PURPOSE:
+	Computes ring ansa longitudes assuming observer is very far from the
+	rings.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       lons = image_ansa_far(cd, rd)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	dkx:	Any subclass of DISK.
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2) of longitudes
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,67 @@
+dat_cache.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_cache
+
+
+ NAME:
+	dat_cache
+
+
+ PURPOSE:
+	Returns a long integer indicating the maximum size of a data array.
+	This value may be adjusted using the environment variable 'DAT_CACHE'.
+	-1 is returned if it cannot be determined.
+
+
+ CATEGORY:
+	NV/OBJ/DAT
+
+
+ CALLING SEQUENCE:
+	cache = dat_cache()
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+
+  OUTPUT: NONE
+
+
+ ENVIRONMENT VARIABLES:
+	DAT_CACHE:	Sets the size of the cache.
+
+
+ RETURN:
+	Current cache value.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

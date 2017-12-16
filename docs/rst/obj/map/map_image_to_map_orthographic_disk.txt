@@ -1,0 +1,75 @@
+map_image_to_map_orthographic_disk.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+map_image_to_map_orthographic_disk
+
+
+ NAME:
+	map_image_to_map_orthographic_disk
+
+
+ PURPOSE:
+	Transforms the given image points to map coordinate points
+	using an orthographic projection for a disk.
+
+
+ CATEGORY:
+	NV/LIB/MAP
+
+
+ CALLING SEQUENCE:
+	map_pts = map_image_to_map_orthographic_disk(md, image_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	md	 	Array (nt) of MAP descriptors.
+
+	image_pts:	Array (2,nv,nt) of map image points.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	valid:	Indices of all input points that correspond to valid
+		output map points.  If not set then all points are
+		valid.
+
+
+ RETURN:
+	Array (2,nv,nt) of map coordinate points in an orthographic disk
+	projection.  This projection portrays a disk as seen from a
+	great distance.  Scale is uniform, but it is only true if the
+	projection is polar.  Likewise, areas are distorted for non-polar
+	projections.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

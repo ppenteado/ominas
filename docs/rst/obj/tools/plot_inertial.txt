@@ -1,0 +1,58 @@
+plot_inertial.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+plot_inertial
+
+
+ NAME:
+       plot_inertial
+
+
+ PURPOSE:
+       Plots inertial vectors on a camera image.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       plot_inertial, cd, v, r
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	v:	Inertial vectors giving origins of vectors to plot.  If only one
+		vector, this will be used as the origin for all of the plotted
+		vectors.
+
+	r:	Inertial vectors giving the vectors to plot, starting at
+		the given origins.
+
+  OUTPUT:
+       NONE
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale; 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
