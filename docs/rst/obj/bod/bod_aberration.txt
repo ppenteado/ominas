@@ -1,0 +1,65 @@
+bod_aberration.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+bod_aberration
+
+
+ NAME:
+	bod_aberration
+
+
+ PURPOSE:
+	Returns the aberration flags for each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	ab = bod_aberration(bx, name)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	bx:	 Any subclass of BODY.
+
+	name:	 Name of aberration to return.  If not given, the full
+		 aberration value is returned.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Aberration flag associated with the given name for each given body
+	descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

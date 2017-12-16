@@ -1,0 +1,92 @@
+pg_threshold.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_threshold
+
+
+ NAME:
+	pg_threshold
+
+
+ PURPOSE:
+	Excludes points whose associated data lie outside of specified
+	thresholds by setting the PTD_MASK_INVISIBLE.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	pg_threshold, object_ptd, tag=tag, max=max, min=min
+
+
+ ARGUMENTS:
+  INPUT:
+	object_ptd:	Array (n_objects) of POINT giving the
+			points to be thresholded.
+
+  OUTPUT:
+	object_ptd:	Modified array of POINT.  PTD_MASK_INVISIBLE
+			is set for all excluded points.
+
+
+ KEYWORDS:
+  INPUT:
+	tag:		Tag name for user data array to threshold.  Default
+			is 'scan_cc'.
+
+	max:		Upper threshold - values greater than this will be
+			excluded.
+
+	min:		Lower threshold - values less than this will be
+			excluded.
+
+	relative:	If set, the max and min arguments will be taken as
+			fractions of the maximum value in the array.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ SIDE EFFECTS:
+	The input argument object_ptd is modified.
+
+
+ RESTRICTIONS:
+	xx
+
+
+ PROCEDURE:
+	The thresholding is performed by cc_threshold.  See the documentation
+	for that routine for details.
+
+
+ EXAMPLE:
+	xx
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

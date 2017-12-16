@@ -1,0 +1,64 @@
+get_surface_ranges.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+get_surface_ranges
+
+
+ NAME:
+       get_surface_ranges
+
+
+ PURPOSE:
+	Determines full ranges of valid surface coordinate system.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       points = get_surface_ranges(od, bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	od:      Observer: camera or map descriptor
+
+	bx:      Object descriptor (subclass of BODY)
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+   INPUT: NONE
+
+   OUTPUT: NONE
+
+
+ RETURN:
+	Array of 2 points representng the minimum and maximum values of the
+	relevant coordinate system.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

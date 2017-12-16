@@ -1,0 +1,61 @@
+dat_slice.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_slice
+
+
+ NAME:
+	dat_slice
+
+
+ PURPOSE:
+	Returns the slice coordinates for the given data descriptor.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dim = dat_slice(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array giving the slice coordinates for the data descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

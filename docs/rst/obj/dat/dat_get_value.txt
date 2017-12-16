@@ -1,0 +1,92 @@
+dat_get_value.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_get_value
+
+
+ NAME:
+	dat_get_value
+
+
+ PURPOSE:
+	Calls input translators, supplying the given keyword, and builds
+	a list of returned descriptors.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	xds = dat_get_value(dd, keyword)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptors.  Must all have the same instrument
+			string.
+
+	keyword:	Keyword to pass to translators, describing the
+			requested quantity.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	trs:		Transient argument string.
+
+	tr_disable:	If set, dat_get_value returns without performing
+			any action.
+
+	tr_override:	Comma-delimited list of translators to use instead
+			of those stored in dd.
+
+	tr_first:	If set, dat_get_value returns after the first
+			successful translator.
+
+	tr_nosort:	By default, output descriptors are sorted to remove
+			those with duplicate names, retaining only the first
+			descriptor of a given name for each input data
+			descriptor.  /tr_nosort disables this action.
+
+	tr_order:	If set (and tr_nosort not set), dat_get_value selects
+			the latest of any duplicately named output descriptors
+			instead of the earliest.
+
+
+  OUTPUT:
+	status:		0 if at least one translator call was successful,
+			-1 otherwise.
+
+
+ RETURN:
+	Array of descriptors returned from all successful translator calls.
+	Descriptors are returned in the same order that the corresponding
+	translators were called.  Each translator may produce multiple
+	descriptors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

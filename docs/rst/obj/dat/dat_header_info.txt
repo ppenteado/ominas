@@ -1,0 +1,65 @@
+dat_header_info.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_header_info
+
+
+ NAME:
+	dat_header_info
+
+
+ PURPOSE:
+	Obtains header info specific to the given data descriptor by calling
+	an application-specific header program.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	info = dat_header_info(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Anonymous structure containing info relevant to the calling application.
+	An application specific program named <instrument>_<htype>_header_info()
+	Is called with the header as the only argmuent.  The output of that
+	program is returned by DAT_HEADER_INFO.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 9/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

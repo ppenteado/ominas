@@ -1,0 +1,96 @@
+pg_shadow_globe.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_shadow_globe
+
+
+ NAME:
+	pg_shadow_globe
+
+
+ PURPOSE:
+	Computes image coordinates of the given inertial vectors projected onto
+	surface of the given globe with respect to the given observer.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_shadow_globe(object_ptd, cd=cd, od=od, gbx=gbx)
+
+
+ ARGUMENTS:
+  INPUT:
+	object_ptd:	Array of POINT containing inertial vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	Array (n_timesteps) of camera descriptors.
+
+	gbx:	Array (n_globes, n_timesteps) of descriptors of objects
+		which must be a subclass of GLOBE.
+
+	od:	Array (n_timesteps) of descriptors of objects
+		which must be a subclass of BODY.  These objects are used
+		as the source from which points are projected.  If no observer
+		descriptor is given, then the light descriptor in gd is used.
+		Only one observer is allowed.
+
+	gd:	Generic descriptor.  If given, the descriptor inputs
+		are taken from this structure if not explicitly given.
+
+	dd:	Data descriptor containing a generic descriptor to use
+		if gd not given.
+
+	reveal:	 Normally, disks whose opaque flag is set are ignored.
+		 /reveal suppresses this behavior.
+
+	clip:	 If set shadow points are cropped to within this many camera
+		 fields of view.
+
+	cull:	 If set, POINT objects excluded by the clip keyword
+		 are not returned.  Normally, empty POINT objects
+		 are returned as placeholders.
+
+	nosolve: If set, shadow points are not computed.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n_globes,n_objects) of POINT containing image
+	points and the corresponding inertial vectors.
+
+
+ STATUS:
+	Soon to be obsolete.  This program will be merged with pg_shadow_disk
+	to make a more general program, which will replace pg_shadow.
+
+
+ SEE ALSO:
+	pg_shadow, pg_shadow_disk, pg_shadow_points
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

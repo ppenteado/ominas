@@ -1,0 +1,64 @@
+stellab.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+stellab
+
+
+ NAME:
+       stellab
+
+
+ PURPOSE:
+	Corrects body positions for stellar aberration on objects for which the
+	correction has not already been performed..
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       stellab, obs_bx, targ_bx
+
+
+ ARGUMENTS:
+  INPUT:
+	obs_bx:		Array (nt) of any subclass of BODY describing
+			the observer.
+
+	targ_bx:	Array (nt) of any subclass of BODY describing
+			the target.  The position of this body is modified.
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT:
+	c:		Speed of light.
+
+	invert:		If set, the inverse correction is performed.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

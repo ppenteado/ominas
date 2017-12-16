@@ -1,0 +1,63 @@
+dat_parse_keyval.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_parse_keyval
+
+
+ NAME:
+	dat_parse_keyval
+
+
+ PURPOSE:
+	Parses a string containing a keyword=value pair.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_parse_keyval, keyval, keyword, value
+
+
+ ARGUMENTS:
+  INPUT:
+	keyval:		String of the form <keyword>=<value>.
+
+  OUTPUT:
+	keyword:	String giving the keyword.
+
+	value:		String giving the value.
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

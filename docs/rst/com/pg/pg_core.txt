@@ -1,0 +1,82 @@
+pg_core.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_core
+
+
+ NAME:
+	pg_core
+
+
+ PURPOSE:
+	Generates a dn profile through a cube, or stack of images.
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+    result = pg_core(dd, cd=cd, outline_ptd)
+
+
+ ARGUMENTS:
+  INPUT:
+	  dd:	 Data descriptor(s).
+
+ outline_ptd:   POINT descriptor giving the outline of the region to plot,
+                as produced by the pg_select_region.
+
+  OUTPUT:
+        NONE
+
+ KEYWORDS:
+  INPUT:
+	  cd:	Camera descriptor.  Needed for sinc interpolation. (to get PSF)
+
+         gd:   Optional generic descriptor containing cd.
+
+     interp:   Type of interpolation to use.  Options are:
+               'nearest', 'mean', 'bilinear', 'cubic', 'sinc'.
+
+         bg:	Uniform value to subtract from profile.
+
+ arg_interp:   Arguments to pass to the interpolation function.
+
+
+  OUTPUT:
+    profile:   The profile.
+
+      sigma:   Array giving the standard deviation at each point in the
+		profile.
+
+    distance:  Array giving the distance, in pixels, along the profile.
+
+   image_pts:  Image point for each point along the profile.
+
+
+ RETURN:
+	Two data descriptors: the first contains the profile; the second contains
+	the profile sigma.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 7/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

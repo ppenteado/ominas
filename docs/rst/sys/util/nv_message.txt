@@ -1,0 +1,125 @@
+nv_message.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+nv_message
+
+
+ NAME:
+	nv_message
+
+
+ PURPOSE:
+	Prints an error message and halts execution.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_message, string
+
+
+ ARGUMENTS:
+  INPUT:
+	string:	Message to print.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	name:		Name to use for the calling routine instead of
+			taking it from the traceback list.
+
+	anonymous:	If set, the traaceback list is not used to infer the
+			name of the calling routine.  In this case, a name
+			is printed nly if explicitly specified using the 'name'
+			keyword.
+
+	continue:	If set, execution is not halted.
+
+	stop:		If set, execution is halted in nv_message.
+
+	get_message:	If set, the last message sent through nv_message
+			is returned in the _string keyword and no other
+			action is taken.
+
+	clear:		If set, the last message is cleared and no other action
+			is taken.
+
+	cb_tag:		If set, the callback procedure below is added to
+			the cllaback list under this tag name and no other
+			action is taken.
+
+	cb_data_p:	Pointer to data for the callback procedure.
+
+	callback:	Name of a callback procedure to add to the callback
+			list.  Callback procedures are sent two arguments:
+			cb_data_p (see above), and the message string.
+
+	disconnect:	If set, the callback identified by the given cb_tag
+			is removed from the callback list and no other
+			action is taken.
+
+	explanation:	String giving an extended explanation for the message.
+
+	verbose:	Floating value in the range 0 to 1 specifying the
+			verbosity threshold.  If set, and no string is given,
+			then the threshold is set to this value.  If a string
+			is given, then it will only be printed if this
+			value is greater than or equal to current verbosity
+			level.  Setting this keyword implies /continue.
+			Verbosity threshold rules of thumb are as follows:
+
+			 0.1:	Useful messages that you don't always need to see;
+				files being loaded, written, etc.
+			 0.5:	Useful messages that you want to see even less;
+				file-not-found warnings, etc.
+			 0.9:	Debugging messages that don't produce huge
+				outputs.
+			 1.0:	Mega debugging messages that may create
+				huge outputs.  Your short message will get lost
+				in this output, so use 0.9 instead.
+
+
+
+	silent:		Suppressed printing of messages.
+
+	format:		Format string.
+
+
+  OUTPUT:
+	message:	If /get_message, this keyword will return the last
+			message sent through nv_message.
+
+
+ ENVIRONMENT VARIABLES:
+	NV_VERBOSITY:	Initial verbosity setting.
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

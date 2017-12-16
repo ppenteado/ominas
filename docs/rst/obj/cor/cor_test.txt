@@ -1,0 +1,61 @@
+cor_test.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_test
+
+
+ NAME:
+	cor_test
+
+
+ PURPOSE:
+	Tests whether the input is an OMINAS object or object structure.
+
+
+ CATEGORY:
+	NV/OBJ/COR
+
+
+ CALLING SEQUENCE:
+	data = cor_test(xd)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	 Any subclass of CORE.  Only one descriptor may be provided.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	True if xd is an OMINAS object or object structure, false otherwise.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

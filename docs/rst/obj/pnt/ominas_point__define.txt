@@ -1,0 +1,68 @@
+ominas_point__define.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ominas_point__define
+
+
+ NAME:
+	ominas_point__define
+
+
+ PURPOSE:
+	Structure for managing points.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	N/A
+
+
+ FIELDS:
+	desc:		Data set description.
+
+	points_p:	Pointer to image points.
+
+	vectors_p:	Pointer to inertial vectors.
+
+	data_p:		Pointer to a point-by-point user data array.
+
+	tags_p:		Tags for point-by-point user data.
+
+	flags_p:	Pointer to point-by-point flag array.
+
+	nv:		Number of elements in the nv direction.
+
+	nt:		Number of elements in the nt direction.
+
+	assoc_xd:	Associated descriptor.
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+  Spitale, 11/2015; 	Adapted from pg_points_struct__define
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

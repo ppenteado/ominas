@@ -1,0 +1,69 @@
+cam_nfilters.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cam_nfilters
+
+
+ NAME:
+	cam_nfilters
+
+
+ PURPOSE:
+	Returns an integer indicating the maximum number of filters allowed
+	in the 'filters' fields of the camera descriptor.  This number can
+	be adjusted using the environment variable 'CAM_NFILTERS'.  The default
+	is 4.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	nfilters = cam_nfilters()
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+
+  OUTPUT: NONE
+
+
+ ENVIRONMENT VARIABLES:
+	CAM_NFILTERS:	Sets the maximum number of filters.
+
+
+ RETURN:
+	Current nfilters value.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

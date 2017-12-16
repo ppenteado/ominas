@@ -1,0 +1,68 @@
+pnt_set_flags.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_set_flags
+
+
+ NAME:
+	pnt_set_flags
+
+
+ PURPOSE:
+	Replaces the flags in a POINT object.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	pnt_set_flags, ptd, flags
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:		POINT object.
+
+	flags:		New flags array.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pnt_flags
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

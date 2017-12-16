@@ -1,0 +1,63 @@
+dat_unload_data.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_unload_data
+
+
+ NAME:
+	dat_unload_data
+
+
+ PURPOSE:
+	Unloads the dat descriptor data array and removes dd from the NV
+	state maintained list if present.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_unload_data, dd
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor to test.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	all:	If set, all maintained data descriptors are unloaded.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

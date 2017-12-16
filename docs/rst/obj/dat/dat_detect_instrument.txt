@@ -1,0 +1,62 @@
+dat_detect_instrument.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_detect_instrument
+
+
+ NAME:
+	dat_detect_instrument
+
+
+ PURPOSE:
+	Attempts to detect the instrument for a data set by calling the
+	detectors in the instrument detectors table.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	instrument = dat_detect_instrument(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	String giving the instrument, or 'DEFAULT' if none detected.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

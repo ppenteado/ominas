@@ -1,0 +1,70 @@
+nv_flush.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+nv_flush
+
+
+ NAME:
+	nv_flush
+
+
+ PURPOSE:
+	Flushes the nv event buffer.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	nv_flush
+
+
+ ARGUMENTS:
+  INPUT:
+	events:	If specified, these events are processed instead of those in
+		the event buffer.
+
+
+ KEYWORDS: NONE
+
+
+ RETURN:
+	NONE
+
+
+ PROCEDURE:
+	Events are compressed so that duplicate events are not reported.  Each
+	unique handler is called once with all of the relevant events given.
+
+
+ COMMON BLOCKS:
+	nv_notify_block
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	nv_notify
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 11/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

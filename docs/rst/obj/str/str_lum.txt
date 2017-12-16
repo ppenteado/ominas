@@ -1,0 +1,60 @@
+str_lum.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+str_lum
+
+
+ NAME:
+       str_lum
+
+
+ PURPOSE:
+       Returns a luminosity for each given star descriptor.
+
+
+ CATEGORY:
+       NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+       result = str_lum(sd)
+
+
+ ARGUMENTS:
+  INPUT:
+       sd:    Array (nt) of star descriptors
+
+  OUTPUT:
+       NONE
+
+
+ KEYWORDS:
+         NONE
+
+ RETURN:
+       An array (nt) of luminosities.
+
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Haemmerle, 5/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

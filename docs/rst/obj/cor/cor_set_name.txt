@@ -1,0 +1,60 @@
+cor_set_name.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_set_name
+
+
+ NAME:
+	cor_set_name
+
+
+ PURPOSE:
+	Replaces the name for each given core descriptor.
+
+
+ CATEGORY:
+	NV/LIB/COR
+
+
+ CALLING SEQUENCE:
+	cor_set_name, crx, name
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	crx:	 Any subclass of CORE.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

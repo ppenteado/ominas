@@ -1,0 +1,62 @@
+dsk_il.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_il
+
+
+ NAME:
+	dsk_il
+
+
+ PURPOSE:
+	Returns il for each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	il = dsk_il(dkd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	dkd:	 Any subclass of DISK.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	il value associated with each given disk descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

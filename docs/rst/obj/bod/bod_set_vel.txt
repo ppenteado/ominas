@@ -1,0 +1,64 @@
+bod_set_vel.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+bod_set_vel
+
+
+ NAME:
+	bod_set_vel
+
+
+ PURPOSE:
+       Replaces the velocity vector (of body center in the inertial
+       frame) of each given body descriptor.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bod_set_vel, bx, vel
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 Array (nt) of any subclass of BODY descriptors.
+
+	vel:	 Array (ndv,3,nt) of new velocity vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

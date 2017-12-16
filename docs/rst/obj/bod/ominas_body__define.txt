@@ -1,0 +1,106 @@
+ominas_body__define.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ominas_body__define
+
+
+ NAME:
+	ominas_body__define
+
+
+ PURPOSE:
+	Class structure for the BODY class.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	N/A
+
+
+ FIELDS:
+	crd:	CORE class descriptor.
+
+		Methods: bod_core
+
+
+	opaque:	Flag describing whether a body is "easily visible".
+
+		Methods: bod_opaque, bod_set_opaque
+
+
+	time:	Time, at body position, at which this descriptor is valid.
+
+		Methods: bod_time, bod_set_time
+
+
+	orient:	Orientation matrix, transforms body to inertial.
+
+		Methods: bod_orient, bod_set_orient
+
+
+	avel:	Angular velocity vector.  Each higher-order vector is the
+		angular velocity for the vector of the preceding order.
+
+		Methods: bod_avel, bod_set_avel
+
+
+	pos:	Position of body center in the inertial frame.
+
+		Methods: bod_pos, bod_set_pos
+
+
+	vel:	Velocity of body center in the inertial frame.
+
+		Methods: bod_vel, bod_set_vel
+
+
+	libv:	Libration vector.  Each higher-order vector is the libration
+		for the vector of the preceding order.  The body librates about
+		the direction v_unit(libv), with an amplitude given by
+		v_mag(libv).
+
+		Methods: bod_libv, bod_set_libv
+
+
+	lib:	Phase of the libraton vectors at body time.
+
+		Methods: bod_lib, bod_set_lib
+
+
+	dlibdt:	Frequency for each libration vector.
+
+		Methods: bod_dlibdt, bod_set_dlibdt
+
+	aberration:
+		Aberration flag mask: 1=correction performed.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,58 @@
+grim_mode_mask.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_mask_button_help_event
+
+
+ NAME:
+	grim_mode_mask_button_event
+
+
+ PURPOSE:
+	Selects the mask cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Allowqs the user to select pixel to include in the mask.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2013
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

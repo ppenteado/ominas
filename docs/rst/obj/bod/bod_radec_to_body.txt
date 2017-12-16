@@ -1,0 +1,65 @@
+bod_radec_to_body.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+bod_radec_to_body
+
+
+ NAME:
+	bod_radec_to_body
+
+
+ PURPOSE:
+	Transforms the given column vectors from the RA/DEC coordinate
+       system associated to the body to the body coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	body_pts = bod_radec_to_body(bx, radec_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 	Array (nt) of any subclass of BODY descriptors.
+
+	radec_pts:	Array (nv,3,nt) of column vectors in the bx radec frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) of column vectors in the bx body frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

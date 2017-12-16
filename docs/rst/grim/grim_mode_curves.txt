@@ -1,0 +1,62 @@
+grim_mode_curves.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_curves_button_help_event
+
+
+ NAME:
+	grim_mode_curves_button_event
+
+
+ PURPOSE:
+	Selects the curves cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	curves are added using the left mouse button and deleted
+	using the right button.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2012
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

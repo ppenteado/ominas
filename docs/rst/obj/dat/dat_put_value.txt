@@ -1,0 +1,75 @@
+dat_put_value.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_put_value
+
+
+ NAME:
+	dat_put_value
+
+
+ PURPOSE:
+	Calls output translators, supplying the given keyword and value.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_put_value, dd, keyword, value
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:		Data descriptor.
+
+	keyword:	Keyword to pass to translators, describing the
+			requested quantity.
+
+	value:		Value to write through the translators.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	trs:		Transient argument string.
+
+	tr_disable:	If set, dat_get_value returns without performing
+			any action.
+
+	tr_override:	Comma-delimited list of translators to use instead
+			of those stored in dd.
+
+  OUTPUT:
+	status:		0 if at least one translator call was successful,
+			-1 otherwise.
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

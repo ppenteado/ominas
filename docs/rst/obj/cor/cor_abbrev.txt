@@ -1,0 +1,66 @@
+cor_abbrev.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_abbrev
+
+
+ NAME:
+	cor_abbrev
+
+
+ PURPOSE:
+	Returns the abbrieviation for the given object class.
+
+
+ CATEGORY:
+	NV/LIB/COR
+
+
+ CALLING SEQUENCE:
+	abbrev = cor_abbrev(xd)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	 Descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	String giving the standard abbreviation for the given class,
+	e.g., 'BOD'.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

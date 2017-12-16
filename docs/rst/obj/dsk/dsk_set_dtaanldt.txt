@@ -1,0 +1,62 @@
+dsk_set_dtaanldt.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_set_dtaanldt
+
+
+ NAME:
+	dsk_set_dtaanldt
+
+
+ PURPOSE:
+	Replaces dtaanldt in each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	dsk_set_dtaanldt, bx, dtaanldt
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Array (nt) of any subclass of DISK.
+
+	dtaanldt:	 New dtaanldt value.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

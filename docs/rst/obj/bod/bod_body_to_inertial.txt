@@ -1,0 +1,67 @@
+bod_body_to_inertial.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+bod_body_to_inertial
+
+
+ NAME:
+	bod_body_to_inertial
+
+
+ PURPOSE:
+	Transforms the given column vectors from the body coordinate
+	system to the inertial coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	inertial_pts = bod_body_to_inertial(bx, body_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	 	Any subclass of BODY.
+
+	body_pts:	Array (nv,3,nt) of column vectors in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv,3,nt) of column vectors in the bx inertial frame.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+

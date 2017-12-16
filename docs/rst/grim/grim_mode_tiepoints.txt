@@ -1,0 +1,64 @@
+grim_mode_tiepoints.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_tiepoints_button_help_event
+
+
+ NAME:
+	grim_mode_tiepoints_button_event
+
+
+ PURPOSE:
+	Selects the tiepoints cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Tiepoints are added using the left mouse button and deleted
+	using the right button.  Tiepoints appear as crosses labeled
+	by numbers.  The use of tiepoints is determined by the
+	particular option selected by the user.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

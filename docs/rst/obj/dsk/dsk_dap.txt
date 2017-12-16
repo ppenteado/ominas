@@ -1,0 +1,61 @@
+dsk_dap.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_dap
+
+
+ NAME:
+	dsk_dap
+
+
+ PURPOSE:
+	Returns dap for each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	dap = dsk_dap(dkd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	dkd:	 Any subclass of DISK.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	dap value associated with each given disk descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

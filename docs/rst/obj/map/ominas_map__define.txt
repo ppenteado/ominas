@@ -1,0 +1,110 @@
+ominas_map__define.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ominas_map__define
+
+
+ NAME:
+	ominas_map__define
+
+
+ PURPOSE:
+	Class structure fo the MAP class.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	N/A
+
+
+ FIELDS:
+	crd:	CORE class descriptor.
+
+		Methods: map_core
+
+
+	projection:
+		String giving the map projection, e.g., RECTANGULAR,
+		ORTHOGRAPHIC.  Map transformation functions are named
+		map_image_to_map_<projection> and map_map_to_image_<projection>.
+
+		Methods: map_projection, map_set_projection
+
+
+	units:	2-element array (lat,lon) to converts map radians to other
+  		units (map radians/unit).
+
+		Methods: map_units, map_set_units
+
+
+	size:	2-element array giving the map size in pixels.
+
+		Methods: map_size, map_set_size
+
+
+	scale:	Map scale (units/angle) at the center of the map.
+
+		Methods: map_scale, map_set_scale
+
+
+	center:	2-element array giving the map coordinates of the
+		center of the map.
+
+		Methods: map_center, map_set_center
+
+
+	origin:	2-element array giving the image coordinates corresponding
+		to the center of the map.
+
+		Methods: map_origin, map_set_origin
+
+
+	range:	2x2-element array giving the map coordinates of the
+		lat/lon ranges of the map.
+
+		Methods: map_range, map_set_range
+
+
+	rotate:	Code specifying a rotation to be applied to the map, as in the
+		IDL 'rotate' function.
+
+
+	graphic:
+		Flag indicating whether latitudes are represented
+		using the planetocrntric or planetographic convention.
+
+	west:	Flag indicating that longitudes are measured to the west.
+
+	radii:	3-element array giving ellipsoid radii to use in projections.
+		Only the relative ratios are important.  All elements are
+		set to 1 by default.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

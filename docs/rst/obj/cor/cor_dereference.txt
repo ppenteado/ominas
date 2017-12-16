@@ -1,0 +1,65 @@
+cor_dereference.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_dereference
+
+
+ NAME:
+	cor_dereference
+
+
+ PURPOSE:
+	Turns an array of objects into an array of structures.
+
+
+ CATEGORY:
+	NV/SYS/COR
+
+
+ CALLING SEQUENCE:
+	result = cor_dereference(xd)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	Array of objects.  Objects may have different classes, but only
+		their common fields are dereferenced.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS: NONE
+
+
+ RETURN:
+	Array of structures.
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	cor_rereference
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2002
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

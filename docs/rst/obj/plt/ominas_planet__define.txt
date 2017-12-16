@@ -1,0 +1,54 @@
+ominas_planet__define.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ominas_planet__define
+
+
+ NAME:
+	ominas_planet__define
+
+
+ PURPOSE:
+	Class structure for the PLANET class.
+
+
+ CATEGORY:
+	NV/LIB/PLT
+
+
+ CALLING SEQUENCE:
+	N/A
+
+
+ FIELDS:
+	gbd:	GLOBE class descriptor.
+
+		Methods: str_globe, str_set_globe
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

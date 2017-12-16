@@ -1,0 +1,60 @@
+get_image_vector.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+get_image_vector
+
+
+ NAME:
+       get_image_vector
+
+
+ PURPOSE:
+	Projects inertial vectors into an image.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       p = get_image_vector(cd, v)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Array (nt) of camera descriptors.
+
+	v:	Array (nv,3,nt) of vectors in the inertial frame.
+
+  OUTPUT:
+       NONE
+
+
+ KEYOWRDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (2,nv,nt) of image vectors.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

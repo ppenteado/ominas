@@ -1,0 +1,66 @@
+pnt_uncompress.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_uncompress
+
+
+ NAME:
+	pnt_uncompress
+
+
+ PURPOSE:
+	Explodes a compressed POINT object back into an array of POINT objects
+	using the original POINT objects as a template.  The
+	compressed POINT object is freed.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	new_ptd = pnt_uncompress(pptd, ptd)
+
+
+ ARGUMENTS:
+  INPUT:
+	pptd:	Compressed POINT object.
+
+	ptd:	Array of original POINT objects to use as a template.
+		Must be in the same order as when compressed.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	nn:		If given, it is assumed that there are nn elements
+			in the compressed array for each element in the
+			original input arrays.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array of POINT objects containing the uncompressed data.
+
+
+
+ MODIFICATION HISTORY:
+  Spitale, 11/2015; 	Adapted from pgs_uncompress
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

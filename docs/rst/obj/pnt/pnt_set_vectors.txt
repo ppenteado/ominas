@@ -1,0 +1,68 @@
+pnt_set_vectors.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_set_vectors
+
+
+ NAME:
+	pnt_set_vectors
+
+
+ PURPOSE:
+	Replaces the vectors in a POINT object.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	pnt_set_vectors, ptd, vectors
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:		POINT object.
+
+	vectors:	New vectors array.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pnt_vectors
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,67 @@
+dsk_reflect.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_reflect
+
+
+ NAME:
+	dsk_reflect
+
+
+ PURPOSE:
+	Computes ray reflections with a DISK object.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	v_int = dsk_reflect(dkd, v, r)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Array (nt) of any subclass of DISK.
+
+	v:	 Array (nv x 3 x nt) of column vectors giving the observer
+		 position in the body frame.
+
+	r:	 Array (nv x 3 x nt) of column vectors giving the source
+		 position in the body frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	hit: 	Array giving the subscripts of the input rays that actually
+	 	reflect on the disk.
+
+
+ RETURN:
+	Array (nv x 3 x nt) of column vectors giving the ray/disk
+	reflections in the body frame.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

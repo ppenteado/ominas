@@ -1,0 +1,60 @@
+ominas_array__define.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ominas_array__define
+
+
+ NAME:
+	ominas_array__define
+
+
+ PURPOSE:
+	Class structure for the ARRAY class.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	N/A
+
+
+ FIELDS:
+	bd:	BODY class descriptor.
+
+		Methods: arr_body, arr_set_body
+
+
+	surface_pts:	Vector giving the surface coordinates of the
+			array points on the primary.
+
+			Methods: arr_surface_pts, arr_set_surface_pts
+
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2012
+ 	Adapted by:	Spitale, 5/2016
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

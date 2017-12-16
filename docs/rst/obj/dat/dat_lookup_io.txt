@@ -1,0 +1,64 @@
+dat_lookup_io.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_lookup_io
+
+
+ NAME:
+	dat_lookup_io
+
+
+ PURPOSE:
+	Looks up the names of the data input and output functions in
+	the I/O table.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	dat_lookup_io, filetype, input_fn, output_fn
+
+
+ ARGUMENTS:
+  INPUT:
+	filetype:	Filetype string from dat_detect_filetype.
+
+  OUTPUT:
+	input_fn:	Name of the input function.
+
+	output_fn:	Name of the output function.
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

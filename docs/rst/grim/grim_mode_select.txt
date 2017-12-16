@@ -1,0 +1,63 @@
+grim_mode_select.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_select_button_help_event
+
+
+ NAME:
+	grim_mode_select_button_event
+
+
+ PURPOSE:
+	Selects the 'select' cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Overlay points are selected by clicking and dragging and curve around
+	the desired points.  The left button selects overlay points, the right
+	deselects overlay points.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2014
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

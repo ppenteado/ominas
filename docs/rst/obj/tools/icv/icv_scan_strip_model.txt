@@ -1,0 +1,85 @@
+icv_scan_strip_model.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+icv_scan_strip_model
+
+
+ NAME:
+	icv_scan_strip_model
+
+
+ PURPOSE:
+	At each point along an image strip, determines the subpixel offset at
+	which the correlation coefficient between a specified model and the
+	image is maximum.
+
+
+ CATEGORY:
+	NV/LIB/TOOLS/ICV
+
+
+ CALLING SEQUENCE:
+	result = icv_scan_strip_model(strip, model, szero, mzero)
+
+
+ ARGUMENTS:
+  INPUT:
+	strip:	Image strip (n_points,ns) to be scanned.  Output from
+		icv_strip_curve ns must be even.
+
+	model:	Model (n_points,nm) to correlate with strip at each point
+		on the curve.  Must have nm < ns.
+
+	szero:	Zero-offset position in the strip.
+
+	mzero:	Zero-offset position in the model.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	cc:	Maximum correlation coefficient at each point on the curve.
+
+	sigma:	Offset uncertainty for each point on the curve, computed as
+		one half of the half-width of the correlation peak.
+
+
+ RETURN:
+	Offset of best correlation at each point on the curve.
+
+
+ PROCEDURE:
+	At every point on the curve, a correlation coefficient is computed
+	for every offset at which the model completely overlays the strip.
+	In other words, the model is swept across the strip.
+
+	At each point, Lagrange interpolation is used on the three correlations
+	surrounding the correlation peak to find the subpixel offset of maximum
+	correlation.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

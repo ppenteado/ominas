@@ -1,0 +1,110 @@
+pg_limb.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_limb
+
+
+ NAME:
+	pg_limb
+
+
+ PURPOSE:
+	Computes image points on the limb of each given globe object.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	limb_ptd = pg_limb(cd=cd, gbx=gbx, ods=ods)
+	limb_ptd = pg_limb(gd=gd, od=od)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	 Array (n_timesteps) of camera descriptors.
+
+	gbx:	 Array (n_objects, n_timesteps) of descriptors of objects
+		 which must be a subclass of GLOBE.
+
+	od:	 Array (n_timesteps) of descriptors of objects
+		 which must be a subclass of BODY.  These objects are used
+		 as the observer from which limb is computed.  If no observer
+		 descriptor is given, the camera descriptor is used.
+
+	gd:	Generic descriptor.  If given, the descriptor inputs
+		are taken from this structure if not explicitly given.
+
+	dd:	Data descriptor containing a generic descriptor to use
+		if gd not given.
+
+	npoints: Number of points to compute.  Default is 1000.
+
+	epsilon: Maximum angular error in the result.  Default is 1e-3.
+
+	reveal:	 Normally, points computed for objects whose opaque flag
+		 is set are made invisible.  /reveal suppresses this behavior.
+
+	clip:	 If set points are computed only within this many camera
+		 fields of view.
+
+	cull:	 If set, POINT objects excluded by the clip keyword
+		 are not returned.  Normally, empty POINT objects
+		 are returned as placeholders.
+
+  OUTPUT:
+	count:	Number of descriptors returned.
+
+
+ RETURN:
+	Array (n_objects) of POINT containing image
+	points and the corresponding inertial vectors.
+
+
+ PROCEDURE:
+	By definition, the surface normal at a point on the limb of a body is
+	perpendicular to a vector from the observer to that same point, so the
+	dot product of the two vectors is zero.  This program uses an iterative
+	scheme to find points onthe surface at which this dot product is less
+	than epsilon.
+
+
+ EXAMPLE:
+	The following command computes points on the planet which lie on the
+	terminator:
+
+	term_ptd = pg_limb,(cd=cd, gbx=pd, od=sd)
+
+	In this call, pd is a planet descriptor, cd is a camera descriptor,
+	and sd is a star descriptor (i.e., the sun).
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,62 @@
+cor_class.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cor_class
+
+
+ NAME:
+	cor_class
+
+
+ PURPOSE:
+	Returns the class name for the given object class.
+
+
+ CATEGORY:
+	NV/LIB/COR
+
+
+ CALLING SEQUENCE:
+	class = cor_class(xd)
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	 Descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	String giving the class name for the given class, without the OMINAS_
+	prefix.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		4/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

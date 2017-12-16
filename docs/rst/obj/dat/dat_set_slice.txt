@@ -1,0 +1,62 @@
+dat_set_slice.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_set_slice
+
+
+ NAME:
+	dat_set_slice
+
+
+ PURPOSE:
+	Sets slice coordinates in a data descriptor.
+
+
+ CATEGORY:
+	NV/OBJ/DAT
+
+
+ CALLING SEQUENCE:
+	dat_set_slice, dd, dd0, slice
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptorin which to set the slice coordinates.
+
+	dd0:	Data descriptorin describing the source data array.
+
+	slice:	Array giving the slice coordinates.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	new:	If set, a new slice pointer is allocated instead of overwriting
+		the exiting data.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		6/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,62 @@
+grim_mode_xyzoom.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_xyzoom_button_help_event
+
+
+ NAME:
+	grim_mode_xyzoom_button_event
+
+
+ PURPOSE:
+	Selects the xy-zoom cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	Same as 'zoom' mode, except the aspect ratio is set by the
+	proportions of the selected box.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2005
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

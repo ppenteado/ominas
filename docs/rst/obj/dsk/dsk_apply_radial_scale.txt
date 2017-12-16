@@ -1,0 +1,65 @@
+dsk_apply_radial_scale.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_apply_radial_scale
+
+
+ NAME:
+	dsk_apply_radial_scale
+
+
+ PURPOSE:
+	Computes scaled radii.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	scaled_radii = dsk_apply_radial_scale(dkd, radii)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 A single disk descriptors.
+
+	radii:	 Array of radii to convert.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	inverse:	If set, the operation is performed in reverse.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Scaled radii based on the scale parameters in the disk descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

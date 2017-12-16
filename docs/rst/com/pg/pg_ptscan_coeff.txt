@@ -1,0 +1,89 @@
+pg_ptscan_coeff.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_ptscan_coeff
+
+
+ NAME:
+	pg_ptscan_coeff
+
+
+ PURPOSE:
+	Computes linear least-squares coefficients for a fit to the image
+	coordinate offset which matches a point to a feature in an image.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_ptscan_coeff(pts_ptd)
+
+
+ ARGUMENTS:
+  INPUT:
+       pts_ptd:        Array (n_pts) of POINT output from
+                       pg_ptscan containing image points as well as
+                       other necessary data.;
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+       axis_ptd:       POINT containing a single image point
+                       to be used as the axis of rotation in the fit for
+                       every point.
+
+       fix:            Array specifying which parameters to fix in the
+                       fit as [dx,dy,dtheta].;
+
+  OUTPUT: NONE
+
+ RETURN:
+       Array (n_pts) of pg_fit_coeff_struct containing coefficients for
+       the least-square fit to be input to pg_fit.
+
+
+ PROCEDURE:
+       pg_ptscan_coeff extracts the scan data from the given
+       scan_ptd structure and uses ipt_coeff to compute the coefficients.
+       See the documentation for that routine for details.
+
+
+ EXAMPLE:
+       The following command uses data from pg_ptscan to compute
+       least square coefficients for a fit such that only dx and dtheta
+       will be allowed to vary:
+
+       optic_ptd = pnt_create_descriptors(points=cam_oaxis(cd))
+       ptscan_cf = pg_ptscan_coeff(pts_ptd, axis=optic_ptd, fix=[1])
+
+       In this call, pts_ptd is a POINT containing the point data
+       from pg_ptscan and optic_ptd is a POINT giving the optic axis
+       of the camera as computed by cam_oaxis.
+
+
+ STATUS:
+	Complete.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Haemmerle, 5/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

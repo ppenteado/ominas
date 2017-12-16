@@ -1,0 +1,87 @@
+dh_rm_value.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dh_rm_value
+
+
+ NAME:
+	dh_rm_value
+
+
+ PURPOSE:
+	Deletes a specified keyword/value pair.
+
+
+ CATEGORY:
+	UTIL/DH
+
+
+ CALLING SEQUENCE:
+	dh_rm_value, dh, keyword
+
+
+ ARGUMENTS:
+  INPUT:
+	dh:		String giving the detached header.
+
+	keyword:	String giving the keyword to be deleted.
+
+  OUTPUT:
+	dh:		dh is modified on return.
+
+
+
+ KEYWORDS:
+  INPUT:
+	n_match:	Maximum number of matches to return.  If not given,
+			all matches are returned.
+
+	all_match:	If set, match all occurrences.
+
+	all_object:	If set, match all object indices.  If not set, then
+			match only object index 0.
+
+	all_history:	If set, match all history indices.  If not set,
+			then only the highest history index is matched.
+
+	object_index:	If given, then match only this object index.
+
+	history_index:	If given, then match only this history index.
+
+	prefix:		If set, then match any keyword which begins with the
+			given keyword string instead of requiring an exact
+			match.
+
+  OUTPUT:
+	count:		Integer giving the numebr of keywords matched.
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	dh_get_value, dh_put_value
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/1998
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

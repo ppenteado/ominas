@@ -1,0 +1,71 @@
+dsk_get_edge_radius.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_get_edge_radius
+
+
+ NAME:
+	dsk_get_edge_radius
+
+
+ PURPOSE:
+	Computes radii along the edge of a disk.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	r = dsk_get_edge_radius(dkd, ta, frame_bd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Array (nt) of any subclass of DISK.
+
+	ta:	 Array (nv x nt) of true anomalies at which to compute radii.
+
+	time:	 Array (nt) of epochs to use instead of that of dkd.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	inner:	If set, the inner edge is used.
+
+	outer:	If set, the outer edge is used.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nv x nt) of radii computed at each true anomaly on each
+	disk.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

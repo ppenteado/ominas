@@ -1,0 +1,65 @@
+grim_mode_zoom.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_zoom_button_help_event
+
+
+ NAME:
+	grim_mode_zoom_button_event
+
+
+ PURPOSE:
+	Selects the zoom cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	The image zoom and offset are controlled by selecting
+	a box in the image.  When the box is created using the
+	left mouse button, zoom and offset are changed so that
+	the contents of the box best fill the current graphics
+	window.  When the right button is used, the contents of
+	the current graphics window are shrunken so as to best
+	fill the box.  In other words, the left button zooms in
+	and the right button zooms out.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

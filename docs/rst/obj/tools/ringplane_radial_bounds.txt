@@ -1,0 +1,62 @@
+ringplane_radial_bounds.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ringplane_radial_bounds
+
+
+ NAME:
+       ringplane_radial_bounds
+
+
+ PURPOSE:
+	Finds ringplane radial bounds by projecting the camera FOV on
+	the ringplane.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       result = ringplane_radial_bounds(cd, dkx)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	dkx:	Any subclass of DISK.
+
+  OUTPUT:  NONE
+
+
+ KEYOWRDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (2) giving the minimum and maximum disk radii visible
+	to the camera.
+
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

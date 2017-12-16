@@ -1,0 +1,71 @@
+pnt_set_data.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_set_data
+
+
+ NAME:
+	pnt_set_data
+
+
+ PURPOSE:
+	Replaces the point-by-point data in a POINT object.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	pnt_set_data, ptd, data
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:		POINT object.
+
+	data:		New point-by-point data array.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noevent:	If set, no event is generated.
+
+	tags:	If given, data arrays are replaced only for these tags, and in
+		this order.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pnt_data
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

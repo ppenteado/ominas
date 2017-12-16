@@ -1,0 +1,62 @@
+glb_point_cloud.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_point_cloud
+
+
+ NAME:
+	glb_point_cloud
+
+
+ PURPOSE:
+	Generates a random cloud of body-frame vectors within a GLOBE object.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	v = glb_point_cloud(gbd, nv)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	GLOBE descriptor.
+
+	nv:	Number of points to generate.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: Array (nv x 3) of body-frame vectors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

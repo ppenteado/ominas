@@ -1,0 +1,65 @@
+glb_graphic_to_globe.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+glb_graphic_to_globe
+
+
+ NAME:
+	glb_graphic_to_globe
+
+
+ PURPOSE:
+       Converts the given vectors from the graphic coordinate
+       system to the globe coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/GLB
+
+
+ CALLING SEQUENCE:
+	globe_pts = glb_graphic_to_globe(gbd, graphic_pts)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbd:	        Array (nt) of any subclass of GLOBE descriptors.
+
+	graphic_pts:	Array (nv,3,nt) of column vectors in the graphic system.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array (nv,3,nt) of column vectors in the globe system.
+
+
+ STATUS:
+	 Not complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

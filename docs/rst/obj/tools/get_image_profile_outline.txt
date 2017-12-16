@@ -1,0 +1,64 @@
+get_image_profile_outline.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+get_image_profile_outline
+
+
+ NAME:
+       get_image_profile_outline
+
+
+ PURPOSE:
+	Generates an outline of an oblique rectangular image region.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+       profile = get_image_profile_outline(points, point, nw=nw, nl=nl)
+
+
+ ARGUMENTS:
+  INPUT:
+	points:	Array (2,2) of image points defining corners at opposite ends
+		on one side of the sector.
+
+	point:	Image point defining and third corner.
+
+
+  OUTPUT:  NONE
+
+
+ KEYWORDS:
+  INPUT:
+	nl:	Number of samples along the scan.
+
+	nw:	Number of samples across the scan.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+       Array of image points defining the outline of the sector.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

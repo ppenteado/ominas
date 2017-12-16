@@ -1,0 +1,88 @@
+pg_station.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_station
+
+
+ NAME:
+	pg_station
+
+
+ PURPOSE:
+	Computes image points for given station descriptors.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	station_ptd = pg_station(gd=gd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	cd:	Array (n_timesteps) of camera descriptors.
+
+	std:	Array (n_objects, n_timesteps) of descriptors of objects
+		that must be a subclass of STATION.
+
+	gbx:	Array (n_xd, n_timesteps) of descriptors of objects
+		that must be a subclass of GLOBE.
+
+	dkx:	Array (n_xd, n_timesteps) of descriptors of objects
+		that must be a subclass of DISK.
+
+	bx:	Array (n_xd, n_timesteps) of descriptors of objects
+		that must be a subclass of BODY, instead of gbx or dkx.
+
+	gd:	Generic descriptor.  If given, the descriptor inputs
+		are taken from this structure if not explicitly given.
+
+	dd:	Data descriptor containing a generic descriptor to use
+		if gd not given.
+
+	clip:	 If set points are computed only within this many camera
+		 fields of view.
+
+	cull:	 If set, POINT objects excluded by the clip keyword
+		 are not returned.  Normally, empty POINT objects
+		 are returned as placeholders.
+
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (n_objects) of POINT containing image points and
+	the corresponding inertial vectors.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 10/2012
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

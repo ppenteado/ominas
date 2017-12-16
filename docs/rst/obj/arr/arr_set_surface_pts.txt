@@ -1,0 +1,63 @@
+arr_set_surface_pts.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+arr_set_surface_pts
+
+
+ NAME:
+	arr_set_surface_pts
+
+
+ PURPOSE:
+	Replaces the surface_pts vector in each given array descriptor.
+
+
+ CATEGORY:
+	NV/LIB/arr
+
+
+ CALLING SEQUENCE:
+	arr_set_surface_pts, ard, surface_pts
+
+
+ ARGUMENTS:
+  INPUT:
+	ard:		Array (nt) of ARRAY descriptors.
+
+	surface_pts:	Array (nv,3,nt) of surface_pts vectors.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

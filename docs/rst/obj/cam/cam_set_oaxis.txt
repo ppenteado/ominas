@@ -1,0 +1,63 @@
+cam_set_oaxis.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+cam_set_oaxis
+
+
+ NAME:
+	cam_set_oaxis
+
+
+ PURPOSE:
+       Replaces the oaxis array for each given camera descriptor.
+
+
+ CATEGORY:
+	NV/LIB/CAM
+
+
+ CALLING SEQUENCE:
+	cam_set_oaxis, cd, oaxis
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Array (nt) of CAMERA descriptors.
+
+       oaxis:	Array (2,nt) of new oaxis values.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:  NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

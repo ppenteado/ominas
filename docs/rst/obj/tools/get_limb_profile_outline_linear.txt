@@ -1,0 +1,65 @@
+get_limb_profile_outline_linear.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+get_limb_profile_outline_linear
+
+
+ NAME:
+       get_limb_profile_outline_linear
+
+
+ PURPOSE:
+       Generates an outline of a rectangular limb sector.
+
+ CATEGORY:
+       NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+	result = get_limb_profile_outline_linear(cd, gbx, points)
+
+
+ ARGUMENTS:
+  INPUT:
+	cd:	Camera descriptor.
+
+	gbx:	Globe descriptor.
+
+	points:	Array (2,2) of image points defining opposite corners
+		of the sector.
+
+  OUTPUT:
+	NONE
+
+
+ KEYWORDS:
+  INPUT:
+	NONE
+
+  OUTPUT:
+	inertial:	Inertial vectors corresponding to the limb sector
+			outline points.
+
+
+ RETURN:
+       Array of image points defining the outline of the sector.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale, 1/2009
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

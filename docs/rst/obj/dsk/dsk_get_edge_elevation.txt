@@ -1,0 +1,69 @@
+dsk_get_edge_elevation.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_get_edge_elevation
+
+
+ NAME:
+	dsk_get_edge_elevation
+
+
+ PURPOSE:
+	Computes elevations along the edge of a disk.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	z = dsk_get_edge_elevation(dkd, ta)
+
+
+ ARGUMENTS:
+  INPUT:
+	dkd:	 Array (nt) of any subclass of DISK.
+
+	ta:	 Array (nta) of true anomalies at which to compute elevations.
+
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	inner:	If set, the inner edge is used.
+
+	outer:	If set, the outer edge is used.
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Array (nt x nta) of elevations computed at each true anomaly on each
+	disk.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

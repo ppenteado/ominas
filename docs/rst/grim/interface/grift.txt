@@ -1,0 +1,107 @@
+grift.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grift
+
+
+ NAME:
+	grift
+
+
+ PURPOSE:
+	External access to GRIM data.  Purloins object and array references
+	from GRIM so that they may be manipulated on the command line or by an
+	external agent.  The returned descriptors allow direct access to the
+	memory images of GRIM's objects, so any changes made affect the
+	objects that GRIM is using.  GRIM monitors those objects and updates
+	itself whenever a change occurs.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ CALLING SEQUENCE:
+	grift, arg, <xd>=<xd>, <overlay>_ptd=<overlay>_ptd
+
+
+ ARGUMENTS:
+  INPUT:
+	arg:	GRIM window number or GRIM data struture.  If not given, the
+		most recently accessed grim instance is used.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	plane:	Grim plane structure(s) instead of giving pn.  Note all planes
+		must belong to the same grim instance.
+
+	pn:	Plane number(s) to access.  If not given, then current plane
+		is used.
+
+	all:	If set, all planes are used.
+
+	active:	If set, only active memebrs of the selected objects are
+		returned.
+
+  OUTPUT:
+	gd:	Generic descriptor containing all of GRIM's descriptors.
+		For multiple planes, a list is returned with each element
+		corresponding to a plane.
+
+	<xd>:	Any descriptor maintained by GRIM.
+
+	<xdx>:	Returnds all descriptors containing the given class, e.g.,
+		bx, gbx, dkx.   Not implemented.
+
+	<overlay>_ptd:
+		POINT object giving the points for the overlay of type <overlay>.
+
+	object_ptd:
+		POINT object giving all overlay points.
+
+	tie_ptd:
+		POINT object giving the tie points.  For multiple planes, a
+		list is returned with each element corresponding to a plane.
+
+	curve_ptd:
+		POINT object giving the curve points.  For multiple planes, a
+		list is returned with each element corresponding to a plane.
+
+
+ EXAMPLE:
+	(1) Open a GRIM window, load an image, and compute limb points.
+
+	(2) At the command line, type:
+
+		IDL> grift, cd=cd
+		IDL> pg_repoint, [50,50], 0d, cd=cd
+
+	GRIM should detect the change to the camera descriptor and update
+	itself by recomputing the limb points and refreshing the display.
+
+
+ SEE ALSO:
+	grim, graft
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,63 @@
+ray_sub_point_graphic.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ray_sub_point_graphic
+
+
+ NAME:
+	ray_sub_point_graphic
+
+
+ PURPOSE:
+	Iterates to find the point on the surface of the globe where the
+	given ray is closest to the surface.
+
+ CATEGORY:
+	NV/LIB/TOOLS
+
+
+ CALLING SEQUENCE:
+    result = ray_sub_point_graphic(gbx, v, r)
+
+
+ ARGUMENTS:
+  INPUT:
+	gbx:	Any subclass of GLOBE.
+
+	v:	Array (nv,3) giving the ray origins in the BODY frame.
+
+	r:	Array (nv,3) giving the ray directions in the BODY frame.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT:
+	normal:	Array (nv,3) of surface normals at each closest
+	approach.
+
+
+ RETURN:
+	Array (nv,3) of closest approach poitns in the BODY frame.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,60 @@
+grim_mode_pan_plot.pro
+===================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_mode_pan_plot_button_help_event
+
+
+ NAME:
+	grim_mode_pan_plot_button_event
+
+
+ PURPOSE:
+	Selects the pan cursor mode.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ OPERATION:
+	The image offset is controlled by selecting an offset vector
+	using the left mouse button, or the middle button may be
+	used to center the image on a selected point.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

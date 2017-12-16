@@ -1,0 +1,68 @@
+pnt_set_desc.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pnt_set_desc
+
+
+ NAME:
+	pnt_set_desc
+
+
+ PURPOSE:
+	Replaces the description field in a POINT object.
+
+
+ CATEGORY:
+	NV/OBJ/PNT
+
+
+ CALLING SEQUENCE:
+	pnt_set_desc, ptd, desc
+
+
+ ARGUMENTS:
+  INPUT:
+	ptd:		POINT object.
+
+	desc:		New description.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	pnt_desc
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		11/2015
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

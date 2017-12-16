@@ -1,0 +1,62 @@
+dsk_m.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_m
+
+
+ NAME:
+	dsk_m
+
+
+ PURPOSE:
+	Returns m for each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	m = dsk_m(dkd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	dkd:	 Any subclass of DISK.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	m value associated with each given disk descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

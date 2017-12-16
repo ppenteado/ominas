@@ -1,0 +1,72 @@
+dat_load_data.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_load_data
+
+
+ NAME:
+	dat_load_data
+
+
+ PURPOSE:
+	Loads the data array for a given data descriptor.  Adds to
+	NV state maintained list if maintain == 1.
+
+
+ CATEGORY:
+	NV/SYS
+
+
+ CALLING SEQUENCE:
+	data = dat_load_data(dd)
+
+
+ ARGUMENTS:
+  INPUT:
+	dd:	Data descriptor to test.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Loaded data array.
+
+
+ KNOWN BUGS:
+	Subsampling (ie. caching) is unreliable.  Lines or other anomalies
+	often appear in subsampled images.  This does not seem to happen
+	with integer sampling (e.g. integer zooms in tvim or grim), so it
+	may be related to rounding or truncating of indices.  It may also be
+	a problem with the set arithmetic.  Caching is currently disabled
+	(see (*_dd.dd0p).cache = -1 below) until it can be fixed.
+
+
+ STATUS:
+	Some bugs.
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

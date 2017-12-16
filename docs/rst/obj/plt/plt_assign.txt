@@ -1,0 +1,70 @@
+plt_assign.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+plt_assign
+
+
+ NAME:
+	plt_assign
+
+
+ PURPOSE:
+	Replaces fields in a PLANET object.  This is a convenient way of
+	setting multiple fields in one call, and only a single event is
+	generated.
+
+
+ CATEGORY:
+	NV/OBJ/PLT
+
+
+ CALLING SEQUENCE:
+	plt_assign, pd, <keywords>=<values>
+
+
+ ARGUMENTS:
+  INPUT:
+	pd:		PLANET object.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	<keywords>:	PLANET fields to set.
+
+	noevent:	If set, no event is generated.
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ SEE ALSO:
+	plt_set_*
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

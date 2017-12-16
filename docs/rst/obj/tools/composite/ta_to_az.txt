@@ -1,0 +1,63 @@
+ta_to_az.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+ta_to_az
+
+
+ NAME:
+       ta_to_az
+
+
+ PURPOSE:
+	Computes azimuths relative to a given observer descriptor.
+
+
+ CATEGORY:
+       NV/LIB/TOOLS/COMPOSITE
+
+
+ CALLING SEQUENCE:
+       result = ta_to_az(ta, dkx, bx)
+
+
+ ARGUMENTS:
+  INPUT:
+	ta:	Longitude.
+
+	dkx:	Disk descriptor.
+
+	bx:	Object descriptor (subclass of BODY) describing the observer.
+
+  OUTPUT:
+       NONE
+
+ KEYWORDS:
+   INPUT: NONE
+
+   OUTPUT: NONE
+
+
+ RETURN:
+       An array of azimuths.
+
+ STATUS:
+       Completed.
+
+
+ MODIFICATION HISTORY:
+       Written by:     Spitale
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

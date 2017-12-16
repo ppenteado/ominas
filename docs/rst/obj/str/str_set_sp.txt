@@ -1,0 +1,63 @@
+str_set_sp.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+str_set_sp
+
+
+ NAME:
+	str_set_sp
+
+
+ PURPOSE:
+	Replaces the spectra class for each given star descriptor.
+
+
+ CATEGORY:
+	NV/LIB/STR
+
+
+ CALLING SEQUENCE:
+	str_set_sp, sd, sp
+
+
+ ARGUMENTS:
+  INPUT:
+	sd:	 Array (nt) of any subclass of STAR.
+
+	sp:	 Array (nt) of new sp strings.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

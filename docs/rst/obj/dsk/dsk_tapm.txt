@@ -1,0 +1,61 @@
+dsk_tapm.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dsk_tapm
+
+
+ NAME:
+	dsk_tapm
+
+
+ PURPOSE:
+	Returns tapm for each given disk descriptor.
+
+
+ CATEGORY:
+	NV/LIB/DSK
+
+
+ CALLING SEQUENCE:
+	tapm = dsk_tapm(dkd)
+
+
+ ARGUMENTS:
+  INPUT: NONE
+	dkd:	 Any subclass of DISK.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	tapm value associated with each given disk descriptor.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

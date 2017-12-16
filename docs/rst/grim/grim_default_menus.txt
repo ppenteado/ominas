@@ -1,0 +1,690 @@
+grim_default_menus.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_core_help_event
+
+
+ NAME:
+	grim_menu_core_event
+
+
+ PURPOSE:
+	This option allows you extract a brightness profile at the selected
+	location for each plane in the image.  The left button selects a single
+	point, and the right button selects a region to average over.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_image_profile_help_event
+
+
+ NAME:
+	grim_menu_image_profile_event
+
+
+ PURPOSE:
+	This option allows you extract a brightness profile in an arbitrary
+	direction in the image.  The left button selects the region's length
+	and then width; the right button selects a region with a width of
+	one-pixel.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2005
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_ring_box_profile_radial_help_event
+
+
+ NAME:
+	grim_menu_ring_box_profile_radial_event
+
+
+ PURPOSE:
+  This option allows you create a radial brightness profile from a
+  rectangular image region.
+
+   1) Activate the ring from which you wish to extract the profile.
+
+   2) Select this option and use the mouse to outline a ring sector:
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 6/2003
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_ring_box_profile_longitudinal_help_event
+
+
+ NAME:
+	grim_menu_ring_box_profile_longitudinal_event
+
+
+ PURPOSE:
+  This option allows you create a longitudinal brightness profile from a
+  rectangular image region.
+
+    1) Activate the ring from which you wish to extract the profile.
+
+    2) Select this option and use the mouse to outline a ring sector.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2003
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_ring_profile_radial_help_event
+
+
+ NAME:
+	grim_menu_ring_profile_radial_event
+
+
+ PURPOSE:
+  This option allows you create a radial brightness profile.
+
+   1) Activate the ring from which you wish to extract the profile.
+
+   2) Select this option and use the mouse to outline a ring sector:
+
+      Left Button:   the sector is bounded by lines of constant
+                     longitude.', $
+      Middle Button: the sector is selected in an arbitrary direction.
+      Left Button:   the sector is bounded by lines perpendicular to
+                     the projected longitudinal direction.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2003
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_ring_profile_longitudinal_help_event
+
+
+ NAME:
+	grim_menu_ring_profile_longitudinal_event
+
+
+ PURPOSE:
+  This option allows you create a longitudinal brightness profile.
+
+    1) Activate the ring from which you wish to extract the profile.
+
+    2) Select this option and use the mouse to outline a ring sector.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 5/2003
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_limb_profile_azimuthal_help_event
+
+
+ NAME:
+	grim_menu_limb_profile_azimuthal_event
+
+
+ PURPOSE:
+  This option allows you create an azimutal brightness profile about a limb.
+
+    1) Activate the planet from which you wish to extract the profile.
+
+    2) Select this option and use the mouse to outline a sector.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2006
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_limb_profile_radial_help_event
+
+
+ NAME:
+	grim_menu_limb_profile_radial_event
+
+
+ PURPOSE:
+  This option allows you create radial brightness profile across a limb.
+
+    1) Activate the planet from which you wish to extract the profile.
+
+    2) Select this option and use the mouse to outline a sector.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2006
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_pointing_farfit_help_event
+
+
+ NAME:
+	grim_menu_pointing_farfit_event
+
+
+ PURPOSE:
+   This option produces a rough pointing correction by comparing the
+   active points with edges detected in the image using pg_edges and
+   pg_farfit.
+
+    1) Activate the edges that you wish to correlate.
+
+    2) Select this option.
+
+   Only active limbs, terminators, and ring edges are used.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_pointing_renderfit_help_event
+
+
+ NAME:
+	grim_menu_pointing_renderfit_event
+
+
+ PURPOSE:
+   This option uses pg_renderfit to produce a pointing correction by comparing
+   the image with a simulated image.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_pointing_lsq_help_event
+
+
+ NAME:
+	grim_menu_pointing_lsq_event
+
+
+ PURPOSE:
+	Opens a gr_lsqtool widget.  Using the current data, camera, active
+	planet, and active ring descriptors.  See gr_lsqtool.pro for details.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_toggle_reorigin_event_help_event
+
+
+ NAME:
+	grim_menu_toggle_reorigin_event
+
+
+ PURPOSE:
+   This option allows the user to set whether geometry descriptors are
+   updated whenever the data array is shifted.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 12/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_shift_enter_step_event_help_event
+
+
+ NAME:
+	grim_menu_shift_enter_step_event
+
+
+ PURPOSE:
+   This option prompts the user to enter the step size for the image-shift
+   menu options.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/2012
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_shift_enter_offset_event_help_event
+
+
+ NAME:
+	grim_menu_shift_enter_offset_event
+
+
+ PURPOSE:
+   This option prompts the user to shift an image by entering an offset.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/2012
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_shift_left_help_event
+
+
+ NAME:
+	grim_menu_shift_left_event
+
+
+ PURPOSE:
+   This option shifts the image left and corrects the camera pointing
+   accordingly.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_shift_right_help_event
+
+
+ NAME:
+	grim_menu_shift_right_event
+
+
+ PURPOSE:
+   This option shifts the image right and corrects the camera pointing
+   accordingly.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_shift_up_help_event
+
+
+ NAME:
+	grim_menu_shift_up_event
+
+
+ PURPOSE:
+   This option shifts the image up and corrects the camera pointing
+   accordingly.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_shift_down_help_event
+
+
+ NAME:
+	grim_menu_shift_down_event
+
+
+ PURPOSE:
+   This option shifts the image down and corrects the camera pointing
+   accordingly.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 8/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_corrections_photometry_help_event
+
+
+ NAME:
+	grim_menu_corrections_photometry_event
+
+
+ PURPOSE:
+	Opens a gr_phttool widget.  Using the primary data, camera, planet, and
+	ring descriptors.  See gr_phttool.pro for details.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_project_map_help_event
+
+
+ NAME:
+	grim_menu_project_map_event
+
+
+ PURPOSE:
+	Opens a gr_maptool widget.  Using the primary data, camera, planet, and
+	ring descriptors.  See gr_maptool.pro for details.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+grim_menu_mosaic_help_event
+
+
+ NAME:
+	grim_menu_mosaic_event
+
+
+ PURPOSE:
+	Uses pg_mosaic to combine all visible image planes into a mosaic.
+	The new mosiac is opened in a new grim instance.
+
+
+ CATEGORY:
+	NV/GR
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2002
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,65 @@
+dat_set_gd.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+dat_set_gd
+
+
+ NAME:
+	dat_set_gd
+
+
+ PURPOSE:
+	Updates a generic descriptor contained in an object.  Similar to
+	cor_set_gd, except descriptor inputs are sorted according to the
+	data descriptors contained in their generic descriptors.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	dat_set_gd, xd, gd, <descriptor keywords>
+
+
+ ARGUMENTS:
+  INPUT:
+	xd:	Objects to modify.  The fields from any existing generic
+		descriptors in these objects are retained in the new ones.
+
+	gd:	New generic descriptor.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	<x>d:	Input keyword for each descriptor type.  These are sorted
+		according to associated data descriptors.
+
+
+  OUTPUT: NONE
+
+
+ RETURN: NONE
+
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale		2/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,63 @@
+bod_inertial.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+bod_inertial
+
+
+ NAME:
+	bod_inertial
+
+
+ PURPOSE:
+	Returns body descriptors defining te inertial coordinate system.
+
+
+ CATEGORY:
+	NV/LIB/BOD
+
+
+ CALLING SEQUENCE:
+	bd = bod_inertial()
+
+
+ ARGUMENTS:
+  INPUT:
+	nt : number of desriptors to return.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT: NONE
+
+  OUTPUT: NONE
+
+
+ RETURN:
+	Body descriptor defining the inertial frame.  Note this descriptor is
+	not allocated on the heap, so it should not be freed by the caller.
+
+
+ STATUS:
+	Complete
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 1/1998
+ 	Adapted by:	Spitale, 5/2016
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+

@@ -1,0 +1,62 @@
+pg_cull_bodies.pro
+===================================================================================================
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+pg_cull_bodies
+
+
+ NAME:
+	pg_cull_bodies
+
+
+ PURPOSE:
+	Removes (and frees) bodies in a given array.
+
+
+ CATEGORY:
+	NV/PG
+
+
+ CALLING SEQUENCE:
+	result = pg_cull_bodies(bx, ii)
+
+
+ ARGUMENTS:
+  INPUT:
+	bx:	Array of descriptors.
+
+	ii:	Subscripts of bdies to remove.  If not undefined, no bodies are
+		removed.
+
+  OUTPUT: NONE
+
+
+ KEYWORDS:
+  INPUT:
+	name:	Array of names of bodies to exempt from removal.
+
+
+ RETURN: NONE
+
+
+ SEE ALSO:
+ 	pg_select_bodies
+
+
+ MODIFICATION HISTORY:
+ 	Written by:	Spitale, 7/2017
+
+
+________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
