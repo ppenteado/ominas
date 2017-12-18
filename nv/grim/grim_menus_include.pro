@@ -906,7 +906,7 @@ end
 ;
 ; PURPOSE:
 ;	Allows user to load images into new image planes.  The user is 
-;	prompted for filenames and dat_read is used to read each image.
+;	prompted for filenames and DAT_READ is used to read each image.
 ;	Multiple images may be selected and a new plane is created for
 ;	each image.  On X-windows systems, multiple files may be selected 
 ;	either by dragging across the filenames or by holding down the 
@@ -962,7 +962,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Allows user to load images into new image planes using the brim 
+;	Allows user to load images into new image planes using the BRIM 
 ;	browser.  Images are selected using the left mouse button and
 ;	each image is loaded on a new plane.
 ;
@@ -1033,7 +1033,7 @@ end
 ;	Allows user to save the current image plane and geometry.  If there 
 ;	is no current filename for the current plane, then the user is 
 ;	prompted for one.  All descriptors are written through the translators
-;	and then dat_write is used to write the data file.  Specific behavior 
+;	and then DAT_WRITE is used to write the data file.  Specific behavior 
 ;	is governed by OMINAS' configuration.
 ;
 ;
@@ -1133,7 +1133,7 @@ end
 ;
 ;
 ; PURPOSE:
-;	Opens a new grim window with the current channal configuration 
+;	Opens a new GRIM window with the current channal configuration 
 ;	reduced to a 3-channel RGB cube.  
 ;
 ;

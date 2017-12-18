@@ -96,7 +96,7 @@ end
 ;	This option allows you extract a brightness profile in an arbitrary 
 ;	direction in the image.  The left button selects the region's length 
 ;	and then width; the right button selects a region with a width of 
-;	one-pixel.
+;	one pixel.
 ;
 ;
 ; CATEGORY:
