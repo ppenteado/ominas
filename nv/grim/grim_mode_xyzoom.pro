@@ -158,7 +158,7 @@ end
 ;=============================================================================
 pro grim_mode_xyzoom_button_help_event, event
  text = ''
- nv_help, 'grim_mode_xyzoom_button_event', cap=text
+ nv_help, 'grim_mode_xyzoom_button_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
