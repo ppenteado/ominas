@@ -323,10 +323,80 @@ end
 
 
 ;===========================================================================
+; nv_help_doc_parse
+;
+;===========================================================================
+function nv_help_doc_parse, lines
+
+ delim = '___________________________'
+
+ w = where(strpos(lines, delim) EQ 0)
+
+ if(w[0] NE -1) then $
+  begin
+   doc_lines = list()
+   for i=0, n_elements(w)-1, 2 do doc_lines.add, lines[w[i]+1:w[i+1]-1]
+   return, doc_lines
+  end
+
+
+ return, !null
+end
+;===========================================================================
+
+
+
+;===========================================================================
 ; nv_help_doc
 ;
 ;===========================================================================
 pro nv_help_doc, iname, capture=capture
+
+ name=strlowcase(iname)
+
+ ;------------------------------------------------------
+ ; find the doc files
+ ;------------------------------------------------------
+ doc_dir = getenv('OMINAS_DIR') + '/docs/rst/'
+ doc_files = file_search(doc_dir,'*.txt')
+ doc_pfs = str_nnsplit(str_flip(str_nnsplit(str_flip(doc_files), '_')), '.')
+
+
+ ;------------------------------------------------------------------------
+ ; search the documentation
+ ;------------------------------------------------------------------------
+ n = n_elements(doc_files)
+
+ for i=0, n-1 do $
+  begin
+   lines = read_txt_file(doc_files[i], /raw)
+   docs = nv_help_doc_parse(lines)
+   if(keyword_set(docs)) then for j=0, n_elements(docs)-1 do $
+    begin
+     doc_lines = docs[j]
+     w = where(strpos(doc_lines, iname) EQ 0)
+     if(w[0] NE -1) then $
+      begin
+       nv_help_print, tr(doc_lines[3:*]), capture=capture
+       return
+      end
+    end
+
+  end
+
+ 
+ nv_message, 'No documentation available for ' + name + '.'
+
+end
+;===========================================================================
+
+
+
+;===========================================================================
+; nv_help_doc
+;
+;===========================================================================
+pro __nv_help_doc, iname, capture=capture
 
  ;------------------------------------------------------
  ; find the doc files
@@ -360,7 +430,7 @@ pro nv_help_doc, iname, capture=capture
 
    p = strpos(lines, name)
    w = where(p EQ 0)
-   w=where(stregex(lines,'^'+name+'(\.pro)?',/boolean))
+   w = where(stregex(lines,'^'+name+'(\.pro)?',/boolean))
    if(w[0] NE -1) then $
     begin
      ii = w[0]

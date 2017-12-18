@@ -21,7 +21,7 @@
 ;=============================================================================
 pro grim_menu_core_help_event, event
  text = ''
- nv_help, 'grim_menu_core_event', cap=text
+ nv_help, 'grim_menu_core_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ end
 ;=============================================================================
 pro grim_menu_image_profile_help_event, event
  text = ''
- nv_help, 'grim_menu_image_profile_event', cap=text
+ nv_help, 'grim_menu_image_profile_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -184,7 +184,7 @@ end
 ;=============================================================================
 pro grim_menu_ring_box_profile_radial_help_event, event
  text = ''
- nv_help, 'grim_menu_ring_box_profile_radial_event', cap=text
+ nv_help, 'grim_menu_ring_box_profile_radial_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -272,7 +272,7 @@ end
 ;=============================================================================
 pro grim_menu_ring_box_profile_longitudinal_help_event, event
  text = ''
- nv_help, 'grim_menu_ring_box_profile_longitudinal_event', cap=text
+ nv_help, 'grim_menu_ring_box_profile_longitudinal_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -366,7 +366,7 @@ end
 ;=============================================================================
 pro grim_menu_ring_profile_radial_help_event, event
  text = ''
- nv_help, 'grim_menu_ring_profile_radial_event', cap=text
+ nv_help, 'grim_menu_ring_profile_radial_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -462,7 +462,7 @@ end
 ;=============================================================================
 pro grim_menu_ring_profile_longitudinal_help_event, event
  text = ''
- nv_help, 'grim_menu_ring_profile_longitudinal_event', cap=text
+ nv_help, 'grim_menu_ring_profile_longitudinal_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -558,7 +558,7 @@ end
 ;=============================================================================
 pro grim_menu_limb_profile_azimuthal_help_event, event
  text = ''
- nv_help, 'grim_menu_limb_profile_azimuthal_event', cap=text
+ nv_help, 'grim_menu_limb_profile_azimuthal_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -648,7 +648,7 @@ end
 ;=============================================================================
 pro grim_menu_limb_profile_radial_help_event, event
  text = ''
- nv_help, 'grim_menu_limb_profile_radial_event', cap=text
+ nv_help, 'grim_menu_limb_profile_radial_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -741,7 +741,7 @@ end
 ;=============================================================================
 pro grim_menu_pointing_farfit_help_event, event
  text = ''
- nv_help, 'grim_menu_pointing_farfit_event', cap=text
+ nv_help, 'grim_menu_pointing_farfit_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -810,7 +810,7 @@ end
 ;=============================================================================
 pro grim_menu_pointing_renderfit_help_event, event
  text = ''
- nv_help, 'grim_menu_pointing_renderfit_event', cap=text
+ nv_help, 'grim_menu_pointing_renderfit_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -964,7 +964,7 @@ end
 ;=============================================================================
 pro grim_menu_toggle_reorigin_event_help_event, event
  text = ''
- nv_help, 'grim_menu_toggle_reorigin_event', cap=text
+ nv_help, 'grim_menu_toggle_reorigin_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -1009,7 +1009,7 @@ end
 ;=============================================================================
 pro grim_menu_shift_enter_step_event_help_event, event
  text = ''
- nv_help, 'grim_menu_shift_enter_step_event', cap=text
+ nv_help, 'grim_menu_shift_enter_step_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -1060,7 +1060,7 @@ end
 ;=============================================================================
 pro grim_menu_shift_enter_offset_event_help_event, event
  text = ''
- nv_help, 'grim_menu_shift_enter_offset_event', cap=text
+ nv_help, 'grim_menu_shift_enter_offset_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -1118,7 +1118,7 @@ end
 ;=============================================================================
 pro grim_menu_shift_left_help_event, event
  text = ''
- nv_help, 'grim_menu_shift_left_event', cap=text
+ nv_help, 'grim_menu_shift_left_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -1159,7 +1159,7 @@ end
 ;=============================================================================
 pro grim_menu_shift_right_help_event, event
  text = ''
- nv_help, 'grim_menu_shift_right_event', cap=text
+ nv_help, 'grim_menu_shift_right_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -1200,7 +1200,7 @@ end
 ;=============================================================================
 pro grim_menu_shift_up_help_event, event
  text = ''
- nv_help, 'grim_menu_shift_up_event', cap=text
+ nv_help, 'grim_menu_shift_up_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -1245,7 +1245,7 @@ end
 ;=============================================================================
 pro grim_menu_shift_down_help_event, event
  text = ''
- nv_help, 'grim_menu_shift_down_event', cap=text
+ nv_help, 'grim_menu_shift_down_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
@@ -1401,7 +1401,7 @@ end
 ;=============================================================================
 pro grim_menu_mosaic_help_event, event
  text = ''
- nv_help, 'grim_menu_mosaic_event', cap=text
+ nv_help, 'grim_menu_mosaic_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
