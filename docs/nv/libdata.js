@@ -11,55 +11,6 @@ libdataItem = 0;
 
 
 
-libdata[libdataItem++] = new Array("obj/bod/_bod_aberration_mask.html", "_bod_aberration_mask.pro", '.pro file in <a href="obj/bod/dir-overview.html">obj/bod/ directory</a>', "_bod_aberration_mask.pro", "", "", "", "", "          -1", "");
-  
-  
-  libdata[libdataItem++] = new Array("obj/bod/_bod_aberration_mask.html#_bod_aberration_mask", "_bod_aberration_mask", 'routine in <a href="obj/bod/_bod_aberration_mask.html">_bod_aberration_mask.pro</a>', "_bod_aberration_mask.pro", "", "_bod_aberration_mask", "<code class= source >	Returns a bitmask for an aberration.</code>  ", "name", "NV/LIB/BOD", "<code class= source > 	Written by:	Spitale, 7/2017</code>  <code class= source >	Aberration mask associated with the given name for each given body</code> <code class= source >	structure.</code> <code class= source > STATUS:</code> <code class= source >	Complete</code>  ");
-  
-  
-
-libdata[libdataItem++] = new Array("obj/cor/_cor_gd.html", "_cor_gd.pro", '.pro file in <a href="obj/cor/dir-overview.html">obj/cor/ directory</a>', "_cor_gd.pro", "", "", "", "", "          -1", "");
-  
-  
-  libdata[libdataItem++] = new Array("obj/cor/_cor_gd.html#_cor_gd", "_cor_gd", 'routine in <a href="obj/cor/_cor_gd.html">_cor_gd.pro</a>', "_cor_gd.pro", "", "_cor_gd", "<code class= source >	Retrieves the generic descriptor from a CORE structure.  The generic</code> <code class= source >	descriptor is stored in a protected structure that prevents its contents</code> <code class= source >	from being freed by nv_free, while still allowing its references to</code> <code class= source >	be copied by nv_clone.</code>  ", "_xd", "NV/OBJ/COR", "<code class= source > 	Written by:	Spitale		3/2017</code>  ");
-  
-  
-
-libdata[libdataItem++] = new Array("obj/cor/_cor_set_gd.html", "_cor_set_gd.pro", '.pro file in <a href="obj/cor/dir-overview.html">obj/cor/ directory</a>', "_cor_set_gd.pro", "", "", "", "", "          -1", "");
-  
-  
-  libdata[libdataItem++] = new Array("obj/cor/_cor_set_gd.html#_cor_set_gd", "_cor_set_gd", 'routine in <a href="obj/cor/_cor_set_gd.html">_cor_set_gd.pro</a>', "_cor_set_gd.pro", "", "_cor_set_gd", "<code class= source >	Sets the generic descriptor in a CORE structure.  The generic</code> <code class= source >	descriptor is stored in a protected structure that prevents its contents</code> <code class= source >	from being freed by nv_free, while still allowing its references to</code> <code class= source >	be copied by nv_clone.</code>  ", "_xdgd<code class= source >	New gd.</code>  ", "NV/OBJ/COR", "<code class= source > 	Written by:	Spitale		3/2017</code>  ");
-  
-  
-
-libdata[libdataItem++] = new Array("obj/cor/_cor_test_udata.html", "_cor_test_udata.pro", '.pro file in <a href="obj/cor/dir-overview.html">obj/cor/ directory</a>', "_cor_test_udata.pro", "", "", "", "", "          -1", "");
-  
-  
-  libdata[libdataItem++] = new Array("obj/cor/_cor_test_udata.html#_cor_test_udata", "_cor_test_udata", 'routine in <a href="obj/cor/_cor_test_udata.html">_cor_test_udata.pro</a>', "_cor_test_udata.pro", "", "_cor_test_udata", "<code class= source >	Tests the existence of data stored in a structure under the</code> <code class= source >	specified name.</code>  ", "_crd<code class= source > Any subclass of CORE.  Only one structure may be provided.</code>  name", "NV/LIB/COR", "<code class= source > 	Written by:	Spitale, 1/2017</code>  <code class= source >	True if the data is stored under the given name, false otherwise.</code> <code class= source > STATUS:</code> <code class= source >	Complete</code>  ");
-  
-  
-
-libdata[libdataItem++] = new Array("obj/glb/_glb_get_surface_normal_body.html", "_glb_get_surface_normal_body.pro", '.pro file in <a href="obj/glb/dir-overview.html">obj/glb/ directory</a>', "_glb_get_surface_normal_body.pro", "", "", "", "", "          -1", "");
-  
-  
-  libdata[libdataItem++] = new Array("obj/glb/_glb_get_surface_normal_body.html#_glb_get_surface_normal_body", "_glb_get_surface_normal_body", 'routine in <a href="obj/glb/_glb_get_surface_normal_body.html">_glb_get_surface_normal_body.pro</a>', "_glb_get_surface_normal_body.pro", "", "_glb_get_surface_normal_body", "<code class= source >	Computes the surface normals of a GLOBE object at the given</code> <code class= source >	body-frame positions.  This is an internal routine.</code>  ", "nonorm<code class= source >If set, the returned vectors are not normalized.</code>  _gbd<code class= source >Array (nt) of GLOBE structures.</code>  r<code class= source >Array (nv,3) of surface positions in the BODY frame.</code>  ", "NV/LIB/GLB", "<code class= source > 	Written by:	Spitale, 6/2016</code>  <code class= source >	Array (nv, 3, nt) of surface unit normals in the BODY frame.</code> <code class= source > STATUS:</code> <code class= source >	Complete</code>  ");
-  
-  
-
-libdata[libdataItem++] = new Array("obj/map/_map_wrap_points.html", "_map_wrap_points.pro", '.pro file in <a href="obj/map/dir-overview.html">obj/map/ directory</a>', "_map_wrap_points.pro", "", "", "", "", "          -1", "");
-  
-  
-  libdata[libdataItem++] = new Array("obj/map/_map_wrap_points.html#_map_wrap_points", "_map_wrap_points", 'routine in <a href="obj/map/_map_wrap_points.html">_map_wrap_points.pro</a>', "_map_wrap_points.pro", "", "_map_wrap_points", "<code class= source >	Forces all map image points to lie inside a specified map by wrapping</code> <code class= source >	longitudes.</code>  ", "_md_image_pts<code class= source >Array (2,nv,nt) of map image points.</code>  _map_pts", "NV/LIB/MAP", "<code class= source > 	Written by:	Spitale, 1/1998</code>  <code class= source >	Array (2,nv,nt) of wrapped map image points.</code> <code class= source > STATUS:</code> <code class= source >	Complete</code>  ");
-  
-  
-
-libdata[libdataItem++] = new Array("obj/pnt/_pnt_resize.html", "_pnt_resize.pro", '.pro file in <a href="obj/pnt/dir-overview.html">obj/pnt/ directory</a>', "_pnt_resize.pro", "", "", "", "", "          -1", "");
-  
-  
-  libdata[libdataItem++] = new Array("obj/pnt/_pnt_resize.html#_pnt_resize", "_pnt_resize", 'routine in <a href="obj/pnt/_pnt_resize.html">_pnt_resize.pro</a>', "_pnt_resize.pro", "", "_pnt_resize", "<code class= source >	Resizes a POINT structure.  Arrays are padded with zeroes or truncated</code> <code class= source >	as needed.</code>  ", "nvnt_ptd<code class= source >	POINT struct.  Note this is an actual POINT structure</code> <code class= source >			rather than an object, as this routine is only</code> <code class= source >			meant to be called internally.</code>  ", "NV/OBJ/PNT", "<code class= source > 	Written by:	Spitale		12/2015</code>  ");
-  
-  
-
 libdata[libdataItem++] = new Array("obj/tools/abcorr.html", "abcorr.pro", '.pro file in <a href="obj/tools/dir-overview.html">obj/tools/ directory</a>', "abcorr.pro", "", "", "", "", "          -1", "");
   
   
