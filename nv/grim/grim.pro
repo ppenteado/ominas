@@ -2740,12 +2740,29 @@ end
 ; grim_create_help_menu
 ;
 ;=============================================================================
+pro grim_help_event, event
+ text = ''
+ nv_help, 'grim', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_create_help_menu
+;
+;=============================================================================
 function grim_create_help_menu, _menu_desc
 
  menu_desc = _menu_desc
 
  help_desc = strep_s(menu_desc, '_event', '_help_event')
- menu_desc = ['1\Help', help_desc]
+; menu_desc = ['1\Help', help_desc]
+ grim_desc = ['0\GRIM \grim_help_event']
+
+ menu_desc = ['1\Help', grim_desc, help_desc]
+;stop
 
  return, menu_desc
 end
