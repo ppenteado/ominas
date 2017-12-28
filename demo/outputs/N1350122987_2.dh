@@ -8,9 +8,9 @@ history = 0 / Current history value
 <updates>
 
 / -------------------------------------------------------------------- /
-/ RING descriptor -- updated Wed Dec  6 12:34:09 2017
+/ RING descriptor -- updated Thu Dec 28 10:37:04 2017
 / -------------------------------------------------------------------- /
-rng_update_time = 2458094.52371528 
+rng_update_time = 2458116.44240741 
 rng_tasks = '' 
 rng_name = 'MAIN_RING_SYSTEM' 
 rng_abbrev = 'RNG' 
@@ -1410,9 +1410,9 @@ rng_dlibldt(6)[5] = 0.00000000000000
 rng_dlibldt(7)[5] = 0.00000000000000 
 rng_desc[5] = '' 
 / -------------------------------------------------------------------- /
-/ PLANET descriptor -- updated Wed Dec  6 12:34:11 2017
+/ PLANET descriptor -- updated Thu Dec 28 10:37:05 2017
 / -------------------------------------------------------------------- /
-plt_update_time = 2458094.52373843 
+plt_update_time = 2458116.44241898 
 plt_tasks = '' 
 plt_name = 'VENUS' 
 plt_abbrev = 'PLT' 
@@ -3250,9 +3250,9 @@ plt_j(8)[17] = 0.00000000000000
 plt_j(9)[17] = 0.00000000000000 
 plt_j(10)[17] = 0.00000000000000 
 / -------------------------------------------------------------------- /
-/ CAMERA descriptor -- updated Wed Dec  6 12:34:19 2017
+/ CAMERA descriptor -- updated Thu Dec 28 10:37:07 2017
 / -------------------------------------------------------------------- /
-cam_update_time = 2458094.52383102 
+cam_update_time = 2458116.44244213 
 cam_tasks(0) = 'pg_repoint' 
 cam_tasks(1) = 'pg_repoint' 
 cam_name = 'CAS_ISS_NA' 
@@ -3336,9 +3336,9 @@ cam_fn_focal_to_image = 'cam_focal_to_image_linear'
 cam_fn_body_to_image = '' 
 cam_fn_image_to_focal = 'cam_image_to_focal_linear' 
 / -------------------------------------------------------------------- /
-/ STAR descriptor -- updated Wed Dec  6 12:34:20 2017
+/ STAR descriptor -- updated Thu Dec 28 10:37:07 2017
 / -------------------------------------------------------------------- /
-str_update_time = 2458094.52384259 
+str_update_time = 2458116.44244213 
 str_tasks = '' 
 str_name = 'SUN' 
 str_abbrev = 'STR' 

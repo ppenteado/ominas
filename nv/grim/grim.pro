@@ -4,7 +4,7 @@
 ; GRIM
 ; ====
 ;
-;      General-purpose GRaphical Interface for oMinas
+;      General-purpose GRaphical Interface for oMinas.
 ; 
 ;
 ; CATEGORY: NV/GR
@@ -25,12 +25,12 @@
 ;            Grim accepts up to two arguments, which can appear in either
 ;            order.  Possible arguments are:
 ;
-;                  data descriptors (object)
-;                  file specification (string)
-;                  grn (scalar)
-;                  plot (1d array)
-;                  image (2d array)
-;                  cube (3d array)
+;                  data descriptors [object array]
+;                  file specifications [string array]
+;                  grn (GRIM window number) [scalar]
+;                  plot [1d array]
+;                  image [2d array]
+;                  cube [3d array]
 ;       
 ;      Plots are displayed as graphs whose abscissa are the array index, unless
 ;      an abscissa is present in the data descriptor.  Many functions are not
@@ -133,7 +133,7 @@
 ;
 ;      `*str_trs`: String giving translator keywords for the star descriptors.
 ;
-;      `*stn_trs`: String giving translator keywords for the stations descriptors.
+;      `*stn_trs`: String giving translator keywords for the station descriptors.
 ;
 ;      `*arr_trs`: String giving translator keywords for the array descriptors.
 ;
@@ -349,7 +349,8 @@
 ;      `*beta`: If set beta features are enabled.
 ;
 ;      `*npoints`:
-;               Number of point to compute for various overlays.  Default is 1000.
+;               Number of point to compute for various overlays.  Default is 
+;               1000.
 ;
 ;      `*plane_syncing`: 
 ;               Turns plane syncing on (1) or off(0).  Default is 0.
@@ -394,8 +395,8 @@
 ;               where 'type' is one of {limb, terminator, center,
 ;               star, ring, planet_grid, array, station, shadow, reflection}
 ;               and the names identify the name of the desired object.  Note 
-;               that grim will load more objects than named if required by another
-;               startup overlay.  For example::
+;               that grim will load more objects than named if required by 
+;               another startup overlay.  For example::
 ;
 ;                        overlays='ring:a_ring'
 ;
@@ -451,8 +452,8 @@
 ;               If set, inital overlay are activated.
 ;
 ;      `*ndd`:  Sets the global ndd value in the OMINAS sate structure, which
-;               controls the maximum number of data descriptors with maintain == 1
-;               to keep in memory at any given time
+;               controls the maximum number of data descriptors with maintain == 
+;               1 to keep in memory at any given time
 ;
 ;      `*render_sampling`:
 ;               Over-sampling value for rendering.
@@ -474,7 +475,8 @@
 ;
 ;      `*render_spawn`:
 ;               If set, renderings from an image (as opposed to a rendering) are 
-;		placed on a new plane.  Default is on, except for rendering planes.
+;		placed on a new plane.  Default is on, except for rendering 
+;               planes.
 ;
 ;      `*render_sky`:
 ;               If set, the sky is included in the rendering.  Default is off.
@@ -497,9 +499,9 @@
 ;  Resource File
 ;  -------------
 ;       The keywords marked above with an asterisk may be overridden using
-;       the file $HOME/.ominas/grimrc.  Keyword=value pairs may be entered, one per
-;       line, using the same syntax as if the keyword were entered on the IDL
-;       command line to invoke grim.  Lines beginning with '#' are ignored.
+;       the file $HOME/.ominas/grimrc.  Keyword=value pairs may be entered, one 
+;       per line, using the same syntax as if the keyword were entered on the 
+;       IDL command line to invoke grim.  Lines beginning with '#' are ignored.
 ;       Keywords entered in the resource file override the default values, and
 ;       are themselves overridden by keywords entered on the command line.
 ;
@@ -598,10 +600,10 @@
 ;                       fill the box.  In other words, the left button zooms in
 ;                       and the right button zooms out.
 ;
-;                  Pan: The pan button puts grim in a pan cursor mode, wherein the
-;                       image offset is controlled by selecting an offset vector
-;                       using the left mouse button.  The middle button may be
-;                       used to center the image on a selected point.
+;                  Pan: The pan button puts grim in a pan cursor mode, wherein 
+;                       the image offset is controlled by selecting an offset 
+;                       vector using the left mouse button.  The middle button 
+;                       may be used to center the image on a selected point.
 ;
 ;                  Pixel Readout:
 ;                       In pixel readout mode, a text window appears
