@@ -24,7 +24,7 @@
 ;		 p		action
 ;		 ----------------------------------------------------
 ;		 No value	Print the full paths of all NV tables. 
-;		 Numeric	Call IDL finction 'help'.
+;		 Numeric	Call IDL function 'help'.
 ;		 Ptr or struct	Descend recursively, printing info on all
 ;				fields.
 ;		 String		Assumes p is the name of an OMINAS routine
@@ -37,16 +37,19 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
-;	event:		If set, the event tables are printed and p
+;       event:		If set, the event tables are printed and p
 ;			is ignored.
 ;
+;       print:		If set, any arrays ith this many elements or fewer
+;			are printed out.
+;
 ;  OUTPUT: 
-;	capture:	If present, the output in returned in this
+;       capture:	If present, the output in returned in this
 ;			keyword instead of being printed.
 ;
 ;
 ; ENVIRONMENT VARIABLES:
-;	OMINAS_DIR:	OMINAS top directory; used to find documentation files.
+;       OMINAS_DIR:	OMINAS top directory; used to find documentation files.
 ;
 ;
 ; RETURN: NONE
@@ -126,7 +129,7 @@ end
 ; nv_help_descend
 ;
 ;===========================================================================
-pro nv_help_descend, dp0, indent, string, index, capture=capture
+pro nv_help_descend, dp0, indent, string, index, capture=capture, print=print
 
  dp = dp0
  type = size(dp, /type)
@@ -143,7 +146,7 @@ pro nv_help_descend, dp0, indent, string, index, capture=capture
     begin
      if(NOT obj_valid(dp[i])) then return
      _dp = cor_dereference(dp[i])
-     nv_help_descend, _dp, indent+1, string, i, capture=capture
+     nv_help_descend, _dp, indent+1, string, i, capture=capture, print=print
     end
   end
 
@@ -164,7 +167,7 @@ pro nv_help_descend, dp0, indent, string, index, capture=capture
        if(keyword_set(string)) then nv_help_print, string, capture=capture
        string = ''
       end
-     nv_help_descend, val, indent+1, string, i, capture=capture
+     nv_help_descend, val, indent+1, string, i, capture=capture, print=print
     end
    return
   end
@@ -186,6 +189,9 @@ pro nv_help_descend, dp0, indent, string, index, capture=capture
     end
 
    ss = string + hh
+
+   if(keyword_set(print)) then $
+     if(n_elements(dp) LE print) then ss = [ss, string(dp, /print)]
 
    if(defined(index)) then $
     begin
@@ -215,6 +221,18 @@ pro nv_help_descend, dp0, indent, string, index, capture=capture
    s = dp[j]
    tags = tag_names(s)
    ntags = n_elements(tags)
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; GD -- just print stucture; do not descend
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(tags[ntags-1] EQ 'GD') then $
+    begin
+     help, s.gd, out=out
+     nv_help_print, out[1:*], capture=capture
+
+     ntags = 0
+    end
+
    for i=0, ntags-1 do $
     begin
      name = tags[i]
@@ -240,7 +258,7 @@ name = name+pname
 
      string = str_pad(' ', ind) + str_pad(name + ':', pad)
 
-     nv_help_descend, s.(i), indent+1, string, capture=capture
+     nv_help_descend, s.(i), indent+1, string, capture=capture, print=print
     end
   end
 
@@ -472,7 +490,9 @@ end
 ; nv_help
 ;
 ;===========================================================================
-pro nv_help, dp, capture=capture, event=event
+pro nv_help, dp, capture=capture, print=print, event=event
+
+ if(keyword_set(print)) then if(print EQ 1) then print = 100
 
  ;--------------------------------------------
  ; show event info if /event
@@ -497,7 +517,7 @@ pro nv_help, dp, capture=capture, event=event
  ; otherwise describe the object
  ;----------------------------------------------------
 ; nv_help_sep
- if(keyword_set(dp)) then nv_help_descend, dp, 0, '', capture=capture $
+ if(keyword_set(dp)) then nv_help_descend, dp, 0, '', capture=capture, print=print $
  else nv_help_state, capture=capture
 
 

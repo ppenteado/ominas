@@ -22,7 +22,7 @@
 ;  ~~~~~~
 ;      arg1, arg2:
 ; 
-;            Grim accepts up to two arguments, which can appear in either
+;            GRIM accepts up to two arguments, which can appear in either
 ;            order.  Possible arguments are:
 ;
 ;                  data descriptors [object array]
@@ -37,7 +37,7 @@
 ;      available in this mode.
 ;
 ;      Cubes are handled as multiple image planes unless /rgb is used
-;      (see below).  All grim planes will contain the same data array,
+;      (see below).  All GRIM planes will contain the same data array,
 ;      but display only data ranges corresponding to one channel of the cube.
 ;      For /rgb (assuming the cube has three channels), the data are placed
 ;      on a single image plane with each cube channel assigned the R, G, or B
@@ -102,7 +102,7 @@
 ;      ~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;      Descriptor select keywords (see pg_get_*) are specified using the
 ;      standard prefix corresponding to the descriptor type.  For example,
-;      the fov keyword to pg_get_planets would be given to grim as plt_fov.
+;      the fov keyword to pg_get_planets would be given to GRIM as plt_fov.
 ;
 ;
 ;      Initial Colormap Keywords
@@ -115,7 +115,7 @@
 ;      `*auto_stretch`:
 ;            If set, the color table for each plane is automatically
 ;            stretched.  This is identical to using the 'Auto' button
-;            on on the grim color tool.
+;            on on the GRIM color tool.
 ;
 ;
 ;      Translator Keywords
@@ -147,7 +147,7 @@
 ;
 ;      `*ysize`:  Size of the graphics window in the y direction.  
 ;
-;      `*zoom`:   Initial zoom to be applied to the image.  If not given, grim
+;      `*zoom`:   Initial zoom to be applied to the image.  If not given, GRIM
 ;                 computes an initial zoom such that the entire image fits on the
 ;                 screen.
 ;
@@ -191,7 +191,7 @@
 ;
 ;      `*menu_fname`:
 ;            Name of a file containing additional menus to add to
-;            the grim widget.  The file syntax follows that for cw_pdmenu.
+;            the GRIM widget.  The file syntax follows that for cw_pdmenu.
 ;
 ;
 ;      Other Keywords
@@ -200,7 +200,7 @@
 ;               String array giving extensions to try for each input file.
 ;               see dat_read.
 ;
-;      `*new`:  If set, a new grim instance is created and all keywords apply
+;      `*new`:  If set, a new GRIM instance is created and all keywords apply
 ;               to that instance.
 ;
 ;      `erase`: If set, erase the current image before doing anything else.
@@ -246,9 +246,9 @@
 ;               If set, GRIM does not erase the draw windoww.
 ;
 ;      `no_refresh`:
-;               If set, grim does not refresh.
+;               If set, GRIM does not refresh.
 ;
-;      `*rgb`:  If set, grim interprets a 3-plane cube as a 3-channel color image
+;      `*rgb`:  If set, GRIM interprets a 3-plane cube as a 3-channel color image
 ;               to be displayed on a single plane.
 ;
 ;      `*channel`:
@@ -274,7 +274,7 @@
 ;      `exit`:  If set, GRIM immediately exits.  This can be used to kill an
 ;               existing GRIM window.
 ;
-;      `modal`: If set, grim is run as a modal widget, i.e., there is no command
+;      `modal`: If set, GRIM is run as a modal widget, i.e., there is no command
 ;               prompt.
 ;
 ;      `*frame`:If set, the initial view is set such that all members of the
@@ -334,7 +334,7 @@
 ;      `user_psym`:
 ;               Default plotting symbol for user overlays.
 ;
-;      `grn`:   Identifies a specific GRIM window by number.  Grim numbers are
+;      `grn`:   Identifies a specific GRIM window by number.  GRIM numbers are
 ;               displayed in the status bar, e.g.: grim <grn>.
 ;
 ;      `pn`:    Directs GRIM to change to the plane corresponding to this plane
@@ -395,7 +395,7 @@
 ;               where 'type' is one of {limb, terminator, center,
 ;               star, ring, planet_grid, array, station, shadow, reflection}
 ;               and the names identify the name of the desired object.  Note 
-;               that grim will load more objects than named if required by 
+;               that GRIM will load more objects than named if required by 
 ;               another startup overlay.  For example::
 ;
 ;                        overlays='ring:a_ring'
@@ -496,44 +496,44 @@
 ;      None
 ;
 ;
-;  Resource File
-;  -------------
+;  GRIM Resource File
+;  ------------------
 ;       The keywords marked above with an asterisk may be overridden using
 ;       the file $HOME/.ominas/grimrc.  Keyword=value pairs may be entered, one 
 ;       per line, using the same syntax as if the keyword were entered on the 
-;       IDL command line to invoke grim.  Lines beginning with '#' are ignored.
+;       IDL command line to invoke GRIM.  Lines beginning with '#' are ignored.
 ;       Keywords entered in the resource file override the default values, and
 ;       are themselves overridden by keywords entered on the command line.
 ;
 ;  Shell Interface
 ;  ---------------
-;       The `grim` alias may be used to start grim from the shell prompt
-;       via the XIDL interface.  The shell interface accepts all keywords
-;       marked above with an asterisk.  See grim.bat.
+;       The `grim` alias may be used to start GRIM from the shell prompt.  
+;       The shell interface accepts all keywords marked with an asterisk
+;       above.  See grim.bat.
 ;
-;       Example (assuming the grim alias described in grim.bat)::
+;       Example::
 ;
 ;            % grim -beta data/*.img overlay=center,limb:JUPITER
 ;
 ;
 ;  Environment Variables
 ;  ---------------------
-;       Grim currently defines no environment variables..
+;       GRIM currently defines no environment variables..
 ;
 ;
 ;  Common Blocks
 ;  -------------
 ;        grim_block:
-;         Keeps track of most recent grim instance and which ones are
+;         Keeps track of most recent GRIM instance and which ones are
 ;         selected.
 ;
 ;
 ;  Side Effects
 ;  ------------
-;       Grim operates directly on the memory images of the descriptors that
+;       GRIM operates directly on the memory images of the descriptors that
 ;       it is given.  Therefore, those descriptors are modified during
 ;       a session.  This architecture allows data to be operated on concurrently
-;       through grim and from the command line; see grift.pro for details.
+;       through GRIM and from the command line; see grift.pro for details.
 ;
 ;
 ;  Layout
@@ -542,12 +542,12 @@
 ;       screen space should be devoted to displaying the data.  This policy
 ;       allows for many GRIM windows to be used simultaneously without being
 ;       obscured by crazy control panels full of buttons, gadgets, widgets,
-;       doodads, whirly-gigs, and what-nots.  The grim layout consists of the
+;       doodads, whirly-gigs, and what-nots.  The GRIM layout consists of the
 ;       following items:
 ;
 ;            Title bar
 ;            ~~~~~~~~~
-;               The title bar displays the grim window number (grn),
+;               The title bar displays the GRIM window number (grn),
 ;               the current plane number (pn), the total number of planes, the
 ;               name field of the data descriptor for the current plane, the
 ;               default title (if given; see the title keyword above), and
@@ -556,8 +556,7 @@
 ;
 ;            Menu bar
 ;            ~~~~~~~~
-;  
-;               Most of grim's functionality is accessed through the
+;               Most of GRIM's functionality is accessed through the
 ;               system of pulldown menus at the top.  Individual menu
 ;               items are described in their own sections.
 ;
@@ -566,12 +565,12 @@
 ;               Some commonly used menu options are duplicated as shortcut
 ;               buttons arranged horizontally just beneath the menu bar.  The
 ;               function of each button is displayed in the status bar (see
-;               below) when the mouse cursor is hovered ove the button.
+;               below) when the mouse cursor is hovered over the button.
 ;
 ;      Cursor mode buttons
 ;      ~~~~~~~~~~~~~~~~~~~
 ;               Cursor mode shortcut buttons are arranged vertically along the
-;               left side of the GRIM window, and as provided as shortcuts
+;               left side of the GRIM window, and are provided as shortcuts
 ;               for the corresponding options in the Mode menu.  The following
 ;               modes are available:
 ;
@@ -590,7 +589,7 @@
 ;                       overlays appear in cyan.  A descriptor is active
 ;                       whenever any of its overlays are active.
 ;
-;                  Zoom:The zoom button puts grim in a zoom cursor mode, wherein
+;                  Zoom:The zoom button puts GRIM in a zoom cursor mode, wherein
 ;                       the image zoom and offset are controlled by selecting
 ;                       a box in the image.  When the box is created using the
 ;                       left mouse button, zoom and offset are changed so that
@@ -600,7 +599,7 @@
 ;                       fill the box.  In other words, the left button zooms in
 ;                       and the right button zooms out.
 ;
-;                  Pan: The pan button puts grim in a pan cursor mode, wherein 
+;                  Pan: The pan button puts GRIM in a pan cursor mode, wherein 
 ;                       the image offset is controlled by selecting an offset 
 ;                       vector using the left mouse button.  The middle button 
 ;                       may be used to center the image on a selected point.
@@ -624,7 +623,8 @@
 ;                       each end.  The use of curves is determined by the
 ;                       particular option selected by the user.
 ;
-;                  Mask:GRIM maintains a mask for each plane whose use is
+;                  Mask:
+;                       GRIM maintains a mask for each plane whose use is
 ;                       appication-dependent.  Mask mode allows pixels in the
 ;                       mask to be toggled on and off.
 ;
@@ -664,19 +664,19 @@
 ;                       Allows the user to reposition the current plane by
 ;                       clicking and dragging.
 ;
+;                  Target:
+;                       Allows the user to re-target the camera by clicking.
+;
 ;                  Navigate:
 ;                       Allows the user to modify the camera position and
 ;                       orientation using the mouse.
-;
-;                  Target:
-;                       Allows the user to re-target the camera by clicking.
 ;
 ;
 ;            Graphics window
 ;            ~~~~~~~~~~~~~~~
 ;               The graphics window displays the data associated with the
 ;               given data descriptor using the current zoom, offset, and
-;               display order.  The edges of an image are indicated by a dotted
+;               display order.  The edges of the data are indicated by a dotted
 ;               line.  The camera optic axis is indicated by a large red cross.
 ;
 ;            Pixel readout
@@ -687,7 +687,7 @@
 ;            Message line
 ;            ~~~~~~~~~~~~
 ;               The message line displays short messages pertaining GRIM's
-;                current state, or displayng button functions.
+;               current state or button functions.
 ;
 ;  Callback Procedures
 ;  -------------------
@@ -697,21 +697,31 @@
 ;       on the applicatation.
 ;
 ;
-;  Resource Names
-;  --------------
-;       The following X-windows resource names apply to grim:
+;  X Resource Names
+;  ----------------
+;       The following X-windows resource names apply to GRIM's widgets::
 ; 
-;        grim_base:   top level base
-;        grim_mbar:   menu bar
+;        grim_base:           top level base
+;        grim_mbar:           menu bar
 ;        grim_shortcuts_base: base containing shortcut buttons
-;        grim_modes_base: base containing modes buttons
-;        grim_draw:   grim draw widget
-;        grim_label:    grim bottom label widget
+;        grim_modes_base:     base containing modes buttons
+;        grim_draw:           GRIM draw widget
+;        grim_label:          GRIM bottom label widget
 ;
 ;       To turn off the confusing higlight box around the modes buttons,
 ;       put the following line in your ~/.Xdefaults file::
 ;
 ;            Idl*grim_modes_base*highlightThickness:  0
+;
+;       Shortcut buttons also have resource names that may be used to define
+;       keyboard shortcuts (search grim.pro file for "resource_name=" to find
+;       the names for each button.  
+;
+;       Each menu option has a corresponding resource name given by its 
+;	event procedure name; see grim_menu_desc in grim.pro and 
+;       grim_default_menus in grim_default_menus.pro.
+;
+;       Default definitios may be found in .ominas/Xdefaults-grim.
 ;
 ;
 ;  Operation
@@ -719,14 +729,13 @@
 ;       GRIM displays 1-, 2-, and 3-dimensional data sets.  1-dimensional
 ;       data arrays are displayed as plots.  In that case, the abscissa is
 ;       the sample number unless the data descriptor contains an abscissa.
-;       2- and 3-dimensional arrays are displaye as image planes.  The only
+;       Some functionality is not available when working with plots.  2- and 
+;       3-dimensional arrays are displaye as image planes.  The only
 ;       difference between images and cubes in GRIM is that images planes
 ;       each have their own data descriptor, while cubes are represented by
 ;       multiple image planes that share a common data descriptor; each plane
 ;       in a cube corresponds to a unique offset in the data array stored in
-;       the common data descriptor.  Some functionality is not available when
-;       working with plots.  In that case, those options do not appear in the
-;       menus.
+;       the common data descriptor.  
 ;
 ;       GRIM requests only the data samples needed for the current viewing
 ;       parameters.  Therefore, GRIM can display data sets of arbitrary size
@@ -734,7 +743,7 @@
 ;       that specific menu options may request the entire data array, depending
 ;       on the application.
 ;
-;       Each GRIM window may contain any number of planes as well as
+;       Each GRIM instance may contain any number of planes as well as
 ;       associated geometric data (i.e. object descriptors) and overlay arrays
 ;       for displaying various geometric objects -- limbs, rings, stars, etc.
 ;       An array of user overlay points is maintained to be used for application-
@@ -742,23 +751,24 @@
 ;       must be activated in order to be used as input to a menu item; see
 ;       activate mode above.
 ;
-;       There are exclusive and non-exclusive mechanisms for selecting grim
-;       windows.  Grim windows may be non-exclusively selected using the select
+;       There are exclusive and non-exclusive mechanisms for selecting GRIM
+;       windows.  GRIM windows may be non-exclusively selected using the select
 ;       mode button mentioned above (upper-left corner).  The exclusive
 ;       selection mechanism consists of a "primary" GRIM window, indicated by
 ;       a red outline in the graphics window.  The primary selection is
 ;       changed by pressing any mode or shortcut button, or by clicking in
-;       the graphics area of the desired grim window.  The meaning of the
+;       the graphics area of the desired GRIM window.  The meaning of the
 ;       various selections depends on the application.
 ;
 ;       The functions of the left and right mouse buttons are determined by the
 ;       cursor mode; some cursor modes define modifier keys to broaden the number
 ;       of functions available in that mode.  The middle mouse button toggles
-;       the activation state of overlay arrays, or pans the image if no overlay
-;       appears beneath the cursor.  The mouse wheel cycles among cursor modes,
-;       or zooms about the cursor position if the control key is held down.
+;       the activation state of overlay arrays, or allows the image to be panned
+;       if no overlay appears beneath the cursor.  The mouse wheel cycles among 
+;       cursor modes, or zooms about the cursor position if the control key is 
+;       held down.
 ;
-;       Objects maintained by GRIM are accessible via the grift interface,
+;       Objects maintained by GRIM are accessible via the GRIFT interface,
 ;       for example::
 ;
 ;            IDL> grift, dd=dd, cd=cd, pd=pd, limb_ptd=limb_ptd
@@ -773,11 +783,11 @@
 ;
 ;       :Examples:
 ; 
-;            (1) To create a new grim instance with no data::
+;            (1) To create a new GRIM instance with no data::
 ;
 ;                  IDL> grim, /new
 ;
-;            (2) To create a new grim instance with data from a file of name
+;            (2) To create a new GRIM instance with data from a file of name
 ;                "filename"::
 ;
 ;                  IDL> dd = dat_read(filename)
@@ -787,7 +797,7 @@
 ;
 ;                  IDL> grim, filename
 ;
-;            (3) To give an existing grim instance a new camera descriptor::
+;            (3) To give an existing GRIM instance a new camera descriptor::
 ;
 ;                  IDL> grim, cd=cd
 ;
@@ -2719,7 +2729,8 @@ pro grim_help, grim_data, text
 
  if(NOT widget_info(grim_data.help_text, /valid)) then $
   begin
-   grim_data.help_text = textedit(text, base=base, xs=80, resource_prefix='grim_help')
+   grim_data.help_text = textedit(text, base=base, xs=80, ys=60, $
+                                               resource_prefix='grim_help')
    widget_control, base, tlb_set_title='GRIM Help'
    grim_data.help_base = base
    grim_set_data, grim_data
@@ -3454,7 +3465,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
        ii = w[0]
        ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
        ; Because we override the event_pro here, the user modes do not
-       ; participate in grim's capture mechanism, so the 'repeat'
+       ; participate in GRIM's capture mechanism, so the 'repeat'
        ; command does not apply.  This is necessary because the user
        ; modes store their data in their button's uvalue, which would
        ; otherwise be used by the capture mechanism.
