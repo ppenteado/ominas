@@ -168,12 +168,10 @@ pro nv_help_descend, dp0, indent, capture=capture, print=print, $
        return
       end
 
-     _dp = cor_dereference(dp[i])
-
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; Print the object reference.
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     if(i NE 0) then $
+     if((i NE 0) AND (level GT 1)) then $
          nv_help_print, indent=indent-offset, str_pad(' ', pad), capture=capture, /nocrlf
      nv_help_print, indent=indent, string(dp[i], /print), capture=capture
 
@@ -181,7 +179,8 @@ pro nv_help_descend, dp0, indent, capture=capture, print=print, $
      ; Descend into the object unless it's an OMINAS object; 
      ; in that case, only descend from the first level,
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     if((NOT cor_test(dp[i])) OR level EQ 1) then $
+     _dp = cor_dereference(dp[i])
+     if((NOT cor_test(dp[i])) OR (level EQ 1)) then $
        nv_help_descend, _dp, indent+offset, capture=capture, print=print, level=level, max=max
     end
    return
@@ -201,8 +200,6 @@ pro nv_help_descend, dp0, indent, capture=capture, print=print, $
        return
       end
 
-     val = *dp[i]
-
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; Print the pointer reference.
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -213,6 +210,7 @@ pro nv_help_descend, dp0, indent, capture=capture, print=print, $
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      ; Descend into the pointer.
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     val = *dp[i]
      nv_help_descend, val, indent+offset, capture=capture, print=print, level=level, max=max
     end
    return
@@ -529,9 +527,8 @@ pro nv_help, dp, capture=capture, print=print, event=event
    return
   end
 
-
  ;----------------------------------------------------
- ; just print documentation if argument is a string
+ ; print documentation if argument is a string
  ;----------------------------------------------------
  if(size(dp, /type) EQ 7) then $
   begin
