@@ -110,26 +110,26 @@ pro nv_help_state, capture=capture
 @nv_block.common
 
  nv_help_print, 'Translators tables:', capture=capture
- nv_help_print, '   ' + *nv_state.translators_filenames_p, capture=capture
+ nv_help_print, '   ' + transpose(*nv_state.translators_filenames_p), capture=capture
  nv_help_print, capture=capture
 
  if(keyword__set(*nv_state.transforms_filenames_p)) then $
   begin
    nv_help_print, 'Transforms tables:', capture=capture
-   nv_help_print, '   ' + *nv_state.transforms_filenames_p, capture=capture
+   nv_help_print, '   ' + transpose(*nv_state.transforms_filenames_p), capture=capture
    nv_help_print, capture=capture
   end
 
  nv_help_print, 'I/O Tables:', capture=capture
- nv_help_print, '   ' + *nv_state.io_filenames_p, capture=capture
+ nv_help_print, '   ' + transpose(*nv_state.io_filenames_p), capture=capture
  nv_help_print, capture=capture
 
  nv_help_print, 'Filetype tables:', capture=capture
- nv_help_print, '   ' + *nv_state.ftp_detectors_filenames_p, capture=capture
+ nv_help_print, '   ' + transpose(*nv_state.ftp_detectors_filenames_p), capture=capture
  nv_help_print, capture=capture
 
  nv_help_print, 'Instrument detector tables:', capture=capture
- nv_help_print, '   ' + *nv_state.ins_detectors_filenames_p, capture=capture
+ nv_help_print, '   ' + transpose(*nv_state.ins_detectors_filenames_p), capture=capture
 
 end
 ;===========================================================================
@@ -242,11 +242,9 @@ pro nv_help_descend, dp0, indent, capture=capture, print=print, $
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      for i=0, ntags-1 do $
       begin
-;if(tags[i] EQ 'ABSCISSA_DAP') then stop
        if(NOT set_member(tags[i], $
              ['IDL_OBJECT_TOP', 'IDL_OBJECT_BOTTOM', '__OBJ__'])) then $
         begin
-;stop
          nv_help_print, indent=indent, str_pad(tags[i], pad), capture=capture, /nocrlf
          nv_help_descend, s.(i), indent+offset, capture=capture, print=print, level=level, max=max
         end
@@ -310,7 +308,6 @@ pro nv_help_dump_events, capture=capture, items
   begin
    xd = items[i].xd
 
-   class = cor_class(xd)
    desc = cor_name(xd)
 
    type = 'READ'
@@ -319,7 +316,7 @@ pro nv_help_dump_events, capture=capture, items
    help, out=s, xd[0]
    ptr = str_flip(str_nnsplit(str_flip(s), ' '))
 
-   s = str_pad(ptr, 18) + str_pad(class, 7) + str_pad(type, 6) + $
+   s = str_pad(ptr, 32) + str_pad(type, 6) + $
        str_pad(desc, 20) + str_pad(items[i].handler, 29)
 
    nv_help_print, capture=capture, s
@@ -345,7 +342,6 @@ pro nv_help_event, capture=capture
  ;-------------------------------------
  nv_help_print, capture=capture, $
   '-------------------------------- Event Registry --------------------------------'
- nv_help_print, capture=capture, ''
  nv_help_dump_events, capture=capture, list
 
  nv_help_print, capture=capture, ''
@@ -355,7 +351,6 @@ pro nv_help_event, capture=capture
  ;-------------------------------------
  nv_help_print, capture=capture, $
   '--------------------------------- Event Buffer ---------------------------------'
- nv_help_print, capture=capture, ''
  nv_help_dump_events, capture=capture, buf
 
  
@@ -395,7 +390,13 @@ end
 ;===========================================================================
 pro nv_help_doc, iname, capture=capture
 
- name=strlowcase(iname)
+ name = strlowcase(iname)
+
+ ;------------------------------------------------------
+ ; print the path to the source file
+ ;------------------------------------------------------
+ which, name, out=s
+ nv_help_print, s, capture=capture
 
  ;------------------------------------------------------
  ; find the doc files
