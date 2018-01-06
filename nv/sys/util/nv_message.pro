@@ -45,7 +45,7 @@
 ;			is taken.
 ;
 ;	cb_tag:		If set, the callback procedure below is added to
-;			the cllaback list under this tag name and no other
+;			the callback list under this tag name and no other
 ;			action is taken.
 ;
 ;	cb_data_p:	Pointer to data for the callback procedure.
@@ -68,8 +68,8 @@
 ;			level.  Setting this keyword implies /continue.  
 ;			Verbosity threshold rules of thumb are as follows:
 ;
-;			 0.1:	Useful messages that you don't always need to see;
-;				files being loaded, written, etc.
+;			 0.1:	Useful messages that you don't always need to 
+;				see; files being loaded, written, etc.
 ;			 0.5:	Useful messages that you want to see even less;
 ;				file-not-found warnings, etc.
 ;			 0.9:	Debugging messages that don't produce huge
