@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;	Prints information about various OMINAS objects.
+;	Prints information about OMINAS and its objects.
 ;
 ;
 ; CATEGORY:
@@ -40,8 +40,8 @@
 ;       event:		If set, the event tables are printed and p
 ;			is ignored.
 ;
-;       print:		If set, any arrays ith this many elements or fewer
-;			are printed out.
+;       print:		If set, any arrays with this many elements or fewer
+;			are printed out.  Default is 100.
 ;
 ;  OUTPUT: 
 ;       capture:	If present, the output in returned in this
@@ -72,14 +72,19 @@
 ; nv_help_print
 ;
 ;===========================================================================
-pro nv_help_print, s, capture=capture
+pro nv_help_print, s, indent=indent, capture=capture, nocrlf=nocrlf
  if(NOT keyword_set(s)) then s = ''
+
+ if(keyword_set(indent)) then s = str_pad(' ', indent) + s
 
  if(defined(capture)) then $
   begin
    if(n_elements(size(s, /dim)) GT 1) then s = tr(s)
    capture = append_array(capture, s)
-  end $
+   return
+  end 
+
+ if(keyword_set(nocrlf)) then print, s, format='(a, $)' $
  else print, s
 end
 ;===========================================================================
@@ -104,163 +109,183 @@ end
 pro nv_help_state, capture=capture
 @nv_block.common
 
- nv_help_print, 'Translators table:	' + *nv_state.translators_filenames_p, capture=capture
+ nv_help_print, 'Translators tables:', capture=capture
+ nv_help_print, '   ' + *nv_state.translators_filenames_p, capture=capture
  nv_help_print, capture=capture
 
  if(keyword__set(*nv_state.transforms_filenames_p)) then $
   begin
-   nv_help_print, 'Transforms table:	' + *nv_state.transforms_filenames_p, capture=capture
+   nv_help_print, 'Transforms tables:', capture=capture
+   nv_help_print, '   ' + *nv_state.transforms_filenames_p, capture=capture
    nv_help_print, capture=capture
   end
 
- nv_help_print, 'I/O Table:		' + *nv_state.io_filenames_p, capture=capture
+ nv_help_print, 'I/O Tables:', capture=capture
+ nv_help_print, '   ' + *nv_state.io_filenames_p, capture=capture
  nv_help_print, capture=capture
 
- nv_help_print, 'Filetype table:		' + *nv_state.ftp_detectors_filenames_p, capture=capture
+ nv_help_print, 'Filetype tables:', capture=capture
+ nv_help_print, '   ' + *nv_state.ftp_detectors_filenames_p, capture=capture
  nv_help_print, capture=capture
 
- nv_help_print, 'Instrument detector table:	' + *nv_state.ins_detectors_filenames_p, capture=capture
+ nv_help_print, 'Instrument detector tables:', capture=capture
+ nv_help_print, '   ' + *nv_state.ins_detectors_filenames_p, capture=capture
 
 end
 ;===========================================================================
+
 
 
 ;===========================================================================
 ; nv_help_descend
 ;
 ;===========================================================================
-pro nv_help_descend, dp0, indent, string, index, capture=capture, print=print
+pro nv_help_descend, dp0, indent, capture=capture, print=print, $
+                                                   level=level0, max=max
+ pad = 20
+ offset = 2
+
+ if(NOT keyword_set(level0)) then level0 = 0
+ level = level0 + 1
+ if(keyword_set(max)) then if(level GT max) then return
 
  dp = dp0
  type = size(dp, /type)
+ dim = size(dp, /dim)
  n = n_elements(dp)
 
- nullval = 'null'
 
  ;----------------------------------------
- ; object: dereference and continue
+ ; Object: dereference and descend.  
  ;----------------------------------------
  if(type EQ 11) then $
   begin
    for i=0, n-1 do $
     begin
-     if(NOT obj_valid(dp[i])) then return
+     if(NOT obj_valid(dp[i])) then $
+      begin
+       nv_help_print, indent=indent, '<NullObject>', capture=capture
+       return
+      end
+
      _dp = cor_dereference(dp[i])
-     nv_help_descend, _dp, indent+1, string, i, capture=capture, print=print
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Print the object reference.
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     if(i NE 0) then $
+         nv_help_print, indent=indent-offset, str_pad(' ', pad), capture=capture, /nocrlf
+     nv_help_print, indent=indent, string(dp[i], /print), capture=capture
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Descend into the object unless it's an OMINAS object; 
+     ; in that case, only descend from the first level,
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     if((NOT cor_test(dp[i])) OR level EQ 1) then $
+       nv_help_descend, _dp, indent+offset, capture=capture, print=print, level=level, max=max
     end
+   return
   end
 
 
  ;----------------------------------------
- ; pointer: dereference and descend again
+ ; Pointer: dereference and descend 
  ;----------------------------------------
  if(type EQ 10) then $
   begin
    for i=0, n-1 do $
     begin
-     if(ptr_valid(dp[i])) then val = *dp[i] $
-     else val = 'null'
-
-     tt = size(val, /type)
-     if((tt EQ 8)) then $
+     if(NOT ptr_valid(dp[i])) then $
       begin
-       if(keyword_set(string)) then nv_help_print, string, capture=capture
-       string = ''
+       nv_help_print, indent=indent, '<NullPointer>', capture=capture
+       return
       end
-     nv_help_descend, val, indent+1, string, i, capture=capture, print=print
+
+     val = *dp[i]
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Print the pointer reference.
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     if(i NE 0) then $
+         nv_help_print, indent=indent-offset, str_pad(' ', pad), capture=capture, /nocrlf
+     nv_help_print, indent=indent, string(dp[i], /print), capture=capture
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Descend into the pointer.
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     nv_help_descend, val, indent+offset, capture=capture, print=print, level=level, max=max
     end
    return
   end
 
- ;----------------------------------------
- ; not a structure -- print value
- ;----------------------------------------
- if(type NE 8) then $
-  begin
-   null = 0
-   if(type EQ 7) then if(dp[0] EQ nullval) then null = 1
-
-   if(null) then hh = nullval $
-   else $
-    begin
-     help, dp, output=h
-     l = strlen(h) 
-     hh = strmid(h, 16, l-16)
-    end
-
-   ss = string + hh
-
-   if(keyword_set(print)) then $
-     if(n_elements(dp) LE print) then ss = [ss, string(dp, /print)]
-
-   if(defined(index)) then $
-    begin
-     nn = strtrim(index,2)
-     l = strlen(ss)
-     p = strpos(ss, '[')
-     pp = strpos(ss, ']')
-     ppp = strpos(ss, ':')
-
-     if(p[0] NE -1) then $
-      begin
-       if(nn EQ 0) then ss = strmid(ss, 0, ppp[0]+1)  + ' ' + nullval $
-       else ss = strmid(ss, 0, p[0]+1) + nn + strmid(ss, pp[0], l-pp[0])
-      end
-    end
-
-   ss = str_pad(ss, 80)
-   nv_help_print, ss, capture=capture
-   return
-  end
 
  ;--------------------------------------------
- ; structure --  record tag names and descend
+ ; Structure -- print tag names and descend
  ;--------------------------------------------
- for j=0, n-1 do $
+ if(type EQ 8) then $
   begin
-   s = dp[j]
-   tags = tag_names(s)
-   ntags = n_elements(tags)
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; GD -- just print stucture; do not descend
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(tags[ntags-1] EQ 'GD') then $
+   for j=0, n-1 do $
     begin
-     help, s.gd, out=out
-     nv_help_print, out[1:*], capture=capture
+     s = dp[j]
+     tags = tag_names(s)
+     ntags = n_elements(tags)
 
-     ntags = 0
-    end
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Print structure description
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     help, dp, out=out
+     ss = strsplit(strtrim(out[0],2), ' ', /extract)
+     nv_help_print, indent=indent, strjoin(ss[1:*], ' '), capture=capture
 
-   for i=0, ntags-1 do $
-    begin
-     name = tags[i]
-     ind = 2*indent
-     pad = 24
-     if(size(s.(i),/type) EQ 10) then $
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Print each tag name and descend, ignoring IDL object fields
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     for i=0, ntags-1 do $
       begin
-;       name = '*' + name
-help, s.(i), out=out
-pname = (strmid(out, strpos(out, '<Ptr'), 100))[0]
-name = name+pname
-       ind = ind-1
-       pad = pad + 1
-       if(ptr_valid(s.(i))) then $
+;if(tags[i] EQ 'ABSCISSA_DAP') then stop
+       if(NOT set_member(tags[i], $
+             ['IDL_OBJECT_TOP', 'IDL_OBJECT_BOTTOM', '__OBJ__'])) then $
         begin
-         np = n_elements(*s.(i))
-         tp = size(*s.(i), /type)
-         ndig = fix(alog10(np)) + 1
-         if((np GT 1) AND (tp EQ 10)) then $
-                        name = name + '[' + str_pad(' ', ndig) + ']'
+;stop
+         nv_help_print, indent=indent, str_pad(tags[i], pad), capture=capture, /nocrlf
+         nv_help_descend, s.(i), indent+offset, capture=capture, print=print, level=level, max=max
         end
       end
-
-     string = str_pad(' ', ind) + str_pad(name + ':', pad)
-
-     nv_help_descend, s.(i), indent+1, string, capture=capture, print=print
     end
+   return
   end
+
+
+ ;------------------------------------------------------------------------
+ ; other types -- print type and value, possibly with some processing
+ ;------------------------------------------------------------------------
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; print description
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ help, dp, out=out
+ ss = strsplit(strtrim(out,2), ' ', /extract)
+ ss = strjoin(ss[1:*])
+
+ if((type EQ 7) AND (dim[0] EQ 0)) then $
+                         junk = str_nnsplit(strtrim(out,2), '=', rem=ss)
+ 
+ nv_help_print, indent=indent, ss, capture=capture
+ 
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; print array values if /print and # elements less than specified value,
+ ; and not a scalar
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(print)) then $
+  if(n LE print) then $
+   if(dim[0] NE 0) then $
+    begin
+    if(type EQ 7) then ss = "'" + string(dp) + "'" $
+    else ss = string(dp, /print)
+    nv_help_print, indent=indent, transpose([ss]), capture=capture
+   end
+
 
 end
 ;===========================================================================
@@ -517,7 +542,7 @@ pro nv_help, dp, capture=capture, print=print, event=event
  ; otherwise describe the object
  ;----------------------------------------------------
 ; nv_help_sep
- if(keyword_set(dp)) then nv_help_descend, dp, 0, '', capture=capture, print=print $
+ if(keyword_set(dp)) then nv_help_descend, dp, 0, capture=capture, print=print $
  else nv_help_state, capture=capture
 
 
