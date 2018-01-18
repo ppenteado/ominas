@@ -217,41 +217,6 @@ function tycho2_get_stars, dd, filename, $
  stars.epochdec = recs.mepDE
 
  ;---------------------------------------------------------
- ; If limits are defined, remove stars that fall outside
- ; the limits. 
- ;---------------------------------------------------------
- w = strcat_radec_select([ra1, ra2]*!dpi/180d, [dec1, dec2]*!dpi/180d, $
-	                             stars.ra*!dpi/180d, stars.dec*!dpi/180d)
- if(w[0] EQ -1) then return, ''
- stars = stars[w]
-
- ;--------------------------------------------------------
- ; Apply proper motion to stars
- ; jtime = years past 2000.0
- ; rapm and decpm = degrees per year
- ;--------------------------------------------------------
- stars.ra = stars.ra + stars.rapm * jtime
- stars.dec = stars.dec + stars.decpm * jtime
-
- ;---------------------------------------------------------
- ; Work in radians now
- ;---------------------------------------------------------
- stars.ra = stars.ra * !dpi/180d
- stars.dec = stars.dec * !dpi/180d
- stars.rapm = stars.rapm * !dpi/180d
- stars.decpm = stars.decpm * !dpi/180d
-
- ;---------------------------------------------------------
- ; If desired, select only nbright brightest stars
- ;---------------------------------------------------------
- if(keyword_set(nbright)) then $
-  begin
-   mag = stars.mag
-   w = strcat_nbright(mag, nbright)
-   stars = stars[w]
-  end
-
- ;---------------------------------------------------------
  ; apply brightness thresholds
  ;---------------------------------------------------------
  if(keyword_set(faint)) then $
@@ -277,6 +242,43 @@ function tycho2_get_stars, dd, filename, $
    if(w[0] NE -1) then _stars = stars[w]
    if(NOT keyword__set(_stars)) then return, ''
    stars = _stars
+   name = name[w]
+  end
+
+ ;---------------------------------------------------------
+ ; If limits are defined, remove stars that fall outside
+ ; the limits. 
+ ;---------------------------------------------------------
+ w = strcat_radec_select([ra1, ra2]*!dpi/180d, [dec1, dec2]*!dpi/180d, $
+	                             stars.ra*!dpi/180d, stars.dec*!dpi/180d)
+ if(w[0] EQ -1) then return, ''
+ stars = stars[w]
+ name = name[w]
+
+ ;--------------------------------------------------------
+ ; Apply proper motion to stars
+ ; jtime = years past 2000.0
+ ; rapm and decpm = degrees per year
+ ;--------------------------------------------------------
+ stars.ra = stars.ra + stars.rapm * jtime
+ stars.dec = stars.dec + stars.decpm * jtime
+
+ ;---------------------------------------------------------
+ ; Work in radians now
+ ;---------------------------------------------------------
+ stars.ra = stars.ra * !dpi/180d
+ stars.dec = stars.dec * !dpi/180d
+ stars.rapm = stars.rapm * !dpi/180d
+ stars.decpm = stars.decpm * !dpi/180d
+
+ ;---------------------------------------------------------
+ ; If desired, select only nbright brightest stars
+ ;---------------------------------------------------------
+ if(keyword_set(nbright)) then $
+  begin
+   mag = stars.mag
+   w = strcat_nbright(mag, nbright)
+   stars = stars[w]
    name = name[w]
   end
 
