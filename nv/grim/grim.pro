@@ -361,6 +361,9 @@
 ;      `*curve_syncing`: 
 ;               Turns curve syncing on (1) or off(0).  Default is 0.
 ;
+;      `*activation_syncing`: 
+;               Turns activation syncing on (1) or off(0).  Default is 0.
+;
 ;      `position`:
 ;               Sets the plot position; see the POSITION grahics keyword.
 ;
@@ -1615,7 +1618,11 @@ pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers, output_wn
  else $
   begin
    stat = grim_activate_by_point(/invert, grim_data, plane, [x,y], clicks=clicks)
-   if(stat NE -1) then grim_refresh, grim_data, /noglass, /no_image $
+   if(stat NE -1) then $
+    begin
+     grim_update_activations, grim_data, plane=plane
+     grim_refresh, grim_data, /noglass, /no_image
+    end $
    else $
     begin
      tvpan, wnum=input_wnum, /noplot, edge=3, $
@@ -1626,6 +1633,7 @@ pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers, output_wn
     end
   end 
  grim_set_mode, grim_data
+
 
 end
 ;=============================================================================
@@ -2985,18 +2993,21 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Dump               \*grim_menu_plane_dump_event', $
            '0\Coregister         \grim_menu_plane_coregister_event', $
            '0\Coadd              \grim_menu_plane_coadd_event', $
-           '0\Syncing            [xxx]\*grim_menu_plane_toggle_plane_syncing_event', $
+           '0\Sync Planes        [xxx]\*grim_menu_plane_toggle_plane_syncing_event', $
            '0\Highlight          [xxx]\*grim_menu_plane_highlight_event', $
            '0\------------------------\+*grim_menu_delim_event', $ 
            '0\Copy Tie Points     \*grim_menu_plane_copy_tiepoints_event', $
 ;           '0\Propagate Tie Points\*grim_menu_plane_propagate_tiepoints_event', $
-           '0\Tie Point Syncing  [xxx]\*grim_menu_plane_toggle_tiepoint_syncing_event', $
+           '0\Sync Tie Points    [xxx]\*grim_menu_plane_toggle_tiepoint_syncing_event', $
            '0\Clear Tie Points    \*grim_menu_plane_clear_tiepoints_event', $
            '0\------------------------\+*grim_menu_delim_event', $ 
            '0\Copy Curves        \*grim_menu_plane_copy_curves_event', $
 ;           '0\Propagate Curves    \*grim_menu_plane_propagate_curves_event', $
-           '0\Curves Syncing     [xxx]\*grim_menu_plane_toggle_curve_syncing_event', $
+           '0\Sync Curves        [xxx]\*grim_menu_plane_toggle_curve_syncing_event', $
            '0\Clear Curves        \*grim_menu_plane_clear_curves_event', $
+           '0\------------------------\+*grim_menu_delim_event', $ 
+;           '0\Copy Activations        \*grim_menu_plane_copy_activations_event', $
+           '0\Sync Activations   [xxx]\*grim_menu_plane_toggle_activation_syncing_event', $
            '0\------------------------\+*grim_menu_delim_event', $ 
            '0\Copy Mask          \*grim_menu_plane_copy_mask_event', $
            '0\Clear Mask         \*grim_menu_plane_clear_mask_event', $
@@ -3095,7 +3106,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Clear active           \*grim_menu_clear_active_event', $ 
            '0\Activate all           \*grim_menu_activate_all_event', $ 
            '0\Deactivate all         \*grim_menu_deactivate_all_event', $ 
-           '0\Invert activations     \*grim_menu_invert_event', $ 
+           '0\Invert Activations     \*grim_menu_invert_event', $ 
            '0\-------------------------\+*grim_menu_delim_event', $ 
            '0\Overlay Settings       \+*grim_menu_points_settings_event', $
            '2\<null>               \+*grim_menu_delim_event']
@@ -3956,7 +3967,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, $
         lgt_trs=lgt_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_xd=assoc_xd, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
-	curve_syncing=curve_syncing, slave_overlays=slave_overlays, $
+	curve_syncing=curve_syncing, activation_syncing=activation_syncing, slave_overlays=slave_overlays, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
 	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, $
 	render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
@@ -3988,7 +3999,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
-        plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, $
+        plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, activation_syncing=activation_syncing, $
 	visibility=visibility, channel=channel, render_numbra=render_numbra, render_sampling=render_sampling, $
 	render_minimum=render_minimum, slave_overlays=slave_overlays, rgb=rgb, $
 	delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
@@ -4389,6 +4400,8 @@ if(NOT defined(render_auto)) then render_auto = 0
                    grim_set_toggle_flag, grim_data, 'TIEPOINT_SYNCING', 1
  if(keyword_set(curve_syncing)) then $
                    grim_set_toggle_flag, grim_data, 'CURVE_SYNCING', 1
+ if(keyword_set(activation_syncing)) then $
+                   grim_set_toggle_flag, grim_data, 'ACTIVATION_SYNCING', 1
  if(keyword_set(highlght)) then $
                    grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', 1
 
@@ -4429,6 +4442,9 @@ if(NOT defined(render_auto)) then render_auto = 0
    grim_update_menu_toggle, grim_data, $
          'grim_menu_plane_toggle_curve_syncing_event', $
           grim_get_toggle_flag(grim_data, 'CURVE_SYNCING')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_toggle_activation_syncing_event', $
+          grim_get_toggle_flag(grim_data, 'ACTIVATION_SYNCING')
    grim_update_menu_toggle, grim_data, $
          'grim_menu_plane_highlight_event', $
           grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
