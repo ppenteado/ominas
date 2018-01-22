@@ -25,6 +25,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT: 
+;	pointer:	If set, the notes pointer is returned.
 ;
 ;  OUTPUT: NONE
 ;
@@ -42,10 +43,12 @@
 ;	
 ;-
 ;=============================================================================
-function cor_notes, crd, noevent=noevent
+function cor_notes, crd, noevent=noevent, pointer=pointer
 @core.include
  nv_notify, crd, type = 1, noevent=noevent
  _crd = cor_dereference(crd)
+
+ if(keyword_set(pointer)) then return, _crd.notes_p
  return, *_crd.notes_p
 end
 ;===========================================================================

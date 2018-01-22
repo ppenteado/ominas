@@ -2041,10 +2041,10 @@ pro grim_notes_event, event
 
 
  ;---------------------------------------------------------
- ; open header editor
+ ; open notes editor
  ;---------------------------------------------------------
  grim_set_primary, grim_data.base
- grim_edit_notes, grim_data, plane=plane
+ grim_edit_dd_notes, grim_data, plane=plane
 
 
 end
@@ -4050,6 +4050,7 @@ if(NOT defined(render_auto)) then render_auto = 0
  cursor_modes = grim_create_cursor_mode('smooth', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('plane', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('drag', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('notes', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('target', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('navigate', mode_args, cursor_modes)
 
