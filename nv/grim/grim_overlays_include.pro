@@ -1526,10 +1526,12 @@ pro grim_rm_indexed_array_by_flabel, grim_data, plane, ptdp, _flabel
  w = nwhere(flabels, flabel)
  if(w[0] EQ -1) then return 
 
-
+;;;print, '-----------------------'
+;;;print, flabel
+;;;print, flabels
  nv_free, (*ptdp)[w]
  *ptdp = rm_list_item(*ptdp, w, only=obj_new(), /scalar)
-
+;;;print, cor_udata(*ptdp, 'GRIM_FULL_INDEXED_ARRAY_LABEL')
 
  
 end
@@ -1560,7 +1562,6 @@ pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all, flabel=flab
      *ptdp = rm_list_item(*ptdp, ii, only=obj_new(), /scalar)
     end
   end
-
 
  grim_set_plane, grim_data, plane, pn=plane.pn
  grim_set_data, grim_data, grim_data.base
@@ -2021,7 +2022,6 @@ pro grim_push_indexed_array, grim_data, ptd, name, flabel=flabel
  ntops = n_elements(tops)
 
  full_name = name+'_SYNCING'
-if(keyword_set(flabel)) then print, flabel
 
  ;------------------------------------------------------
  ; project/remove arrays in other planes and windows
@@ -2035,6 +2035,7 @@ if(keyword_set(flabel)) then print, flabel
     begin
      _ptdp = grim_get_indexed_array(_planes[ii], name)
 
+;;;print, ii
      if(keyword_set(flabel)) then $
            grim_rm_indexed_array_by_flabel, _grim_data, _planes[ii], _ptdp, flabel $
      else if((tops[i] NE top) OR (_planes[ii].pn NE plane.pn)) then $
@@ -2378,6 +2379,7 @@ pro grim_activate_overlay, grim_data, plane, ptd, xds=xds, pptd=pptd, $
     end
   end
 
+ grim_update_activations, grim_data, plane=plane
 
  ;-----------------------------------
  ; contact activation callbacks
