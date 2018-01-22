@@ -336,24 +336,54 @@ end
 
 
 ;=============================================================================
+; grim_notes_callback
+;
+;=============================================================================
+pro grim_notes_callback, id, dd
+
+ widget_control, id, get_value = text
+ cor_set_notes, dd, text
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_edit_notes
 ;
 ;=============================================================================
-pro grim_edit_notes, grim_data, plane=plane
+function grim_edit_notes, xd, base=base
 
- widget_control, grim_data.draw, /hourglass
+ text = 0
 
- if(NOT widget_info(grim_data.notes_text, /valid)) then $
+ if(NOT widget_info(base, /valid)) then $
   begin
-   grim_data.notes_text = $
-          textedit(*plane.notes_p, base=base, /editable, resource='grim_notes')
-   grim_data.notes_base = base
-   grim_set_data, grim_data
-   grim_refresh, grim_data, /no_image, /no_objects
+   class = cor_class(xd)
+   title = 'NOTES: ' + class
+   if(class EQ 'POINT') then title = title + '(' + pnt_desc(xd) + ')'
+   title = title + '; ' + cor_name(xd)
+   text = $
+     textedit(cor_notes(xd), base=base, resource='grim_notes', $
+                  title=title, callback='grim_notes_callback', data=xd)
   end $
- else widget_control, grim_data.notes_base, /map
+ else widget_control, base, /map
 
-; hide button
+ return, text
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_edit_dd_notes
+;
+;=============================================================================
+pro grim_edit_dd_notes, grim_data, plane=plane
+
+ base = grim_data.notes_base
+ grim_data.notes_text = grim_edit_notes(plane.dd, base=base)
+ grim_data.notes_base = base
 
 end
 ;=============================================================================
@@ -5287,8 +5317,8 @@ pro grim_menu_notes_event, event
 
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
- grim_edit_notes, grim_data, plane=plane
-
+ 
+ grim_edit_dd_notes, grim_data, plane=plane
 end
 ;=============================================================================
 

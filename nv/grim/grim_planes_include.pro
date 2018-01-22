@@ -704,7 +704,6 @@ gd		:	ptr_new(0), $	; Generic descriptor
 		tiepoint_ptdp	: 	ptr_new(obj_new()), $
 		curve_ptdp	: 	ptr_new(obj_new()), $
 		user_ptd_tlp	:	ptr_new(), $	
-		notes_p		:	ptr_new(''), $
 
 	;-----------------
 	; stretch
