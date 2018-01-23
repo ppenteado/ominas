@@ -565,7 +565,7 @@ end
 ;=============================================================================
 function pnt_read_3, filename, visible=visible, $
          name=name, desc=desc, flags=flags, points=p, vectors=v, $
-         comment=comment, version=version, data=data, tags=tags
+         comment=comment, version=version, data=data, tags=tags, notes=notes
 
  
  openr, unit, filename, /get_lun
@@ -720,6 +720,7 @@ function pnt_read_3, filename, visible=visible, $
      line = psrpnt_get_next(unit, 'notes:', stop=':', stat=stat)
      if(stat EQ 0) then $
       begin
+       notes = ''
        while(NOT eof(unit)) do $
         begin
          readf, unit, line
@@ -753,7 +754,7 @@ end
 ;=============================================================================
 function pnt_read, filename, bin=bin, $
          name=name, desc=desc, flags=flags, points=points, vectors=vectors, $
-         comment=comment, data=data, tags=tags
+         comment=comment, data=data, tags=tags, notes=notes
 @pnt_include.pro
 
  openr, unit, filename, /get_lun
@@ -799,7 +800,7 @@ function pnt_read, filename, bin=bin, $
          comment=comment, version=version, data=data, tags=tags)
   3: ptd = pnt_read_3(filename, visible=visible, $
          name=name, desc=desc, flags=flags, points=points, vectors=vectors, $
-         comment=comment, version=version, data=data, tags=tags)
+         comment=comment, version=version, data=data, tags=tags, notes=notes)
   else: nv_message, 'Invalid protocol.'
  endcase
 

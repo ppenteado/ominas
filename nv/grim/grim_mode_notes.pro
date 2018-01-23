@@ -2,7 +2,7 @@
 ; grim_mode_notes_bitmap
 ;
 ;=============================================================================
-function grim_mode_notes_bitmap
+function _grim_mode_notes_bitmap
 
  return, [                               $
 		[255B, 255B],			$
@@ -20,6 +20,37 @@ function grim_mode_notes_bitmap
 		[217B, 255B],			$
 		[225B, 255B],			$
 		[241B, 255B],			$
+		[255B, 255B]			$
+                ]
+ 
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_mode_notes_bitmap
+;
+;=============================================================================
+function grim_mode_notes_bitmap
+
+ return, [                               $
+		[255B, 255B],			$
+		[255B, 255B],			$
+		[095B, 245B],			$
+		[015B, 240B],			$
+		[239B, 247B],			$
+		[047B, 245B],			$
+		[239B, 247B],			$
+		[175B, 244B],			$
+		[239B, 247B],			$
+		[175B, 246B],			$
+		[239B, 247B],			$
+		[047B, 244B],			$
+		[239B, 247B],			$
+		[015B, 240B],			$
+		[255B, 255B],			$
 		[255B, 255B]			$
                 ]
  
@@ -63,6 +94,7 @@ pro grim_mode_notes_mouse_event, event, data
    if(NOT keyword_set(ptd)) then return
    xd = ptd
   end
+ if(NOT keyword_set(xd)) then return
 
  base = cor_udata(xd, 'GRIM_NOTES_BASE')
  text = grim_edit_notes(xd, base=base)
