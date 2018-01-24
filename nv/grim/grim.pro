@@ -393,13 +393,15 @@
 ;               List of initial overlays to compute on startup.  Each element
 ;               is of the form::
 ;
-;                          type[:name1,name2,...]
+;                          type[:name1,name2,...][/key1=val1/key2=val2/...]
 ;
 ;               where 'type' is one of {limb, terminator, center,
 ;               star, ring, planet_grid, array, station, shadow, reflection}
-;               and the names identify the name of the desired object.  Note 
-;               that GRIM will load more objects than named if required by 
-;               another startup overlay.  For example::
+;               and the names identify the name of the desired object.  The 
+;               keys and vals correspond to fields in the overlay structure 
+;               and may be used to override the defaults.  Note that GRIM will 
+;               load more objects than named if required by another startup 
+;               overlay.  For example::
 ;
 ;                        overlays='ring:a_ring'
 ;
@@ -437,6 +439,14 @@
 ;                        overlays=['terminator:MOON', $
 ;                                  'shadow:MOON'
 ;                                  'planet_grid:EARTH,MOON']
+;
+;		To override an overlay parameters, use:
+;
+;                        overlays=['limb:color=white']
+;                        overlays=['limb:jupiter/color=white/psym=1']
+;                        etc.
+;
+;                  
 ;
 ;
 ;      `*delay_overlays`:
@@ -589,7 +599,7 @@
 ;                       overlays associated with a given descriptor, or all
 ;                       stars.  Active overlays appear in the colors selected
 ;                       in the 'Overlay Settings' menu selection.  Inactive
-;                       overlays appear in cyan.  A descriptor is active
+;                       overlays appear in gray.  A descriptor is active
 ;                       whenever any of its overlays are active.
 ;
 ;                  Zoom:The zoom button puts GRIM in a zoom cursor mode, wherein
@@ -2946,27 +2956,27 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Open As RGB          \*grim_menu_open_as_rgb_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Detached Header    \+*grim_menu_file_save_detached_header_event', $
-           '0\Save All Detached Headers\+*grim_menu_file_save_all_detached_headers_event', $
+           '0\Save Detached Headers; All Planes\+*grim_menu_file_save_all_detached_headers_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save User Points    \*grim_menu_file_save_user_ptd_event', $
-           '0\Save All User Points\*grim_menu_file_save_all_user_ptd_event', $
+           '0\Save User Points; All Planes\*grim_menu_file_save_all_user_ptd_event', $
            '0\Load User Points    \*grim_menu_file_load_user_ptd_event', $
-           '0\Load All User Points\*grim_menu_file_load_all_user_ptd_event', $
+           '0\Load User Points; All Planes\*grim_menu_file_load_all_user_ptd_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Tie Points     \*grim_menu_file_save_tie_ptd_event', $
-           '0\Save All Tie Points \*grim_menu_file_save_all_tie_ptd_event', $
+           '0\Save Tie Points; All Planes \*grim_menu_file_save_all_tie_ptd_event', $
            '0\Load Tie Points     \*grim_menu_file_load_tie_ptd_event', $
-           '0\Load All Tie Points \*grim_menu_file_load_all_tie_ptd_event', $
+           '0\Load Tie Points; All Planes \*grim_menu_file_load_all_tie_ptd_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Curves         \*grim_menu_file_save_curves_event', $
-           '0\Save All Curves     \*grim_menu_file_save_all_curves_event', $
+           '0\Save Curves; All Planes     \*grim_menu_file_save_all_curves_event', $
            '0\Load Curves         \*grim_menu_file_load_curves_event', $
-           '0\Load All Curves     \*grim_menu_file_load_all_curves_event', $
+           '0\Load Curves; All Planes     \*grim_menu_file_load_all_curves_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Mask           \*grim_menu_file_save_mask_event', $
-           '0\Save All Masks      \*grim_menu_file_save_all_masks_event', $
+           '0\Save Masks; All Planes      \*grim_menu_file_save_all_masks_event', $
            '0\Load Mask           \*grim_menu_file_load_mask_event', $
-           '0\Load All Masks      \*grim_menu_file_load_all_masks_event', $
+           '0\Load Masks; All Planes      \*grim_menu_file_load_all_masks_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Postscript     \+*grim_menu_file_save_ps_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
@@ -3651,7 +3661,7 @@ pro grim_initial_framing, grim_data, frame, delay_overlays=delay_overlays
 
  for i=0, n_elements(planes)-1 do $
   begin
-   name = grim_parse_overlay(frame[0], obj_name)
+   name = grim_parse_overlay(planes[i], frame[0], obj_name)
    if(name EQ '1') then name = ''
    ptd = grim_ptd(planes[i], type=name)
    if(NOT keyword_set(ptd)) then return
@@ -3740,7 +3750,7 @@ pro grim_initial_overlays, grim_data, plane=plane, _overlays, exclude=exclude, $
      if(keyword_set(overlays)) then $
       for i=0, n_elements(overlays)-1 do $
        begin
-        name = grim_parse_overlay(overlays[i], obj_name)
+        name = grim_parse_overlay(planes[j], overlays[i], obj_name)
         grim_print, grim_data, 'Plane ' + strtrim(j,1) + ': ' + name
         grim_overlay, grim_data, name, plane=planes[j], obj_name=obj_name, temp=temp, ptd=_ptd
         if(grim_data.activate) then grim_activate_all, grim_data, planes[j]
