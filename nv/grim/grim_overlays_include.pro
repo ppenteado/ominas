@@ -397,8 +397,6 @@ pro grim_draw_user_overlays, grim_data, plane, inactive_color, override_color=ov
    if(keyword_set(active_user_ptd)) then $
            grim_draw_user_points, grim_data, plane, active_tags, xmap=xmap, $
                                                      override_color=override_color
-
-
    if(keyword_set(inactive_user_ptd)) then $
        grim_draw_user_points, grim_data, plane, inactive_tags, inactive_color, $
                                            xmap=xmap, override_color=override_color
@@ -562,7 +560,7 @@ pro grim_draw, grim_data, planes=planes, $
   ; standard overlay points
   ;--------------------------------
   if(NOT keyword_set(nopoints)) then $
-          grim_draw_standard_overlays, grim_data, plane, 'cyan', $
+          grim_draw_standard_overlays, grim_data, plane, 'gray', $
                          update=update, mlab=mlab, override_color=override_color
 
    ;--------------------------------

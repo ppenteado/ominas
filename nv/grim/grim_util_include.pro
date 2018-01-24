@@ -467,10 +467,62 @@ end
 ;=============================================================================
 ; grim_parse_overlay
 ;
+;  fn:name1/field1=value1,name2/field2=value2/field3=value3,...
+;
+;=============================================================================
+function grim_parse_overlay, plane, overlay, names, struct=struct
+
+ names = ''
+
+ ;---------------------------------------------------------
+ ; get overlay function
+ ;---------------------------------------------------------
+ s = str_split(overlay, ':')
+ fn = s[0]
+ if(n_elements(s) EQ 1) then return, fn
+
+ ;---------------------------------------------------------
+ ; get overlay names and parameters
+ ;---------------------------------------------------------
+ items = strupcase(str_nsplit(s[1], '/'))
+ p = strpos(items, '=')
+ w = where(p EQ -1, complement=ww)
+ if(w[0] NE -1) then names = items[w]
+ if(ww[0] NE -1) then parm = items[ww]
+
+ ;---------------------------------------------------------
+ ; assign parameters
+ ;---------------------------------------------------------
+ if(keyword_set(parm)) then $
+  begin
+   overlays = *plane.overlays_p
+   tags = tag_names(overlays)
+
+   w = where(overlays.name EQ fn)
+   if(w[0] NE -1) then $
+   for i=0, n_elements(parm)-1 do $
+    begin
+     s = str_split(parm[i], '=')
+     key = s[0] & val = s[1]
+     ww = where(tags EQ strupcase(key))
+     if(ww[0] NE -1) then overlays[w].(ww) = match_type(overlays[w].(ww), val)
+    end
+   *plane.overlays_p = overlays
+  end
+
+ return, fn
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_parse_overlay
+;
 ;  fn:name1,name2,...
 ;
 ;=============================================================================
-function grim_parse_overlay, overlay, names
+function __grim_parse_overlay, plane, overlay, names
 
  names = ''
 
