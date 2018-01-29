@@ -786,6 +786,7 @@ function pnt_read, filename, bin=bin, $
  ;---------------------------------------------------------------------
  ; parse file according to protocol
  ;---------------------------------------------------------------------
+ nv_message, verb=0.1, 'Reading ' + filename
  case protocol of
   0: begin
       ptd = pnt_read_0(filename, visible=visible, $
