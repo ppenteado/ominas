@@ -66,10 +66,10 @@ end
 
 
 ;=============================================================================
-; grim_update_active_xds
+; grim_update_activations
 ;
 ;=============================================================================
-pro grim_update_active_xds, grim_data, plane=plane
+pro grim_update_activations, grim_data, plane=plane, no_sync=no_sync
 
  if(NOT keyword_set(plane)) then plane = grim_get_plane(grim_data)
 
@@ -105,6 +105,13 @@ pro grim_update_active_xds, grim_data, plane=plane
       if(w[0] NE -1) then grim_activate_xd, plane, assoc_xd[w]
      end
    end
+
+ ;--------------------------------------------------------------
+ ; copy activations
+ ;--------------------------------------------------------------
+ if(NOT keyword_set(no_sync)) then $
+   if(grim_get_toggle_flag(grim_data, 'ACTIVATION_SYNCING')) then $
+                                 grim_copy_activations, grim_data, plane=plane
 
 end
 ;=============================================================================
@@ -390,8 +397,6 @@ pro grim_draw_user_overlays, grim_data, plane, inactive_color, override_color=ov
    if(keyword_set(active_user_ptd)) then $
            grim_draw_user_points, grim_data, plane, active_tags, xmap=xmap, $
                                                      override_color=override_color
-
-
    if(keyword_set(inactive_user_ptd)) then $
        grim_draw_user_points, grim_data, plane, inactive_tags, inactive_color, $
                                            xmap=xmap, override_color=override_color
@@ -555,7 +560,7 @@ pro grim_draw, grim_data, planes=planes, $
   ; standard overlay points
   ;--------------------------------
   if(NOT keyword_set(nopoints)) then $
-          grim_draw_standard_overlays, grim_data, plane, 'cyan', $
+          grim_draw_standard_overlays, grim_data, plane, 'gray', $
                          update=update, mlab=mlab, override_color=override_color
 
    ;--------------------------------
@@ -1357,6 +1362,7 @@ pro grim_add_indexed_array, ptdp, p, ptd=ptd, $
  ptd = pnt_create_descriptors(points=pp, $
         uname='GRIM_INDEXED_ARRAY_LABEL', $
         udata=label)
+ cor_set_udata, ptd, 'GRIM_FULL_INDEXED_ARRAY_LABEL', label
 
 
  ;------------------------------------------------------------------------
@@ -1502,10 +1508,40 @@ end
 
 
 ;=============================================================================
+; grim_rm_indexed_array_by_flabel
+;
+;=============================================================================
+pro grim_rm_indexed_array_by_flabel, grim_data, plane, ptdp, _flabel
+
+ if(NOT ptr_valid(ptdp)) then return
+ if(NOT keyword_set(*ptdp)) then return
+
+ xx = str_nnsplit(reform(_flabel), '-', rem=flabel)
+
+ _flabels = reform(cor_udata(*ptdp, 'GRIM_FULL_INDEXED_ARRAY_LABEL'))
+ xx = str_nnsplit(_flabels, '-', rem=flabels)
+
+ w = nwhere(flabels, flabel)
+ if(w[0] EQ -1) then return 
+
+;;;print, '-----------------------'
+;;;print, flabel
+;;;print, flabels
+ nv_free, (*ptdp)[w]
+ *ptdp = rm_list_item(*ptdp, w, only=obj_new(), /scalar)
+;;;print, cor_udata(*ptdp, 'GRIM_FULL_INDEXED_ARRAY_LABEL')
+
+ 
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_rm_indexed_array
 ;
 ;=============================================================================
-pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all
+pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all, flabel=flabel
 
  ptdp = grim_get_indexed_array(plane, name)
 
@@ -1519,11 +1555,11 @@ pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all
    ii = grim_select_array(grim_data, plane=plane, *ptdp, p)
    if(ii[0] NE -1) then $
     begin
+    flabel = cor_udata((*ptdp)[ii], 'GRIM_FULL_INDEXED_ARRAY_LABEL')
      nv_free, (*ptdp)[ii]
      *ptdp = rm_list_item(*ptdp, ii, only=obj_new(), /scalar)
     end
   end
-
 
  grim_set_plane, grim_data, plane, pn=plane.pn
  grim_set_data, grim_data, grim_data.base
@@ -1582,13 +1618,13 @@ end
 ; grim_rm_tiepoint
 ;
 ;=============================================================================
-pro grim_rm_tiepoint, grim_data, p, all=all, plane=plane, nosync=nosync
+pro grim_rm_tiepoint, grim_data, p, all=all, plane=plane, no_sync=no_sync
 
  if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
- grim_rm_indexed_array, grim_data, plane=plane, 'TIEPOINT', p, all=all
+ grim_rm_indexed_array, grim_data, plane=plane, 'TIEPOINT', p, all=all, flabel=flabel
 
  if(NOT keyword_set(no_sync)) then $
-                   grim_push_indexed_array, grim_data, ptd, 'TIEPOINT', /rm
+                   grim_push_indexed_array, grim_data, ptd, 'TIEPOINT', flabel=flabel
 end
 ;=============================================================================
 
@@ -1598,13 +1634,13 @@ end
 ; grim_rm_curve
 ;
 ;=============================================================================
-pro grim_rm_curve, grim_data, p, all=all, plane=plane, nosync=nosync
+pro grim_rm_curve, grim_data, p, all=all, plane=plane, no_sync=no_sync
 
  if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
- grim_rm_indexed_array, grim_data, plane=plane, 'CURVE', p, all=all
+ grim_rm_indexed_array, grim_data, plane=plane, 'CURVE', p, all=all, flabel=flabel
 
  if(NOT keyword_set(no_sync)) then $
-                grim_push_indexed_array, grim_data, ptd, 'CURVE', /rm
+                grim_push_indexed_array, grim_data, ptd, 'CURVE', flabel=flabel
 end
 ;=============================================================================
 
@@ -1928,6 +1964,7 @@ pro grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _plane, _ptdp
 @grim_block.include
 @pnt_include.pro
 
+ if(NOT keyword_set(ptd)) then return 
  if(NOT obj_valid(ptd[0])) then return 
 
  pts = pnt_points(ptd)
@@ -1953,6 +1990,7 @@ pro grim_sync_indexed_array, grim_data, plane, ptd, _grim_data, _plane, _ptdp
  label = strtrim(grim_data.grn,2) + '.' + $
                strtrim(plane.pn,2) + '.' + $
                     strtrim(cor_udata(ptd, 'GRIM_INDEXED_ARRAY_LABEL', /noevent),2)
+ cor_set_udata, ptd, 'GRIM_FULL_INDEXED_ARRAY_LABEL', label
  if(keyword_set(_pts)) then $
   begin
    grim_add_indexed_array, _ptdp, _pts, label=label
@@ -1969,7 +2007,7 @@ end
 ; grim_push_indexed_array
 ;
 ;=============================================================================
-pro grim_push_indexed_array, grim_data, ptd, name, rm=rm
+pro grim_push_indexed_array, grim_data, ptd, name, flabel=flabel
 @grim_block.include
 @pnt_include.pro
 
@@ -1983,28 +2021,32 @@ pro grim_push_indexed_array, grim_data, ptd, name, rm=rm
 
  full_name = name+'_SYNCING'
 
- ;-------------------------------------------------
- ; project arrays in other planes and windows
- ;-------------------------------------------------
+ ;------------------------------------------------------
+ ; project/remove arrays in other planes and windows
+ ;------------------------------------------------------
  for i=0, ntops-1 do $
   begin
    _grim_data = grim_get_data(tops[i])
    _planes = grim_get_plane(_grim_data, /all)
 
    for ii=0, n_elements(_planes)-1 do $
-    if((tops[i] NE top) OR (_planes[ii].pn NE plane.pn)) then $
-     begin
+    begin
+     _ptdp = grim_get_indexed_array(_planes[ii], name)
+
+;;;print, ii
+     if(keyword_set(flabel)) then $
+           grim_rm_indexed_array_by_flabel, _grim_data, _planes[ii], _ptdp, flabel $
+     else if((tops[i] NE top) OR (_planes[ii].pn NE plane.pn)) then $
+      begin
        if(grim_get_toggle_flag(_grim_data, full_name) $
                    OR grim_get_toggle_flag(grim_data, full_name)) then $
-        begin
-         _ptdp = grim_get_indexed_array(_planes[ii], name)
-         if(NOT keyword_set(rm)) then $
-   	         grim_sync_indexed_array, $
+           grim_sync_indexed_array, $
    			 grim_data, plane, ptd, _grim_data, _planes[ii], _ptdp 
-        end
+      end
      end
    if(tops[i] NE top) then grim_refresh, _grim_data, /use_pixmap
   end
+
 
  grim_data = grim_get_data(top)
 
@@ -2252,6 +2294,42 @@ end
 
 
 ;=============================================================================
+; grim_copy_activations
+;
+;=============================================================================
+pro grim_copy_activations, grim_data, plane=plane
+
+ planes = grim_get_plane(grim_data, /all)
+ ptd0 = grim_ptd(plane)
+ name0 = cor_name(ptd0)
+ active0 = cor_udata(ptd0, 'GRIM_ACTIVE_FLAG')
+
+
+ for i=0, n_elements(planes)-1 do if(planes[i].pn NE plane.pn) then $
+  begin
+   ptd = grim_ptd(planes[i])
+   if(keyword_set(ptd)) then $
+    begin
+     name = cor_name(ptd)
+     w = nwhere(name, name0, rev=w0)
+
+     if(w[0] NE -1) then for j=0, n_elements(w)-1 do $
+      begin
+       cor_set_udata, ptd[w], 'GRIM_ACTIVE_FLAG', active0[w0], /noevent
+       grim_update_activations, grim_data, plane=planes[i], /no_sync
+      end
+    end
+  end
+
+
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_activate_xd
 ;
 ;=============================================================================
@@ -2266,6 +2344,7 @@ pro grim_activate_xd, plane, xds
 
 end
 ;=============================================================================
+
 
 
 ;=============================================================================
@@ -2298,6 +2377,7 @@ pro grim_activate_overlay, grim_data, plane, ptd, xds=xds, pptd=pptd, $
     end
   end
 
+ grim_update_activations, grim_data, plane=plane
 
  ;-----------------------------------
  ; contact activation callbacks
@@ -2323,7 +2403,7 @@ pro grim_activate_all_overlays, grim_data, plane
 
  grim_activate_user_overlay, plane, grim_get_user_ptd(plane=plane)
 
- grim_update_active_xds, grim_data, plane=plane
+ grim_update_activations, grim_data, plane=plane
 end
 ;=============================================================================
 
@@ -2342,7 +2422,7 @@ pro grim_deactivate_all_overlays, grim_data, plane
 
  grim_deactivate_user_overlay, plane, grim_get_user_ptd(plane=plane)
 
- grim_update_active_xds, grim_data, plane=plane
+ grim_update_activations, grim_data, plane=plane
 end
 ;=============================================================================
 
@@ -2366,7 +2446,7 @@ pro grim_invert_active_overlays, grim_data, plane, ptd
  ;-----------------------------------------------------
  ; update object-referenced activation lists
  ;-----------------------------------------------------
- grim_update_active_xds, grim_data, plane=plane
+ grim_update_activations, grim_data, plane=plane
 
 
 end
@@ -2516,7 +2596,7 @@ d2min = 25
     end 
   end
 
- grim_update_active_xds, grim_data, plane=plane
+ grim_update_activations, grim_data, plane=plane
 
  return, -1
 end
@@ -2682,7 +2762,7 @@ pro grim_remove_by_box, grim_data, plane, cx, cy, stat=stat, user=user
     end
   end
 
- grim_update_active_xds, grim_data, plane=plane
+ grim_update_activations, grim_data, plane=plane
 end
 ;=============================================================================
 
@@ -2770,7 +2850,7 @@ d2min = 9
    if(box) then grim_activate_by_box, grim_data, plane, cx, cy, deactivate=deactivate
   end
 
- grim_update_active_xds, grim_data, plane=plane
+ grim_update_activations, grim_data, plane=plane
 end
 ;=============================================================================
 
