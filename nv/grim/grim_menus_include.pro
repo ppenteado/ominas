@@ -336,24 +336,54 @@ end
 
 
 ;=============================================================================
+; grim_notes_callback
+;
+;=============================================================================
+pro grim_notes_callback, id, dd
+
+ widget_control, id, get_value = text
+ cor_set_notes, dd, text
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_edit_notes
 ;
 ;=============================================================================
-pro grim_edit_notes, grim_data, plane=plane
+function grim_edit_notes, xd, base=base
 
- widget_control, grim_data.draw, /hourglass
+ text = 0
 
- if(NOT widget_info(grim_data.notes_text, /valid)) then $
+ if(NOT widget_info(base, /valid)) then $
   begin
-   grim_data.notes_text = $
-          textedit(*plane.notes_p, base=base, /editable, resource='grim_notes')
-   grim_data.notes_base = base
-   grim_set_data, grim_data
-   grim_refresh, grim_data, /no_image, /no_objects
+   class = cor_class(xd)
+   title = 'NOTES: ' + class
+   if(class EQ 'POINT') then title = title + '(' + pnt_desc(xd) + ')'
+   title = title + '; ' + cor_name(xd)
+   text = $
+     textedit(cor_notes(xd), base=base, resource='grim_notes', $
+                  title=title, callback='grim_notes_callback', data=xd)
   end $
- else widget_control, grim_data.notes_base, /map
+ else widget_control, base, /map
 
-; hide button
+ return, text
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_edit_dd_notes
+;
+;=============================================================================
+pro grim_edit_dd_notes, grim_data, plane=plane
+
+ base = grim_data.notes_base
+ grim_data.notes_text = grim_edit_notes(plane.dd, base=base)
+ grim_data.notes_base = base
 
 end
 ;=============================================================================
@@ -3419,6 +3449,56 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_plane_toggle_activation_syncing_event
+;
+;
+; PURPOSE:
+;	Toggles activation syncing on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 1/2018
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_toggle_activation_syncing_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_toggle_activation_syncing_help_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_toggle_activation_syncing_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+ 
+ flag = grim_get_toggle_flag(grim_data, 'ACTIVATION_SYNCING')
+ flag = 1 - flag
+
+ grim_set_toggle_flag, grim_data, 'ACTIVATION_SYNCING', flag
+ grim_update_menu_toggle, grim_data, $
+                      'grim_menu_plane_toggle_activation_syncing_event', flag
+
+; grim_sync_activations, grim_data
+; grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_plane_clear_curves_event
 ;
 ;
@@ -5237,8 +5317,8 @@ pro grim_menu_notes_event, event
 
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
- grim_edit_notes, grim_data, plane=plane
-
+ 
+ grim_edit_dd_notes, grim_data, plane=plane
 end
 ;=============================================================================
 
