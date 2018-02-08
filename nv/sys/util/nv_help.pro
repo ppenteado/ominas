@@ -110,26 +110,26 @@ pro nv_help_state, capture=capture
 @nv_block.common
 
  nv_help_print, 'Translators tables:', capture=capture
- nv_help_print, '   ' + transpose(*nv_state.translators_filenames_p), capture=capture
+ nv_help_print, '   ' + transpose([*nv_state.translators_filenames_p]), capture=capture
  nv_help_print, capture=capture
 
  if(keyword__set(*nv_state.transforms_filenames_p)) then $
   begin
    nv_help_print, 'Transforms tables:', capture=capture
-   nv_help_print, '   ' + transpose(*nv_state.transforms_filenames_p), capture=capture
+   nv_help_print, '   ' + transpose([*nv_state.transforms_filenames_p]), capture=capture
    nv_help_print, capture=capture
   end
 
  nv_help_print, 'I/O Tables:', capture=capture
- nv_help_print, '   ' + transpose(*nv_state.io_filenames_p), capture=capture
+ nv_help_print, '   ' + transpose([*nv_state.io_filenames_p]), capture=capture
  nv_help_print, capture=capture
 
  nv_help_print, 'Filetype tables:', capture=capture
- nv_help_print, '   ' + transpose(*nv_state.ftp_detectors_filenames_p), capture=capture
+ nv_help_print, '   ' + transpose([*nv_state.ftp_detectors_filenames_p]), capture=capture
  nv_help_print, capture=capture
 
  nv_help_print, 'Instrument detector tables:', capture=capture
- nv_help_print, '   ' + transpose(*nv_state.ins_detectors_filenames_p), capture=capture
+ nv_help_print, '   ' + transpose([*nv_state.ins_detectors_filenames_p]), capture=capture
 
 end
 ;===========================================================================
