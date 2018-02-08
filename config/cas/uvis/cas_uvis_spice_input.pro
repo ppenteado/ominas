@@ -110,7 +110,7 @@ pro cas_uvis_spice_parse_labels, dd, _time, $
      ;-----------------------------------
      ; exposure time
      ;-----------------------------------
-     tim=cas_uvis_spice_time(label,exposure=exp)
+     tim=cas_uvis_spice_time(dd[i],exposure=exp)
      exposure[i] = exp
 
      ;-----------------------------------
@@ -118,8 +118,8 @@ pro cas_uvis_spice_parse_labels, dd, _time, $
      ;-----------------------------------
      axisname=strsplit(pdspar(label,'AXIS_NAME'),' ,()',/extract)
      coreitems=long(strsplit(pdspar(label,'CORE_ITEMS'),' ,()',/extract))
-     size[0,i] = coreitems[where(strmatch(axisname,'*SAMPLE*',/fold_case))]
-     size[1,i] = coreitems[where(strmatch(axisname,'*LINE*',/fold_case))]
+     size[1,i] = coreitems[where(strmatch(axisname,'*SAMPLE*',/fold_case))]
+     size[0,i] = coreitems[where(strmatch(axisname,'*LINE*',/fold_case))]
 
      ;-----------------------------------
      ; filters
@@ -139,7 +139,7 @@ pro cas_uvis_spice_parse_labels, dd, _time, $
    ;-----------------------------------
    ; optic axis
    ;-----------------------------------
-   oaxis[*,i] = size[*,i]/2d
+   oaxis[*,i] = [0,20];size[*,i]/2d
   end
 
  if(NOT keyword_set(_time)) then _time = time
@@ -170,7 +170,7 @@ function cas_uvis_spice_cameras, dd, ref, pos=pos, constants=constants, $
 	'CAS_UVIS': $
 	  begin
 	   inst = -82840l ;FUV_HI
-	   scale=0.08594d0*!dpi/180d0
+	   scale=0.04297d0*!dpi/180d0
 	   
 	   orient_fn = 'cas_cmat_to_orient'
 	  end
