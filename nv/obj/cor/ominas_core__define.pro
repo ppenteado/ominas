@@ -41,6 +41,9 @@ end_keywords
  if(keyword_set(tasks)) then self.tasks_p = nv_ptr_new(tasks[*,ii]) $
  else self.tasks_p = nv_ptr_new([''])
 
+ if(keyword_set(notes)) then self.notes_p = nv_ptr_new(notes[*,ii]) $
+ else self.notes_p = nv_ptr_new([''])
+
  self.abbrev = 'COR'
  self.tag = 'CRD'
 
@@ -90,6 +93,12 @@ end
 ;		Methods: cor_user
 ;
 ;
+;	notes_p:
+;		Pointer to user notes.
+;
+;		Methods: cor_notes, cor_set_notes
+;
+;
 ;	tasks_p:
 ;		Pointer to tasks list.
 ;
@@ -123,6 +132,7 @@ pro ominas_core__define
  struct = $
     { ominas_core, inherits IDL_Object, $
 	tasks_p:	 nv_ptr_new(), $	; Pointer to task list 
+	notes_p:	 nv_ptr_new(), $	; User notes.
 	name:		 '', $			; Name of object
 	udata_tlp:	 nv_ptr_new(), $	; Pointer to user data
 	abbrev:		 '', $			; Abbreviation of descriptor class

@@ -242,21 +242,6 @@ function sao_get_stars, dd, filename, $
    nv_message, verb=0.9, '_star contains ' + string(n_elements(_star)) + ' stars'
 
    ;---------------------------------------------------------
-   ; If limits are defined, remove stars that fall outside
-   ; the limits. 
-   ;---------------------------------------------------------
-   _RA = _star[*].RA
-   byteorder, _RA, /XDRTOF
-   _DEC = _star[*].DEC
-   byteorder, _DEC, /XDRTOF
-
-   w = strcat_radec_select([_ra1, _ra2], [_dec1, _dec2], _RA, _DEC)
-   if(w[0] EQ -1) then continue 
-   _star = _star[w]
-
-   nv_message, verb=0.9, 'After RA/DEC test, _star contains' + string(n_elements(_star)) + ' stars'
-
-   ;---------------------------------------------------------
    ; select within magnitude limits
    ;---------------------------------------------------------
    if(keyword__set(faint)) then $
@@ -286,6 +271,21 @@ function sao_get_stars, dd, filename, $
       if(w[0] EQ -1) then continue
       _star = _star[w]
      end
+
+   ;---------------------------------------------------------
+   ; If limits are defined, remove stars that fall outside
+   ; the limits. 
+   ;---------------------------------------------------------
+   _RA = _star[*].RA
+   byteorder, _RA, /XDRTOF
+   _DEC = _star[*].DEC
+   byteorder, _DEC, /XDRTOF
+
+   w = strcat_radec_select([_ra1, _ra2], [_dec1, _dec2], _RA, _DEC)
+   if(w[0] EQ -1) then continue 
+   _star = _star[w]
+
+   nv_message, verb=0.9, 'After RA/DEC test, _star contains' + string(n_elements(_star)) + ' stars'
 
    ;---------------------------------------------------------
    ; Unpack the _star array
