@@ -209,7 +209,7 @@ else
      *) ans=n ;;
     esac
 fi
-for mis in  cas dawn gll vgr 
+for mis in  cas dawn gll vgr juno
 do
   if [ ! -e "$HOME/.ominas/config/ominas_env_$mis.sh" ]; then
     cp -avf config/$mis/ominas_env_$mis.sh $HOME/.ominas/config/
@@ -342,6 +342,10 @@ function ppkg()
 		"dawn")
 			kername="DAWN"
                         longname="Dawn"	;;
+                "juno")
+                        kername="JUNO"
+                        longname="Juno" ;;
+
 		*)
 	esac
 	pkins $script $kername $longname $1
@@ -981,7 +985,7 @@ if grep -q "export DFLAG=true" $setting; then
  DFLAG="true"
 fi
 
-declare -a mis=("cas" "gll" "vgr" "dawn")
+declare -a mis=("cas" "gll" "vgr" "juno")
 #declare -a Data=("Generic_kernels" "SEDR" "TYCHO2" "SAO" "GSC" "UCAC4")
 #declare -a Data=("Generic_kernels" "TYCHO2" "UCAC4" "SAO" "GSC" )
 declare -a Data=("Generic_kernels" "TYCHO2" "SAO" "MAPS" "UCAC4" "GSC" )
@@ -1079,8 +1083,10 @@ Mission Packages:
            About 833 MB as of Dec/2016
 	6) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
+        7) Juno  . . . . . . . . . . . . . . . . . ${mstatus[3]}
+           Subsetted, about 9 GB as of Feb/2018
 Data:
-        8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
+        8) NAIF Generic Kernels  . . . . . . . . . ${dstatus[0]}
            About 22 GB as of Dec/2016
         9) Tycho2 star catalog . . . . . . . . . . ${dstatus[1]}
            About 161 MB download, 665 MB unpacked
@@ -1135,10 +1141,10 @@ Mission Packages:
            About 833 MB as of Dec/2016
         6) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
-        7) Dawn  . . . . . . . . . . . . . . . . . ${mstatus[3]}
-           Subsetted, about 8 GB as of Jan/2017
+        7) Juno  . . . . . . . . . . . . . . . . . ${mstatus[3]}
+           Subsetted, about 9 GB as of Feb/2018
 Data:
-        8) NAIF Generic Kernels  . . . . . . . . .  ${dstatus[0]}
+        8) NAIF Generic Kernels  . . . . . . . . . ${dstatus[0]}
            About 22 GB as of Dec/2016
         9) Tycho2 star catalog . . . . . . . . . . ${dstatus[1]}
            About 161 MB download, 665 MB unpacked
