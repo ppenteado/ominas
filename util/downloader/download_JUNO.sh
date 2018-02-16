@@ -28,7 +28,7 @@ ts=`eval echo "~/.ominas/timestamps/"`
 
 for dir in "${dirs[@]}"
 do
- echo ${wget} "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts $@"
+ ${wget} "${baseurl}${dir}/ --localdir=${1}/$dir/ --absolute --timestamps=$ts $@"
 done
 
 #special treatment directories (spk and ck, which are large)
