@@ -1,8 +1,8 @@
 ;=============================================================================
-; grim_write_ptd
+; grim_write_ps
 ;
 ;=============================================================================
-pro grim_write_ptd, grim_data, filename
+pro grim_write_ps, grim_data, filename
 
  xoff = 0.5
  yoff = 2.0
@@ -1633,12 +1633,14 @@ pro grim_menu_file_load_tie_ptd_event, event
  ; get filename
  ;------------------------------------------------------
  fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIEPOINT'), $
-                                         title='Select filename to load', /one)
+                                         title='Select filename to load')
+ if(NOT keyword_set(fname)) then return
 
  ;------------------------------------------------------
- ; write data
+ ; read data
  ;------------------------------------------------------
- grim_read_indexed_arrays, grim_data, plane, 'TIEPOINT', fname=fname
+ for i=0, n_elements(fname)-1 do $
+       grim_read_indexed_arrays, grim_data, plane, 'TIEPOINT', fname=fname[i]
  grim_refresh, grim_data
 
 end
@@ -1824,12 +1826,14 @@ pro grim_menu_file_load_curves_event, event
  ; get filename
  ;------------------------------------------------------
  fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'CURVE'), $
-                                            title='Select filename to load', /one)
+                                                 title='Select filename to load')
+ if(NOT keyword_set(fname)) then return
 
  ;------------------------------------------------------
- ; write data
+ ; read data
  ;------------------------------------------------------
- grim_read_indexed_arrays, grim_data, plane, 'CURVE', fname=fname
+ for i=0, n_elements(fname)-1 do $
+       grim_read_indexed_arrays, grim_data, plane, 'CURVE', fname=fname[i]
  grim_refresh, grim_data
 
 end
@@ -2089,14 +2093,16 @@ end
 ;----------------------------------------------------------------------------
 pro grim_menu_file_save_ps_event, event
 
-
-
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
 
  ;------------------------------------------------------
  ; prompt for filename 
  ;------------------------------------------------------
+ catch, error
+ if(error NE 0) then ans = dialog_message('Invalid response', /info)
+ set_plot, 'X'
+
  filename = pickfiles(get_path=get_path, $
                          title='Select filename for saving', path=path, /one)
  if(NOT keyword__set(filename)) then return
@@ -2105,7 +2111,61 @@ pro grim_menu_file_save_ps_event, event
  ; write postscript file
  ;------------------------------------------------------
  widget_control, grim_data.draw, /hourglass
- grim_write_ptd, grim_data, filename[0]
+ grim_write_ps, grim_data, filename[0]
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_file_save_png_event
+;
+;
+; PURPOSE:
+;	Saves the current view as a PNG image. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2/2018
+;	
+;-
+;=============================================================================
+pro grim_menu_file_save_png_help_event, event
+ text = ''
+ nv_help, 'grim_menu_file_save_ptd_help_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_file_save_png_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_set_primary, grim_data.base
+
+ ;------------------------------------------------------
+ ; prompt for filename 
+ ;------------------------------------------------------
+ catch, error
+ if(error NE 0) then ans = dialog_message('Invalid response', /info)
+
+ filename = pickfiles(get_path=get_path, $
+               options=['', 'Color', 'B/W'], selected_option=selected_option, $
+                              title='Select filename for saving', path=path, /one)
+ if(NOT keyword__set(filename)) then return
+
+ ;------------------------------------------------------
+ ; write postscript file
+ ;------------------------------------------------------
+ widget_control, grim_data.draw, /hourglass
+
+ if(selected_option EQ 'B/W') then mono = 1
+ png_image, filename[0], mono=mono
 
 end
 ;=============================================================================

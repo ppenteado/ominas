@@ -2979,6 +2979,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '0\Load Masks; All Planes      \*grim_menu_file_load_all_masks_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Save Postscript     \+*grim_menu_file_save_ps_event', $
+           '0\Save PNG            \+*grim_menu_file_save_png_event', $
            '0\--------------------\+*grim_menu_delim_event', $ 
            '0\Repeat              \+*grim_menu_repeat_event', $
            '0\Undo                \+*grim_menu_undo_event', $
