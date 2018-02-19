@@ -1084,7 +1084,7 @@ Mission Packages:
 	6) Voyager . . . . . . . . . . . . . . . . ${mstatus[2]}
            About 163 MB as of Dec/2016
         7) Juno  . . . . . . . . . . . . . . . . . ${mstatus[3]}
-           Subsetted, about 9 GB as of Feb/2018
+           Subsetted, about 22 GB as of Feb/2018
 Data:
         8) NAIF Generic Kernels  . . . . . . . . . ${dstatus[0]}
            About 22 GB as of Dec/2016

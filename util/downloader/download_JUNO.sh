@@ -6,7 +6,7 @@
 OWNDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 wget=${OWNDIR}/pp_wget
 echo "This script will download a subset of kernels from the PDS Juno archive ("\
-"http://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/. As of February/2018, this adds to 8.8GB."
+"http://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/. As of February/2018, this adds to 22GB."
 
 if [ -z ${ominas_auto+x} ] || [ ${ominas_auto} == 0 ] ; then
   read -rp "Continue?[y] " ans
@@ -33,7 +33,7 @@ done
 
 #special treatment directories (spk and ck, which are large)
 echo "Downloading spks"
-${wget} "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts --xpattern=spk_(ref|pre|nob)_.+\.bsp"
+  ${wget} "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts --xpattern=spk_(ref|pre|nob)_.+\.bsp"
 
 echo "Downloading cks"
 
