@@ -327,6 +327,7 @@ pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap, $
 
        if(keyword_set(user_fn_shade[j])) then $
                 shade = call_function(user_fn_shade[j], user_ptd[j], grim_data, plane)
+;if(tags[i] EQ 'CURTAIN_BAGHDAD') then stop
 
 
        ;- - - - - - - - - - - - - - - - - - - -
@@ -1248,64 +1249,6 @@ end
 
 
 ;=============================================================================
-; grim_write_indexed_arrays
-;
-;=============================================================================
-pro grim_write_indexed_arrays, grim_data, plane, name, fname=fname
-
- if(NOT keyword_set(fname)) then $
-                fname = grim_indexed_array_fname(grim_data, plane, name)
-
- tie_ptd = *plane.tiepoint_ptdp
- ptdp = grim_get_indexed_array(plane, name)
- ptd = *ptdp
-
- w = where(pnt_valid(ptd))
- if(w[0] NE -1) then pnt_write, fname, ptd[w] $
- else $
-  begin
-   ff = findfile(fname)
-   if(keyword_set(ff)) then file_delete, fname, /quiet
-  end
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_read_indexed_arrays
-;
-;=============================================================================
-pro grim_read_indexed_arrays, grim_data, plane, name, fname=fname
-
- if(NOT keyword_set(fname)) then $
-                fname = grim_indexed_array_fname(grim_data, plane, name)
-
- ff = (findfile(fname))[0]
- if(keyword_set(ff)) then ptd = pnt_read(ff) $
- else ptd = 0
-
- ptdp = grim_get_indexed_array(plane, name)
-
- w = where(pnt_valid(ptd))
- if(w[0] EQ -1) then return
- n = n_elements(w)
-
- for i=0, n-1 do $
-  begin
-   label = cor_udata(ptd[i], 'GRIM_INDEXED_ARRAY_LABEL', /noevent)
-   if(NOT keyword_set(label)) then label = strtrim(i,2)
-   grim_add_indexed_array, ptdp, pnt_points(ptd[i]), label=label
-  end
-
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_unique_array_label
 ;
 ;=============================================================================
@@ -1371,6 +1314,63 @@ pro grim_add_indexed_array, ptdp, p, ptd=ptd, $
  *ptdp = append_array(*ptdp, ptd)
 
  if(defined(flags)) then pnt_set_flags, ptd, flags
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_write_indexed_arrays
+;
+;=============================================================================
+pro grim_write_indexed_arrays, grim_data, plane, name, fname=fname
+
+ if(NOT keyword_set(fname)) then $
+                fname = grim_indexed_array_fname(grim_data, plane, name)
+
+ tie_ptd = *plane.tiepoint_ptdp
+ ptdp = grim_get_indexed_array(plane, name)
+ ptd = *ptdp
+
+ w = where(pnt_valid(ptd))
+ if(w[0] NE -1) then pnt_write, fname, ptd[w] $
+ else $
+  begin
+   ff = findfile(fname)
+   if(keyword_set(ff)) then file_delete, fname, /quiet
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_read_indexed_arrays
+;
+;=============================================================================
+pro grim_read_indexed_arrays, grim_data, plane, name, fname=fname
+
+ if(NOT keyword_set(fname)) then $
+                fname = grim_indexed_array_fname(grim_data, plane, name)
+
+ ff = (findfile(fname))[0]
+ if(keyword_set(ff)) then ptd = pnt_read(ff) $
+ else ptd = 0
+
+ ptdp = grim_get_indexed_array(plane, name)
+
+ w = where(pnt_valid(ptd))
+ if(w[0] EQ -1) then return
+ n = n_elements(w)
+
+ for i=0, n-1 do $
+  begin
+   cor_set_udata, ptd[i], 'GRIM_INDEXED_ARRAY_LABEL', -1
+   grim_add_indexed_array, ptdp, pnt_points(ptd[i]);, label=label
+  end
+
 
 end
 ;=============================================================================
@@ -1516,20 +1516,16 @@ pro grim_rm_indexed_array_by_flabel, grim_data, plane, ptdp, _flabel
  if(NOT ptr_valid(ptdp)) then return
  if(NOT keyword_set(*ptdp)) then return
 
- xx = str_nnsplit(reform(_flabel), '-', rem=flabel)
+ xx = str_nnsplit(reform(strtrim(_flabel,2)), '-', rem=flabel)
 
- _flabels = reform(cor_udata(*ptdp, 'GRIM_FULL_INDEXED_ARRAY_LABEL'))
+ _flabels = strtrim(reform(cor_udata(*ptdp, 'GRIM_FULL_INDEXED_ARRAY_LABEL')),2)
  xx = str_nnsplit(_flabels, '-', rem=flabels)
 
  w = nwhere(flabels, flabel)
  if(w[0] EQ -1) then return 
 
-;;;print, '-----------------------'
-;;;print, flabel
-;;;print, flabels
  nv_free, (*ptdp)[w]
  *ptdp = rm_list_item(*ptdp, w, only=obj_new(), /scalar)
-;;;print, cor_udata(*ptdp, 'GRIM_FULL_INDEXED_ARRAY_LABEL')
 
  
 end
