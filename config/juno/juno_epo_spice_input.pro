@@ -77,8 +77,9 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
     ;;  ref (must be J2000)
     ref='J2000'
     ;;  et
-    cspice_str2et,h['START_TIME'],et
-    et=et+60./1000
+    cspice_str2et,h['START_TIME'],et0
+    ;et0=et0+60./1000
+    idelay=double((strsplit(h['INTERFRAME_DELAY'],/extract))[0])
     ;;  tol (must be 0)
     tol=0
     ;;  pos_only (should be 0)
@@ -92,8 +93,9 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
     
     for iframe=0,nframes-1 do begin
     
-      picn=_dd.name.Substring(31,34)
+      picn=iframe;_dd.name.Substring(31,34)
       clri=picn MOD 3
+      et=et0+(iframe/3)*idelay
     
       ;; instc is the spice number for the filter
       ;; inst=-61500l, 501=blu, 502=grn, 503=red
@@ -166,7 +168,7 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
         ; need to define a function to handle this... (from documentation)
         fn_psf=cam_fn_psf, $
         ; cam filters in h['FILTERS']
-        filters=replicate(h['FILTER_NAME',0],cam_nfilters()), $
+        filters=replicate(h['FILTER_NAME',clri],cam_nfilters()), $
         ; cam_size pixels in x y (from documentation)
         ; "1640×1214 7.4-micron pixels (1600×1200 photoactive)" tho .PNG files have 1648 width. Strips have 128 height.
         size=[1648,128], $
@@ -180,7 +182,7 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
       bod_set_pos, cd, bod_pos(cd)*1000d   ; km --> m
       bod_set_vel, cd, bod_vel(cd)*1000d   ; km/s --> m/s
   
-      ret.add,cd
+      ret.add,cd[0]
   
     endfor ;loop in frames
   endfor ;loop in dd
