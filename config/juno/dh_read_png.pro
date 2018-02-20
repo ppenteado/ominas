@@ -20,6 +20,13 @@ label[0]='' ;dummy key to make detectors that assume label is a string array hap
 type=size(da,/type)
 nax=size(da,/n_dimensions)
 dim=size(da,/dimensions)
+if idl_validname(label['INSTRUMENT_NAME'],/convert_all) eq 'JUNO_EPO_CAMERA' then begin
+  nframes=label['LINES']/128
+  da=reform(da,[dim[0],128,nframes],/overwrite)
+  nax=size(da,/n_dimensions)
+  dim=size(da,/dimensions)
+endif
+
 return,da
 end
 ;=============================================================================
