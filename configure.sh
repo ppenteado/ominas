@@ -1195,7 +1195,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto=1
-    ans="1 2 3 4 5 6 8 9 10 11 12"
+    ans="1 2 3 4 5 6 7 8 9 10 11 12"
   else
     ans="all"
   fi
@@ -1222,7 +1222,7 @@ AUTOP
   fi
   if [ ${ansy} == "y" ] || [ ${ansy} == "Y" ]; then
     ominas_auto_u=1
-    ans="3 4 5 6 8 9 10 11 12 13 2 1"
+    ans="3 4 5 6 7 8 9 10 11 12 13 2 1"
   else
     ans="uall"
   fi
@@ -1251,7 +1251,7 @@ do
   fi
 done
 if [ "${ominas_nodel}" == "2" ]; then
-  ans="4 5 6 8 9 10 11 12 13"
+  ans="4 5 6 7 8 9 10 11 12 13"
 fi
 for num in $ans
 do
