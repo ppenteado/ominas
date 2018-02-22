@@ -1582,7 +1582,7 @@ end
 pro grim_scroll, grim_data, plane, clicks, modifiers
 
  ;- - - - - - - - - - - - - - - - -
- ; No modifier -- change mde 
+ ; No modifier -- change mode 
  ;- - - - - - - - - - - - - - - - -
  if(NOT keyword_set(modifiers)) then $
   begin
@@ -1597,7 +1597,7 @@ pro grim_scroll, grim_data, plane, clicks, modifiers
   begin
    dm = double(clicks)
    factor = 2d^dm
-   offset = grim_zoom_to_cursor(factor, /relative, zoom=zoom)
+   offset = grim_zoom_to_cursor(grim_data, factor, /relative, zoom=zoom)
    grim_refresh, grim_data, zoom=zoom, offset=offset
   end 
 

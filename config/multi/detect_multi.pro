@@ -49,7 +49,8 @@ function detect_multi, dd
  else $
   begin
    openr, unit, filename, /get_lun, error=error
-   if(error NE 0) then nv_message, /anonymous, !err_string
+;   if(error NE 0) then nv_message, /anonymous, !err_string
+   if(error NE 0) then return, 0
    record = assoc(unit, bytarr(11,/nozero))
    s = string(record[0])
    close, unit

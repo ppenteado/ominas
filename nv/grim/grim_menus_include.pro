@@ -637,9 +637,9 @@ end
 ; grim_zoom_to_cursor
 ;
 ;=============================================================================
-function grim_zoom_to_cursor, zz, relative=relative, zoom=zoom
+function grim_zoom_to_cursor, grim_data, zz, relative=relative, zoom=zoom
 
- tvim, get_info=tvd, /silent
+ tvim, grim_data.wnum, get_info=tvd, /silent
  if(keyword_set(relative)) then zoom = tvd.zoom*zz $
  else zoom = zz
 
@@ -3878,7 +3878,7 @@ end
 pro grim_menu_view_zoom_double_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(2d, /relative, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 2d, /relative, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -3914,7 +3914,7 @@ end
 pro grim_menu_view_zoom_half_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(0.5d, /relative, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 0.5d, /relative, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -3950,7 +3950,7 @@ end
 pro grim_menu_view_zoom_1_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -3986,7 +3986,7 @@ end
 pro grim_menu_view_zoom_2_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(2d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 2d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4022,7 +4022,7 @@ end
 pro grim_menu_view_zoom_3_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(3d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 3d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4058,7 +4058,7 @@ end
 pro grim_menu_view_zoom_4_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(4d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 4d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4094,7 +4094,7 @@ end
 pro grim_menu_view_zoom_5_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(5d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 5d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4130,7 +4130,7 @@ end
 pro grim_menu_view_zoom_6_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(6d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 6d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4166,7 +4166,7 @@ end
 pro grim_menu_view_zoom_7_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(7d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 7d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4202,7 +4202,7 @@ end
 pro grim_menu_view_zoom_8_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(8d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 8d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4238,7 +4238,7 @@ end
 pro grim_menu_view_zoom_9_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(9d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 9d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4274,7 +4274,7 @@ end
 pro grim_menu_view_zoom_10_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(10d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 10d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4310,7 +4310,7 @@ end
 pro grim_menu_view_zoom_1_2_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/2d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/2d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4346,7 +4346,7 @@ end
 pro grim_menu_view_zoom_1_3_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/3d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/3d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4382,7 +4382,7 @@ end
 pro grim_menu_view_zoom_1_4_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/4d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/4d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4418,7 +4418,7 @@ end
 pro grim_menu_view_zoom_1_5_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/5d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/5d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4454,7 +4454,7 @@ end
 pro grim_menu_view_zoom_1_5_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/5d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/5d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4490,7 +4490,7 @@ end
 pro grim_menu_view_zoom_1_6_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/6d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/6d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4526,7 +4526,7 @@ end
 pro grim_menu_view_zoom_1_7_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/7d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/7d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4562,7 +4562,7 @@ end
 pro grim_menu_view_zoom_1_8_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/8d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/8d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4598,7 +4598,7 @@ end
 pro grim_menu_view_zoom_1_9_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/9d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/9d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4634,7 +4634,7 @@ end
 pro grim_menu_view_zoom_1_10_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/10d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/10d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
