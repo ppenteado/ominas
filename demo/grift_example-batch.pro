@@ -35,7 +35,7 @@
 ;
 ;-
 ;-------------------------------------------------------------------------
-grim, './data/N1350122987_2.IMG', $
+grim, './daa/N1350122987_2.IMG', $
 ;                  light=['SUN', 'JUPITER'], $
                   over=['center','limb','terminator','ring'], nhist=5
 

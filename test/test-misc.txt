@@ -20,6 +20,8 @@ grim '$PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png' \
 grim ~/casIss/1800/N1800458665_1.IMG.cal str_trs=faint=12 -auto_stretch over=stars
 
 
+dd = dat_read('http://www.test.org')
+
 
 
 ;pd = pg_get_planets(bod_time=100)

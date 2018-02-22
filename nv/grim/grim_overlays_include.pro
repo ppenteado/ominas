@@ -1365,12 +1365,7 @@ pro grim_read_indexed_arrays, grim_data, plane, name, fname=fname
  if(w[0] EQ -1) then return
  n = n_elements(w)
 
- for i=0, n-1 do $
-  begin
-   cor_set_udata, ptd[i], 'GRIM_INDEXED_ARRAY_LABEL', -1
-   grim_add_indexed_array, ptdp, pnt_points(ptd[i]);, label=label
-  end
-
+ for i=0, n-1 do grim_add_indexed_array, ptdp, pnt_points(ptd[i])
 
 end
 ;=============================================================================

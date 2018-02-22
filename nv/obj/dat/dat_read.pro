@@ -144,6 +144,7 @@ function drd_read, filename, data, header, $
  ; read detached header
  ;---------------------------------
  dh_fname = dh_fname(filename)
+stop
  dh = dh_read(dh_fname)
  if(NOT dh_validate(dh)) then $
                   nv_message, /con, 'Invalid detached header: ' + dh_fname
@@ -175,9 +176,21 @@ function drd_read, filename, data, header, $
  else filetype = _filetype
  if(keyword_set(action)) then if(action EQ 'IGNORE') then return, 0
 
+
+ ;---------------------------------------------------------------------------
+ ; If unable to detect filetype, check to see whether the file even exists.
+ ; We wait until this point because the file may not be a disk file.  In that
+ ; case, a filetype detector would have identified it and the corresponding
+ ; I/O function will know what to do with it.  In either case, issue a warning
+ ; and return.
+ ;---------------------------------------------------------------------------
  if(filetype EQ '') then $
   begin
-   nv_message, 'Unable to detect filetype.', /con
+   filename = dat_filename(dd)
+   ff = file_search(filename)
+   if(NOT keyword_set(ff)) then $
+                nv_message, 'Not found: ' + filename + '.', /con $
+   else nv_message, 'Unable to detect filetype.', /con
    return, 0
   end
 
@@ -400,7 +413,9 @@ function dat_read, filespec, data, header, $
 
 
  ;--------------------------------------------------------------------------
- ; expand file specifications and try extensions; return if no files found
+ ; Expand file specifications and try extensions.  If no files found,
+ ; contiue with given filespec, as it may refer to something other than a 
+ ; disk file.
  ;--------------------------------------------------------------------------
  nspec = n_elements(filespec)
  next = n_elements(extensions)
@@ -413,11 +428,12 @@ function dat_read, filespec, data, header, $
    filenames = append_array(filenames, file)
   end
 
- if(NOT keyword_set(filenames)) then  $
-  begin
-   nv_message, /con, 'No files.'
-   return, !null
-  end
+; if(NOT keyword_set(filenames)) then  $
+;  begin
+;   nv_message, /con, 'No files.'
+;   return, !null
+;  end
+ if(NOT keyword_set(filenames)) then filenames = filespec
 
 
 
@@ -446,6 +462,8 @@ function dat_read, filespec, data, header, $
                         if(keyword_set(ddi)) then dat_load_data, ddi, data=data
    dd = append_array(dd, ddi)
   end
+ if(NOT keyword_set(dd)) then return, !null
+
 
  count = n_elements(dd)
  return, dd

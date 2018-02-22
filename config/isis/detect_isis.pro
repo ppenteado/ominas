@@ -50,7 +50,8 @@ function detect_isis, dd
  else $
   begin
    openr, unit, filename, /get_lun, error=error
-   if(error NE 0) then nv_message, !err_string
+;   if(error NE 0) then nv_message, !err_string
+   if(error NE 0) then return, 0
    record = assoc(unit, bytarr(4,/nozero))
    s = string(record[0])
    close, unit
