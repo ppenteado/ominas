@@ -17,7 +17,6 @@ function detect_pds4, dd
  ; check first few bytes for xml file
  ;===============================================
  openr, unit, filename, /get_lun, error=error
-; if(error NE 0) then nv_message, /anonymous, !err_string
  if(error NE 0) then return, 0
 
  record = assoc(unit, bytarr(13,/nozero))
