@@ -3,8 +3,48 @@
 ;
 ;=============================================================================
 function dhfn_filename, raw_filename
-; need to replace non-compliant characters with compliant characters
- return, raw_filename
+
+ filename = raw_filename
+
+ ;------------------------------------------------------------------------
+ ; this set should be pretty portable...
+ ;------------------------------------------------------------------------
+ valid = [byte('/'), $
+          byte('\'), $
+          byte('-'), $
+          byte('_'), $
+          byte('.'), $
+          bindgen(byte('z') - byte('a') + 1) + (byte('a'))[0], $
+          bindgen(byte('Z') - byte('A') + 1) + (byte('A'))[0], $
+          bindgen(byte('9') - byte('0') + 1) + (byte('0'))[0] $
+          ]
+
+ ;------------------------------------------------------------------------
+ ; If directory delimeters are present, check whether they refer to an
+ ; existing directory.  If not, then remove them from the list of
+ ; valid characters.
+ ;------------------------------------------------------------------------
+ dir = file_dirname(filename)
+ dir = file_search(dir, /test_dir)
+ if(NOT keyword_set(dir)) then valid = valid[2:*] $
+ else filename = file_basename(filename)
+
+ ;------------------------------------------------------------------------
+ ; replace any invalid characters with '_'
+ ;------------------------------------------------------------------------
+ bname = byte(filename)
+
+ nvalid = n_elements(valid)
+ n = n_elements(bname)
+
+ diff = (valid # make_array(n, val=1)) $
+          - (bname ## make_array(nvalid, val=1))
+
+ bdiff = diff NE 0
+ w = where(total(bdiff,1) EQ nvalid)
+
+ if(w[0] NE -1) then bname[w] = byte('_')
+ return, dir + path_sep() + string(bname)
 end
 ;=============================================================================
 
