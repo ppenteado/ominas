@@ -144,7 +144,6 @@ function drd_read, filename, data, header, $
  ; read detached header
  ;---------------------------------
  dh_fname = dh_fname(filename)
-stop
  dh = dh_read(dh_fname)
  if(NOT dh_validate(dh)) then $
                   nv_message, /con, 'Invalid detached header: ' + dh_fname
