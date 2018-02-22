@@ -33,10 +33,10 @@ done
 
 #special treatment directories (spk and ck, which are large)
 echo "Downloading spks"
-  ${wget} "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts --xpattern=spk_(ref|pre|nob)_.+\.bsp"
+  ${wget} "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts --xpattern=spk_((ref)|(pre)|(nob)|(merge))_.+\.bsp"
 
 echo "Downloading cks"
 
-${wget} "${baseurl}ck/ --localdir=${1}/ck/ $@ --absolute --timestamps=$ts --pattern=juno_sc_rec_.+\.bc"
+${wget} "${baseurl}ck/ --localdir=${1}/ck/ $@ --absolute --timestamps=$ts --pattern=juno_sc_.+\.bc --xpattern=(juno_([^_]+)_((nom)|(prl)|(prs)|(raw)|(tst))_.+\.bc)|(test)"
 
 
