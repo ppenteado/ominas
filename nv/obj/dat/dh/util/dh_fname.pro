@@ -1,4 +1,16 @@
 ;=============================================================================
+; dhfn_filename
+;
+;=============================================================================
+function dhfn_filename, raw_filename
+; need to replace non-compliant characters with compliant characters
+ return, raw_filename
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; dhfn_findfile
 ;
 ;=============================================================================
@@ -26,44 +38,45 @@ end
 ; dh_fname.pro
 ;
 ;=============================================================================
-function dh_fname, filename, write=write
+function dh_fname, raw_filename, write=write
+
+ ;----------------------------------------------------
+ ; check for DH_PATH
+ ;----------------------------------------------------
+ path = getenv('DH_PATH')
+ if(NOT keyword_set(path)) then path = './'
 
 
  ;---------------------------------------------------------------
- ; if writing, always put dh in same path as file, and replace
- ; any extension with '.dh'
+ ; create a file-system-compliant basename
  ;---------------------------------------------------------------
- if(keyword_set(write)) then return, ext_rep(filename, 'dh')
-
-
-
- ;------------------------------------------------------------------
- ; Otherwise try various possibilities to find an existing dh file...
- ;------------------------------------------------------------------
+ filename = dhfn_filename(raw_filename)
+ split_filename, filename, dir, full_name
  split_filename, filename, dir, name, ext
  if(NOT keyword_set(dir[0])) then dir = './'
 
+
+ ;----------------------------------------------------------------------------
+ ; if creating a new dh, put it in the desired path, and add '.dh'
+ ;----------------------------------------------------------------------------
+ if(keyword_set(write)) then return, path + '/' + full_name + '.dh'
+
+
+ ;------------------------------------------------------------------
+ ; Otherwise try various possibilities to find an existing dh file
+ ;------------------------------------------------------------------
+
  ;- - - - - - - - - - - - - - - - - - -
- ; try same directory as the image
+ ; try same directory as the data file
  ;- - - - - - - - - - - - - - - - - - -
  ff = dhfn_findfile(dir, name, ext)
  if(keyword_set(ff)) then return, ff
 
  ;- - - - - - - - - - - - - - - - - - -
- ; try current directory
+ ; try path directory
  ;- - - - - - - - - - - - - - - - - - -
- ff = dhfn_findfile('./', name, ext)
+ ff = dhfn_findfile(path, name, ext)
  if(keyword_set(ff)) then return, ff
-
- ;- - - - - - - - - - - - - - - - - - -
- ; try DH_PATH
- ;- - - - - - - - - - - - - - - - - - -
- path = getenv('DH_PATH')
- if(keyword_set(path)) then $
-  begin
-   ff = dhfn_findfile(path, name, ext)
-   if(keyword_set(ff)) then return, ff
-  end
 
 
  return, ''

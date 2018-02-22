@@ -180,8 +180,7 @@ function drd_read, filename, data, header, $
  ; If unable to detect filetype, check to see whether the file even exists.
  ; We wait until this point because the file may not be a disk file.  In that
  ; case, a filetype detector would have identified it and the corresponding
- ; I/O function will know what to do with it.  In either case, issue a warning
- ; and return.
+ ; I/O function will know what to do with it.  
  ;---------------------------------------------------------------------------
  if(filetype EQ '') then $
   begin
@@ -426,12 +425,6 @@ function dat_read, filespec, data, header, $
    if(NOT keyword_set(file)) then file = file_search(filespec[i])
    filenames = append_array(filenames, file)
   end
-
-; if(NOT keyword_set(filenames)) then  $
-;  begin
-;   nv_message, /con, 'No files.'
-;   return, !null
-;  end
  if(NOT keyword_set(filenames)) then filenames = filespec
 
 
