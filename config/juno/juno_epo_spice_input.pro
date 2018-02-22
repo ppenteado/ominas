@@ -111,6 +111,25 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
     
       status=spice_get_cameras( sc, inst, plat, ref, et, tol, $
         cam_pos, cam_vel, cmat, cam_avel, pos_only, obs=obs)
+        
+      cspice_getfov,instc,4,shape,frame,bsight,bounds
+      cspice_sincpt,'ellipsoid','JUPITER',et,'IAU_JUPITER','NONE', $
+                     '-61000',frame,bsight,spoint,trgepc,srfvec,found
+      print,'found:',found
+      
+      cspice_reclat, spoint,  radius, lon, lat
+      print,lon*180/!dpi,lat*180d0/!dpi
+      cspice_spkezr,'JUPITER', et,frame,'NONE','-61000',starg,ltime
+      print,cspice_vsep(bsight,starg[0:2])*180d0/!dpi
+      print,'norm:',norm(starg)
+      
+      cspice_pxform,frame,'J2000',et,rotatem
+      ang=cspice_vsep([0d0,0d0,1d0],bsight)
+      cspice_ucrss,[0d0,0d0,1d0],bsight,iaxis
+      cspice_axisar,iaxis,-ang,r
+      cmat=transpose(r##transpose(rotatem))
+      
+      
     
       ;------------------------------
       ; create a camera descriptor
@@ -154,16 +173,16 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
         ; cam_time is et in middle of exposure (may need to add half exposure time) h['EXPOSURETIME']
         time=et+expos/2, $
         ; can leave undefined, defaults to 'cam_focal_to_image_linear' (from documentation)
-        fn_focal_to_image='cam_focal_to_image_juno_epo', $
+        ;fn_focal_to_image='cam_focal_to_image_juno_epo', $
         ; can leave undefined, defaults to 'cam_image_to_focal_linear' (from documentation)
-        fn_image_to_focal='cam_image_to_focal_juno_epo', $
+        ;fn_image_to_focal='cam_image_to_focal_juno_epo', $
         ; additional info for two functions above (leave this empty for now)
         ;;fi_data=cam_fi_data, $
         ;;fi_data=[nv_ptr_new(XX), nv_ptr_new(YY), nv_ptr_new(PP), nv_ptr_new(QQ)], $
         ;   fi_data=nv_ptr_new(fi_data), $
         ; cam_scale is angular size of one pixel, x y, in radians (from documentation, 0.6727 in mrad)
         ;0.0006729d0,0.0006736
-        scale=[0.0006727d0,0.0006727d0], $
+        scale=[0.0006727d0,0.0006727d0]*1d0, $
         ; point spread function, see seciton 4.3 https://link.springer.com/article/10.1007/s11214-014-0079-x
         ; need to define a function to handle this... (from documentation)
         fn_psf=cam_fn_psf, $
