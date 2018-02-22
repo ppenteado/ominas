@@ -16,5 +16,5 @@
   detect_png			PNG		read
   detect_ext			EXT		read
   detect_w10n_pds		W10N_PDS	read
-
+  detect_png                    PNG             read
 

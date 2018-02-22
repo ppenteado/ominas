@@ -14,3 +14,5 @@
   MASK		dh_read_mask		dh_write_mask		-
   ISIS          dh_read_isis            pp_write_isis           -
   PDS_W10N      dh_read_pds_w10n        -                       -
+  PNG           dh_read_png             ominas_write_png        -
+
