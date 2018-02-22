@@ -115,19 +115,25 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
       cspice_getfov,instc,4,shape,frame,bsight,bounds
       cspice_sincpt,'ellipsoid','JUPITER',et,'IAU_JUPITER','NONE', $
                      '-61000',frame,bsight,spoint,trgepc,srfvec,found
-      print,'found:',found
+      print,'found:',found,iframe
       
       cspice_reclat, spoint,  radius, lon, lat
       print,lon*180/!dpi,lat*180d0/!dpi
       cspice_spkezr,'JUPITER', et,frame,'NONE','-61000',starg,ltime
       print,cspice_vsep(bsight,starg[0:2])*180d0/!dpi
       print,'norm:',norm(starg)
-      
+      cspice_sincpt,'ellipsoid','JUPITER',et,'IAU_JUPITER','NONE', $
+        '-61000',frame,starg[0:2],spoint,trgepc,srfvec,found
+      cspice_reclat, spoint,  radius, lon, lat
+      print,'ss:',lon*180/!dpi,lat*180d0/!dpi
+          
       cspice_pxform,frame,'J2000',et,rotatem
       ang=cspice_vsep([0d0,0d0,1d0],bsight)
       cspice_ucrss,[0d0,0d0,1d0],bsight,iaxis
       cspice_axisar,iaxis,-ang,r
-      cmat=transpose(r##transpose(rotatem))
+      ;cmat=transpose(r##transpose(rotatem))
+      cmat=-r##transpose(rotatem)
+      cmat[*,2]*=-1
       
       
     
