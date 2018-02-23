@@ -8,6 +8,6 @@ function juno_epo_transform, ima, label, force=force
  
 
  
- return, imb
+ return, ima
 end
 ;==============================================================================
