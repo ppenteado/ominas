@@ -13,7 +13,7 @@ function juno_epo_cmat_to_orient, cmat
 
  orient[0,*,*] =  -cmat[*,0,*] ;x
  orient[1,*,*] =  cmat[*,2,*] ;y 
- orient[2,*,*] =  cmat[*,1,*] ;z
+ orient[2,*,*] =  -cmat[*,1,*] ;z
 
 
 
