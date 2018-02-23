@@ -113,25 +113,28 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
         cam_pos, cam_vel, cmat, cam_avel, pos_only, obs=obs)
         
       cspice_getfov,instc,4,shape,frame,bsight,bounds
+      
+      ;do some geometry checks
       cspice_sincpt,'ellipsoid','JUPITER',et,'IAU_JUPITER','NONE', $
                      '-61000',frame,bsight,spoint,trgepc,srfvec,found
-      print,'found:',found,iframe
-      
+      nv_message,verb=1.1,'junocam frame:'+strtrim(iframe,2)
       cspice_reclat, spoint,  radius, lon, lat
-      print,lon*180/!dpi,lat*180d0/!dpi
+      if found then nv_message,verb=1.1,'boresight surface intercept:'+string(lon*180/!dpi,lat*180d0/!dpi)
       cspice_spkezr,'JUPITER', et,frame,'NONE','-61000',starg,ltime
-      print,cspice_vsep(bsight,starg[0:2])*180d0/!dpi
-      print,'norm:',norm(starg)
+      nv_message,verb=1.1,string(cspice_vsep(bsight,starg[0:2])*180d0/!dpi)
+      nv_message,verb=1.1,'target-observer distance:'+strtrim(norm(starg),2)
       cspice_sincpt,'ellipsoid','JUPITER',et,'IAU_JUPITER','NONE', $
         '-61000',frame,starg[0:2],spoint,trgepc,srfvec,found
       cspice_reclat, spoint,  radius, lon, lat
-      print,'ss:',lon*180/!dpi,lat*180d0/!dpi
-          
+      nv_message,verb=1.1,'subspacecraft point:'+string(lon*180/!dpi,lat*180d0/!dpi)
+      
+      ;build cmat for instrument (there is no frame associated with each band,
+      ;so cannot just use spice_get_cameras
+      ;need to create cmat from junocam frame and bsight vector
       cspice_pxform,frame,'J2000',et,rotatem
       ang=cspice_vsep([0d0,0d0,1d0],bsight)
       cspice_ucrss,[0d0,0d0,1d0],bsight,iaxis
       cspice_axisar,iaxis,-ang,r
-      ;cmat=transpose(r##transpose(rotatem))
       cmat=-r##transpose(rotatem)
       cmat[*,2]*=-1
       
@@ -188,7 +191,7 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
         ;   fi_data=nv_ptr_new(fi_data), $
         ; cam_scale is angular size of one pixel, x y, in radians (from documentation, 0.6727 in mrad)
         ;0.0006729d0,0.0006736
-        scale=[0.0006727d0,0.0006727d0]*1d0, $
+        scale=[0.0006727d0,0.0006727d0], $
         ; point spread function, see seciton 4.3 https://link.springer.com/article/10.1007/s11214-014-0079-x
         ; need to define a function to handle this... (from documentation)
         fn_psf=cam_fn_psf, $
