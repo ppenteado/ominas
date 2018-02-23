@@ -56,12 +56,15 @@ function vgr_iss_vicar_header_info, dd
  ;-----------------------------------
  ; filters
  ;-----------------------------------
- meta.filters = vicgetpar(label, 'FILTER_NAME')
+ meta.filters = vicar_vgrkey(label, 'FILT')
 
  ;-----------------------------------
  ; target
  ;-----------------------------------
- meta.target = strupcase(vicgetpar(label, 'TARGET_NAME'))
+ lab05 = vicgetpar(label, 'LAB05')
+ meta.target = strtrim(strmid(lab05, 35, 11), 2)
+ if (meta.target EQ 'ENCELADU') then meta.target = 'ENCELADUS'
+ if (meta.target.EQ 'S-RINGS') then meta.target = 'SATURN'
 
  ;-----------------------------------
  ; time
