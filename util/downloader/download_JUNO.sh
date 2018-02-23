@@ -33,7 +33,7 @@ done
 
 #special treatment directories (spk and ck, which are large)
 echo "Downloading spks"
-  ${wget} "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts --xpattern=spk_((ref)|(pre)|(nob)|(merge))_.+\.bsp"
+  ${wget} "${baseurl}spk/ --localdir=${1}/spk/ $@ --absolute --timestamps=$ts --xpattern=spk_((nob)|(merge))_.+\.bsp"
 
 echo "Downloading cks"
 
