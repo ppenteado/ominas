@@ -115,10 +115,12 @@ new_range=map_image_to_map(md,[[xrange[0],yrange[0]],[xrange[1],yrange[1]]])
 nmap_xsize=xrange[1]-xrange[0]
 nmap_ysize=yrange[1]-yrange[0]
 
-mfac=40
+;resolution scale factor for the high res maps
+mfac=90
 nmap_xsize*=mfac
 nmap_ysize*=mfac
 
+;build the high res map descriptor
 nmd=pg_get_maps(/over ,gbx = pd[0], name='JUPITER',projection='RECTANGULAR',$
   fn_data=ptr_new(),size=[nmap_xsize,nmap_ysize],origin=[nmap_xsize,nmap_ysize]/2,$
   center=mean(new_range,dimension=2),$
@@ -132,22 +134,23 @@ nmos=dblarr(nmap_xsize,nmap_ysize,3) ;array for the 3 mosaics
 ncounts=lonarr(nmap_xsize,nmap_ysize,3)
 ddm=objarr(3)
 
-for icol=0,2 do begin
+for icol=0,2 do begin ;loop on filters
   ;array for the count of how many pixels were added
   ncount=lonarr(nmap_xsize,nmap_ysize)
   ;array where each frame is added to
   nmost=dblarr(nmap_xsize,nmap_ysize)
-  for i=icol,nframes-1,3 do begin
-    ;if np[i] eq 0 then continue ;skip frames that do not have the planet in them
-    mtmp=pg_map(ddn[i],md=nmd,gd=gd[i],map=maptmp)
-    ndd_map[i]=mtmp
+  for i=icol,nframes-1,3 do begin ;loop on frames for each filter
+    t=systime(/seconds)
+    mtmp=pg_map(ddn[i],md=nmd,gd=gd[i],map=maptmp);,pc_xsize=nmap_xsize,pc_ysize=nmap_ysize)
+    ;keep frame, to use in pg_mosaic - will use a lot more time and memory
+    ;ndd_map[i]=mtmp ; comment this line to turn off pg_mosaic algorithm
     ;add frame to mosaic, so it can be thrown away
     w=where(maptmp ne maptmp[0]*0,c)
     if c then begin
       ncount[w]+=1
       nmost[w]+=maptmp[w]
     endif
-    print,'mapped ',i,c
+    print,'mapped frame ',strtrim(i,2),' with ',strtrim(c,2),' pixels in ',strtrim(systime(/seconds)-t,2),' s'
   endfor
   w=where(ncount,c)
   if c then nmost[w]/=ncount[w]
@@ -155,18 +158,16 @@ for icol=0,2 do begin
   ncounts[*,*,2-icol]=ncount
   
   ;make the mosaic for the channel
-  ddm[icol]=pg_mosaic(ndd_map[icol:-1:3],mosaic=mosaic,comb='mean')
+  if obj_valid(ndd_map[icol]) then ddm[icol]=pg_mosaic(ndd_map[icol:-1:3],mosaic=mosaic,comb='mean')
   ;throw away the maps for this band
   ndd_map[icol:-1:3]=obj_new()
 endfor
 
-
-;;make the mosaic for each channel
-
  
-ddim=dblarr(nmap_xsize,nmap_ysize,3)
 ;make the RGB image - note that band order for the camera is BGR
-for i=0,2 do ddim[*,*,2-i]=dat_data(ddm[i])
-
+if obj_valid(ddm[0])  then begin
+  ddim=dblarr(nmap_xsize,nmap_ysize,3)
+  for i=0,2 do ddim[*,*,2-i]=dat_data(ddm[i])
+endif
 
 end
