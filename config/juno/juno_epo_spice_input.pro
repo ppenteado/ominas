@@ -78,7 +78,7 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
     ref='J2000'
     ;;  et
     cspice_str2et,h['START_TIME'],et0
-    ;et0=et0+60./1000
+    et0=et0+60d-3 ;exposure starts 60ms after the time indicated in the header
     idelay=double((strsplit(h['INTERFRAME_DELAY'],/extract))[0])
     ;;  tol (must be 0)
     tol=0
@@ -199,10 +199,11 @@ function juno_epo_spice_cameras, dd, ref, pos=pos, constants=constants, $
         filters=replicate(h['FILTER_NAME',clri],cam_nfilters()), $
         ; cam_size pixels in x y (from documentation)
         ; "1640×1214 7.4-micron pixels (1600×1200 photoactive)" tho .PNG files have 1648 width. Strips have 128 height.
-        size=[1648,128], $
+        size=[1608,128], $ ;without overscan
         ; cam_oaxis pixel x y value for optical axis (from documentation)
         ;oaxis=cam_oaxis)
-        oaxis=[cx,cy])
+        ;oaxis=[cx,cy])
+        oaxis=[802.5d0,63.5d0]) ;center of each band's field of view
       ;   oaxis=[824,72])
       cam_set_fi_data, cd, fi_data, /noevent
       bod_set_orient, cd, call_function('juno_epo_cmat_to_orient', bod_orient(cd))

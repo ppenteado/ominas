@@ -25,6 +25,7 @@ if idl_validname(label['INSTRUMENT_NAME'],/convert_all) eq 'JUNO_EPO_CAMERA' the
   da=reverse(da,2,/overwrite)
   da=reform(da,[dim[0],128,nframes],/overwrite)
   ;da=reverse(da,2,/overwrite)
+  da=da[23:1630,*,*] ;cut off overscan
   nax=size(da,/n_dimensions)
   dim=size(da,/dimensions)
 endif
