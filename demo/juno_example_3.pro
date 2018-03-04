@@ -153,7 +153,7 @@ for icol=0,2 do begin ;loop on filters
     roi=where(maprd)
     mtmp=pg_map(ddn[i],md=nmd,gd=gd[i],map=maptmp,roi=roi,pc_xsize=nmap_xsize,pc_ysize=nmap_ysize)
     ;keep frame, to use in pg_mosaic - will use a lot more time and memory
-    (ndd_maps[icol]).add,mtmp ; comment this line to turn off pg_mosaic algorithm
+    ;(ndd_maps[icol]).add,mtmp ; comment this line to turn off pg_mosaic algorithm
     ;add frame to mosaic, so it can be thrown away
     w=where(maptmp ne maptmp[0]*0,c)
     if c then begin
@@ -170,7 +170,9 @@ for icol=0,2 do begin ;loop on filters
   ;make the mosaic for the channel
   if n_elements(ndd_maps[icol]) then ddm[icol]=pg_mosaic((ndd_maps[icol]).toarray(),mosaic=mosaic,comb='mean')
   ;throw away the maps for this band
-  ndd_maps[icol]=list()
+  ltmp=ndd_maps[icol]
+  ndd_maps[icol]=obj_new()
+  for ind=0,n_elements(ltmp)-1 do ltmp[ind]=obj_new() 
 endfor
 t01=systime(/seconds)
 print,'hi res loop done in ',strtrim(t01-t00,2),' s'
