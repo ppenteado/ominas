@@ -2,9 +2,9 @@ compile_opt idl2,logical_predicate
 
 ;read data
 ;dd=dat_read('JNCE_2017139_06C00114_V01-raw.png')
-;dd=dat_read('JNCE_2018038_11C00050_V01-raw.png')
+dd=dat_read('JNCE_2018038_11C00050_V01-raw.png')
 ;dd=dat_read('JNCE_2017033_04C00100_V01-raw.png')
-dd=dat_read('data/JNCE_2017192_07C00059_V01-raw.png')
+;dd=dat_read('data/JNCE_2017192_07C00059_V01-raw.png')
 
 ;get camera, planet, sun descriptors
 cd=pg_get_cameras(dd,/tr_nosort)
