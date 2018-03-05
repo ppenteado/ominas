@@ -1,20 +1,26 @@
 ;===========================================================================
-; vgr_iss_vicar_header_info
+; vgr_iss_w10n_pds_header_info
 ;
 ;===========================================================================
-function vgr_iss_vicar_header_info, dd
+function vgr_iss_w10n_pds_header_info, dd
 
  meta = {vgr_iss_spice_label_struct}
 
  label = dat_header(dd)
  if(NOT keyword_set(label)) then return, 0
 
+ jlabel = json_parse(label, /tostruct)
+ lab02 = jlabel.task[0].lab02
+ lab03 = jlabel.task[0].lab03
+ lab05 = jlabel.task[0].lab05
+
  sc_name = vgr_parse_inst(dat_instrument(dd), cam=name)
 
  ;-----------------------------------
  ; exposure time
  ;-----------------------------------
- meta.exposure = vicar_vgrkey(label, 'EXP') / 1000d
+ exp = strmid(lab03, strpos(lab03,' EXP ')+5, 9)
+ meta.exposure = double(exp) / 1000d
 
  ;-----------------------------------
  ; image size, scale
@@ -56,12 +62,11 @@ function vgr_iss_vicar_header_info, dd
  ;-----------------------------------
  ; filters
  ;-----------------------------------
- meta.filters = vicar_vgrkey(label, 'FILT')
+ meta.filters = strmid(lab03, strpos(lab03,' FILT ')+8, 6)
 
  ;-----------------------------------
  ; target
  ;-----------------------------------
- lab05 = vicgetpar(label, 'LAB05')
  meta.target = strtrim(strmid(lab05, 35, 11), 2)
  if (meta.target EQ 'ENCELADU') then meta.target = 'ENCELADUS'
  if (meta.target.EQ 'S-RINGS') then meta.target = 'SATURN'
@@ -70,7 +75,7 @@ function vgr_iss_vicar_header_info, dd
  ; time
  ;-----------------------------------
  meta.time = -1d100
- scet = vicar_vgrkey(label, 'SCET')
+ scet = strmid(lab02, strpos(lab02,' SCET ')+6, 15)
  p = strpos(strupcase(scet), 'UNKNOWN')
  if(p[0] EQ -1) then $
   begin

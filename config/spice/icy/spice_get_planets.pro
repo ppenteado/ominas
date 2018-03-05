@@ -24,7 +24,7 @@ function spice_get_planets, names, ref, et, $
  vel = dblarr(3,n)
  radii = dblarr(3,n)
  avel = dblarr(3,n)
- jcoef = dblarr(10,n)
+ jcoef = dblarr(128,n)
  orient = dblarr(3,3,n) & orient[diaggen(3,n)] = 1
  gm = dblarr(n)
  lora = dblarr(n)

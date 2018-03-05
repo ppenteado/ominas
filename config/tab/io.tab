@@ -13,4 +13,4 @@
   EXT		dh_read_ext		dh_write_ext		-
   MASK		dh_read_mask		dh_write_mask		-
   ISIS          dh_read_isis            pp_write_isis           -
-  PDS_W10N      dh_read_pds_w10n        -                       -
+  W10N_PDS      dh_read_w10n_pds        -                       dh_w10n_pds_par

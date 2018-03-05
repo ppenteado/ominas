@@ -63,7 +63,7 @@ pro pnt_write, filename, ptd, bin=bin, noevent=noevent, status=status
 
  nv_message, verb=0.1, 'Writing ' + filename
 
- printf, unit, 'protocol 3'
+ printf, unit, 'protocol 4'
  if(keyword_set(bin)) then printf, unit, 'binary'
 
  nptd = n_elements(_ptd)
@@ -165,7 +165,6 @@ pro pnt_write, filename, ptd, bin=bin, noevent=noevent, status=status
      tag_list_write, _ptd[i].udata_tlp, unit=unit, bin=bin
     end
 
-
    ;- - - - - - - - - - - - - - - - -
    ; point-by-point user data
    ;- - - - - - - - - - - - - - - - -
@@ -193,7 +192,9 @@ pro pnt_write, filename, ptd, bin=bin, noevent=noevent, status=status
    if(ptr_valid(_ptd[i].notes_p)) then $
     begin
      printf, unit, ' notes:'
-     printf, unit, '  ' + tr(*_ptd[i].notes_p)
+     notes = *_ptd[i].notes_p
+     if(keyword_set(notes)) then printf, unit, tr(notes)
+     printf, unit, ' __end_notes__'
     end
   end
 

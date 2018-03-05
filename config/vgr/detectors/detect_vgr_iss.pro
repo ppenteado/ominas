@@ -5,14 +5,21 @@
 function detect_vgr_iss, dd
 
  label = (dat_header(dd))[0]
-
+ file_type = dat_filetype(dd)
 
  ;---------------------------------
  ; get sublabels
  ;---------------------------------
- lab02 = vicgetpar(label, 'LAB02')
- lab03 = vicgetpar(label, 'LAB03')
- lab07 = vicgetpar(label, 'LAB07')
+ if (file_type EQ 'W10N_PDS') then begin
+    jlabel = json_parse(label, /tostruct)
+    lab02 = jlabel.task[0].lab02
+    lab03 = jlabel.task[0].lab03
+    lab07 = jlabel.task[0].lab07
+ endif else begin 
+    lab02 = vicgetpar(label, 'LAB02')
+    lab03 = vicgetpar(label, 'LAB03')
+    lab07 = vicgetpar(label, 'LAB07')
+ endelse
 
  ;---------------------------------
  ; determine which spacecraft
