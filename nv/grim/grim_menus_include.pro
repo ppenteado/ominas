@@ -1,8 +1,8 @@
 ;=============================================================================
-; grim_write_ptd
+; grim_write_ps
 ;
 ;=============================================================================
-pro grim_write_ptd, grim_data, filename
+pro grim_write_ps, grim_data, filename
 
  xoff = 0.5
  yoff = 2.0
@@ -637,9 +637,9 @@ end
 ; grim_zoom_to_cursor
 ;
 ;=============================================================================
-function grim_zoom_to_cursor, zz, relative=relative, zoom=zoom
+function grim_zoom_to_cursor, grim_data, zz, relative=relative, zoom=zoom
 
- tvim, get_info=tvd, /silent
+ tvim, grim_data.wnum, get_info=tvd, /silent
  if(keyword_set(relative)) then zoom = tvd.zoom*zz $
  else zoom = zz
 
@@ -1633,12 +1633,14 @@ pro grim_menu_file_load_tie_ptd_event, event
  ; get filename
  ;------------------------------------------------------
  fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'TIEPOINT'), $
-                                         title='Select filename to load', /one)
+                                         title='Select filename to load')
+ if(NOT keyword_set(fname)) then return
 
  ;------------------------------------------------------
- ; write data
+ ; read data
  ;------------------------------------------------------
- grim_read_indexed_arrays, grim_data, plane, 'TIEPOINT', fname=fname
+ for i=0, n_elements(fname)-1 do $
+       grim_read_indexed_arrays, grim_data, plane, 'TIEPOINT', fname=fname[i]
  grim_refresh, grim_data
 
 end
@@ -1824,12 +1826,14 @@ pro grim_menu_file_load_curves_event, event
  ; get filename
  ;------------------------------------------------------
  fname = pickfiles(default=grim_indexed_array_fname(grim_data, plane, 'CURVE'), $
-                                            title='Select filename to load', /one)
+                                                 title='Select filename to load')
+ if(NOT keyword_set(fname)) then return
 
  ;------------------------------------------------------
- ; write data
+ ; read data
  ;------------------------------------------------------
- grim_read_indexed_arrays, grim_data, plane, 'CURVE', fname=fname
+ for i=0, n_elements(fname)-1 do $
+       grim_read_indexed_arrays, grim_data, plane, 'CURVE', fname=fname[i]
  grim_refresh, grim_data
 
 end
@@ -2089,14 +2093,16 @@ end
 ;----------------------------------------------------------------------------
 pro grim_menu_file_save_ps_event, event
 
-
-
  grim_data = grim_get_data(event.top)
  grim_set_primary, grim_data.base
 
  ;------------------------------------------------------
  ; prompt for filename 
  ;------------------------------------------------------
+ catch, error
+ if(error NE 0) then ans = dialog_message('Invalid response', /info)
+ set_plot, 'X'
+
  filename = pickfiles(get_path=get_path, $
                          title='Select filename for saving', path=path, /one)
  if(NOT keyword__set(filename)) then return
@@ -2105,7 +2111,61 @@ pro grim_menu_file_save_ps_event, event
  ; write postscript file
  ;------------------------------------------------------
  widget_control, grim_data.draw, /hourglass
- grim_write_ptd, grim_data, filename[0]
+ grim_write_ps, grim_data, filename[0]
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_file_save_png_event
+;
+;
+; PURPOSE:
+;	Saves the current view as a PNG image. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 2/2018
+;	
+;-
+;=============================================================================
+pro grim_menu_file_save_png_help_event, event
+ text = ''
+ nv_help, 'grim_menu_file_save_ptd_help_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_file_save_png_event, event
+
+ grim_data = grim_get_data(event.top)
+ grim_set_primary, grim_data.base
+
+ ;------------------------------------------------------
+ ; prompt for filename 
+ ;------------------------------------------------------
+ catch, error
+ if(error NE 0) then ans = dialog_message('Invalid response', /info)
+
+ filename = pickfiles(get_path=get_path, $
+               options=['', 'Color', 'B/W'], selected_option=selected_option, $
+                              title='Select filename for saving', path=path, /one)
+ if(NOT keyword__set(filename)) then return
+
+ ;------------------------------------------------------
+ ; write postscript file
+ ;------------------------------------------------------
+ widget_control, grim_data.draw, /hourglass
+
+ if(selected_option EQ 'B/W') then mono = 1
+ png_image, filename[0], mono=mono
 
 end
 ;=============================================================================
@@ -3818,7 +3878,7 @@ end
 pro grim_menu_view_zoom_double_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(2d, /relative, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 2d, /relative, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -3854,7 +3914,7 @@ end
 pro grim_menu_view_zoom_half_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(0.5d, /relative, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 0.5d, /relative, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -3890,7 +3950,7 @@ end
 pro grim_menu_view_zoom_1_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -3926,7 +3986,7 @@ end
 pro grim_menu_view_zoom_2_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(2d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 2d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -3962,7 +4022,7 @@ end
 pro grim_menu_view_zoom_3_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(3d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 3d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -3998,7 +4058,7 @@ end
 pro grim_menu_view_zoom_4_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(4d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 4d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4034,7 +4094,7 @@ end
 pro grim_menu_view_zoom_5_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(5d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 5d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4070,7 +4130,7 @@ end
 pro grim_menu_view_zoom_6_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(6d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 6d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4106,7 +4166,7 @@ end
 pro grim_menu_view_zoom_7_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(7d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 7d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4142,7 +4202,7 @@ end
 pro grim_menu_view_zoom_8_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(8d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 8d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4178,7 +4238,7 @@ end
 pro grim_menu_view_zoom_9_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(9d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 9d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4214,7 +4274,7 @@ end
 pro grim_menu_view_zoom_10_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(10d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 10d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4250,7 +4310,7 @@ end
 pro grim_menu_view_zoom_1_2_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/2d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/2d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4286,7 +4346,7 @@ end
 pro grim_menu_view_zoom_1_3_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/3d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/3d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4322,7 +4382,7 @@ end
 pro grim_menu_view_zoom_1_4_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/4d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/4d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4358,7 +4418,7 @@ end
 pro grim_menu_view_zoom_1_5_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/5d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/5d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4394,7 +4454,7 @@ end
 pro grim_menu_view_zoom_1_5_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/5d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/5d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4430,7 +4490,7 @@ end
 pro grim_menu_view_zoom_1_6_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/6d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/6d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4466,7 +4526,7 @@ end
 pro grim_menu_view_zoom_1_7_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/7d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/7d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4502,7 +4562,7 @@ end
 pro grim_menu_view_zoom_1_8_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/8d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/8d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4538,7 +4598,7 @@ end
 pro grim_menu_view_zoom_1_9_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/9d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/9d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end
@@ -4574,7 +4634,7 @@ end
 pro grim_menu_view_zoom_1_10_event, event
 
  grim_data = grim_get_data(event.top)
- offset = grim_zoom_to_cursor(1d/10d, zoom=zoom)
+ offset = grim_zoom_to_cursor(grim_data, 1d/10d, zoom=zoom)
  grim_refresh, grim_data, zoom=zoom, offset=offset
 
 end

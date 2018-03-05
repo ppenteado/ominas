@@ -38,7 +38,5 @@ pro png_image, filename, wnum=wnum, mono=mono, quantize=quantize, order=order, c
  write_png, filename, xx, r, g, b
 
 
-
-
 end
 ;==============================================================================
