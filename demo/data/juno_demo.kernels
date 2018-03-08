@@ -5,7 +5,7 @@ $DEMO_SPICE_FK/juno_v12.tf
 $DEMO_SPICE_SPK/juno_rec_orbit.bsp
 $DEMO_SPICE_SPK/juno_struct_v01.bsp
 $DEMO_SPICE_SPK/jup230.bsp
-$DEMO_SPICE_SPK/jup310.bsp
+#$DEMO_SPICE_SPK/jup310.bsp
 $DEMO_SPICE_SPK/de403s.bsp
 $DEMO_SPICE_LSK/naif0012.tls
 $DEMO_SPICE_PCK/pck00010.tpc
