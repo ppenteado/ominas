@@ -11,3 +11,4 @@
   detect_vgr_pps		VICAR
   detect_vgr_rss		VICAR
   detect_cas_vims               ISIS
+  detect_juno_epo_cam           PNG
