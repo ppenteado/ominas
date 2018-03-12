@@ -4,7 +4,9 @@
 ;===========================================================================
 function detect_cas_vims, dd
 
- label = strjoin(dat_header(dd),string(10B));[0]
+ lab=dat_header(dd)
+ if ~isa(lab,'string') then return,''
+ label = strjoin(lab,string(10B));[0]
  
  groupre='([[:<:]]GROUP[[:space:]]*=[[:space:]]*ISIS_INSTRUMENT[[:>:]])(.*)'+$
    '([[:<:]]END_GROUP[[:space:]]*=[[:space:]]*ISIS_INSTRUMENT[[:>:]])'
