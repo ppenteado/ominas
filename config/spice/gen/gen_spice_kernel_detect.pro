@@ -5,7 +5,7 @@
 ;
 ;
 ; PURPOSE:
-;       Return filenames of kernels approprate to given time, in correct order
+;       Return filenames of kernels approprate to given time, in correct order.
 ;
 ;
 ; CATEGORY:
@@ -46,13 +46,21 @@
 ;	
 ;	strict:		No function.  Included for consistent interface.
 ;
+;	filters:	List of names of filter algorithms to use, in order.
+;			Default is ['SEGLEN', 'LBLTIME', 'ITIME', 'MTIME'].
+;			Algorithms behave as follows:
+;
+;			  SEGLEN:  Selects results residing within the shortest
+;			           kernel segments.
+;			  LBLTIME: Selects results with the latest label time,
+;			           if a kernel label exists.
+;			  ITIME:   Selects results with the latest OMINAS
+;			           install timestamp.
+;			  MTIME:   Selects results with the latest file system
+;			           date.
+;
 ;  OUTPUT: NONE
 ;
-;
-; PROCEDURE:		Read kernel database
-;                       Deterimine kernels that have coverage for given time (or all)
-;			Determine which time base to use for ordering: file system, PDS LBL time, or OMINAS timestamp
-;                       Return ordered file list
 ;
 ; RESTRICTIONS:
 ;			Leapseconds kernels need to be loaded, SCLK kernels
@@ -68,11 +76,206 @@
 ;	Addapted by:	J.Spitale      Feb. 2017
 ;-
 ;=============================================================================
+
+
+
+;=============================================================================
+; gskd_filter_seglen
+;
+;=============================================================================
+function gskd_filter_seglen, dat
+ if(NOT keyword_set(dat)) then return, ''
+
+ intervals = dat.last - dat.first
+ w = where(intervals EQ min(intervals))
+ if(w[0] EQ -1) then return, ''
+
+ return, dat[w]
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; gskd_filter_lbltime
+;
+;=============================================================================
+function gskd_filter_lbltime, dat
+ if(NOT keyword_set(dat)) then return, ''
+
+ times = dat.lbltime 
+ w = where(times NE -1)
+ if(w[0] EQ -1) then return, dat
+ tmax = max(times, w)
+ if(w[0] EQ -1) then return, ''
+
+ return, dat[w]
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; gskd_filter_itime
+;
+;=============================================================================
+function gskd_filter_itime, dat
+ if(NOT keyword_set(dat)) then return, ''
+
+ times = dat.installtime 
+ w = where(times NE -1)
+ if(w[0] EQ -1) then return, dat
+ tmax = max(times, w)
+ if(w[0] EQ -1) then return, ''
+
+ return, dat[w]
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; gskd_filter_mtime
+;
+;=============================================================================
+function gskd_filter_mtime, dat
+ if(NOT keyword_set(dat)) then return, ''
+
+ times = dat.mtime 
+ w = where(times NE -1)
+ if(w[0] EQ -1) then return, dat
+ tmax = max(times, w)
+ if(w[0] EQ -1) then return, ''
+
+ return, dat[w]
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; gen_spice_kernel_detect
+;
+;=============================================================================
+function gen_spice_kernel_detect, dd, kpath, type, $
+               djd=_djd, sc=sc, time=_time, all=all, strict=strict, $
+               filters=filters
+
+
+ ticks = 0
+ if(type EQ 'c') then ticks = 1
+ if(NOT defined(filters)) then $
+                    filters = ['SEGLEN', 'LBLTIME', 'ITIME', 'MTIME']
+;                    filters = ['LBLTIME', 'SEGLEN', 'ITIME', 'MTIME']
+
+
+ if(ticks) then $
+    if(NOT keyword_set(sc)) then nv_message, 'Spacecraft must be specified.'
+
+ if(keyword_set(_time)) then time = _time
+ 
+ djd = 0d
+ if(keyword_set(_djd)) then djd = _djd
+ dsec = djd * 86400d 
+
+ if(~keyword_set(all) && ~keyword_set(time)) then begin
+    nv_message, name='gen_spice_kernel_detect', 'Must specify /all or time.'
+ endif
+
+ ;--------------------------------
+ ; Get kernel database 
+ ;--------------------------------
+ data = gen_spice_build_db(kpath, type)
+ if(NOT keyword_set(data)) then return,''
+
+ ;------------------------
+ ; Get appropriate kernels
+ ;------------------------
+ if(keyword_set(all)) then $
+  begin
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; get all files with valid ranges
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   valid = where(data.first NE -1, count)
+
+   nv_message, verb=0.9, 'Number of valid kernels = ' + strtrim(count,2)
+  end $
+ else $
+  begin
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; convert ET to sclk ticks
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   before_time = time-dsec
+   after_time = time+dsec
+
+   if(keyword_set(ticks)) then $
+    begin
+     cspice_sce2t, sc, time-dsec, before_time
+     cspice_sce2t, sc, time+dsec, after_time
+    end
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; get all files with valid ranges that include input time
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   valid = where((data.first LT after_time) AND (data.last GT before_time), nvalid)
+
+   nv_message, verb=0.9, 'Number of valid kernels including given time = ' + strtrim(nvalid,2)
+ end
+
+ if(nvalid EQ 0) then return, ''
+
+
+ ;--------------------------------------------------------------
+ ; select files(s)
+ ;--------------------------------------------------------------
+ data = data[valid] 
+
+
+ ;---------------------------------------------------
+ ; choose among all files with coverage 
+ ;---------------------------------------------------
+ all_ids = data.id
+ ids = unique(all_ids)
+ nids = n_elements(ids)
+ for i=0, nids-1 do $
+  begin
+   w = where(all_ids EQ ids[i])
+   dat = data[w]
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - -
+   ; apply filters
+   ;- - - - - - - - - - - - - - - - - - - - - - - - -
+   if(keyword_set(filters)) then $
+    for j=0, n_elements(filters)-1 do $
+      dat = call_function('gskd_filter_' + strlowcase(filters[j]), dat)
+
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - -
+   ; add selected kernels
+   ;- - - - - - - - - - - - - - - - - - - - - - - - -
+   files = append_array(files, dat.filename)
+  end
+
+
+ return, unique(files)
+end
+;=============================================================================
+
+
+
+
+
+
+
+
+
+;=============================================================================
 function gen_spice_kernel_detect, dd, kpath, type, $
                djd=_djd, sc=sc, time=_time, all=all, strict=strict
 
  ticks = 0
  if(type EQ 'c') then ticks = 1
+
 
  if(ticks) then $
     if(NOT keyword_set(sc)) then nv_message, 'Spacecraft must be specified.'
