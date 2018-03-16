@@ -557,9 +557,22 @@ function gsc_get_stars, dd, filename, $
   begin
    bright = double(bright)
    w = where(stars.mag GE bright)
-   if(w[0] NE -1) then __stars = stars[w]
-   if(NOT keyword__set(__stars)) then return, ''
-   stars = __stars
+   if(w[0] NE -1) then _stars = stars[w]
+   if(NOT keyword__set(_stars)) then return, ''
+   stars = _stars
+  end
+
+ ;-------------------------------------
+ ; select named stars
+ ;-------------------------------------
+ gsc_id = strtrim(string(stars.GSC_ID,format='(I05)'),2)
+ name = "GSC " + gsc_region + " " + gsc_id
+ if(keyword__set(names)) then $
+  begin
+   w = where(names EQ name)
+   if(w[0] NE -1) then _stars = stars[w]
+   if(NOT keyword__set(_stars)) then return, ''
+   stars = _stars
   end
 
  ;------------------------------------------------------------------
@@ -578,19 +591,6 @@ function gsc_get_stars, dd, filename, $
   begin
    w = strcat_nbright(stars.mag, nbright)
    stars = stars[w]
-  end
-
- ;-------------------------------------
- ; select named stars
- ;-------------------------------------
- gsc_id = strtrim(string(stars.GSC_ID,format='(I05)'),2)
- Name = "GSC " + gsc_region + " " + gsc_id
- if(keyword__set(names)) then $
-  begin
-   w = where(names EQ name)
-   if(w[0] NE -1) then _stars = stars[w]
-   if(NOT keyword__set(_stars)) then return, ''
-   stars = _stars
   end
 
  RA = stars.RA_DEG*!DPI/180d0

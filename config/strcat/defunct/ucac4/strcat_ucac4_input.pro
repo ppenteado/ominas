@@ -234,46 +234,6 @@ function ucac4_get_stars, dd, filename, $
  href = recs.rnm			;;; for look-up in hipsupl.dat
                                         ;;; not implemented yet
 
- ;------------------------------------------------------------------
- ; If limits are defined, remove stars that fall outside the limits
- ; Limits in deg, Assumes RA's + DEC's in J2000 (B1950 if /b1950)
- ;------------------------------------------------------------------
- w = strcat_radec_select([_ra1, _ra2]*!dpi/180d, [_dec1, _dec2]*!dpi/180d, $
-                                     stars.ra*!dpi/180d, stars.dec*!dpi/180d)
- if(w[0] EQ -1) then return, ''
- stars = stars[w]
-
- ;--------------------------------------------------------
- ; Apply proper motion to star 
- ; jtime = years past 2000.0
- ; rapm and decpm = degrees per year
- ;--------------------------------------------------------
- _jtime = jtime
- if(keyword_set(b1950)) then _jtime = jtime - 50
- nv_message, verb=0.9, 'jtime used is ' + strtrim(string(_jtime),2)
- ;;stars.ra = stars.ra + stars.rapm*(_jtime-(stars.epochra-2000))
- ;;stars.dec = stars.dec + stars.decpm*(_jtime-(stars.epochdec-2000))
- stars.ra = stars.ra + stars.rapm*(_jtime)
- stars.dec = stars.dec + stars.decpm*(_jtime)
-
- ;-------------------------------------------
- ; work in radians now
- ;-------------------------------------------
- stars.ra = stars.ra * !dpi/180d
- stars.dec = stars.dec * !dpi/180d
- stars.rapm = stars.rapm * !dpi/180d
- stars.decpm = stars.decpm * !dpi/180d
-
- ;-----------------------------------------------------------
- ; if desired, select only nbright brightest stars
- ;-----------------------------------------------------------
- if(keyword_set(nbright)) then $
-  begin
-   mag = stars.mag
-   w = strcat_nbright(mag, nbright)
-   stars = stars[w]
-  end
-
  ;---------------------------------------------------------
  ; apply brightness thresholds
  ;---------------------------------------------------------
@@ -304,6 +264,48 @@ function ucac4_get_stars, dd, filename, $
    stars = _stars
    name = name[w]
   end
+
+ ;------------------------------------------------------------------
+ ; If limits are defined, remove stars that fall outside the limits
+ ; Limits in deg, Assumes RA's + DEC's in J2000 (B1950 if /b1950)
+ ;------------------------------------------------------------------
+ w = strcat_radec_select([_ra1, _ra2]*!dpi/180d, [_dec1, _dec2]*!dpi/180d, $
+                                     stars.ra*!dpi/180d, stars.dec*!dpi/180d)
+ if(w[0] EQ -1) then return, ''
+ stars = stars[w]
+ name = name[w]
+
+ ;-----------------------------------------------------------
+ ; if desired, select only nbright brightest stars
+ ;-----------------------------------------------------------
+ if(keyword_set(nbright)) then $
+  begin
+   mag = stars.mag
+   w = strcat_nbright(mag, nbright)
+   stars = stars[w]
+   name = name[w]
+  end
+
+ ;--------------------------------------------------------
+ ; Apply proper motion to star 
+ ; jtime = years past 2000.0
+ ; rapm and decpm = degrees per year
+ ;--------------------------------------------------------
+ _jtime = jtime
+ if(keyword_set(b1950)) then _jtime = jtime - 50
+ nv_message, verb=0.9, 'jtime used is ' + strtrim(string(_jtime),2)
+ ;;stars.ra = stars.ra + stars.rapm*(_jtime-(stars.epochra-2000))
+ ;;stars.dec = stars.dec + stars.decpm*(_jtime-(stars.epochdec-2000))
+ stars.ra = stars.ra + stars.rapm*(_jtime)
+ stars.dec = stars.dec + stars.decpm*(_jtime)
+
+ ;-------------------------------------------
+ ; work in radians now
+ ;-------------------------------------------
+ stars.ra = stars.ra * !dpi/180d
+ stars.dec = stars.dec * !dpi/180d
+ stars.rapm = stars.rapm * !dpi/180d
+ stars.decpm = stars.decpm * !dpi/180d
 
  ;----------------------
  ; Fill star descriptors
