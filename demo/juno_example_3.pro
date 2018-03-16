@@ -119,7 +119,7 @@ nmap_ysize=yrange[1]-yrange[0]+1
 mapslr=mapslr[xrange[0]:xrange[1],yrange[0]:yrange[1],*]
 
 ;resolution scale factor for the high res maps
-mfac=90
+mfac=20
 nmap_xsize*=mfac
 nmap_ysize*=mfac
 
