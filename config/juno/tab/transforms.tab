@@ -1,7 +1,0 @@
-# instrument		input			output		
-# string		transform		transform
-#------------------------------------------------------------------------------
-
-  JUNO_EPO_CAMERA            juno_epo_transform     -
-
-END
