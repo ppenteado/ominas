@@ -820,7 +820,6 @@ function icy() {
 # copy. If NAIF kernels will not be used, then no action is taken.       #
 # Icy is installed based on auto-detection of the OS.                    #
 #------------------------------------------------------------------------#
-
 if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
   echo "Icy appears to be already configured:"
   echo ${ominas_icytest}
@@ -855,7 +854,7 @@ if [ ${ominas_icyst} == 1 ] && [ ${ominas_auto} == 0 ]; then
         *) return 1;;
   esac
 else
-  if [ ${ominas_auto_u} == 1 ] ; then
+  if [ ${ominas_auto_u} == 1 ] && [ ${change_demo} == 0 ] ; then
     return 1
   fi
 fi
@@ -1250,8 +1249,19 @@ do
     fi
   fi
 done
+change_demo=0
 if [ "${ominas_nodel}" == "2" ]; then
-  ans="4 5 6 7 8 9 10 11 12 13"
+  for num in $ans
+  do
+    if [ $num == "3" ]; then
+      change_demo=1
+    fi
+  done
+  if [ $change_demo == "1" ]; then
+    ans="3 4 5 6 7 8 9 10 11 12 13"
+  else
+    ans="4 5 6 7 8 9 10 11 12 13"
+  fi
 fi
 for num in $ans
 do
