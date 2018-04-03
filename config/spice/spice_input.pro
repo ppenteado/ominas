@@ -501,12 +501,14 @@ pro si_manage_kernels, dd, prefix=prefix, inst=inst, pos=pos, reload=reload, $
  ;---------------------------------------------------------------------------
  ; get the kernel list file
  ;---------------------------------------------------------------------------
+ sep = path_sep()
+
  klist = tr_keyword_value(dd, 'klist')
  if(keyword_set(klist)) then $
-  if(strpos(klist, '/') EQ -1) then $
+  if(strpos(klist, sep) EQ -1) then $
    begin
     kpath = spice_get_kpath('NV_SPICE_KER', klist)
-    klist = kpath + '/' + klist
+    klist = kpath + sep + klist
    end
 
  ;---------------------------------------------------------------------------

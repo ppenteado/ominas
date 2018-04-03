@@ -217,7 +217,7 @@ common dhsi_block, all_xds
      dh_name = file_basename(dh_file)
      if(strupcase(dh_name) EQ 'AUTO') then $
                                  dh_name = dh_fname(/write, cor_name(dd[j]))
-     dh_file = dh_dir + '/' + dh_name
+     dh_file = dh_dir + path_sep() + dh_name
      dh = dh_read(dh_file)
      dat_set_dh, dd[j], dh
     end

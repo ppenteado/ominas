@@ -57,6 +57,7 @@ pro dat_load_data, dd, sample=sample, data=data
 @nv_block.common
 @core.include
 
+
  _dd = cor_dereference(dd)
 (*_dd.dd0p).cache = -1				; caching disabled until fully debugged
 

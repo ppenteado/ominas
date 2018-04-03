@@ -1,4 +1,21 @@
 ;=============================================================================
+; grim_test_motion_event
+;
+;=============================================================================
+function grim_test_motion_event, event
+
+ struct = tag_names(event, /struct)
+ if(struct EQ 'WIDGET_TRACKING') then return, 1
+
+ if(struct EQ 'WIDGET_DRAW') then if(event.type EQ 2) then return, 1
+
+ return, 0
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_write_ps
 ;
 ;=============================================================================
@@ -274,7 +291,7 @@ end
 ;=============================================================================
 pro grim_deactivate_all, grim_data, plane
 
- grim_deactivate_all_overlays, grim_data, plane
+ grim_activate_all_overlays, grim_data, plane, /deactivate
 
 end
 ;=============================================================================
@@ -382,8 +399,16 @@ end
 pro grim_edit_dd_notes, grim_data, plane=plane
 
  base = grim_data.notes_base
+
+ if(widget_info(base, /valid)) then $
+  begin
+   widget_control, base, /map
+   return
+  end
+
  grim_data.notes_text = grim_edit_notes(plane.dd, base=base)
  grim_data.notes_base = base
+ grim_set_data, grim_data, grim_data.base
 
 end
 ;=============================================================================
@@ -402,7 +427,7 @@ function grim_user_ptd_fname, grim_data, plane, basename=basename
    if(NOT keyword_set(basename)) then basename = 'grim-' + strtrim(plane.pn,2)
   end
 
- return, grim_data.workdir + '/' + basename + '.user_ptd'
+ return, grim_data.workdir + path_sep() + basename + '.user_ptd'
 end
 ;=============================================================================
 
@@ -468,7 +493,7 @@ end
 ;=============================================================================
 function grim_mask_fname, grim_data, plane, basename=basename
  if(NOT keyword_set(basename)) then basename = cor_name(plane.dd)
- return, grim_data.workdir + '/' + basename + '.mask'
+ return, grim_data.workdir + path_sep() + basename + '.mask'
 end
 ;=============================================================================
 
@@ -563,17 +588,9 @@ end
 ; grim_jumpto
 ;
 ;=============================================================================
-function grim_jumpto, grim_data, id
+function grim_jumpto, grim_data, pn
 
- if(keyword_set(id)) then $
-  begin
-   widget_control, id, get_value=pns
-   if(pns[0] EQ '') then return, 0
-   widget_control, grim_data.jumpto_text, set_value=''
-   w = str_isnum(pns)
-   if(w[0] EQ -1) then return, 0
-  end $
- else $
+ if(NOT keyword_set(pn)) then $
   begin
    done = 0
    repeat $
@@ -583,9 +600,9 @@ function grim_jumpto, grim_data, id
      w = str_isnum(pns)
      if(w[0] NE -1) then done = 1
     endrep until(done)
+   pn = (long(pns))[0]
   end
 
- pn = (long(pns))[0]
  grim_jump_to_plane, grim_data, pn, valid=valid
 
  return, valid
@@ -2441,6 +2458,76 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_plane_first_event
+;
+;
+; PURPOSE:
+;	Changes to the first image plane. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 3/2018
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_first_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_first_help_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_first_event, event
+
+ grim_data = grim_get_data(event.top)
+
+ grim_change_plane, grim_data, /first
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
+;	grim_menu_plane_last_event
+;
+;
+; PURPOSE:
+;	Changes to the last image plane. 
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 3/2018
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_last_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_last_help_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_last_event, event
+
+ grim_data = grim_get_data(event.top)
+
+ grim_change_plane, grim_data, /last
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_plane_next_event
 ;
 ;
@@ -2467,7 +2554,7 @@ pro grim_menu_plane_next_event, event
 
  grim_data = grim_get_data(event.top)
 
- grim_next_plane, grim_data
+ grim_change_plane, grim_data, /next
 end
 ;=============================================================================
 
@@ -2502,7 +2589,7 @@ pro grim_menu_plane_previous_event, event
 
  grim_data = grim_get_data(event.top)
 
- grim_previous_plane, grim_data
+ grim_change_plane, grim_data, /previous
 end
 ;=============================================================================
 

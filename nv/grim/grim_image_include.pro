@@ -949,6 +949,67 @@ end
 
 
 ;=============================================================================
+; grim_update_jumpto_droplist
+;
+;=============================================================================
+pro grim_update_jumpto_droplist, grim_data, names=names, max_planes=max_planes
+if(NOT keyword_set(grim_data.jumpto_droplist)) then return
+
+ if(NOT keyword_set(max_planes)) then max_planes = 50
+
+ pns = lindgen(grim_data.n_planes)
+ if(grim_data.n_planes GT max_planes) then $
+  begin
+   pns = lindgen(max_planes) + grim_data.pn - max_planes/2
+   if(pns[0] LT 0) then pns = pns - pns[0] $
+   else if(pns[max_planes-1] GE grim_data.n_planes) then $
+           pns = pns - (pns[max_planes-1] - grim_data.n_planes)
+  end
+
+ val = strtrim(pns, 2)
+ if(keyword_set(names)) then $
+  begin
+   planes = grim_get_plane(grim_data, pn=pns)
+   val = str_pad(val + ': ', 5) + cor_name(planes.dd)
+  end
+
+ widget_control, grim_data.jumpto_droplist, set_value=val
+ widget_control, grim_data.jumpto_droplist, $
+                              set_droplist_select=where(val EQ grim_data.pn)
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_update_jumpto_combobox
+;
+;=============================================================================
+pro grim_update_jumpto_combobox, grim_data, names=names, max_planes=max_planes
+if(NOT keyword_set(grim_data.jumpto_combobox)) then return
+
+ if(NOT keyword_set(max_planes)) then max_planes = 50
+
+ pns = lindgen(grim_data.n_planes)
+
+ val = strtrim(pns, 2)
+ if(keyword_set(names)) then $
+  begin
+   planes = grim_get_plane(grim_data, pn=pns)
+   val = str_pad(val + ': ', 5) + cor_name(planes.dd)
+  end
+
+ widget_control, grim_data.jumpto_combobox, set_value=val
+ widget_control, grim_data.jumpto_combobox, $
+                              set_combobox_select=where(val EQ grim_data.pn)
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_refresh
 ;
 ;=============================================================================
@@ -981,7 +1042,7 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
    planes = grim_get_visible_planes(grim_data)
   end $
  else planes = plane
-
+ all_planes = grim_get_plane(grim_data, /all)
 
  ;-----------------------------------
  ; apply any default activations
@@ -1067,10 +1128,9 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  if(NOT keyword_set(no_title)) then $
   begin
    beta = ''
-   if(grim_data.beta) then beta = '(beta)'
-   title = 'GRIM' + beta + ' ' + strtrim(grim_data.grn,2) + $
-           ';  plane ' + strtrim(grim_data.pn,2) + ' of ' + $
-           strtrim(grim_data.n_planes,2) + ';  ' + $
+   if(grim_data.beta) then beta = ' (beta)'
+   title = 'GRIM' + beta + ' ' + strtrim(grim_data.grn,2) + ';  ' + $
+           strtrim(grim_data.n_planes,2) + ' planes;  ' + $
            grim_title(plane)
     if(keyword_set(grim_data.def_title)) then title = title + ' -- ' + grim_data.def_title
     
@@ -1081,9 +1141,10 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
 
 
  ;-----------------------------------
- ; clear out plane text box
+ ; update plane number droplist
  ;-----------------------------------
- widget_control, grim_data.jumpto_text, set_value=''
+ grim_update_jumpto_droplist, grim_data
+ grim_update_jumpto_combobox, grim_data
 
 
  ;-----------------------------------

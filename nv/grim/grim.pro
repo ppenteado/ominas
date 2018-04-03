@@ -501,7 +501,10 @@
 ;
 ;      `*rendering`:
 ;               If set, perform a rendering on the initial descriptor set.
-;		(not yet implemented)
+;
+;      `*guideline`:
+;               If set, the guideline is turned on at startup.
+;
 ;
 ;
 ;  OUTPUT:
@@ -1092,23 +1095,6 @@ end
 
 
 ;=============================================================================
-; grim_test_motion_event
-;
-;=============================================================================
-function grim_test_motion_event, event
-
- struct = tag_names(event, /struct)
- if(struct EQ 'WIDGET_TRACKING') then return, 1
-
- if(struct EQ 'WIDGET_DRAW') then if(event.type EQ 2) then return, 1
-
- return, 0
-end
-;=============================================================================
-
-
-
-;=============================================================================
 ; grim_set_ct
 ;
 ;=============================================================================
@@ -1627,10 +1613,9 @@ pro grim_middle, grim_data, plane, id, x, y, press, clicks, modifiers, output_wn
   end $
  else $
   begin
-   stat = grim_activate_by_point(/invert, grim_data, plane, [x,y], clicks=clicks)
+   grim_activate_select, /point, /invert, grim_data, plane, [x,y], stat=stat
    if(stat NE -1) then $
     begin
-     grim_update_activations, grim_data, plane=plane
      grim_refresh, grim_data, /noglass, /no_image
     end $
    else $
@@ -1666,6 +1651,15 @@ pro grim_draw_event, event
  struct = tag_names(event, /struct)
  
  if(NOT grim_test_motion_event(event)) then grim_set_primary, grim_data.base
+; grim_set_primary, grim_data.base
+
+
+ ;======================================
+ ; jumpto droplist 
+ ;======================================
+ widget_control, grim_data.jumpto_droplist, get_value=val
+ p = strpos(val[0], ':')
+ if(p[0] NE -1) then grim_update_jumpto_droplist, grim_data
 
 
  ;======================================
@@ -1721,6 +1715,36 @@ end
 
 
 ;=============================================================================
+; grim_rewind_event
+;
+;=============================================================================
+pro grim_rewind_event, event
+
+ grim_data = grim_get_data(event.top)
+
+ ;---------------------------------------------------------
+ ; if tracking event, just print usage info
+ ;---------------------------------------------------------
+ struct = tag_names(event, /struct)
+ if(struct EQ 'WIDGET_TRACKING') then $
+  begin
+   if(event.enter) then grim_print, grim_data, 'First plane'
+   return
+  end
+
+
+ ;---------------------------------------------------------
+ ; switch to previous plane
+ ;---------------------------------------------------------
+ grim_set_primary, grim_data.base
+ grim_change_plane, grim_data, /first
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_previous_event
 ;
 ;=============================================================================
@@ -1743,7 +1767,7 @@ pro grim_previous_event, event
  ; switch to previous plane
  ;---------------------------------------------------------
  grim_set_primary, grim_data.base
- grim_previous_plane, grim_data
+ grim_change_plane, grim_data, /previous
 
 end
 ;=============================================================================
@@ -1758,24 +1782,33 @@ pro grim_jumpto_event, event
 
  grim_data = grim_get_data(event.top)
 
- ;---------------------------------------------------------
- ; if tracking event, just print usage info
- ;---------------------------------------------------------
+ ;-------------------------------------------------------------------
+ ; if tracking event, print usage info and toggle names in droplist
+ ;-------------------------------------------------------------------
  struct = tag_names(event, /struct)
  if(struct EQ 'WIDGET_TRACKING') then $
   begin
+;print,event.enter
+;cursor, x, y, /nowait
+;print, !mouse.button
+;stop
    if(event.enter) then grim_print, grim_data, 'Jump to plane'
+;   grim_update_jumpto_droplist, grim_data, names=event.enter
+   grim_update_jumpto_droplist, grim_data, /names
    return
   end
-
 
  ;---------------------------------------------------------
  ; jump to new plane
  ;---------------------------------------------------------
  grim_set_primary, grim_data.base
- valid = grim_jumpto(grim_data, grim_data.jumpto_text)
- if(valid) then grim_refresh, grim_data, /no_erase
 
+ if(keyword_set(grim_data.jumpto_droplist)) then widget_control, grim_data.jumpto_droplist, get_value=pns
+ if(keyword_set(grim_data.jumpto_combobox)) then widget_control, grim_data.jumpto_combobox, get_value=pns
+ pn = pns[event.index]
+
+ valid = grim_jumpto(grim_data, pn)
+ if(valid) then grim_refresh, grim_data, /no_erase
 end
 ;=============================================================================
 
@@ -1804,7 +1837,37 @@ pro grim_next_event, event
  ; switch to next plane
  ;---------------------------------------------------------
  grim_set_primary, grim_data.base
- grim_next_plane, grim_data
+ grim_change_plane, grim_data, /next
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_fastforward_event
+;
+;=============================================================================
+pro grim_fastforward_event, event
+
+ grim_data = grim_get_data(event.top)
+
+ ;---------------------------------------------------------
+ ; if tracking event, just print usage info
+ ;---------------------------------------------------------
+ struct = tag_names(event, /struct)
+ if(struct EQ 'WIDGET_TRACKING') then $
+  begin
+   if(event.enter) then grim_print, grim_data, 'Last plane'
+   return
+  end
+
+
+ ;---------------------------------------------------------
+ ; switch to next plane
+ ;---------------------------------------------------------
+ grim_set_primary, grim_data.base
+ grim_change_plane, grim_data, /last
 
 end
 ;=============================================================================
@@ -2993,6 +3056,8 @@ function grim_menu_desc, cursor_modes=cursor_modes
           '+*1\Mode' , $
 
           '+*1\Plane' , $
+           '0\First               \+*grim_menu_plane_first_event' , $
+           '0\Last               \+*grim_menu_plane_last_event' , $
            '0\Next               \+*grim_menu_plane_next_event' , $
            '0\Previous           \+*grim_menu_plane_previous_event', $
            '0\Jump               \+*grim_menu_plane_jump_event' , $
@@ -3279,20 +3344,35 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
            widget_base(grim_data.shortcuts_base, /row, $
                                        space=0, xpad=4, ypad=0, ysize=ys)
 
+ grim_data.rewind_button = widget_button(grim_data.shortcuts_base2, $
+             resource_name='grim_rewind_button', $
+             value=grim_rewind_bitmap(), /bitmap, /tracking_events, $
+                                              event_pro='grim_rewind_event')
+
  grim_data.previous_button = widget_button(grim_data.shortcuts_base2, $
              resource_name='grim_previous_button', $
              value=grim_previous_bitmap(), /bitmap, /tracking_events, $
                                               event_pro='grim_previous_event')
 
- grim_data.jumpto_text = widget_text(grim_data.shortcuts_base2, $
-                     resource_name='grim_jumpto_text', xsize=3, $
-                               value='', /tracking_events, /editable, $
+; grim_data.jumpto_combobox = widget_combobox(grim_data.shortcuts_base2, $
+;                    /editable, $
+;                     resource_name='grim_jumpto_list', $
+;                               value=['0'], /tracking_events, $
+;                                              event_pro='grim_jumpto_event')
+ grim_data.jumpto_droplist = widget_droplist(grim_data.shortcuts_base2, $
+                     resource_name='grim_jumpto_list', $
+                               value=['000'], /tracking_events, $
                                               event_pro='grim_jumpto_event')
 
  grim_data.next_button = widget_button(grim_data.shortcuts_base2, $
              resource_name='grim_next_button', $
              value=grim_next_bitmap(), /bitmap, /tracking_events, $
                                                   event_pro='grim_next_event')
+
+ grim_data.fastforward_button = widget_button(grim_data.shortcuts_base2, $
+             resource_name='grim_fastforward_button', $
+             value=grim_fastforward_bitmap(), /bitmap, /tracking_events, $
+                                                  event_pro='grim_fastforward_event')
 
 
  grim_data.shortcuts_base3 = $
@@ -3982,7 +4062,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
 	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, $
 	render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
-	render_minimum=render_minimum, $
+	render_minimum=render_minimum, guideline=guideline, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
         xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
@@ -4013,7 +4093,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, activation_syncing=activation_syncing, $
 	visibility=visibility, channel=channel, render_numbra=render_numbra, render_sampling=render_sampling, $
 	render_minimum=render_minimum, slave_overlays=slave_overlays, rgb=rgb, $
-	delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
+	delay_overlays=delay_overlays, auto_stretch=auto_stretch, guideline=guideline, $
 	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, render_sky=render_sky
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
@@ -4168,7 +4248,7 @@ if(NOT defined(render_auto)) then render_auto = 0
        symsize=symsize, nhist=nhist, maintain=maintain, lights=lights, $
        compress=compress, extensions=extensions, max=max, beta=beta, npoints=npoints, $
        visibility=visibility, channel=channel, keyvals=keyvals, $
-       title=title, slave_overlays=slave_overlays, $
+       title=title, slave_overlays=slave_overlays, guideline=guideline, $
        render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_minimum=render_minimum, $
        render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
        overlays=overlays, activate=activate)
@@ -4310,7 +4390,7 @@ if(NOT defined(render_auto)) then render_auto = 0
    grim_add_xd, grim_data, planes[i].sd_p, sd, assoc_xd=_assoc_xd[i]
    grim_add_xd, grim_data, planes[i].ltd_p, ltd, /one, assoc_xd=_assoc_xd[i]
 
-;   grim_deactivate_xd, planes[i], grim_xd(planes[i])
+;   grim_activate_xd, planes[i], grim_xd(planes[i]), /deactivate
   end
 
 
@@ -4430,14 +4510,6 @@ if(NOT defined(render_auto)) then render_auto = 0
     end
   end
 
- ;----------------------------------------------
- ; if new instance, initialize cursor modes
- ;----------------------------------------------
- if(new) then $
-     for i=0, n_elements(cursor_modes)-1 do $
-        if(routine_exists(cursor_modes[i].name+'_init')) then $
-            call_procedure, cursor_modes[i].name+'_init', grim_data, cursor_modes[i].data_p
-
 
 
  ;---------------------------------------------------------
@@ -4491,6 +4563,25 @@ if(NOT defined(render_auto)) then render_auto = 0
   for i=0, nplanes-1 do $
          grim_initial_overlays, grim_data, plane=planes[i], overlays
 
+
+ ;----------------------------------------------
+ ; if new instance, initialize cursor modes
+ ;----------------------------------------------
+ if(new) then $
+  for i=0, n_elements(cursor_modes)-1 do $
+   begin
+    refresh = 0
+    if(routine_exists(cursor_modes[i].name+'_init')) then $
+     begin
+      call_procedure, cursor_modes[i].name+'_init', grim_data, cursor_modes[i].data_p
+      refresh = 1
+     end
+   end
+
+ ;-------------------------
+ ; draw initial image
+ ;-------------------------
+ if(NOT keyword_set(no_refresh)) then grim_refresh, grim_data, /no_image
 
 end
 ;=============================================================================

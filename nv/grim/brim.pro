@@ -620,6 +620,8 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
  enable_selection = keyword_set(enable_selection)
  if(NOT keyword_set(thumbsize)) then thumbsize = 100
 
+ sep = path_sep()
+
  ;----------------------------------
  ; select files if none given
  ;----------------------------------
@@ -638,7 +640,7 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
   begin
    for i=0, n_elements(files)-1 do $
     begin
-     if(strpos(files[i], '/') EQ -1) then files[i] = pwd() + '/' + files[i]
+     if(strpos(files[i], sep) EQ -1) then files[i] = pwd() + sep + files[i]
      ff = file_search(files[i])
      if(keyword_set(ff)) then _files = append_array(_files, ff)
     end
@@ -653,7 +655,7 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
    if(w[0] EQ -1) then return
    files = files[w]
 
-   w = where(strpos(files,'/') NE -1)
+   w = where(strpos(files,sep) NE -1)
    if(w[0] EQ -1) then return
    files = files[w]
 
@@ -677,7 +679,7 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
  if(NOT keyword_set(title)) then title = 'BRIM'
 
 ; base = widget_base(title=title, /column, /tlb_size_events)
- base = widget_base(title=title, /tlb_size_events)
+ base = widget_base(title=title, /tlb_size_events, resource_name='brim_base')
 
  scroll_base = widget_base(base, xpad=0, ypad=0, /scroll, col=nx, space=0)
  widget_control, scroll_base, set_uvalue=nx

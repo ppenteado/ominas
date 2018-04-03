@@ -36,7 +36,7 @@ dd = dat_read(files)
 
 cd0 = pg_get_cameras(dd[0])
 cd1 = pg_get_cameras(dd[1])
-cd0 = pg_get_cameras(dd[0])		;fail
+cd0 = pg_get_cameras(dd[0])
 
 
 
