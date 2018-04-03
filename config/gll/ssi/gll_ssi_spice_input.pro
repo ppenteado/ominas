@@ -114,6 +114,7 @@ pro gll_ssi_spice_parse_labels, dd, _time, $
 
  meta0 = {gll_ssi_spice_label_struct}
  meta0.size = [1024,1024]
+ meta0.oaxis = [511.5,511.5]
 
  for i=0, ndd-1 do $
   begin

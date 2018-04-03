@@ -41,7 +41,7 @@ function cas_iss_w10n_pds_header_info, dd
  ;-----------------------------------
  ; optic axis
  ;-----------------------------------
- meta.oaxis = meta.size/2d
+ meta.oaxis = meta.size/2d - 0.5
 
  ;-----------------------------------
  ; time

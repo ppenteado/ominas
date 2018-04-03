@@ -80,20 +80,20 @@ cd = pg_get_cameras(dd, instrument=instrument, time=t)
 ;  returned by the translators (in this case, wherever Cassini was and 
 ;  where it was pointed at the specified times).  Here we force the cameras to 
 ;  point at the center of the Earth (with the Y vector pointed to celestial 
-;  north), and we place the camera along the Earth-Moon line at 4 times the 
+;  north), and we place the camera along the Earth-Moon line at 8 times the 
 ;  Earth-Moon distance.  Note the use of the data descriptor created by 
 ;  PG_GET_CAMERAS:: 
 ;
 ;     pd0 = pg_get_planets(dd, od=cd, name='EARTH')
 ;     pd1 = pg_get_planets(dd, od=cd, name='MOON')
-;     pg_reposition, bx=cd, bod_pos(pd0) + (bod_pos(pd1)-bod_pos(pd0))*4, /absolute
+;     pg_reposition, bx=cd, bod_pos(pd0) + (bod_pos(pd1)-bod_pos(pd0))*, /absolute
 ;     pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd), /north
 ;
 ;-
 ;-------------------------------------------------------------------------
 pd0 = pg_get_planets(dd, od=cd, name='EARTH')
 pd1 = pg_get_planets(dd, od=cd, name='MOON')
-pg_reposition, bx=cd, bod_pos(pd0) + (bod_pos(pd1)-bod_pos(pd0))*4, /absolute
+pg_reposition, bx=cd, bod_pos(pd0) + (bod_pos(pd1)-bod_pos(pd0))*8, /absolute
 pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd), /north
 
 
