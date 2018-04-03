@@ -13,8 +13,6 @@
   #detect_isis                   ISIS            read
   detect_pds			PDS		read
   detect_pds4			PDS4		read
-  detect_png			PNG		read
   detect_ext			EXT		read
   detect_w10n_pds		W10N_PDS	read
-#  detect_png                    PNG             read
 
