@@ -168,7 +168,7 @@ pro grim_rm_xd, plane, xd
      ; unregister event handler
      ;--------------------------------------------------------
      nv_notify_unregister, xdx, 'grim_descriptor_notify'
-     grim_deactivate_xd, plane, xdx
+     grim_activate_xd, plane, xdx, /deactivate
 
      ;----------------------------------
      ; remove its overlays
@@ -218,7 +218,7 @@ pro grim_rm_descriptor, grim_data, plane=plane, xdp, xd
  ; unregister event handler
  ;--------------------------------------------------------
  nv_notify_unregister, xd, 'grim_descriptor_notify'
- grim_deactivate_xd, plane, xd
+ grim_activate_xd, plane, xd, /deactivate
 
  ;----------------------------------
  ; remove its overlays

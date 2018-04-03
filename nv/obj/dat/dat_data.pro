@@ -159,7 +159,7 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  ;-------------------------------------------------------------------------
  ; Uncompress
  ;-------------------------------------------------------------------------
- _dat_uncompress_data, _dd, cdata=cdata, cabscissa=cabscissa
+ _dat_uncompress_data, _dd
 
 
  ;-------------------------------------------------------------------------
@@ -221,7 +221,7 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  ;-------------------------------------------------------------------------
  ; restore compression
  ;-------------------------------------------------------------------------
- _dat_compress_data, _dd, cdata=cdata, cabscissa=cabscissa
+ _dat_compress_data, _dd
 
  if(return_abscissa) then return, abscissa
  return, data
