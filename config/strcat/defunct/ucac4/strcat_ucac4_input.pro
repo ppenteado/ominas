@@ -120,6 +120,8 @@ function ucac4_get_stars, dd, filename, $
          faint=faint, bright=bright, nbright=nbright, $
          names=names, mag=mag, jtime=jtime
 
+ sep = path_sep()
+
  ;---------------------------------------------------------
  ; check whether catalog falls within brightness limits
  ;---------------------------------------------------------
@@ -193,9 +195,9 @@ function ucac4_get_stars, dd, filename, $
    z_fname = 'z' + string(zmin + i, format='(I03)')
    z_strs = last - first
    z_recs = replicate({ucac4_record}, z_strs)
-   openr, zone, getenv('NV_UCAC4_DATA') + '/' + z_fname, /get_lun
+   openr, zone, getenv('NV_UCAC4_DATA') + sep + z_fname, /get_lun
    point_lun, zone, first * rec_bytes
-   nv_message, verb=0.9, 'Reading ' + string(z_strs) + ' stars from zone file ' + getenv('NV_UCAC4_DATA') + '/' + z_fname 
+   nv_message, verb=0.9, 'Reading ' + string(z_strs) + ' stars from zone file ' + getenv('NV_UCAC4_DATA') + sep + z_fname 
    readu, zone, z_recs
    ; store components of name, zone(zzz) and record number (nnnnnn) in pts_key
    ; star name is ucac4-zzz-nnnnnn

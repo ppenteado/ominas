@@ -154,7 +154,7 @@ function gen_spice_build_db, _kpath, type, nocheck=nocheck
  ; replace / with _
  ;-------------------------------------
  kpath = file_search(_kpath)
- fix_path = strjoin(strsplit(kpath,'/',/extract),'_')
+ fix_path = strjoin(strsplit(kpath,path_sep(),/extract),'_')
 
  ;-------------------------------------
  ; replace * with x
@@ -260,7 +260,7 @@ function gen_spice_build_db, _kpath, type, nocheck=nocheck
      explanation = $
         ['This database expedites the search for the appropriate kernels.', $
          'It is only updated when kernels are added or deleted from the kernel', $
-         'directory.  The initial creation may take a minute or two.']
+         'directory.  The initial creation may take a few minutes.']
 
    verb = new_db ? 'Creating' : 'Updating'
 ;   nv_message, /con, verb + ' ' + strupcase(type) + ' kernel database...', $
