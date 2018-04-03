@@ -134,7 +134,8 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; read relevant array catalogs
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
-   dir = catpath + '/' + strlowcase(primary) + '/'
+   sep = path_sep()
+   dir = catpath + sep + strlowcase(primary) + sep
    files = file_search(dir + '*.arr')
    split_filename, files, dirs, files
 

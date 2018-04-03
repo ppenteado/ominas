@@ -538,6 +538,17 @@ pro grim_mode_navigate_mouse_event, event, data
 
 
  ;---------------------------------------
+ ; nadir/zenith mode
+ ;---------------------------------------
+ if(event.modifiers EQ 2) then $
+  begin
+; nadir: move camera directly above selected point; point to nadir
+; zenith move camera to selected point; point at zenith
+   return
+  end
+
+
+ ;---------------------------------------
  ; get points
  ;---------------------------------------
  grim_mode_navigate_get_points, grim_data, plane=plane, $
@@ -584,7 +595,8 @@ pro grim_mode_navigate_mode, grim_data, data_p
 
  device, cursor_standard = 142
  grim_print, grim_data, $
-      'NAVIGATE CAMERA -- LEFT: Nod; RIGHT: Twist  <Shift> LEFT:XZ; RIGHT: track; WHEEL: Y '
+;      'NAVIGATE CAMERA -- LEFT: Nod; RIGHT: Twist  <Shift> LEFT:XZ; RIGHT: track; WHEEL: Y '
+      'NAVIGATE CAMERA -- LEFT: Nod; RIGHT: Twist  <Shift> LEFT:XZ; RIGHT: track; WHEEL: Y  <Ctrl> LEFT:Nadir; RIGHT: Zenith'
 
 end
 ;=============================================================================

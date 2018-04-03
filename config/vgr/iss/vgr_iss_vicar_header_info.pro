@@ -64,7 +64,7 @@ function vgr_iss_vicar_header_info, dd
  lab05 = vicgetpar(label, 'LAB05')
  meta.target = strtrim(strmid(lab05, 35, 11), 2)
  if (meta.target EQ 'ENCELADU') then meta.target = 'ENCELADUS'
- if (meta.target.EQ 'S-RINGS') then meta.target = 'SATURN'
+ if (meta.target EQ 'S-RINGS') then meta.target = 'SATURN'
 
  ;-----------------------------------
  ; time

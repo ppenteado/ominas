@@ -7,7 +7,7 @@ function dhfn_filename, raw_filename
  filename = raw_filename
 
  ;------------------------------------------------------------------------
- ; this set should be pretty portable...
+ ; This set should be pretty portable...
  ;------------------------------------------------------------------------
  valid = [byte('/'), $
           byte('\'), $
@@ -56,16 +56,18 @@ end
 ;=============================================================================
 function dhfn_findfile, dir, name, ext
 
+ sep = path_sep()
+
  ;---------------------------------------------------------------
  ; try replacing existing extension
  ;---------------------------------------------------------------
- ff = file_search(dir + '/' + name + '.dh')
+ ff = file_search(dir + sep + name + '.dh')
  if(keyword_set(ff)) then return, ff
 
  ;---------------------------------------------------------------
  ; try just adding .dh extension
  ;---------------------------------------------------------------
- if(keyword_set(ext)) then ff = findfile(dir + '/' + name + '.' + ext + '.dh')
+ if(keyword_set(ext)) then ff = findfile(dir + sep + name + '.' + ext + '.dh')
  if(keyword_set(ff)) then return, ff
 
  return, ''
@@ -99,7 +101,7 @@ function dh_fname, raw_filename, write=write
  ;----------------------------------------------------------------------------
  ; if creating a new dh, put it in the desired path, and add '.dh'
  ;----------------------------------------------------------------------------
- if(keyword_set(write)) then return, path + '/' + full_name + '.dh'
+ if(keyword_set(write)) then return, path + path_sep() + full_name + '.dh'
 
 
  ;------------------------------------------------------------------

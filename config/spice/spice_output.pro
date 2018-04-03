@@ -123,7 +123,7 @@ pro spice_output, dd, keyword, value, prefix, inst, status=status, $
  ck_dir = (file_search(file_dirname(ck_file)))[0]
  ck_name = file_basename(ck_file)
  if(strupcase(ck_name) EQ 'AUTO') then ck_name = cor_name(dd) + '.bc'
- ck_file = ck_dir + '/' + ck_name
+ ck_file = ck_dir + path_sep() + ck_name
 
 
  reload = tr_keyword_value(dd, 'reload')

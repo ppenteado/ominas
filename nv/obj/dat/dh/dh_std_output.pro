@@ -172,7 +172,7 @@ pro dh_std_output, dd, keyword, value, status=status, $
    dh_dir = (file_search(file_dirname(dh_file)))[0]
    dh_name = file_basename(dh_file)
    if(strupcase(dh_name) EQ 'AUTO') then dh_name = dh_fname(/write, cor_name(dd))
-   dh_file = dh_dir + '/' + dh_name
+   dh_file = dh_dir + path_sep() + dh_name
   end
 
 

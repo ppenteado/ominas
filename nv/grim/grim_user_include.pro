@@ -31,7 +31,7 @@ end
 pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
                   color=color, fn_color=fn_color, fn_shade=fn_shade, psym=psym, thick=thick, line=line, symsize=symsize, $
                   shade_threshold=shade_threshold, fn_graphics=fn_graphics, xgraphics=xgraphics, nodraw=nodraw, inactive=inactive, $
-                  no_refresh=no_refresh, plane=plane
+                  no_refresh=no_refresh, plane=plane, lock=lock
 
  if(NOT keyword_set(tag)) then tag = 'no_name'
  if(NOT keyword_set(symsize)) then symsize = 1
@@ -68,6 +68,9 @@ pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
  user_struct.symsize = symsize
 
  cor_set_udata, user_ptd, 'GRIM_USER_STRUCT', user_struct, /noevent
+
+ if(keyword_set(lock)) then $
+              cor_set_udata, user_ptd, 'GRIM_SELECT_LOCK', 1, /noevent
 
  tlp = plane.user_ptd_tlp
  if(keyword_set(update)) then $
@@ -288,14 +291,15 @@ end
 ; grim_activate_user_overlay
 ;
 ;=============================================================================
-pro grim_activate_user_overlay, plane, ptd
+pro grim_activate_user_overlay, plane, ptd, deactivate=deactivate
 
  if(NOT keyword_set(ptd)) then return
 
  ;--------------------------------------------------------------------
  ; activate overlays
  ;--------------------------------------------------------------------
- cor_set_udata, ptd, 'GRIM_ACTIVE_FLAG', 1, /all, /noevent
+ flag = keyword_set(deactivate) ? 0 : 1
+ cor_set_udata, ptd, 'GRIM_ACTIVE_FLAG', flag, /all, /noevent
 
 
 end
