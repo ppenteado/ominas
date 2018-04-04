@@ -62,9 +62,15 @@ nt = 1
 ;
 ;-
 ;-------------------------------------------------------------------------
-cds = pg_get_cameras(instrument=instrument, time=times)
-t_start = bod_time(cds[0])
-t_stop = bod_time(cds[1])
+;cds = pg_get_cameras(instrument=instrument, time=times)
+;t_start = bod_time(cds[0])
+;t_stop = bod_time(cds[1])
+;pds = pg_get_planets(time=times)
+;;; need to fix this ['EARTH','EARTH'] bullshit
+;;; need earth and moon maps in demo/data/maps
+pds = pg_get_planets(time=times, name=['EARTH','EARTH'])
+t_start = bod_time(pds[0])
+t_stop = bod_time(pds[1])
 
 t = t_start
 if(nt GT 1) then t = (dindgen(nt)/(nt-1) * (t_stop - t_start)) + t_start

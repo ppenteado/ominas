@@ -129,12 +129,71 @@ function dltr_extract, table, instrument, $
 
 
 
+ ;============================================
+ ; add *unique* new translators and keyvals
+ ;============================================
+; if(keyword_set(_input_translators)) then $
+;  begin
+;   ww = nwhere(_input_translators, input_translators)
+;   w = complement(_input_translators, ww)
+;   if(w[0] NE -1) then $
+;    begin
+;     input_translators = append_array(input_translators, _input_translators[w])
+;     if(keyword_set(_input_keyvals)) then $
+;               input_keyvals = append_array(input_keyvals, _input_keyvals[w,*])
+;    end
+;  end
+
+; if(keyword_set(_output_translators)) then $
+;  begin
+;   ww = nwhere(_output_translators, output_translators)
+;   w = complement(_output_translators, ww)
+;   if(w[0] NE -1) then $
+;    begin
+;     output_translators = append_array(output_translators, _output_translators[w])
+;     if(keyword_set(_output_keyvals)) then $
+;               output_keyvals = append_array(output_keyvals, _output_keyvals[w,*])
+;    end
+;  end
+
+
+ ;============================================
+ ; add new translators and keyvals
+ ;============================================
  input_translators = append_array(input_translators, _input_translators)
- output_translators = append_array(output_translators, _output_translators)
  input_keyvals = append_array(input_keyvals, _input_keyvals)
+ output_translators = append_array(output_translators, _output_translators)
  output_keyvals = append_array(output_keyvals, _output_keyvals)
 
+
  return, 0
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; dltr_unique
+;
+; 
+;=============================================================================
+pro dltr_unique, translators, keyvals
+
+ n = n_elements(translators)
+ mark = bytarr(n)
+
+ for i=0, n-2 do $
+  begin
+   w = where(translators[i+1:*] EQ translators[i])
+   if(w[0] NE -1) then mark[i] = 1
+  end
+
+ w = where(mark EQ 0)
+
+ translators = translators[w]
+ keyvals = keyvals[w,*]
+
+
 end
 ;=============================================================================
 
@@ -151,6 +210,10 @@ pro dat_lookup_translators, instrument, $
 @nv_block.common
 @core.include
 
+ input_translators = ''
+ input_keyvals = ''
+ output_translators = ''
+ output_keyvals = ''
 
  ;=====================================================
  ; read the translators table if it doesn't exist
@@ -215,6 +278,12 @@ pro dat_lookup_translators, instrument, $
  nv_message, verb=0.9, 'Input translators: ' + str_comma_list(input_translators)
  nv_message, verb=0.9, 'Output translators: ' + str_comma_list(output_translators)
 
+
+ ;---------------------------------------------------------------------
+ ; Keep only the latest instance of any redundant translator
+ ;---------------------------------------------------------------------
+ dltr_unique, input_translators, input_keyvals
+ dltr_unique, output_translators, output_keyvals
 
 end
 ;===========================================================================

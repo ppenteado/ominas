@@ -1,6 +1,18 @@
 # instrument	input			output		keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
+  COMMON	strcat_sao_input		-	
+  	-	strcat_common_input		-	
+
+  DEFAULT	gen_spice_input			- 	klist=gen_demo.kernels \
+                                                        lsk_in=auto
+
+
+
+
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
   CAS_ISS_NA	cas_iss_spice_input	cas_iss_spice_output \
 							klist=cas_demo.kernels \
 #							ck_in=auto \
@@ -70,17 +82,18 @@
   VGR2_ISS_WA	vgr_iss_spice_input	vgr_iss_spice_output klist=vgr_demo.kernels
 
 
+
+
 # Instrument	Input			Output		Keyword arguments
 # string	translator		translator
 #------------------------------------------------------------------------------
   GLL_SSI	gll_ssi_spice_input	gll_ssi_spice_output klist=gll_demo.kernels
 
 
-  COMMON	strcat_sao_input		-	
-  COMMON	strcat_common_input		-	
 
-
-
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
  JUNO_EPO_CAMERA     juno_epo_spice_input    juno_epo_spice_output \
                                                   klist=juno_demo.kernels 
 #                                                        ck_in=auto \
