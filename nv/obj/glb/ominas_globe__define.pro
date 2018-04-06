@@ -2,16 +2,40 @@
 ; ominas_globe::init
 ;
 ;=============================================================================
-function ominas_globe::init, ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, $
+function ominas_globe::init, _ii, crd=crd0, bd=bd0, sld=sld0, gbd=gbd0, $
 @glb__keywords_tree.include
 end_keywords
 @core.include
  
+ if(keyword_set(_ii)) then ii = _ii
+ if(NOT keyword_set(ii)) then ii = 0 
+
+
+ ;---------------------------------------------------------------
+ ; set up parent class
+ ;---------------------------------------------------------------
  if(keyword_set(gbd0)) then struct_assign, gbd0, self
  void = self->ominas_solid::init(ii, crd=crd0, bd=bd0, sld=sld0, $
 @sld__keywords_tree.include
 end_keywords)
 
+
+ ;-------------------------------------------------------------------------
+ ; Handle index errors: set index to zero and try again.  This allows a 
+ ; single input to be applied to multiple objects, via multiple calls to
+ ; this method.  In that case, all inputs must be given as single inputs.
+ ;-------------------------------------------------------------------------
+ catch, error
+ if(error NE 0) then $
+  begin
+   ii = 0
+   catch, /cancel
+  end
+
+ 
+ ;---------------------------------------------------------------
+ ; assign initial values
+ ;---------------------------------------------------------------
  self.abbrev = 'GLB'
  self.tag = 'GBD'
  if(keyword_set(lref)) then self.lref=decrapify(lref[ii])
