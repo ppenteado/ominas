@@ -38,12 +38,20 @@
 ;
 ;         dim:          Returned dimension of array
 ;
+;        type:          Returned datatype of array 
+;
+;      sample:          Requested samples by index
+;
+; returned_samples:     Returned samples by index (subframe containing sample indexes)
+;
 ; RETURN:
-;       The data array read from the file.
+;       The data array read from the web site.
 ;
 ;
 ; MODIFICATION HISTORY:
 ;       Written by:     Haemmerle, 2/2018
+;       Modified by:    Haemmerle, 3/2018
+;                       Added type, sample, returned_samples
 ;
 ;-----------------------------------------------------------------
 FUNCTION Url_Callback, status, progress, data
@@ -56,7 +64,8 @@ FUNCTION Url_Callback, status, progress, data
 END
 
 ;-----------------------------------------------------------------
-FUNCTION read_w10n_pds, url, label, dim=dim, nodata=_nodata, silent=silent, $
+FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=silent, $
+                        sample=sample, returned_samples=returned_samples, $
                         pds=pds, gif=gif, debug=debug
 
    nodata = keyword_set(_nodata)
@@ -189,13 +198,37 @@ FUNCTION read_w10n_pds, url, label, dim=dim, nodata=_nodata, silent=silent, $
    if (keyword_set(debug)) then print, 'Image size = ', isize
    metadata = (attributes[1])['value']
    label = json_serialize(metadata)
+   if (isize[2] EQ 1) then dim = isize[0:1] $
+   else dim = isize
+
+   ; Get data type (if available using VICAR system label item FORMAT)
+   ;dh_w10n_pds_par, label, 'FORMAT', get=image_type, debug=debug
+   ;if (keyword_set(debug)) then print, 'FORMAT = ', image_type
+   ;if (image_type EQ 'BYTE') then type = 1
+   ;if (image_type EQ 'HALF') then type = 2
+   ;if (image_type EQ 'WORD') then type = 2
+   ;if (image_type EQ 'FULL') then type = 3
+   ;if (image_type EQ 'REAL') then type = 4
+   ;if (image_type EQ 'DOUB') then type = 5
+
+   ; Use pixel data request in JSON to get data type
+   oUrl->SetProperty, URL_PATH = IMAGE_PATH + IMAGE_NAME + '/'+node_name+'/raster/data[0:1,0:1,0:1]?output=json
+   data_json = oUrl->Get( /STRING_ARRAY )
+   jlab = json_parse(data_json)
+   image_type = jlab['type']
+   if (keyword_set(debug)) then print, 'type = ', image_type
+   if (image_type EQ 'uint8') then type = 1
+   if (image_type EQ 'int16') then type = 2
+   if (image_type EQ 'int32') then type = 3
+   if (image_type EQ 'float32') then type = 4
+   if (image_type EQ 'float64') then type = 5
 
    if (keyword_set(gif)) then begin
 
       ; Make a request to the PDS image server.
       ; Retrieve a binary gif image file and write it 
       ; to the local disk's IDL main directory.
-      oUrl->SetProperty, URL_PATH = IMAGE_PATH + IMAGE_NAME + '/0/image[]?output=gif'
+      oUrl->SetProperty, URL_PATH = IMAGE_PATH + IMAGE_NAME + '/'+node_name+'/image[]?output=gif'
 
       fn = oUrl->Get(FILENAME = IMAGE_NAME + '.gif')  
 
@@ -206,47 +239,118 @@ FUNCTION read_w10n_pds, url, label, dim=dim, nodata=_nodata, silent=silent, $
 
    ; Make a request for binary data
    if (NOT keyword_set(nodata)) then begin
+
       big_endian = 1b - (byte(1,0,1))[0]
-      if (big_endian EQ 1) then oUrl->SetProperty, URL_PATH = IMAGE_PATH + IMAGE_NAME + '/0/raster/data[]?output=big-endian' $
-      else oUrl->SetProperty, URL_PATH = IMAGE_PATH + IMAGE_NAME + '/0/raster/data[]?output=little-endian'
+      data_range = ''
+      rsize = isize[0]*isize[1]*isize[2]
+
+      if (keyword_set(sample)) then begin
+         ; Check sample
+         if(min(sample) LT 0 ) then message, 'Input sample index cannot be negative'
+         if(max(sample) GE rsize) then message, 'Input sample index cannot be outside array'
+         ; Find range of samples
+         fsize = isize[0]*isize[1]
+         max_index_x = -1
+         min_index_x = isize[0]
+         max_index_y = -1
+         min_index_y = isize[1] 
+         max_index_z = -1
+         min_index_z = isize[2] 
+         for i = 0, n_elements(sample)-1 do begin
+            z = sample[i]/fsize
+            y = (sample[i]-z*fsize)/isize[1]
+            x = sample[i]-z*fsize-y*isize[0]
+            ;print, 'x, y, z = ', x, y, z
+            if (z GT max_index_z) then max_index_z = z
+            if (z LT min_index_z) then min_index_z = z
+            if (y GT max_index_y) then max_index_y = y
+            if (y LT min_index_y) then min_index_y = y 
+            if (x GT max_index_x) then max_index_x = x
+            if (x LT min_index_x) then min_index_x = x
+            ;print, 'min/max x = ', min_index_x, max_index_x, '  min/max y = ', min_index_y, max_index_y, $
+            ;     '  min/max z = ', min_index_z, max_index_z
+         endfor
+         x_range = max_index_x - min_index_x + 1
+         y_range = max_index_y - min_index_y + 1
+         z_range = max_index_z - min_index_z + 1
+         data_range = strtrim(string(min_index_x),2) + ':' + strtrim(string(max_index_x+1),2) + ',' + $ 
+                      strtrim(string(min_index_y),2) + ':' + strtrim(string(max_index_y+1),2) + ',' + $
+                      strtrim(string(min_index_z),2) + ':' + strtrim(string(max_index_z+1),2)
+         if (keyword_set(debug)) then print, 'data_range =  "', data_range, '"'
+
+         ; calculate returned samples
+         rsize = x_range*y_range*z_range
+         i = 0
+         returned_samples = make_array(rsize, /long)
+         for z=min_index_z, max_index_z do begin
+            for y=min_index_y, max_index_y do begin
+               for x=min_index_x, max_index_x do begin
+                  returned_samples[i] = z*fsize + y*isize[0] + x
+                  i = i + 1
+               endfor
+            endfor
+         endfor
+      endif
+
+      if (big_endian EQ 1) then $
+         oUrl->SetProperty, URL_PATH = IMAGE_PATH + IMAGE_NAME + '/'+node_name+'/raster/data['+data_range+']?output=big-endian' $
+      else oUrl->SetProperty, URL_PATH = IMAGE_PATH + IMAGE_NAME + '/'+node_name+'/raster/data['+data_range+']?output=little-endian'
 
       data = oURL->Get( /BUFFER )
 
       ; Reformat data
       pixels = n_elements(data)
       ; If Byte data
-      if (pixels EQ isize[0]*isize[1]*isize[2]) then begin
-         if (isize[2] EQ 1 ) then begin
-            dim = isize[0:1]
-            data = reform(data, isize[0], isize[1], /overwrite)
-         endif else begin
-            dim = isize
-            data = reform(data, isize[0], isize[1], isize[2], /overwrite)
-         endelse
+      if (pixels EQ rsize) then begin
+         if (NOT keyword_set(sample)) then begin
+            if (isize[2] EQ 1) then data = reform(data, isize[0], isize[1], /overwrite) $
+            else data = reform(data, isize[0], isize[1], isize[2], /overwrite)
+         endif
       endif $
       ; If Half (short) data
-      else if (pixels EQ 2*isize[0]*isize[1]*isize[2]) then begin
-         short_data = make_array(isize[0]*isize[1]*isize[2], /uint)
-         if (big_endian EQ 1) then begin
-            for i=0, isize[0]*isize[1]-1 do short_data[i] = 256*data[2*i] + data[2*i+1]
-         endif else begin
-            for i=0, isize[0]*isize[1]-1 do short_data[i] = data[2*i] + 256*data[2*i+1]
-         endelse
-         if (isize[2] EQ 1 ) then begin
-            dim = isize[0:1]
-            data = reform(short_data, isize[0], isize[1], /overwrite)
-         endif else begin
-            dim = isize
-            data = reform(short_data, isize[0], isize[1], isize[2], /overwrite)
-         endelse
-      endif else begin $
+      else if (pixels EQ 2*rsize) then begin
+         data = reform(data, 2, rsize, /overwrite)
+         short_data = fix(data, 0, rsize)
+         if (NOT keyword_set(sample)) then begin
+            if (isize[2] EQ 1) then data = reform(short_data, isize[0], isize[1], /overwrite) $
+            else data = reform(short_data, isize[0], isize[1], isize[2], /overwrite)
+         endif
+      endif $
+      ; If Long data
+      else if ((pixels EQ 4*rsize) && (type NE !NULL) && (type EQ 3)) then begin
+         data = reform(data, 4, rsize, /overwrite)
+         long_data = long(data, 0, rsize)
+         if (NOT keyword_set(sample)) then begin
+            if (isize[2] EQ 1) then data = reform(long_data, isize[0], isize[1], /overwrite) $
+            else data = reform(long_data, isize[0], isize[1], isize[2], /overwrite)
+         endif
+      endif $
+      ; If Real data
+      else if ((pixels EQ 4*rsize) && (type NE !NULL) && (type EQ 4)) then begin
+         data = reform(data, 4, rsize, /overwrite)
+         float_data = float(data, 0, rsize)
+         if (NOT keyword_set(sample)) then begin
+            if (isize[2] EQ 1) then data = reform(float_data, isize[0], isize[1], /overwrite) $
+            else data = reform(float_data, isize[0], isize[1], isize[2], /overwrite)
+         endif
+      endif $
+      ; If double data
+      else if ((pixels EQ 8*rsize) && (type NE !NULL) && (type EQ 5)) then begin
+         data = reform(data, 8, rsize, /overwrite)
+         double_data = double(data, 0, rsize)
+         if (NOT keyword_set(sample)) then begin
+            if (isize[2] EQ 1) then data = reform(double_data, isize[0], isize[1], /overwrite) $
+            else data = reform(double_data, isize[0], isize[1], isize[2], /overwrite)
+         endif 
+      endif else begin
+         ; 4 or 8 byte not supported if type doesn't exist
          n_pix = pixels/isize[0]/isize[1]/isize[2]
-         message, 'Pixel size of ' + strtrim(string(n_pix),2) + ' not supported'
+         message, 'Type for pixel size of ' + strtrim(string(n_pix),2) + ' is not known, cannot convert'
       endelse
 
    endif else begin
      data = 0
-     if(NOT keyword_set(silent)) then print, 'Not reading image data.'
+     if(NOT keyword_set(silent)) then print, '/nodata specified, Not reading image data.'
    endelse
 
    if (keyword_set(pds)) then begin
