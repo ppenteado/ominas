@@ -24,7 +24,7 @@
 ;+
 ; OBSERVATION PARAMETERS
 ;
-;  Here we set basic parameters of the observation; start and stop times,
+;  Here we set basic parameters of the observation: start and stop times,
 ;  number of time steps, name of instrument.  Note that the times could also
 ;  be given numerically; UTC times are used for readability.  The 
 ;  interpretation of the times is performed by the translators (see next step):: 
@@ -76,7 +76,7 @@ if(nt GT 1) then t = (dindgen(nt)/(nt-1) * (t_stop - t_start)) + t_start
 ;
 ;  Camera descriptors are obtained for all times.  Note that, because there 
 ;  is no data descriptor, this call to PG_GET_CAMERAS creates one and returns 
-;  it in the first argument. the position and pointing of the cameras wil be 
+;  it in the first argument. the position and pointing of the cameras will be 
 ;  changed in the next step:: 
 ;
 ;     cd = pg_get_cameras(instrument=instrument, time=times)
