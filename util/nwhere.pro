@@ -62,7 +62,7 @@ function nwhere, ref, list, reverse_indices=reverse_indices
  if(NOT defined(w)) then w = (ii = -1)
 
  if(defined(ii)) then reverse_indices = ii
- return, w
+ return, decrapify(w)
 end
 ;===========================================================================
 
