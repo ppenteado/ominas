@@ -32,12 +32,14 @@ function cas_iss_psf, cd, x, y
  ;--------------------------------------------
  ; determine data filename
  ;--------------------------------------------
+ sep = path_sep()
+
  inst = cor_name(cd)
  filters = cam_filters(cd)
 
  dir = getenv('CAS_FILTERS')
  if(NOT keyword_set(dir)) then dir = getenv('OMINAS_CAS') + '/psfs'
- dir = dir + '/'
+ dir = dir + sep
 
  filespec=dir+'default_psf_generic_00200.dat'
  if(n_elements(filters) GE 2) then filespec = dir + $
@@ -47,7 +49,7 @@ function cas_iss_psf, cd, x, y
  if(NOT keyword_set(ff)) then $
   begin
 ;   nv_message, /con, $
-;               'PSF file not found for ' + filters[0] + '/' + filters[1] + '.'
+;               'PSF file not found for ' + filters[0] + sep + filters[1] + '.'
    return, 0
   end
 

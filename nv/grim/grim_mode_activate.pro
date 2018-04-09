@@ -50,10 +50,10 @@ pro grim_mode_activate_mouse_event, event, data
 
  if(event.press EQ 1) then $
      grim_activate_select, $
-	 grim_data, plane, [event.x, event.y], clicks=event.clicks, ptd=ptd $
+	 grim_data, plane, [event.x, event.y], clicks=event.clicks $
  else if(event.press EQ 4) then $
      grim_activate_select, $
-	grim_data, plane, [event.x, event.y], /deactivate, clicks=event.clicks, ptd=ptd $
+	grim_data, plane, [event.x, event.y], /deactivate, clicks=event.clicks $
  else return
 
  grim_refresh, grim_data, /noglass, /no_image;, /update

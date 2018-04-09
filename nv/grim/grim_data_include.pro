@@ -19,7 +19,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
            cursor_swap=cursor_swap, cmd=cmd, lights=lights, $
            path=path, save_path=save_path, load_path=load_path, fov=fov, clip=clip, $
            cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
-           lgt_trs=lgt_trs, hide=hide, type=type, $
+           lgt_trs=lgt_trs, hide=hide, type=type, guideline=guideline, $
 	   cam_select=cam_select, plt_select=plt_select, rng_select=rng_select, $
 	   sun_select=sun_select, str_select=str_select, stn_select=stn_select, arr_select=arr_select, $
            color=color, xrange=xrange, yrange=yrange, position=position, npoints=npoints, $
@@ -56,6 +56,9 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   if(NOT keyword_set(fov)) then fov = 0.
   if(NOT keyword_set(clip)) then clip = 0.
   if(NOT keyword_set(filter)) then filter = ''
+
+  
+  guideline_flag = keyword_set(guideline)
 
   if(keyword_set(path)) then load_path = (save_path = path)
   if(NOT keyword_set(load_path)) then load_path = ''
@@ -97,6 +100,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 	; widgets
 	;---------------
 		base			: 0l, $
+		title			: title, $
 		shortcuts_base		: 0l, $
 		shortcuts_base1		: 0l, $
 		shortcuts_base2		: 0l, $
@@ -110,9 +114,12 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		color_button		: 0l, $
 		settings_button		: 0l, $
 		crop_button		: 0l, $
+		fastforward_button	: 0l, $
 		next_button		: 0l, $
 		previous_button		: 0l, $
-		jumpto_text		: 0l, $
+		rewind_button		: 0l, $
+		jumpto_droplist		: 0l, $
+		jumpto_combobox		: 0l, $
 		refresh_button		: 0l, $
 		hide_button		: 0l, $
 		toggle_image_button	: 0l, $
@@ -189,7 +196,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		mode_data_p		: ptr_new(0), $
 		grid_flag		: 0, $
 		pixel_grid_flag		: 0, $
-		guideline_flag		: 0, $
+		guideline_flag		: guideline_flag, $
 		guideline_pixmaps	: [0l,0l], $
 		guideline_save_xy	: [-1d,-1d], $
 		axes_flag		: 0, $
@@ -315,11 +322,31 @@ end
 
 
 ;=============================================================================
+; grim_title_to_top
+;
+;=============================================================================
+function grim_title_to_top, title
+@grim_block.include
+
+ for i=0, n_elements(_all_tops)-1 do $
+  begin
+   widget_control, _all_tops[i], get_uvalue=grim_data
+   if(grim_data.title EQ title) then return, _all_tops[i]
+  end
+
+ return, -1
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_grn_to_top
 ;
 ;=============================================================================
 function grim_grn_to_top, grn
 common grn_block, tops
+ if(grn LT 0) then return, 0
  if(grn GE n_elements(tops)) then return, 0
  return, tops[grn]
 end
@@ -412,6 +439,16 @@ pro grim_set_primary, top
  grim_set_ct, grim_data
  grim_refresh, /no_image, /no_objects, grim_data, /noglass
 
+
+ ;-----------------------------------
+ ; set coordinate system
+ ;-----------------------------------
+ grim_wset, grim_data, grim_data.wnum
+
+
+ ;-----------------------------------
+ ; call callbacks
+ ;-----------------------------------
  grim_call_primary_callbacks
 
 end
