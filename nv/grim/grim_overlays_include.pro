@@ -2238,7 +2238,7 @@ end
 ; grim_copy_activations
 ;
 ;=============================================================================
-pro grim_copy_activations, grim_data, plane=plane0
+pro _grim_copy_activations, grim_data, plane=plane0
 
  planes = grim_get_plane(grim_data, /all)
  ptd0 = grim_ptd(plane0)
@@ -2254,7 +2254,8 @@ pro grim_copy_activations, grim_data, plane=plane0
     begin
      name = cor_name(ptd)
 ;;     desc = pnt_desc(ptd)
-     w = nwhere(name, name0, rev=w0)
+;     w = nwhere(name, name0, rev=w0)
+     w = nwhere1(name, name0, rev=w0)
     if(w[0] NE -1) then $
           cor_set_udata, ptd[w], 'GRIM_ACTIVE_FLAG', active0[w0], /noevent
     end
@@ -2269,7 +2270,7 @@ end
 ; grim_copy_activations
 ;
 ;=============================================================================
-pro _grim_copy_activations, grim_data, plane=plane0
+pro grim_copy_activations, grim_data, plane=plane0
 
  planes = grim_get_plane(grim_data, /all)
  ptd0 = grim_ptd(plane0)

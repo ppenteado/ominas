@@ -26,8 +26,7 @@
 ;
 ;  OUTPUT:
 ;       reverse_indices:
-;              Reverse subscripts for each returned subscript. One per returned
-;              subscript.
+;		Subscripts wrt the second input array.
 ;
 ; KEYWORDS:
 ;       NONE
@@ -47,29 +46,6 @@
 ;-
 ;=============================================================================
 function nwhere, ref, list, reverse_indices=reverse_indices
-
- for i=0l, n_elements(list)-1 do $
-  begin
-   ww = where(ref EQ list[i])
-   if(ww[0] NE -1) then $
-    begin
-     w = append_array(w, ww)
-     if(arg_present(reverse_indices)) then $
-                   ii = append_array(ii, make_array(n_elements(ww), val=i))
-    end
-  end
-
- if(NOT defined(w)) then w = (ii = -1)
-
- if(defined(ii)) then reverse_indices = ii
- return, decrapify(w)
-end
-;===========================================================================
-
-
-
-;=============================================================================
-function __nwhere, ref, list, reverse_indices=reverse_indices
 
  n = n_elements(list)
 
