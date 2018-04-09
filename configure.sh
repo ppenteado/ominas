@@ -140,8 +140,13 @@ fi
 
 
 if [ "$IDL_DIR" = "" ]; then
-        idl=`which idl | tail -1`
-        idlbin=$idl
+        ivers=( "idl87" "idl86" "idl85" "idl84" "idl83" "idl82" "idl" )
+        for idlbinv in "${ivers[@]}"; do
+          idl=`which ${idlbinv} | tail -1`
+          echo ${idlbinv}
+          idlbin=$idl
+          if [ "$idl" != "" ]; then break; fi
+        done
         if [ "$idl" = "" ]; then
           read -rp "IDL not found. Please enter the location of your IDL installation (such as /usr/local/exelis/idl85): " idldir
           IDL_DIR="$idldir"
@@ -150,6 +155,10 @@ if [ "$IDL_DIR" = "" ]; then
           idlbin=$IDL_DIR/bin/idl
         else
           printf "Using IDL at $idl\n"
+          IDL_DIR=`${idl} -e 'print,filepath("")' | tail -1`
+          printf "Setting IDL_DIR to ${IDL_DIR}\n"
+          export IDL_DIR
+          idlbin=$IDL_DIR/bin/idl
         fi
 else
         printf "IDL_DIR found, $IDL_DIR, using it\n"
@@ -1435,14 +1444,14 @@ fi
 if grep -q "[^#]*\. ~/.ominas/ominasrc" ${usersh} ; then
   echo "${usersh} already sets ominas alias"
 else
-  echo ". ~/.ominas/ominasrc" >> ${usersh}
+  echo "if [ -s ~/.ominas/ominasrc ]; then . ~/.ominas/ominasrc; fi" >> ${usersh}
 fi
 
 
 if grep -q "[^#]*\. ~/.ominas/ominasrc" ${psetting} ; then
   echo "${psetting} already sets ominas alias"
 else
-  echo ". ~/.ominas/ominasrc" >> ${psetting}
+  echo "if [ -s ~/.ominas/ominasrc ]; then . ~/.ominas/ominasrc; fi" >> ${psetting}
 fi
 
 #if grep -q "alias ominas=~/.ominas/ominas" ${usersh} ; then
