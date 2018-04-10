@@ -8,7 +8,7 @@ $DEMO_SPICE_LSK/naif0012.tls
 
 
 # used for eclipse example
-$DEMO_SPICE_SPK/de430.bsp
+$DEMO_SPICE_SPK/140114AP_SCPSE_13290_17265.bsp
 $DEMO_SPICE_PCK/pck00010.tpc
 
 
