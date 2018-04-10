@@ -847,20 +847,26 @@ end
 ; grim_match_overlays
 ;
 ;=============================================================================
-function grim_match_overlays, ptd, ptd0
+function grim_match_overlays, ptd, ptd0, general=general
 
 
- ;----------------------------------------------------------
- ; narrow by comparing descriptions, names, and assoc xds
- ;----------------------------------------------------------
- w = where((pnt_desc(ptd) EQ pnt_desc(ptd0)) $
-              AND (cor_name(ptd) EQ cor_name(ptd0)) $
-                  AND (pnt_assoc_xd(ptd) EQ pnt_assoc_xd(ptd0)) )
+ ;-----------------------------------------------------------------
+ ; narrow by comparing descriptions, names, and possibly assoc xds
+ ;-----------------------------------------------------------------
+ if(NOT keyword_set(general)) then $
+   w = where(( pnt_desc(ptd) EQ pnt_desc(ptd0)) $
+                 AND (cor_name(ptd) EQ cor_name(ptd0)) $
+                    AND (pnt_assoc_xd(ptd) EQ pnt_assoc_xd(ptd0)) ) $
+ else $
+   w = where(( pnt_desc(ptd) EQ pnt_desc(ptd0)) $
+                 AND (cor_name(ptd) EQ cor_name(ptd0)) )
 
  ;----------------------------------------------------------
- ; if only one math, assume it's correct
+ ; if only one match, assume it's correct
  ;----------------------------------------------------------
  if(n_elements(w) EQ 1) then return, w
+
+
 
  ;-------------------------------------------------------------------------
  ; compare observers for remaining candidates; multiple ods are possible
@@ -2232,15 +2238,47 @@ end
 ; grim_copy_activations
 ;
 ;=============================================================================
-pro grim_copy_activations, grim_data, plane=plane
+pro _grim_copy_activations, grim_data, plane=plane0
 
  planes = grim_get_plane(grim_data, /all)
- ptd0 = grim_ptd(plane)
+ ptd0 = grim_ptd(plane0)
+ name0 = cor_name(ptd0)
+;; desc0 = pnt_desc(ptd0)
+ active0 = cor_udata(ptd0, 'GRIM_ACTIVE_FLAG')
+
+
+ for i=0, n_elements(planes)-1 do if(planes[i].pn NE plane0.pn) then $
+  begin
+   ptd = grim_ptd(planes[i])
+   if(keyword_set(ptd)) then $
+    begin
+     name = cor_name(ptd)
+;;     desc = pnt_desc(ptd)
+;     w = nwhere(name, name0, rev=w0)
+     w = nwhere1(name, name0, rev=w0)
+    if(w[0] NE -1) then $
+          cor_set_udata, ptd[w], 'GRIM_ACTIVE_FLAG', active0[w0], /noevent
+    end
+  end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_copy_activations
+;
+;=============================================================================
+pro grim_copy_activations, grim_data, plane=plane0
+
+ planes = grim_get_plane(grim_data, /all)
+ ptd0 = grim_ptd(plane0)
  name0 = cor_name(ptd0)
  active0 = cor_udata(ptd0, 'GRIM_ACTIVE_FLAG')
 
 
- for i=0, n_elements(planes)-1 do if(planes[i].pn NE plane.pn) then $
+ for i=0, n_elements(planes)-1 do if(planes[i].pn NE plane0.pn) then $
   begin
    ptd = grim_ptd(planes[i])
    if(keyword_set(ptd)) then $

@@ -487,7 +487,7 @@ function grim_parse_overlay, plane, overlay, names, struct=struct
  items = strupcase(str_nsplit(s[1], '/'))
  p = strpos(items, '=')
  w = where(p EQ -1, complement=ww)
- if(w[0] NE -1) then names = items[w]
+ if(w[0] NE -1) then names = str_nsplit(items[w], ',')
  if(ww[0] NE -1) then parm = items[ww]
 
  ;---------------------------------------------------------

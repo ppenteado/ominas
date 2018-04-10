@@ -2,16 +2,40 @@
 ; ominas_data::init
 ;
 ;=============================================================================
-function ominas_data::init, ii, crd=crd0, dd=dd0, $
+function ominas_data::init, _ii, crd=crd0, dd=dd0, $
 @dat__keywords_tree.include
 end_keywords
 @core.include
 
+ if(keyword_set(_ii)) then ii = _ii
+ if(NOT keyword_set(ii)) then ii = 0 
+
+
+ ;---------------------------------------------------------------
+ ; set up parent class
+ ;---------------------------------------------------------------
  if(keyword_set(dd0)) then struct_assign, dd0, self
  void = self->ominas_core::init(ii, crd=crd0, $
 @cor__keywords.include
 end_keywords)
 
+
+ ;-------------------------------------------------------------------------
+ ; Handle index errors: set index to zero and try again.  This allows a 
+ ; single input to be applied to multiple objects, via multiple calls to
+ ; this method.  In that case, all inputs must be given as single inputs.
+ ;-------------------------------------------------------------------------
+ catch, error
+ if(error NE 0) then $
+  begin
+   ii = 0
+   catch, /cancel
+  end
+
+ 
+ ;---------------------------------------------------------------
+ ; assign initial values
+ ;---------------------------------------------------------------
  self.abbrev = 'DAT'
  self.tag = 'DD'
 

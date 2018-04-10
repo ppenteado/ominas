@@ -156,7 +156,6 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=keyvals, $
                           trs=trs, free=free, $
                           @dat__keywords_tree.include
                           end_keywords
-
  ndd = n_elements(dd)
 
  ;---------------------------------------------------------------------
@@ -249,10 +248,12 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=keyvals, $
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
    if(defined(name)) then _name = name & name = !null
+   if(defined(time)) then _time = time & time = !null
    plt_assign, pd, /noevent, $
                 @plt__keywords_tree.include
                 end_keywords
    if(defined(_name)) then name = _name
+   if(defined(_time)) then time = _time
   end
 
  ;--------------------------------------------------------
