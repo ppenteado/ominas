@@ -80,6 +80,7 @@ function dat_detect_instrument, dd
  ;==============================================================
  ; Instrument is DEFAULT if none detected
  ;==============================================================
+ nv_message, verb=0.9, 'No instrument detected; setting to DEFAULT.'
  return, 'DEFAULT'
 end
 ;===========================================================================

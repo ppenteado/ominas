@@ -2563,6 +2563,7 @@ end
 ;
 ;=============================================================================
 function grim_select_overlays, grim_data, plane, p0, ptds, $
+                 filter=filter, value=value, complement=complement, $
                                      clicks=clicks, point=point, box=box
 
  ;---------------------------------------------
@@ -2571,6 +2572,18 @@ function grim_select_overlays, grim_data, plane, p0, ptds, $
  if(NOT keyword_set(ptds)) then $
    ptds = append_array(grim_ptd(plane), grim_get_user_ptd(plane=plane))
  if(NOT keyword_set(ptds)) then return, !null
+
+ ;---------------------------------------------
+ ; filter by user value if filter specified
+ ;---------------------------------------------
+ if(keyword_set(filter)) then $
+  begin
+   values = cor_udata(ptds, filter)
+   w = where(values EQ value, complement=ww)
+   if(keyword_set(complement)) then w=ww
+   if(w[0] EQ -1) then return, !null
+   ptds = ptds[w]
+  end
 
  ;--------------------------------------------------------
  ; remove those that are locked
@@ -2665,11 +2678,12 @@ pro grim_activate_select, grim_data, plane, p0, $
  ; select overlays
  ;--------------------------------------------------------
  ptd = grim_select_overlays(grim_data, plane, p0, $
+            filter='GRIM_ACTIVE_FLAG', value=keyword_set(deactivate), $
                                    clicks=clicks, point=point, box=box)
  if(NOT keyword_set(ptd)) then return
 
  ;--------------------------------------------------------
- ; activate remaining overlays
+ ; activate/deactivate overlays
  ;--------------------------------------------------------
  status = 0
 
