@@ -134,7 +134,8 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
    endif
 
    ; create a new IDLnetURL object 
-   oUrl = OBJ_NEW('IDLnetUrl')
+   if (!version.release ge '8.4') then oUrl = OBJ_NEW('IDLnetUrl') else $
+     oUrl = OBJ_NEW('IDLnetUrl',ssl_certificate_file=getenv('OMINAS_DIR')+path_sep()+'util'+path_sep()+'downloader'+path_sep()+'ca-bundle.crt')
 
    ; Specify the callback function
    if (keyword_set(debug)) then oUrl->SetProperty, CALLBACK_FUNCTION ='Url_Callback'
