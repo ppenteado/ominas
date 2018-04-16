@@ -185,6 +185,7 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
       PRINT, 'IMAGE_METADATA array of strings returned:'
       for i=0, n_elements(image_metadata_json)-1 do print, image_metadata_json[i]
    endif
+   if (n_elements(image_metadata_json) EQ 0) then message, 'No image label found'
    image_metadata = json_parse(image_metadata_json)
    if (keyword_set(debug)) then begin
        print, 'IMAGE_METADATA:'
