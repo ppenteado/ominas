@@ -17,7 +17,8 @@
 ;
 ;
 ; ARGUMENTS:
-;  INPUT: array:
+;  INPUT: 
+;       array:
 ;		Array to process.
 ;
 ;	s:	Array of sorted subscripts.  If given, these subscripts
@@ -37,6 +38,10 @@
 ;		Array of subscripts mapping the output elements to their
 ;		original positions in the input array.
 ;
+;	subscripts:			
+;		Array of subscripts giving the elements of array that were
+;               returned.
+;
 ;
 ; RETURN:
 ;	Unique array elements.
@@ -51,7 +56,7 @@
 ;	
 ;-
 ;=============================================================================
-function unique, _x, ss, nosort=nosort, reverse_indices=iii
+function unique, _x, ss, nosort=nosort, reverse_indices=iii, subscripts=uu
 
  reverse = arg_present(iii)
 

@@ -290,11 +290,12 @@ function pg_get_stars, arg1, arg2, sd=_sd, od=od, _extra=keyvals, $
    ; override the specified values (name cannot be overridden)
    ;-------------------------------------------------------------------
    if(defined(name)) then _name = name & name = !null
+   if(defined(time)) then _time = time & time = !null
    str_assign, sd, /noevent, $
                      @str__keywords_tree.include
                      end_keywords
     if(defined(_name)) then name = _name
-
+    if(defined(_time)) then time = _time
   end
 
  ;--------------------------------------------------------

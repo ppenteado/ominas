@@ -143,6 +143,9 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
 
    if(keyword_set(free)) then nv_free, dd
   end $
+ ;-------------------------------------------------------------------
+ ; otherwise, get planet descriptors from the translators
+ ;-------------------------------------------------------------------
  else $
   begin
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -202,7 +205,6 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
                  end_keywords
     if(defined(_name)) then name = _name
     if(defined(_time)) then time = _time
-
   end
 
 
