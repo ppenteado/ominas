@@ -1620,10 +1620,11 @@ end
 ; grim_rm_tiepoint
 ;
 ;=============================================================================
-pro grim_rm_tiepoint, grim_data, p, all=all, plane=plane, no_sync=no_sync
+pro grim_rm_tiepoint, grim_data, p, all=all, plane=plane, no_sync=no_sync, flabel=flabel
 
  if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
  grim_rm_indexed_array, grim_data, plane=plane, 'TIEPOINT', p, all=all, flabel=flabel
+ if(NOT keyword_set(flabel)) then return
 
  if(NOT keyword_set(no_sync)) then $
                    grim_push_indexed_array, grim_data, ptd, 'TIEPOINT', flabel=flabel
@@ -1636,10 +1637,11 @@ end
 ; grim_rm_curve
 ;
 ;=============================================================================
-pro grim_rm_curve, grim_data, p, all=all, plane=plane, no_sync=no_sync
+pro grim_rm_curve, grim_data, p, all=all, plane=plane, no_sync=no_sync, flabel=flabel
 
  if(NOT keyword__set(plane)) then plane = grim_get_plane(grim_data)
  grim_rm_indexed_array, grim_data, plane=plane, 'CURVE', p, all=all, flabel=flabel
+ if(NOT keyword_set(flabel)) then return
 
  if(NOT keyword_set(no_sync)) then $
                 grim_push_indexed_array, grim_data, ptd, 'CURVE', flabel=flabel
@@ -2029,23 +2031,26 @@ pro grim_push_indexed_array, grim_data, ptd, name, flabel=flabel
  for i=0, ntops-1 do $
   begin
    _grim_data = grim_get_data(tops[i])
-   _planes = grim_get_plane(_grim_data, /all)
-
-   for ii=0, n_elements(_planes)-1 do $
+   if(_grim_data.type NE 'PLOT') then $
     begin
-     _ptdp = grim_get_indexed_array(_planes[ii], name)
+     _planes = grim_get_plane(_grim_data, /all)
 
-     if(keyword_set(flabel)) then $
-           grim_rm_indexed_array_by_flabel, _grim_data, _planes[ii], _ptdp, flabel $
-     else if((tops[i] NE top) OR (_planes[ii].pn NE plane.pn)) then $
+     for ii=0, n_elements(_planes)-1 do $
       begin
-       if(grim_get_toggle_flag(_grim_data, full_name) $
+       _ptdp = grim_get_indexed_array(_planes[ii], name)
+  
+       if(keyword_set(flabel)) then $
+           grim_rm_indexed_array_by_flabel, _grim_data, _planes[ii], _ptdp, flabel $
+       else if((tops[i] NE top) OR (_planes[ii].pn NE plane.pn)) then $
+        begin
+         if(grim_get_toggle_flag(_grim_data, full_name) $
                    OR grim_get_toggle_flag(grim_data, full_name)) then $
-           grim_sync_indexed_array, $
+             grim_sync_indexed_array, $
    			 grim_data, plane, ptd, _grim_data, _planes[ii], _ptdp 
-      end
-     end
-   if(tops[i] NE top) then grim_refresh, _grim_data, /use_pixmap
+        end
+       end
+     if(tops[i] NE top) then grim_refresh, _grim_data, /use_pixmap
+    end
   end
 
 
@@ -2563,6 +2568,7 @@ end
 ;
 ;=============================================================================
 function grim_select_overlays, grim_data, plane, p0, ptds, $
+                 filter=filter, value=value, complement=complement, $
                                      clicks=clicks, point=point, box=box
 
  ;---------------------------------------------
@@ -2571,6 +2577,18 @@ function grim_select_overlays, grim_data, plane, p0, ptds, $
  if(NOT keyword_set(ptds)) then $
    ptds = append_array(grim_ptd(plane), grim_get_user_ptd(plane=plane))
  if(NOT keyword_set(ptds)) then return, !null
+
+ ;---------------------------------------------
+ ; filter by user value if filter specified
+ ;---------------------------------------------
+ if(keyword_set(filter)) then $
+  begin
+   values = cor_udata(ptds, filter)
+   w = where(values EQ value, complement=ww)
+   if(keyword_set(complement)) then w=ww
+   if(w[0] EQ -1) then return, !null
+   ptds = ptds[w]
+  end
 
  ;--------------------------------------------------------
  ; remove those that are locked
@@ -2665,11 +2683,12 @@ pro grim_activate_select, grim_data, plane, p0, $
  ; select overlays
  ;--------------------------------------------------------
  ptd = grim_select_overlays(grim_data, plane, p0, $
+            filter='GRIM_ACTIVE_FLAG', value=keyword_set(deactivate), $
                                    clicks=clicks, point=point, box=box)
  if(NOT keyword_set(ptd)) then return
 
  ;--------------------------------------------------------
- ; activate remaining overlays
+ ; activate/deactivate overlays
  ;--------------------------------------------------------
  status = 0
 

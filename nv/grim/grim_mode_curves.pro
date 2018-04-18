@@ -64,8 +64,8 @@ pro grim_mode_curves_mouse_event, event, data
    grim_wset, grim_data, input_wnum
    p = convert_coord(double(event.x), double(event.y), /device, /to_data)
    grim_wset, grim_data, output_wnum
-   grim_rm_curve, grim_data, p[0:1]
-   grim_refresh, grim_data, /use_pixmap
+   grim_rm_curve, grim_data, p[0:1], flabel=flabel
+   if(keyword_set(flabel)) then grim_refresh, grim_data, /use_pixmap
   end
 
 

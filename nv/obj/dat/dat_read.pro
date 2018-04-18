@@ -168,7 +168,7 @@ function drd_read, filename, data, header, $
 
 
  ;------------------------------
- ; get names of I/O routines
+ ; detect filetype
  ;------------------------------
  if(NOT keyword_set(_filetype)) then $
 	       filetype = dat_detect_filetype(dd, action=action) $
@@ -322,8 +322,6 @@ function drd_read, filename, data, header, $
    if(NOT keyword_set(_instrument)) then  $
     begin
      instrument = dat_detect_instrument(dd)
-     if(instrument EQ '') then $
-        	  nv_message, /continue,'Unable to detect instrument.'
      nv_message, verb=0.9, 'Instrument = ' + instrument
     end $
    else instrument = _instrument
