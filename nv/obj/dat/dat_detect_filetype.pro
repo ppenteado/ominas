@@ -20,13 +20,19 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:		Data descriptor containing filename to test.
+;	dd:		Data descriptor containing filename or header to test.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS:
 ;  INPUT: 
+;	filename:	Filename to test.  If not given, it is taken from the
+;			data descriptor.
+;
+;	header:		Header to test.  If not given, it is taken from the
+;			data descriptor.
+;
 ;	default:	If set, the 'DEFAULT' filetype is returned.
 ;			The default filetype is the first item in the table
 ;			whose action is not 'IGNORE'.
@@ -35,6 +41,8 @@
 ;
 ;  OUTPUT: 
 ;	action:		Action string from matched file type entry.
+;
+;	files:		Expanded list of filenames.
 ;
 ;
 ; RETURN: 
@@ -55,7 +63,9 @@
 ;	
 ;-
 ;=============================================================================
-function dat_detect_filetype, dd, default=default, all=all, action=action
+function dat_detect_filetype, dd, $
+                              filename=filename, header=header, files=files, $
+                                         default=default, all=all, action=action
 @nv_block.common
 @core.include
 
@@ -96,15 +106,29 @@ function dat_detect_filetype, dd, default=default, all=all, action=action
  ;=====================================================
  ; call filetype detectors until true is returned
  ;=====================================================
+ if(keyword_set(dd)) then $
+  begin
+   if(NOT keyword_set(filename)) then filename = dat_filename(dd)
+   if(NOT keyword_set(header)) then header = dat_header(dd)
+  end
+
  s = size(table)
  n_ftp = s[1]
  for i=0, n_ftp-1 do $
   begin
    detect_fn = table[i,0]
-   if(call_function(detect_fn, dd)) then $
+   if(call_function(detect_fn, filename=filename, header=header)) then $
     begin
      filetype = table[i,1]
      action = actions[i]
+
+     if(arg_present(files)) then $
+      begin
+       query_fn = strlowcase('query_' + filetype)
+       if(NOT routine_exists(query_fn)) then query_fn = 'file_search'
+       files = call_function(query_fn, filename)
+      end
+
      return, filetype
     end
   end

@@ -2,10 +2,8 @@
 ; detect_occ.pro
 ;
 ;===========================================================================
-function detect_occ, dd
+function detect_occ, filename=filename, header=header
 
- filename = dat_filename(dd)
- header = dat_header(dd)
  status = 0
 
  ;===============================================

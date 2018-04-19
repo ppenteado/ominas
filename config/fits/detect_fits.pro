@@ -2,10 +2,8 @@
 ; detect_fits.pro
 ;
 ;===========================================================================
-function detect_fits, dd
+function detect_fits, filename=filename, header=header
 
- filename = dat_filename(dd)
- header = dat_header(dd)
  status = 0
 
  ;===============================================

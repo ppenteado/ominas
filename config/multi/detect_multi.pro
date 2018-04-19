@@ -2,10 +2,8 @@
 ; detect_multi.pro
 ;
 ;===========================================================================
-function detect_multi, dd
+function detect_multi, filename=filename, header=header
 
- filename = dat_filename(dd)
- header = dat_header(dd)
  status = 0
 
  ;===============================================

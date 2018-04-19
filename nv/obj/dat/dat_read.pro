@@ -120,7 +120,7 @@
 ;
 ;=============================================================================
 function drd_read, filename, data, header, $
-		  filetype=_filetype, $
+		  filetype=filetype, $
 		  htype=_htype, $
 		  input_fn=_input_fn, $
 		  output_fn=_output_fn, $
@@ -165,32 +165,6 @@ function drd_read, filename, data, header, $
          maintain=maintain, $
          compress=compress, $
          tab_translators=tab_translators)
-
-
- ;------------------------------
- ; detect filetype
- ;------------------------------
- if(NOT keyword_set(_filetype)) then $
-	       filetype = dat_detect_filetype(dd, action=action) $
- else filetype = _filetype
- if(keyword_set(action)) then if(action EQ 'IGNORE') then return, 0
-
-
- ;---------------------------------------------------------------------------
- ; If unable to detect filetype, check to see whether the file even exists.
- ; We wait until this point because the file may not be a disk file.  In that
- ; case, a filetype detector would have identified it and the corresponding
- ; I/O function will know what to do with it.  
- ;---------------------------------------------------------------------------
- if(filetype EQ '') then $
-  begin
-   filename = dat_filename(dd)
-   ff = file_search(filename)
-   if(NOT keyword_set(ff)) then $
-                nv_message, 'Not found: ' + filename + '.', /con $
-   else nv_message, 'Unable to detect filetype.', /con
-   return, 0
-  end
 
 
  ;------------------------
@@ -409,22 +383,29 @@ function dat_read, filespec, data, header, $
 
 
  ;--------------------------------------------------------------------------
- ; Expand file specifications and try extensions.  If no files found,
- ; contiue with given filespec, as it may refer to something other than a 
- ; disk file.
+ ; Detect file type and expand any file specifications.  Consider all 
+ ; extensions, if any given.  
  ;--------------------------------------------------------------------------
  nspec = n_elements(filespec)
  next = n_elements(extensions)
+
  for i=0, nspec-1 do $
   begin
-   file = ''
    for j=0, next-1 do $
-     file = append_array(file, file_search(filespec[i] + extensions[j]))
-   if(NOT keyword_set(file)) then file = file_search(filespec[i])
-   filenames = append_array(filenames, file)
+    begin
+     filename = filespec[i] + extensions[j]
+     filetype = dat_detect_filetype(filename=filename, files=files, action=action)
+     if(NOT keyword_set(filetype)) then $
+               nv_message, /con, 'Unable to detect filetype: ' + filename $
+     else if(action NE 'IGNORE') then $
+      begin
+       if(NOT keyword_set(files)) then files = filename
+       filenames = append_array(filenames, files)
+       filetypes = append_array(filetypes, $
+			       make_array(n_elements(files), val=filetype))
+      end
+    end
   end
- if(NOT keyword_set(filenames)) then filenames = filespec
-
 
 
  ;----------------------------------------------------------
@@ -433,7 +414,7 @@ function dat_read, filespec, data, header, $
  for i=0, n_elements(filenames)-1 do $
   begin
    ddi = drd_read(filenames[i], data, header, $
-			filetype=filetype, $
+			filetype=filetypes[i], $
 			input_fn=input_fn, $
 			output_fn=output_fn, $
 			keyword_fn=keyword_fn, $

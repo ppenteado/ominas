@@ -2,10 +2,8 @@
 ; detect_tdl.pro
 ;
 ;===========================================================================
-function detect_tdl, dd
+function detect_tdl, filename=filename, header=header
 
- filename = dat_filename(dd)
- header = dat_header(dd)
  status = 0
 
 

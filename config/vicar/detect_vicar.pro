@@ -2,10 +2,8 @@
 ; detect_vicar.pro
 ;
 ;===========================================================================
-function detect_vicar, dd
+function detect_vicar, filename=filename, header=header
 
- filename = dat_filename(dd)
- header = dat_header(dd)
  status = 0
 
 
@@ -27,7 +25,7 @@ function detect_vicar, dd
  ;===================================
  ; check for vicar label 
  ;===================================
- if(strpos(s[0], 'LBLSIZE') EQ 0) then status=1
+ if(strpos(s[0], 'LBLSIZE') EQ 0) then status = 1
 
 
  return, status

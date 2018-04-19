@@ -2,10 +2,8 @@
 ; detect_mask.pro
 ;
 ;===========================================================================
-function detect_mask, dd
+function detect_mask, filename=filename, header=header
 
- filename = dat_filename(dd)
- header = dat_header(dd)
  status = 0
 
  ;===============================================

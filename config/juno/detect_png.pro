@@ -2,9 +2,8 @@
 ; detect_png.pro
 ;
 ;===========================================================================
-function detect_png, dd
+function detect_png, filename=filename, header=header
 
- filename = dat_filename(dd)
  status=0
 
  ;==============================

@@ -2,10 +2,8 @@
 ; detect_isis.pro
 ;
 ;===========================================================================
-function detect_isis, dd
+function detect_isis, filename=filename, header=header
 
- filename = dat_filename(dd)
- header = dat_header(dd)
  status = 0
 
  ;===============================================

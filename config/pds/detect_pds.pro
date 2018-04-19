@@ -2,10 +2,8 @@
 ; detect_pds.pro
 ;
 ;===========================================================================
-function detect_pds, dd
+function detect_pds, filename=filename, header=header
 
- filename = dat_filename(dd)
- header = dat_header(dd)
  status = 0
 
  ;===============================================
