@@ -11,6 +11,7 @@ function detect_vgr_iss, dd
  ; get sublabels
  ;---------------------------------
  meta = dat_header_info(dd, instrument='VGR1_ISS_NA')
+ if(NOT keyword_set(meta)) then return, ''
  lab02 = meta.lab02
  lab03 = meta.lab03
  lab07 = meta.lab07

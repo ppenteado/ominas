@@ -21,7 +21,6 @@ function detect_occ, filename=filename, header=header
   end
 
 
-
  ;===================================
  ; check for vicar label 
  ;===================================

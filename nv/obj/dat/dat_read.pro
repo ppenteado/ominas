@@ -381,6 +381,8 @@ function dat_read, filespec, data, header, $
  if(NOT keyword_set(maintain)) then maintain = 0
  nodata = keyword_set(nodata)
 
+ if(NOT keyword_set(extensions)) then extensions = '' $
+ else extensions = unique([extensions, ''])
 
  ;--------------------------------------------------------------------------
  ; Detect file type and expand any file specifications.  Consider all 
@@ -391,20 +393,24 @@ function dat_read, filespec, data, header, $
 
  for i=0, nspec-1 do $
   begin
+   valid = 0
    for j=0, next-1 do $
     begin
      filename = filespec[i] + extensions[j]
      filetype = dat_detect_filetype(filename=filename, files=files, action=action)
-     if(NOT keyword_set(filetype)) then $
-               nv_message, /con, 'Unable to detect filetype: ' + filename $
-     else if(action NE 'IGNORE') then $
-      begin
-       if(NOT keyword_set(files)) then files = filename
-       filenames = append_array(filenames, files)
-       filetypes = append_array(filetypes, $
+     if(keyword_set(filetype)) then valid = 1
+     if(keyword_set(filetype)) then $
+      if(action NE 'IGNORE') then $
+       begin
+        if(NOT keyword_set(files)) then files = filename
+        filenames = append_array(filenames, files)
+        filetypes = append_array(filetypes, $
 			       make_array(n_elements(files), val=filetype))
-      end
+       end
     end
+   if(NOT valid) then $
+        nv_message, /con, 'Unable to detect filetype: ' + filespec[i] + $
+           (next EQ 1 ? '' : ' (' + str_comma_list('"'+extensions+'"') + ')')
   end
 
 
