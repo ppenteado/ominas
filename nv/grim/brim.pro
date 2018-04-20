@@ -192,7 +192,7 @@ pro brim_load, brim_data, files, display=display
    if(size(files, /type) EQ 7) then $
     begin
      _im = 0
-     dd = dat_read(files[i], _im);, maintain=2)
+     dd = dat_read(files[i], _im, maintain=2)
      if(obj_valid(dd[0])) then nv_free, dd
     end $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -604,7 +604,7 @@ end
 ; brim
 ;
 ;=============================================================================
-pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
+pro brim, filespecs, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
      left_fn=left_fn, right_fn=right_fn, middle_fn=middle_fn, fn_data=fn_data, $
      exclusive_selection=exclusive_selection, path=path, get_path=get_path, $
      modal=modal, title=title, ids=ids, order=order, filter=filter, $
@@ -625,45 +625,36 @@ pro brim, files, thumbsize=thumbsize, labels=labels, select_ids=select_ids, $
  ;----------------------------------
  ; select files if none given
  ;----------------------------------
- if(NOT keyword_set(files)) then $
+ if(NOT keyword_set(filespecs)) then $
   begin
    files = $
     pickfiles(get_path=get_path, title='Select files to load', $
                                                path=path, filter=filter)
    if(NOT keyword_set(files[0])) then return
-  end 
- 
- ;---------------------------------------------------------
- ; resolve any file specifications and determine filetypes
- ;---------------------------------------------------------
- if(size(files, /type) EQ 7) then $
-  begin
-   for i=0, n_elements(files)-1 do $
-    begin
-     if(strpos(files[i], sep) EQ -1) then files[i] = pwd() + sep + files[i]
-     ff = file_search(files[i])
-     if(keyword_set(ff)) then _files = append_array(_files, ff)
-    end
-   if(NOT keyword_set(_files)) then return
-   files = _files
+  end $
+ ;--------------------------------------------------------------------
+ ; Otherwise determine filetypes and resolve any file specifications 
+ ;--------------------------------------------------------------------
+ else $
+  for i=0, n_elements(filespecs)-1 do $
+   begin
+    filetype = dat_detect_filetype(filename=filespecs[i])
+    if(keyword_set(filetype)) then $
+                files = append_array(files, dat_expand(filetype, filespecs[i]))
+   end
 
-   w = where(files NE '')
-   if(w[0] EQ -1) then return
-   files = files[w]
+ w = where(files NE '')
+ if(w[0] EQ -1) then return
+ files = files[w]
 
-   w = where(strpos(files,':') EQ -1)
-   if(w[0] EQ -1) then return
-   files = files[w]
+ w = where(strpos(files,sep) NE -1)
+ if(w[0] EQ -1) then return
+ files = files[w]
 
-   w = where(strpos(files,sep) NE -1)
-   if(w[0] EQ -1) then return
-   files = files[w]
+ if(NOT keyword_set(files)) then return
 
-   if(NOT keyword_set(files)) then return
-
-   split_filename, files, dirs, names
-   labels = names  
-  end
+ split_filename, files, dirs, names
+ labels = names  
 
  ;----------------------------------
  ; geometry

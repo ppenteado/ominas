@@ -42,8 +42,6 @@
 ;  OUTPUT: 
 ;	action:		Action string from matched file type entry.
 ;
-;	files:		Expanded list of filenames.
-;
 ;
 ; RETURN: 
 ;	String giving the type, or null string if none detected.  Detector 
@@ -63,8 +61,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_detect_filetype, dd, $
-                              filename=filename, header=header, files=files, $
+function dat_detect_filetype, dd, filename=filename, header=header, $
                                          default=default, all=all, action=action
 @nv_block.common
 @core.include
@@ -84,17 +81,11 @@ function dat_detect_filetype, dd, $
             'Without this table, OMINAS cannot read input data.']
 
  table = *nv_state.ftp_table_p
- actions = strupcase(table[*,2])
 
  ;=====================================================
  ; default type is the first entry that is not ignored
  ;=====================================================
- if(keyword_set(default)) then $
-  begin
-   w = where(actions NE 'IGNORE')
-   if(w[0] EQ -1) then return, ''
-   return, table[w[0],1] 
-  end
+ if(keyword_set(default)) then return, table[0,1] 
 
 
  ;=====================================================
@@ -115,24 +106,8 @@ function dat_detect_filetype, dd, $
  s = size(table)
  n_ftp = s[1]
  for i=0, n_ftp-1 do $
-  begin
-   detect_fn = table[i,0]
-   if(call_function(detect_fn, filename=filename, header=header)) then $
-    begin
-     filetype = table[i,1]
-     action = actions[i]
-
-     if(arg_present(files)) then $
-      begin
-       query_fn = strlowcase('query_' + filetype)
-       if(NOT routine_exists(query_fn)) then query_fn = 'file_search'
-       files = call_function(query_fn, filename)
-      end
-
-     return, filetype
-    end
-  end
-
+   if(call_function(table[i,0], $
+             filename=filename, header=header)) then return, table[i,1]
 
  return, ''
 end
