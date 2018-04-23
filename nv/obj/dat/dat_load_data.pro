@@ -113,6 +113,7 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
                        header, abscissa=abscissa, $
                        sample=samples_to_load, returned_samples=returned_samples)
 
+
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; If the input function fails (probably because it cannot subsample),
  ; then try the generic file reader
