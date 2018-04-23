@@ -53,7 +53,7 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_load_data, dd, sample=sample, data=data
+pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
 @nv_block.common
 @core.include
 
@@ -140,14 +140,11 @@ pro dat_load_data, dd, sample=sample, data=data
  ;----------------------------------
  ; set data on descriptor
  ;----------------------------------
- if((*_dd.dd0p).maintain LT 2) then $
-  begin
-   nv_suspend_events
-   dat_set_data, dd, data, abscissa=abscissa, sample=samples_to_load
-   if(keyword_set(udata)) then cor_set_udata, dd, '', udata
-   if(keyword_set(header)) then dat_set_header, dd, header
-   nv_resume_events
-  end
+ nv_suspend_events
+ dat_set_data, dd, data, abscissa=abscissa, sample=samples_to_load
+ if(keyword_set(udata)) then cor_set_udata, dd, '', udata
+ if(keyword_set(header)) then dat_set_header, dd, header
+ nv_resume_events
 
 end
 ;=============================================================================

@@ -180,6 +180,12 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
 
 
  ;-------------------------------------------------------------------------
+ ; Unload data array if maintain == 2
+ ;-------------------------------------------------------------------------
+ if((*_dd.dd0p).maintain EQ 2) then dat_unload_data, _dd
+
+
+ ;-------------------------------------------------------------------------
  ; If possible, reorganize to the proper dimensions.  This is not possible
  ; if the data array is being subsampled.
  ;-------------------------------------------------------------------------

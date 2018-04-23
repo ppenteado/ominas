@@ -19,7 +19,8 @@
 ; ARGUMENTS:
 ;  INPUT:
 ;	filespec:	Array of strings giving file specifications for
-;			file to read.
+;			file to read.  Each file specificaton must refer to
+;			files of a uniform filetype.
 ;
 ;  OUTPUT:
 ;	data:		Data array from the last file read.  This is provided
@@ -92,11 +93,10 @@
 ;
 ;
 ; PROCEDURE:
-;	dat_read expands all file specifications and then attempts to detect
-;	the filetype for each resulting filename using the filetype detectors
-;	table.  If a filetype is detected, dat_read looks up the I/O functions
-;	and calls the input function to read the file.  Finally, it calls
-;	nv_init_descriptor to obtain a data descriptor.  
+;	For each file specification, DAT_READ detets the filetype and then 
+;	expands the specification according to that filetype.  For each 
+;	resulting file, DAT_READ looks up the I/O functions and calls the 
+;	input function to read the file and build a data descriptor.  
 ;
 ;
 ; STATUS:
