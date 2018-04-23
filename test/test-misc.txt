@@ -45,6 +45,13 @@ brim '$PG_MAPS'/Saturn/*/*
 brim https://pds-imaging.jpl.nasa.gov/w10n/cassini/cassini_orbiter/coiss_1001/data/1350045294_1350147054/N135012\*.IMG
 
 
+;==============================================================================
+; Test file subsampling
+;==============================================================================
+export DAT_CACHE=500
+grim data/N1350122987_2.IMG +DAT_CACHE=500
+export DAT_CACHE=0
+
 
 
 

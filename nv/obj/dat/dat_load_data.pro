@@ -39,8 +39,8 @@
 ;	often appear in subsampled images.  This does not seem to happen
 ;	with integer sampling (e.g. integer zooms in tvim or grim), so it
 ;	may be related to rounding or truncating of indices.  It may also be
-;	a problem with the set arithmetic.  Caching is currently disabled
-;	(see (*_dd.dd0p).cache = -1 below) until it can be fixed.
+;	a problem with the set arithmetic.  Enabling caching (setting DAT_CACHE
+;	to some non-zero number) is not recommended.
 ;
 ;
 ; STATUS:
@@ -59,7 +59,6 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
 
 
  _dd = cor_dereference(dd)
-(*_dd.dd0p).cache = -1				; caching disabled until fully debugged
 
  sample0 = *(*_dd.dd0p).sample_p
  if(data_archive_defined((*_dd.dd0p).data_dap, (*_dd.dd0p).dap_index)) then $
@@ -74,7 +73,7 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
  ;-------------------------------------------------------------
  ; determine samples such that no loaded samples are reloaded
  ;-------------------------------------------------------------
- if((*_dd.dd0p).cache NE -1) then $
+ if(keyword_set((*_dd.dd0p).cache)) then $
   begin
    if(keyword_set(sample)) then $
     begin
