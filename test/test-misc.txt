@@ -48,9 +48,7 @@ brim https://pds-imaging.jpl.nasa.gov/w10n/cassini/cassini_orbiter/coiss_1001/da
 ;==============================================================================
 ; Test file subsampling
 ;==============================================================================
-export DAT_CACHE=500
 grim data/N1350122987_2.IMG +DAT_CACHE=500
-export DAT_CACHE=0
 
 
 
