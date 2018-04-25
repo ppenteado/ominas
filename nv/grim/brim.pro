@@ -202,7 +202,8 @@ pro brim_display, brim_data, ii
      dim = size(image, /dim) 
      zoom = min(float(size)/float(dim))
 
-     tvim, brim_data.wnums[i], order=brim_data.order, image, zoom=zoom
+     if(brim_data.order NE -1) then order = brim_data.order
+     tvim, brim_data.wnums[i], order=order, image, zoom=zoom
     end
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
@@ -211,6 +212,39 @@ pro brim_display, brim_data, ii
    cor_set_udata, dd[i], 'BRIM_THUMBNAIL', image
    widget_control, brim_data.label_widgets[i], set_value=labels[i]
   end
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; brim_data_event
+;
+;=============================================================================
+pro brim_data_event, event
+;print, 'brim_data_event'
+
+; data = *event.data_p
+
+; brim_data = data.data
+; dd = data.dd
+
+
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; brim_register_data_events
+;
+;=============================================================================
+pro brim_register_data_events, brim_data, dd
+
+ for i=0, n_elements(dd)-1 do $
+   nv_notify_register, dd[i], 'brim_data_event', data={data:brim_data, dd:dd[i]}
 
 end
 ;=============================================================================
@@ -333,6 +367,8 @@ function brim_configure, dd, base=base, $
  ; load and display images
  ;----------------------------------
  widget_control, /hourglass
+ brim_display, brim_data
+ brim_register_data_events, brim_data, dd
 
  return, brim_data
 end
@@ -416,7 +452,8 @@ pro brim_grim, brim_data, dd
  widget_control, /hourglass
 
  if(brim_data.order NE -1) then order = brim_data.order
- grim, /new, dd, order=order
+; grim, /new, dd, order=order
+ grim, /new, dat_filename(dd), order=order
 
 end
 ;=============================================================================
@@ -441,6 +478,17 @@ pro brim_fn_left, brim_data, data, i, dd, status=status
    brim_grim, brim_data, dd
   end $
  else brim_select, brim_data, i
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; brim_fn_right
+;
+;=============================================================================
+pro brim_fn_right, brim_data, data, i, dd, status=status
 
 end
 ;=============================================================================
@@ -558,7 +606,7 @@ pro brim, arg, thumbsize=thumbsize, labels=labels, $
  if(NOT keyword_set(arg)) then arg = ''
  if(NOT defined(left_fn)) then left_fn = 'brim_fn_left'
  if(NOT defined(middle_fn)) then middle_fn = ''
- if(NOT defined(right_fn)) then right_fn = ''
+ if(NOT defined(right_fn)) then right_fn = 'brim_fn_right'
  if(NOT keyword_set(fn_data)) then fn_data = ''
  if(NOT keyword_set(labels)) then labels = ''
  if(NOT keyword_set(order)) then order = -1
@@ -635,12 +683,27 @@ pro brim, arg, thumbsize=thumbsize, labels=labels, $
      path=path, get_path=get_path, $
      modal=modal, title=title, order=order)
 
- brim_display, brim_data
-
  no_block = 1
  if(keyword_set(modal)) then no_block = 0
  xmanager, 'brim', base, no_block=no_block
 
+
+ ;----------------------------------
+ ; menu
+ ;----------------------------------
+; menu_desc = [ '1\File' , $
+;               '0\Load                \brim_menu_file_load_event', $
+;               '0\Open                \brim_menu_file_open_event', $
+;               '2\<null>              \brim_menu_delim_event']
+;bb = widget_base(group_leader=base, /floating, tlb_frame_attr=6)
+;menu = cw__pdmenu(bb, menu_desc)
+;widget_control, bb, /realize
+
+
+
+ ;----------------------------------
+ ; output selections
+ ;----------------------------------
  select_dd = *brim_data.select_dd_p
  if(keyword_set(select_dd)) then $
   begin
