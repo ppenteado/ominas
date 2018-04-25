@@ -77,7 +77,7 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
       CATCH, /CANCEL
 
       ; Display the error msg 
-      if (NOT keyword_set(silent)) then message, !ERROR_STATE.msg
+      if (NOT keyword_set(silent)) then message, /info, !ERROR_STATE.msg
 
       ; Get the properties that will tell us more about the error.
       oUrl->GetProperty, RESPONSE_CODE=rspCode, $
@@ -94,24 +94,24 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
    ; Parse URL
    prot_pos = strpos(url, '://')
    if (prot_pos EQ -1) then begin
-      if (NOT keyword_set(silent)) then message, 'URL does not have a protocol'
+      if (NOT keyword_set(silent)) then message, /info, 'URL does not have a protocol'
       return, 0
    endif
    IMAGE_PROTOCOL = strmid(url, 0, prot_pos)
    host_pos = strpos(url, '/', prot_pos+3)
    if (host_pos EQ -1) then begin
-      if (NOT keyword_set(silent)) then message, 'URL does not have a path'
+      if (NOT keyword_set(silent)) then message, /info, 'URL does not have a path'
       return, 0
    endif
    IMAGE_HOST = strmid(url, prot_pos+3, host_pos-prot_pos-3)
    path_pos = strpos(url, '/', /reverse_search)
    if (path_pos-host_pos EQ 0) then begin
-      if (NOT keyword_set(silent)) then message, 'URL does not have a path'
+      if (NOT keyword_set(silent)) then message, /info, 'URL does not have a path'
       return, 0
    endif
    IMAGE_PATH = strmid(url, host_pos+1, path_pos-host_pos)
    if (strlen(url) EQ path_pos+1) then begin
-      if (NOT keyword_set(silent)) then message, 'URL does not have an image name' 
+      if (NOT keyword_set(silent)) then message, /info, 'URL does not have an image name' 
       return, 0
    endif
    IMAGE_NAME = strmid(url, path_pos+1)
@@ -125,11 +125,11 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
 
    ; Validate URL
    if ((strcmp(IMAGE_PROTOCOL, 'http', /fold_case) NE 1) AND (strcmp(IMAGE_PROTOCOL, 'https', /fold_case) NE 1)) then begin
-      if (NOT keyword_set(silent)) then message, 'Only supports http or https protocol'
+      if (NOT keyword_set(silent)) then message, /info, 'Only supports http or https protocol'
       return, 0
    endif
    if (strcmp(IMAGE_HOST, 'pds-imaging.jpl.nasa.gov', /fold_case) NE 1) then begin
-      if (NOT keyword_set(silent)) then message, 'Only supports PDS site'
+      if (NOT keyword_set(silent)) then message, /info, 'Only supports PDS site'
       return, 0
    endif
 
