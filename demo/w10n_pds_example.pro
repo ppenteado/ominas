@@ -11,7 +11,7 @@
 ;   This example file can be executed from the shell prompt in the ominas/demo
 ;   directory using::
 ;
-;     ominas w10n_pds_example.pro 
+;     ominas w10n_pds_example.pro <--cas> <--vgr> <--gll> <mission=={cas|vgr|gll}>
 ;
 ;    or from within an OMINAS IDL session using::
 ;
@@ -45,8 +45,15 @@
 ;
 ;-
 ;-------------------------------------------------------------------------
-mission = ''
-read, mission, prompt='Enter mission (cas, vgr, gll): '
+argv = ominas_argv()
+mission = ominas_value(argv, 'mission')
+if(keyword_set(ominas_value(argv, 'cas'))) then mission = 'cas'
+if(keyword_set(ominas_value(argv, 'vgr'))) then mission = 'vgr'
+if(keyword_set(ominas_value(argv, 'gll'))) then mission = 'gll'
+
+if(NOT keyword_set(mission)) then $
+                      read, mission, prompt='Enter mission (cas, vgr, gll): '
+
 if (mission eq 'cas') then url_mission = 'CASSINI ISS' $
 else if (mission eq 'vgr') then url_mission = 'VOYAGER ISS' $
 else if (mission eq 'gll') then url_mission = 'GALILEO SSI' $

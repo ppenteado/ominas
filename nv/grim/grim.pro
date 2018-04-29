@@ -3320,7 +3320,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
                                                   capture='grim_menu_capture')
  grim_data.menu_ids_p = nv_ptr_new(menu_ids)
  help_menu_desc = grim_create_help_menu(menu_desc)
- grim_data.help_menu = cw__pdmenu(grim_data.mbar, help_menu_desc, /mbar)
+ grim_data.help_menu = cw__pdmenu(grim_data.mbar, help_menu_desc, /mbar, /help)
 
 
  ;-----------------------------------------

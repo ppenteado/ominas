@@ -31,7 +31,7 @@
 ;
 ; KEYWORDS:
 ;  INPUT:
-;	def:		If set, new items simply ust be defined instead of "set".
+;	def:		If set, new items simply must be defined instead of "set".
 ;
 ;	positive:	If set, a single value of -1 is taken as an undefined
 ;			array.

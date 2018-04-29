@@ -19,7 +19,8 @@
 ; ARGUMENTS:
 ;  INPUT:
 ;	filespec:	Array of strings giving file specifications for
-;			file to read.
+;			file to read.  Each file specificaton must refer to
+;			files of a uniform filetype.
 ;
 ;  OUTPUT:
 ;	data:		Data array from the last file read.  This is provided
@@ -92,11 +93,10 @@
 ;
 ;
 ; PROCEDURE:
-;	dat_read expands all file specifications and then attempts to detect
-;	the filetype for each resulting filename using the filetype detectors
-;	table.  If a filetype is detected, dat_read looks up the I/O functions
-;	and calls the input function to read the file.  Finally, it calls
-;	nv_init_descriptor to obtain a data descriptor.  
+;	For each file specification, DAT_READ detets the filetype and then 
+;	expands the specification according to that filetype.  For each 
+;	resulting file, DAT_READ looks up the I/O functions and calls the 
+;	input function to read the file and build a data descriptor.  
 ;
 ;
 ; STATUS:
@@ -354,7 +354,6 @@ end
 ;===========================================================================
 
 
-
 ;=============================================================================
 ; dat_read
 ;
@@ -381,46 +380,27 @@ function dat_read, filespec, data, header, $
  if(NOT keyword_set(maintain)) then maintain = 0
  nodata = keyword_set(nodata)
 
- if(NOT keyword_set(extensions)) then extensions = '' $
- else extensions = unique([extensions, ''])
-
- ;--------------------------------------------------------------------------
- ; Detect file type and expand any file specifications.  Consider all 
- ; extensions, if any given.  
- ;--------------------------------------------------------------------------
- nspec = n_elements(filespec)
  next = n_elements(extensions)
 
- for i=0, nspec-1 do $
+ ;--------------------------------------------------------------------------
+ ; Detect file type and expand any file specifications. 
+ ;--------------------------------------------------------------------------
+ for j=0, n_elements(filespec)-1 do $
   begin
-   valid = 0
-   for j=0, next-1 do $
-    begin
-     filename = filespec[i] + extensions[j]
-     filetype = dat_detect_filetype(filename=filename, files=files, action=action)
-     if(keyword_set(filetype)) then valid = 1
-     if(keyword_set(filetype)) then $
-      if(action NE 'IGNORE') then $
-       begin
-        if(NOT keyword_set(files)) then files = filename
-        filenames = append_array(filenames, files)
-        filetypes = append_array(filetypes, $
-			       make_array(n_elements(files), val=filetype))
-       end
-    end
-   if(NOT valid) then $
-        nv_message, /con, 'Unable to detect filetype: ' + filespec[i] + $
-           (next EQ 1 ? '' : ' (' + str_comma_list('"'+extensions+'"') + ')')
-  end
+   filetype = dat_detect_filetype(filename=filespec[j])
+   filenames = dat_expand(filetype, filespec[j], extensions)
 
-
- ;----------------------------------------------------------
- ; read each file
- ;----------------------------------------------------------
- for i=0, n_elements(filenames)-1 do $
-  begin
-   ddi = drd_read(filenames[i], data, header, $
-			filetype=filetypes[i], $
+   if(NOT keyword_set(filenames)) then $
+        nv_message, /con, 'Not found: ' + filespec[j] + $
+           (next EQ 1 ? '' : ' (+' + str_comma_list(extensions) + ')') $
+   else $
+    ;----------------------------------------------------------
+    ; read each file
+    ;----------------------------------------------------------
+    for i=0, n_elements(filenames)-1 do $
+     begin
+      ddi = drd_read(filenames[i], data, header, $
+			filetype=filetype, $
 			input_fn=input_fn, $
 			output_fn=output_fn, $
 			keyword_fn=keyword_fn, $
@@ -435,9 +415,10 @@ function dat_read, filespec, data, header, $
 			sample=sample, nodata=nodata, $
 			name=name, nhist=nhist, $
 			extensions=extensions)
-   if(arg_present(data)) then $
+      if(arg_present(data)) then $
                         if(keyword_set(ddi)) then dat_load_data, ddi, data=data
-   dd = append_array(dd, ddi)
+      dd = append_array(dd, ddi)
+     end
   end
  if(NOT keyword_set(dd)) then return, !null
 

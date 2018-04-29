@@ -31,8 +31,24 @@
 ;
 ;
 ; KEYWORDS: 
+;  INPUT: NONE
+;
+;  OUTPUT: 
 ;	special_args:	Returns the names of any arguments ending with '@'.
 ;			Those arguments are removed from the argument list.
+;
+;	sample:		Returns the file_sample value (see below).
+;
+;	select:		Returns the file_select value (see below).
+;
+;
+; GLOBAL SHELL KEYWORDS: 
+;	file_sample:
+;		Sets file list sampling; see read_txt_file.
+;
+;	file_select:
+;		Sets file selection criterion; see read_txt_file.
+;
 ;
 ; RETURN:
 ;	The trimmed argument list, with all keywords=value pairs and 
@@ -48,7 +64,8 @@
 ;
 ;-
 ;=============================================================================
-function bat_parse_argv, argv, keys, val_ps, special_args=special_args
+function bat_parse_argv, argv, keys, val_ps, $
+           special_args=special_args, sample=file_sample, select=file_select
 
  if(NOT keyword_set(argv[0])) then return, ''
 
@@ -57,41 +74,28 @@ function bat_parse_argv, argv, keys, val_ps, special_args=special_args
  ; from argv and returned via the special_args 
  ; output
  ;---------------------------------------------
- stoken = '@'
- test = str_flip(argv)
- w = where(strmid(test, 0, 1) EQ stoken)
- if(w[0] NE -1) then $
-  begin
-   xx = str_nnsplit(test[w], stoken, rem=rem)
-   special_args = str_flip(rem)
+ special_args = ominas_value(argv, delim='@')
+ if(NOT keyword_set(argv[0])) then return, ''
 
-   argv = rm_list_item(argv, w, only='')
-   if(NOT keyword_set(argv[0])) then return, ''
-  end
+
+ ;----------------------------------------------------------------
+ ; get global keyword/value pairs
+ ;----------------------------------------------------------------
+ file_sample = ominas_value(argv, 'file_sample')
+ file_select = ominas_value(argv, 'file_select')
+
 
  ;--------------------------------------------
- ; Anything with '=' is a keyword argument
- ; array inputs are delineated using ','
+ ; get keywords / values
  ;--------------------------------------------
- nkey = 0 
- p = strpos(argv, '=') 
- w = where(p NE -1) 
- if(w[0] NE -1) then $
-  begin 
-   raw_keyvals = argv[w] 
-   nkey = n_elements(raw_keyvals) 
-   val_ps = ptrarr(nkey) 
-   keys = strarr(nkey) 
-   for i=0, nkey-1 do $
-    begin 
-     s = str_split(raw_keyvals[i], '=') 
-     keys[i] = s[0] 
-     val_ps[i] = ptr_new(str_nsplit(s[1], ','))  
-    end 
+ values = ominas_value(argv, key=keywords)
+ if(keyword_set(keywords)) then $
+  for i=0, n_elements(keywords)-1 do $
+   begin
+    keys = append_array(keys, keywords[i])
+    val_ps = append_array(val_ps, ptr_new(str_nsplit(values[i], ',')))
+   end
 
-   argv = rm_list_item(argv, w, only='')
-   if(NOT keyword_set(argv[0])) then return, ''
-  end 
 
  ;-----------------------------
  ; the rest are regular args

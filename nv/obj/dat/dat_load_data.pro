@@ -39,8 +39,8 @@
 ;	often appear in subsampled images.  This does not seem to happen
 ;	with integer sampling (e.g. integer zooms in tvim or grim), so it
 ;	may be related to rounding or truncating of indices.  It may also be
-;	a problem with the set arithmetic.  Caching is currently disabled
-;	(see (*_dd.dd0p).cache = -1 below) until it can be fixed.
+;	a problem with the set arithmetic.  Enabling caching (setting DAT_CACHE
+;	to some non-zero number) is not recommended.
 ;
 ;
 ; STATUS:
@@ -53,13 +53,12 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_load_data, dd, sample=sample, data=data
+pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
 @nv_block.common
 @core.include
 
 
  _dd = cor_dereference(dd)
-(*_dd.dd0p).cache = -1				; caching disabled until fully debugged
 
  sample0 = *(*_dd.dd0p).sample_p
  if(data_archive_defined((*_dd.dd0p).data_dap, (*_dd.dd0p).dap_index)) then $
@@ -74,7 +73,7 @@ pro dat_load_data, dd, sample=sample, data=data
  ;-------------------------------------------------------------
  ; determine samples such that no loaded samples are reloaded
  ;-------------------------------------------------------------
- if((*_dd.dd0p).cache NE -1) then $
+ if(keyword_set((*_dd.dd0p).cache)) then $
   begin
    if(keyword_set(sample)) then $
     begin
@@ -113,6 +112,7 @@ pro dat_load_data, dd, sample=sample, data=data
                        header, abscissa=abscissa, $
                        sample=samples_to_load, returned_samples=returned_samples)
 
+
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; If the input function fails (probably because it cannot subsample),
  ; then try the generic file reader
@@ -140,14 +140,11 @@ pro dat_load_data, dd, sample=sample, data=data
  ;----------------------------------
  ; set data on descriptor
  ;----------------------------------
- if((*_dd.dd0p).maintain LT 2) then $
-  begin
-   nv_suspend_events
-   dat_set_data, dd, data, abscissa=abscissa, sample=samples_to_load
-   if(keyword_set(udata)) then cor_set_udata, dd, '', udata
-   if(keyword_set(header)) then dat_set_header, dd, header
-   nv_resume_events
-  end
+ nv_suspend_events
+ dat_set_data, dd, data, abscissa=abscissa, sample=samples_to_load
+ if(keyword_set(udata)) then cor_set_udata, dd, '', udata
+ if(keyword_set(header)) then dat_set_header, dd, header
+ nv_resume_events
 
 end
 ;=============================================================================

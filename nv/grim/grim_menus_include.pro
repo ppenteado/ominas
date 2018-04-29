@@ -230,7 +230,7 @@ end
 ; grim_load_files
 ;
 ;=============================================================================
-pro grim_load_files, grim_data, filenames, load_path=load_path
+pro grim_load_files, grim_data, filenames, load_path=load_path, norefresh=norefresh
 
  plane = grim_get_plane(grim_data)
  filter = plane.filter
@@ -277,7 +277,8 @@ pro grim_load_files, grim_data, filenames, load_path=load_path
  offset = [0d,0d]
 
  grim_wset, grim_data, grim_data.wnum, get_info=tvd
- grim_refresh, grim_data, zoom=zoom, offset=offset, order=tvd.order
+ if(NOT keyword_set(norefresh)) then $
+         grim_refresh, grim_data, zoom=zoom, offset=offset, order=tvd.order
  grim_wset, grim_data, /save
 
 end
@@ -1011,7 +1012,7 @@ end
 ; PURPOSE:
 ;	Allows user to load images into new image planes using the BRIM 
 ;	browser.  Images are selected using the left mouse button and
-;	each image is loaded on a new plane.
+;	each image is loaded on a new plane after the browse window is closed.
 ;
 ;
 ; CATEGORY:
@@ -1029,7 +1030,7 @@ pro grim_menu_file_browse_help_event, event
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_browse_file_left_event, base, i, id, status=status
+pro grim_browse_file_left_event, brim_data, base, i, dd, status=status
 
  status = -1
  grim_data = grim_get_data(base)
@@ -1052,19 +1053,17 @@ pro grim_menu_file_browse_event, event
  if(keyword__set(plane.load_path)) then path = plane.load_path
  grim_wset, grim_data, grim_data.wnum, get_info=tvd
 
- brim, filenames, path=plane.load_path, get_path=get_path, ids=filenames, $
-      left_fn='grim_browse_file_left_event', fn_data=event.top, /modal, $
-      select=select, title='Select images to load', order=tvd.order, $
-      filter=plane.filter, /enable
- if(NOT keyword__set(select)) then return
- if(select[0] EQ '') then return
+ brim, path=plane.load_path, get_path=get_path, /modal, order=tvd.order, $
+      title='Select files to load', picktitle='Select files to browse', $
+      filter=plane.filter, select=select
+ if(NOT keyword_set(select)) then return
 
  ;----------------------------------
  ; load each file into a new plane
  ;----------------------------------
  widget_control, grim_data.base, /hourglass
- grim_load_files, grim_data, select, load_path=get_path
-
+ grim_load_files, grim_data, select, load_path=get_path, /norefresh
+ grim_refresh, grim_data
 end
 ;=============================================================================
 
@@ -2658,13 +2657,11 @@ pro grim_menu_plane_browse_help_event, event
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_browse_plane_left_event, base, i, id, status=status
+pro grim_browse_plane_left_event, brim_data, base, pn, dd, status=status
 
  status = -1
  grim_data = grim_get_data(base)
  if(NOT grim_exists(grim_data)) then return
-
- pn = id[0]
 
  grim_jump_to_plane, grim_data, pn, valid=valid
  if(valid) then $
@@ -2673,26 +2670,8 @@ pro grim_browse_plane_left_event, base, i, id, status=status
    status = 1
   end
 
-end
-;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-pro grim_browse_refresh_event, data_p
-
- base = *data_p
- if(NOT widget_info(base, /valid_id)) then $
-  begin
-   grim_rm_refresh_callback, data_p
-   return
-  end
-
- grim_data = grim_get_data()
- plane = grim_get_plane(grim_data)
-
- widget_control, base, get_uvalue=brim_data
-
- planes = grim_get_plane(grim_data, /all)
- brim_select, brim_data, plane.pn, dd=planes.dd, id=planes.pn
-
-
+ brim_select, brim_data, /clear
+ brim_select, brim_data, pn, /select
 end
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 pro grim_menu_plane_browse_event, event
@@ -2702,11 +2681,9 @@ pro grim_menu_plane_browse_event, event
  planes = grim_get_plane(grim_data, /all, pn=pns)
 
  grim_wset, grim_data, grim_data.wnum, get_info=tvd
- brim, planes.dd, ids=pns, $
+ brim, planes.dd, $
       left_fn='grim_browse_plane_left_event', fn_data=event.top, $
-      select=grim_data.pn, /exclusive, order=tvd.order, /enable, base=base
-
- grim_add_refresh_callback, 'grim_browse_refresh_event', nv_ptr_new(base)
+      order=tvd.order, base=base
 
 end
 ;=============================================================================

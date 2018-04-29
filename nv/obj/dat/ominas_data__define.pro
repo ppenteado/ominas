@@ -253,8 +253,8 @@ end
 ;
 ;	abmin:		Minimum abscissa value.
 ;
-;	cache:		Max cache size data array.  Used to deterine whether 
-;			to load / unload data samples.  -1 means infinite.
+;	cache:		Max cache size data array.  Used to determine whether 
+;			to load / unload data samples.  0 means infinite.
 ;
 ;	dim:		Array giving data dimensions.
 ;
