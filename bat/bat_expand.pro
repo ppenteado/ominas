@@ -38,10 +38,6 @@
 ;
 ;	file_select:
 ;		Sets file selection criterion; see read_txt_file.
-;		
-;	verbosity:
-;		Sets verbosity level; see nv_message.
-;		
 ;
 ;
 ; RETURN:
@@ -60,69 +56,15 @@
 ;
 ;-
 ;=============================================================================
-function bat_expand, filespecs, keys, val_ps, input_files
-
- n = n_elements(input_files)
-
- ;----------------------------------------------------------------
- ; get gobal keyword/value pairs
- ;----------------------------------------------------------------
- if(keyword_set(keys)) then $
-  begin
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   ; file_sample
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   w = where(strlowcase(keys) EQ 'file_sample')
-   if(w[0] NE -1) then $
-    begin
-     file_sample = (*val_ps[w[0]])[0]
-     keys[w] = ''
-    end
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   ; file_select
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   w = where(strlowcase(keys) EQ 'file_select')
-   if(w[0] NE -1) then $
-    begin
-     file_select = *val_ps[w[0]]
-     keys[w] = ''
-    end
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   ; verbosity
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   w = where(strlowcase(keys) EQ 'verbosity')
-   if(w[0] NE -1) then $
-    begin
-     verbosity = *val_ps[w[0]]
-     keys[w] = ''
-     nv_message, verb=verbosity
-    end
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   ; remove global shell keywords from keyval list
-   ;- - - - - - - - - - - - - - - - - - - - - - - -
-   w = where(keys EQ '')
-   if(w[0] NE -1) then $
-    begin
-     keys = rm_list_item(keys, w, only='')
-     val_ps = rm_list_item(val_ps, w)
-     if(NOT keyword_set(keys[0])) then $
-      begin
-       keys = ''
-       val_ps = ptr_new()
-      end
-    end
-  end
-
+function bat_expand, filespecs, keys, val_ps, input_files, sample, select
 
  ;----------------------------------------------------------------
  ; expand file specs
  ;----------------------------------------------------------------
- for i=0, n-1 do $
+ if(keyword_set(input_files)) then $
+  for i=0, n_elements(input_files)-1 do $
        filespecs = append_array(filespecs, $
-            read_txt_file(input_files[i], sample=file_sample, select=file_select))
+          decrapify(read_txt_file(input_files[i], sample=sample, select=select)))
 
  if(NOT keyword_set(filespecs)) then return, ''
  return, filespecs

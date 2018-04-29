@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       bat_argv
+;       ominas_argv
 ;
 ; PURPOSE:
 ;       Returns a shell argument list. Arguments are expanded
@@ -15,7 +15,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       arg = bat_argv(i)
+;       arg = ominas_argv(i)
 ;
 ;
 ; ARGUMENTS:
@@ -43,12 +43,17 @@
 ;
 ;-
 ;=============================================================================
-function bat_argv, i
+function ominas_argv, i
 
+ ;----------------------------------------------------------------
+ ; get IDL arguemnts
+ ;----------------------------------------------------------------
  argv = command_line_args()
-
  if(n_elements(argv) EQ 0) then return, ''
 
+ ;----------------------------------------------------------------
+ ; parse switch characters
+ ;----------------------------------------------------------------
  first = strmid(argv, 0, 1)
  first2 = strmid(argv, 0, 2)
  _arg = strmid(argv,1,1024)
@@ -60,10 +65,10 @@ function bat_argv, i
  w = where(first2 EQ '--')
  if(w[0] NE -1) then argv[w] = __arg[w] + '=1'
 
-; w = where(first EQ '+')
-; if(w[0] NE -1) then setenv, _arg[w]
 
-
+ ;----------------------------------------------------------------
+ ; return desired arguments
+ ;----------------------------------------------------------------
  if(n_elements(i) EQ 0) then return, argv
  if(i GE n_elements(argv)) then return, ''
 
