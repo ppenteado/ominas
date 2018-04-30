@@ -17,13 +17,11 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       value = ominas_value(argv, keyword)
+;       value = ominas_value(keyword)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	argv:	xidl argument list.
-;
 ;	keyword:  
 ;		String array giving the name of the keyword for which a value 
 ;		is desired.  Keyword names may be abreviated as in IDL.
@@ -71,7 +69,6 @@ function bv_get, argv, keyword, delim, key=key
  else ii = nwhere(keys, keyword)
  if(ii[0] EQ -1) then return, ''
 
-
  argv = rm_list_item(argv, jj[ii])
  key = keys[ii]
  return, decrapify(vals[ii])
@@ -84,7 +81,9 @@ end
 ; ominas_value
 ;
 ;=============================================================================
-function ominas_value, argv, keyword, delim=delim, keywords=keys
+function ominas_value, keyword, delim=delim, keywords=keys
+
+ argv = ominas_argv(/keyvals)
 
  if(NOT keyword_set(argv[0])) then return, ''
  if(NOT keyword_set(delim)) then delim = ['==', '=']
