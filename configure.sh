@@ -908,8 +908,8 @@ case $ans in
 				cd icy
 				icypath=${PWD}
                                 echo "Trying to use precompiled binaries..."
-                                rm -vf ./lib/._icy.dlm
-                                rm -vf ./lib/._icy.so
+                                if [ -e ./lib/._icy.dlm ]; then rm -vf ./lib/._icy.dlm; fi
+                                if [ -e ./lib/._icy.so ]; then rm -vf ./lib/._icy.so; fi
                                 binary_icytest=`$idlbin -IDL_DLM_PATH "<IDL_DEFAULT>:${icypath}/lib/" -e "!path+=':'+file_expand_path('${OMINAS_DIR}/util/downloader')+':${icypath}/lib/' & ominas_icy_test"  2> /dev/null`
                                 if [ $? == 0 ] ; then
                                   echo "Success: ${binary_icytest}"
