@@ -903,17 +903,22 @@ case $ans in
 				#ext "icy.tar.Z"
 				#ext "icy.tar"
                                 echo "Extracting Icy source files..."
-                                tar -xzf "${OMINAS_TMP}/icy.tar.Z"
-                                rm -f "${OMINAS_TMP}/icy.tar.Z"
+                                tar -xzf "${OMINAS_TMP}/icy.tar.Z" >& /dev/null
+                                #rm -vf "${OMINAS_TMP}/icy.tar.Z"
 				cd icy
-				icypath=$PWD
-                                echo "Compiling Icy..."
-                                if [ ${ominas_auto} == 1 ] ; then
-				  /bin/csh makeall.csh >& ~/.ominas/icy_make.log
+				icypath=${PWD}
+                                echo "Trying to use precompiled binaries..."
+                                rm -vf ./lib/._icy.dlm
+                                rm -vf ./lib/._icy.so
+                                binary_icytest=`$idlbin -IDL_DLM_PATH "<IDL_DEFAULT>:${icypath}/lib/" -e "!path+=':'+file_expand_path('${OMINAS_DIR}/util/downloader')+':${icypath}/lib/' & ominas_icy_test"  2> /dev/null`
+                                if [ $? == 0 ] ; then
+                                  echo "Success: ${binary_icytest}"
                                 else
-                                 /bin/csh makeall.csh >& ~/.ominas/icy_make.log
+                                  echo "Precompiled binary failed: ${binary_icytest}"
+                                  echo "Trying to build Icy..."
+				  /bin/csh makeall.csh >& ~/.ominas/icy_make.log
+                                  echo "Icy compiled. Log is at ~/.ominas/icy_make.log"
                                 fi
-                                echo "Icy compiled. Log is at ~/.ominas/icy_make.log"
 				cd $OMINAS_DIR	;;
 			*)
 				read -rp "Please enter the location of the Icy install directory [~/ominas_data/icy/]: " datapath
