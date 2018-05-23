@@ -22,8 +22,6 @@
 ;
 ;	filespec:	Array of file specification strings.
 ;
-;	extension:	Array of strings giving file extensions to try.  
-;
 ;  OUTPUT: NONE
 ;
 ;
@@ -44,7 +42,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_expand, filetype, filespec, extensions
+function dat_expand, filetype, filespec
 
  if(NOT keyword_set(extensions)) then extensions = '' $
  else extensions = unique([extensions, ''])
@@ -52,9 +50,7 @@ function dat_expand, filetype, filespec, extensions
  query_fn = strlowcase('query_' + filetype)
  if(NOT routine_exists(query_fn)) then query_fn = 'file_search'
 
- for i=0, n_elements(extensions)-1 do $
-        filenames = append_array(filenames, $
-                           call_function(query_fn, filespec + extensions[i]))
+ filenames = append_array(filenames, call_function(query_fn, filespec))
 
  return, filenames
 end

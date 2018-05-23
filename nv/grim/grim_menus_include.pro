@@ -3233,6 +3233,56 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_view_zoom_force_integer_event
+;
+;
+; PURPOSE:
+;	Toggles integer zoom on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 5/2018
+;	
+;-
+;=============================================================================
+pro grim_menu_view_zoom_force_integer_help_event, event
+ text = ''
+ nv_help, 'grim_menu_view_zoom_force_integer_help_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_view_zoom_force_integer_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+
+ flag = grim_get_toggle_flag(grim_data, 'INTEGER_ZOOM')
+ flag = 1 - flag
+ 
+ grim_set_toggle_flag, grim_data, 'INTEGER_ZOOM', flag
+ grim_update_menu_toggle, grim_data, $
+                       'grim_menu_view_zoom_force_integer_event', flag
+
+
+ if(flag) then grim_refresh, grim_data
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_plane_copy_tiepoints_event
 ;
 ;

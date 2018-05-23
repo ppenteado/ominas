@@ -565,8 +565,8 @@
 ;            ~~~~~~~~~
 ;               The title bar displays the GRIM window number (grn),
 ;               the current plane number (pn), the total number of planes, the
-;               name field of the data descriptor for the current plane, the
-;               default title (if given; see the title keyword above), and
+;               core name field of the data descriptor for the current plane, 
+;               the default title (if given; see the title keyword above), and
 ;               a string indicating which RGB channels are associated with the
 ;               current plane.
 ;
@@ -3101,6 +3101,7 @@ function grim_menu_desc, cursor_modes=cursor_modes
              '0\Specify           \+*grim_menu_view_zoom_event' , $
              '0\Double            \+*grim_menu_view_zoom_double_event' , $
              '0\Half              \+*grim_menu_view_zoom_half_event' , $
+             '0\Force Integer        [xxx]\*grim_menu_view_zoom_force_integer_event', $
              '0\1                 \+*grim_menu_view_zoom_1_event' , $
              '0\2                 \+*grim_menu_view_zoom_2_event' , $
              '0\3                 \+*grim_menu_view_zoom_3_event' , $
@@ -4062,7 +4063,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
 	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, $
 	render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
-	render_minimum=render_minimum, guideline=guideline, $
+	render_minimum=render_minimum, guideline=guideline, integer_zoom=integer_zoom, $
      ;----- extra keywords for plotting only ----------
 	color=color, xrange=xrange, yrange=yrange, thick=thick, nsum=nsum, ndd=ndd, $
         xtitle=xtitle, ytitle=ytitle, psym=psym, title=title
@@ -4094,7 +4095,8 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	visibility=visibility, channel=channel, render_numbra=render_numbra, render_sampling=render_sampling, $
 	render_minimum=render_minimum, slave_overlays=slave_overlays, rgb=rgb, $
 	delay_overlays=delay_overlays, auto_stretch=auto_stretch, guideline=guideline, $
-	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, render_sky=render_sky
+	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, render_sky=render_sky, $
+        integer_zoom=integer_zoom
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
 
@@ -4496,6 +4498,9 @@ if(NOT defined(render_auto)) then render_auto = 0
                    grim_set_toggle_flag, grim_data, 'ACTIVATION_SYNCING', 1
  if(keyword_set(highlght)) then $
                    grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', 1
+ if(keyword_set(integer_zoom)) then $
+                   grim_set_toggle_flag, grim_data, 'INTEGER_ZOOM', 1
+
 
  ;----------------------------------------------
  ; if new instance, initialize menu extensions
@@ -4532,6 +4537,9 @@ if(NOT defined(render_auto)) then render_auto = 0
    grim_update_menu_toggle, grim_data, $
          'grim_menu_plane_highlight_event', $
           grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_view_zoom_force_integer_event', $
+          grim_get_toggle_flag(grim_data, 'INTEGER_ZOOM')
   end
 
 

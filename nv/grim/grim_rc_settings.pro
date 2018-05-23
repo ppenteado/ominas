@@ -35,7 +35,7 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
         render_numbra=render_numbra, render_sampling=render_sampling, render_minimum=render_minimum, slave_overlays=slave_overlays, $
         delay_overlays=delay_overlays, auto_stretch=auto_stretch, lights=lights, $
         render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, render_sky=render_sky, $
-	guideline=guideline
+	guideline=guideline, integer_zoom=integer_zoom
 
 
  ;----------------------------------------------------
@@ -369,6 +369,11 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
                       _guideline = extra_value(kv, 'GUIDELINE') $
  else _guideline = guideline
  if(keyword_set(_guideline)) then guideline = fix(_guideline)
+
+ if(n_elements(integer_zoom) EQ 0) then $
+                      _integer_zoom = extra_value(kv, 'INTEGER_ZOOM') $
+ else _integer_zoom = integer_zoom
+ if(keyword_set(_integer_zoom)) then integer_zoom = fix(_integer_zoom)
 
 
  ;-----------------------------------------------------------------

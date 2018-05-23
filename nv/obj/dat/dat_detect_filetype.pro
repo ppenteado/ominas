@@ -93,7 +93,6 @@ function dat_detect_filetype, dd, filename=filename, header=header, $
  ;=====================================================
  if(keyword_set(all)) then return, table[*,1] 
 
-
  ;=====================================================
  ; call filetype detectors until true is returned
  ;=====================================================

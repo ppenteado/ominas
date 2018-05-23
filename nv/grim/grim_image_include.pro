@@ -1051,6 +1051,12 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
 
 
  ;-----------------------------------
+ ; make zoom corrections
+ ;-----------------------------------
+;; grim_correct_zoom, grim_data
+
+
+ ;-----------------------------------
  ; redraw main image
  ;-----------------------------------
  if(NOT keyword_set(no_image)) then $
