@@ -151,6 +151,10 @@
 ;                 computes an initial zoom such that the entire image fits on the
 ;                 screen.
 ;
+;      `*integer_zoom`:
+;                 If set, zoom levels will be rounded to the nearst integer
+;                 or 1/integer.
+;
 ;      `*rotate`: Initial rotate value to be applied to the image (as in the IDL
 ;                 ROTATE routine).  If not given, 0 is assumed.
 ;

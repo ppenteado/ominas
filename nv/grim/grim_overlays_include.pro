@@ -382,23 +382,73 @@ end
 
 
 ;=============================================================================
+; grim_match_user_tags
+;
+;=============================================================================
+function grim_match_user_tags, tags, select_tags, sub=sub
+
+ sub = -1
+ if(NOT keyword_set(tags)) then return, ''
+
+ nsel = n_elements(select_tags)
+ nmid = make_array(nsel, val=1024)
+
+ last = strmid(str_flip(select_tags), 0, 1)
+ w = where(last EQ '*')
+ if(w[0] NE -1) then nmid[w] = strlen(select_tags[w])-1
+ 
+ for i=0, nsel-1 do $
+  sub = append_array(sub, $
+         where(strmid(tags, 0, nmid[i]) EQ strmid(select_tags[i], 0, nmid[i])), /def)
+  
+ sub = unique(sub)
+ w = where(sub NE -1)
+ if(w[0] EQ -1) then return, ''
+
+ sub = sub[w]
+ return, tags[sub]
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_draw_user_overlays
 ;
 ;=============================================================================
 pro grim_draw_user_overlays, grim_data, plane, inactive_color, $
-                 override_color=override_color, noxgraphics=noxgraphics
+              override_color=override_color, noxgraphics=noxgraphics, tags=tags
 
  xmap = 0
 
  ;--------------------------------------------------
- ; draw standard plots and build xgraphics map
+ ; draw user points
  ;--------------------------------------------------
  if(keyword_set(plane.user_ptd_tlp)) then $
   begin
    active_user_ptd = grim_get_active_user_overlays(plane, inactive_user_ptd)
-   active_tags = unique(cor_name(active_user_ptd))
-   inactive_tags = unique(cor_name(inactive_user_ptd))
+;   active_tags = unique(cor_name(active_user_ptd))
+;   inactive_tags = unique(cor_name(inactive_user_ptd))
+   active_tags = cor_name(active_user_ptd)
+   inactive_tags = cor_name(inactive_user_ptd)
 
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; narrow to specified tags, if any
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(keyword_set(tags)) then $
+    begin
+     active_tags = grim_match_user_tags(active_tags, tags, sub=w)
+     if(w[0] NE -1) then active_user_ptd = active_user_ptd[w] $
+     else active_user_ptd = !null
+
+     inactive_tags = grim_match_user_tags(inactive_tags, tags, sub=w)
+     if(w[0] NE -1) then inactive_user_ptd = inactive_user_ptd[w] $
+     else inactive_user_ptd = !null
+    end
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; draw points
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(active_user_ptd)) then $
            grim_draw_user_points, grim_data, plane, active_tags, xmap=xmap, $
                           override_color=override_color, noxgraphics=noxgraphics
@@ -531,7 +581,7 @@ pro grim_draw, grim_data, planes=planes, $
        user=user, tiepoints=tiepoints, mask=mask, curves=curves, $
        label=labels, readout=readout, measure=measure, update=update, $
        nopoints=nopoints, noxgraphics=noxgraphics, roi=roi, $
-       no_user=no_user,override_color=override_color
+       no_user=no_user, override_color=override_color, utags=utags
 
  if(grim_data.hidden) then return
 
@@ -574,7 +624,7 @@ pro grim_draw, grim_data, planes=planes, $
    ;--------------------------------
    if(keyword_set(user)) then $
         grim_draw_user_overlays, grim_data, plane, 'gray', $
-                      override_color=override_color, noxgraphics=noxgraphics
+              override_color=override_color, noxgraphics=noxgraphics, tags=utags
 
 
    ;--------------------------------
@@ -1172,8 +1222,7 @@ pro grim_clear_objects, grim_data, all=all, $
                       grim_rm_ptd, planes[i], grim_ptd(planes[i], type=name)
     end
 
-   if(keyword_set(all)) then ptr_free, planes[i].user_ptd_tlp	; Need to free all the pointers!!
-   if(keyword_set(all)) then planes[i].user_ptd_tlp = ptr_new()
+   if(keyword_set(all)) then tag_list_rm, /nofree, planes[i].user_ptd_tlp
   end
 
  grim_set_data, grim_data, grim_data.base
@@ -1556,6 +1605,8 @@ pro grim_rm_indexed_array, grim_data, plane=plane, name, p, all=all, flabel=flab
  else ii = grim_select_array(grim_data, plane=plane, *ptdp, p)
 
  if(ii[0] EQ -1) then return
+
+ if(NOT keyword_set(*ptdp)) then return
 
  flabel = cor_udata((*ptdp)[ii], 'GRIM_FULL_INDEXED_ARRAY_LABEL')
  nv_free, (*ptdp)[ii]
@@ -2502,7 +2553,7 @@ function grim_select_overlays_by_point, grim_data, plane, p0, ptds, clicks=click
  ;---------------------------------------------
  ; select overlay under initial cursor point
  ;---------------------------------------------
- p = convert_coord(p0[0], p0[1], /device, /to_data)
+ p = (convert_coord(p0[0], p0[1], /device, /to_data))[0:1]
  ptd = grim_nearest_overlay(plane, p, ptds)
 
  ;----------------------------------------------------------
@@ -2682,9 +2733,14 @@ pro grim_activate_select, grim_data, plane, p0, $
  ;--------------------------------------------------------
  ; select overlays
  ;--------------------------------------------------------
+ if(NOT keyword_set(invert)) then $
+  begin
+   filter = 'GRIM_ACTIVE_FLAG'
+   value = keyword_set(deactivate)
+  end
+
  ptd = grim_select_overlays(grim_data, plane, p0, $
-            filter='GRIM_ACTIVE_FLAG', value=keyword_set(deactivate), $
-                                   clicks=clicks, point=point, box=box)
+            filter=filter, value=value, clicks=clicks, point=point, box=box)
  if(NOT keyword_set(ptd)) then return
 
  ;--------------------------------------------------------

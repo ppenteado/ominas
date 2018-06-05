@@ -1,11 +1,11 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	glb_body_to_local
+;	glb_body_to_local_pos
 ;
 ;
 ; PURPOSE:
-;       Converts the given column vectors from the body coordinate
+;       Converts the given column position vectors from the body coordinate
 ;       system to the local coordinate system.
 ;
 ;
@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	local_pts = glb_body_to_local(gbd, body_org, body_pts)
+;	local_pts = glb_body_to_local_pos(gbd, body_org, body_pts)
 ;
 ;
 ; ARGUMENTS:
@@ -37,7 +37,8 @@
 ;
 ;
 ; RETURN:
-;       Array (nv,3,nt) of column vectors in the local system.
+;       Array (nv,3,nt) of column vectors in the local system representing 
+;	vectors from body_org to body_pts.
 ;
 ;
 ; STATUS:
@@ -45,31 +46,12 @@
 ;
 ;
 ; MODIFICATION HISTORY:
-; 	Written by:	Spitale, 1/1998
-; 	Adapted by:	Spitale, 5/2016
+; 	Written by:	Spitale, 5/2018
 ;	
 ;-
 ;=============================================================================
-function glb_body_to_local, gbd, v, r
+function glb_body_to_local_pos, gbd, v, r
 @core.include
- 
- _gbd = cor_dereference(gbd)
-
- sv = size(v)
- nv = sv[1]
- nt = n_elements(_gbd)
-
- z = dblarr(nv,3,nt) & z[*,2,*] = 1d
-
- zenith = glb_get_surface_normal(/body, gbd, v)
- east = v_unit(v_cross(z, zenith))
- north = v_cross(zenith, east)
-
- result = dblarr(nv,3,nt, /nozero)
- result[*,0,*] = v_inner(east, r)
- result[*,1,*] = v_inner(north, r)
- result[*,2,*] = v_inner(zenith, r)
-
- return, result
+ return, glb_body_to_local(gbd, v, r-v)
 end
 ;=============================================================================

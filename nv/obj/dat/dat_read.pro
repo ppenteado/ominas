@@ -62,10 +62,16 @@
 ;			file.  This parameter is passed through to the input 
 ;			function, which may choose to ignore it.
 ;
-;	extensions:	If given, these extensions are attempted for each file.
-;			If a file with the extension is not found, then the next
-;			extension is tried until no extensions are left to try.
-;			If no extensions work, then the raw filename is attemtped.
+;	name:		Core name to assign to each data descriptor instead of 
+;			deriving it from the file name.
+;
+;	extensions:	If given, these extensions are attempted for each file
+;			specification, in addition to no extension.  If a file 
+;			with the extension is not found, then the next extension 
+;			is tried until no extensions are left to try.  If no 
+;			extensions work, then the raw filename is attempted.  
+;			This extension is not included in core name of the data 
+;			descriptor.
 ;
 ;
 ;  OUTPUT: 
@@ -134,7 +140,7 @@ function drd_read, filename, data, header, $
 ;                  tab_transforms=tab_transforms, $
                   maintain=maintain, compress=compress, $
                   sample=sample, nodata=nodata, $
-		  name=_name, extension=extension, nhist=nhist
+		  name=name, nhist=nhist
 
 
  count = 0
@@ -147,12 +153,6 @@ function drd_read, filename, data, header, $
  if(NOT dh_validate(dh)) then $
                   nv_message, /con, 'Invalid detached header: ' + dh_fname
 
- ;-----------------------------------------------------------------
- ; use base filename as id string (minus any extra extension)
- ;-----------------------------------------------------------------
- if(keyword_set(_name)) then name = _name[i] $
- else name = file_basename(filename, extension)
-  
  ;-----------------------------------------
  ; set up initial data descriptor
  ;-----------------------------------------
@@ -355,6 +355,18 @@ end
 
 
 ;=============================================================================
+; drd_loaded
+;
+;=============================================================================
+function drd_loaded, dd, name
+ w = where(cor_name(dd) EQ name)
+ return, w[0] NE -1
+end
+;===========================================================================
+
+
+
+;=============================================================================
 ; dat_read
 ;
 ;=============================================================================
@@ -372,7 +384,164 @@ function dat_read, filespec, data, header, $
 ;                  tab_transforms=tab_transforms, $
                   maintain=maintain, compress=compress, $
                   sample=sample, nodata=nodata, $
-		  name=name, nhist=nhist, $
+		  name=_name, nhist=nhist, $
+		  extensions=extensions, $
+                  count=count
+@core.include
+
+ if(NOT keyword_set(maintain)) then maintain = 0
+ nodata = keyword_set(nodata)
+
+ if(NOT keyword_set(extensions)) then extensions = '' $
+ else extensions = [extensions, '']
+
+ n_spec = n_elements(filespec)
+ n_ext = n_elements(extensions)
+
+ ;--------------------------------------------------------------------------
+ ; expand file specifications including any extensions
+ ;--------------------------------------------------------------------------
+ for j=0, n_spec-1 do $
+  begin
+   filetype = !null
+   candidate = ''
+   for k=0, n_ext-1 do $
+    begin
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; add extension
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ff = filespec[j] + extensions[k]
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Attempt to detect file type:
+     ;  If the filespec contains wildcards, this may not work
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     _filetype = dat_detect_filetype(filename=ff)
+     filetype = append_array(filetype, _filetype, /def)
+
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     ; Attempt to expand filespec.  If the file type was not detected,
+     ; then dat_expand will not find a query function and the filespec 
+     ; will be expanded as if it's a disk file.
+     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     candidate = append_array(candidate, dat_expand(_filetype, ff))
+    end
+   if(NOT keyword_set(candidate)) then $
+ 	                   nv_message, /con, 'No match: ' + filespec[j]
+
+   candidates = append_array(candidates, candidate)
+   filetypes = append_array(filetypes, filetype)
+  end
+ if(NOT keyword_set(candidates)) then return, !null
+
+
+ ;--------------------------------------------------
+ ; weed out lower-priority matches
+ ;--------------------------------------------------
+ for i=0, n_elements(candidates)-1 do $
+  begin 
+   ii = !null
+   basename = file_basename(candidates[i])
+   for k=0, n_ext-2 do $
+    begin
+     basename = file_basename(candidates[i], extensions[k])
+     w = where(basename EQ file_basename(candidates, extensions[k]))
+     ii = append_array(ii, w)
+    end
+
+   if(n_elements(ii) LE 1) then sub = append_array(sub, i, /def) $
+   else $
+    begin
+     matches = file_basename(candidates[ii])
+     w = where(matches EQ basename + extensions[0])
+     sub = append_array(sub, ii[w[0]], /def)
+    end
+
+   basenames = append_array(basenames, basename)
+  end
+ filenames = candidates[sub]
+ filetypes = filetypes[sub]
+
+ filenames = unique(filenames, sub=sub, /desort)
+ basenames = basenames[sub]
+ filetypes = filetypes[sub]
+
+
+ ;--------------------------------------------------
+ ; read files
+ ;--------------------------------------------------
+ if(keyword_set(filenames)) then $
+  for i=0, n_elements(filenames)-1 do $
+   begin
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ; Second attempt to detect file type:
+    ;  This time the filespec will have been expanded, so we make 
+    ;  another attempt if there's still no filetype.
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    filetype = filetypes[i]
+    if(NOT keyword_set(filetype)) then $
+        	  filetype = dat_detect_filetype(filename=filenames[i])
+
+    if(NOT keyword_set(filetype)) then $
+ 	 nv_message, /con, 'Unable to detect file type: ' + filenames[i] $
+    else $
+     begin
+       if(NOT keyword_set(_name)) then name = basenames[i] $
+       else name = _name
+
+       ddi = drd_read(filenames[i], data, header, $
+ 	          filetype=filetype, $
+ 	          input_fn=input_fn, $
+ 	          output_fn=output_fn, $
+ 	          keyword_fn=keyword_fn, $
+ 	          instrument=instrument, $
+ 	          input_translators=input_translators, $
+ 	          output_translators=output_translators, $
+ 	          input_transforms=input_transforms, $
+ 	          output_transforms=output_transforms, $
+ 	          tab_translators=tab_translators, $
+;	          tab_transforms=tab_transforms, $
+ 	          maintain=maintain, compress=compress, $
+ 	          sample=sample, nodata=nodata, $
+ 	          name=name, nhist=nhist)
+       if(keyword_set(ddi)) then $
+        begin
+         if(arg_present(data)) then dat_load_data, ddi, data=data
+         dd = append_array(dd, ddi)
+         found = 1
+        end
+     end
+   end
+
+ if(NOT keyword_set(dd)) then return, !null
+
+
+ count = n_elements(dd)
+ return, dd
+end
+;===========================================================================
+
+
+
+;=============================================================================
+; dat_read
+;
+;=============================================================================
+function dat_read, filespec, data, header, $
+		  filetype=filetype, $
+		  input_fn=input_fn, $
+		  output_fn=output_fn, $
+		  keyword_fn=keyword_fn, $
+		  instrument=instrument, $
+		  input_translators=input_translators, $
+		  output_translators=output_translators, $
+		  input_transforms=input_transforms, $
+		  output_transforms=output_transforms, $
+                  tab_translators=tab_translators, $
+;                  tab_transforms=tab_transforms, $
+                  maintain=maintain, compress=compress, $
+                  sample=sample, nodata=nodata, $
+		  name=_name, nhist=nhist, $
 		  extensions=extensions, $
                   count=count
 @core.include
@@ -391,6 +560,7 @@ function dat_read, filespec, data, header, $
  ;--------------------------------------------------------------------------
  for j=0, n_spec-1 do $
   begin
+   found = 0
    for k=0, n_ext-1 do $
     begin
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -410,12 +580,13 @@ function dat_read, filespec, data, header, $
      ; will be expanded as if it's a disk file.
      ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      filenames = dat_expand(filetype, ff)
+     n_files = n_elements(filenames)
 
      ;- - - - - - - - - - - - - - - - -
      ; read each file
      ;- - - - - - - - - - - - - - - - -
      if(keyword_set(filenames)) then $
-      for i=0, n_elements(filenames)-1 do $
+      for i=0, n_files-1 do $
        begin
         ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         ; Second attempt to detect file type:
@@ -429,7 +600,14 @@ function dat_read, filespec, data, header, $
  	     nv_message, /con, 'Unable to detect file type: ' + filenames[i] $
         else $
          begin
-           ddi = drd_read(filenames[i], data, header, $
+           basename = file_basename(filenames[i], extensions[k])
+           if(NOT drd_loaded(dd, basename)) then $
+            begin
+             if(NOT keyword_set(_name)) then name = basename $
+             else name = _name
+
+print, filenames[i]
+             ddi = drd_read(filenames[i], data, header, $
 			filetype=filetype, $
 			input_fn=input_fn, $
 			output_fn=output_fn, $
@@ -443,22 +621,18 @@ function dat_read, filespec, data, header, $
 ;			tab_transforms=tab_transforms, $
 			maintain=maintain, compress=compress, $
 			sample=sample, nodata=nodata, $
-			name=name, extension=extensions[k], $
- 			nhist=nhist)
-           if(arg_present(data)) then $
-                        if(keyword_set(ddi)) then dat_load_data, ddi, data=data
-           dd = append_array(dd, ddi)
-           k = n_ext					; break out of the loop
+			name=name, nhist=nhist)
+             if(keyword_set(ddi)) then $
+              begin
+               if(arg_present(data)) then dat_load_data, ddi, data=data
+               dd = append_array(dd, ddi)
+               found = 1
+              end
+            end
          end
        end
     end
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; if loop over extensions finished natually, then no files were
-   ; found for this filespec.
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(k EQ n_ext) then $
-          for k=0, n_ext-1 do $
-                  nv_message, /con, 'Not found: ' + filespec[j] + extensions[k] 
+   if(NOT found) then nv_message, /con, 'Not found: ' + filespec[j] 
   end
 
  if(NOT keyword_set(dd)) then return, !null
