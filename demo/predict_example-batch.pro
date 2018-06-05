@@ -139,5 +139,5 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;-------------------------------------------------------------------------
 grift, cd=cd, pd=pd, rd=rd
 footprint_ptd = pg_footprint(cd=cd, bx=[pd,rd])
-graft, footprint_ptd, tag='FP-'+strtrim(counter(),2), col=ctbrown()
+graft, footprint_ptd, tag='FP-'+strtrim(counter(),2), col=ctpink()
 

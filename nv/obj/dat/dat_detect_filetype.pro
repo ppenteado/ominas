@@ -34,8 +34,7 @@
 ;			data descriptor.
 ;
 ;	default:	If set, the 'DEFAULT' filetype is returned.
-;			The default filetype is the first item in the table
-;			whose action is not 'IGNORE'.
+;			The default filetype is the first item in the table.
 ;
 ;	all:		If set, all filetypes in the table are returned.
 ;
@@ -62,7 +61,7 @@
 ;-
 ;=============================================================================
 function dat_detect_filetype, dd, filename=filename, header=header, $
-                                         default=default, all=all, action=action
+                                                default=default, all=all
 @nv_block.common
 @core.include
 
@@ -83,7 +82,7 @@ function dat_detect_filetype, dd, filename=filename, header=header, $
  table = *nv_state.ftp_table_p
 
  ;=====================================================
- ; default type is the first entry that is not ignored
+ ; default type is the first entry 
  ;=====================================================
  if(keyword_set(default)) then return, table[0,1] 
 
