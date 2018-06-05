@@ -77,8 +77,6 @@ pro grim_add_user_points, grn=grn, user_ptd, tag, update=update, $
               if((tag_list_match(tlp, tag))[0] EQ -1) then return
 
  tag_list_set, tlp, tag, user_ptd, new=new, index=index
- plane.user_ptd_tlp = tlp
- grim_set_plane, grim_data, plane, pn=pn
 
  if(NOT keyword_set(inactive)) then grim_activate_user_overlay, plane, user_ptd
 
@@ -132,7 +130,7 @@ pro grim_rm_user_points, grim_data, tag, plane=plane, grn=grn
  if(NOT keyword_set(plane.user_ptd_tlp)) then return
  if(NOT ptr_valid(plane.user_ptd_tlp)) then return
 
- for i=0, n_elements(tag)-1 do tag_list_rm, plane.user_ptd_tlp, tag[i]
+ for i=0, n_elements(tag)-1 do tag_list_rm, /nofree, plane.user_ptd_tlp, tag[i]
 
 
 end
@@ -178,7 +176,7 @@ function grim_get_user_ptd, plane=plane, grn=grn, tag, prefix=prefix, $
  if(NOT keyword_set(plane.user_ptd_tlp)) then return, 0
  if(NOT ptr_valid(plane.user_ptd_tlp)) then return, 0
 
- if(NOT keyword_set(tag)) then tag = (*plane.user_ptd_tlp).name
+ if(NOT keyword_set(tag)) then tag = tag_list_names(plane.user_ptd_tlp)
 
  n = n_elements(tag)
 
@@ -237,8 +235,11 @@ pro grim_user_notify, grim_data, plane=plane
 
  if(NOT keyword_set(plane.user_ptd_tlp)) then return
  if(NOT ptr_valid(plane.user_ptd_tlp)) then return
+ if(NOT keyword_set(*plane.user_ptd_tlp)) then return
 
  ptd = grim_get_user_ptd(plane=plane)
+ if(NOT keyword_set(ptd)) then return
+
  cd = grim_xd(plane, /cd)
 
  nv_suspend_events

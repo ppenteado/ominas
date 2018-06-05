@@ -29,7 +29,7 @@ cd = pg_get_cameras(inst='CAS_ISS_NA', time=[4,5,6]*3.5d7)	  & help, cd
 ; Tests of shell aliases with various types of files and expressions.
 ;==============================================================================
 grim '$PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png' \
-                                           over=planet_grid,station,array
+                                              over=planet_grid,station,array
 grim ~/casIss/1800/N1800458665_1.IMG.cal str_trs=faint=12 -auto_stretch over=stars
 grim data/n* over=center
 grim https://pds-imaging.jpl.nasa.gov/w10n/cassini/cassini_orbiter/coiss_1001/data/1350045294_1350147054/N1350122987_2.IMG
@@ -38,11 +38,15 @@ grim 'data/n*' +NV_VERBOSITY=0.9
 
 grim non_existent_file
 grim data/c1138223.gem data/n1351469359.2 data/fake1 data/n1354897340.1 data/fake2
+grim data/N* ext=.cal
+grim data/N* ext=.+
+grim data/c1138223 data/c3494022 data/fake1 ext=.gem,.img
 
-brim data/*.img data/*.IMG data/*.1 data/*.2 data/*.png data/*.cub 
-brim '$PG_MAPS'/Saturn/*/*
 
+##brim data/*.img data/*.IMG data/*.1 data/*.2 data/*.png data/*.cub 
+brim data/*.img data/*.IMG data/*.1 data/*.2 data/*.cub 
 brim https://pds-imaging.jpl.nasa.gov/w10n/cassini/cassini_orbiter/coiss_1001/data/1350045294_1350147054/N135012\*.IMG
+brim '$PG_MAPS'/Saturn/*/*
 
 
 ;==============================================================================
@@ -52,9 +56,16 @@ grim data/N1350122987_2.IMG +DAT_CACHE=500
 
 
 
+;==============================================================================
+; Test for object keyword conflicts
+;==============================================================================
+.r obj_conflicts
 
 
 
 
-
+;==============================================================================
+; Test TVIM data coordinate system
+;==============================================================================
+ominas tvim_test.paste
 

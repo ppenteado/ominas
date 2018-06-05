@@ -4,7 +4,7 @@
 ;       ominas_argv
 ;
 ; PURPOSE:
-;       Returns a shell argument list. Arguments are expanded
+;       Returns the shell argument list.  Arguments are expanded
 ;	according to standard shell rules.  "-" and "--" are used instead 
 ;	of "/" to set a keyword to one.  Arrays are specified as 
 ;	comma-delineated lists with no white space.  
@@ -20,14 +20,20 @@
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	i:	Index of the argument to return.  If there are no arguments,
-;		or if i is invalid, then '' is returned.  If i is not 
-;		specified, then all arguments are returned.  
+;	i:	Index of positional argument to return.  If there are no 
+;		positional arguments, or if i is invalid, then '' is returned.  
+;		If i is not specified, then all arguments are returned.  
 ;
 ;  OUTPUT: NONE
 ;
 ;
-; KEYWORDS: NONE
+; KEYWORDS: 
+;  INPUT: 
+;	keyvals: 
+;		If set, keyword arguments are returned instead of positional 
+;		arguments.  In this case, i has no meaning.
+;
+;  OUTPUT: NONE
 ;
 ;
 ; RETURN:
@@ -43,13 +49,20 @@
 ;
 ;-
 ;=============================================================================
-function ominas_argv, i
+function ominas_argv, i, keyvals=keyvals
 
  ;----------------------------------------------------------------
- ; get IDL arguemnts
+ ; get IDL arguments
  ;----------------------------------------------------------------
  argv = command_line_args()
  if(n_elements(argv) EQ 0) then return, ''
+
+ ;----------------------------------------------------------------
+ ; get IDL arguments
+ ;----------------------------------------------------------------
+ w = where(argv NE '-args')
+ if(w[0] EQ -1) then return, ''
+ argv = argv[w]
 
  ;----------------------------------------------------------------
  ; parse switch characters
@@ -65,11 +78,24 @@ function ominas_argv, i
  w = where(first2 EQ '--')
  if(w[0] NE -1) then argv[w] = __arg[w] + '=1'
 
+ ;----------------------------------------------------------------
+ ; distinguish keyword=value vs positional args
+ ;----------------------------------------------------------------
+ kv = ''
+ w = where(strpos(argv, '=') NE -1, comp=ww)
+ if(w[0] NE -1) then kv = argv[w]
+ if(keyword_set(keyvals)) then return, kv
+
+ ;----------------------------------------------------------------
+ ; retain only positional args, if any
+ ;----------------------------------------------------------------
+ if(ww[0] EQ -1) then return, ''
+ argv = argv[ww]
 
  ;----------------------------------------------------------------
  ; return desired arguments
  ;----------------------------------------------------------------
- if(n_elements(i) EQ 0) then return, argv
+ if(NOT defined(i)) then return, argv
  if(i GE n_elements(argv)) then return, ''
 
  return, argv[i]

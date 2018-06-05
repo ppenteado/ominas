@@ -42,7 +42,7 @@ pro grim_mode_navigate_get_points, grim_data, plane=plane, $
 
  points_ptd = pnt_compress(points_ptds)
  curves_ptd = pnt_compress(curves_ptds)
- user_ptd = pnt_compress(user_ptds)
+ user_ptd = pnt_compress(user_ptds, /nodata)
 
 end
 ;=============================================================================

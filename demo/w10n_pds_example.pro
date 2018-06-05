@@ -45,11 +45,10 @@
 ;
 ;-
 ;-------------------------------------------------------------------------
-argv = ominas_argv()
-mission = ominas_value(argv, 'mission')
-if(keyword_set(ominas_value(argv, 'cas'))) then mission = 'cas'
-if(keyword_set(ominas_value(argv, 'vgr'))) then mission = 'vgr'
-if(keyword_set(ominas_value(argv, 'gll'))) then mission = 'gll'
+mission = ominas_value('mission')
+if(keyword_set(ominas_value('cas'))) then mission = 'cas'
+if(keyword_set(ominas_value('vgr'))) then mission = 'vgr'
+if(keyword_set(ominas_value('gll'))) then mission = 'gll'
 
 if(NOT keyword_set(mission)) then $
                       read, mission, prompt='Enter mission (cas, vgr, gll): '

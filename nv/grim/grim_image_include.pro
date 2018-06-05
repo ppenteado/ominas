@@ -367,11 +367,13 @@ pro grim_display_image, grim_data, plane=plane, $
                      dim[1]-entire_ysize/zoom]
   end
 
+ integer_zoom = grim_get_toggle_flag(grim_data, 'INTEGER_ZOOM')
+
  tvim, wnum, /silent, doffset=doffset, zoom=zoom, rotate=rotate, order=order, $
        default=default, previous=previous, flip=flip, restore=restore, $
        xsize=xsize, ysize=ysize, offset=offset, top=top, noplot=no_plot, $
        no_scale=no_scale, no_wset=no_wset, no_coord=no_coord, tvimage=tvimage, $
-       home=home, draw_pixmap=draw_pixmap, no_copy=no_copy;, erase=erase
+       home=home, draw_pixmap=draw_pixmap, no_copy=no_copy, integer_zoom=integer_zoom;, erase=erase
 
  if(NOT plane.image_visible) then return
 

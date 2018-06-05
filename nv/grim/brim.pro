@@ -136,10 +136,17 @@ function brim_image, brim_data, ii, abscissa=abscissa, full=full
  dim = dim[0:1]
  max = max(dat_max(dd))
 
- ;----------------------------------------------
+ ;------------------------------------------------------------------------
  ; set tvim coordinate system
- ;----------------------------------------------
- tvim, /silent, zoom=min([float(!d.x_size)/dim[0], float(!d.y_size)/dim[1]])
+ ;  Constrain to integer or 1/integer zoom to avoid aliasing in the 
+ ;  sampling grid.  This allows for queries on file types the support
+ ;  simple off/stepsize queries, e.g., w10n.
+ ;------------------------------------------------------------------------
+ zoom = min([double(!d.x_size)/dim[0], double(!d.y_size)/dim[1]])
+ if(zoom GT 1) then zoom = long(zoom) $ 
+ else if(zoom LT 1)  then zoom = 1d/(double(long(1/zoom)-1))
+help, zoom
+ tvim, /silent, zoom=zoom
 
  ;----------------------------------------------
  ; sample image

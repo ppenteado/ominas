@@ -1,0 +1,62 @@
+dd = dat_read('../demo/data/n1350122987.2', im)
+dim = dat_dim(dd)
+
+;-------------------------------------------------------------------------
+; Display pixel grid.  Each point should plot in the center of a pixel
+;-------------------------------------------------------------------------
+tvim, im, xsize=1600, ysize=800, zoom=0.25, offset=[500,500]
+grid = gridgen(dim)
+plots, grid, psym=3, color=ctred()
+
+
+
+;-------------------------------------------------------------------------
+; Test coordinate conversion.   With integer zoom, the steps between data
+; coordinates computed from a uniform device grid should be constant.  Any
+; aliasing will cause grid_detect to fail.
+;-------------------------------------------------------------------------
+
+pdev = gridgen([!d.x_size, !d.y_size])
+device, set_graphics=6
+plots, /device, pdev, psym=3
+p = (convert_coord(/device, /to_data, pdev))[0:1,*]
+plots, p, psym=3
+device, set_graphics=3
+
+samples = xy_to_w(dim, p, /unique, /clip)
+
+
+
+
+
+pp = w_to_xy(dim, samples)
+plots, pp, psym=4, col=ctgreen()
+
+
+
+
+
+stop
+
+
+
+p = p[*,w]
+
+print, p[*,0:10]
+window, /free
+
+px = reform(p[0,*])
+dpx = shift(px,1)-px
+plot, dpx[1:100], /yno
+
+stop
+
+pp = long(p)
+ppx = reform(pp[0,*])
+dppx = shift(ppx,1)-ppx
+plot, dppx[1:100]
+
+
+
+truncate coords
+take unique samples

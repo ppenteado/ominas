@@ -33,6 +33,8 @@
 ;  INPUT:
 ;	nosort:	If set, the input array is not sorted.
 ;
+;	desort:	If set, the output array is returned in original order.
+;
 ;  OUTPUT: 
 ;	reverse_indices:			
 ;		Array of subscripts mapping the output elements to their
@@ -56,7 +58,7 @@
 ;	
 ;-
 ;=============================================================================
-function unique, _x, ss, nosort=nosort, reverse_indices=iii, subscripts=uu
+function unique, _x, ss, nosort=nosort, desort=desort, reverse_indices=iii, subscripts=subscripts
 
  reverse = arg_present(iii)
 
@@ -84,6 +86,16 @@ function unique, _x, ss, nosort=nosort, reverse_indices=iii, subscripts=uu
    if(defined(sss)) then iii = uuu[sss]
   end
 
- return, x[uu]
+ subscripts = ss[uu]
+ result = x[uu]
+
+ if(keyword_set(desort)) then $
+  begin
+   qq = sort(subscripts)
+   subscripts = subscripts[qq]
+   result = result[qq]
+  end
+
+ return, result
 end
 ;================================================================================

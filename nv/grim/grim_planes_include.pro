@@ -717,7 +717,7 @@ gd		:	ptr_new(0), $	; Generic descriptor
 		mask_p		: 	ptr_new(-1), $
 		tiepoint_ptdp	: 	ptr_new(obj_new()), $
 		curve_ptdp	: 	ptr_new(obj_new()), $
-		user_ptd_tlp	:	ptr_new(), $	
+		user_ptd_tlp	:	ptr_new({tag_list_struct}), $	
 
 	;-----------------
 	; stretch

@@ -64,31 +64,30 @@
 ;
 ;-
 ;=============================================================================
-function bat_parse_argv, argv, keys, val_ps, $
+function bat_parse_argv, keys, val_ps, $
            special_args=special_args, sample=file_sample, select=file_select
 
- if(NOT keyword_set(argv[0])) then return, ''
+; if(NOT keyword_set(argv[0])) then return, ''
 
  ;---------------------------------------------
  ; Special args end with '@' and are removed 
  ; from argv and returned via the special_args 
  ; output
  ;---------------------------------------------
- special_args = ominas_value(argv, delim='@')
- if(NOT keyword_set(argv[0])) then return, ''
+ special_args = ominas_value(delim='@')
 
 
  ;----------------------------------------------------------------
  ; get global keyword/value pairs
  ;----------------------------------------------------------------
- file_sample = ominas_value(argv, 'file_sample')
- file_select = ominas_value(argv, 'file_select')
+ file_sample = ominas_value('file_sample')
+ file_select = ominas_value('file_select')
 
 
  ;--------------------------------------------
  ; get keywords / values
  ;--------------------------------------------
- values = ominas_value(argv, key=keywords)
+ values = ominas_value(key=keywords)
  if(keyword_set(keywords)) then $
   for i=0, n_elements(keywords)-1 do $
    begin
@@ -97,9 +96,9 @@ function bat_parse_argv, argv, keys, val_ps, $
    end
 
 
- ;-----------------------------
- ; the rest are regular args
- ;-----------------------------
- return, argv
+ ;--------------------------------------
+ ; return positional args
+ ;--------------------------------------
+  return, ominas_argv()
 end
 ;===============================================================================

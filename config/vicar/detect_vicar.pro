@@ -6,7 +6,6 @@ function detect_vicar, filename=filename, header=header
 
  status = 0
 
-
  ;===============================================
  ; if no header, read the beginning of the file
  ;===============================================
@@ -20,7 +19,6 @@ function detect_vicar, filename=filename, header=header
    close, unit
    free_lun, unit
   end
-
 
  ;===================================
  ; check for vicar label 
