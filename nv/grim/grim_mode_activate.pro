@@ -70,7 +70,7 @@ end
 pro grim_mode_activate_mode, grim_data, data_p
 
  device, cursor_standard = 60
- grim_print, grim_data, 'ACTIVATE OVERLAYS -- LEFT: Activate; RIGHT: Deactivate'
+ grim_print, grim_data, 'ACTIVATE OVERLAYS -- L:Activate R:Deactivate'
 
 end
 ;=============================================================================

@@ -128,7 +128,7 @@ end
 pro grim_mode_smooth_mode, grim_data, data_p
 
  device, cursor_standard = 64
- grim_print, grim_data, 'SMOOTH -- LEFT: Square kernel; RIGHT: Rectangular kernel'
+ grim_print, grim_data, 'SMOOTH -- L:Square Kernel R:Rectangular Kernel'
 
 end
 ;=============================================================================

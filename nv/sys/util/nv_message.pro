@@ -28,9 +28,9 @@
 ;	name:		Name to use for the calling routine instead of 
 ;			taking it from the traceback list.
 ;
-;	anonymous:	If set, the traaceback list is not used to infer the
+;	anonymous:	If set, the traceback list is not used to infer the
 ;			name of the calling routine.  In this case, a name
-;			is printed nly if explicitly specified using the 'name'
+;			is printed only if explicitly specified using the 'name'
 ;			keyword.
 ;
 ;	continue:	If set, execution is not halted.

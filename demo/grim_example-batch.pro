@@ -88,7 +88,7 @@ grim, /new, file, zoom=0.75, /order, $
 ; EXAMPLE 4: 
 ;
 ;  Let's get rid of the explicit planet names and just select them based
-;  on geometric criteria.  FOV=-1 selects overlays with 1 field of view
+;  on geometric criteria.  FOV=-1 selects overlays within 1 field of view
 ;  of the viewport::  
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
@@ -103,7 +103,7 @@ grim, /new, file, zoom=0.75, /order, $
 ;+
 ; EXAMPLE 5: 
 ;
-;  Same as above, except FOV=-1 selects overlays with 1 field of view
+;  Same as above, except FOV=-1 selects overlays within 1 field of view
 ;  of the *image*::
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
@@ -141,7 +141,7 @@ grim, /exit, grn=lindgen(100)		; I'm assuming you haven't opened more
 ;  Speaking of way too many GRIMs, let's just open a bunch of images in
 ;  *one* GRIM.  Each image is opened in a separate plane.  You can change 
 ;  planes using the left/right arrows in the top left corner.  If you have
-;  Xdefaults-grim set up, you can use the left / right arrow keys::
+;  Xdefaults-grim set up, you can use the left/right arrow keys::
 ;
 ;    grim, /new, './data/n*.2', /order, overlay='center'
 ;-

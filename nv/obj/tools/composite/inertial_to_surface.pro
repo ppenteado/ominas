@@ -1,11 +1,11 @@
 ;=============================================================================
 ;+
 ; NAME:
-;       body_to_surface
+;       inertial_to_surface
 ;
 ;
 ; PURPOSE:
-;       Transforms points in body coordinates to surface coordinates.
+;       Transforms vectors in inertial coordinates to surface coordinates.
 ;
 ;
 ; CATEGORY:
@@ -13,14 +13,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       result = body_to_surface(bx, body_pts)
+;       result = inertial_to_surface(bx, inertial_pts)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	bx:      Array of nt object descriptors (subclass of BODY).
+;	bx:             Array of nt object descriptors (subclass of BODY).
 ;
-;	body_pts:       Array (nv x 3 x nt) of body points.
+;	inertial_pts:   Array (nv x 3 x nt) of inertial vectors.
 ;
 ;  OUTPUT:
 ;       NONE
@@ -39,10 +39,10 @@
 ;
 ;
 ; MODIFICATION HISTORY:
-;       Written by:     Spitale
+;       Written by:     Spitale; 6/2018
 ;-
 ;=============================================================================
-function body_to_surface, bx, p
+function inertial_to_surface, bx, p
 
  if(NOT keyword_set(p)) then return, 0
 
@@ -55,13 +55,11 @@ function body_to_surface, bx, p
  ii_bx = rm_list_item(lindgen(nt), [ii_gbx, ii_dkx], only=-1)
 
  if(keyword_set(gbx)) then $
-;            result[*,*,ii_gbx] = glb_body_to_globe(gbx[ii_gbx], p[*,*,ii_gbx])
-            result[*,*,ii_gbx] = glb_body_to_globe(gbx, p[*,*,ii_gbx])
+            result[*,*,ii_gbx] = inertial_to_globe(gbx, p[*,*,ii_gbx])
  if(keyword_set(dkx)) then $
-;            result[*,*,ii_dkx] = dsk_body_to_disk(dkx[ii_dkx], p[*,*,ii_dkx])
-            result[*,*,ii_dkx] = dsk_body_to_disk(dkx, p[*,*,ii_dkx])
- if(ii_bx[0] NE -1) then $
-            result[*,*,ii_bx] = bod_body_to_radec(bx[ii_bx], p[*,*,ii_bx])
+            result[*,*,ii_dkx] = inertial_to_disk(dkx, p[*,*,ii_dkx])
+;; if(ii_bx[0] NE -1) then $
+;;            result[*,*,ii_bx] = bod_body_to_radec(bx[ii_bx], p[*,*,ii_bx])
 
  return, result
 end

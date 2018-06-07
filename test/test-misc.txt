@@ -39,7 +39,9 @@ grim 'data/n*' +NV_VERBOSITY=0.9
 grim non_existent_file
 grim data/c1138223.gem data/n1351469359.2 data/fake1 data/n1354897340.1 data/fake2
 grim data/N* ext=.cal
-grim data/N* ext=.+
+grim data/N* ext=.[+]
+grim data/N* ext=.[3]
+grim data/N* ext=.[3-]
 grim data/c1138223 data/c3494022 data/fake1 ext=.gem,.img
 
 

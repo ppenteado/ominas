@@ -136,7 +136,7 @@ end
 pro grim_mode_curves_mode, grim_data, data_p
 
  grim_mode_curves_cursor, swap=swap
- grim_print, grim_data, 'CURVE -- LEFT: Add; MIDDLE: Cancel; RIGHT: Remove'
+ grim_print, grim_data, 'CURVE -- L:Add M:Cancel R:Remove'
 
 end
 ;=============================================================================

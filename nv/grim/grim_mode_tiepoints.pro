@@ -128,7 +128,7 @@ end
 pro grim_mode_tiepoints_mode, grim_data, data_p
 
  grim_mode_tiepoints_cursor, swap=swap
- grim_print, grim_data, 'TIEPOINTS -- LEFT: Add; RIGHT: Remove'
+ grim_print, grim_data, 'TIEPOINTS -- L:Add R:Remove'
 
 end
 ;=============================================================================
