@@ -359,10 +359,16 @@ common tvim_block, tvd, tvim_top
  ;- - - - - - - - - - - - -
  ; offset
  ;- - - - - - - - - - - - -
- x0 = offset[0] + 0.5
+;;; x0 = offset[0] + 0.5
+;;; x1 = offset[0] + xsize/zoom[0] - 0.5
+
+;;; y0 = offset[1] + 0.5
+;;; y1 = offset[1] + ysize/zoom[1] - 0.5
+
+ x0 = offset[0] - 0.5
  x1 = offset[0] + xsize/zoom[0] - 0.5
 
- y0 = offset[1] + 0.5
+ y0 = offset[1] - 0.5
  y1 = offset[1] + ysize/zoom[1] - 0.5
 
  xmin = double(offset[0])

@@ -1003,6 +1003,31 @@ end
 
 
 ;=============================================================================
+; grim_rm_exclusions
+;
+;=============================================================================
+pro grim_rm_exclusions, grim_data, overlay, ptd
+
+ exclude_struct = *grim_data.exclude_overlays_p
+ if(NOT keyword_set(exclude_struct)) then return
+
+ w = where((exclude_struct.overlay EQ '') $
+                      OR (exclude_struct.overlay EQ strupcase(overlay)))
+ if(w[0] EQ -1) then return
+
+ exclude_struct = exclude_struct[w]
+ w = nwhere(cor_name(ptd), exclude_struct.name)
+
+ if(w[0] EQ -1) then return
+
+ nv_free, ptd[w]
+ ptd = rm_list_item(ptd, w, only=obj_new())
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_add_points
 ;
 ;=============================================================================
@@ -1016,6 +1041,7 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
  ; get points arrays and info for this overlay type
  ;--------------------------------------------------------------------
  ptd0 = grim_ptd(plane, type=name)
+
 
  ;-----------------------------------------------------------------------------
  ; if points exist for this type, replace existing points and append new ones
@@ -1031,6 +1057,11 @@ pro grim_add_points, grim_data, ptd, plane=plane, $
      else ptd_new[w] = ptd[i]
     end
   end 
+
+ ;--------------------------------------------------------------------
+ ; remove any excluded overlays
+ ;--------------------------------------------------------------------
+ grim_rm_exclusions, grim_data, name, ptd_new
 
  ;-----------------------------------------------------------------------------
  ; record new points list

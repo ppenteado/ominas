@@ -13,7 +13,7 @@ end
 ; grim_init
 ;
 ;=============================================================================
-function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
+function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, tag=tag, filter=filter,$
            retain=retain, user_callbacks=user_callbacks, $
            user_psym=user_psym, user_fn_graphics=user_fn_graphics, user_thick=user_thick, user_line=user_line, $
            cursor_swap=cursor_swap, cmd=cmd, lights=lights, $
@@ -90,6 +90,8 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
   if(NOT keyword_set(title)) then title = ''
   if(NOT keyword_set(xtitle)) then xtitle = ''
   if(NOT keyword_set(ytitle)) then ytitle = ''
+
+  if(NOT keyword_set(tag)) then tag = ''
 
   ;----------------------
   ; main data structure
@@ -217,6 +219,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		mag_last_x0		: -1l, $
 		mag_last_y0		: -1l, $
 		grn			: -1l, $
+		tag			: tag, $
 		act_callbacks_p		: ptr_new(''), $
 		act_callbacks_data_pp	: ptr_new(0), $
 		rf_callbacks_p		: ptr_new(''), $
@@ -248,6 +251,8 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, filter=filter,$
 		lights_p		: ptr_new(lights), $
 
 		render_show		: 1b, $
+
+		exclude_overlays_p	: ptr_new(0), $
 
 	;---------------
 	; planes
@@ -355,14 +360,69 @@ end
 
 
 ;=============================================================================
+; grim_grn_to_tag
+;
+;=============================================================================
+function grim_grn_to_tag, grn
+common grn_block, tops
+
+ widget_control, tops[grn], get_uvalue=grim_data
+ return, grim_data.tag
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_tag_to_grn
+;
+;=============================================================================
+function grim_tag_to_grn, tag
+@grim_block.include
+
+ for i=0, n_elements(_all_tops)-1 do $
+  begin
+   widget_control, _all_tops[i], get_uvalue=grim_data
+   if(keyword_set(grim_data.tag)) then $
+      if(grim_data.tag EQ tag) then return, grim_data.grn
+  end
+
+ return, -1
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_tag_to_top
+;
+;=============================================================================
+function grim_tag_to_top, tag
+@grim_block.include
+
+ for i=0, n_elements(_all_tops)-1 do $
+  begin
+   widget_control, _all_tops[i], get_uvalue=grim_data
+   if(keyword_set(grim_data.tag)) then $
+      if(grim_data.tag EQ tag) then return, _all_tops[i]
+  end
+
+ return, 0
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_get_data
 ;
 ;=============================================================================
-function grim_get_data, top, grn=grn, plane=plane, $
+function grim_get_data, top, grn=grn, tag=tag, plane=plane, $
          dead=dead, primary=primary, no_wset=no_wset
 @grim_block.include
 
  if(keyword_set(plane)) then grn = plane.grn
+ if(keyword_set(tag)) then grn = grim_tag_to_grn(tag)
 
  if(defined(grn)) then top = grim_grn_to_top(grn)
  if((NOT keyword_set(top)) AND (NOT keyword_set(_top))) then return, 0

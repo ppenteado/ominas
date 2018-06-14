@@ -1131,7 +1131,9 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
   begin
    beta = ''
    if(grim_data.beta) then beta = ' (beta)'
-   title = 'GRIM' + beta + ' ' + strtrim(grim_data.grn,2) + ';  ' + $
+   tag = ''
+   if(keyword_set(grim_data.tag)) then tag = ' "' + grim_data.tag + '"'
+   title = 'GRIM' + beta + ' ' + strtrim(grim_data.grn,2) + tag + ';  ' + $
            strtrim(grim_data.n_planes,2) + ' plane' + $
            (grim_data.n_planes GT 1 ? 's' : '') + $
            ';  ' + grim_title(plane)

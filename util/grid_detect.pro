@@ -13,7 +13,17 @@ function grid_detect, dim, w, s0=s0, s1=s1, d=d
  ;--------------------------------------------------------------------
  ; convert 1-D samples to appropriate dimensionality
  ;--------------------------------------------------------------------
+;return, -1
  p = w_to_nd(dim, w)
+; window, /free
+; px = reform(p[0,*])
+; dpx = shift(px,1)-px
+; plot, dpx[1:100], /yno
+
+ px = reform(p[0,*])
+ dpx = shift(px,1)-px
+grim, tag='dpx', dpx;[1:100]
+return, -1
 
  ;------------------------------------------------------------
  ; create uniform grid to test
@@ -22,9 +32,9 @@ function grid_detect, dim, w, s0=s0, s1=s1, d=d
  s0 = lonarr(ndim)
  s1 = lonarr(ndim)
 
- ;------------------------------------------------------------
+ ;- - - - - - - - - - - - - - - - -
  ; determine grid parameters
- ;------------------------------------------------------------
+ ;- - - - - - - - - - - - - - - - -
  for i=0, ndim-1 do $
   begin
    s0[i] = p[i,0]			; min coordinate in this dimension

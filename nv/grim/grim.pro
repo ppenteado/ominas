@@ -341,6 +341,10 @@
 ;      `grn`:   Identifies a specific GRIM window by number.  GRIM numbers are
 ;               displayed in the status bar, e.g.: grim <grn>.
 ;
+;      `tag`:   Identifies a specific GRIM window by string.  GRIM tags are
+;               displayed in the status bar in quotes.  If no GRIM window
+;               exists with this tag, then one is created.
+;
 ;      `pn`:    Directs GRIM to change to the plane corresponding to this plane
 ;               number.
 ;
@@ -450,8 +454,14 @@
 ;                        overlays=['limb:jupiter/color=white/psym=1']
 ;                        etc.
 ;
-;                  
-;
+;      `*exclude_overlays`:
+;               Specifies overlays to exclude.  Syntax is the same for the ,
+;               overlays keyword except keyword=value pairs are ignored.
+;               If only a name or names are specified (i.e., no overlay type),
+;               then all overlays with that name are excluded.  Note that the
+;               exclusions are not implemented until after the overlays have 
+;               been computed, so exclusions do not reduce processing.  The,
+;               specified exclusions apply for the entire GRIM session.
 ;
 ;      `*delay_overlays`:
 ;               If set, initial overlays (see 'overlays' above) are not computed
@@ -468,7 +478,7 @@
 ;      `*activate`:
 ;               If set, inital overlay are activated.
 ;
-;      `*ndd`:  Sets the global ndd value in the OMINAS sate structure, which
+;      `*ndd`:  Sets the global ndd value in the OMINAS state structure, which
 ;               controls the maximum number of data descriptors with maintain == 
 ;               1 to keep in memory at any given time
 ;
@@ -567,12 +577,12 @@
 ;
 ;            Title bar
 ;            ~~~~~~~~~
-;               The title bar displays the GRIM window number (grn),
-;               the current plane number (pn), the total number of planes, the
-;               core name field of the data descriptor for the current plane, 
-;               the default title (if given; see the title keyword above), and
-;               a string indicating which RGB channels are associated with the
-;               current plane.
+;               The title bar displays the GRIM window number (grn), the tag
+;               (if any), the current plane number (pn), the total number of 
+;               planes, the core name field of the data descriptor for the 
+;               current plane, the default title (if given; see the title 
+;               keyword above), and a string indicating which RGB channels are 
+;               associated with the current plane.
 ;
 ;            Menu bar
 ;            ~~~~~~~~
@@ -4055,10 +4065,10 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	plane_callbacks=plane_callbacks, plane_callback_data_ps=plane_callback_data_ps, $
 	max=max, path=path, symsize=symsize, lights=lights, $
 	user_psym=user_psym, workdir=workdir, mode_args=mode_args, $
-        save_path=save_path, load_path=load_path, overlays=overlays, pn=pn, $
+        save_path=save_path, load_path=load_path, overlays=overlays, exclude_overlays=exclude_overlays, pn=pn, $
 	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
 	menu_extensions=menu_extensions, button_extensions=button_extensions, $
-	arg_extensions=arg_extensions, loadct=loadct, grn=grn, $
+	arg_extensions=arg_extensions, loadct=loadct, grn=grn, tag=tag, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, $
         lgt_trs=lgt_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_xd=assoc_xd, $
@@ -4075,6 +4085,13 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 @grim_block.include
 @grim_constants.common
 
+ if(keyword_set(tag)) then $
+  begin
+   _grn = grim_tag_to_grn(tag)
+   if(_grn NE -1) then grn = _grn $
+   else new = 1
+  end
+
  if(keyword_set(exit)) then $
   begin
    grim_exit, grn=grn
@@ -4088,7 +4105,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	new=new, xsize=xsize, ysize=ysize, mode_init=mode_init, $
 	zoom=zoom, rotate=rotate, order=order, offset=offset, filter=filter, retain=retain, $
 	path=path, save_path=save_path, load_path=load_path, symsize=symsize, $
-        overlays=overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
+        overlays=overlays, exclude_overlays=exclude_overlays, menu_fname=menu_fname, cursor_swap=cursor_swap, $
 	fov=fov, clip=clip, menu_extensions=menu_extensions, button_extensions=button_extensions, arg_extensions=arg_extensions, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, lgt_trs=lgt_trs, stn_trs=stn_trs, arr_trs=arr_trs, $
 	hide=hide, mode_args=mode_args, xzero=xzero, lights=lights, $
@@ -4243,7 +4260,7 @@ if(NOT defined(render_auto)) then render_auto = 0
    ;----------------------------------------------
    ; initialize data structure and common block
    ;----------------------------------------------
-   grim_data = grim_init(dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, type=type, $
+   grim_data = grim_init(dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, tag=tag, type=type, $
        filter=filter, retain=retain, user_callbacks=user_callbacks, $
        user_psym=user_psym, path=path, save_path=save_path, load_path=load_path, $
        cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
@@ -4325,8 +4342,22 @@ if(NOT defined(render_auto)) then render_auto = 0
  ;  to planes.dd, or to assoc_xd if given.  If cd is a MAP, then descriptors
  ;  are sorted by od, if given.  Note that cd and od are not sorted; there 
  ;  must either be one given for each, or a single descriptor given, which 
- ;  is applied to the current plane.
+ ;  is applied to the current plane.  If dds are supplied to an existing
+ ;  GRIM, then there must be one per plane.
  ;===========================================================================
+ grim_data = grim_get_data()
+ plane = grim_get_plane(grim_data)
+ planes = grim_get_plane(grim_data, /all)
+ nplanes = n_elements(planes)
+
+ if(NOT new) then if(keyword_set(dd)) then $
+  begin
+   if(nplanes NE n_elements(dd)) then nv_message, 'Inconsistent inputs'
+
+   for i=0, nplanes-1 do planes[i].dd = dd[i]
+   grim_set_plane, grim_data, planes
+  end
+
  if(NOT keyword_set(_cd)) then _cd = dat_gd(gd, dd=dd, /cd)
  if(NOT keyword_set(_od)) then _od = dat_gd(gd, dd=dd, /od)
 
@@ -4336,11 +4367,6 @@ if(NOT defined(render_auto)) then render_auto = 0
  if(NOT keyword_set(std)) then std = dat_gd(gd, dd=dd, /std)
  if(NOT keyword_set(ard)) then ard = dat_gd(gd, dd=dd, /ard)
  if(NOT keyword_set(ltd)) then ltd = dat_gd(gd, dd=dd, /ltd)
-
- grim_data = grim_get_data()
- plane = grim_get_plane(grim_data)
- planes = grim_get_plane(grim_data, /all)
- nplanes = n_elements(planes)
 
  _assoc_xd = planes.dd
  if(keyword_set(assoc_xd)) then _assoc_xd = assoc_xd
@@ -4399,6 +4425,11 @@ if(NOT defined(render_auto)) then render_auto = 0
 ;   grim_activate_xd, planes[i], grim_xd(planes[i]), /deactivate
   end
 
+
+ ;-------------------------
+ ; parse overlay exlusions
+ ;-------------------------
+ grim_parse_overlay_exclusions, grim_data, exclude_overlays
 
 
  ;=========================================================

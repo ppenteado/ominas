@@ -26,10 +26,20 @@ cd = pg_get_cameras(inst='CAS_ISS_NA', time=[4,5,6]*3.5d7)	  & help, cd
 
 
 ;==============================================================================
+; Tests of various GRIM inputs.
+;==============================================================================
+grim, '$PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png', $
+                                     over=['planet_grid','station','array']
+grim, 'data/n*', over=['center','limb','terminator'], $
+                             exclude=['center:europa,ganymede', 'limb:io']
+
+
+;==============================================================================
 ; Tests of shell aliases with various types of files and expressions.
 ;==============================================================================
 grim '$PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png' \
                                               over=planet_grid,station,array
+grim data/n* over=center,limb,terminator 'exclude=center:europa;ganymede,limb:io'
 grim ~/casIss/1800/N1800458665_1.IMG.cal str_trs=faint=12 -auto_stretch over=stars
 grim data/n* over=center
 grim https://pds-imaging.jpl.nasa.gov/w10n/cassini/cassini_orbiter/coiss_1001/data/1350045294_1350147054/N1350122987_2.IMG

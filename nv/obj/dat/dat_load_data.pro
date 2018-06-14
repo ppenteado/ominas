@@ -58,8 +58,7 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
 @core.include
 
 
-;;stop
-;;s = w10n_sample_to_query(dat_dim(dd), sample)
+;;;if(keyword_set(sample)) then s = w10n_sample_to_query(dat_dim(dd), sample)
  _dd = cor_dereference(dd)
 
  sample0 = *(*_dd.dd0p).sample_p

@@ -67,6 +67,52 @@
 function bat_parse_argv, keys, val_ps, $
            special_args=special_args, sample=file_sample, select=file_select
 
+ ;---------------------------------------------
+ ; Special args start with '@' and are removed 
+ ; from argv and returned via the special_args 
+ ; output
+ ;---------------------------------------------
+ special_args = ominas_value(delim='@', /rm)
+
+
+ ;----------------------------------------------------------------
+ ; get global keyword/value pairs
+ ;----------------------------------------------------------------
+ file_sample = ominas_value('file_sample')
+ file_select = ominas_value('file_select')
+
+
+ ;--------------------------------------------
+ ; get keywords / values
+ ;--------------------------------------------
+ values = ominas_value(keywords=keywords)
+ if(keyword_set(keywords)) then $
+  for i=0, n_elements(keywords)-1 do $
+   begin
+    keys = append_array(keys, keywords[i])
+    val_ps = append_array(val_ps, ptr_new(ominas_value(keywords[i])))
+   end
+
+
+ ;--------------------------------------
+ ; return positional args
+ ;--------------------------------------
+  return, ominas_argv()
+end
+;===============================================================================
+
+
+
+
+
+
+
+
+
+;=============================================================================
+function ___bat_parse_argv, keys, val_ps, $
+           special_args=special_args, sample=file_sample, select=file_select
+
 ; if(NOT keyword_set(argv[0])) then return, ''
 
  ;---------------------------------------------

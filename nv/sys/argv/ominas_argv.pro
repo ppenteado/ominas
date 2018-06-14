@@ -5,8 +5,7 @@
 ;
 ; PURPOSE:
 ;       Returns the shell argument list.  Arguments are expanded
-;	according to standard shell rules.  "-" and "--" are used instead 
-;	of "/" to set a keyword to one.  Arrays are specified as 
+;	according to standard shell rules.  Arrays are specified as 
 ;	comma-delineated lists with no white space.  
 ;
 ;
@@ -33,6 +32,10 @@
 ;		If set, keyword arguments are returned instead of positional 
 ;		arguments.  In this case, i has no meaning.
 ;
+;	delim:	 Delimiters(s) to use instead of '==' and '='.
+;
+;	toggle:	 Toggle character(s) to use instead of '--' and '-'.
+;
 ;  OUTPUT: NONE
 ;
 ;
@@ -49,20 +52,37 @@
 ;
 ;-
 ;=============================================================================
-function ominas_argv, i, keyvals=keyvals
+function ominas_argv, i, delim=delim, toggle=toggle
+
+ ;----------------------------------------------------------------
+ ; strip out keyword/value pairs
+ ;----------------------------------------------------------------
+ values = ominas_value(delim=delim, toggle=toggle, keywords, argv0=argv)
+
+ ;----------------------------------------------------------------
+ ; return desired arguments
+ ;----------------------------------------------------------------
+ if(NOT keyword_set(argv)) then return, ''
+ if(NOT defined(i)) then return, argv
+ if(i GE n_elements(argv)) then return, ''
+
+ return, argv[i]
+end
+;=========================================================================
+
+
+
+;=============================================================================
+function ___ominas_argv, i, keyvals=keyvals, delim=delim
+
+ if(NOT keyword_set(delim)) then delim = ['==', '=']			;;;;;;
+
 
  ;----------------------------------------------------------------
  ; get IDL arguments
  ;----------------------------------------------------------------
  argv = command_line_args()
  if(n_elements(argv) EQ 0) then return, ''
-
- ;----------------------------------------------------------------
- ; get IDL arguments
- ;----------------------------------------------------------------
- w = where(argv NE '-args')
- if(w[0] EQ -1) then return, ''
- argv = argv[w]
 
  ;----------------------------------------------------------------
  ; parse switch characters

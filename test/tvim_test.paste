@@ -4,7 +4,8 @@ dim = dat_dim(dd)
 ;-------------------------------------------------------------------------
 ; Display pixel grid.  Each point should plot in the center of a pixel
 ;-------------------------------------------------------------------------
-tvim, im, xsize=1600, ysize=800, zoom=0.25, offset=[500,500]
+;tvim, im, xsize=1600, ysize=800, zoom=0.25, offset=[500,500]
+tvim, im, xsize=1600, ysize=800, zoom=10, offset=[500,500]
 grid = gridgen(dim)
 plots, grid, psym=3, color=ctred()
 
