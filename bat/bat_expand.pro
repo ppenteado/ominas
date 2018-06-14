@@ -13,31 +13,24 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;       filespecs = bat_expand(keys, val_ps, input_files)
+;       filespecs = bat_expand(list, path, sample, select)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT: 
-;	keys:	String array giving the names of keywords aruments.
+;	list:	String array giving names of files to be read using
+;	             	read_txt_file.  
 ;
-;	val_ps:	Pointer array giving value for each keyword.
+;	path:	 	File list path.
 ;
-;	input_files: String array giving names of files to be read using
-;	             read_txt_file.  
+;	sample:   	File list sampling; see read_txt_file.
 ;
+;	select:   	File list selection criterion; see read_txt_file.
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS: NONE
-;
-;
-; GLOBAL SHELL KEYWORDS: 
-;	file_sample:
-;		Sets file list sampling; see read_txt_file.
-;
-;	file_select:
-;		Sets file selection criterion; see read_txt_file.
 ;
 ;
 ; RETURN:
@@ -56,17 +49,17 @@
 ;
 ;-
 ;=============================================================================
-function bat_expand, filespecs, keys, val_ps, input_files, sample, select
+function bat_expand, filespecs, list, path, sample, select
 
  ;----------------------------------------------------------------
  ; expand file specs
  ;----------------------------------------------------------------
- if(keyword_set(input_files)) then $
-  for i=0, n_elements(input_files)-1 do $
+ if(keyword_set(list)) then $
+  for i=0, n_elements(list)-1 do $
        filespecs = append_array(filespecs, $
-          decrapify(read_txt_file(input_files[i], sample=sample, select=select)))
+          decrapify(read_txt_file(list[i], sample=sample, select=select)))
 
  if(NOT keyword_set(filespecs)) then return, ''
- return, filespecs
+ return, path + filespecs
 end
 ;==============================================================================

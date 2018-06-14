@@ -34,20 +34,23 @@
 ;  INPUT: NONE
 ;
 ;  OUTPUT: 
-;	special_args:	Returns the names of any arguments ending with '@'.
-;			Those arguments are removed from the argument list.
+;	list:		Returns the names of any arguments starting or ending 
+;			with '@'.  Those arguments are removed from the argument 
+;			list.  Those names will be used as file lists.
 ;
-;	sample:		Returns the file_sample value (see below).
+;	path:		Returns an optional path for the file list.
 ;
-;	select:		Returns the file_select value (see below).
+;	sample:		Returns the bat_sample value (see below).
+;
+;	select:		Returns the bat_select value (see below).
 ;
 ;
 ; GLOBAL SHELL KEYWORDS: 
-;	file_sample:
-;		Sets file list sampling; see read_txt_file.
+;	bat_path:	Sets file list path.
 ;
-;	file_select:
-;		Sets file selection criterion; see read_txt_file.
+;	bat_sample:	Sets file list sampling; see read_txt_file.
+;
+;	bat_select:	Sets file selection criterion; see read_txt_file.
 ;
 ;
 ; RETURN:
@@ -65,22 +68,21 @@
 ;-
 ;=============================================================================
 function bat_parse_argv, keys, val_ps, $
-           special_args=special_args, sample=file_sample, select=file_select
+           list=list, path=path, sample=sample, select=select
 
- ;---------------------------------------------
- ; Special args start with '@' and are removed 
- ; from argv and returned via the special_args 
- ; output
- ;---------------------------------------------
- special_args = ominas_value(delim='@', /rm)
-
+ ;---------------------------------------------------------
+ ; Special args start or end with '@' and are removed from
+ ; argv and returned via the list output
+ ;---------------------------------------------------------
+ list = ominas_value(key=alt, delim='@', /rm)
+ if(keyword_set(alt)) then list = alt
 
  ;----------------------------------------------------------------
  ; get global keyword/value pairs
  ;----------------------------------------------------------------
- file_sample = ominas_value('file_sample')
- file_select = ominas_value('file_select')
-
+ path = decrapify(ominas_value('bat_path', null=''))
+ sample = decrapify(ominas_value('bat_sample', null=''))
+ select = decrapify(ominas_value('bat_select', null=''))
 
  ;--------------------------------------------
  ; get keywords / values
@@ -93,7 +95,6 @@ function bat_parse_argv, keys, val_ps, $
     val_ps = append_array(val_ps, ptr_new(ominas_value(keywords[i])))
    end
 
-
  ;--------------------------------------
  ; return positional args
  ;--------------------------------------
@@ -105,46 +106,3 @@ end
 
 
 
-
-
-
-
-;=============================================================================
-function ___bat_parse_argv, keys, val_ps, $
-           special_args=special_args, sample=file_sample, select=file_select
-
-; if(NOT keyword_set(argv[0])) then return, ''
-
- ;---------------------------------------------
- ; Special args end with '@' and are removed 
- ; from argv and returned via the special_args 
- ; output
- ;---------------------------------------------
- special_args = ominas_value(delim='@')
-
-
- ;----------------------------------------------------------------
- ; get global keyword/value pairs
- ;----------------------------------------------------------------
- file_sample = ominas_value('file_sample')
- file_select = ominas_value('file_select')
-
-
- ;--------------------------------------------
- ; get keywords / values
- ;--------------------------------------------
- values = ominas_value(key=keywords)
- if(keyword_set(keywords)) then $
-  for i=0, n_elements(keywords)-1 do $
-   begin
-    keys = append_array(keys, keywords[i])
-    val_ps = append_array(val_ps, ptr_new(str_nsplit(values[i], ',')))
-   end
-
-
- ;--------------------------------------
- ; return positional args
- ;--------------------------------------
-  return, ominas_argv()
-end
-;===============================================================================

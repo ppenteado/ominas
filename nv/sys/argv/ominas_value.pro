@@ -24,7 +24,7 @@
 ;  INPUT: 
 ;	keyword: String giving the name of the keyword for which a value 
 ;		 is desired.  If not given, all keywords are identified and
-;		 return, in the 'keywords' output, and all values are returned
+;		 returned in the 'keywords' output, and all values are returned
 ;		 as strings (i.e., no array parsing performed).
 ;
 ;  OUTPUT: NONE
@@ -90,7 +90,8 @@ function ov_parse, argv, values, delim=delim
      values = append_array(values, keyval[1], /def)
     end
   end
- if(NOT keyword_set(values)) then return, ''
+;; if(NOT keyword_set(values)) then return, ''
+ if(NOT defined(jj)) then return, ''
 
  argv = rm_list_item(argv, jj, only='')
  return, keywords
@@ -126,6 +127,9 @@ end
 function ov_parse_keyvals, keywords, delim=delim, toggle=toggle, argv0=argv0, rm=rm
 common ominas_argv_block, ___argv
 
+ if(NOT keyword_set(delim)) then delim = ['==', '=']
+ if(NOT keyword_set(toggle)) then toggle = ['--', '-']
+
  ;----------------------------------------------------------------
  ; get argument list
  ;----------------------------------------------------------------
@@ -136,8 +140,6 @@ common ominas_argv_block, ___argv
  argv = ___argv
 
  argv0 = ''
- if(NOT keyword_set(delim)) then delim = ['==', '=']
- if(NOT keyword_set(toggle)) then toggle = ['--', '-']
 
  ;----------------------------------------------------------------
  ; parse toggle characters
@@ -150,14 +152,15 @@ common ominas_argv_block, ___argv
  for i=0, n_elements(delim)-1 do $
   begin
    keys = ov_parse(argv, vals, delim=delim[i])
-   if(keyword_set(vals)) then $
+   if(keyword_set(keys) OR keyword_set(vals)) then $
+;;   if(keyword_set(vals)) then $
     begin
      keywords = append_array(keywords, keys, /def)
      values = append_array(values, vals, /def)
     end
   end
  argv0 = argv
- if(NOT keyword_set(values)) then return, !null
+ if(NOT defined(values)) then return, !null
 
  if(keyword_set(rm)) then ___argv = argv
  return, values
@@ -177,16 +180,28 @@ function ominas_value, keyword, delim=delim, toggle=toggle, keywords=keywords, $
  if(NOT defined(null)) then null = !null
  if(keyword_set(set)) then null = 0
 
+ ;----------------------------------------------------------------
+ ; get all keyword/value pairs
+ ;----------------------------------------------------------------
  values = ov_parse_keyvals(delim=delim, toggle=toggle, keywords, argv0=argv0, rm=rm)
  if(NOT keyword_set(keyword)) then return, values
- if(NOT keyword_set(keywords)) then return, ''
+ if(NOT keyword_set(keywords)) then return, null
 
+ ;----------------------------------------------------------------
+ ; match specified keyword
+ ;----------------------------------------------------------------
  w = where(keywords EQ keyword)
  if(w[0] EQ -1) then return, null
-
  value = values[w]
+
+ ;----------------------------------------------------------------
+ ; parse array
+ ;----------------------------------------------------------------
  val = str_nsplit(value, ',')
 
+ ;----------------------------------------------------------------
+ ; distinguish set vs. unset
+ ;----------------------------------------------------------------
  if(keyword_set(set)) then $
   begin
    if(n_elements(val) GT 1) then return, 1
@@ -194,6 +209,9 @@ function ominas_value, keyword, delim=delim, toggle=toggle, keywords=keywords, $
    return, 1
   end
 
+ ;----------------------------------------------------------------
+ ; convert type
+ ;----------------------------------------------------------------
  if(keyword_set(int)) then return, fix(val)
  if(keyword_set(long)) then return, long(val)
  if(keyword_set(float)) then return, float(val)
@@ -203,88 +221,3 @@ function ominas_value, keyword, delim=delim, toggle=toggle, keywords=keywords, $
 end
 ;===============================================================================
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-;=============================================================================
-; bv_get
-;
-;=============================================================================
-function bv_get, argv, keyword, delim, key=key
-
- for i=0, n_elements(argv)-1 do $
-  begin
-   key = (val = '')
-   keyval = str_split(argv[i], delim)
-   if(n_elements(keyval) EQ 2) then $
-    begin
-     jj = append_array(jj, i, /def)
-     keys = append_array(keys, keyval[0])
-     vals = append_array(vals, keyval[1])
-    end
-  end
-
- if(NOT keyword_set(keys)) then return, ''
-;;; if(NOT keyword_set(vals)) then vals = keys
- n = n_elements(keys)
-
- if(NOT keyword_set(keyword)) then ii = lindgen(n) $
- else ii = nwhere(keys, keyword)
- if(ii[0] EQ -1) then return, ''
-
- argv = rm_list_item(argv, jj[ii])
- key = keys[ii]
- return, decrapify(vals[ii])
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; ominas_value
-;
-;=============================================================================
-function ___ominas_value, keyword, delim=delim, $
-          set=set, int=int, long=long, float=float, double=double
-
- if(NOT keyword_set(delim)) then delim = ['==', '=']
-
- argv = ominas_argv(/keyvals)
- if(NOT keyword_set(argv[0])) then vals = '' $ 
- else $
-  begin
-   for i=0, n_elements(delim)-1 do $
-    begin
-     val = bv_get(argv, keyword, delim[i], key=key)
-     vals = append_array(vals, val)
-     keys = append_array(keys, key)
-    end
-  end
-
- if(keyword_set(set)) then $
-  begin
-   if(NOT keyword_set(vals)) then return, 0
-   if(n_elements(vals) GT 1) then return, 1
-   if(vals[0] EQ '0') then return, 0
-   return, 1
-  end
-
- if(keyword_set(int)) then return, fix(vals)
- if(keyword_set(long)) then return, long(vals)
- if(keyword_set(float)) then return, float(vals)
- if(keyword_set(double)) then return, double(vals)
-
- return, vals
-end
-;===============================================================================

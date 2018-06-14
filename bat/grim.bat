@@ -55,8 +55,8 @@
 !quiet = 1
 
 ___argv = bat_parse_argv(___keys, ___val_ps, $
-                                   spec=___spec, samp=___samp, sel=___sel)
-___filespecs = bat_expand(___argv, ___keys, ___val_ps, ___spec, ___samp, ___sel)
+                           list=___list, path=___path, samp=___samp, sel=___sel)
+___filespecs = bat_expand(___argv, ___list, ___path, ___samp, ___sel)
 if(keyword_set(___filespecs)) then ___files = findfiles(___filespecs, /tolerant)
 
 if(keyword__set(___files)) then $
