@@ -22,7 +22,7 @@
 ;
 ;       kpath:         Path of the CK files
 ;
-;	type:		Type of kernel: 'c' or 'sp'.
+;	type:		Type of kernel: 'c' or 'sp' or 'pc'.
 ;
 ;	sc:		NAIF spacecraft ID 
 ;
@@ -51,7 +51,7 @@
 ;			Algorithms behave as follows:
 ;
 ;			  SEGLEN:  Selects results residing within the shortest
-;			           kernel segments.
+;			           kernel segments. 
 ;			  LBLTIME: Selects results with the latest label time,
 ;			           if a kernel label exists.
 ;			  ITIME:   Selects results with the latest OMINAS
@@ -74,6 +74,7 @@
 ; MODIFICATION HISTORY:
 ;       Written by:     V. Haemmerle,  Feb. 2017
 ;	Addapted by:	J.Spitale      Feb. 2017
+;       Modified by:    V. Haemmerle,  Jun. 2018
 ;-
 ;=============================================================================
 
@@ -161,13 +162,11 @@ function gen_spice_kernel_detect, dd, kpath, type, $
                djd=_djd, sc=sc, time=_time, all=all, strict=strict, $
                filters=filters
 
-
  ticks = 0
  if(type EQ 'c') then ticks = 1
  if(NOT defined(filters)) then $
                     filters = ['SEGLEN', 'LBLTIME', 'ITIME', 'MTIME']
 ;                    filters = ['LBLTIME', 'SEGLEN', 'ITIME', 'MTIME']
-
 
  if(ticks) then $
     if(NOT keyword_set(sc)) then nv_message, 'Spacecraft must be specified.'
@@ -248,149 +247,68 @@ function gen_spice_kernel_detect, dd, kpath, type, $
    if(keyword_set(filters)) then $
     for j=0, n_elements(filters)-1 do $
       dat = call_function('gskd_filter_' + strlowcase(filters[j]), dat)
-
-
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; add selected kernels
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    files = append_array(files, dat.filename)
   end
 
+ files_to_use = unique(files, /desort)
 
- return, unique(files)
-end
-;=============================================================================
-
-
-
-
-
-
-
-
-
-;=============================================================================
-function gen_spice_kernel_detect, dd, kpath, type, $
-               djd=_djd, sc=sc, time=_time, all=all, strict=strict
-
- ticks = 0
- if(type EQ 'c') then ticks = 1
-
-
- if(ticks) then $
-    if(NOT keyword_set(sc)) then nv_message, 'Spacecraft must be specified.'
-
- if(keyword_set(_time)) then time = _time
- 
- djd = 0d
- if(keyword_set(_djd)) then djd = _djd
- dsec = djd * 86400d 
-
- if(~keyword_set(all) && ~keyword_set(time)) then begin
-    nv_message, name='gen_spice_kernel_detect', 'Must specify /all or time.'
- endif
-
- ;--------------------------------
- ; Get kernel database 
- ;--------------------------------
- data = gen_spice_build_db(kpath, type)
- if(NOT keyword_set(data)) then return,''
-
- ;------------------------
- ; Get appropriate kernels
- ;------------------------
- if(keyword_set(all)) then $
+ ;---------------------------------------------------
+ ; order result by time, by filter
+ ;---------------------------------------------------
+ nfiles = n_elements(files_to_use)
+ w = where(data.filename EQ files_to_use[0])
+ ind = w[0]
+ for j=1, nfiles-1 do $
   begin
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; get all files with valid ranges
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   valid = where(data.first NE -1, count)
+   w = where(data.filename EQ files_to_use[j])
+   ind = [ind, w[0]] 
+  end
+ dat = data[ind]
 
-   nv_message, verb=0.9, 'Number of valid kernels = ' + strtrim(count,2)
-  end $
- else $
+ if(keyword_set(filters)) then $
   begin
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; convert ET to sclk ticks
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   before_time = time-dsec
-   after_time = time+dsec
-
-   if(keyword_set(ticks)) then $
+   for j=0, n_elements(filters)-1 do $
     begin
-     cspice_sce2t, sc, time-dsec, before_time
-     cspice_sce2t, sc, time+dsec, after_time
+     if (filters[j] EQ 'SEGLEN') then continue
+     if (filters[j] EQ 'LBLTIME') then $
+      begin
+       w = where(dat.lbltime NE -1, count)
+       if (count EQ nfiles) then $
+        begin
+         times = dat.lbltime
+         break
+        end 
+      end
+     if (filters[j] EQ 'ITIME') then $
+      begin
+       w = where(dat.installtime NE -1, count)
+       if (count EQ nfiles) then $
+        begin
+         times = dat.installtime
+         break
+        end
+      end
+     if (filters[j] EQ 'MTIME') then $
+      begin
+       w = where(dat.mtime NE -1, count)
+       if (count EQ nfiles) then $
+        begin
+         times = dat.mtime
+         break
+        end
+      end
     end
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; get all files with valid ranges that include input time
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   valid = where((data.first LT after_time) AND (data.last GT before_time), nvalid)
-
-   nv_message, verb=0.9, 'Number of valid kernels including given time = ' + strtrim(nvalid,2)
+  end
+ if (keyword_set(times)) then $
+  begin
+   ind = sort(times)
+   files_to_use = files_to_use[ind]
  end
 
- if(nvalid EQ 0) then return, ''
-
-
- ;--------------------------------------------------------------
- ; select files(s)
- ;--------------------------------------------------------------
- data = data[valid] 
-
-
- ;---------------------------------------------------
- ; choose best kernel for each body 
- ;---------------------------------------------------
- all_ids = data.id
- ids = unique(all_ids)
- nids = n_elements(ids)
- for i=0, nids-1 do $
-  begin
-   w = where(all_ids EQ ids[i])
-   dat = data[w]
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - -
-   ; first narrow down to shortest kernel interval
-   ;- - - - - - - - - - - - - - - - - - - - - - - - -
-   intervals = dat.last - dat.first
-   w = where(intervals EQ min(intervals), nvalid)
-   dat = dat[w]
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; take the latest of the remaining kernels, based on various 
-   ; time stamps:
-   ;  If lbltime exists, use that
-   ;  If not, try installtime
-   ;  If not, use file system time
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   if(nvalid GT 1) then $
-    begin
-     times = dat.mtime 
-
-     w = where(dat.installtime NE -1, count)
-     if(count GT 0) then times[w] = dat.installtime
-
-     w = where(dat.lbltime NE -1, count)
-;;;     if(count GT 0) then times[w] = dat.lbltime
-     if(count GT 0) then times[w] = dat[w].lbltime
-
-;     w = where(times NE -1, n)
-;     dat = dat[w]
-;     times = times[w]
-
-     tmax = max(times, w)
-     dat = dat[w]
-;print, dat.id, dat.filename
-    end
-
-   files = append_array(files, dat.filename)
-  end
-
-
- return, unique(files)
+ return, files_to_use
 end
 ;=============================================================================
-
-
 
