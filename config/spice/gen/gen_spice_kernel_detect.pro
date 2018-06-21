@@ -20,7 +20,7 @@
 ;  INPUT:
 ;	dd:		Data descriptor.
 ;
-;       kpath:         Path of the CK files
+;       kpath:          Path of the CK files
 ;
 ;	type:		Type of kernel: 'c' or 'sp' or 'pc'.
 ;
@@ -51,7 +51,7 @@
 ;			Algorithms behave as follows:
 ;
 ;			  SEGLEN:  Selects results residing within the shortest
-;			           kernel segments. 
+;			           kernel segments.
 ;			  LBLTIME: Selects results with the latest label time,
 ;			           if a kernel label exists.
 ;			  ITIME:   Selects results with the latest OMINAS
@@ -74,7 +74,6 @@
 ; MODIFICATION HISTORY:
 ;       Written by:     V. Haemmerle,  Feb. 2017
 ;	Addapted by:	J.Spitale      Feb. 2017
-;       Modified by:    V. Haemmerle,  Jun. 2018
 ;-
 ;=============================================================================
 
@@ -84,13 +83,15 @@
 ; gskd_filter_seglen
 ;
 ;=============================================================================
-function gskd_filter_seglen, dat
- if(NOT keyword_set(dat)) then return, ''
+function gskd_filter_seglen, dat, time=time
+ time = !null
+ if(NOT keyword_set(dat)) then return, !null
 
  intervals = dat.last - dat.first
  w = where(intervals EQ min(intervals))
  if(w[0] EQ -1) then return, ''
 
+ time = make_array(n_elements(w), val=-1d100)
  return, dat[w]
 end
 ;=============================================================================
@@ -101,8 +102,9 @@ end
 ; gskd_filter_lbltime
 ;
 ;=============================================================================
-function gskd_filter_lbltime, dat
- if(NOT keyword_set(dat)) then return, ''
+function gskd_filter_lbltime, dat, time=time
+ time = !null
+ if(NOT keyword_set(dat)) then return, !null
 
  times = dat.lbltime 
  w = where(times NE -1)
@@ -110,6 +112,7 @@ function gskd_filter_lbltime, dat
  tmax = max(times, w)
  if(w[0] EQ -1) then return, ''
 
+ time = dat[w].lbltime
  return, dat[w]
 end
 ;=============================================================================
@@ -120,8 +123,9 @@ end
 ; gskd_filter_itime
 ;
 ;=============================================================================
-function gskd_filter_itime, dat
- if(NOT keyword_set(dat)) then return, ''
+function gskd_filter_itime, dat, time=time
+ time = !null
+ if(NOT keyword_set(dat)) then return, !null
 
  times = dat.installtime 
  w = where(times NE -1)
@@ -129,6 +133,7 @@ function gskd_filter_itime, dat
  tmax = max(times, w)
  if(w[0] EQ -1) then return, ''
 
+ time = dat[w].installtime
  return, dat[w]
 end
 ;=============================================================================
@@ -139,8 +144,9 @@ end
 ; gskd_filter_mtime
 ;
 ;=============================================================================
-function gskd_filter_mtime, dat
- if(NOT keyword_set(dat)) then return, ''
+function gskd_filter_mtime, dat, time=time
+ time = !null
+ if(NOT keyword_set(dat)) then return, !null
 
  times = dat.mtime 
  w = where(times NE -1)
@@ -148,6 +154,7 @@ function gskd_filter_mtime, dat
  tmax = max(times, w)
  if(w[0] EQ -1) then return, ''
 
+ time = dat[w].mtime
  return, dat[w]
 end
 ;=============================================================================
@@ -162,11 +169,13 @@ function gen_spice_kernel_detect, dd, kpath, type, $
                djd=_djd, sc=sc, time=_time, all=all, strict=strict, $
                filters=filters
 
+
  ticks = 0
  if(type EQ 'c') then ticks = 1
  if(NOT defined(filters)) then $
                     filters = ['SEGLEN', 'LBLTIME', 'ITIME', 'MTIME']
 ;                    filters = ['LBLTIME', 'SEGLEN', 'ITIME', 'MTIME']
+
 
  if(ticks) then $
     if(NOT keyword_set(sc)) then nv_message, 'Spacecraft must be specified.'
@@ -246,69 +255,25 @@ function gen_spice_kernel_detect, dd, kpath, type, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    if(keyword_set(filters)) then $
     for j=0, n_elements(filters)-1 do $
-      dat = call_function('gskd_filter_' + strlowcase(filters[j]), dat)
+      dat = call_function('gskd_filter_' + strlowcase(filters[j]), dat, time=stime)
+
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    ; add selected kernels
    ;- - - - - - - - - - - - - - - - - - - - - - - - -
    files = append_array(files, dat.filename)
+   select_time = append_array(select_time, stime)
   end
 
- files_to_use = unique(files, /desort)
 
  ;---------------------------------------------------
- ; order result by time, by filter
+ ; cull and sort files by time
  ;---------------------------------------------------
- nfiles = n_elements(files_to_use)
- w = where(data.filename EQ files_to_use[0])
- ind = w[0]
- for j=1, nfiles-1 do $
-  begin
-   w = where(data.filename EQ files_to_use[j])
-   ind = [ind, w[0]] 
-  end
- dat = data[ind]
+ files = unique(files, sub=ss, /desort)
+ select_time = select_time[ss]
 
- if(keyword_set(filters)) then $
-  begin
-   for j=0, n_elements(filters)-1 do $
-    begin
-     if (filters[j] EQ 'SEGLEN') then continue
-     if (filters[j] EQ 'LBLTIME') then $
-      begin
-       w = where(dat.lbltime NE -1, count)
-       if (count EQ nfiles) then $
-        begin
-         times = dat.lbltime
-         break
-        end 
-      end
-     if (filters[j] EQ 'ITIME') then $
-      begin
-       w = where(dat.installtime NE -1, count)
-       if (count EQ nfiles) then $
-        begin
-         times = dat.installtime
-         break
-        end
-      end
-     if (filters[j] EQ 'MTIME') then $
-      begin
-       w = where(dat.mtime NE -1, count)
-       if (count EQ nfiles) then $
-        begin
-         times = dat.mtime
-         break
-        end
-      end
-    end
-  end
- if (keyword_set(times)) then $
-  begin
-   ind = sort(times)
-   files_to_use = files_to_use[ind]
- end
-
- return, files_to_use
+ ss = sort(select_time)
+ return, files[ss]
 end
 ;=============================================================================
+
 
