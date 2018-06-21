@@ -22,7 +22,7 @@
 ;
 ;       kpath:          Path of the CK files
 ;
-;	type:		Type of kernel: 'c' or 'sp'.
+;	type:		Type of kernel: 'c' or 'sp' or 'pc'.
 ;
 ;	sc:		NAIF spacecraft ID 
 ;
