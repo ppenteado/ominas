@@ -4,13 +4,13 @@
 ;       ominas_argv
 ;
 ; PURPOSE:
-;       Returns the shell argument list.  Arguments are expanded
-;	according to standard shell rules.  Arrays are specified as 
-;	comma-delineated lists with no white space.  
+;       Returns the shell argument list.  Arguments are expanded according 
+;       to standard shell rules.  Arrays are specified as comma-delineated 
+;       lists with no white space.  
 ;
 ;
 ; CATEGORY:
-;       BAT
+;       NV/SYS/ARGV
 ;
 ;
 ; CALLING SEQUENCE:
@@ -20,21 +20,32 @@
 ; ARGUMENTS:
 ;  INPUT: 
 ;	i:	Index of positional argument to return.  If there are no 
-;		positional arguments, or if i is invalid, then '' is returned.  
-;		If i is not specified, then all arguments are returned.  
+;		positional arguments, or if i is invalid, then !null is returned.  
+;		If i is not specified, then all arguments are returned and 
+;		all values are returned as raw strings (i.e., no array parsing 
+;		or type conversion performed).
 ;
 ;  OUTPUT: NONE
 ;
 ;
 ; KEYWORDS: 
 ;  INPUT: 
-;	keyvals: 
-;		If set, keyword arguments are returned instead of positional 
-;		arguments.  In this case, i has no meaning.
+;	delim:	 Delimiters(s) to use for identifying keyword/value pairs 
+;		 instead of '==' and '='.
 ;
-;	delim:	 Delimiters(s) to use instead of '==' and '='.
+;	toggle:	 Toggle character(s) to use for identifying toggles instead 
+;		 of '--' and '-'.
 ;
-;	toggle:	 Toggle character(s) to use instead of '--' and '-'.
+;	null:	Null return value to use instea of !null 
+;
+;	int:	If set, result is converted to int.
+;
+;	long:	If set, result is converted to long.
+;
+;	float:	If set, result is converted to float.
+;
+;	double:	If set, result is converted to double.
+;
 ;
 ;  OUTPUT: NONE
 ;
@@ -52,7 +63,11 @@
 ;
 ;-
 ;=============================================================================
-function ominas_argv, i, delim=delim, toggle=toggle
+function ominas_argv, i, delim=delim, toggle=toggle, null=null, $
+                  int=int, long=long, float=float, double=double
+
+ if(NOT defined(null)) then null = !null
+ if(keyword_set(set)) then null = 0
 
  ;----------------------------------------------------------------
  ; strip out keyword/value pairs
@@ -62,11 +77,25 @@ function ominas_argv, i, delim=delim, toggle=toggle
  ;----------------------------------------------------------------
  ; return desired arguments
  ;----------------------------------------------------------------
- if(NOT keyword_set(argv)) then return, ''
+ if(NOT keyword_set(argv)) then return, nv_null(null=null)
  if(NOT defined(i)) then return, argv
- if(i GE n_elements(argv)) then return, ''
+ if(i GE n_elements(argv)) then return, nv_null(null=null)
 
- return, argv[i]
+ ;----------------------------------------------------------------
+ ; parse array
+ ;----------------------------------------------------------------
+ val = ominas_parse_array(argv[i])
+ val = decrapify(val)
+
+ ;----------------------------------------------------------------
+ ; convert type
+ ;----------------------------------------------------------------
+ if(keyword_set(int)) then return, fix(val)
+ if(keyword_set(long)) then return, long(val)
+ if(keyword_set(float)) then return, float(val)
+ if(keyword_set(double)) then return, double(val)
+
+ return, val
 end
 ;=========================================================================
 

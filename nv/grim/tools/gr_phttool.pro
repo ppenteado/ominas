@@ -483,6 +483,7 @@ pro gr_phttool_event, event
  ; get pht form base and data structure
  ;-----------------------------------------------
  grim_data = grim_get_data(/primary)
+ if(NOT keyword_set(grim_data)) then return
  data = grim_get_user_data(grim_data, 'GRPHT_DATA')
  phtd = grpht_form_to_phtd(data)
 
@@ -604,6 +605,7 @@ end
 pro grpht_primary_notify, init_data_p
 
  grim_data = grim_get_data(/primary)
+ if(NOT keyword_set(grim_data)) then return
  data = grim_get_user_data(grim_data, 'GRPHT_DATA')
  if(NOT keyword_set(data)) then $
                grim_set_user_data, grim_data, 'GRPHT_DATA', *init_data_p $

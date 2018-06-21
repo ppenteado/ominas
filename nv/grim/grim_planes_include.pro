@@ -83,6 +83,8 @@ end
 ;=============================================================================
 function grim_get_plane, grim_data, all=all, pn=pn, visible=visible
 
+ if(NOT keyword_set(grim_data)) then return, 0
+
  if(keyword_set(all)) then $
   begin
    flags = *grim_data.pl_flags_p

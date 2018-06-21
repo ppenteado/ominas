@@ -8,9 +8,9 @@ history = 0 / Current history value
 <updates>
 
 / -------------------------------------------------------------------- /
-/ RING descriptor -- updated Tue Jun  5 08:44:26 2018
+/ RING descriptor -- updated Thu Jun 21 12:52:32 2018
 / -------------------------------------------------------------------- /
-rng_update_time = 2458275.36418981 
+rng_update_time = 2458291.53648148 
 rng_tasks = '' 
 rng_notes = '' 
 rng_name = 'MAIN_RING_SYSTEM' 
@@ -1416,9 +1416,9 @@ rng_dlibldt(6)[5] = 0.00000000000000
 rng_dlibldt(7)[5] = 0.00000000000000 
 rng_desc[5] = '' 
 / -------------------------------------------------------------------- /
-/ PLANET descriptor -- updated Tue Jun  5 08:44:26 2018
+/ PLANET descriptor -- updated Thu Jun 21 12:52:33 2018
 / -------------------------------------------------------------------- /
-plt_update_time = 2458275.36418981 
+plt_update_time = 2458291.53649306 
 plt_tasks = '' 
 plt_notes = '' 
 plt_name = 'VENUS' 
@@ -5398,11 +5398,12 @@ plt_j(126)[17] = 0.00000000000000
 plt_j(127)[17] = 0.00000000000000 
 plt_j(128)[17] = 0.00000000000000 
 / -------------------------------------------------------------------- /
-/ CAMERA descriptor -- updated Tue Jun  5 08:44:29 2018
+/ CAMERA descriptor -- updated Thu Jun 21 12:52:36 2018
 / -------------------------------------------------------------------- /
-cam_update_time = 2458275.36422454 
+cam_update_time = 2458291.53652778 
 cam_tasks(0) = 'pg_repoint' 
 cam_tasks(1) = 'pg_repoint' 
+cam_tasks(2) = 'pg_repoint' 
 cam_notes = '' 
 cam_name = 'CAS_ISS_NA' 
 cam_abbrev = 'CAM' 
@@ -5485,9 +5486,9 @@ cam_fn_focal_to_image = 'cam_focal_to_image_linear'
 cam_fn_body_to_image = '' 
 cam_fn_image_to_focal = 'cam_image_to_focal_linear' 
 / -------------------------------------------------------------------- /
-/ STAR descriptor -- updated Tue Jun  5 08:44:29 2018
+/ STAR descriptor -- updated Thu Jun 21 12:52:36 2018
 / -------------------------------------------------------------------- /
-str_update_time = 2458275.36422454 
+str_update_time = 2458291.53652778 
 str_tasks = '' 
 str_notes = '' 
 str_name = 'SUN' 

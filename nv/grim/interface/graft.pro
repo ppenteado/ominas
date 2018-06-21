@@ -31,9 +31,11 @@
 ;	grn:	 ID of GRIM instance to use.  If not given, then current one
 ;		 is used.
 ;
+;	tag:	 Tag of GRIM window to access.
+;
 ;	psym:	 Plotting symbol.
 ;
-;	tag:	 If given, the array is added as user data with this tag name.
+;	name:	 If given, the array is added as user data with this name.
 ;
 ;	symsize: Plotting symbol size.
 ;
@@ -65,7 +67,7 @@
 ;-
 ;=============================================================================
 pro graft, arg, $
-   psym=psym, symsize=symsize, color=_color, tag=tag, pn=pn, grn=grn
+   psym=psym, symsize=symsize, color=_color, name=name, pn=pn, grn=grn, tag=tag
 
  type = size(arg, /type)
  if(type EQ 11) then ptd = arg $
@@ -75,6 +77,7 @@ pro graft, arg, $
  ;------------------------------------------------------------------
  ; determine which GRIM window
  ;------------------------------------------------------------------
+ if(keyword_set(tag)) then grn = grim_tag_to_grn(tag)
  if(keyword_set(grn)) then $
                      grim_data = grim_get_data(grim_grn_to_top(grn)) $
  else grim_data = grim_get_data(/primary)
@@ -110,16 +113,16 @@ pro graft, arg, $
  ;------------------------------
  ; set user points
  ;------------------------------
- if(keyword_set(tag)) then $
-    grim_add_user_points, plane=plane, pnt_compress(ptd), tag, $
+ if(keyword_set(name)) then $
+    grim_add_user_points, plane=plane, pnt_compress(ptd), name, $
         	   psym=psym, symsize=symsize, color=color, /no_refresh $
  else $
   begin
    for i=0, n_elements(ptd)-1 do $
     begin
-     tag = pnt_desc(ptd[i]) + '-' + cor_name(ptd[i])
+     name = pnt_desc(ptd[i]) + '-' + cor_name(ptd[i])
      grim_add_user_points, plane=plane, ptd[i], $
-                  tag, psym=psym, symsize=symsize, color=color, /no_refresh
+                  name, psym=psym, symsize=symsize, color=color, /no_refresh
     end
   end
 

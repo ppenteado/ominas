@@ -23,8 +23,8 @@
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	arg:	GRIM window number or GRIM data struture.  If not given, the 
-;		most recently accessed grim instance is used.
+;	arg:	GRIM window number, GRIM tag, or GRIM data struture.  If not 
+;		given, the most recently accessed grim instance is used.
 ;
 ;  OUTPUT: NONE
 ;
@@ -41,6 +41,11 @@
 ;
 ;	active:	If set, only active memebrs of the selected objects are
 ;		returned.
+;
+;	grn:	Id of GRIM window to access.
+;
+;	tag:	Tag of GRIM window to access.
+;	
 ;
 ;  OUTPUT:
 ;	gd:	Generic descriptor containing all of GRIM's descriptors.  
@@ -88,7 +93,8 @@
 ;	
 ;-
 ;=============================================================================
-pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, gd=gd, $
+pro grift, arg, plane=planes, pn=pn, all=all, active=active, grn=grn, tag=tag, $
+         gd=gd, $
          dd=dd, $
          cd=cd, $
          md=md, $
@@ -152,9 +158,12 @@ _ref_extra=ex
  ;----------------------------------------------------------------
  arg_type = size(arg, /type)
  if(arg_type EQ 8) then grim_data = arg $
+ else if(arg_type EQ 7) then tag = arg $
  else if(arg_type NE 0) then grn = arg
 
- if(defined(grn)) then grim_data = grim_get_data(grim_grn_to_top(grn)) $
+ if(defined(tag)) then grn = grim_tag_to_grn(tag)
+
+ if(defined(grn)) then grim_data = grim_get_data(grn=grn) $
  else grim_data = grim_get_data(/primary)
 
  if(NOT keyword_set(grim_data)) then grim_data = grim_get_data(planes[0])

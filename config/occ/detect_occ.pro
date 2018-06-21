@@ -31,8 +31,8 @@ function detect_occ, filename=filename, header=header
  ;==============================================
  if(status EQ 1) then $
   begin
-   xx = read_vicar(filename, label, /nodata, /silent)
-   xx = vicgetpar(label, 'OCCFILE', stat=stat)
+   xx = read_vicar(filename, header, /nodata, /silent)
+   xx = vicgetpar(header, 'OCCFILE', stat=stat)
    if(keyword_set(stat)) then status = 0
   end
 

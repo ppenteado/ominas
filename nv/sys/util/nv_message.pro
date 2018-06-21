@@ -89,6 +89,11 @@
 ;	message:	If /get_message, this keyword will return the last
 ;			message sent through nv_message.
 ;
+;	get_verbosity:	Returns the current verbosity value.
+;
+;	test_verbose:   1 if nv_message detects a versbose condition for a 
+;			given verbose input, 0 otherwise.
+;
 ;
 ; ENVIRONMENT VARIABLES:
 ;	NV_VERBOSITY:	Initial verbosity setting.
@@ -110,7 +115,8 @@ pro nv_message, string, name=name, anonymous=anonymous, continue=continue, $
              clear=clear, get_message=get_message, format=format, $
              message=_string, explanation=explanation, $
              callback=callback, cb_data_p=cb_data_p, disconnect=disconnect, $
-             cb_tag=cb_tag, verbose=verbose, silent=silent, stop=stop
+             cb_tag=cb_tag, verbose=verbose, silent=silent, stop=stop, $
+             get_verbosity=get_verbosity, test_verbose=test_verbose
 common nv_message_block, last_message, cb_tlp, verbosity
 @core.include
 @nv_block.common
@@ -124,13 +130,15 @@ common nv_message_block, last_message, cb_tlp, verbosity
    if(keyword_set(nv_verbosity)) then verbosity = double(nv_verbosity)
   end
  if(NOT keyword_set(verbosity)) then verbosity = 0
+ get_verbosity = verbosity
 
- ;------------------------------------------------
- ; set verbosity if no string
- ;------------------------------------------------
+ ;--------------------------------------------------
+ ; set verbosity if no string or no test requested
+ ;--------------------------------------------------
  verbosity=(n_elements(verbosity) gt 0) ? verbosity : 0
  silence = 1
- if(NOT defined(string)) then $
+;;; if(NOT defined(string)) then $
+ if((NOT defined(string)) AND (NOT arg_present(test_verbose))) then $
   begin
    if(defined(verbose)) then verbosity = double(verbose[0])
   end $
@@ -145,6 +153,7 @@ common nv_message_block, last_message, cb_tlp, verbosity
  else if(NOT defined(verbose)) then silence = 0
 
  if(keyword_set(silent)) then verbose = 0
+ test_verbose = 1-silence
  if(defined(verbose)) then continue = 1
 
  ;---------------------------------------------------------------

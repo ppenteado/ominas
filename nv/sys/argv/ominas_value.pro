@@ -13,7 +13,7 @@
 ;
 ;	  
 ; CATEGORY:
-;       BAT
+;       NV/SYS/ARGV
 ;
 ;
 ; CALLING SEQUENCE:
@@ -25,7 +25,8 @@
 ;	keyword: String giving the name of the keyword for which a value 
 ;		 is desired.  If not given, all keywords are identified and
 ;		 returned in the 'keywords' output, and all values are returned
-;		 as strings (i.e., no array parsing performed).
+;		 as raw strings (i.e., no array parsing or type conversion 
+;		 performed).
 ;
 ;  OUTPUT: NONE
 ;
@@ -170,6 +171,17 @@ end
 
 
 ;=============================================================================
+; ominas_parse_array
+;
+;=============================================================================
+function ominas_parse_array, arg
+ return, str_nsplit(arg, ',')
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; ominas_value
 ;
 ;=============================================================================
@@ -177,7 +189,6 @@ function ominas_value, keyword, delim=delim, toggle=toggle, keywords=keywords, $
           set=set, int=int, long=long, float=float, double=double, $
           null=null, argv0=argv0, rm=rm
  
- if(NOT defined(null)) then null = !null
  if(keyword_set(set)) then null = 0
 
  ;----------------------------------------------------------------
@@ -185,19 +196,19 @@ function ominas_value, keyword, delim=delim, toggle=toggle, keywords=keywords, $
  ;----------------------------------------------------------------
  values = ov_parse_keyvals(delim=delim, toggle=toggle, keywords, argv0=argv0, rm=rm)
  if(NOT keyword_set(keyword)) then return, values
- if(NOT keyword_set(keywords)) then return, null
+ if(NOT keyword_set(keywords)) then return, nv_null(null=null)
 
  ;----------------------------------------------------------------
  ; match specified keyword
  ;----------------------------------------------------------------
  w = where(keywords EQ keyword)
- if(w[0] EQ -1) then return, null
+ if(w[0] EQ -1) then return, nv_null(null=null)
  value = values[w]
 
  ;----------------------------------------------------------------
  ; parse array
  ;----------------------------------------------------------------
- val = str_nsplit(value, ',')
+ val = ominas_parse_array(value)
 
  ;----------------------------------------------------------------
  ; distinguish set vs. unset
@@ -212,6 +223,7 @@ function ominas_value, keyword, delim=delim, toggle=toggle, keywords=keywords, $
  ;----------------------------------------------------------------
  ; convert type
  ;----------------------------------------------------------------
+ val = decrapify(val)
  if(keyword_set(int)) then return, fix(val)
  if(keyword_set(long)) then return, long(val)
  if(keyword_set(float)) then return, float(val)

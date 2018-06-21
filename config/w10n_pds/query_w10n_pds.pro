@@ -24,8 +24,7 @@
 ;  OUTPUT:              None.
 ;
 ; KEYWORDS:
-;  INPUT:
-;       debug:          Print out http responses and debug info
+;  INPUT: NONE
 ;
 ; RETURN:
 ;       An array if URLs (filenames) from the web site.
@@ -45,8 +44,9 @@ FUNCTION Query_Url_Callback, status, progress, data
 END
 
 ;-----------------------------------------------------------------
-FUNCTION query_w10n_pds, url, debug=debug
+FUNCTION query_w10n_pds, url
 
+debug=1
    status = 0
 
    ; If the url object throws an error it will be caught here
@@ -60,9 +60,9 @@ FUNCTION query_w10n_pds, url, debug=debug
       ; Get the properties that will tell us more about the error.
       oUrl->GetProperty, RESPONSE_CODE=rspCode, $
          RESPONSE_HEADER=rspHdr, RESPONSE_FILENAME=rspFn
-      if (keyword_set(debug)) then PRINT, 'rspCode = ', rspCode
-      if (keyword_set(debug)) then PRINT, 'rspHdr= ', rspHdr
-      if (keyword_set(debug)) then PRINT, 'rspFn= ', rspFn
+      nv_message, verb=0.5, 'rspCode = ' + strtrim(rspCode,2)
+      nv_message, verb=0.5, 'rspHdr= ' + strtrim(rspHdr,2)
+      nv_message, verb=0.5, 'rspFn= ' + strtrim(rspFn,2)
 
       ; Destroy the url object
       OBJ_DESTROY, oUrl
@@ -94,12 +94,10 @@ FUNCTION query_w10n_pds, url, debug=debug
    endif
    IMAGE_NAME = strmid(url, path_pos+1)
 
-   if (keyword_set(debug)) then begin
-      help, image_protocol
-      help, image_host
-      help, image_path
-      help, image_name
-   endif
+   nv_message, verb=0.5, 'image_protocol = ' + image_protocol
+   nv_message, verb=0.5, 'image_host = ' + image_host
+   nv_message, verb=0.5, 'image_path = ' + image_path
+   nv_message, verb=0.5, 'image_name = ' + image_name
 
    ; Validate URL
    if ((strcmp(IMAGE_PROTOCOL, 'http', /fold_case) NE 1) AND (strcmp(IMAGE_PROTOCOL, 'https', /fold_case) NE 1)) then begin
@@ -115,11 +113,13 @@ FUNCTION query_w10n_pds, url, debug=debug
    if (!version.release ge '8.4') then oUrl = OBJ_NEW('IDLnetUrl') else $
      oUrl = OBJ_NEW('IDLnetUrl',ssl_certificate_file=getenv('OMINAS_DIR')+path_sep()+'util'+path_sep()+'downloader'+path_sep()+'ca-bundle.crt')
 
+   nv_message, verb=0.5, test_verbose=verbose
+
    ; Specify the callback function
-   if (keyword_set(debug)) then oUrl->SetProperty, CALLBACK_FUNCTION ='Query_Url_Callback'
+   if (verbose) then oUrl->SetProperty, CALLBACK_FUNCTION ='Query_Url_Callback'
 
    ; Set verbose to 1 to see more info on the transacton
-   if(keyword_set(debug)) then oUrl->SetProperty, VERBOSE = 1
+   if(verbose) then oUrl->SetProperty, VERBOSE = 1
 
    ; Set the transfer protocol as http or https
    oUrl->SetProperty, url_scheme = IMAGE_PROTOCOL
@@ -138,25 +138,23 @@ FUNCTION query_w10n_pds, url, debug=debug
    OBJ_DESTROY, oUrl
 
    ; Print the returned array of strings
-   if (keyword_set(debug)) then begin
-      PRINT, 'TOP_METADATA array of strings returned:'
-      for i=0, n_elements(top_metadata_json)-1 do print, top_metadata_json[i]
-   endif
+   nv_message, verb=0.5, 'TOP_METADATA array of strings returned:'
+   for i=0, n_elements(top_metadata_json)-1 do $
+      nv_message, verb=0.5, /anonymous, '  ' + top_metadata_json[i]
+
    if(n_elements(top_metadata_json) EQ 0) then return, ''
 
    top_metadata = json_parse(top_metadata_json)
-   if (keyword_set(debug)) then begin
-      print, 'TOP_METADATA:'
-      print, top_metadata
-   endif
+   nv_message, verb=0.5, 'TOP_METADATA:'
+   nv_message, verb=0.5, /anonymous, top_metadata
 
    w10n = top_metadata['w10n']
    path = ''
    type = ''
    for i=0,n_elements(w10n)-1 do if (w10n[i,'name'] EQ 'path') then path = w10n[i, 'value']
    for i=0,n_elements(w10n)-1 do if (w10n[i,'name'] EQ 'type') then type = w10n[i, 'value']
-   if (keyword_set(debug)) then print, 'w10n path = ', path
-   if (keyword_set(debug)) then print, 'w10n type = ', type
+   nv_message, verb=0.5, 'w10n path = ' + path
+   nv_message, verb=0.5, 'w10n type = ' + type
 
    leaves = top_metadata['leaves']
    if (n_elements(leaves) EQ 0) then begin

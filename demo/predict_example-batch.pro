@@ -133,11 +133,11 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;
 ;     grift, cd=cd, pd=pd, rd=rd
 ;     footprint_ptd = pg_footprint(cd=cd, bx=[pd,rd])
-;     graft, footprint_ptd, tag='FP-'+strtrim(counter(),2)
+;     graft, footprint_ptd, name='FP-'+strtrim(counter(),2)
 ;
 ;-
 ;-------------------------------------------------------------------------
 grift, cd=cd, pd=pd, rd=rd
 footprint_ptd = pg_footprint(cd=cd, bx=[pd,rd])
-graft, footprint_ptd, tag='FP-'+strtrim(counter(),2), col=ctpink()
+graft, footprint_ptd, name='FP-'+strtrim(counter(),2), col=ctpink()
 

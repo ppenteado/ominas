@@ -46,6 +46,8 @@
 ;	comment:	Returns all lines starting with '#', which are 
 ;			not otherwise parsed. 
 ;
+;	notes:		Array notes.
+;
 ;
 ; RETURN:
 ; 	Normally, this routine returns a POINT containing
