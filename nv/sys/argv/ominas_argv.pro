@@ -38,6 +38,8 @@
 ;
 ;	null:	Null return value to use instea of !null 
 ;
+;	byte:	If set, result is converted to byte.
+;
 ;	int:	If set, result is converted to int.
 ;
 ;	long:	If set, result is converted to long.
@@ -64,7 +66,7 @@
 ;-
 ;=============================================================================
 function ominas_argv, i, delim=delim, toggle=toggle, null=null, $
-                  int=int, long=long, float=float, double=double
+                  byte=byte, int=int, long=long, float=float, double=double
 
  if(NOT defined(null)) then null = !null
  if(keyword_set(set)) then null = 0
@@ -85,11 +87,12 @@ function ominas_argv, i, delim=delim, toggle=toggle, null=null, $
  ; parse array
  ;----------------------------------------------------------------
  val = ominas_parse_array(argv[i])
- val = decrapify(val)
 
  ;----------------------------------------------------------------
  ; convert type
  ;----------------------------------------------------------------
+ val = decrapify(val)
+ if(keyword_set(byte)) then return, fix(byte)
  if(keyword_set(int)) then return, fix(val)
  if(keyword_set(long)) then return, long(val)
  if(keyword_set(float)) then return, float(val)

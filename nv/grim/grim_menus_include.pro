@@ -3673,6 +3673,56 @@ end
 ;=============================================================================
 ;+
 ; NAME:
+;	grim_menu_plane_toggle_action_syncing_event
+;
+;
+; PURPOSE:
+;	Toggles action syncing on/off.  
+;
+;
+; CATEGORY:
+;	NV/GR
+;
+;
+; MODIFICATION HISTORY:
+; 	Written by:	Spitale, 6/2018
+;	
+;-
+;=============================================================================
+pro grim_menu_plane_toggle_action_syncing_help_event, event
+ text = ''
+ nv_help, 'grim_menu_plane_toggle_action_syncing_help_event', cap=text
+ if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
+end
+;----------------------------------------------------------------------------
+pro grim_menu_plane_toggle_action_syncing_event, event
+
+ widget_control, /hourglass
+
+ grim_data = grim_get_data(event.top)
+ plane = grim_get_plane(grim_data)
+
+
+ grim_data = grim_get_data(event.top)
+ 
+ flag = grim_get_toggle_flag(grim_data, 'ACTION_SYNCING')
+ flag = 1 - flag
+
+ grim_set_toggle_flag, grim_data, 'ACTION_SYNCING', flag
+ grim_update_menu_toggle, grim_data, $
+                      'grim_menu_plane_toggle_action_syncing_event', flag
+
+; grim_sync_actions, grim_data
+; grim_refresh, grim_data, /use_pixmap
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+;+
+; NAME:
 ;	grim_menu_plane_clear_curves_event
 ;
 ;

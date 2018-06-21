@@ -1026,12 +1026,27 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
  no_context=no_context, no_callback=no_callback, no_back=no_back, $
  no_coord=no_coord, tvimage=tvimage, no_plot=no_plot, just_image=just_image, $
  dx=dx, dy=dy, update=update, current=current, no_copy=no_copy, no_main=no_main, $
- no_user=no_user, overlay_color=overlay_color
+ no_user=no_user, overlay_color=overlay_color, disable=disable, enable=enable
 @grim_block.include
 
 
-
  if(NOT keyword_set(grim_data)) then grim_data = grim_get_data(plane=plane) 
+
+ if(keyword_set(disable)) then $
+  begin
+   grim_data.enable_refresh = 0
+   grim_set_data, grim_data
+   return
+  end
+ if(keyword_set(enable)) then $
+  begin
+   grim_data.enable_refresh = 1
+   grim_set_data, grim_data
+   return
+  end
+ if(NOT grim_data.enable_refresh) then return
+
+
  if(NOT keyword_set(noglass)) then widget_control, grim_data.draw, /hourglass
  if(NOT keyword_set(no_wset)) then grim_wset, grim_data, grim_data.wnum
 

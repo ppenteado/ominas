@@ -372,6 +372,9 @@
 ;      `*activation_syncing`: 
 ;               Turns activation syncing on (1) or off(0).  Default is 0.
 ;
+;      `*action_syncing`: 
+;               Turns action syncing on (1) or off(0).  Default is 0.
+;
 ;      `position`:
 ;               Sets the plot position; see the POSITION grahics keyword.
 ;
@@ -2949,13 +2952,15 @@ function grim_parse_menu_desc, _menu_desc, $
             plot_indices=plot_indices, $
             plot_only_items=plot_only_items, $
             plot_only_indices=plot_only_indices, $
-            beta_only_indices=beta_only_indices
+            beta_only_indices=beta_only_indices, $
+            sync_indices=sync_indices, sync_items=sync_items
 
  map_token = '*'
  od_token = '#'
  plot_token = '+'
  plot_only_token = '%'
  beta_only_token = '?'
+ sync_token = '!'
 
  map_items = ''
  od_map_items = ''
@@ -3007,6 +3012,15 @@ function grim_parse_menu_desc, _menu_desc, $
    beta_only_indices = w
   end
 
+ p = strpos(menu_desc, sync_token)
+ w = where(p NE -1)
+ if(w[0] NE -1) then $
+  begin
+   ss = str_nnsplit(menu_desc[w], sync_token, rem=sync_items)
+   menu_desc[w] = ss + sync_items
+   sync_indices = w
+  end
+
  return, menu_desc
 end
 ;=============================================================================
@@ -3021,6 +3035,7 @@ end
 ;  Items containing '+' work for plots as well.
 ;  Items containing '%' work only for plots.
 ;  Items containing '?' work only for the beta version.
+;  Items containing '!' can be synced to all planes.
 ;
 ;=============================================================================
 function grim_menu_desc, cursor_modes=cursor_modes
@@ -3095,6 +3110,8 @@ function grim_menu_desc, cursor_modes=cursor_modes
 ;           '0\Propagate Curves    \*grim_menu_plane_propagate_curves_event', $
            '0\Sync Curves        [xxx]\*grim_menu_plane_toggle_curve_syncing_event', $
            '0\Clear Curves        \*grim_menu_plane_clear_curves_event', $
+           '0\------------------------\+*grim_menu_delim_event', $ 
+           '0\Sync Actions       [xxx]\*grim_menu_plane_toggle_action_syncing_event', $
            '0\------------------------\+*grim_menu_delim_event', $ 
 ;           '0\Copy Activations        \*grim_menu_plane_copy_activations_event', $
            '0\Sync Activations   [xxx]\*grim_menu_plane_toggle_activation_syncing_event', $
@@ -3180,24 +3197,24 @@ function grim_menu_desc, cursor_modes=cursor_modes
            '2\<null>               \+*grim_menu_delim_event', $
 
           '+*1\Overlays' ,$
-           '0\Compute centers        \grim_menu_points_centers_event', $ 
-           '0\Compute limbs          \#grim_menu_points_limbs_event', $        
-           '0\Compute terminators    \#grim_menu_points_terminators_event', $
-           '0\Compute planet grids   \*grim_menu_points_planet_grids_event', $ 
-           '0\Compute rings          \grim_menu_points_rings_event', $
-           '0\Compute ring grids     \grim_menu_points_ring_grids_event', $ 
-           '0\Compute stations       \*grim_menu_points_stations_event', $ 
-           '0\Compute arrays         \*grim_menu_points_arrays_event', $ 
-           '0\Compute stars          \grim_menu_points_stars_event', $ 
-           '0\Compute shadows        \grim_menu_points_shadows_event', $ 
-;           '0\Compute reflections    \?grim_menu_points_reflections_event', $ 
+           '0\Compute centers        \!grim_menu_points_centers_event', $ 
+           '0\Compute limbs          \!#grim_menu_points_limbs_event', $        
+           '0\Compute terminators    \!#grim_menu_points_terminators_event', $
+           '0\Compute planet grids   \!*grim_menu_points_planet_grids_event', $ 
+           '0\Compute rings          \!grim_menu_points_rings_event', $
+           '0\Compute ring grids     \!grim_menu_points_ring_grids_event', $ 
+           '0\Compute stations       \!*grim_menu_points_stations_event', $ 
+           '0\Compute arrays         \!*grim_menu_points_arrays_event', $ 
+           '0\Compute stars          \!grim_menu_points_stars_event', $ 
+           '0\Compute shadows        \!grim_menu_points_shadows_event', $ 
+;           '0\Compute reflections    \!?grim_menu_points_reflections_event', $ 
            '0\-------------------------\+*grim_menu_delim_event', $ 
-           '0\Hide/Unhide all        \+*grim_menu_hide_all_event', $ 
-           '0\Clear all              \*grim_menu_clear_all_event', $ 
-           '0\Clear active           \*grim_menu_clear_active_event', $ 
-           '0\Activate all           \*grim_menu_activate_all_event', $ 
-           '0\Deactivate all         \*grim_menu_deactivate_all_event', $ 
-           '0\Invert Activations     \*grim_menu_invert_event', $ 
+           '0\Hide/Unhide all        \!+*grim_menu_hide_all_event', $ 
+           '0\Clear all              \!*grim_menu_clear_all_event', $ 
+           '0\Clear active           \!*grim_menu_clear_active_event', $ 
+           '0\Activate all           \!*grim_menu_activate_all_event', $ 
+           '0\Deactivate all         \!*grim_menu_deactivate_all_event', $ 
+           '0\Invert Activations     \!*grim_menu_invert_event', $ 
            '0\-------------------------\+*grim_menu_delim_event', $ 
            '0\Overlay Settings       \+*grim_menu_points_settings_event', $
            '2\<null>               \+*grim_menu_delim_event']
@@ -3257,6 +3274,41 @@ end
 
 
 ;=============================================================================
+; grim_sync_action
+;
+;=============================================================================
+pro grim_sync_action, grim_data
+
+ if(NOT keyword_set(grim_data.repeat_fn)) then return
+ fn = grim_data.repeat_fn
+ event = *grim_data.repeat_event_p
+
+ sync_items = *grim_data.sync_items_p
+ w = where(fn EQ sync_items)
+ if(w[0] EQ -1) then return
+
+ grim_refresh, grim_data, /disable
+
+ pn = grim_data.pn
+ planes = grim_get_plane(grim_data, /all)
+ for i=0, n_elements(planes)-1 do if(i NE pn) then $
+  begin
+   grim_data.pn = i
+   grim_set_data, grim_data
+   call_procedure, fn, event
+ end
+
+ grim_refresh, grim_data, /enable
+
+ grim_data.pn = pn
+ grim_set_data, grim_data
+ grim_refresh, /use_pixmap
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_menu_capture
 ;
 ;=============================================================================
@@ -3268,8 +3320,11 @@ pro grim_menu_capture, fn, event
 
  grim_data.repeat_fn = fn
  *grim_data.repeat_event_p = event
-
  grim_set_data, grim_data, grim_data.base
+
+ if(grim_get_toggle_flag(grim_data, 'ACTION_SYNCING')) then $
+                                             grim_sync_action, grim_data
+
 end
 ;=============================================================================
 
@@ -3316,7 +3371,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
      od_map_items=od_map_items, od_map_indices=od_map_indices, $
      plot_items=plot_items, plot_indices=plot_indices, $
      plot_only_items=plot_only_items, plot_only_indices=plot_only_indices, $
-     beta_only_indices=beta_only_indices)
+     beta_only_indices=beta_only_indices, sync_items=sync_items)
 
 
  menu_desc = grim_cull_menu_desc(menu_desc, plot, map, beta, $
@@ -3329,6 +3384,7 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
  grim_data.menu_desc_p = nv_ptr_new(menu_desc)
  grim_data.map_items_p = nv_ptr_new(map_items)
  grim_data.od_map_items_p = nv_ptr_new(od_map_items)
+ grim_data.sync_items_p = nv_ptr_new(sync_items)
 
  grim_data.menu = $
           cw__pdmenu(grim_data.mbar, menu_desc, /mbar, ids=menu_ids, $
@@ -4073,7 +4129,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	cam_trs=cam_trs, plt_trs=plt_trs, rng_trs=rng_trs, str_trs=str_trs, $
         lgt_trs=lgt_trs, stn_trs=stn_trs, arr_trs=arr_trs, assoc_xd=assoc_xd, $
         plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, $
-	curve_syncing=curve_syncing, activation_syncing=activation_syncing, slave_overlays=slave_overlays, $
+	curve_syncing=curve_syncing, activation_syncing=activation_syncing, action_syncing=action_syncing, slave_overlays=slave_overlays, $
 	position=position, delay_overlays=delay_overlays, auto_stretch=auto_stretch, $
 	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, $
 	render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
@@ -4112,7 +4168,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
         psym=psym, nhist=nhist, maintain=maintain, ndd=ndd, workdir=workdir, $
         activate=activate, frame=frame, compress=compress, loadct=loadct, max=max, $
 	extensions=extensions, beta=beta, rendering=rendering, npoints=npoints, $
-        plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, activation_syncing=activation_syncing, $
+        plane_syncing=plane_syncing, tiepoint_syncing=tiepoint_syncing, curve_syncing=curve_syncing, activation_syncing=activation_syncing, action_syncing=action_syncing, $
 	visibility=visibility, channel=channel, render_numbra=render_numbra, render_sampling=render_sampling, $
 	render_minimum=render_minimum, slave_overlays=slave_overlays, rgb=rgb, $
 	delay_overlays=delay_overlays, auto_stretch=auto_stretch, guideline=guideline, $
@@ -4531,6 +4587,8 @@ if(NOT defined(render_auto)) then render_auto = 0
                    grim_set_toggle_flag, grim_data, 'CURVE_SYNCING', 1
  if(keyword_set(activation_syncing)) then $
                    grim_set_toggle_flag, grim_data, 'ACTIVATION_SYNCING', 1
+ if(keyword_set(action_syncing)) then $
+                   grim_set_toggle_flag, grim_data, 'ACTION_SYNCING', 1
  if(keyword_set(highlght)) then $
                    grim_set_toggle_flag, grim_data, 'PLANE_HIGHLIGHT', 1
  if(keyword_set(integer_zoom)) then $
@@ -4569,6 +4627,9 @@ if(NOT defined(render_auto)) then render_auto = 0
    grim_update_menu_toggle, grim_data, $
          'grim_menu_plane_toggle_activation_syncing_event', $
           grim_get_toggle_flag(grim_data, 'ACTIVATION_SYNCING')
+   grim_update_menu_toggle, grim_data, $
+         'grim_menu_plane_toggle_action_syncing_event', $
+          grim_get_toggle_flag(grim_data, 'ACTION_SYNCING')
    grim_update_menu_toggle, grim_data, $
          'grim_menu_plane_highlight_event', $
           grim_get_toggle_flag(grim_data, 'PLANE_HIGHLIGHT')

@@ -36,6 +36,8 @@
 ;	set:	If set, the returned value is 0 unless the keyword exists and is
 ;		not '0'.
 ;
+;	byte:	If set, result is converted to byte.
+;
 ;	int:	If set, result is converted to int.
 ;
 ;	long:	If set, result is converted to long.
@@ -186,7 +188,7 @@ end
 ;
 ;=============================================================================
 function ominas_value, keyword, delim=delim, toggle=toggle, keywords=keywords, $
-          set=set, int=int, long=long, float=float, double=double, $
+          set=set, byte=byte, int=int, long=long, float=float, double=double, $
           null=null, argv0=argv0, rm=rm
  
  if(keyword_set(set)) then null = 0
@@ -224,6 +226,7 @@ function ominas_value, keyword, delim=delim, toggle=toggle, keywords=keywords, $
  ; convert type
  ;----------------------------------------------------------------
  val = decrapify(val)
+ if(keyword_set(byte)) then return, byte(val)
  if(keyword_set(int)) then return, fix(val)
  if(keyword_set(long)) then return, long(val)
  if(keyword_set(float)) then return, float(val)

@@ -1500,10 +1500,9 @@ function grim_default_menus
            '2\<null>               \+*grim_menu_delim_event', $
 
 	  '*1\Corrections', $
-;           '0\Sync      [xxx]\*grim_menu_corrections_sync_event', $
            '1\Pointing' , $
-            '0\Farfit\grim_menu_pointing_farfit_event', $
-;;            '?0\Renderfit\grim_menu_pointing_renderfit_event', $
+            '0\Farfit\!grim_menu_pointing_farfit_event', $
+;;            '?0\Renderfit\!grim_menu_pointing_renderfit_event', $
             '0\Least Squares\grim_menu_pointing_lsq_event', $
             '2\<null>               \+*grim_menu_delim_event', $
            '*1\Shift Image' , $
