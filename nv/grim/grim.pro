@@ -361,19 +361,19 @@
 ;               1000.
 ;
 ;      `*plane_syncing`: 
-;               Turns plane syncing on (1) or off(0).  Default is 0.
+;               Turns plane syncing on (1) or off (0).  Default is 0.
 ;
 ;      `*tiepoint_syncing`: 
-;               Turns tiepoint syncing on (1) or off(0).  Default is 0.
+;               Turns tiepoint syncing on (1) or off (0).  Default is 0.
 ;
 ;      `*curve_syncing`: 
-;               Turns curve syncing on (1) or off(0).  Default is 0.
+;               Turns curve syncing on (1) or off (0).  Default is 0.
 ;
 ;      `*activation_syncing`: 
-;               Turns activation syncing on (1) or off(0).  Default is 0.
+;               Turns activation syncing on (1) or off (0).  Default is 0.
 ;
 ;      `*action_syncing`: 
-;               Turns action syncing on (1) or off(0).  Default is 0.
+;               Turns action syncing on (1) or off (0).  Default is 0.
 ;
 ;      `position`:
 ;               Sets the plot position; see the POSITION grahics keyword.
@@ -3288,6 +3288,7 @@ pro grim_sync_action, grim_data
  if(w[0] EQ -1) then return
 
  grim_refresh, grim_data, /disable
+ pg_draw, /suspend
 
  pn = grim_data.pn
  planes = grim_get_plane(grim_data, /all)
@@ -3298,6 +3299,7 @@ pro grim_sync_action, grim_data
    call_procedure, fn, event
  end
 
+ pg_draw, /resume
  grim_refresh, grim_data, /enable
 
  grim_data.pn = pn

@@ -156,7 +156,6 @@ common ominas_argv_block, ___argv
   begin
    keys = ov_parse(argv, vals, delim=delim[i])
    if(keyword_set(keys) OR keyword_set(vals)) then $
-;;   if(keyword_set(vals)) then $
     begin
      keywords = append_array(keywords, keys, /def)
      values = append_array(values, vals, /def)

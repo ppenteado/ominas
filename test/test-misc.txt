@@ -40,6 +40,7 @@ grim, 'data/n*', over=['center','limb','terminator'], $
 grim '$PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png' \
                                               over=planet_grid,station,array
 grim data/n* over=center,limb,terminator 'exclude=center:europa;ganymede,limb:io'
+grim data/n* over=center,limb,terminator -action_syncing -activation_syncing
 grim data/files.txt@ bat_path=data/
 grim ~/casIss/1800/N1800458665_1.IMG.cal str_trs=faint=12 -auto_stretch over=stars
 grim data/n* over=center
