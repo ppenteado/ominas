@@ -28,8 +28,6 @@
 ;  INPUT:
 ;         pds:          Return label as PDS label
 ;
-;       debug:          Print out http responses and debug info
-;
 ;      nodata:          Do not return data
 ;
 ;      silent:          Do not print messages
@@ -66,7 +64,7 @@ END
 ;-----------------------------------------------------------------
 FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=silent, $
                         sample=sample, returned_samples=returned_samples, $
-                        pds=pds, gif=gif, debug=debug
+                        pds=pds, gif=gif
 
    nodata = keyword_set(_nodata)
    status = 0
@@ -116,12 +114,10 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
    endif
    IMAGE_NAME = strmid(url, path_pos+1)
 
-   if (keyword_set(debug)) then begin
-      help, image_protocol
-      help, image_host
-      help, image_path
-      help, image_name
-   endif
+   nv_message, verb=0.5, 'image_protocol = ' + image_protocol
+   nv_message, verb=0.5, 'image_host = ' + image_host
+   nv_message, verb=0.5, 'image_path = ' + image_path
+   nv_message, verb=0.5, 'image_name = ' + image_name
 
    ; Validate URL
    if ((strcmp(IMAGE_PROTOCOL, 'http', /fold_case) NE 1) AND (strcmp(IMAGE_PROTOCOL, 'https', /fold_case) NE 1)) then begin
@@ -137,11 +133,13 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
    if (!version.release ge '8.4') then oUrl = OBJ_NEW('IDLnetUrl') else $
      oUrl = OBJ_NEW('IDLnetUrl',ssl_certificate_file=getenv('OMINAS_DIR')+path_sep()+'util'+path_sep()+'downloader'+path_sep()+'ca-bundle.crt')
 
-   ; Specify the callback function
-   if (keyword_set(debug)) then oUrl->SetProperty, CALLBACK_FUNCTION ='Url_Callback'
+    nv_message, verb=0.5, test_verbose=verbose
+
+  ; Specify the callback function
+   if (verbose) then oUrl->SetProperty, CALLBACK_FUNCTION ='Url_Callback'
 
    ; Set verbose to 1 to see more info on the transacton
-   if(keyword_set(debug)) then oUrl->SetProperty, VERBOSE = 1
+   if(verbose) then oUrl->SetProperty, VERBOSE = 1
 
    ; Set the transfer protocol as http or https
    oUrl->SetProperty, url_scheme = IMAGE_PROTOCOL
@@ -157,15 +155,14 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
    top_metadata_json = oUrl->Get( /STRING_ARRAY )
 
    ; Print the returned array of strings
-   if (keyword_set(debug)) then begin
-      PRINT, 'TOP_METADATA array of strings returned:'
-      for i=0, n_elements(top_metadata_json)-1 do print, top_metadata_json[i]
-   endif
+   nv_message, verb=0.5, 'TOP_METADATA array of strings returned:'
+   for i=0, n_elements(top_metadata_json)-1 do $
+      nv_message, verb=0.5, /anonymous, '  ' + top_metadata_json[i]
+
    top_metadata = json_parse(top_metadata_json)
-   if (keyword_set(debug)) then begin
-      print, 'TOP_METADATA:'
-      print, top_metadata
-   endif
+   nv_message, verb=0.5, 'TOP_METADATA:'
+   nv_message, verb=0.5, /anonymous, top_metadata
+
    nodes = top_metadata['nodes']
    if (n_elements(nodes) NE 1) then begin
       if (NOT keyword_set(silent)) then message, 'Node contains more than one image'
@@ -182,30 +179,28 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
    image_metadata_json = oUrl->Get( /STRING_ARRAY )
 
    ; Print the returned array of strings
-   if (keyword_set(debug)) then begin
-      PRINT, 'IMAGE_METADATA array of strings returned:'
-      for i=0, n_elements(image_metadata_json)-1 do print, image_metadata_json[i]
-   endif
+   nv_message, verb=0.5, 'IMAGE_METADATA array of strings returned:'
+   for i=0, n_elements(image_metadata_json)-1 do $
+      nv_message, verb=0.5, /anonymous, '  ' + image_metadata_json[i]
+
    if (n_elements(image_metadata_json) EQ 0) then message, 'No image label found'
    image_metadata = json_parse(image_metadata_json)
-   if (keyword_set(debug)) then begin
-       print, 'IMAGE_METADATA:'
-       print, image_metadata
-   endif
+   nv_message, verb=0.5, 'IMAGE_METADATA:'
+   nv_message, verb=0.5, /anonymous, image_metadata
 
    ; Get image size
    attributes = image_metadata['attributes']
    image_size = (attributes[0])['value']
    isize = image_size.ToArray(type=3)
-   if (keyword_set(debug)) then print, 'Image size = ', isize
+   nv_message, verb=0.5, 'Image size = ' + strtrim(isize,2)
    metadata = (attributes[1])['value']
    label = json_serialize(metadata)
    if (isize[2] EQ 1) then dim = isize[0:1] $
    else dim = isize
 
    ; Get data type (if available using VICAR system label item FORMAT)
-   ;dh_w10n_pds_par, label, 'FORMAT', get=image_type, debug=debug
-   ;if (keyword_set(debug)) then print, 'FORMAT = ', image_type
+   ;dh_w10n_pds_par, label, 'FORMAT', get=image_type
+   ;nv_message, verb=0.5, 'FORMAT = ' + image_type
    ;if (image_type EQ 'BYTE') then type = 1
    ;if (image_type EQ 'HALF') then type = 2
    ;if (image_type EQ 'WORD') then type = 2
@@ -218,7 +213,7 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
    data_json = oUrl->Get( /STRING_ARRAY )
    jlab = json_parse(data_json)
    image_type = jlab['type']
-   if (keyword_set(debug)) then print, 'type = ', image_type
+   nv_message, verb=0.5, 'type = ' + image_type
    if (image_type EQ 'uint8') then type = 1
    if (image_type EQ 'int16') then type = 2
    if (image_type EQ 'int32') then type = 3
@@ -278,7 +273,7 @@ FUNCTION read_w10n_pds, url, label, dim=dim, type=type, nodata=_nodata, silent=s
          data_range = strtrim(string(min_index_x),2) + ':' + strtrim(string(max_index_x+1),2) + ',' + $ 
                       strtrim(string(min_index_y),2) + ':' + strtrim(string(max_index_y+1),2) + ',' + $
                       strtrim(string(min_index_z),2) + ':' + strtrim(string(max_index_z+1),2)
-         if (keyword_set(debug)) then print, 'data_range =  "', data_range, '"'
+         nv_message, verb=0.5, 'data_range = "' + data_range + '"'
 
          ; calculate returned samples
          rsize = x_range*y_range*z_range

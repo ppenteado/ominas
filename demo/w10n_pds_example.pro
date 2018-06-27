@@ -51,7 +51,10 @@ if(keyword_set(ominas_value('vgr'))) then mission = 'vgr'
 if(keyword_set(ominas_value('gll'))) then mission = 'gll'
 
 if(NOT keyword_set(mission)) then $
-                      read, mission, prompt='Enter mission (cas, vgr, gll): '
+ begin &$
+  mission = '' &$
+  read, mission, prompt='Enter mission (cas, vgr, gll): ' &$
+ end
 
 if (mission eq 'cas') then url_mission = 'CASSINI ISS' $
 else if (mission eq 'vgr') then url_mission = 'VOYAGER ISS' $

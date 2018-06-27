@@ -2,7 +2,8 @@
 ; detect_vgr_cd.pro
 ;
 ;===========================================================================
-function detect_vgr_cd, filename=filename, header=header
+;function detect_vgr_cd, filename=filename, header=header
+function detect_vgr_cd, dd
 
 return, ''	; this detector is obsolete, needs to be updated
  status = 1 

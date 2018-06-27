@@ -46,7 +46,6 @@ END
 ;-----------------------------------------------------------------
 FUNCTION query_w10n_pds, url
 
-debug=1
    status = 0
 
    ; If the url object throws an error it will be caught here
