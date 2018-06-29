@@ -164,8 +164,10 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
  ; update description
  ;----------------------------------------------
  (*_dd.dd0p).typecode = size(data, /type)
- _dd.min = min(data)
- _dd.max = max(data)
+ if ((*_dd.dd0p).typecode ne 8) then begin
+   _dd.min = min(data)
+   _dd.max = max(data)
+ endif
 
  if(keyword_set(_abscissa)) then $
   begin

@@ -199,8 +199,13 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  ;-------------------------------------------------------------------------
  ; compute data ranges -- not reliable if data array is being subsampled
  ;-------------------------------------------------------------------------
- max = max(data)
- min = min(data)
+ if size(data,/type) ne 8 then begin
+   max = max(data)
+   min = min(data)
+ endif else begin
+  max=!values.d_nan
+  min=!values.d_nan
+ endelse
  abmax = max(abscissa)
  abmin = min(abscissa)
 
