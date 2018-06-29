@@ -1049,8 +1049,9 @@ else
 fi
 echo "Icy: ${ominas_icytest}"
 export ominas_icyst
-
-OMINAS_TMP=`$idlbin -e "print,filepath('_${USER}_ominas',/tmp)" 2> /dev/null`
+echo $idlbin
+OMINAS_TMP=`$idlbin -e "print,filepath('_${USER}_ominas',/tmp)" | tail -1  2> /dev/null`
+echo $OMINAS_TMP
 #OMINAS_TMP="${OMINAS_RC}/tmp"
 if [ ! -w "${OMINAS_TMP}" ]; then
   mkdir -p ${OMINAS_TMP}
