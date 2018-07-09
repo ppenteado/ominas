@@ -25,6 +25,7 @@ function detect_tdl, filename=filename, header=header
  ;===================================
  ; check for label field
  ;===================================
+ if ~isa(s,/string) then return,0
  if(strpos(s[0], 'TDL_LBLSIZE') NE -1) then status=1
 
 
