@@ -3,6 +3,7 @@
 #------------------------------------------------------------------------------
 
   CAS_RADAR             cas_radar_transform     -
+  CAS_CIRS             cas_cirs_transform     -
   JUNO_EPO_CAMERA            juno_epo_transform     -
 
   END
