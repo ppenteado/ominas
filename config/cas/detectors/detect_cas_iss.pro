@@ -9,6 +9,7 @@ function detect_cas_iss, dd
 
 
  ; w10n json labels...
+ if ~isa(s,/string) then return,0
  if ((strpos(label, '"ISSNA"') NE -1) AND $
          (strpos(label, 'CASSINI') NE -1)) then return, 'CAS_ISS_NA'
  if ((strpos(label, '"ISSWA"') NE -1) AND $
