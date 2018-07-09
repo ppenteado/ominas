@@ -10,7 +10,8 @@
   detect_vgr_cd			VGR_CD	
   detect_tdl			TDL	
   detect_multi			MULTI	
-  #detect_isis                   ISIS   
+  #detect_isis                   ISIS
+  detect_pdscirstable           PDSCIRSTABLE
   detect_pds			PDS	
   detect_pds4			PDS4	
   detect_ext			EXT	

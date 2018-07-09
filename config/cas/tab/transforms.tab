@@ -4,4 +4,5 @@
   CAS_ISSNA		cas_iss_delut		- #cas_iss_relut
   CAS_ISSWA		cas_iss_delut		- #cas_iss_relut
   CAS_RADAR             cas_radar_transform     -
+  CAS_CIRS              cas_cirs_transform     -
   END
