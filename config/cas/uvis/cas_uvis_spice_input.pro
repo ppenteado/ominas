@@ -139,7 +139,7 @@ pro cas_uvis_spice_parse_labels, dd, _time, $
    ;-----------------------------------
    ; optic axis
    ;-----------------------------------
-   oaxis[*,i] = [0,20];size[*,i]/2d
+   oaxis[*,i] = [-2,36];size[*,i]/2d
   end
 
  if(NOT keyword_set(_time)) then _time = time
@@ -165,6 +165,7 @@ function cas_uvis_spice_cameras, dd, ref, pos=pos, constants=constants, $
        exposure=exposure, size=size, filters=filters, oaxis=oaxis
 
  bin = 1
+ label=dat_header(dd[0])
 
  case dat_instrument(dd[0]) of
 	'CAS_UVIS': $

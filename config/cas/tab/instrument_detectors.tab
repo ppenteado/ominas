@@ -6,4 +6,5 @@
   detect_cas_uvis		
   detect_cas_radar              
   detect_cas_vims
-  detect_cas_cirs               
+  detect_cas_cirs
+  detect_cas_cirscube
