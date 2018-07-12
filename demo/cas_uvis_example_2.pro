@@ -150,8 +150,8 @@ n=1
 for i=0,n-1 do begin
   grid_ps = pg_grid(gd=gd[i], lat=lat, lon=lon)
   pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx
-  pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx,$
-    od=gd[i].ltd
+;  pg_hide, grid_ps, cd=gd[i].cd, gbx=gd[i].gbx,$
+;    od=gd[i].ltd
   pg_draw, grid_ps, color=ctblue(),wnum=ww[i]
   plat_ps = pg_grid(gd=gd[i],slon=!dpi/2d,lat=lat,nlon=0)
   pg_hide, plat_ps[0], cd=gd[i].cd, gbx=gd[0].gbx
