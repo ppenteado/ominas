@@ -22,7 +22,8 @@
 ;
 ;       kpath:          Path of the CK files
 ;
-;	type:		Type of kernel: 'c' or 'sp' or 'pc'.
+;	type:		Type of kernel: 'c' or 'sp' or 'pc'.  Note, type='pc' 
+;			implies /all.  
 ;
 ;	sc:		NAIF spacecraft ID 
 ;
@@ -169,6 +170,7 @@ function gen_spice_kernel_detect, dd, kpath, type, $
                djd=_djd, sc=sc, time=_time, all=all, strict=strict, $
                filters=filters
 
+ if(strlowcase(type) EQ 'pc') then all = 1
 
  ticks = 0
  if(type EQ 'c') then ticks = 1
@@ -186,9 +188,8 @@ function gen_spice_kernel_detect, dd, kpath, type, $
  if(keyword_set(_djd)) then djd = _djd
  dsec = djd * 86400d 
 
- if(~keyword_set(all) && ~keyword_set(time)) then begin
+ if((NOT keyword_set(all)) AND  (NOT keyword_set(time))) then $
     nv_message, name='gen_spice_kernel_detect', 'Must specify /all or time.'
- endif
 
  ;--------------------------------
  ; Get kernel database 
@@ -204,9 +205,8 @@ function gen_spice_kernel_detect, dd, kpath, type, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ; get all files with valid ranges
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   valid = where(data.first NE -1, count)
-
-   nv_message, verb=0.9, 'Number of valid kernels = ' + strtrim(count,2)
+   valid = where(data.first NE -1, nvalid)
+   nv_message, verb=0.9, 'Number of valid kernels = ' + strtrim(nvalid,2)
   end $
  else $
   begin

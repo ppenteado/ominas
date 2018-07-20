@@ -4,7 +4,7 @@
 ; MULTI-INSTRUMENT EXAMPLE
 ; ------------------------
 ; 
-;   This script demonstrates reading Cassini RADAR SAR, VIMS and ISS images and
+;   This script demonstrates reading Cassini RADAR SAR, VIMS, and ISS images and
 ;   projecting them onto an orthographical map for display as a RGB composite.
 ;   
 ;   The SAR data file used, `BIFQI22N068_D045_T003S01_V02.IMG`, is too large (202 MB)

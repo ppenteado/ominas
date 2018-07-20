@@ -357,7 +357,7 @@ common tvim_block, tvd, tvim_top
   end
 
  ;- - - - - - - - - - - - -
- ; offset
+ ; offset, zoom
  ;- - - - - - - - - - - - -
 ;;; x0 = offset[0] + 0.5
 ;;; x1 = offset[0] + xsize/zoom[0] - 0.5

@@ -224,6 +224,7 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
    ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
+;help, data_xy
    _im = grim_get_image(grim_data, plane=planes[i], $
                           channel=channel, sample=data_xy, abscissa=grid)
 

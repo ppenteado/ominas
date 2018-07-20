@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	data = dat_load_data(dd)
+;	dat_load_data, dd
 ;
 ;
 ; ARGUMENTS:
@@ -25,13 +25,17 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	sample:		Requeseted data samples.  If not set, all samples are 
+;			loaded.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	data:		Loaded data values.
+;
+;	abscissa:	Loaded abscissa values.
 ;
 ;
-; RETURN: 
-;	Loaded data array.
+; RETURN: NONE
 ;
 ;
 ; KNOWN BUGS:
@@ -57,8 +61,7 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
 @nv_block.common
 @core.include
 
-
-;;;if(keyword_set(sample)) then s = w10n_sample_to_query(dat_dim(dd), sample)
+;;;if(keyword_set(sample)) then s = w10n_sample_to_query(dat_dim(dd), unique(sample))
  _dd = cor_dereference(dd)
 
  sample0 = *(*_dd.dd0p).sample_p
@@ -78,9 +81,7 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
   begin
    if(keyword_set(sample)) then $
     begin
-     ss = sort(sample)
-     uu = uniq(sample[ss])
-     requested_samples = sample[uu[ss]]
+     requested_samples = [unique(sample)]
 
      samples_to_load = requested_samples
      if(sample0[0] NE -1) then $
@@ -92,9 +93,9 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
      if(samples_to_load[0] EQ -1) then return
     end
 
- ;----------------------------------
+ ;-----------------------------------
  ; unload older samples if necessary
- ;----------------------------------
+ ;-----------------------------------
 ;   overflow = $
 ;         _dat_compute_size(_dd, [loaded_samples, samples_to_load) - (*_dd.dd0p).cache
 ;   if(overflow GT 0) then _dat_unload_samples, _dd, overflow

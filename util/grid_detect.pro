@@ -1,7 +1,7 @@
 ;==============================================================================
 ; grid_detect
 ;
-;  Assumes samples w are sorted
+;  Assumes samples w are sorted and unique
 ;
 ;==============================================================================
 function grid_detect, dim, w, s0=s0, s1=s1, d=d
@@ -9,19 +9,15 @@ function grid_detect, dim, w, s0=s0, s1=s1, d=d
  n = n_elements(w)
  ndim = n_elements(dim)
 
-
  ;--------------------------------------------------------------------
  ; convert 1-D samples to appropriate dimensionality
  ;--------------------------------------------------------------------
 ;return, -1
  p = w_to_nd(dim, w)
-; window, /free
-; px = reform(p[0,*])
-; dpx = shift(px,1)-px
-; plot, dpx[1:100], /yno
 
  px = reform(p[0,*])
- dpx = shift(px,1)-px
+ dpx = px-shift(px,1)
+stop
 grim, tag='dpx', dpx;[1:100]
 return, -1
 
@@ -37,11 +33,11 @@ return, -1
  ;- - - - - - - - - - - - - - - - -
  for i=0, ndim-1 do $
   begin
-   s0[i] = p[i,0]			; min coordinate in this dimension
-   s1[i] = p[i,n-1]			; max coordinate in this dimension
+   s0[i] = p[i,0]			; min coordinate in dimension i
+   s1[i] = p[i,n-1]			; max coordinate in dimension i
 
-   ww = min(where(p[i,*] NE p[i,0]))	; look for increment in this dimension
-   d[i] = p[i,ww[0]] - p[i,0]		; compute step in this dimension
+   ww = min(where(p[i,*] NE p[i,0]))	; look for increment in dimension i
+   d[i] = p[i,ww[0]] - p[i,0]		; compute step in this dimension i
   end
 stop
 

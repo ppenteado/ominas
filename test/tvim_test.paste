@@ -1,37 +1,58 @@
-dd = dat_read('../demo/data/n1350122987.2', im)
-dim = dat_dim(dd)
+s = 10				; test image size
+z = 40				; zoom
+d = 5				; border width in data pixels
+
+
 
 ;-------------------------------------------------------------------------
-; Display pixel grid.  Each point should plot in the center of a pixel
+; construct a checkerboard image
 ;-------------------------------------------------------------------------
-;tvim, im, xsize=1600, ysize=800, zoom=0.25, offset=[500,500]
-tvim, im, xsize=1600, ysize=800, zoom=10, offset=[500,500]
+dim = [s,s]
+im = bytarr(dim)
+im[altgen(s)] = 1
+
+
+
+
+;-------------------------------------------------------------------------
+; Display pixel grid over zoomed image.  Each cross should plot in the 
+; center of a pixel
+;-------------------------------------------------------------------------
+size = (s+2*d)*z
+tvim, im, xsize=size, ysize=size, zoom=z, offset = -[d,d]
 grid = gridgen(dim)
-plots, grid, psym=3, color=ctred()
+plots, grid, psym=1, color=ctred()
 
 
 
 ;-------------------------------------------------------------------------
-; Test coordinate conversion.   With integer zoom, the steps between data
-; coordinates computed from a uniform device grid should be constant.  Any
-; aliasing will cause grid_detect to fail.
+; Test coordinate conversions.  With integer zoom, the steps between data
+; coordinates computed from a uniform device grid should be constant.
 ;-------------------------------------------------------------------------
 
-pdev = gridgen([!d.x_size, !d.y_size])
+;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+; Generate and plot device-coordinate grid.
+;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pdev = gridgen([!d.x_size, !d.y_size])		; all device pixels
 device, set_graphics=6
 plots, /device, pdev, psym=3
-p = (convert_coord(/device, /to_data, pdev))[0:1,*]
+
+;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+; Convert device-coordinate grid to data coordinates and plot.
+;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+p = (convert_coord(/device, /to_data, pdev))[0:1,*]	; data coordinates
+							; of all device pixels
 plots, p, psym=3
 device, set_graphics=3
 
-samples = xy_to_w(dim, p, /unique, /clip)
-
-
-
-
-
-pp = w_to_xy(dim, samples)
-plots, pp, psym=4, col=ctgreen()
+;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+; Convert data coordinates to 1D samples and back, and plot.
+; The result is quantized by xy_to_w because samples are long ints.
+;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+samples = xy_to_w(dim, p, /unique, /clip)	; 1D data samples for all 
+						; device pixels
+pp = w_to_xy(dim, samples)			; back to data coordinates
+plots, pp, psym=6, col=ctred()
 
 
 
@@ -40,10 +61,9 @@ plots, pp, psym=4, col=ctgreen()
 stop
 
 
-
 p = p[*,w]
 
-print, p[*,0:10]
+print, p[*,0:100]
 window, /free
 
 px = reform(p[0,*])
@@ -59,5 +79,3 @@ plot, dppx[1:100]
 
 
 
-truncate coords
-take unique samples
