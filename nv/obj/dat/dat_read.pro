@@ -814,9 +814,9 @@ function dat_read, filespec, data, header, $
         	 name=name, nhist=nhist)
       if(keyword_set(ddi)) then $
        begin
- 	if(arg_present(data)) then dat_load_data, ddi, data=data
- 	dd = append_array(dd, ddi)
- 	found = 1
+        if(arg_present(data)) then dat_load_data, ddi, data=data
+        dd = append_array(dd, ddi)
+        found = 1
        end
     end
   end

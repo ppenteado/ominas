@@ -199,10 +199,10 @@ pro grpht_apply_correction_primary, grim_data, data, phtd
  ;---------------------------
  ; get data
  ;----------------------------
- limb_ptd = grim_ptd(plane, /limb)
+ limb_ptd = grim_ptd(plane, /limb, /active)
  if(NOT keyword_set(limb_ptd)) then $
   begin
-   grim_message, 'No outline points.'
+   grim_message, 'No active limb points.'
    return
   end
 
