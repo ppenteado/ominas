@@ -6,8 +6,8 @@ if strlowcase(type) eq 'fp1' then begin
 
 endif else begin
   if keyword_set(sub) then begin
-    nbx=2
-    nby=20
+    nbx=10
+    nby=10
     box=dblarr(2,nbx*nby,5)
     xp=dindgen(nbx+1)/(nbx)
     yp=dindgen(nby+1)/(nby)
