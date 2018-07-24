@@ -181,7 +181,12 @@ for i=0,1 do begin
   zoom=sb[i] ? 1 : 8
   offset=sb[i] ? [200d0,200d0] : [-15,-10]
   sband=sb[i] ? 0 : band
-  tvim, (dat_data(ddv[i]))[*,*,sband], $
+  da=dat_data(ddv[i])
+  if size(da,/type) eq 8 then begin
+    da=da.core
+    dat_set_data,ddv[i],da
+  endif
+  tvim, (da)[*,*,sband], $
     zoom=zoom,/order, /new,offset=offset,$
     xsize=600,ysize=600
   ;write_png,'graphics/mis_ex'+strtrim(i+2,2)+'.png',tvrd()
@@ -271,6 +276,6 @@ for i=0,2 do begin
 endfor
 
 
-grim,mds,cd=replicate(mdp,3),/new,vis=1,channel=[1b,2b,4b];,overlays=['planet_grid']
+grim,mds,cd=replicate(mdp,3),/new,vis=1,channel=[1b,2b,4b],order=0;,overlays=['planet_grid']
 
 end
