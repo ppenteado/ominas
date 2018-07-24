@@ -24,9 +24,9 @@ function cas_vims_spice_time, dd, dt=dt, string=string, status=status,startjd=st
   strmid(start_time,9,2),strmid(start_time,12,2),strmid(start_time,15,6))
   exposure=endjd-startjd
  exposure*=86400d0
- dt = -0.5d*exposure
+ dt = 0.5d*exposure
  nv_message,verb=0.91,'VIMS START_TIME='+strtrim(start_time,2)
- return, close_time
+ return, start_time;start_time+dt
 end
 ;===========================================================================
 
