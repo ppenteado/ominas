@@ -7,7 +7,6 @@
 ;   This script demonstrates reading a Cassini CIRS cube and projecting it
 ;   onto an orthographical map for display with a Cassini ISS image of Mimas.
 ;   
-;
 ;   Setup: The instrument detectors, translators and transforms must contain the
 ;   CIRS and ISS definitions, as is included in `demo/data/instrument_detectors.tab`,
 ;   `demo/data/translators.tab`, and `demo/data/transforms.tab`.
@@ -25,17 +24,41 @@ compile_opt idl2,logical_predicate
 !quiet = 1
 ;-------------------------------------------------------------------------
 ;+
-; Read CIRS file 
-; -------------
+; Extract CIRS files
+; --------------
+; 
+;   The cubes from PDS are too large to include in the OMINAS repository uncompressed,
+;   so we will uncompress the tar files included with OMINAS::
+;   
+;     ;Extract the CIRS files, if needed
+;     ldir='~/ominas_data/cirs'
+;     spawn,'eval echo '+ldir,res
+;     ldir=res
+;     imgs=ldir[0]+path_sep()+['126MI_FP3DAYMAP001_CI006_601_F3_039E.DAT','126MI_FP3DAYMAP001_CI004_601_F3_039E.DAT']
+;     foreach img,imgs do if ~file_test(img,/read) then begin
+;       print,'CIRS DAT file needed for the demo not found. Extracting it from the tar.gz file provided with OMINAS...'
+;       file_untar,getenv('OMINAS_DEMO')+path_sep()+'data'+path_sep()+file_basename(img,'.DAT')+'.tar.gz',ldir,/verbose
+;     endif
+;
 ; 
 ;
 ;-
 ;-------------------------------------------------------------------------
 
+;Extract the CIRS files, if needed
+ldir='~/ominas_data/cirs'
+spawn,'eval echo '+ldir,res
+ldir=res
+imgs=ldir[0]+path_sep()+['126MI_FP3DAYMAP001_CI006_601_F3_039E.DAT','126MI_FP3DAYMAP001_CI004_601_F3_039E.DAT']
+foreach img,imgs do if ~file_test(img,/read) then begin
+  print,'CIRS DAT file needed for the demo not found. Extracting it from the tar.gz file provided with OMINAS...'
+  file_untar,getenv('OMINAS_DEMO')+path_sep()+'data'+path_sep()+file_basename(img,'.DAT')+'.tar.gz',ldir,/verbose
+endif
+
 
 
 ;Read the CIRS files 
-dd=dat_read(file_search(getenv('OMINAS_DIR')+'/demo/data/126MI_FP3DAYMAP001_CI00*_601_F3_039E.LBL'))
+dd=dat_read(file_search(ldir+path_sep()+'126MI_FP3DAYMAP001_CI00*_601_F3_039E.LBL'))
 
 ;-------------------------------------------------------------------------
 ;+
@@ -125,7 +148,7 @@ mdp= pg_get_maps(/over,  $
   origin=[map_xsize,map_ysize]/2, $
   center=[0d0,-0.7d0*!dpi])
 
-dd=[(dat_read(getenv('OMINAS_DIR')+'/demo/data/N1644787857_1.IMG'))[0],dd]
+dd=[(dat_read(getenv('OMINAS_DEMO')+path_sep()+'data'+path_sep()+'N1644787857_1.IMG'))[0],dd]
 
 nv=3
 mdr=objarr(nv) & cd=objarr(nv) & pd=objarr(nv) & ltd=objarr(nv) & dd_map=objarr(nv)
@@ -134,7 +157,7 @@ for i=0,nv-1 do begin
 
   gd[i].cd = pg_get_cameras(dd[i])
   gd[i].gbx = pg_get_planets(dd[i], od=cd[i],name='MIMAS')
-  gd[i].ltd = pg_get_stars(dd[i], od=cd[i], name='SUN')
+  ;gd[i].ltd = pg_get_stars(dd[i], od=cd[i], name='SUN')
   
   if i gt 0 then begin    
     mdr[i]=pg_get_maps(dd[i])
