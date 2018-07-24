@@ -38,7 +38,8 @@ $DEMO_SPICE_SPK/010420R_SCPSE_EP1_JP83.bsp
 # generic kernels for cas/cas iss / vims
 $DEMO_SPICE_FK/cas_v37.tf
 $DEMO_SPICE_IK/cas_iss_v08.ti
-$DEMO_SPICE_SCK/cas00083.tsc
+#$DEMO_SPICE_SCK/cas00083.tsc
+$DEMO_SPICE_SCK/cas00172.tsc
 $DEMO_SPICE_IK/cas_vims_v06.ti
 $DEMO_SPICE_IK/cas_uvis_v06.ti
 
