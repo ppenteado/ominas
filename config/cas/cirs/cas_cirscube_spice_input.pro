@@ -33,7 +33,7 @@ flc=double(pdspar(header,'CSS:FIRST_LINE_CENTER')); = 17
 lsc=double(pdspar(header,'CSS:LAST_SAMPLE_CENTER')); = 117
 llc=double(pdspar(header,'CSS:LAST_LINE_CENTER')); = -75
 
-center=[mean([flc,llc]),mean([fsc,lsc])]
+center=[mean([flc,llc]),-mean([fsc,lsc])]
 units=[180d0,360d0]/[-(flc-llc),-(fsc-lsc)]
 
 mdr=map_create_descriptors(name='CAS_CIRS',$

@@ -170,7 +170,7 @@ case 1 of
 endcase
 
 inst=-82890L-ifp
-scale=ifp eq 0 ? [1,1]*0.22d0*!dpi/180d0 : [0.02d0,0.17d0]*!dpi/180d0
+scale=ifp eq 0 ? [1,1]*0.223d0*!dpi/180d0 : [0.0172d0,0.172d0]*!dpi/180d0
 
 orient_fn = 'cas_cmat_to_orient'
 
