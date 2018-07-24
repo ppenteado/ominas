@@ -61,7 +61,7 @@ max=0
     endif
 
  if file_basename(fname) eq fname then fname=file_dirname(filename,/mark_directory)+fname
- indf=file_which('cirs_index.sav')
+ indf=file_which('cirs_index.sav',/include_current_dir)
  if indf then restore,indf,/verbose
  foreach tt,table,it do begin
    table[it]._conf_key=strtrim(fix(tt.det),2)+'_'+strtrim(tt.ispts,2)+'_'+strtrim(tt.iwn_start,2)+'_'+strtrim(tt.iwn_step,2)
