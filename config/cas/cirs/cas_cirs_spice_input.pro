@@ -170,7 +170,37 @@ case 1 of
 endcase
 
 inst=-82890L-ifp
-scale=ifp eq 0 ? [1,1]*0.223d0*!dpi/180d0 : [0.0172d0,0.172d0]*!dpi/180d0
+scale=ifp eq 0 ? [1,1]*0.223d0*!dpi/180d0 : [0.0172d0,0.0172d0]*!dpi/180d0
+oaxis=[0d0,0d0]
+case 1 of
+  table[0].det eq 0: oaxis=[5.7d-3/scale[0],0d0] ;FP1
+  (table[0].det ge 1) && (table[0].det le 5): begin ;FP3 pair
+    oaxis=[(1.7d-3-.47d-3)/scale[0],-0.04d-3/scale[1]]
+    oaxis[1]+=6d0-table[0].det*2
+    scale[1]*=2d0
+  end
+  (table[0].det ge 6) && (table[0].det le 10): begin ;FP3 center
+    oaxis=[(1.7d-3-.47d-3)/scale[0],-0.04d-3/scale[1]]
+    oaxis[1]+=7.5d0-table[0].det
+  end
+  (table[0].det ge 11) && (table[0].det le 20): begin ;FP3 odd/even
+    oaxis=[(1.7d-3-.47d-3)/scale[0],-0.04d-3/scale[1]]
+    oaxis[1]+=15.5d0-table[0].det
+  end
+  (table[0].det ge 21) && (table[0].det le 30): begin ;FP4 odd/even
+    oaxis=[(1.7d-3+.47d-3)/scale[0],-0.04d-3/scale[1]]
+    oaxis[1]+=-25.5d0+table[0].det
+  end
+  (table[0].det ge 31) && (table[0].det le 35): begin ;FP4 center
+    oaxis=[(1.7d-3+.47d-3)/scale[0],-0.04d-3/scale[1]]
+    oaxis[1]+=-33.5d0+table[0].det
+  end  
+  (table[0].det ge 36) && (table[0].det le 40): begin ;FP4 pair
+    oaxis=[(1.7d-3+.47d-3)/scale[0],-0.04d-3/scale[1]]
+    oaxis[1]+=-76d0+table[0].det*2
+    scale[1]*=2d0
+  end
+endcase
 
 orient_fn = 'cas_cmat_to_orient'
 

@@ -1,13 +1,14 @@
-function cirs_fov,type,sub=sub
+function cirs_fov,type,sub=sub,nbx=nbx,nby=nby
 compile_opt idl2,logical_predicate
+
 
 
 if strlowcase(type) eq 'fp1' then begin
 
 endif else begin
   if keyword_set(sub) then begin
-    nbx=10
-    nby=10
+    nbx=n_elements(nbx) ? nbx : 10
+    nby=n_elements(nby) ? nby : 10
     box=dblarr(2,nbx*nby,5)
     xp=dindgen(nbx+1)/(nbx)
     yp=dindgen(nby+1)/(nby)

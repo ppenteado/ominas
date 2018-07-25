@@ -2,7 +2,7 @@
 ;=======================================================================
 ;+
 ; CIRS EXAMPLE
-; -------------
+; ------------
 ; 
 ;   This script demonstrates reading a Cassini CIRS cube and projecting it
 ;   onto an orthographical map for display with a Cassini ISS image of Mimas.
@@ -25,7 +25,7 @@ compile_opt idl2,logical_predicate
 ;-------------------------------------------------------------------------
 ;+
 ; Extract CIRS files
-; --------------
+; ------------------
 ; 
 ;   The cubes from PDS are too large to include in the OMINAS repository uncompressed,
 ;   so we will uncompress the tar files included with OMINAS::
