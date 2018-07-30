@@ -3,7 +3,8 @@
 ;
 ;
 ;==============================================================================
-function xy_to_w, im, p, sx=sx, sy=sy, unique=unique, clip=clip
+function xy_to_w, im, p, sx=sx, sy=sy, unique=unique, clip=clip, sub=sub
+COMPILE_OPT strictarr			; needed for call to unique() below
 
  if(n_elements(im) EQ 2) then $
   begin
@@ -19,15 +20,19 @@ function xy_to_w, im, p, sx=sx, sy=sy, unique=unique, clip=clip
  n = sx*sy
 
 ; w = long(p[0,*] + p[1,*]*sx)
- w = long(p[0,*]) + long(p[1,*]*sx)
 ; w = round(p[0,*] + p[1,*]*sx)
+ w = long(p[0,*]) + long(p[1,*]*sx)
 
- if(keyword_set(unique)) then w = unique(w)
+ if(keyword_set(unique)) then w = unique(w, sub=sub)
 
  if(keyword_set(clip)) then $
   begin
    ii = where((w GE 0) AND (w LT n))
-   if(ii[0] NE -1) then w = w[ii]
+   if(ii[0] NE -1) then $
+    begin
+     w = w[ii]
+     sub = sub[ii]
+    end
   end
 
  return, reform(w)

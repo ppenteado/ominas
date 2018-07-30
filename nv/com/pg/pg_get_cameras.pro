@@ -153,14 +153,24 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    if(NOT keyword_set(default_orient)) then default_orient = idgen(3)
 
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; Get the source dd if this is a slice
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   dd0 = dat_slice_source(dd)
 
    ;-----------------------------------------------
    ; call translators
    ;-----------------------------------------------
-   cd = dat_get_value(dd, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cd, key3=default_orient, $
+   cd = dat_get_value(dd0, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cd, key3=default_orient, $
                              key7=time, key8=name, trs=trs, $
                               @nv_trs_keywords_include.pro
                               end_keywords)
+
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; Select relevant cds if this is a slice
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   cd = dat_slice_select(dd, cd)
 
    ;------------------------------------------------------------------------
    ; Free dd if pg_sort_args determined that it will not be used outside 

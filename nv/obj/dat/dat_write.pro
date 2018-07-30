@@ -13,8 +13,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	dat_write, filespec, dd
-;	dat_write, dd
+;	dat_write, filespec, dd <, keyvals>
+;	dat_write, dd <, keyvals>
 ;
 ;
 ; ARGUMENTS:
@@ -29,6 +29,9 @@
 ;			dd does not match the number of filespecs, then it is
 ;			assumed that all dd are intended to be written to the
 ;			first file resulting from the first filespec.
+;
+;	keyvals:	String giving keyword-value pairs to be passed to the 
+;			output method.
 ;
 ;  OUTPUT: NONE
 ;
@@ -74,25 +77,31 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_write, arg1, arg2, nodata=nodata, $
+pro dat_write, arg1, arg2, arg3, nodata=nodata, $
 		  filetype=_filetype, $
 		  output_fn=_output_fn, $
                   override=override
 @core.include
 ; on_error, 1
 
+ ;------------------------------
+ ; decipher args
+ ;------------------------------
  if(size(arg1, /type) EQ 11) then $
   begin
    dd = arg1
    filespec = dat_filename(dd)
+   if(keyword_set(arg2)) then keyvals = arg2
   end $
  else $
   begin
    dd = arg2
    filespec = arg1
+   if(keyword_set(arg3)) then keyvals = arg3
   end
 
  _dd = cor_dereference(dd)
+ dat_add_io_transient_keyvals, dd, keyvals
 
  ;------------------------------
  ; expand filespec

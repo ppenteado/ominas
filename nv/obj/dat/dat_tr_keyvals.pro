@@ -1,11 +1,11 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	dat_output_keyvals
+;	dat_tr_keyvals
 ;
 ;
 ; PURPOSE:
-;	Returns the maintenance value associated with a data descriptor.
+;	Returns the translator keywords/values associated with a data descriptor.
 ;
 ;
 ; CATEGORY:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	data = dat_output_keyvals(dd)
+;	data = dat_tr_keyvals(dd)
 ;
 ;
 ; ARGUMENTS:
@@ -30,7 +30,7 @@
 ;
 ;
 ; RETURN:
-;	The maintenance value associated with the data descriptor.
+;	The translator keywords/values associated with the data descriptor.
 ;
 ;
 ; STATUS:
@@ -44,11 +44,11 @@
 ;	
 ;-
 ;=============================================================================
-function dat_output_keyvals, dd, noevent=noevent
+function dat_tr_keyvals, dd, noevent=noevent
 @core.include
  nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
- return, *_dd.output_keyvals_p
+ return, *_dd.tr_keyvals_p
 end
 ;===========================================================================
 

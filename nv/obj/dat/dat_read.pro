@@ -13,7 +13,8 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	dd = dat_read(filespec [, data, header])
+;	dd = dat_read(filespec, data, header)
+;	dd = dat_read(filespec, keyvals, data, header)
 ;
 ;
 ; ARGUMENTS:
@@ -21,6 +22,9 @@
 ;	filespec:	Array of strings giving file specifications for
 ;			file to read.  Each file specificaton must refer to
 ;			files of a uniform filetype.
+;
+;	keyvals:	String giving keyword-value pairs to be passed to the 
+;			input method.
 ;
 ;  OUTPUT:
 ;	data:		Data array from the last file read.  This is provided
@@ -110,6 +114,10 @@
 ;
 ;				extensions=['.[2+]']
 ;
+;	slice:		If set, and scalar (i.e., /slice), then the data are 
+;			sliced by 1 dimension.  If not scalar, then the data
+;			are sliced using these slice coordinates.
+;
 ;
 ;  OUTPUT: 
 ;	count:		Number of descriptors returned.
@@ -162,7 +170,7 @@
 ; drd_read
 ;
 ;=============================================================================
-function drd_read, filename, data, header, $
+function drd_read, filename, data, header, keyvals=keyvals, $
 		  filetype=filetype, $
 		  htype=_htype, $
 		  input_fn=_input_fn, $
@@ -208,6 +216,7 @@ function drd_read, filename, data, header, $
  ;------------------------
  if(NOT keyword_set(_input_fn) OR NOT keyword__set(_output_fn)) then $
 		     dat_lookup_io, filetype, input_fn, output_fn, keyword_fn
+ dat_lookup_io, filetype, input_fn, output_fn, keyword_fn, io_keyvals
 
  if(keyword_set(_input_fn)) then input_fn = _input_fn
  if(keyword_set(_output_fn)) then output_fn = _output_fn
@@ -215,6 +224,9 @@ function drd_read, filename, data, header, $
 
  if(output_fn EQ '') then nv_message, verb=0.5, 'No output function available.'
  if(input_fn EQ '') then nv_message, verb=0.5, 'No input function available.'
+
+ dat_add_io_transient_keyvals, dd, keyvals
+ io_keyvals = dat_parse_keyvals(io_keyvals)
 
 
  ;-----------------------------------------
@@ -224,7 +236,8 @@ function drd_read, filename, data, header, $
           filetype=filetype, $
           input_fn=input_fn, $
           output_fn=output_fn, $
-          keyword_fn=keyword_fn
+          keyword_fn=keyword_fn, $
+          io_keyvals=io_keyvals
 
 
  ;-----------------------------------------
@@ -345,18 +358,14 @@ function drd_read, filename, data, header, $
    if(keyword_set(instrument)) then $
     begin
      dat_lookup_translators, instrument, tab_translators=tab_translators, $
-       input_translators, output_translators, $
-       input_keyvals, output_keyvals
+       input_translators, output_translators, tr_keyvals
 
      if(keyword_set(_input_translators)) then $
 				   input_translators = _input_translators
      if(keyword_set(_output_translators)) then $
 				   output_translators = _output_translators
-     if(keyword_set(_input_keyvals)) then input_keyvals = _input_keyvals
-     if(keyword_set(_output_keyvals)) then output_keyvals = _output_keyvals
 
-     input_keyvals = dat_parse_keyvals(input_keyvals)
-     output_keyvals = dat_parse_keyvals(output_keyvals)
+     tr_keyvals = dat_parse_keyvals(tr_keyvals)
     end
 
    ;---------------------------------
@@ -383,8 +392,7 @@ function drd_read, filename, data, header, $
          output_transforms=output_transforms, $
          input_translators=input_translators, $
          output_translators=output_translators, $
-         input_keyvals=input_keyvals, $
-         output_keyvals=output_keyvals
+         tr_keyvals=tr_keyvals
   end
 
 
@@ -726,10 +734,10 @@ end
 
 
 ;=============================================================================
-; dat_read
+; dat__read
 ;
 ;=============================================================================
-function dat_read, filespec, data, header, $
+function dat__read, filespec, data, header, keyvals=keyvals, $
 		  filetype=filetype, $
 		  input_fn=input_fn, $
 		  output_fn=output_fn, $
@@ -745,8 +753,9 @@ function dat_read, filespec, data, header, $
                   sample=sample, nodata=nodata, $
 		  name=_name, nhist=nhist, $
 		  extensions=extensions, latest=latest, $
-                  count=count
+                  count=count, slice=slice
 @core.include
+
 
  if(NOT keyword_set(maintain)) then maintain = 0
  nodata = keyword_set(nodata)
@@ -797,7 +806,7 @@ function dat_read, filespec, data, header, $
       if(NOT keyword_set(_name)) then name = basenames[i] $
       else name = _name
 
-      ddi = drd_read(filenames[i], data, header, $
+      ddi = drd_read(filenames[i], data, header, keyvals=keyvals, $
         	 filetype=filetype, $
         	 input_fn=input_fn, $
         	 output_fn=output_fn, $
@@ -814,9 +823,15 @@ function dat_read, filespec, data, header, $
         	 name=name, nhist=nhist)
       if(keyword_set(ddi)) then $
        begin
- 	if(arg_present(data)) then dat_load_data, ddi, data=data
- 	dd = append_array(dd, ddi)
- 	found = 1
+        if(keyword_set(slice)) then $
+         begin
+          if(size(slice, /dim) EQ 0) then ddi = dat_slices(ddi, data) $
+          else ddi = dat_slices(ddi, slice, data)
+         end $
+        else if(arg_present(data)) then dat_load_data, ddi, data=data
+
+        dd = append_array(dd, ddi)
+        found = 1
        end
     end
   end
@@ -827,6 +842,7 @@ function dat_read, filespec, data, header, $
    return, !null
   end
 
+; drd_outputs, arg1, arg2, arg3, data, header
 
  count = n_elements(dd)
  return, dd
@@ -834,3 +850,69 @@ end
 ;===========================================================================
 
 
+
+
+;=============================================================================
+; dat_read
+;
+;=============================================================================
+function dat_read, filespec, arg1, arg2, arg3, $
+		  filetype=filetype, $
+		  input_fn=input_fn, $
+		  output_fn=output_fn, $
+		  keyword_fn=keyword_fn, $
+		  instrument=instrument, $
+		  input_translators=input_translators, $
+		  output_translators=output_translators, $
+		  input_transforms=input_transforms, $
+		  output_transforms=output_transforms, $
+                  tab_translators=tab_translators, $
+;                  tab_transforms=tab_transforms, $
+                  maintain=maintain, compress=compress, $
+                  sample=sample, nodata=nodata, $
+		  name=_name, nhist=nhist, $
+		  extensions=extensions, latest=latest, $
+                  count=count, slice=slice
+
+
+ if(size(arg1, /type) EQ 7) then $
+    return, dat__read(filespec, arg2, arg3, keyvals=arg1, $
+		  filetype=filetype, $
+		  input_fn=input_fn, $
+		  output_fn=output_fn, $
+		  keyword_fn=keyword_fn, $
+		  instrument=instrument, $
+		  input_translators=input_translators, $
+		  output_translators=output_translators, $
+		  input_transforms=input_transforms, $
+		  output_transforms=output_transforms, $
+                  tab_translators=tab_translators, $
+;                  tab_transforms=tab_transforms, $
+                  maintain=maintain, compress=compress, $
+                  sample=sample, nodata=nodata, $
+		  name=_name, nhist=nhist, $
+		  extensions=extensions, latest=latest, $
+                  count=count, slice=slice )
+
+
+ return, dat__read(filespec, arg1, arg2, $
+		  filetype=filetype, $
+		  input_fn=input_fn, $
+		  output_fn=output_fn, $
+		  keyword_fn=keyword_fn, $
+		  instrument=instrument, $
+		  input_translators=input_translators, $
+		  output_translators=output_translators, $
+		  input_transforms=input_transforms, $
+		  output_transforms=output_transforms, $
+                  tab_translators=tab_translators, $
+;                  tab_transforms=tab_transforms, $
+                  maintain=maintain, compress=compress, $
+                  sample=sample, nodata=nodata, $
+		  name=_name, nhist=nhist, $
+		  extensions=extensions, latest=latest, $
+                  count=count, slice=slice )
+
+
+end
+;=============================================================================

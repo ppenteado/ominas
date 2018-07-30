@@ -14,7 +14,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	new_dd = dat_slices(dd, h, q)
+;	new_dd = dat_slices(dd, slice)
 ;
 ;
 ; ARGUMENTS:
@@ -27,7 +27,17 @@
 ;		into its constituent images, and an image is sliced into its
 ;		constituent lines etc.
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	data:		Data array from the last data descriptor returned.  
+;			This is provided as a convenience when slicing off 
+;			single descriptors so that it is not necessary to 
+;			call dat_data to get the array.
+;
+;	header:		Header array from the last data descriptor returned.  
+;			This is provided as a convenience when slicing off 
+;			single descriptors so that it is not necessary to call 
+;			dat_header to get the array.
+;
 ;
 ;
 ; KEYWORDS:
@@ -63,7 +73,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_slices, dd0, slice
+function dat_slices, dd0, slice, data, header
 
  dim0 = dat_dim(dd0)
  ndim0 = n_elements(dim0)
@@ -81,6 +91,9 @@ function dat_slices, dd0, slice
    dd[i] = nv_clone(dd0, protect='DD0P')
    dat_set_slice, dd[i], dd0, slice[*,i], /new
   end
+
+ if(arg_present(data)) then data = dat_data(dd[n-1])
+ if(arg_present(header)) then header = dat_header(dd[n-1])
 
  return, dd
 end

@@ -47,7 +47,7 @@
 ;
 ;-
 ;-------------------------------------------------------------------------
-dd = dat_read('./data/N1350122987_2.IMG', im, label)
+dd = dat_read('./data/N1350122987_2.IMG', 'test=blah', im, label)
 tvim, im, zoom=0.75, /order, /new
 
 ;-------------------------------------------------------------------------
@@ -774,7 +774,7 @@ tvim, /new, map1
 ;   stored in the data descriptor.  It is not written until DAT_WRITE is called::
 ;   
 ;     pg_put_rings, dd, od=cd, rd=rd
-;     pg_put_planets, dd, od=cd, pd=pd
+;     pg_put_planets, dd, od=cd, pd=pd[0]
 ;     pg_put_cameras, dd, cd=cd
 ;     pg_put_stars, dd, sd=ltd, od=cd
 ;
@@ -794,7 +794,7 @@ tvim, /new, map1
 ;-
 ;---------------------------------------------------------------------------
 pg_put_rings, dd, od=cd, rd=rd
-pg_put_planets, dd, od=cd, pd=pd
+pg_put_planets, dd, od=cd, pd=pd[0]
 pg_put_cameras, dd, cd=cd
 pg_put_stars, dd, sd=ltd, od=cd
 print, transpose(dat_dh(dd))

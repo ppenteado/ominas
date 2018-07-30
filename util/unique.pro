@@ -63,7 +63,6 @@ function unique, _x, ss, nosort=nosort, desort=desort, reverse_indices=iii, subs
  reverse = arg_present(iii)
 
  n = n_elements(_x)
-
  if(keyword_set(nosort)) then x = _x $
  else $
   begin

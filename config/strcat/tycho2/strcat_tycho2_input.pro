@@ -333,6 +333,7 @@ function tycho2_get_stars, dd, filename, $
  ;---------------------------------------------------------
  pc = const_get('parsec')
  Lsun = const_get('Lsun')
+;print, stars.mag
  m = stars.mag - 5d*alog10(dist/pc) + 5d
  lum = Lsun * 10.d^( (4.83d0-m)/2.5d )
 

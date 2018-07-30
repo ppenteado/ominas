@@ -166,6 +166,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, tag=tag, filter=
 		menu_desc_p		: ptr_new(), $
 		map_items_p		: ptr_new(), $
 		od_map_items_p		: ptr_new(), $
+		sync_items_p		: ptr_new(), $
 		readout_top		: 0l, $
 		readout_text		: 0l, $
 		header_text		: -1l, $
@@ -253,6 +254,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, tag=tag, filter=
 		render_show		: 1b, $
 
 		exclude_overlays_p	: ptr_new(0), $
+		enable_refresh		: 1b, $
 
 	;---------------
 	; planes

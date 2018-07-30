@@ -70,13 +70,6 @@
 function bat_parse_argv, keys, val_ps, $
            list=list, path=path, sample=sample, select=select
 
- ;---------------------------------------------------------
- ; Special args start or end with '@' and are removed from
- ; argv and returned via the list output
- ;---------------------------------------------------------
- list = ominas_value(key=alt, delim='@', /rm)
- if(keyword_set(alt)) then list = alt
-
  ;----------------------------------------------------------------
  ; get global keyword/value pairs
  ;----------------------------------------------------------------
@@ -94,6 +87,13 @@ function bat_parse_argv, keys, val_ps, $
     keys = append_array(keys, keywords[i])
     val_ps = append_array(val_ps, ptr_new(ominas_value(keywords[i])))
    end
+
+ ;---------------------------------------------------------
+ ; Special args start or end with '@' and are removed from
+ ; argv and returned via the list output
+ ;---------------------------------------------------------
+ list = ominas_value(key=alt, delim='@', /rm)
+ if(keyword_set(alt)) then list = alt
 
  ;--------------------------------------
  ; return positional args
