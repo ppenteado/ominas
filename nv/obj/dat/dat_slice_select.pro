@@ -59,6 +59,7 @@ if(keyword_set(dd0)) then _xd = _xd[slice]	; for now; need to do this right
    xds = append_array(xds, _xd)
   end
 
+; need to free xds that don't get selected unless /nofree
 
  return, xds
 end

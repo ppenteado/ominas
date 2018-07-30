@@ -89,9 +89,29 @@ end_keywords)
  if(keyword_set(htype)) then (*self.dd0p).htype = htype $
  else (*self.dd0p).htype = dat_detect_filetype(/default)
 
- if(keyword_set(input_fn)) then self.input_fn = input_fn
- if(keyword_set(output_fn)) then self.output_fn = output_fn
- if(keyword_set(keyword_fn)) then self.keyword_fn = keyword_fn
+ ;-----------------------
+ ; I/O methods
+ ;-----------------------
+ self.io_keyvals_p = nv_ptr_new('')
+;;; self.io_output_keyvals_p = nv_ptr_new('')
+
+ if((NOT keyword_set(input_fn)) OR (NOT keyword_set(output_fn))) then $
+    dat_lookup_io, (*self.dd0p).filetype, $
+               _input_fn, _output_fn, _keyword_fn, io_keyvals
+
+ if(keyword_set(input_fn)) then self.input_fn = input_fn $
+ else if(keyword_set(_input_fn)) then self.input_fn = _input_fn
+
+ if(keyword_set(output_fn)) then self.output_fn = output_fn $
+ else if(keyword_set(_output_fn)) then self.output_fn = _output_fn
+
+ if(keyword_set(keyword_fn)) then self.keyword_fn = keyword_fn $
+ else if(keyword_set(_keyword_fn)) then self.keyword_fn = _keyword_fn
+
+ if(keyword_set(io_input_keyvals)) then $
+      self.io_keyvals_p = nv_ptr_new(dat_parse_keyvals(io_input_keyvals))
+;; if(keyword_set(io_output_keyvals)) then $
+;;      self.io_output_keyvals_p = nv_ptr_new(dat_parse_keyvals(io_output_keyvals))
 
 
  ;-----------------------
@@ -108,12 +128,12 @@ end_keywords)
  ;-----------------------
  self.input_translators_p = nv_ptr_new('')
  self.output_translators_p = nv_ptr_new('')
- self.input_keyvals_p = nv_ptr_new('')
- self.output_keyvals_p = nv_ptr_new('')
+ self.tr_keyvals_p = nv_ptr_new('')
+;;; self.tr_output_keyvals_p = nv_ptr_new('')
  if(keyword_set(self.instrument)) then $
   begin
    dat_lookup_translators, self.instrument, tab_translators=tab_translators, $
-           input_translators, output_translators, input_keyvals, output_keyvals
+                             input_translators, output_translators, tr_keyvals
 
    if(input_translators[0] EQ '') then $
                 nv_message, /continue, 'No input translators available.' $
@@ -123,10 +143,10 @@ end_keywords)
                 nv_message, /continue, 'No output translators available.' $
    else *self.output_translators_p = output_translators
 
-   if(keyword_set(input_keyvals)) then $
-                   self.input_keyvals_p = nv_ptr_new(dat_parse_keyvals(input_keyvals))
-   if(keyword_set(output_keyvals)) then $
-                   self.output_keyvals_p = nv_ptr_new(dat_parse_keyvals(output_keyvals))
+   if(keyword_set(tr_keyvals)) then $
+                   self.tr_keyvals_p = nv_ptr_new(dat_parse_keyvals(tr_keyvals))
+;;   if(keyword_set(tr_output_keyvals)) then $
+;;                   self.tr_output_keyvals_p = nv_ptr_new(dat_parse_keyvals(tr_output_keyvals))
   end
 
 
@@ -294,14 +314,21 @@ end
 ;	output_translators_p:	Pointer to list of output translator 
 ;				functions determined by dat_lookup_translators.
 ;
-;	input_keyvals_p:	Keyword/value pairs for input translators.
+;	tr_keyvals_p:		Keyword/value pairs for translators.
 ;
-;	output_keyvals_p:	Keyword/value pairs for output translators.
-;
-;	transient_keyvals_p:	Transient keyword/value pairs found in the 
+;;;	tr_output_keyvals_p:	Keyword/value pairs for output translators.
+;;;
+;	tr_transient_keyvals_p:	Transient keyword/value pairs found in the 
 ;				translator argument string.
 ;
-;	last_translator:	Description of last translator called.
+;	io_keyvals_p:		Keyword/value pairs for I/O methods.
+;
+;;;	io_output_keyvals_p:	Keyword/value pairs for output methods.
+;;;
+;	io_transient_keyvals_p:	Transient keyword/value pairs found in the 
+;				io method argument string.
+;
+;;;	last_translator:	Description of last translator called.
 ;
 ;	sampling_fn:		Optional function to perform a transformation
 ;				on the samples given to dat_data():
@@ -433,13 +460,18 @@ pro ominas_data__define
 	input_fn:		'', $		; Function to read file
 	output_fn:		'', $		; Function to write file
 	keyword_fn:		'', $		; Function toread/write header keywords
+	io_keyvals_p:		nv_ptr_new(), $	; Keyvals for I/O methods
+;;	io_output_keyvals_p:	nv_ptr_new(), $	; Keyvals for output methods
+	io_transient_keyvals_p:	nv_ptr_new(), $	; Keyvals parsed per-command
+
 	instrument:		'', $		; Instrument string
+
 	input_translators_p:	nv_ptr_new(), $	; Names of input translators
 	output_translators_p:	nv_ptr_new(), $	; Names of output translators
-	input_keyvals_p:	nv_ptr_new(), $	; Keyvals for input translators
-	output_keyvals_p:	nv_ptr_new(), $	; Keyvals for output translators
-	transient_keyvals_p:	nv_ptr_new(), $	; Keyvals parsed per-command
-	last_translator:	lonarr(2), $	; Description of last translator
+	tr_keyvals_p:		nv_ptr_new(), $	; Keyvals for translators
+;;	tr_output_keyvals_p:	nv_ptr_new(), $	; Keyvals for output translators
+	tr_transient_keyvals_p:	nv_ptr_new(), $	; Keyvals parsed per-command
+;;	last_translator:	lonarr(2), $	; Description of last translator
 						; called
 
 	sampling_fn:		'', $		; Optional sampling function.

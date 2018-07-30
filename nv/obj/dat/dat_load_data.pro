@@ -225,12 +225,13 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
  ; corresponding to the entire slice within the source array
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  dd = dat_slice_source(dd)
- dat_slice_convert, dd, samples_to_load
  _dd = cor_dereference(dd)
+
+ dat_slice_convert, dd, samples_to_load
 
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- ; First attempt to read using input function (usually the fastest)
+ ; First, attempt to read using input function (usually the fastest)
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  data = call_function(_dd.input_fn, _dd, $
                        header, abscissa=abscissa, $

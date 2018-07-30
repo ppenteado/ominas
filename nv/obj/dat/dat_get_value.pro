@@ -91,7 +91,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ;--------------------------------------------
  ; record any transient keyvals
  ;--------------------------------------------
- _dd = dat_add_transient_keyvals(_dd, trs)
+ dat_add_tr_transient_keyvals, _dd, trs
 
 
  ;--------------------------------------------
@@ -123,10 +123,12 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
   begin
    nv_message, verb=0.9, 'Calling translator ' + translators[i]
 
-   _dd.last_translator = [i,0]#make_array(ndd, val=1)
+;   _dd.last_translator = [i,0]#make_array(ndd, val=1)
    cor_rereference, dd, _dd
 
-   xd = call_function(translators[i], dd, keyword, values=xds, stat=stat, $
+   stat = -1
+   if(keyword_set(translators[i])) then $
+     xd = call_function(translators[i], dd, keyword, values=xds, stat=stat, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
 		    end_keywords)
@@ -136,8 +138,8 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    ;--------------------------------------
    if(stat EQ 0) then $
     begin
-     nv_message, verb=1.5, 'Returned descriptors: ' + $
-                                                 str_comma_list([cor_name(xd)])
+     nv_message, verb=1.5, $
+                    'Returned descriptors: ' + str_comma_list([cor_name(xd)])
 
      if(keyword_set(xd)) then $
       begin 

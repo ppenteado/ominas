@@ -168,7 +168,7 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
 
 
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; Selects relevant cds if this is a slice
+   ; Select relevant cds if this is a slice
    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    cd = dat_slice_select(dd, cd)
 

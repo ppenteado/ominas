@@ -621,7 +621,7 @@ function grim_symsize_star, data
  mags = *data.mag_p < mmax > mmin
  norm = (mmax - mags)/(mmax-mmin)
 
- return, norm*(smax-smin) + smin
+; return, norm*(smax-smin) + smin
 
  max = max(mags) + 2
  return, (max - mags) / max
@@ -638,10 +638,12 @@ function grim_shade_star, data, ptd
  mmax = 16d & mmin = 1d
  smax = 1d & smin = 0.25
 
+; somehow, all mags are negative suddenly...
+;print, *data.mag_p
  mags = *data.mag_p < mmax > mmin
  norm = (mmax - mags)/(mmax-mmin)
 
- return, norm*(smax-smin) + smin
+; return, norm*(smax-smin) + smin
 
  max = max(mags) + 2
  return, (max - mags) / max

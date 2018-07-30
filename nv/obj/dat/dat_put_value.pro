@@ -80,7 +80,7 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
  ;--------------------------------------------
  ; record any transient keyvals
  ;--------------------------------------------
- _dd = dat_add_transient_keyvals(_dd, trs)
+ dat_add_tr_transient_keyvals, _dd, trs
 
  ;--------------------------------------------
  ; send value through all output translators
@@ -98,10 +98,11 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
   begin
    nv_message, verb=0.9, 'Calling translator ' + translators[i]
 
-   _dd.last_translator = [i,1]
+;   _dd.last_translator = [i,1]
    cor_rereference, dd, _dd
 
-   call_procedure, translators[i], dd, keyword, value, stat=stat, $
+   if(keyword_set(translators[i])) then $
+     call_procedure, translators[i], dd, keyword, value, stat=stat, $
 @nv_trs_keywords_include.pro
 @nv_trs_keywords1_include.pro
                       end_keywords

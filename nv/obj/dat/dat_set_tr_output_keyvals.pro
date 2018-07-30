@@ -1,11 +1,11 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	dat_set_output_keyvals
+;	dat_set_tr_output_keyvals
 ;
 ;
 ; PURPOSE:
-;	Replaces the output_keyvals value in a data descriptor.
+;	Replaces the tr_output_keyvals value in a data descriptor.
 ;
 ;
 ; CATEGORY:
@@ -13,14 +13,14 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	dat_set_output_keyvals, dd, output_keyvals
+;	dat_set_tr_output_keyvals, dd, output_keyvals
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
 ;	dd:		Data descriptor.
 ;
-;	output_keyvals:	New output_keyvals value.
+;	output_keyvals:	New tr_output_keyvals value.
 ;
 ;  OUTPUT: NONE
 ;
@@ -45,11 +45,11 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_set_output_keyvals, dd, output_keyvals, noevent=noevent
+pro dat_set_tr_output_keyvals, dd, output_keyvals, noevent=noevent
 @core.include
  _dd = cor_dereference(dd)
 
- *_dd.output_keyvals_p = output_keyvals
+ *_dd.tr_output_keyvals_p = output_keyvals
 
  cor_rereference, dd, _dd
  nv_notify, dd, type = 0, noevent=noevent

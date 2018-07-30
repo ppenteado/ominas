@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	tr_keyword_value
+;	dat_keyword_value
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	value = tr_keyword_value(dd, keyword)
+;	value = dat_keyword_value(dd, keyword)
 ;
 ;
 ; ARGUMENTS:
@@ -51,10 +51,10 @@
 
 
 ;=============================================================================
-; trkv_match
+; dkv_match
 ;
 ;=============================================================================
-pro trkv_match, kv, i, keyword, value=value
+pro dkv_match, kv, i, keyword, value=value
 
  if(NOT ptr_valid((*kv.keywords_p)[i])) then return
  if(NOT ptr_valid((*kv.values_p)[i])) then return
@@ -74,10 +74,10 @@ end
 
 
 ;=============================================================================
-; trkv_parse
+; dkv_parse
 ;
 ;=============================================================================
-function trkv_parse, value
+function dkv_parse, value
 
  ;---------------------------
  ; arrays delimited by ';'
@@ -92,68 +92,39 @@ end
 
 
 ;=============================================================================
-; tr_keyword_value
+; dat_keyword_value
 ;
 ;=============================================================================
-function ___tr_keyword_value, dd, keyword
+function dat_keyword_value, keyword, $
+         transient_keyvals, keyvals, input_fns, output_fns
 @core.include
-
- _dd = cor_dereference(dd[0])
 
  ;----------------------------------------------------------------------
  ; first look for transient keyval match
  ;----------------------------------------------------------------------
- if(ptr_valid(_dd.tr_transient_keyvals_p)) then $
-                trkv_match, *_dd.tr_transient_keyvals_p, 0, keyword, value=value
- if(n_elements(value) NE 0) then return, trkv_parse(value)
-
+ if(keyword_set(transient_keyvals)) then $
+                dkv_match, transient_keyvals, 0, keyword, value=value
+ if(n_elements(value) NE 0) then return, dkv_parse(value)
 
  ;----------------------------------------------------------------------
  ; if no transient keyval match, then match regular keyvals
  ;----------------------------------------------------------------------
- if(NOT ptr_valid(_dd.tr_input_keyvals_p)) then return, ''
+ if(NOT keyword_set(keyvals)) then return, ''
 
  ;----------------------------------------
  ; determine input or output translator
  ;----------------------------------------
- i = _dd.last_translator[0]
- io = _dd.last_translator[1]
-
- if(io EQ 0) then kv = *_dd.tr_keyvals_p $
- else kv = *_dd.tr_output_keyvals_p
+ i = dat_caller(input_fns)
+ if(i[0] EQ -1) then i = dat_caller(output_fns)
+ if(i EQ -1) then return, ''
 
  ;-----------------
  ; match keyval 
  ;-----------------
- trkv_match, kv, i, keyword, value=value
+ dkv_match, keyvals, i, keyword, value=value
  if(NOT keyword_set(value)) then value = ''
 
 
- return, trkv_parse(value)
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; tr_keyword_value
-;
-;=============================================================================
-function tr_keyword_value, dd, keyword
-@core.include
-
- _dd = cor_dereference(dd[0])
-
- transient_keyvals = ''
- keyvals = ''
-
- if(ptr_valid(_dd.tr_transient_keyvals_p)) then $
-                              transient_keyvals  = *_dd.tr_transient_keyvals_p
- if(ptr_valid(_dd.tr_keyvals_p)) then keyvals = *_dd.tr_keyvals_p
-
- return, dat_keyword_value(keyword, transient_keyvals, keyvals, $
-                    *_dd.input_translators_p, *_dd.output_translators_p)
-
-
+ return, dkv_parse(value)
 end
 ;=============================================================================

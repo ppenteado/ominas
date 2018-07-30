@@ -40,7 +40,8 @@ files=getenv('OMINAS_DIR')+'/demo/data/FUV*.LBL'
 files=file_search(files)
 files=files[0]
 ;files='~/uvis/W1568137841_2_CALIB.IMG'
-files='~/uvis/iap/FUV2007_253_18_54.LBL'
+;files='~/uvis/iap/FUV2007_253_18_54.LBL'
+files='data/FUV2007_253_17_19.LBL'
 dd = dat_read(files)
 dat_set_data,dd[0],reverse(transpose(dat_data(dd[0]),[2,1,0]),2)
 
