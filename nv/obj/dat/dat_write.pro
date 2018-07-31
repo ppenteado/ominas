@@ -165,7 +165,8 @@ pro dat_write, arg1, arg2, arg3, nodata=nodata, $
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; first transform the data if necessary
    ;- - - - - - - - - - - - - - - - - - - - - -
-   data = dat_transform_output(_dd[i], data, header)
+;   data = dat_transform_output(_dd[i], data, header)
+   dat_transform_output, dd[i]
 
    ;- - - - - - - - - - - - - - - - - - - - - -
    ; write data

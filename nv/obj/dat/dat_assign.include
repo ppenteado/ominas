@@ -27,6 +27,7 @@
  if(defined(keyword_fn)) then dat_set_keyword_fn, _xd, keyword_fn, /noevent
  if(defined(input_transforms)) then dat_set_input_transforms, _xd, input_transforms, /noevent
  if(defined(output_transforms)) then dat_set_output_transforms, _xd, output_transforms, /noevent
+ if(defined(tf_keyvals)) then dat_set_tf_keyvals, _xd, tf_keyvals, /noevent
  if(defined(input_translators)) then dat_set_input_translators, _xd, input_translators, /noevent
  if(defined(output_translators)) then dat_set_output_translators, _xd, output_translators, /noevent
  if(defined(tr_keyvals)) then dat_set_tr_keyvals, _xd, tr_keyvals, /noevent

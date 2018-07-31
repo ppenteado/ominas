@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	tr_keyword_value
+;	tf_keyword_value
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	value = tr_keyword_value(dd, keyword)
+;	value = tf_keyword_value(dd, keyword)
 ;
 ;
 ; ARGUMENTS:
@@ -51,10 +51,10 @@
 
 
 ;=============================================================================
-; tr_keyword_value
+; tf_keyword_value
 ;
 ;=============================================================================
-function tr_keyword_value, dd, keyword
+function tf_keyword_value, dd, keyword
 @core.include
 
  _dd = cor_dereference(dd[0])
@@ -62,12 +62,12 @@ function tr_keyword_value, dd, keyword
  transient_keyvals = ''
  keyvals = ''
 
- if(ptr_valid(_dd.tr_transient_keyvals_p)) then $
-                              transient_keyvals  = *_dd.tr_transient_keyvals_p
- if(ptr_valid(_dd.tr_keyvals_p)) then keyvals = *_dd.tr_keyvals_p
+ if(ptr_valid(_dd.tf_transient_keyvals_p)) then $
+                              transient_keyvals  = *_dd.tf_transient_keyvals_p
+ if(ptr_valid(_dd.tf_keyvals_p)) then keyvals = *_dd.tf_keyvals_p
 
  return, dat_keyword_value(keyword, transient_keyvals, keyvals, $
-                    *_dd.input_translators_p, *_dd.output_translators_p)
+                    *_dd.input_transforms_p, *_dd.output_transforms_p)
 
 
 end

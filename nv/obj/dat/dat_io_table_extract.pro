@@ -13,8 +13,6 @@ function dat_io_table_extract, table, filetype, $
  output_fn = decrapify(items[*,1])
  keyword_fn = decrapify(items[*,2])
 
-; keyvals = decrapify(keyvals)
-
  return, 0
 end
 ;=============================================================================

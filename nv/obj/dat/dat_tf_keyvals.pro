@@ -1,26 +1,24 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	dat_set_tr_output_keyvals
+;	dat_tf_keyvals
 ;
 ;
 ; PURPOSE:
-;	Replaces the tr_output_keyvals value in a data descriptor.
+;	Returns the transform keywords/values associated with a data descriptor.
 ;
 ;
 ; CATEGORY:
-;	NV/SYS
+;	NV/OBJ/DAT
 ;
 ;
 ; CALLING SEQUENCE:
-;	dat_set_tr_output_keyvals, dd, output_keyvals
+;	data = dat_tf_keyvals(dd)
 ;
 ;
 ; ARGUMENTS:
 ;  INPUT:
-;	dd:		Data descriptor.
-;
-;	output_keyvals:	New tr_output_keyvals value.
+;	dd:	Data descriptor.
 ;
 ;  OUTPUT: NONE
 ;
@@ -31,7 +29,8 @@
 ;  OUTPUT: NONE
 ;
 ;
-; RETURN: NONE
+; RETURN:
+;	The transform keywords/values associated with the data descriptor.
 ;
 ;
 ; STATUS:
@@ -40,19 +39,18 @@
 ;
 ;
 ; MODIFICATION HISTORY:
-; 	Written by:	Spitale
+; 	Written by:	Spitale, 7/2008
 ; 	Adapted by:	Spitale, 5/2016
 ;	
 ;-
 ;=============================================================================
-pro dat_set_tr_output_keyvals, dd, output_keyvals, noevent=noevent
+function dat_tf_keyvals, dd, noevent=noevent
 @core.include
+ nv_notify, dd, type = 1, noevent=noevent
  _dd = cor_dereference(dd)
-
- *_dd.tr_output_keyvals_p = output_keyvals
-
- cor_rereference, dd, _dd
- nv_notify, dd, type = 0, noevent=noevent
- nv_notify, /flush, noevent=noevent
+ return, *_dd.tf_keyvals_p
 end
 ;===========================================================================
+
+
+

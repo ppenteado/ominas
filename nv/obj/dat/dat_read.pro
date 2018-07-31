@@ -374,12 +374,15 @@ function drd_read, filename, data, header, keyvals=keyvals, $
    if(keyword_set(instrument)) then $
     begin
      dat_lookup_transforms, instrument, tab_transforms=tab_transforms, $
-       input_transforms, output_transforms
+       input_transforms, output_transforms, tf_keyvals
 
      if(keyword_set(_input_transforms)) then $
 				   input_transforms = _input_transforms
      if(keyword_set(_output_transforms)) then $
 				   output_transforms = _output_transforms
+
+     dat_add_tf_transient_keyvals, dd, keyvals
+     tf_keyvals = dat_parse_keyvals(tf_keyvals)
     end
 
    ;--------------------------
@@ -390,6 +393,7 @@ function drd_read, filename, data, header, keyvals=keyvals, $
          instrument=instrument, $
          input_transforms=input_transforms, $
          output_transforms=output_transforms, $
+         tf_keyvals=tf_keyvals, $
          input_translators=input_translators, $
          output_translators=output_translators, $
          tr_keyvals=tr_keyvals

@@ -123,9 +123,6 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
   begin
    nv_message, verb=0.9, 'Calling translator ' + translators[i]
 
-;   _dd.last_translator = [i,0]#make_array(ndd, val=1)
-   cor_rereference, dd, _dd
-
    stat = -1
    if(keyword_set(translators[i])) then $
      xd = call_function(translators[i], dd, keyword, values=xds, stat=stat, $

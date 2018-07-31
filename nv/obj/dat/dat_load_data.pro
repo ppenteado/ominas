@@ -141,10 +141,10 @@ pro ___dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
    if(n_elements(data) NE n_elements(samples_to_load)) then samples_to_load = -1
 
 
- ;----------------------------------
- ; transform data
- ;----------------------------------
- data = dat_transform_input(_dd, data, header)
+; ;----------------------------------
+; ; transform data
+; ;----------------------------------
+; data = dat_transform_input(_dd, data, header)
 
  ;----------------------------------
  ; set data on descriptor
@@ -154,6 +154,15 @@ pro ___dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
  if(keyword_set(udata)) then cor_set_udata, dd, '', udata
  if(keyword_set(header)) then dat_set_header, dd, header
  nv_resume_events
+
+
+ ;----------------------------------
+ ; transform data
+ ;----------------------------------
+ nv_suspend_events
+ dat_transform_input, dd
+ nv_resume_events
+
 
 end
 ;=============================================================================
@@ -257,10 +266,10 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
    if(n_elements(data) NE n_elements(samples_to_load)) then samples_to_load = -1
 
 
- ;----------------------------------
- ; transform data
- ;----------------------------------
- data = dat_transform_input(_dd, data, header)
+; ;----------------------------------
+; ; transform data
+; ;----------------------------------
+; data = dat_transform_input(_dd, data, header)
 
  ;----------------------------------
  ; set data on descriptor
@@ -269,6 +278,14 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
  dat_set_data, dd, data, abscissa=abscissa, sample=samples_to_load
  if(keyword_set(udata)) then cor_set_udata, dd, '', udata
  if(keyword_set(header)) then dat_set_header, dd, header
+ nv_resume_events
+
+
+ ;----------------------------------
+ ; transform data
+ ;----------------------------------
+ nv_suspend_events
+ dat_transform_input, dd
  nv_resume_events
 
 end
