@@ -84,15 +84,22 @@ pro dat_write, arg1, arg2, arg3, nodata=nodata, $
 @core.include
 ; on_error, 1
 
- ;------------------------------
+ ;--------------------------------------------------------------------------
  ; decipher args
- ;------------------------------
+ ;--------------------------------------------------------------------------
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; data descriptor as first arg
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
  if(size(arg1, /type) EQ 11) then $
   begin
    dd = arg1
    filespec = dat_filename(dd)
    if(keyword_set(arg2)) then keyvals = arg2
   end $
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
+ ; file specification as first arg
+ ;- - - - - - - - - - - - - - - - - - - - - - - -
  else $
   begin
    dd = arg2
@@ -100,8 +107,8 @@ pro dat_write, arg1, arg2, arg3, nodata=nodata, $
    if(keyword_set(arg3)) then keyvals = arg3
   end
 
- _dd = cor_dereference(dd)
  dat_add_io_transient_keyvals, dd, keyvals
+ _dd = cor_dereference(dd)
 
  ;------------------------------
  ; expand filespec

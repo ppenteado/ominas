@@ -176,7 +176,7 @@ end_keywords)
  ;---------------------------------
  self.input_transforms_p = nv_ptr_new('')
  self.output_transforms_p = nv_ptr_new('')
- self.tr_keyvals_p = nv_ptr_new('')
+ self.tf_keyvals_p = nv_ptr_new('')
  if((NOT keyword_set(input_transforms)) OR $
                         (NOT keyword_set(output_transforms))) then $
   if(keyword_set(self.instrument)) then $

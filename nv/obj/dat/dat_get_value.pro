@@ -79,8 +79,6 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
                              end_keywords
 @core.include
 
-; on_error, 1
- _dd = cor_dereference(dd)
  ndd = n_elements(dd)
 
  status = -1
@@ -91,12 +89,15 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ;--------------------------------------------
  ; record any transient keyvals
  ;--------------------------------------------
- dat_add_tr_transient_keyvals, _dd, trs
+ nv_message, verb=0.9, 'Adding transient keywords: ' + trs
+ dat_add_tr_transient_keyvals, dd, trs
 
 
  ;--------------------------------------------
  ; build translators list
  ;--------------------------------------------
+ _dd = cor_dereference(dd)
+
 ; need to group dd based on instrument...
  if(NOT keyword_set(tr_override)) then $
   begin

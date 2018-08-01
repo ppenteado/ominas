@@ -2,7 +2,7 @@
 ; dat_transform_output
 ;
 ;=============================================================================
-___function dat_transform_output, _dd, data, header
+function ___dat_transform_output, _dd, data, header
 
  if(NOT keyword_set(*_dd.output_transforms_p)) then return, data
 
@@ -21,7 +21,7 @@ end
 ; dat_transform_output
 ;
 ;=============================================================================
-pro dat_transform_output, dd, 
+pro dat_transform_output, dd
 
  _dd = cor_dereference(dd)
 

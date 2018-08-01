@@ -62,7 +62,6 @@ pro dat_add_tf_transient_keyvals, dd, trs
                    _dd.tf_transient_keyvals_p = nv_ptr_new(dat_parse_keyvals(keyvals))
   end
 
-
  cor_rereference, dd, _dd
 end
 ;===========================================================================

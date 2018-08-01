@@ -107,7 +107,6 @@ function dat_parse_keyvals, keyvals, keywords=keywords, extra=extra
   end
 
 
-; return, nv_ptr_new(kv)
  return, kv
 end
 ;=============================================================================

@@ -27,7 +27,15 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	tr:	If set, translator keywords are searched.
+;
+;
+;	tf:	If set, transform keywords are searched.
+;
+;
+;	io:	If set, I/O keywords are searched.
+;
 ;
 ;  OUTPUT: NONE
 ;
@@ -36,10 +44,11 @@
 ;	Value string associated with the given keyword.  Note that transient
 ;	keyword/value pairs take precedence.
 ;
+;
 ; RESTRICTIONS:
-;	This routine only works from within a translator, I/O method, or
-;	transform method because it uses the call stack to determine which
-;	which keyword lits to search.
+;	Unless /tr, /tf or /io are specified, this routine only works from 
+;	within a translator, I/O method, or transform method because it uses 
+; 	the call stack to determine which keyword list to search.
 ;
 ;
 ; STATUS:
@@ -66,7 +75,6 @@ pro dkv_match, kv, i, keyword, value=value
 
  keywords = (*(*kv.keywords_p)[i])
  values = (*(*kv.values_p)[i])
-;print, keywords
 
  w = where(strupcase(keywords) EQ strupcase(keyword))
 
@@ -100,7 +108,7 @@ end
 ; dkv_inputs
 ;
 ;=============================================================================
-pro dkv_inputs, _dd, transient_keyvals, keyvals, ii
+pro dkv_inputs, _dd, transient_keyvals, keyvals, ii, tr=tr, tf=tf, io=io
 
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -121,6 +129,8 @@ pro dkv_inputs, _dd, transient_keyvals, keyvals, ii
  ii = dat_caller(output_fns)
  if(ii[0] NE -1) then return
 
+ if(keyword_set(tr)) then return
+
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; check I/O methods
@@ -139,6 +149,8 @@ pro dkv_inputs, _dd, transient_keyvals, keyvals, ii
  if(ii[0] NE -1) then return
  ii = dat_caller(output_fns)
  if(ii[0] NE -1) then return
+
+ if(keyword_set(io)) then return
 
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -159,6 +171,8 @@ pro dkv_inputs, _dd, transient_keyvals, keyvals, ii
  ii = dat_caller(output_fns)
  if(ii[0] NE -1) then return
 
+ if(keyword_set(tf)) then return
+
 
 end
 ;=============================================================================
@@ -169,7 +183,7 @@ end
 ; dat_keyword_value
 ;
 ;=============================================================================
-function dat_keyword_value, dd, keyword
+function dat_keyword_value, dd, keyword, tr=tr, tf=tf, io=io
 @core.include
 
  _dd = cor_dereference(dd[0])
@@ -177,7 +191,7 @@ function dat_keyword_value, dd, keyword
  ;----------------------------------------------------------------------
  ; get arrays
  ;----------------------------------------------------------------------
- dkv_inputs, _dd, transient_keyvals, keyvals, ii
+ dkv_inputs, _dd, transient_keyvals, keyvals, ii, tr=tr, tf=tf, io=io
  if(ii EQ -1) then return, ''
 
 
