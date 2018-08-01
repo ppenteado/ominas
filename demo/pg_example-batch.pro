@@ -771,7 +771,9 @@ tvim, /new, map1
 ;   These commands write the descriptor information out through the 
 ;   translators.  The exact behavior is translator-dependent.  In the default
 ;   configuration, the detached header translator modifies the detached header 
-;   stored in the data descriptor.  It is not written until DAT_WRITE is called::
+;   stored in the data descriptor.  It is not written until DAT_WRITE is called.
+;   We write only pd[0] because some translator setups may return large
+;   numbers of planet descriptors, making it pretty slow::
 ;   
 ;     pg_put_rings, dd, od=cd, rd=rd
 ;     pg_put_planets, dd, od=cd, pd=pd[0]

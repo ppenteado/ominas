@@ -1,7 +1,7 @@
 ;=============================================================================
 ;+
 ; NAME:
-;	dat_add_tr_transient_keyvals
+;	dat_add_tf_transient_keyvals
 ;
 ;
 ; PURPOSE:
@@ -13,7 +13,7 @@
 ;
 ;
 ; CALLING SEQUENCE:
-;	dat_add_tr_transient_keyvals, dd, trs
+;	dat_add_tf_transient_keyvals, dd, trs
 ;
 ;
 ; ARGUMENTS:
@@ -44,13 +44,13 @@
 ;	
 ;-
 ;=============================================================================
-pro dat_add_tr_transient_keyvals, dd, trs
+pro dat_add_tf_transient_keyvals, dd, trs
 @core.include
  
  _dd = cor_dereference(dd)
 
- w = where(ptr_valid(_dd.tr_transient_keyvals_p))
- if(w[0] NE -1) then nv_ptr_free, _dd[w].tr_transient_keyvals_p
+ w = where(ptr_valid(_dd.tf_transient_keyvals_p))
+ if(w[0] NE -1) then nv_ptr_free, _dd[w].tf_transient_keyvals_p
 
  ;--------------------------------------------
  ; parse any transient keyvals
@@ -59,7 +59,7 @@ pro dat_add_tr_transient_keyvals, dd, trs
   begin
    keyvals = transpose(dat_parse_transient_keyvals(trs))
    if(keyword_set(keyvals)) then $
-                   _dd.tr_transient_keyvals_p = nv_ptr_new(dat_parse_keyvals(keyvals))
+                   _dd.tf_transient_keyvals_p = nv_ptr_new(dat_parse_keyvals(keyvals))
   end
 
  cor_rereference, dd, _dd

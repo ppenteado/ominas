@@ -92,9 +92,9 @@ function station_input, dd, keyword, prefix, values=values, status=status, $
  ;-----------------------------------------------
  ; translator arguments
  ;-----------------------------------------------
- select_all = tr_keyword_value(dd, 'all')
- reload = tr_keyword_value(dd, 'reload')
- names = str_nsplit(tr_keyword_value(dd, 'name'), ';')
+ select_all = dat_keyword_value(dd, 'all')
+ reload = dat_keyword_value(dd, 'reload')
+ names = str_nsplit(dat_keyword_value(dd, 'name'), ';')
  if(NOT keyword_set(names)) then names= '' $
  else select_all = 1
 

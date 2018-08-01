@@ -125,7 +125,6 @@ pro dat_lookup_io, filetype, input_fn, output_fn, keyword_fn, keyvals
  input_fn = ''
  output_fn = ''
 
-
  status = dat_io_table_extract(table, filetype, $
                 input_fn, output_fn, keyword_fn, keyvals)
 

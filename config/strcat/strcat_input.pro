@@ -101,24 +101,24 @@ pro strcat_get_inputs, dd, env, key, $
  ;---------------------------------------------------------
  ; Translator keywords
  ;---------------------------------------------------------
- b1950 = tr_keyword_value(dd, 'b1950')
+ b1950 = dat_keyword_value(dd, 'b1950')
 
- jtime = double(tr_keyword_value(dd, 'jtime'))
+ jtime = double(dat_keyword_value(dd, 'jtime'))
 
- j2000 = tr_keyword_value(dd, 'j2000')
+ j2000 = dat_keyword_value(dd, 'j2000')
 
- _faint = tr_keyword_value(dd, 'faint')
+ _faint = dat_keyword_value(dd, 'faint')
  if(_faint NE '') then faint = double(_faint)
 
- _bright = tr_keyword_value(dd, 'bright')
+ _bright = dat_keyword_value(dd, 'bright')
  if(_bright NE '') then bright = double(_bright)
 
- nbright = long(tr_keyword_value(dd, 'nbright'))
+ nbright = long(dat_keyword_value(dd, 'nbright'))
 
  ;---------------------------------------------------------
  ; Star catalog path
  ;---------------------------------------------------------
- path = tr_keyword_value(dd, key)
+ path = dat_keyword_value(dd, key)
  if(NOT keyword_set(path)) then path = getenv(env);
  if(NOT keyword_set(path)) then $
   begin
@@ -136,10 +136,10 @@ pro strcat_get_inputs, dd, env, key, $
  ;---------------------------------------------------------
  ; fov and cov 
  ;---------------------------------------------------------
- fov = double(tr_keyword_value(dd, 'fov'))
+ fov = double(dat_keyword_value(dd, 'fov'))
  if(NOT keyword_set(fov)) then fov = 1
 
- cov = double(parse_comma_list(tr_keyword_value(dd, 'cov'), delim=';'))
+ cov = double(parse_comma_list(dat_keyword_value(dd, 'cov'), delim=';'))
  if(keyword_set(cov)) then cov = transpose(cov) $
  else if(NOT keyword_set(cov)) then cov = cam_oaxis(ods[0])
    ;;; this assumes od is a camera.  Not great.

@@ -48,7 +48,7 @@ function spice_kernel_parse, dd, prefix, inst, type, ext=ext, time=_time, $
  ;---------------------------------------
  ; Get raw kernel keyword value
  ;---------------------------------------
- _k_in = tr_keyword_value(dd, kw)
+ _k_in = dat_keyword_value(dd, kw)
  if(NOT keyword_set(_k_in)) then return, ''
 
  ;---------------------------------------

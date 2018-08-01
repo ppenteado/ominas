@@ -202,11 +202,11 @@ function ring_input, dd, keyword, prefix, values=values, status=status, $
  ;-----------------------------------------------
  ; translator arguments
  ;-----------------------------------------------
- system = tr_keyword_value(dd, 'system')
- select_all = tr_keyword_value(dd, 'all')
- select_fiducial = tr_keyword_value(dd, 'fiducial')
- reload = tr_keyword_value(dd, 'reload')
- sel_names = tr_keyword_value(dd, 'name')
+ system = dat_keyword_value(dd, 'system')
+ select_all = dat_keyword_value(dd, 'all')
+ select_fiducial = dat_keyword_value(dd, 'fiducial')
+ reload = dat_keyword_value(dd, 'reload')
+ sel_names = dat_keyword_value(dd, 'name')
  if(NOT keyword_set(sel_names[0])) then sel_names= '' $
  else select_all = 1
 

@@ -159,14 +159,14 @@ pro dh_std_output, dd, keyword, value, status=status, $
  ;-----------------------------------------------
  ; translator keywords
  ;-----------------------------------------------
- format = tr_keyword_value(dd, 'format')
+ format = dat_keyword_value(dd, 'format')
  if(keyword_set(format)) then ods = dh_from_ominas(format, value) $
  else ods = value
 
  _ods =  cor_dereference(ods)
  prefix = strlowcase(str_nnsplit(keyword, '_'))
 
- dh_file = tr_keyword_value(dd, 'dh_out')
+ dh_file = dat_keyword_value(dd, 'dh_out')
  if(keyword_set(dh_file)) then $
   begin
    dh_dir = (file_search(file_dirname(dh_file)))[0]

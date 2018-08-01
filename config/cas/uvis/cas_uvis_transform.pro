@@ -4,9 +4,10 @@
 ; based on documentation at https://pds-imaging.jpl.nasa.gov/data/cassini/cassini_orbiter/CORADR_0045/DOCUMENT/
 ;
 ;==============================================================================
-function cas_uvis_transform, ima, label, force=force
+pro cas_uvis_transform, dd, force=force
   compile_opt idl2,logical_predicate
  
+<<<<<<< HEAD
   if size(ima,/type) eq 8 then ima=ima.core
   ima=transpose(ima,[2,1,0])
   bb=fix(pdspar(label,'BAND_BIN'))
@@ -15,5 +16,7 @@ function cas_uvis_transform, ima, label, force=force
   endif
  ;ima=reverse(ima,2)
  return, ima
+=======
+>>>>>>> Spitale
 end
 ;==============================================================================

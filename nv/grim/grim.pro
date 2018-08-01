@@ -103,6 +103,8 @@
 ;      Descriptor select keywords (see pg_get_*) are specified using the
 ;      standard prefix corresponding to the descriptor type.  For example,
 ;      the fov keyword to pg_get_planets would be given to GRIM as plt_fov.
+;      Note that these keywords do not appear in the transator arguments 
+;      in GRIM's overlay settings tool.
 ;
 ;
 ;      Initial Colormap Keywords

@@ -129,10 +129,10 @@ function orb_input, dd, keyword, prefix, values=values, status=status, $
  ;-----------------------------------------------
  ; translator arguments
  ;-----------------------------------------------
- select_all = tr_keyword_value(dd, 'all')
- reload = tr_keyword_value(dd, 'reload')
-; sel_names = str_nsplit(tr_keyword_value(dd, 'name'), ';')
- sel_names = tr_keyword_value(dd, 'name')
+ select_all = dat_keyword_value(dd, 'all')
+ reload = dat_keyword_value(dd, 'reload')
+; sel_names = str_nsplit(dat_keyword_value(dd, 'name'), ';')
+ sel_names = dat_keyword_value(dd, 'name')
  if(NOT keyword_set(sel_names[0])) then sel_names= '' $
  else select_all = 1
 

@@ -63,28 +63,25 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
 @core.include
 
  status = 0
-
-; on_error, 1
- _dd = cor_dereference(dd)
-
  if(keyword__set(tr_disable)) then return
-
- if(NOT ptr_valid(_dd.output_translators_p)) then $
-  begin
-   status = -1
-   return
-  end
-;        nv_message, 'No output translator available for '+keyword+'.'
 
 
  ;--------------------------------------------
  ; record any transient keyvals
  ;--------------------------------------------
- dat_add_tr_transient_keyvals, _dd, trs
+ dat_add_tr_transient_keyvals, dd, trs
+
 
  ;--------------------------------------------
  ; send value through all output translators
  ;--------------------------------------------
+ _dd = cor_dereference(dd)
+ if(NOT ptr_valid(_dd.output_translators_p)) then $
+  begin
+   status = -1
+   return
+  end
+
  nv_suspend_events
 ; i=0
 ; translators=*_dd.output_translators_p
@@ -97,9 +94,6 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
  for i=0, n-1 do $
   begin
    nv_message, verb=0.9, 'Calling translator ' + translators[i]
-
-;   _dd.last_translator = [i,1]
-   cor_rereference, dd, _dd
 
    if(keyword_set(translators[i])) then $
      call_procedure, translators[i], dd, keyword, value, stat=stat, $

@@ -128,8 +128,8 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;
 ;  Here is some code to compute a footprint for the current camera
 ;  pointing and graft it into GRIM.  To compute additional footprints, use 
-;  GRIM's navigate mode to change the pointing and then paste the lines
-;  again:: 
+;  GRIM's navigate mode to change the position and pointing and then paste 
+;  the lines again:: 
 ;
 ;     grift, cd=cd, pd=pd, rd=rd
 ;     footprint_ptd = pg_footprint(cd=cd, bx=[pd,rd])
