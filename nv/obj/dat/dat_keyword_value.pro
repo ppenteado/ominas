@@ -36,6 +36,11 @@
 ;	Value string associated with the given keyword.  Note that transient
 ;	keyword/value pairs take precedence.
 ;
+; RESTRICTIONS:
+;	This routine only works from within a translator, I/O method, or
+;	transform method because it uses the call stack to determine which
+;	which keyword lits to search.
+;
 ;
 ; STATUS:
 ;	Complete
@@ -95,7 +100,7 @@ end
 ; dkv_inputs
 ;
 ;=============================================================================
-pro dkv_inputs, _dd, transient_keyvals, keyvals, input_fns, output_fns, ii
+pro dkv_inputs, _dd, transient_keyvals, keyvals, ii
 
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -115,7 +120,6 @@ pro dkv_inputs, _dd, transient_keyvals, keyvals, input_fns, output_fns, ii
  if(ii[0] NE -1) then return
  ii = dat_caller(output_fns)
  if(ii[0] NE -1) then return
-
 
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -173,7 +177,7 @@ function dat_keyword_value, dd, keyword
  ;----------------------------------------------------------------------
  ; get arrays
  ;----------------------------------------------------------------------
- dkv_inputs, _dd, transient_keyvals, keyvals, input_fns, output_fns, ii
+ dkv_inputs, _dd, transient_keyvals, keyvals, ii
  if(ii EQ -1) then return, ''
 
 
