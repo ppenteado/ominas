@@ -23,7 +23,7 @@ function detect_vicar, filename=filename, header=header
  ;===================================
  ; check for vicar label 
  ;===================================
- if ~isa(s,/string) then return,0
+ if ~isa(s,'string') then return,0
  if(strpos(s[0], 'LBLSIZE') EQ 0) then status = 1
 
 

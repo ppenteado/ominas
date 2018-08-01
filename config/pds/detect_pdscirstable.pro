@@ -24,7 +24,7 @@ function detect_pdscirstable, filename=filename, header=header
  ;===================================
  ; check for pds label 
  ;===================================
- if ~isa(s,/string) then return,0
+ if ~isa(s,'string') then return,0
  if(strpos(s[0], 'PDS_VERSION_ID') NE -1) then status = 1
  if(strpos(s[0], 'SFDU_LABEL') NE -1) then status = 1
  if(strpos(s[0], 'XV_COMPATIBILITY') NE -1) then status = 1

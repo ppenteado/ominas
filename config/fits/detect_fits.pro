@@ -24,7 +24,7 @@ function detect_fits, filename=filename, header=header
  ;==============================
  ; check for indicator string
  ;==============================
- if ~isa(s,/string) then return,0
+ if ~isa(s,'string') then return,0
  if(s EQ 'SIMPLE') then status=1
 
 

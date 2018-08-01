@@ -25,7 +25,7 @@ function detect_mask, filename=filename, header=header
  ;===================================
  ; check for indicator string
  ;===================================
- if ~isa(s,/string) then return,0
+ if ~isa(s,'string') then return,0
  if(s[0] EQ 'mask') then status=1
 
 
