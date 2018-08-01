@@ -2,6 +2,6 @@
 # string		transform		transform
 #------------------------------------------------------------------------------
 
-  CAS_RADAR             cas_radar_transform     -		test=ggrggr
+  CAS_RADAR             cas_radar_transform     -		
 
 END

@@ -93,10 +93,10 @@ function array_input, dd, keyword, prefix, values=values, status=status, $
  ;-----------------------------------------------
  ; translator arguments
  ;-----------------------------------------------
- select_all = tr_keyword_value(dd, 'all')
- reload = tr_keyword_value(dd, 'reload')
- names = str_nsplit(tr_keyword_value(dd, 'name'), ';')
- primaries = str_nsplit(tr_keyword_value(dd, 'primary'), ';')
+ select_all = dat_keyword_value(dd, 'all')
+ reload = dat_keyword_value(dd, 'reload')
+ names = str_nsplit(dat_keyword_value(dd, 'name'), ';')
+ primaries = str_nsplit(dat_keyword_value(dd, 'primary'), ';')
  if(NOT keyword_set(names[0])) then names= '' $
  else select_all = 1
 

@@ -203,10 +203,10 @@ common dhsi_block, all_xds
    ;- - - - - - - - - - - - - - - - -
    ; translator keywords
    ;- - - - - - - - - - - - - - - - -
-   history = tr_keyword_value(dd[j], 'history')
+   history = dat_keyword_value(dd[j], 'history')
    if(keyword_set(history)) then hi = fix(history)
 
-   dh_file = tr_keyword_value(dd[j], 'dh_in')
+   dh_file = dat_keyword_value(dd[j], 'dh_in')
 
    ;- - - - - - - - - - - - - - - - -
    ; get detached header
