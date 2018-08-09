@@ -10,6 +10,8 @@ function cas_vims_spice_time, dd, dt=dt, string=string, status=status,startjd=st
 
  start_time=strtrim(pdspar(label,'START_TIME'),2)
  if stregex(start_time,'^"[^"]+"$',/boolean) then start_time=strmid(start_time,1,strlen(start_time)-2)
+ if(strmid(start_time,strlen(start_time)-1,1) EQ 'Z') then $
+   start_time = strmid(start_time,0,strlen(start_time)-1)
  if(NOT keyword_set(start_time)) then return, -1d100
  status = 0
 
