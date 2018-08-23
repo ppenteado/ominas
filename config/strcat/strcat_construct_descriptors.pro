@@ -95,7 +95,6 @@ function strcat_construct_descriptors, dd, parm, stars, note=note
  ;---------------------------------------------------------
  ; Precess to output coordinstae
  ;---------------------------------------------------------
-;stop
  strcat_precess, parm, pos, /back
  strcat_precess, parm, vel, /back
 

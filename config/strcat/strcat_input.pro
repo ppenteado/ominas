@@ -375,15 +375,12 @@ function strcat_input, dd, keyword, cat, format, n_obj=n_obj, dim=dim, values=va
  ;---------------------------------------------------------
  ; Get star descriptors for all stars in all regions
  ;---------------------------------------------------------
-;; for i=0, nregions-1 do $
-;;   sd = append_array(sd, call_function(cat + '_GET_STARS', dd, regions[i], parm))
-;; if(NOT keyword_set(sd)) then return, 0
-
  for i=0, nregions-1 do $
    stars = append_array(sd, call_function(cat + '_GET_STARS', dd, regions[i], parm))
- if(NOT keyword_set(stars)) then return, 0
- sd = strcat_construct_descriptors(dd, parm, stars)
+ if(NOT keyword_set(stars)) then return, ''
 
+ sd = strcat_construct_descriptors(dd, parm, stars)
+ if(NOT keyword_set(sd)) then return, ''
 
 
  ;--------------------------------------------------------
@@ -397,12 +394,12 @@ function strcat_input, dd, keyword, cat, format, n_obj=n_obj, dim=dim, values=va
  ;--------------------------------------------------------
 ; if(keyword_set(parm.nbright)) then sd = strcat_nbright(parm.od, sd, nbright)
  strcat_nbright, sd, parm
+ n_obj = n_elements(sd)
 
 
  ;---------------------------------------------------------
  ; Return silently if no stars are left
  ;---------------------------------------------------------
- n_obj = n_elements(sd)
  if(n_obj EQ 0) then return, ''
  
  stcat = stars[0].cat
@@ -411,7 +408,6 @@ function strcat_input, dd, keyword, cat, format, n_obj=n_obj, dim=dim, values=va
  
  bod_set_time, sd, parm.time
 
- status = 0
  return, sd
 end
 ;===============================================================================
