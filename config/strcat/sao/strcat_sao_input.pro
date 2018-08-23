@@ -129,11 +129,6 @@ function sao_get_stars, dd, filename, parm
  _dec1 = parm.dec1
  _dec2 = parm.dec2
 
- _ra1 = _ra1[0] * !dpi/180d
- _ra2 = _ra2[0] * !dpi/180d
- _dec1 = _dec1[0] * !dpi/180d
- _dec2 = _dec2[0] * !dpi/180d
-
  ;---------------------------------------------------------
  ; Open file
  ;---------------------------------------------------------
