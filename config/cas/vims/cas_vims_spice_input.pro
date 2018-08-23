@@ -95,7 +95,12 @@ pro cas_vims_spice_parse_labels, dd, _time, $
   time = dblarr(ndd)
   exposure = dblarr(ndd)
   size = make_array(2,ndd, val=1024)
-  filters = strarr((dat_dim(dd[0]))[2],ndd)
+  da=dat_data(dd[0])
+  if size(da,/type) eq 8 then begin
+    filters=strarr((size(da.core,/dimensions))[-1],ndd)
+  endif else begin
+    filters = strarr((dat_dim(dd[0]))[2],ndd)
+  endelse
   target = strarr(ndd)
   oaxis = dblarr(2,ndd)
 
@@ -218,7 +223,12 @@ compile_opt idl2
                   
   ret=list()
   foreach ccd,cd,icd do begin
-    cds=objarr((dat_dim(dd[icd]))[2])
+    da=dat_data(dd[icd])
+    if size(da,/type) eq 8 then begin
+      cds=objarr((size(da.core,/dimensions))[2])
+    endif else begin
+      cds=objarr((dat_dim(dd[icd]))[2])
+    endelse
     foreach cdsf,cds,ifi do begin
       cds[ifi]=nv_clone(ccd)
       cam_set_filters,cds[ifi],filters[ifi]

@@ -36,11 +36,11 @@ compile_opt idl2,logical_predicate
 
 dd=dat_read('ISPM10021300.LBL')
 ddn=cirs_separate_spectra(dd,/byreq,keys=keys)
-wk=where(strmatch(keys,'*126MI_FP*'))
+wk=where(stregex(keys,'.*_.*_126MI_FP.*DAYMAP001_PRIME',/boolean))
 foreach wwk,wk,iwk do print,wwk,dat_dim(ddn[wwk]),keys[wwk]
 
 bytimes=hash()
-foreach wwk,wk[2:-1],iwk do begin
+foreach wwk,wk,iwk do begin
 
   ddnu=ddn[wwk]
   ns=(dat_dim(ddnu))[0]
@@ -101,7 +101,7 @@ foreach wwk,wk[2:-1],iwk do begin
     title=keys[wwk]+' '+strtrim(wwk,2)+' /'+strtrim(iwk,2))
    www=where(fl lt 1d-8)
    pp_drawsphericalpoly,lons[www],lats[www],fl[www],rgb_table=13,linestyle='none'
-   m.save,'cirs_example_test3_'+string(iwk,format='(I03)')+'.png',res=100
+   m.save,'cirs_example_test4_'+string(iwk,format='(I03)')+'.png',res=100
    m.close
    scet=(dat_header(ddnu)).table[0].scet
    if ~bytimes.haskey(scet) then begin

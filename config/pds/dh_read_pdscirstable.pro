@@ -64,7 +64,9 @@ max=0
  indf=file_which('cirs_index.sav',/include_current_dir)
  if indf then restore,indf,/verbose
  foreach tt,table,it do begin
+   fp=tt.det eq 0 ? 1 : (tt.det gt 20 ? 4 : 3) ;CIRS focal plane number
    table[it]._conf_key=strtrim(fix(tt.det),2)+'_'+strtrim(tt.ispts,2)+'_'+strtrim(tt.iwn_start,2)+'_'+strtrim(tt.iwn_step,2)
+   ;table[it]._conf_key=strtrim(fix(fp),2)+'_'+strtrim(tt.ispts,2)+'_'+strtrim(tt.iwn_start,2)+'_'+strtrim(tt.iwn_step,2)
  endforeach
  if indf then begin
   it=0L
@@ -107,7 +109,9 @@ endif
    readu,lun,tmp
    table[it]._ispm=ptr_new(tmp)
    table[it]._ispw=ptr_new(dindgen(bs/4)*tt.iwn_step+tt.iwn_start)
+   fp=tt.det eq 0 ? 1 : (tt.det gt 20 ? 4 : 3) ;CIRS focal plane number
    table[it]._conf_key=strtrim(fix(tt.det),2)+'_'+strtrim(tt.ispts,2)+'_'+strtrim(tt.iwn_start,2)+'_'+strtrim(tt.iwn_step,2)
+   ;table[it]._conf_key=strtrim(fix(fp),2)+'_'+strtrim(tt.ispts,2)+'_'+strtrim(tt.iwn_start,2)+'_'+strtrim(tt.iwn_step,2)
    readu,lun,bs
    count+=bs+4
  endforeach
