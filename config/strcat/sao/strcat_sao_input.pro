@@ -168,6 +168,7 @@ function sao_get_stars, dd, filename, parm
    nv_message, 'Segment pointers in file are not valid, perhaps not binary SAO catalog file:' + filename
 
 ; find segments
+help, _ra1, _ra2, _dec1, _dec2
  start_segment = 17 - fix((_dec2*!RADEG+90.)/10)
  end_segment = 17 - fix((_dec1*!RADEG+90.)/10)
 

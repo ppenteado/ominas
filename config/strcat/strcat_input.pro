@@ -267,13 +267,11 @@ function strcat_get_inputs, dd, cat, format, remote=remote, $
        exp=['Without FOV limits, stars will be returned for the entire sky.', $
             'This may cause the software to run very slowly.']
 
+
  ;---------------------------------------------------------
- ; Convert ra and dec bounds of scene from rad -> deg
+ ; Precess FOV cooordinates if needed if needed
  ;---------------------------------------------------------
- parm.ra1 = parm.ra1 * 180d / !dpi
- parm.ra2 = parm.ra2 * 180d / !dpi
- parm.dec1 = parm.dec1 * 180d / !dpi
- parm.dec2 = parm.dec2 * 180d / !dpi
+; strcat_precess, parm
 
 
  ;---------------------------------------------------------
@@ -286,6 +284,15 @@ function strcat_get_inputs, dd, cat, format, remote=remote, $
 
  parm.ra1 = ras[0] & parm.ra2 = ras[1]
  parm.dec1 = decs[0] & parm.dec2 = decs[1]
+
+
+ ;---------------------------------------------------------
+ ; Convert ra and dec bounds of scene from rad -> deg
+ ;---------------------------------------------------------
+ parm.ra1 = parm.ra1 * 180d / !dpi
+ parm.ra2 = parm.ra2 * 180d / !dpi
+ parm.dec1 = parm.dec1 * 180d / !dpi
+ parm.dec2 = parm.dec2 * 180d / !dpi
 
 
 
@@ -355,10 +362,10 @@ function strcat_input, dd, keyword, cat, format, n_obj=n_obj, dim=dim, values=va
  dim = [1]
 
 
- ;---------------------------------------------------------
- ; Precess cooordinates if needed if needed
- ;---------------------------------------------------------
- strcat_precess, parm
+; ;---------------------------------------------------------
+; ; Precess cooordinates if needed if needed
+; ;---------------------------------------------------------
+; strcat_precess, parm
 
 
  ;-------------------------------------------------------------
