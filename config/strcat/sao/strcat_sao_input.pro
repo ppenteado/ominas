@@ -124,10 +124,10 @@ function sao_get_stars, dd, filename, parm
  ;---------------------------------------------------------
  ; convert to radians
  ;---------------------------------------------------------
- _ra1 = parm.ra1
- _ra2 = parm.ra2
- _dec1 = parm.dec1
- _dec2 = parm.dec2
+ ra1 = parm.ra1 *!dpi/180
+ ra2 = parm.ra2 *!dpi/180
+ dec1 = parm.dec1 *!dpi/180
+ dec2 = parm.dec2 *!dpi/180
 
  ;---------------------------------------------------------
  ; Open file
@@ -168,9 +168,10 @@ function sao_get_stars, dd, filename, parm
    nv_message, 'Segment pointers in file are not valid, perhaps not binary SAO catalog file:' + filename
 
 ; find segments
-help, _ra1, _ra2, _dec1, _dec2
- start_segment = 17 - fix((_dec2*!RADEG+90.)/10)
- end_segment = 17 - fix((_dec1*!RADEG+90.)/10)
+ start_segment = 17 - fix((dec2*!RADEG+90.)/10)
+ end_segment = 17 - fix((dec1*!RADEG+90.)/10)
+; start_segment = 17 - fix((dec2+90.)/10)
+; end_segment = 17 - fix((dec1+90.)/10)
 
  nv_message, verb=0.9, 'Search segments from ' + string(start_segment) + ' to ' + string(end_segment)
 
@@ -186,7 +187,7 @@ help, _ra1, _ra2, _dec1, _dec2
    ;---------------------------------------------------------
    ; Search within segment to find RA limits
    ;---------------------------------------------------------
-   if(end_record-start_record GT 100 AND _ra1 LE _ra2) then $
+   if(end_record-start_record GT 100 AND ra1 LE ra2) then $
      begin
       ra_ptr = ptr(2*i) + lindgen(37)*((ptr(2*i+1)-ptr(2*i))/36)
       ra_ptr[36] = ptr(2*i+1)
@@ -198,12 +199,12 @@ help, _ra1, _ra2, _dec1, _dec2
        end
       byteorder, ra_test, /XDRTOF
 
-      index = where(ra_test LE _ra1,count)
+      index = where(ra_test LE ra1,count)
       start_record = ra_ptr[0]
       if(count NE 0) then start_record = ra_ptr[count-1]
 
       end_record = ra_ptr[36]
-      index = where(ra_test GE _ra2,count)
+      index = where(ra_test GE ra2,count)
       if(count NE 0) then end_record = ra_ptr[37-count]
      end
 
@@ -218,178 +219,6 @@ help, _ra1, _ra2, _dec1, _dec2
    ; Convert catalog data format to standardized format
    ;---------------------------------------------------------
    return, strcat_sao_values(_star)
-
-
-
-
-
-
-   ;---------------------------------------------------------
-   ; select within magnitude limits
-   ;---------------------------------------------------------
-   if(finite(parm.faint)) then $
-     begin
-      _Mag = _star.mag
-      byteorder, _Mag, /XDRTOF
-      w = where(_Mag LE parm.faint)
-      if(w[0] EQ -1) then continue
-      _star = _star[w]
-     end
-
-   if(finite(parm.bright)) then $
-     begin
-      _Mag = _star.mag
-      byteorder, _Mag, /XDRTOF
-      w = where(_Mag GE parm.bright)
-      if(w[0] EQ -1) then continue 
-      _star = _star[w]
-     end
-
-   ;---------------------------------------------------------
-   ; Select named stars
-   ;---------------------------------------------------------
-   if(keyword__set(names)) then $
-     begin
-      w = where(names EQ STRING(_star.Name))
-      if(w[0] EQ -1) then continue
-      _star = _star[w]
-     end
-
-   ;---------------------------------------------------------
-   ; If limits are defined, remove stars that fall outside
-   ; the limits. 
-   ;---------------------------------------------------------
-   _RA = _star[*].RA
-   byteorder, _RA, /XDRTOF
-   _DEC = _star[*].DEC
-   byteorder, _DEC, /XDRTOF
-
-   w = strcat_radec_select([_ra1, _ra2], [_dec1, _dec2], _RA, _DEC)
-   if(w[0] EQ -1) then continue 
-   _star = _star[w]
-
-   nv_message, verb=0.9, 'After RA/DEC test, _star contains' + string(n_elements(_star)) + ' stars'
-
-   ;---------------------------------------------------------
-   ; Unpack the _star array
-   ;---------------------------------------------------------
-   _RA = _star.RA
-   _DEC = _star.DEC
-   _DECpm = _star.DECpm
-   _RApm = _star.RApm
-   _Mag = _star.mag
-   _Name = STRING(_star.Name)
-   _Sp = STRING(_star.sp)
-   byteorder, _RA, /XDRTOF
-   byteorder, _DEC, /XDRTOF
-   byteorder, _RApm, /XDRTOF
-   byteorder, _DECpm, /XDRTOF
-   byteorder, _Mag, /XDRTOF
-
-   ;---------------------------------------------------------
-   ; Apply proper motion to star (JTIME = years past 1950.0)
-   ;---------------------------------------------------------
-   _RA = _RA + (double(_RApm)*parm.JTIME/240.D0)*!DTOR 
-   _DEC = _DEC + (double(_DECpm)*parm.JTIME/3600.D0)*!DTOR
-
-   ;---------------------------------------------------------
-   ; Print out data
-   ;---------------------------------------------------------
-   nv_message, verb=1.0, '_Name: ' + _Name
-   nv_message, verb=1.0, '_RA: ' + string(_RA)
-   nv_message, verb=1.0, '_DEC: ' + string(_DEC)
-   nv_message, verb=1.0, '_Mag: ' +  string(_Mag)
-   nv_message, verb=1.0, '_Sp: ' + _Sp
-
-   ;---------------------------------------------------------
-   ; Build arrays
-   ;---------------------------------------------------------
-   if(first_segment EQ 1) then $
-     begin
-      first_segment = 0
-      RA = _RA
-      DEC = _DEC
-      Mag = _Mag
-      Name = _Name
-      Sp = _Sp
-     end $
-   else $
-     begin
-      RA = [RA,_RA]
-      DEC = [DEC,_DEC]
-      Mag = [Mag,_Mag]
-      Name = [Name,_Name]
-      Sp = [Sp,_Sp]
-     end
-
-  end ;segment end
-
- close, unit
- free_lun, unit
-
- ;---------------------------------------------------------
- ; Fill star descriptors
- ;---------------------------------------------------------
- n = n_elements(Name)
-
- print, 'Total of ',n,' stars'
- if(n EQ 0) then return, ''
-
- ;---------------------------------------------------------
- ; Calculate "dummy" properties
- ;---------------------------------------------------------
- orient = make_array(3,3,n)
- _orient = [ [1d,0d,0d], [0d,1d,0d], [0d,0d,1d] ]
- for j = 0 , n-1 do orient[*,*,j] = _orient
- avel = make_array(1,3,n,value=0d)
- vel = make_array(1,3,n,value=0d)
-; time = make_array(n,value=(bod_time(ods[0])))
- time = make_array(n,value=0d)
- radii = make_array(3,n,value=1d)
- lora = make_array(n, value=0d)
-
- ;---------------------------------------------------------
- ; Calculate position vector, use distance as 10 parsec 
- ; to have apparent magnitude = absolute magnitude
- ;---------------------------------------------------------
- dist = 3.085678d+17 ; 10pc in meters
- pos = make_array(3,n,value=0d)
- pos[0,*] = cos(RA)*cos(DEC)*dist
- pos[1,*] = sin(RA)*cos(DEC)*dist
- pos[2,*] = sin(DEC)*dist
-
- ;---------------------------------------------------------
- ; Precess B1950 to J2000 if wanted
- ;---------------------------------------------------------
- if(parm.coord NE 'b1950') then pos = transpose(b1950_to_j2000(transpose(pos)))
- pos = reform(pos,1,3,n)
-
- ;---------------------------------------------------------
- ; Calculate "luminosity" from visual Magnitude
- ; Use Sun as model, though this is wrong for other stars
- ; but since we don't know A (space absorption) and may
- ; only sometimes know Spectral type... what the heck
- ; use formula Mv = 4.83 - 2.5*log(L/Lsun) and since
- ; distance is 10pc mv = Mv
- ;---------------------------------------------------------
- mag = Mag
- Lsun = const_get('Lsun')
- lum = Lsun * 10.d^( (4.83d0-double(Mag))/2.5d )
-
-_sd = str_create_descriptors( n, $
-        gd=make_array(n, val=dd), $
-        name=name, $
-        orient=orient, $
-        avel=avel, $
-        pos=pos, $
-        vel=vel, $
-        time=time, $
-        radii=radii, $
-        lora=lora, $
-        lum=lum, $
-        sp=sp )
-
- return, _sd
 end
 ;===============================================================================
 
