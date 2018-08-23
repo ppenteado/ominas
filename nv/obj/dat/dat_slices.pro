@@ -43,7 +43,8 @@
 ; KEYWORDS:
 ;  INPUT: NONE
 ;
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	abscissa:	Data abscissa.
 ;
 ;
 ; RETURN: 
@@ -73,7 +74,7 @@
 ;	
 ;-
 ;=============================================================================
-function dat_slices, dd0, slice, data, header
+function dat_slices, dd0, slice, data, header, abscissa=abscissa
 
  dim0 = dat_dim(dd0)
  ndim0 = n_elements(dim0)
@@ -92,7 +93,7 @@ function dat_slices, dd0, slice, data, header
    dat_set_slice, dd[i], dd0, slice[*,i], /new
   end
 
- if(arg_present(data)) then data = dat_data(dd[n-1])
+ if(arg_present(data)) then data = dat_data(dd[n-1], abscissa=abscissa)
  if(arg_present(header)) then header = dat_header(dd[n-1])
 
  return, dd

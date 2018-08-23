@@ -333,34 +333,7 @@ end
 ; these regions.
 ;-
 ;==============================================================================
-function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc, b1950=b1950
-
-  ;---------------------------------------------------------
-  ; For range testing, need to have limits in j2000 since
-  ; star positions in catalog are in j2000 
-  ; If /b1950 is specified, then convert range to j2000
-  ;---------------------------------------------------------
-  _ra1 = ra1
-  _ra2 = ra2
-  _dec1 = dec1
-  _dec2 = dec2
-  if (keyword_set(b1950)) then $
-    begin
-     ; If ra1/ra2 is entire range then do not change
-     ; declination change is not enough to update
-     if (ra1 NE 0. OR ra2 NE 360.) then $
-       begin
-         nv_message, verb=0.9, 'Converting RA/DEC to J2000 (catalog epoch) for range testing'
-         ra_to_xyz, ra1, dec1, pos1
-         ra_to_xyz, ra2, dec2, pos2
-         pos1_1950 = b1950_to_j2000(pos1)
-         pos2_1950 = b1950_to_j2000(pos2)
-         xyz_to_ra, pos1_1950, _ra1, _dec1
-         xyz_to_ra, pos2_1950, _ra2, _dec2
-         if (_ra1 LT 0) then _ra1 = _ra1 + 360d
-         if (_ra2 LT 0 ) then _ra2 = _ra2 + 360d
-       end
-    end
+function gsc_get_regions, parm
 
   ; Initialize the directory name for each zone
   zdir = strarr(24)
@@ -368,16 +341,16 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc, b1950=b1950
   rows = 9537
   num_regions = 0
 
-  if(NOT keyword__set(path_gsc)) then path_gsc = getenv('NV_GSC_DATA')
-  region_file = path_gsc + "/" + "regions.dat"
+  if(NOT keyword__set(parm.path)) then parm.path = getenv('NV_GSC_DATA')
+  region_file = parm.path + "/" + "regions.dat"
   if(!VERSION.OS eq 'vms') then $
    begin
-    len = strlen(path_gsc)
-    lastchar = strmid(path_gsc,len-1,1)
+    len = strlen(parm.path)
+    lastchar = strmid(parm.path,len-1,1)
     if(lastchar eq ']' or lastchar eq ':') then $
-      region_file = path_gsc + "regions.index"
+      region_file = parm.path + "regions.index"
     if(lastchar eq '.') then region_file = $
-     strmid(path_gsc,0,len-1) + "]" + "regions.dat"
+     strmid(parm.path,0,len-1) + "]" + "regions.dat"
    end
 
   get_lun, lun
@@ -393,9 +366,9 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc, b1950=b1950
     ; Note:  southern dechi and declow are reversed
     dechi = region_table.DEC_HI
 
-    if (dechi gt 0 and dechi lt _dec1) then begin
+    if (dechi gt 0 and dechi lt parm.dec1) then begin
       goto,next
-    endif else if (dechi lt 0 and dechi gt _dec2) then begin
+    endif else if (dechi lt 0 and dechi gt parm.dec2) then begin
       goto,next
     endif
 
@@ -404,31 +377,31 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc, b1950=b1950
 
     if (declow gt 0) then begin
       ; North
-      if (declow gt _dec2) then goto,next
+      if (declow gt parm.dec2) then goto,next
     endif else if (declow lt 0) then  begin
       ; South
-      if (declow le _dec1) then goto, next
+      if (declow le parm.dec1) then goto, next
     endif else begin
       ; Lower limit of GS region ON equator
       if (dechi gt 0) then begin
         ; North
-        if (dechi lt _dec1 or declow gt _dec2) then goto, next
+        if (dechi lt parm.dec1 or declow gt parm.dec2) then goto, next
       endif else if (dechi < 0) then begin
         ; South
-        if (dechi gt _dec2 or declow lt _dec1) then goto, next
+        if (dechi gt parm.dec2 or declow lt parm.dec1) then goto, next
       endif
     endelse
 
     ; Right ascension range of the GS region
-    if (_ra1 lt _ra2) then begin
+    if (parm.ra1 lt parm.ra2) then begin
       ; 0 R.A. not in region
 
       ralow = region_table.RA_LOW
-      if (ralow gt _ra2) then goto, next
+      if (ralow gt parm.ra2) then goto, next
 
       rahi = region_table.RA_HI
       if (ralow gt rahi) then rahi = rahi + 360.0
-      if (rahi lt _ra1) then goto, next
+      if (rahi lt parm.ra1) then goto, next
 
     endif else begin
 
@@ -437,7 +410,7 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc, b1950=b1950
       rahi = region_table.RA_HI
 
       if (ralow gt rahi) then rahi = rahi + 360.0
-      if (ralow gt _ra2 and rahi lt _ra1) then goto, next
+      if (ralow gt parm.ra2 and rahi lt parm.ra1) then goto, next
 
     endelse
 
@@ -450,17 +423,17 @@ function gsc_get_regions, ra1, ra2, dec1, dec2, path_gsc=path_gsc, b1950=b1950
     ; Build the file name
     root = string(format='(i4.4,".GSC")',regnum)
 
-    path = string(format='(a,"/",a,"/")',path_gsc,zdir(zone-1))
+    path = string(format='(a,"/",a,"/")',parm.path,zdir(zone-1))
     if(!VERSION.OS eq 'vms') then $
      begin
-      len = strlen(path_gsc)
-      lastchar = strmid(path_gsc,len-1,1)
+      len = strlen(parm.path)
+      lastchar = strmid(parm.path,len-1,1)
       if(lastchar eq ']') then path = $
-       strmid(path_gsc,0,len-1) + "." + zdir(zone-1) + "]"
+       strmid(parm.path,0,len-1) + "." + zdir(zone-1) + "]"
       if(lastchar eq ':') then path = $
-       path_gsc + "[" + zdir(zone-1) + "]"
+       parm.path + "[" + zdir(zone-1) + "]"
       if(lastchar eq '.') then path = $
-       path_gsc + zdir(zone-1) + "]"
+       parm.path + zdir(zone-1) + "]"
      end
 
     if(num_regions eq 0) then region_list = path+root $
@@ -488,45 +461,16 @@ end
 ; region (ra1 - ra2) and (dec1 - dec2) into a star descriptor.
 ;-
 ;===============================================================================
-function gsc_get_stars, dd, filename, $
-         b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
-         faint=faint, bright=bright, nbright=nbright, $
-         names=names, mag=mag, jtime=jtime
+function gsc_get_stars, dd, filename, parm
        
+ names = *parm.names_p
+
  f = findfile(filename)
  if(f[0] eq '') then $
   begin
    print, 'gsc_get_stars: File does not exist - ',filename
    return, ''
   end
-
- ;---------------------------------------------------------
- ; For range testing, need to have limits in j2000 since
- ; star positions in catalog are in j2000 
- ; If /b1950 is specified, then convert range to j2000
- ;---------------------------------------------------------
- _ra1 = ra1
- _ra2 = ra2
- _dec1 = dec1
- _dec2 = dec2
- if (keyword_set(b1950)) then $
-   begin
-     ; If ra1/ra2 is entire range then do not change
-     ; declination change is not enough to update
-     if (ra1 NE 0. OR ra2 NE 360.) then $
-       begin
-         nv_message, verb=0.9, 'Converting RA/DEC to J2000 (catalog epoch) for range testing'
-         ra_to_xyz, ra1, dec1, pos1
-         ra_to_xyz, ra2, dec2, pos2
-         pos1_1950 = b1950_to_j2000(pos1)
-         pos2_1950 = b1950_to_j2000(pos2)
-         xyz_to_ra, pos1_1950, _ra1, _dec1
-         xyz_to_ra, pos2_1950, _ra2, _dec2
-         if (_ra1 LT 0) then _ra1 = _ra1 + 360d
-         if (_ra2 LT 0 ) then _ra2 = _ra2 + 360d
-       end
-   end
- nv_message, verb=0.9, '_ra1 = ' + strtrim(string(_ra1),2) + ', _ra2= ' + strtrim(string(_ra2),2)
 
  ;----------------------------------------------
  ; Open file, expected name ends with "nnnn.GSC"
@@ -541,135 +485,11 @@ function gsc_get_stars, dd, filename, $
  stars = gsc_remove_dups(records)
  nstars = n_elements(stars)
 
- ;-------------------------------------
- ; select within magnitude limits
- ;-------------------------------------
- if(n_elements(faint) NE 0) then $
-  begin
-   faint = double(faint)
-   w = where(stars.mag LE faint)
-   if(w[0] NE -1) then _stars = stars[w]
-   if(NOT keyword__set(_stars)) then return, ''
-   stars = _stars
-  end
 
- if(n_elements(bright) NE 0) then $
-  begin
-   bright = double(bright)
-   w = where(stars.mag GE bright)
-   if(w[0] NE -1) then _stars = stars[w]
-   if(NOT keyword__set(_stars)) then return, ''
-   stars = _stars
-  end
-
- ;-------------------------------------
- ; select named stars
- ;-------------------------------------
- gsc_id = strtrim(string(stars.GSC_ID,format='(I05)'),2)
- name = "GSC " + gsc_region + " " + gsc_id
- if(keyword__set(names)) then $
-  begin
-   w = where(names EQ name)
-   if(w[0] NE -1) then _stars = stars[w]
-   if(NOT keyword__set(_stars)) then return, ''
-   stars = _stars
-  end
-
- ;------------------------------------------------------------------
- ; If limits are defined, remove stars that fall outside the limits
- ; Limits in deg, Assumes RA's + DEC's in J2000 (B1950 if /b1950)
- ;------------------------------------------------------------------
- w = strcat_radec_select([_ra1, _ra2]*!dpi/180d, [_dec1, _dec2]*!dpi/180d, $
-                                     stars.ra_deg*!dpi/180d, stars.dec_deg*!dpi/180d)
- if(w[0] EQ -1) then return, ''
- stars = stars[w]
-
- ;-----------------------------------------------------------
- ; if desired, select only nbright brightest stars
- ;-----------------------------------------------------------
- if(keyword__set(nbright)) then $
-  begin
-   w = strcat_nbright(stars.mag, nbright)
-   stars = stars[w]
-  end
-
- RA = stars.RA_DEG*!DPI/180d0
- DEC = stars.DEC_DEG*!DPI/180d0
- gsc_id = strtrim(string(stars.GSC_ID,format='(I05)'),2)
- Name = "GSC " + gsc_region + " " + gsc_id
- Sp = strtrim(STRING(stars.CLASS),2)
-
- ;----------------------
- ; Fill star descriptors
- ;----------------------
- n = n_elements(Name)
- print, 'Total of ',n,' stars out of ',nstars,' in GSC region ',gsc_region
- if(n eq 0) then return, ''
-
- ;-----------------------------
- ; Calculate "dummy" properties
- ;-----------------------------
- orient = make_array(3,3,n)
- _orient = [ [1d,0d,0d], [0d,1d,0d], [0d,0d,1d] ]
- for j = 0 , n-1 do orient[*,*,j] = _orient
- avel = make_array(1,3,n,value=0d)
- vel = make_array(1,3,n,value=0d)
- time = make_array(n,value=0d)
- radii = make_array(3,n,value=1d)
- lora = make_array(n, value=0d)
-
- ;--------------------------------------------------------
- ; Apply proper motion to star (no proper motion info for GSC)
- ; JTIME = years past 2000.0
- ; RApm and DECpm = milliarcseconds per year
- ;--------------------------------------------------------
- ;RA = RA + ((double(RApm)*JTIME/3.6e6)*!DTOR) / cos(DEC)
- ;DEC = DEC + (double(DECpm)*JTIME/3.6e6)*!DTOR
-
-
- ;-----------------------------------------------------
- ; Calculate position vector, use distance as 10 parsec 
- ; to have apparent magnitude = absolute magnitude
- ;-----------------------------------------------------
- dist = 3.085678d+17 ; 10pc in meters
- pos = make_array(3,n,value=0d)
- pos[0,*] = cos(RA)*cos(DEC)*dist
- pos[1,*] = sin(RA)*cos(DEC)*dist
- pos[2,*] = sin(DEC)*dist
-
- ;-----------------------------------------------------
- ; Precess J2000 to B1950 if wanted
- ;-----------------------------------------------------
- if(keyword__set(b1950)) then pos = $
-  transpose(b1950_to_j2000(transpose(pos),/reverse))
- pos = reform(pos,1,3,n)
-
- ;-------------------------------------------------------
- ; Calculate "luminosity" from visual Magnitude
- ; Use Sun as model, though this is wrong for other stars
- ; but since we don't know A (space absorption) and may
- ; only sometimes know Spectral type... what the heck
- ; use formula Mv = 4.83 - 2.5*log(L/Lsun) and since
- ; distance is 10pc mv = Mv
- ;-------------------------------------------------------
- Lsun = const_get('Lsun')
- mag = stars.mag
- lum = Lsun * 10.d^( (4.83d0-double(mag))/2.5d ) 
-
- _sd = str_create_descriptors( n, $
-        gd=make_array(n, val=dd), $
-        name=name, $
-        orient=orient, $
-        avel=avel, $
-        pos=pos, $
-        vel=vel, $
-        time=time, $
-        radii=radii, $
-        lora=lora, $
-        lum=lum, $
-        sp=sp )
-
- return, _sd
+ ;---------------------------------------------------------
+ ; Convert catalog data format to standardized format
+ ;---------------------------------------------------------
+ return, strcat_gsc_values(stars)
 end
 ;=============================================================================
 
@@ -682,14 +502,14 @@ end
 ;-
 ;===============================================================================
 function strcat_gsc_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords
 
 
  return, strcat_input(dd, keyword, 'gsc', n_obj=n_obj, dim=dim, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords )
 
 end

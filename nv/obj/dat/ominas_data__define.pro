@@ -470,7 +470,7 @@ pro ominas_data__define
 
 	input_fn:		'', $		; Function to read file
 	output_fn:		'', $		; Function to write file
-	keyword_fn:		'', $		; Function toread/write header keywords
+	keyword_fn:		'', $		; Function to read/write header keywords
 	io_keyvals_p:		nv_ptr_new(), $	; Keyvals for I/O methods
 	io_transient_keyvals_p:	nv_ptr_new(), $	; Keyvals parsed per-command
 

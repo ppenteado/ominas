@@ -6,7 +6,7 @@
 function ext_read_xwd, filename, dim=dim, nodata=nodata
 
  if(keyword_set(nodata)) then $
-               nv_message, /con, 'WARNING: /NO_DATA keyword ignored.
+               nv_message, /warning, '/NO_DATA keyword ignored.
 
 
  dat = read_xwd(filename, r, g, b)

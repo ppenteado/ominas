@@ -101,7 +101,7 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
                           no_default=no_default, count=count, $
                               @cam__keywords_tree.include
                               @dat__keywords.include
-                              @nv_trs_keywords_include.pro
+                              @dat_trs_keywords_include.pro
                               end_keywords
 
  count = 0
@@ -163,7 +163,7 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
    ;-----------------------------------------------
    cd = dat_get_value(dd0, 'CAM_DESCRIPTORS', key1=od, key2=pd, key4=_cd, key3=default_orient, $
                              key7=time, key8=name, trs=trs, $
-                              @nv_trs_keywords_include.pro
+                              @dat_trs_keywords_include.pro
                               end_keywords)
 
 

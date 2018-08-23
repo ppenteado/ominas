@@ -476,6 +476,26 @@ end
 
 
 ;=============================================================================
+; grim_get_roi
+;
+;=============================================================================
+function grim_get_roi, grim_data, plane, outline=outline
+
+ if(keyword_set(outline)) then $
+  begin
+   if(NOT pnt_valid(plane.roi_ptd)) then return, !null
+   return, plane.roi_ptd
+  end
+
+ if(NOT ptr_valid(plane.roi_p)) then return, !null
+ return, *plane.roi_p
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_draw_roi
 ;
 ;=============================================================================
@@ -2586,12 +2606,11 @@ function grim_select_overlays_by_point, grim_data, plane, p0, ptds, clicks=click
  ;---------------------------------------------
  p = (convert_coord(p0[0], p0[1], /device, /to_data))[0:1]
  ptd = grim_nearest_overlay(plane, p, ptds)
+ if(NOT keyword_set(ptd)) then return, !null
 
  ;----------------------------------------------------------
  ; if double click, get all ptds associated with the xd
  ;----------------------------------------------------------
- if(NOT keyword_set(ptd)) then return, !null
-
  if(keyword_set(clicks)) then $
   if(clicks EQ 2) then $
    begin
@@ -2670,7 +2689,7 @@ function grim_select_overlays, grim_data, plane, p0, ptds, $
    if(keyword_set(complement)) then w=ww
    if(w[0] EQ -1) then return, !null
    ptds = ptds[w]
-  end
+  end 
 
  ;--------------------------------------------------------
  ; remove those that are locked
@@ -2764,11 +2783,12 @@ pro grim_activate_select, grim_data, plane, p0, $
  ;--------------------------------------------------------
  ; select overlays
  ;--------------------------------------------------------
- if(NOT keyword_set(invert)) then $
-  begin
-   filter = 'GRIM_ACTIVE_FLAG'
-   value = keyword_set(deactivate)
-  end
+  if(NOT keyword_set(invert)) then $
+ if(clicks NE 2) then $
+   begin
+    filter = 'GRIM_ACTIVE_FLAG'
+    value = keyword_set(deactivate)
+   end
 
  ptd = grim_select_overlays(grim_data, plane, p0, $
             filter=filter, value=value, clicks=clicks, point=point, box=box)

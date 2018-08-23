@@ -150,7 +150,8 @@ pro grim_menu_image_profile_event, event
  if(NOT keyword_set(dd)) then return
 
  widget_control, /hourglass
- grim, dd, xtitle='Distance (pixels)', ytitle=['<DN>', 'Sigma'], $
+ grim, dd, tag='Image Profile', $
+             xtitle='Distance (pixels)', ytitle=['<DN>', 'Sigma'], $
                    title=['Image profile', 'Image profile sigma'], /new
  
 end
@@ -237,8 +238,9 @@ pro grim_menu_ring_box_profile_radial_event, event
  if(NOT keyword_set(dd)) then return
 
  widget_control, /hourglass
- grim, dd, xtitle='Radius', ytitle=['<DN>', 'Sigma'], $
-       title=['Radial ring profile', 'Radial ring profile sigmas'], /new
+ grim, tag='Ring Box Profile Radial', $
+      dd, xtitle='Radius', ytitle=['<DN>', 'Sigma'], $
+          title=['Radial ring profile', 'Radial ring profile sigmas'], /new
  
 
 end
@@ -325,7 +327,7 @@ pro grim_menu_ring_box_profile_longitudinal_event, event
  if(NOT keyword_set(dd)) then return
 
  widget_control, /hourglass
- grim, dd, /new, $
+ grim, tag='Ring Box Profile Azimuthal', dd, /new, $
      xtitle='Longitude (deg)', ytitle=['<DN>', 'Sigma'], $
          title=['Longitudinal ring profile', 'Longitudinal ring profile sigmas']
  
@@ -428,7 +430,8 @@ pro grim_menu_ring_profile_radial_event, event
  if(NOT keyword_set(dd)) then return
 
  widget_control, /hourglass
- grim, dd, xtitle='Radius', ytitle=['<DN>', 'Sigma'], $
+ grim, tag='Ring Profile Radial', $
+      dd, xtitle='Radius', ytitle=['<DN>', 'Sigma'], $
        title=['Radial ring profile', 'Radial ring profile sigmas'], /new
  
 
@@ -523,7 +526,7 @@ pro grim_menu_ring_profile_longitudinal_event, event
  if(NOT keyword_set(dd)) then return
 
  widget_control, /hourglass
- grim, dd, /new, $
+ grim, tag='Ring Profile Azimuthal', dd, /new, $
      xtitle='Longitude (deg)', ytitle=['<DN>', 'Sigma'], $
          title=['Longitudinal ring profile', 'Longitudinal ring profile sigmas']
  
@@ -613,7 +616,7 @@ pro grim_menu_limb_profile_azimuthal_event, event
  if(NOT keyword_set(dd)) then return
 
  widget_control, /hourglass
- grim, dd, /new, $
+ grim, tag='Limb Profile Azimuthual', dd, /new, $
      xtitle='Azimuth (deg)', ytitle=['<DN>', 'Sigma'], $
          title=['Azimuthal limb profile', 'Azimuthal limb profile sigmas']
  
@@ -702,7 +705,7 @@ pro grim_menu_limb_profile_radial_event, event
  if(NOT keyword_set(dd)) then return
 
  widget_control, /hourglass
- grim, dd, /new, $
+ grim, tag='Limb Profile Radial', dd, /new, $
      xtitle='Radius (m)', ytitle=['<DN>', 'Sigma'], $
          title=['Radial limb profile', 'Radial limb profile sigmas']
  

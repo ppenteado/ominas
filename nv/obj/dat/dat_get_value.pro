@@ -74,8 +74,8 @@
 ;-
 ;=============================================================================
 function dat_get_value, dd, keyword, status=status, trs=trs, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
                              end_keywords
 @core.include
 
@@ -127,8 +127,8 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
    stat = -1
    if(keyword_set(translators[i])) then $
      xd = call_function(translators[i], dd, keyword, values=xds, stat=stat, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 		    end_keywords)
 
    ;--------------------------------------

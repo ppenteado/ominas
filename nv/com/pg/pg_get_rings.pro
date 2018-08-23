@@ -138,7 +138,7 @@ function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=keyvals, $
                       override=override, verbatim=verbatim, count=count, $
                               @rng__keywords_tree.include
                               @dat__keywords.include
-                              @nv_trs_keywords_include.pro
+                              @dat_trs_keywords_include.pro
                               end_keywords
 
  count = 0
@@ -187,7 +187,7 @@ function pg_get_rings, arg1, arg2, rd=_rd, pd=pd, od=od, _extra=keyvals, $
    ;-----------------------------------------------
    rd = dat_get_value(dd, 'RNG_DESCRIPTORS', key1=pd, key2=od, key4=_rd, $
                             key7=time, key8=name, trs=trs, $
-                              @nv_trs_keywords_include.pro
+                              @dat_trs_keywords_include.pro
                               end_keywords)
 
    ;------------------------------------------------------------------------

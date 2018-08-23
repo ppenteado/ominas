@@ -144,7 +144,7 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=keyvals, $
                    override=override, verbatim=verbatim, raw=raw, count=count, $
                    @plt__keywords_tree.include
                    @dat__keywords.include
-                   @nv_trs_keywords_include.pro
+                   @dat_trs_keywords_include.pro
                    end_keywords
 
  count = 0
@@ -199,7 +199,7 @@ function pg_get_planets, arg1, arg2, pd=_pd, od=od, sd=sd, _extra=keyvals, $
    ;-----------------------------------------------
    pd = dat_get_value(dd, 'PLT_DESCRIPTORS', key1=od, key2=sd, key4=_pd, $
                                 key7=time, key8=name, trs=trs, $
-                                  @nv_trs_keywords_include.pro
+                                  @dat_trs_keywords_include.pro
                                   end_keywords)
 
    ;------------------------------------------------------------------------

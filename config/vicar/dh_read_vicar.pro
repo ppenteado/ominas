@@ -9,6 +9,8 @@ function dh_read_vicar, dd, label, dim, type, min, max, abscissa=abscissa, $
  if(keyword_set(sample)) then return, 0
  filename = dat_filename(dd)
 
+if(defined(abscissa)) then nv_message, /con, 'Abscissa not supported.'
+
  ;-----------------------------------------------------------------------
  ; min , max set to zero because no way to determine without reading
  ; entire data array

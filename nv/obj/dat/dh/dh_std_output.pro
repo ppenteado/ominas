@@ -145,8 +145,8 @@ end
 ;
 ;=============================================================================
 pro dh_std_output, dd, keyword, value, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords
 
  status = 0

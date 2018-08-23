@@ -59,8 +59,8 @@
 ; :Hidden:
 ;-
 ;===============================================================================
-function sao_get_regions, ra1, ra2, dec1, dec2, path_sao=path_sao
- return, file_test(path_sao + '/sao_idl.str') ? path_sao + '/sao_idl.str' : path_sao + '/sao.dat'	; there's only one sao "region"
+function sao_get_regions, parm
+ return, file_test(parm.path + '/sao_idl.str') ? parm.path + '/sao_idl.str' : parm.path + '/sao.dat'	; there's only one sao "region"
 end
 ;===============================================================================
 
@@ -111,46 +111,23 @@ end
 ;      be seconds past 2000, unless keyword /b1950 is set
 ;-
 ;===============================================================================
-function sao_get_stars, dd, filename, $
-         b1950=b1950, ra1=ra1, ra2=ra2, dec1=dec1, dec2=dec2, $
-         faint=faint, bright=bright, nbright=nbright, $
-         names=names, mag=mag, jtime=jtime
+function sao_get_stars, dd, filename, parm
+
+ names = *parm.names_p
 
  ;---------------------------------------------------------
  ; check whether catalog falls within brightness limits
  ;---------------------------------------------------------
- if(keyword_set(faint)) then if(faint LT -1.5) then return, ''
- if(keyword_set(bright)) then if(bright GT 10) then return, ''
+ if(finite(parm.faint)) then if(parm.faint LT -1.5) then return, ''
+ if(finite(parm.bright)) then if(parm.bright GT 10) then return, ''
 
  ;---------------------------------------------------------
- ; For segment testing, need to have limits in b1950 since
- ; star positions in catalog are in b1950
- ; If /b1950 is not specified, then convert range to b1950
+ ; convert to radians
  ;---------------------------------------------------------
- _ra1 = ra1
- _ra2 = ra2
- _dec1 = dec1
- _dec2 = dec2
-  nv_message, verb=1.0, 'ra1 = '+string(ra1)+' ra2= '+string(ra2)+' dec1= '+string(dec1)+' dec2= '+string(dec2)
-
- if (NOT keyword_set(b1950)) then $
-   begin
-     ; If ra1/ra2 is entire range then do not change
-     ; declination change is not enough to update
-     if (ra1 NE 0. OR ra2 NE 360.) then $
-       begin
-         nv_message, verb=0.9, 'Converting RA/DEC to B1950 (catalog epoch) for range testing'
-         ra_to_xyz, ra1, dec1, pos1
-         ra_to_xyz, ra2, dec2, pos2
-         pos1_1950 = b1950_to_j2000(pos1,/reverse)
-         pos2_1950 = b1950_to_j2000(pos2,/reverse)
-         xyz_to_ra, pos1_1950, _ra1, _dec1
-         xyz_to_ra, pos2_1950, _ra2, _dec2
-         if (_ra1 LT 0) then _ra1 = _ra1 + 360d
-         if (_ra2 LT 0 ) then _ra2 = _ra2 + 360d
-         nv_message, verb=1.0, 'ra1 = '+string(_ra1)+' ra2= '+string(_ra2)+' dec1= '+string(_dec1)+' dec2= '+string(_dec2)
-       end
-   end
+ _ra1 = parm.ra1
+ _ra2 = parm.ra2
+ _dec1 = parm.dec1
+ _dec2 = parm.dec2
 
  _ra1 = _ra1[0] * !dpi/180d
  _ra2 = _ra2[0] * !dpi/180d
@@ -242,22 +219,32 @@ function sao_get_stars, dd, filename, $
    nv_message, verb=0.9, '_star contains ' + string(n_elements(_star)) + ' stars'
 
    ;---------------------------------------------------------
+   ; Convert catalog data format to standardized format
+   ;---------------------------------------------------------
+   return, strcat_sao_values(_star)
+
+
+
+
+
+
+   ;---------------------------------------------------------
    ; select within magnitude limits
    ;---------------------------------------------------------
-   if(keyword__set(faint)) then $
+   if(finite(parm.faint)) then $
      begin
       _Mag = _star.mag
       byteorder, _Mag, /XDRTOF
-      w = where(_Mag LE faint)
+      w = where(_Mag LE parm.faint)
       if(w[0] EQ -1) then continue
       _star = _star[w]
      end
 
-   if(keyword__set(bright)) then $
+   if(finite(parm.bright)) then $
      begin
       _Mag = _star.mag
       byteorder, _Mag, /XDRTOF
-      w = where(_Mag GE bright)
+      w = where(_Mag GE parm.bright)
       if(w[0] EQ -1) then continue 
       _star = _star[w]
      end
@@ -306,8 +293,8 @@ function sao_get_stars, dd, filename, $
    ;---------------------------------------------------------
    ; Apply proper motion to star (JTIME = years past 1950.0)
    ;---------------------------------------------------------
-   _RA = _RA + (double(_RApm)*JTIME/240.D0)*!DTOR 
-   _DEC = _DEC + (double(_DECpm)*JTIME/3600.D0)*!DTOR
+   _RA = _RA + (double(_RApm)*parm.JTIME/240.D0)*!DTOR 
+   _DEC = _DEC + (double(_DECpm)*parm.JTIME/3600.D0)*!DTOR
 
    ;---------------------------------------------------------
    ; Print out data
@@ -345,19 +332,6 @@ function sao_get_stars, dd, filename, $
  free_lun, unit
 
  ;---------------------------------------------------------
- ; If desired, select only nbright brightest stars
- ;---------------------------------------------------------
- if(keyword__set(nbright)) then $
-  begin
-   w = strcat_nbright(Mag, nbright)
-   RA = RA[w]
-   DEC = DEC[w]
-   Mag = Mag[w]
-   Name = Name[w]
-   Sp = Sp[w]
-  end
-
- ;---------------------------------------------------------
  ; Fill star descriptors
  ;---------------------------------------------------------
  n = n_elements(Name)
@@ -391,7 +365,7 @@ function sao_get_stars, dd, filename, $
  ;---------------------------------------------------------
  ; Precess B1950 to J2000 if wanted
  ;---------------------------------------------------------
- if(NOT keyword__set(b1950)) then pos = transpose(b1950_to_j2000(transpose(pos)))
+ if(parm.coord NE 'b1950') then pos = transpose(b1950_to_j2000(transpose(pos)))
  pos = reform(pos,1,3,n)
 
  ;---------------------------------------------------------
@@ -406,7 +380,7 @@ function sao_get_stars, dd, filename, $
  Lsun = const_get('Lsun')
  lum = Lsun * 10.d^( (4.83d0-double(Mag))/2.5d )
 
- _sd = str_create_descriptors( n, $
+_sd = str_create_descriptors( n, $
         gd=make_array(n, val=dd), $
         name=name, $
         orient=orient, $
@@ -433,13 +407,13 @@ end
 ;-
 ;===============================================================================
 function strcat_sao_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords
 
- return, strcat_input(dd, keyword, 'sao', n_obj=n_obj, dim=dim, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+ return, strcat_input(dd, keyword, 'sao', 'b1950', n_obj=n_obj, dim=dim, values=values, status=status, $
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords )
 
 end

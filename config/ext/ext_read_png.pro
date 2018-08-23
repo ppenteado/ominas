@@ -30,7 +30,7 @@ end
 function ext_read_png, filename, dim=dim, type=type, nodata=nodata
 
  if(keyword_set(nodata)) then $
-               nv_message, /con, 'WARNING: /NO_DATA keyword ignored.
+               nv_message, /warning, '/NO_DATA keyword ignored.
 
 
  dat = read_png(filename, r, g, b)
