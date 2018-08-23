@@ -220,8 +220,6 @@ function sao_get_stars, dd, filename, parm
    ;---------------------------------------------------------
    return, strcat_sao_values(_star)
 
-
-
   end
 
 end
@@ -241,8 +239,8 @@ function strcat_sao_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, sta
 @dat_trs_keywords1_include.pro
 	end_keywords
 
-;;; SAO catalog is b1950, so the commented line shoudl be correct.  However,
-;;; translator does not function with the set.
+;;; SAO catalog is b1950, so the commented line should be correct.  However,
+;;; the translator does not function with that setting.
 ; return, strcat_input(dd, keyword, 'sao', n_obj=n_obj, dim=dim, values=values, status=status, $
  return, strcat_input(dd, keyword, 'sao', 'b1950', n_obj=n_obj, dim=dim, values=values, status=status, $
 @dat_trs_keywords_include.pro
