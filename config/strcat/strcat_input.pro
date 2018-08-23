@@ -91,8 +91,8 @@ pro strcat_parm__define
 
 struct = $
   { strcat_parm, $
-    od:		obj_new(), $	; observer decsriptor
-    format:	'', $		; catalog frmat
+    od:		obj_new(), $	; observer descriptor
+    format:	'', $		; catalog format j2000 or b1950
     coord:	'', $		; input / output coord. sys j2000 or b1950
     time:	0d, $
     jtime:	0d, $
@@ -362,10 +362,10 @@ function strcat_input, dd, keyword, cat, format, n_obj=n_obj, dim=dim, values=va
  dim = [1]
 
 
-; ;---------------------------------------------------------
-; ; Precess cooordinates if needed if needed
-; ;---------------------------------------------------------
-; strcat_precess, parm
+ ;---------------------------------------------------------
+ ; Precess cooordinates if needed if needed
+ ;---------------------------------------------------------
+ strcat_precess, parm
 
 
  ;-------------------------------------------------------------
