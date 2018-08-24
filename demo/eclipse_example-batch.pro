@@ -135,6 +135,8 @@ pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd), /north
 ;  Note that various renderng settings may be changed using options under
 ;  View->Render.  A more realistic shadow may be obtained by modifying
 ;  the NUMBRA value, though it will sow down the rendering significantly.
+;  
+;         .. image:: graphics/eclipse_example_1.png
 ;
 ;-
 ;-------------------------------------------------------------------------

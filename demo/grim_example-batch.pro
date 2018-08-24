@@ -41,6 +41,8 @@ defsysv, '!grimrc',  ''				; disable grim resource file
 ;    dd = dat_read(file)
 ;    grim, dd, zoom=0.75, /order, $
 ;                  overlay=['center', 'limb', 'terminator', 'ring']
+;                  
+;  .. image:: graphics/grim_example_01.png
 ;
 ;-
 ;------------------------------------------------------------------------------
@@ -59,6 +61,9 @@ grim, dd, zoom=0.75, /order, $
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
 ;                overlay=['center', 'limb', 'terminator', 'ring']
+;                
+;  .. image:: graphics/grim_example_02.png
+;  
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, file, zoom=0.75, /order, $
@@ -76,6 +81,9 @@ grim, /new, file, zoom=0.75, /order, $
 ;    grim, /new, file, zoom=0.75, /order, $
 ;        overlay=['center:JUPITER,IO,EUROPA,GANYMEDE,CALLISTO', $
 ;                                                'limb', 'terminator', 'ring']
+;                                                
+;  .. image:: graphics/grim_example_03.png
+;  
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, file, zoom=0.75, /order, $
@@ -93,6 +101,9 @@ grim, /new, file, zoom=0.75, /order, $
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
 ;        overlay=['center', 'limb', 'terminator', 'ring'], fov=-1
+;        
+;  .. image:: graphics/grim_example_04.png
+;  
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, file, zoom=0.75, /order, $
@@ -108,6 +119,9 @@ grim, /new, file, zoom=0.75, /order, $
 ;
 ;    grim, /new, file, zoom=0.75, /order, $
 ;        overlay=['center', 'limb', 'terminator', 'ring'], fov=1
+;        
+;  .. image:: graphics/grim_example_05.png
+;  
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, file, zoom=0.75, /order, $
@@ -123,7 +137,7 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 
 
 ;------------------------------------------------------------------------------
-; +
+;+
 ;  You have too many GRIM windows open.  Let's take care of that::
 ;
 ;   grim, /exit, grn=lindgen(100)
@@ -137,13 +151,24 @@ grim, /exit, grn=lindgen(100)		; I'm assuming you haven't opened more
 
 
 ;------------------------------------------------------------------------------
-; +
+;+
 ;  Speaking of way too many GRIMs, let's just open a bunch of images in
 ;  *one* GRIM.  Each image is opened in a separate plane.  You can change 
 ;  planes using the left/right arrows in the top left corner.  If you have
 ;  Xdefaults-grim set up, you can use the left/right arrow keys::
 ;
 ;    grim, /new, './data/n*.2', /order, overlay='center'
+;    
+;  .. image:: graphics/grim_example_06.png
+;  
+;  .. image:: graphics/grim_example_07.png
+;  
+;  .. image:: graphics/grim_example_08.png
+;  
+;  .. image:: graphics/grim_example_09.png
+;  
+;  .. image:: graphics/grim_example_10.png
+;  
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, './data/n*.2', /order, overlay='center'
@@ -151,11 +176,14 @@ grim, /new, './data/n*.2', /order, overlay='center'
 
 
 ;------------------------------------------------------------------------------
-; 
+;+ 
 ;  Did you know GRIM also handles plots?  Well it does!
-; ::
+;  ::
 ;
 ;    grim, /new, './data/GamAra037_2_bin50_031108.vic'
+;    
+;  .. image:: graphics/grim_example_11.png
+;  
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, './data/GamAra037_2_bin50_031108.vic', xsize=1200, ysize=300
@@ -176,6 +204,8 @@ grim, /new, './data/GamAra037_2_bin50_031108.vic', xsize=1200, ysize=300
 ;                'terminator:SATURN', $
 ;                'planet_grid:SATURN', $
 ;                'ring']
+;                
+;  .. image:: graphics/grim_example_12.png
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, './data/' + ['N1460072434_1.IMG', $
@@ -196,6 +226,9 @@ grim, /new, './data/' + ['N1460072434_1.IMG', $
 ;  anything::
 ;
 ;    grim, /new, './data/CM_1503358311_1_ir_eg.cub'
+;    
+;  .. image:: graphics/grim_example_13.png
+;  
 ;-
 ;------------------------------------------------------------------------------
 grim, /new, './data/CM_1503358311_1_ir_eg.cub'

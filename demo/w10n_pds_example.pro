@@ -25,7 +25,6 @@
 ;+
 ; READ AND DISPLAY IMAGE
 ;
-; .. image:: A different URL depending on mission
 ;   Missions supported CASSINI ISS, VGR ISS, GLL SSI
 ;
 ;   Use DAT_READ to read the image and then display the image using TVIM.  
@@ -220,12 +219,22 @@ plabels=[cor_name(pd), $
 ;+
 ; DRAW EVERYTHING
 ;
+; Cassini result:
+; 
 ; .. image:: graphics/jupiter_limb_initial.jpeg
 ;
 ; Now we can do a nice simple call to PG_DRAW to draw everything::
 ;
 ;     pg_draw, object_ptd, $
 ;               col=colors, psy=psyms, psi=psizes, csi=csizes, pl=plabels
+;               
+; Voyager image:
+;
+; .. image:: graphics/w10n_pds_vgr.png
+; 
+; Galileo result:
+;
+; .. image:: graphics/w10n_pds_gll.png
 ;
 ;-
 ;-------------------------------------------------------------------------
