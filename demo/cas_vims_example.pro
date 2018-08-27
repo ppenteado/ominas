@@ -52,7 +52,7 @@ hdxy['CM_1504754217_1_ir_eg.cub']=[1d0,-2d0]*0
 files=getenv('OMINAS_DIR')+'/demo/data/'+((hdxy.keys()).toarray());[0]
 n = n_elements(files)
 dd = dat_read(files)
-foreach ddd,dd do dat_set_data,ddd,0.>(dat_data(ddd)).core<0.1
+foreach ddd,dd do dat_set_data,ddd,0.>(dat_data(ddd))<0.1
 
 ;-------------------------------------------------------------------------
 ;+
