@@ -92,7 +92,7 @@ grim,dd,cd=md,order=0,overlay=['planet_grid']
 ; 
 ;     grim,dd_map,cd=mdp,overlays=['planet_grid'],order=0,/new
 ;     
-;   .. image:: graphics/geotiff_example_1.png
+;   .. image:: graphics/geotiff_example_2.png
 ;   
 ;   
 ;-
