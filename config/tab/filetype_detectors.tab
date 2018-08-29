@@ -13,7 +13,7 @@
   #detect_isis                   ISIS
   detect_pdscirstable           PDSCIRSTABLE
   detect_pds			PDS	
-  detect_pds4			PDS4	
+  detect_pds4			PDS4
+  detect_geotiff                GEOTIFF	
   detect_ext			EXT	
   detect_w10n_pds		W10N_PDS
-
