@@ -2,7 +2,7 @@
 ;=======================================================================
 ;+
 ; GEOTIFF EXAMPLE
-; -------------
+; ---------------
 ; 
 ;   This script demonstrates reading a Mars MOLA DEM geotiff and projecting it
 ;   onto an orthographical map for display. The geotiff provided in the demo
@@ -24,7 +24,7 @@ compile_opt idl2,logical_predicate
 ;-------------------------------------------------------------------------
 ;+
 ; Read geotiff file 
-; -------------
+; -----------------
 ; 
 ;     dd=dat_read(getenv('OMINAS_DEMO')+path_sep()+'data'+path_sep()+'Mars_MGS_MOLA_DEM_mosaic_global_9260m.tif')
 ;
@@ -43,7 +43,14 @@ dd=dat_read(getenv('OMINAS_DEMO')+path_sep()+'data'+path_sep()+'Mars_MGS_MOLA_DE
 ;   Get a map descriptor and use it to show the DEM on grim with a map grid::
 ;  
 ;     md=pg_get_maps(dd)
+;     ;subtract the minimum elevation, so that the data range starts at 0, for visualization
+;     da=double(dat_data(dd))
+;     damin=min(da)
+;     da-=damin
+;     dat_set_data,dd,da
 ;     grim,dd,cd=md,order=0,overlay=['planet_grid']
+;     
+;   .. image:: graphics/geotiff_example_1.png
 ;  
 ;
 ;-
@@ -51,6 +58,11 @@ dd=dat_read(getenv('OMINAS_DEMO')+path_sep()+'data'+path_sep()+'Mars_MGS_MOLA_DE
 
 ;Get a map descriptor and show DEM on grim with planet grid overlay
 md=pg_get_maps(dd)
+;subtract the minimum elevation, so that the data range starts at 0, for visualization
+da=double(dat_data(dd))
+damin=min(da)
+da-=damin
+dat_set_data,dd,da
 grim,dd,cd=md,order=0,overlay=['planet_grid']
 
 ;-------------------------------------------------------------------------
@@ -70,24 +82,17 @@ grim,dd,cd=md,order=0,overlay=['planet_grid']
 ;       projection='ORTHOGRAPHIC', $
 ;       size=[map_xsize,map_ysize], $
 ;       origin=[map_xsize,map_ysize]/2, $
-;       center=[0d0,0d0])
+;       center=[0d0,-60d0*!dpi/180d0])
 ;
 ;   Now, do the projection::
 ;   
-;     ;subtract the minimum elevation, so that the data range starts at 0, for visualization
-;     da=double(dat_data(dd))
-;     damin=min(da)
-;     da-=damin
-;     dat_set_data,dd,da
-;     dd_map=pg_map(dd,md=mdp,cd=md,pc_xsize=800,pc_ysize=800)
-;     grim,dd_map,cd=mdp,overlays=['planet_grid'],order=0,/new
-;
-; 
 ;     dd_map=pg_map(dd,md=mdp,cd=md,pc_xsize=800,pc_ysize=800)
 ;
 ;   Visualize the result, now with grim::
 ; 
 ;     grim,dd_map,cd=mdp,overlays=['planet_grid'],order=0,/new
+;     
+;   .. image:: graphics/geotiff_example_1.png
 ;   
 ;   
 ;-
@@ -100,13 +105,9 @@ mdp= pg_get_maps(/over,  $
  projection='ORTHOGRAPHIC', $
  size=[map_xsize,map_ysize], $
  origin=[map_xsize,map_ysize]/2, $
- center=[0d0,0d0])
+ center=[0d0,-60d0*!dpi/180d0])
 
-;subtract the minimum elevation, so that the data range starts at 0, for visualization 
-da=double(dat_data(dd))
-damin=min(da)
-da-=damin
-dat_set_data,dd,da
+
 dd_map=pg_map(dd,md=mdp,cd=md,pc_xsize=800,pc_ysize=800)
 grim,dd_map,cd=mdp,overlays=['planet_grid'],order=0,/new
 
