@@ -112,7 +112,37 @@ dd_map=pg_map(dd,md=mdp,cd=md,pc_xsize=800,pc_ysize=800)
 grim,dd_map,cd=mdp,overlays=['planet_grid'],order=0,/new
 
 
-;Write geotiffs from the OMINAS maps
+;-------------------------------------------------------------------------
+;+
+; Save geotiffs from OMINAS maps
+; ------------------------------
+;
+;  
+;   Put map descriptors in data descriptors::
+;
+;     cor_set_udata,dd_map,'md',mdp
+;     cor_set_udata,dd,'md',md
+;     ;scale data for geotiff
+;     ndd=nv_clone(dd)
+;     ndd_map=nv_clone(dd_map)
+;     dat_set_data,ndd,bytscl(dat_data(ndd))
+;     dat_set_data,ndd_map,bytscl(dat_data(ndd_map))
+;     dat_write,'geotiff_ex1.tif',ndd,filetype='GEOTIFF'
+;     ;dat_write,'geotiff_ex2.tif',ndd_map,filetype='GEOTIFF'
+;
+;
+;   This is how the image looks like on GoogleEarth Pro
+;        
+;   .. image:: graphics/geotiff_example_4.jpg
+;   
+;   For comparison, this is GoogleEarth Pro's base layer, with the same perspective
+;   
+;   .. image:: graphics/geotiff_example_3.jpg
+;   
+;   
+;-
+;-------------------------------------------------------------------------
+
 ;Put map descriptors in data descriptors
 cor_set_udata,dd_map,'md',mdp
 cor_set_udata,dd,'md',md
@@ -122,7 +152,7 @@ ndd_map=nv_clone(dd_map)
 dat_set_data,ndd,bytscl(dat_data(ndd))
 dat_set_data,ndd_map,bytscl(dat_data(ndd_map))
 dat_write,'geotiff_ex1.tif',ndd,filetype='GEOTIFF'
-dat_write,'geotiff_ex2.tif',ndd_map,filetype='GEOTIFF'
+;dat_write,'geotiff_ex2.tif',ndd_map,filetype='GEOTIFF'
 
 
 end
