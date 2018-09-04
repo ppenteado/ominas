@@ -585,7 +585,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;             /map_graphic,
 ;             size=[400,200])
 ;
-;          .. image:: graphics/jupiter_rectangular.jpeg
+;    .. image:: graphics/jupiter_rectangular.jpeg
 ;
 ;
 ;    Orthographic::
@@ -595,7 +595,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;             size=[400,400], $
 ;             center=[!dpi/6d,!dpi])
 ;
-;          .. image:: graphics/jupiter_orthographic.jpeg
+;    .. image:: graphics/jupiter_orthographic.jpeg
 ;
 ;
 ;    Stereographic::
@@ -605,7 +605,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;              scale=0.5, $
 ;              size=[400,400], center=[!dpi/2d,0d])
 ;
-;          .. image:: graphics/jupiter_stereographic.jpeg
+;    .. image:: graphics/jupiter_stereographic.jpeg
 ;
 ;
 ;    Mercator::
@@ -614,7 +614,7 @@ pg_draw, dgrid_ptd, color=ctpurple()
 ;             projection='MERCATOR', $	
 ;              size=[400,200])
 ;
-;          .. image:: graphics/jupiter_mercator.jpeg
+;    .. image:: graphics/jupiter_mercator.jpeg
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -648,18 +648,6 @@ md = pg_get_maps(/over, bx=pd[ii], $
 ;     dd_map = pg_map(dd, md=md, gd=gd, bx=pd[ii], map=map)
 ;     tvim, /new, map
 ;
-;    Rectangular::
-;          .. image:: graphics/jupiter_rectangular.jpeg
-;
-;    Orthographic::
-;          .. image:: graphics/jupiter_orthographic.jpeg
-;
-;    Stereographic::
-;          .. image:: graphics/jupiter_stereographic.jpeg
-;
-
-;    Mercator::
-;          .. image:: graphics/jupiter_mercator.jpeg
 ;
 ;
 ;   You could bound the map like this::

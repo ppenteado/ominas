@@ -66,7 +66,7 @@ compile_opt idl2,logical_predicate
 ;
 ;   Show it a 1/20 resolution::
 ;
-;     tvim,0d0>da<1d0,zoom=0.05,/order,/new
+;     tvim,da,zoom=0.05,/order,/new
 ;
 ;   .. image:: graphics/mis_ex1.png
 ;
@@ -92,7 +92,8 @@ dd=dat_read(img)
 
 da=dat_data(dd)
 dat_set_data,dd,0d0>da<1d0
-tvim,0d0>da<1d0,zoom=0.05,/order,/new
+da=dat_data(dd)
+tvim,da,zoom=0.05,/order,/new
 ;write_png,'graphics/mis_ex1.png',tvrd()
 
 

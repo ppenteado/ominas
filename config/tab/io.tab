@@ -15,3 +15,4 @@
   ISIS          dh_read_isis            pp_write_isis           -
   W10N_PDS      dh_read_w10n_pds        -                       dh_w10n_pds_par
   PDSCIRSTABLE	dh_read_pdscirstable	-			dh_pdspar
+  GEOTIFF	dh_read_geotiff		dh_write_geotiff			dh_structpar

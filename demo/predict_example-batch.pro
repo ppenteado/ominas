@@ -103,6 +103,16 @@ pg_repoint, cd=cd, bod_pos(pd0)-bod_pos(cd), /north
 ;                  'terminator:SATURN', $
 ;                  'planet_grid:SATURN', $
 ;                  'ring'], frame='ring'
+;                  
+;  .. image:: graphics/predict_example_01.png
+;  
+;  .. image:: graphics/predict_example_02.png
+;  
+;  .. image:: graphics/predict_example_03.png
+;  
+;  .. image:: graphics/predict_example_04.png
+;  
+;  .. image:: graphics/predict_example_05.png
 ;
 ;-
 ;-------------------------------------------------------------------------
@@ -134,6 +144,8 @@ stop, '=== Auto-example complete.  Use cut & paste to continue.'
 ;     grift, cd=cd, pd=pd, rd=rd
 ;     footprint_ptd = pg_footprint(cd=cd, bx=[pd,rd])
 ;     graft, footprint_ptd, name='FP-'+strtrim(counter(),2)
+;     
+;  .. image:: graphics/predict_example_06.png
 ;
 ;-
 ;-------------------------------------------------------------------------

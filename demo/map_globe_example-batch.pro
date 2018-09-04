@@ -163,7 +163,7 @@ _dd = pg_map(dd, md=_cd, cd=cd, gbx=pd, map=_im)
 tvim, /new, z=0.5, _im, title='CAMERA TO CAMERA PROJECTION'
 
 
-stop
+;stop
 ;--------------------------------------------------------------------
 ; Write a map and map descriptor.  Note that in the default
 ; confguration, the map will be written as a vicar file and the 
@@ -184,7 +184,7 @@ dat_write, 'globe-1.map', dd_map1		; write data file, and detached header
 
 
 
-dd_map = dat_read('globe-1.vic')
+dd_map = dat_read('globe-1.map')
 md = pg_get_maps(dd_map)
 
 grid_ptd = pg_grid(cd=md, gbx=pd)

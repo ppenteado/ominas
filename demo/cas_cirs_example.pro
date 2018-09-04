@@ -81,7 +81,7 @@ dd=dat_read(file_search(ldir+path_sep()+'126MI_FP3DAYMAP001_CI00*_601_F3_039E.LB
 ;-------------------------------------------------------------------------
 for i=0,1 do begin
   da=dat_data(dd[i])
-  dat_set_data,dd[i],reverse(total(da.core,3),2)
+  dat_set_data,dd[i],reverse(total(da,3),2)
   tvim,dat_data(dd[i]),/order,/new
 endfor
 ;-------------------------------------------------------------------------
