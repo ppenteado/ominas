@@ -72,7 +72,7 @@
 ;
 ;=============================================================================
 function pnt_read_0, filename, visible=visible, $
-         name=name, desc=desc, flags=flags, points=points, vectors=vectors, $
+         name=name, desc=desc, flags=_flags, points=points, vectors=vectors, $
          comment=comment
 
  lines = read_txt_file(filename, /raw)
@@ -214,7 +214,7 @@ end
 ;
 ;=============================================================================
 function pnt_read_1, filename, visible=visible, $
-         name=name, desc=desc, flags=flags, points=p, vectors=v, $
+         name=name, desc=desc, flags=f, points=p, vectors=v, $
          comment=comment, version=version, data=data, tags=tags
 
  
@@ -391,7 +391,7 @@ end
 ;
 ;=============================================================================
 function pnt_read_2, filename, visible=visible, $
-         name=name, desc=desc, flags=flags, points=p, vectors=v, $
+         name=name, desc=desc, flags=f, points=p, vectors=v, $
          comment=comment, version=version, data=data, tags=tags
 
  
@@ -566,7 +566,7 @@ end
 ;
 ;=============================================================================
 function pnt_read_3, filename, visible=visible, $
-         name=name, desc=desc, flags=flags, points=p, vectors=v, $
+         name=name, desc=desc, flags=f, points=p, vectors=v, $
          comment=comment, version=version, data=data, tags=tags, notes=notes
 
  
@@ -755,7 +755,7 @@ end
 ;
 ;=============================================================================
 function pnt_read_4, filename, visible=visible, $
-         name=name, desc=desc, flags=flags, points=p, vectors=v, $
+         name=name, desc=desc, flags=f, points=p, vectors=v, $
          comment=comment, version=version, data=data, tags=tags, notes=notes
 
  

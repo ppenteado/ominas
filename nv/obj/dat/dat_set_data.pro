@@ -61,8 +61,8 @@ pro dat_set_data, dd, _data, update=update, noevent=noevent, $
  if(update EQ -1) then return
 
  if((*_dd.dd0p).maintain GT 0) then $
-  nv_message, verb=0.1, $
-   'WARNING: Changes to data array may be lost due to the maintainance level.'
+  nv_message, /warning, verb=0.1, $
+   'Changes to data array may be lost due to the maintainance level.'
 
  if(keyword_set(_abscissa)) then abscissa = _abscissa
  if(keyword_set(_data)) then data = _data

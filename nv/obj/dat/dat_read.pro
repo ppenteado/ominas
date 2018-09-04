@@ -120,6 +120,8 @@
 ;
 ;
 ;  OUTPUT: 
+;	abscissa:	Data abscissa.
+;
 ;	count:		Number of descriptors returned.
 ;
 ;
@@ -254,8 +256,8 @@ function drd_read, filename, data, header, keyvals=keyvals, $
    if(defined(_data)) then _typecode = size(_data, /type) $
    else $
     begin
-     nv_message, /con, name='dat_read', $
-                       'WARNING: Type code not determined, converting to byte.'
+     nv_message, /warning, name='dat_read', $
+                       'Type code not determined, converting to byte.'
      _typecode = 1
     end
   end
@@ -265,7 +267,7 @@ function drd_read, filename, data, header, keyvals=keyvals, $
    if(defined(_data)) then _dim = size(_data, /dim) $
    else $
     begin
-     nv_message, /con, name='dat_read', 'WARNING: Dimensions not determined.'
+     nv_message, /warning, name='dat_read', 'Dimensions not determined.'
      _dim = 0
     end
   end
@@ -275,8 +277,8 @@ function drd_read, filename, data, header, keyvals=keyvals, $
    if(defined(_data)) then _min = min(_data) $
    else $
     begin
-     nv_message, name='dat_read', /con, $
-                                   'WARNING: Minimum data value not determined.'
+     nv_message, name='dat_read', /warning, $
+                                   'Minimum data value not determined.'
      _min = 0
     end
   end
@@ -286,8 +288,8 @@ function drd_read, filename, data, header, keyvals=keyvals, $
    if(defined(_data)) then _max = max(_data) $
    else $
     begin
-     nv_message, /con, name='dat_read', $
-                                   'WARNING: Maximum data value not determaxed.'
+     nv_message, /warning, name='dat_read', $
+                                   'Maximum data value not determaxed.'
      _max = 0
     end
   end
@@ -741,7 +743,7 @@ end
 ; dat__read
 ;
 ;=============================================================================
-function dat__read, filespec, data, header, keyvals=keyvals, $
+function dat__read, filespec, data, header, keyvals=keyvals, abscissa=abscissa, $
 		  filetype=filetype, $
 		  input_fn=input_fn, $
 		  output_fn=output_fn, $
@@ -829,10 +831,11 @@ function dat__read, filespec, data, header, keyvals=keyvals, $
        begin
         if(keyword_set(slice)) then $
          begin
-          if(size(slice, /dim) EQ 0) then ddi = dat_slices(ddi, data) $
-          else ddi = dat_slices(ddi, slice, data)
+          if(size(slice, /dim) EQ 0) then $
+                           ddi = dat_slices(ddi, data, abscissa=abscissa) $
+          else ddi = dat_slices(ddi, slice, data, abscissa=abscissa)
          end $
-        else if(arg_present(data)) then dat_load_data, ddi, data=data
+        else if(arg_present(data)) then dat_load_data, ddi, data=data, abscissa=abscissa
 
         dd = append_array(dd, ddi)
         found = 1
@@ -860,7 +863,7 @@ end
 ; dat_read
 ;
 ;=============================================================================
-function dat_read, filespec, arg1, arg2, arg3, $
+function dat_read, filespec, arg1, arg2, arg3, abscissa=abscissa, $
 		  filetype=filetype, $
 		  input_fn=input_fn, $
 		  output_fn=output_fn, $
@@ -880,7 +883,7 @@ function dat_read, filespec, arg1, arg2, arg3, $
 
 
  if(size(arg1, /type) EQ 7) then $
-    return, dat__read(filespec, arg2, arg3, keyvals=arg1, $
+    return, dat__read(filespec, arg2, arg3, keyvals=arg1, abscissa=abscissa, $
 		  filetype=filetype, $
 		  input_fn=input_fn, $
 		  output_fn=output_fn, $
@@ -899,7 +902,7 @@ function dat_read, filespec, arg1, arg2, arg3, $
                   count=count, slice=slice )
 
 
- return, dat__read(filespec, arg1, arg2, $
+ return, dat__read(filespec, arg1, arg2, abscissa=abscissa, $
 		  filetype=filetype, $
 		  input_fn=input_fn, $
 		  output_fn=output_fn, $

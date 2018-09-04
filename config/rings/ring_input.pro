@@ -166,8 +166,8 @@ end
 ;
 ;=============================================================================
 function ring_input, dd, keyword, prefix, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords
 
  ;--------------------------

@@ -45,7 +45,7 @@
 ;	true:     If set, the actual data array is returned, even if there is
 ;	          a sampling function.
 ;
-;	abscissa: If set to 1, the abscissa is rurned instead of the data.
+;	abscissa: If set to 1, the abscissa is returned instead of the data.
 ;
 ;  OUTPUT: 
 ;	abscissa: The abscissa is returned in this array.
@@ -234,7 +234,7 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  ;-------------------------------------------------------------------------
  _dat_compress_data, _dd
 
- if(return_abscissa) then return, abscissa
+ if(return_abscissa) then return, _abscissa
  return, data
 end
 ;===========================================================================

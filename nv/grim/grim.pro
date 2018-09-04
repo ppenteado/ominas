@@ -433,7 +433,7 @@
 ;
 ;               may result in no ring, while::
 ;
-;                        overlays='ring', trs_rd='name=fn54'
+;                        overlays='ring', rng_trs='name=fn54'
 ;
 ;               would be more likely to yield a ring.  In the former example,
 ;               the specified name is compared against whatever default ring

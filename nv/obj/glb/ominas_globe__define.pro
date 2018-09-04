@@ -58,7 +58,7 @@ end_keywords)
    nj = n_elements(self.J)
    if(_nj GT nj) then $
     begin
-     nv_message, /con, 'Warning -- J contains more terms than allowed, truncating.'
+     nv_message, /warning, 'J contains more terms than allowed, truncating.'
      J = J[0:nj-1,ii]
     end
    _nj = n_elements(J[*,ii])

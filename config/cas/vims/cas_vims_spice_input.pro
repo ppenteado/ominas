@@ -336,15 +336,15 @@ end
 ;
 ;===========================================================================
 function cas_vims_spice_input, dd, keyword, n_obj=n_obj, dim=dim, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords
 compile_opt idl2
 
 ;;;key7=cas_vims_spice_time(dat_header(dd))
  return, spice_input(dd, keyword, 'cas','vims', values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords)
 
 end

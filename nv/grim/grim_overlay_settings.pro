@@ -349,28 +349,31 @@ pro gros_apply_settings, data
     for j=0, n_utags-1 do $
      begin
       user_ptd = grim_get_user_ptd(plane=planes[i], utags[j], user_struct=user_struct)
-      thick = user_struct.thick
-      fn_shade = user_struct.fn_shade
-      fn_color = user_struct.fn_color
-      fn_graphics = user_struct.fn_graphics
-      xgraphics = user_struct.xgraphics
+      if(keyword_set(user_ptd)) then $
+       begin
+        thick = user_struct.thick
+        fn_shade = user_struct.fn_shade
+        fn_color = user_struct.fn_color
+        fn_graphics = user_struct.fn_graphics
+        xgraphics = user_struct.xgraphics
 
-      psym = ''
-      _psym = grim_parse_form_entry(data.ids, data.tags, $
+        psym = ''
+        _psym = grim_parse_form_entry(data.ids, data.tags, $
                                                gros_user_tag(j, 'psym'), /num)
-      if((_psym[0] GT -8) AND (_psym[0] LT 8)) then psym = _psym $
-      else grim_message, 'Invalid psym for user overlay ' + utags[j] + '.'
+        if((_psym[0] GT -8) AND (_psym[0] LT 8)) then psym = _psym $
+        else grim_message, 'Invalid psym for user overlay ' + utags[j] + '.'
   
-      psize = ''
-      _psize = grim_parse_form_entry(data.ids, data.tags, $
+        psize = ''
+        _psize = grim_parse_form_entry(data.ids, data.tags, $
                                                gros_user_tag(j, 'psize'), /num)
-      psize = _psize    
+        psize = _psize    
 
-      col = data.colors[grim_parse_form_entry(data.ids, data.tags, $
+        col = data.colors[grim_parse_form_entry(data.ids, data.tags, $
                                        gros_user_tag(j, 'color'), /drop)]
-      grim_add_user_points, /update, /nodraw, user_ptd, utags[j], plane=planes[i], $
-         color=col, psym=psym, thick=thick, symsize=psize, fn_shade=fn_shade, fn_color=fn_color, $
-         fn_graphics=fn_graphics, xgraphics=xgraphics
+        grim_add_user_points, /update, /nodraw, user_ptd, utags[j], plane=planes[i], $
+           color=col, psym=psym, thick=thick, symsize=psize, fn_shade=fn_shade, fn_color=fn_color, $
+           fn_graphics=fn_graphics, xgraphics=xgraphics
+       end
      end
 
 

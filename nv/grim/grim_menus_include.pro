@@ -394,6 +394,29 @@ end
 
 
 ;=============================================================================
+; grim_frame_current_overlays
+;
+;=============================================================================
+pro grim_frame_current_overlays, grim_data
+
+ plane = grim_get_plane(grim_data)
+
+ widget_control, grim_data.draw, /hourglass
+
+ active_ptd = grim_ptd(plane, /active)
+ if(NOT keyword_set(ptd)) then ptd = grim_ptd(plane)
+ if(NOT keyword_set(ptd)) then return
+
+ grim_frame_overlays, grim_data, plane, ptd
+
+ grim_refresh, grim_data
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_edit_dd_notes
 ;
 ;=============================================================================
@@ -5460,17 +5483,19 @@ end
 pro grim_menu_view_frame_event, event
 
  grim_data = grim_get_data(event.top)
- plane = grim_get_plane(grim_data)
+ grim_frame_current_overlays, grim_data
 
- widget_control, grim_data.draw, /hourglass
+; plane = grim_get_plane(grim_data)
 
- active_ptd = grim_ptd(plane, /active)
- if(NOT keyword_set(ptd)) then ptd = grim_ptd(plane)
- if(NOT keyword_set(ptd)) then return
+; widget_control, grim_data.draw, /hourglass
 
- grim_frame_overlays, grim_data, plane, ptd
+; active_ptd = grim_ptd(plane, /active)
+; if(NOT keyword_set(ptd)) then ptd = grim_ptd(plane)
+; if(NOT keyword_set(ptd)) then return
 
- grim_refresh, grim_data
+; grim_frame_overlays, grim_data, plane, ptd
+
+; grim_refresh, grim_data
 
 end
 ;=============================================================================

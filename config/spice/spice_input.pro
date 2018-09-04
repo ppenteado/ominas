@@ -822,8 +822,8 @@ end
 ;
 ;=============================================================================
 function spice_input, dd, keyword, prefix, inst, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords
 common spice_input_block, last_prefix
 

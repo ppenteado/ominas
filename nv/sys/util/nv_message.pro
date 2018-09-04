@@ -78,7 +78,8 @@
 ;				huge outputs.  Your short message will get lost
 ;				in this output, so use 0.9 instead.
 ;
-;
+;	warning:	If set, the output string is prepended with 'Warning:' .
+;			/continue is implied.
 ;
 ;	silent:		Suppressed printing of messages.
 ;
@@ -113,7 +114,7 @@
 ;=============================================================================
 pro nv_message, string, name=name, anonymous=anonymous, continue=continue, $
              clear=clear, get_message=get_message, format=format, $
-             message=_string, explanation=explanation, $
+             message=_string, explanation=explanation, warning=warning, $
              callback=callback, cb_data_p=cb_data_p, disconnect=disconnect, $
              cb_tag=cb_tag, verbose=verbose, silent=silent, stop=stop, $
              get_verbosity=get_verbosity, test_verbose=test_verbose
@@ -205,6 +206,12 @@ common nv_message_block, last_message, cb_tlp, verbosity
  ; otherwise, store last message and print to terminal
  ;---------------------------------------------------------------
  if(NOT keyword_set(string)) then return
+ if(keyword_set(warning)) then $
+  begin
+   continue = 1
+   string = '[WARNING] ' + string
+  end
+
 ; last_message = string
 
  if(NOT keyword_set(anonymous)) then $
@@ -219,6 +226,8 @@ common nv_message_block, last_message, cb_tlp, verbosity
    end
 
  if(keyword_set(name)) then string = strupcase(name)+': ' + string
+
+
 
  if((NOT silence) AND (NOT ptr_valid(cb_tlp))) then $
   begin

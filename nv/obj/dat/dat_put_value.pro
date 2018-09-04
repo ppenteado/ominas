@@ -57,8 +57,8 @@
 ;-
 ;=============================================================================
 pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
                              end_keywords
 @core.include
 
@@ -97,8 +97,8 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
 
    if(keyword_set(translators[i])) then $
      call_procedure, translators[i], dd, keyword, value, stat=stat, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
                       end_keywords
    _dd = cor_dereference(dd)
   end
