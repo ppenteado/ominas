@@ -78,7 +78,7 @@ max=0
  wt=where(strmatch(tag_names(dat),'*TABLE',/fold_case),/null)
  case 1 of
   n_elements(wi) gt 0 : image=dat.(wi[0])
-  n_elements(wq) gt 0 : image=fix(io_keyword_value(dd,'struct')) ? dat.(wq[0]) : (dat.(wq[0])).core 
+  n_elements(wq) gt 0 : image=fix(dat_keyword_value(dd,'struct')) ? dat.(wq[0]) : (dat.(wq[0])).core 
   n_elements(wt) gt 0 : begin
     image={}
     foreach name,dat.(wt[0]).names,iname do image=create_struct(image,name,(dat.(wt[0]).(iname+1))[0])

@@ -11,7 +11,8 @@
 ;   CIRS and ISS definitions, as is included in `demo/data/instrument_detectors.tab`,
 ;   `demo/data/translators.tab`, and `demo/data/transforms.tab`.
 ;
-;   This example requires SPICE/Icy to have been setup. It can be run by doing::
+;   This example requires SPICE/Icy to have been setup.  It also requires
+;   the OMINAS demo package to be configured.  It can be run by doing::
 ;
 ;     .run cas_cirs_example
 ;     
@@ -183,7 +184,7 @@ grim,dd_map,cd=replicate(mdp,3),od=gd.cd,ltd=gd.ltd,pd=gd.gbx,channel=[1b,2b,2b]
 ;
 ;   Combine the channels, as a grayscale ISS image, with a transparent color CIRS overlay::
 ;   
-;     im0=image(dat_data(dd_map[0]),dimensions=[map_xsize,map_ysize],/no_toolbar,margin=0)
+;     im0=image(dat_data(dd_map[0]),dimensions=[map_xsize,map_ysize],margin=0)
 ;     im1=image(dat_data(dd_map[1])>dat_data(dd_map[2]),/current,transparency=60,rgb_table=13)
 ;     
 ;   .. image:: graphics/cirs_ex1_4.png
@@ -195,7 +196,7 @@ grim,dd_map,cd=replicate(mdp,3),od=gd.cd,ltd=gd.ltd,pd=gd.gbx,channel=[1b,2b,2b]
 ;     l[*]=dat_data(dd_map[0])
 ;     h[*]=(dat_data(dd_map[1]))*240d0
 ;     color_convert,h,l,s,r,g,b,/hls_rgb
-;     im2=image([[[r]],[[g]],[[b]]],dimensions=[map_xsize,map_ysize],/no_toolbar,margin=0)
+;     im2=image([[[r]],[[g]],[[b]]],dimensions=[map_xsize,map_ysize],margin=0)
 ;
 ;   .. image:: graphics/cirs_ex1_5.png
 ;
@@ -203,7 +204,7 @@ grim,dd_map,cd=replicate(mdp,3),od=gd.cd,ltd=gd.ltd,pd=gd.gbx,channel=[1b,2b,2b]
 ;-------------------------------------------------------------------------
 
 
-im0=image(dat_data(dd_map[0]),dimensions=[map_xsize,map_ysize],/no_toolbar,margin=0)
+im0=image(dat_data(dd_map[0]),dimensions=[map_xsize,map_ysize],margin=0)
 im1=image(dat_data(dd_map[1])>dat_data(dd_map[2]),/current,transparency=60,rgb_table=13)
 ;im1.save,'demo/cas_cirs_iss_example_1.png'
 s=dblarr(map_xsize,map_ysize) & l=s & h=s
@@ -211,7 +212,7 @@ s[*]=(dat_data(dd_map[1])) gt 0d0
 l[*]=dat_data(dd_map[0])
 h[*]=(dat_data(dd_map[1]))*240d0
 color_convert,h,l,s,r,g,b,/hls_rgb
-im2=image([[[r]],[[g]],[[b]]],dimensions=[map_xsize,map_ysize],/no_toolbar,margin=0)
+im2=image([[[r]],[[g]],[[b]]],dimensions=[map_xsize,map_ysize],margin=0)
 ;im2.save,'demo/cas_cirs_iss_example_2.png'
 
 

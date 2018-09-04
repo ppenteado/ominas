@@ -4,11 +4,8 @@
 ; 
 ;
 ;==============================================================================
-function cas_vims_transform, ima, label, force=force
+pro cas_vims_transform, dd, force=force
   compile_opt idl2,logical_predicate
  
-  ima=ima
- 
- return, ima
 end
 ;==============================================================================

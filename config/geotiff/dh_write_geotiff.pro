@@ -2,9 +2,9 @@
 ; dh_write_geotiff.pro
 ;
 ;=============================================================================
-pro dh_write_geotiff, dd, filename, data, header, abscissa=abscissa, nodata=nodata
+function dh_write_geotiff, dd, filename, data, header, abscissa=abscissa, nodata=nodata
 
- if(keyword_set(nodata)) then return
+ if(keyword_set(nodata)) then return, -1
 
  if(NOT keyword_set(filename)) then filename = dat_filename(dd)
  if(NOT keyword_set(label)) then label = dat_header(dd)
@@ -57,5 +57,7 @@ pro dh_write_geotiff, dd, filename, data, header, abscissa=abscissa, nodata=noda
   complex=(dt eq 6),dcomplex=(dt eq 9),double=(dt eq 5),l64=((dt eq 14)||(dt eq 15)),$
   long=((dt eq 3)||(dt eq 13)),short=((dt eq 2)||(dt eq 12)),float=(dt eq 4),$
   signed=((dt eq 2)||(dt eq 3)||(dt eq 14)),orientation=1
+
+ return, 0
 end
 ;=============================================================================

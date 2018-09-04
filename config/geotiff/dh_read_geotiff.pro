@@ -13,7 +13,7 @@ function dh_read_geotiff, dd, label, dim, type, min, max, abscissa=abscissa, $
  ; read label
  ;--------------------------------------------------------
  q=query_tiff(filename,info,geotiff=geo)
- planet=strtrim(io_keyword_value(dd,'planet'),2) ? strtrim(io_keyword_value(dd,'planet'),2) : 'EARTH' 
+ planet=strtrim(dat_keyword_value(dd,'planet'),2) ? strtrim(dat_keyword_value(dd,'planet'),2) : 'EARTH' 
  
 
 

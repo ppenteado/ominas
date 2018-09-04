@@ -463,6 +463,7 @@ function grim_clone_plane, grim_data, plane=plane, spawn=spawn
 
  cor_substitute_xd, new_xd, xd, new_xd, /use_gd, /noevent
  cor_substitute_xd, new_ptd, ptd, new_ptd, /use_gd, /noevent
+stop
 
  if(keyword_set(ptd)) then $
   begin

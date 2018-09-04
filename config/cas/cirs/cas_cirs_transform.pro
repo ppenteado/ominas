@@ -4,11 +4,8 @@
 ; 
 ;
 ;==============================================================================
-function cas_cirs_transform, ima, label, force=force
+function cas_cirs_transform, dd, force=force
   compile_opt idl2,logical_predicate
  
-  ima=ima
- 
- return, ima
 end
 ;==============================================================================

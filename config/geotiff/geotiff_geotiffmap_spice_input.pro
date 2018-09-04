@@ -60,15 +60,15 @@ end
 ;
 ;===========================================================================
 function geotiff_geotiffmap_spice_input, dd, keyword, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords
 
  if(keyword EQ 'MAP_DESCRIPTORS') then return, geotiffmap_spice_maps(dd, status=status)
 
  return, spice_input(dd, keyword, 'geotiff', 'geotiffmap', values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords)
 
 end

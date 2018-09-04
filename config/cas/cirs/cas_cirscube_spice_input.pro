@@ -162,16 +162,16 @@ end
 ;
 ;===========================================================================
 function cas_cirscube_spice_input, dd, keyword, values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords
 
  if(keyword EQ 'MAP_DESCRIPTORS') then return, cas_cirscube_spice_maps(dd, status=status)
 
  return, spice_input(dd, keyword, 'cas', 'cirscube', values=values, status=status, $
 ; return, spice_input(dd, keyword, 'cas', values=values, status=status, $
-@nv_trs_keywords_include.pro
-@nv_trs_keywords1_include.pro
+@dat_trs_keywords_include.pro
+@dat_trs_keywords1_include.pro
 	end_keywords)
 
 end
