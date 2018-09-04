@@ -326,7 +326,7 @@ pro grim_draw_user_points, grim_data, plane, tags, inactive_color, xmap=xmap, $
        shade = 1d
 
        if(keyword_set(user_fn_shade[j])) then $
-                shade = call_function(user_fn_shade[j], user_ptd[j], grim_data, plane)
+          shade = call_function(user_fn_shade[j], user_ptd[j], grim_data, plane)
 
 
        ;- - - - - - - - - - - - - - - - - - - -

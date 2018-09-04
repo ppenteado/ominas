@@ -46,7 +46,7 @@
 ;
 ;
 ; RESTRICTIONS:
-;	Unless /tr, /tf or /io are specified, this routine only works from 
+;	Unless /tr, /tf, or /io are specified, this routine only works from 
 ;	within a translator, I/O method, or transform method because it uses 
 ; 	the call stack to determine which keyword list to search.
 ;

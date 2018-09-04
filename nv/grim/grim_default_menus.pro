@@ -30,50 +30,69 @@ pro grim_menu_core_event, event
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
  planes = grim_get_plane(grim_data, /all)
+ nplanes = n_elements(planes)
+
+ if(nplanes EQ 1) then $
+  begin
+   grim_message, 'Multiple image planes required.'
+   return
+  end
 
  ;------------------------------------------------
  ; make sure relevant descriptors are loaded
  ;------------------------------------------------
+; widget_control, /hourglass
  cd = grim_get_cameras(grim_data)
 
  ;------------------------------------------------
  ; select region
  ;------------------------------------------------
+ device, cursor_standard=30
+
  cursor, px, py, /down
  button = !err
- p0 = (convert_coord(/data, /to_device, [px,py]))[0:1]
+ p0 = [px,py]
 
  color = ctyellow()
 
- if(button EQ 1) then box = 1 $
- else if(button EQ 4) then box = 0 $
+ if(button EQ 1) then $
+  begin
+   outline_ptd = pnt_create_descriptors(points=p0)
+   grim_add_user_points, outline_ptd, color=color, psym=1, plane=plane
+  end $
+ else if(button EQ 4) then $
+  begin
+;stop
+;help, event.modifier
+;   box = event.modifier EQ 1 ? 0 : 1
+box = 1
+
+   _p0 = (convert_coord(/data, /to_device, p0))[0:1]
+   grim_logging, grim_data, /start
+   region = pg_select_region(box=box, 0, p0=_p0, /autoclose, $
+                       cancel_button=2, end_button=-1, select_button=4, $
+                                                    color=color, image_pts=_p)
+   grim_logging, grim_data, /stop
+
+   pp = (convert_coord(/device, /to_data, double(_p[0,*]), double(_p[1,*])))[0:1,*]
+   outline_ptd = pnt_create_descriptors(points=pp)
+
+;   dim = dat_dim(dd)
+;   sub = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
+
+   grim_add_user_points, outline_ptd, color=color, psym=-3, plane=plane
+  end $
  else return
 
- grim_logging, grim_data, /start
- region = pg_select_region(box=box, 0, p0=p0, /autoclose, $
-                       cancel_button=2, end_button=-1, select_button=4, $
-                                                    color=color, image_pts=p)
- grim_logging, grim_data, /stop
 
- pp = (convert_coord(/device, /to_data, double(p[0,*]), double(p[1,*])))[0:1,*]
- outline_ptd = pnt_create_descriptors(points=pp)
-
-; dim = dat_dim(dd)
-; sub = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
-
-
- ;------------------------------------------------
- ; save the outline
- ;------------------------------------------------
- grim_add_user_points, outline_ptd, color='red', psym=3, plane=plane
 
 
  ;------------------------------------------------
  ; open a new grim window with the core
  ;------------------------------------------------
-return
+;return
  grim_message, /clear
-; dd = pg_core(planes.dd, sigma=sigma, cd=grim_xd(plane, /cd), outline_ptd, distance=distance)
+ dd = pg_core(planes.dd, sigma=sigma, cd=cd, outline_ptd, distance=distance)
  grim_message
  if(NOT keyword_set(dd)) then return
 
