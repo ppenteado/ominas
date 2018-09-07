@@ -48,6 +48,7 @@ grim https://pds-imaging.jpl.nasa.gov/w10n/cassini/cassini_orbiter/coiss_1001/da
 grim data/CM_1559100372_1_ir_eg.cub
 
 grim 'data/n*' +NV_VERBOSITY=0.9
+grim 'data/*'
 
 grim non_existent_file
 grim data/c1138223.gem data/n1351469359.2 data/fake1 data/n1354897340.1 data/fake2

@@ -20,11 +20,11 @@
 ;  This example file can be executed from the shell prompt in the ominas/demo
 ;  directory using::
 ;
-;  	ominas grim_examples-batch
+;  	ominas grim_example-batch
 ;
 ;  or from within IDL using::
 ;
-;  	@grim_examples-batch
+;  	@grim_example-batch
 ;-
 ;==============================================================================
 !quiet = 1
@@ -203,7 +203,7 @@ grim, /new, './data/GamAra037_2_bin50_031108.vic', xsize=1200, ysize=300
 ;                'limb:SATURN', $
 ;                'terminator:SATURN', $
 ;                'planet_grid:SATURN', $
-;                'ring']
+;                'ring'], /global_scaling
 ;                
 ;  .. image:: graphics/grim_example_12.png
 ;-
@@ -216,7 +216,7 @@ grim, /new, './data/' + ['N1460072434_1.IMG', $
            'limb:SATURN', $
            'terminator:SATURN', $
            'planet_grid:SATURN', $
-           'ring']
+           'ring'], /global_scaling
 
 
 ;------------------------------------------------------------------------------

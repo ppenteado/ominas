@@ -437,11 +437,11 @@ end
 ;=============================================================================
 function grim_clone_plane, grim_data, plane=plane, spawn=spawn
 
+ ;---------------------------------------------
+ ; add a new plane
+ ;---------------------------------------------
 ; if(keyword_set(spawn)) then 
  grim_add_planes, grim_data, plane.dd, pn=pn
-
- xd = grim_xd(plane)
- ptd = grim_ptd(plane)
 
  new_plane = nv_clone(plane)
 
@@ -451,19 +451,26 @@ function grim_clone_plane, grim_data, plane=plane, spawn=spawn
  new_plane.cmd = colormap_descriptor(data=new_plane.pn, $
                                 n_colors=grim_n_colors(dat_typecode(new_plane.dd)))
 
+ ;---------------------------------------------
+ ; clone descriptors
+ ;---------------------------------------------
+ xd = grim_xd(plane)
+ ptd = grim_ptd(plane)				;;;returns 0
+
  new_xd = grim_xd(new_plane)
  new_ptd = grim_ptd(new_plane)
-
 
  nv_notify_register, new_plane.dd, 'grim_descriptor_notify', scalar_data=grim_data.base
  nv_notify_register, new_xd, 'grim_descriptor_notify', scalar_data=grim_data.base
 
-
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; replace dependencies of original plane with those of new plane
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  cor_substitute_xd, new_xd, plane.dd, new_plane.dd, /use_gd, /noevent
 
  cor_substitute_xd, new_xd, xd, new_xd, /use_gd, /noevent
  cor_substitute_xd, new_ptd, ptd, new_ptd, /use_gd, /noevent
-stop
+ cor_substitute_xd, new_ptd, xd, new_xd, /use_gd, /noevent
 
  if(keyword_set(ptd)) then $
   begin
@@ -471,6 +478,8 @@ stop
    cor_substitute_xd, assoc_xds, xd, new_xd, /noevent
    pnt_set_assoc_xd, new_ptd, assoc_xds
   end
+
+
 
  grim_set_plane, grim_data, new_plane
  grim_set_data, grim_data

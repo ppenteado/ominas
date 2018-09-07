@@ -15,6 +15,7 @@ function detect_png, filename=filename, header=header
  ;=================================
  ; read the first 8 bytes
  ;=================================
+ if((fstat(unit)).size LT 8) then return, 0
  b=bytarr(8)
  readu,unit,b
  ;==============================

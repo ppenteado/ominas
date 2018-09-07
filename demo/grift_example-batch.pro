@@ -12,11 +12,11 @@
 ;  This example file can be executed from the shell prompt in the ominas/demo
 ;  directory using::
 ;
-;  	ominas grim_example-batch
+;  	ominas grift_example-batch
 ;
 ;  or from within IDL using::
 ;
-;  	@grim_example-batch
+;  	@grift_example-batch
 ;-
 ;==============================================================================
 !quiet = 1

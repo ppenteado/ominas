@@ -14,6 +14,7 @@ function detect_vicar, filename=filename, header=header
   begin
    openr, unit, filename, /get_lun, error=error
    if(error NE 0) then return, 0
+   if((fstat(unit)).size LT 20) then return, 0
    record = assoc(unit, bytarr(20,/nozero))
    s = string(record[0])
    close, unit

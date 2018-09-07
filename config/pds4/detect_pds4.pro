@@ -16,6 +16,7 @@ function detect_pds4, filename=filename, header=header
  openr, unit, filename, /get_lun, error=error
  if(error NE 0) then return, 0
 
+ if((fstat(unit)).size LT 13) then return, 0
  record = assoc(unit, bytarr(13,/nozero))
  s = string(record[0])
  close, unit

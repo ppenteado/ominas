@@ -9,14 +9,15 @@ function detect_geotiff, filename=filename, header=header
  ;===============================================
  ; if no header, read the beginning of the file
  ;===============================================
- if(keyword_set(header)) then b=header else begin
+ if(keyword_set(header)) then b=byte(header) else begin
    openr, unit, filename, /get_lun, error=error
    if(error NE 0) then return, 0
+   if((fstat(unit)).size LT 16) then return, 0
    b=bytarr(16)
    readu,unit,b
    free_lun, unit
   endelse
-
+ if(n_elements(b) LE 1) then return, 0
 
  ;===================================
  ; check for tiff header 

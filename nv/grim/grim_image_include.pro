@@ -190,8 +190,12 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
  planes = grim_visible_planes(grim_data, current=current, plane=plane)
  rgb = planes.rgb
 
+ ;------------------------------------------------------
+ ; determine whether scaling is global or local
+ ;------------------------------------------------------
  max = plane.max[0]
- if(NOT keyword_set(max)) then max = max(dat_max(planes.dd))
+ if(NOT keyword_set(max)) then $
+              if(grim_data.global_scaling) then max = max(dat_max(planes.dd))
 
  ;---------------------------------------
  ; get appropriate channel if specified
@@ -224,7 +228,6 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
    ; - - - - - - - - - - - - - - -
    ; get sub image
    ; - - - - - - - - - - - - - - -
-;help, data_xy
    _im = grim_get_image(grim_data, plane=planes[i], $
                           channel=channel, sample=data_xy, abscissa=grid)
 

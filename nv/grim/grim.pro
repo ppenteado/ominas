@@ -277,6 +277,12 @@
 ;               and more data values are sampled.  That problem may be
 ;               eliminated via this keyword.
 ;
+;      `*global_scaling`:
+;               If set, image planes are scaled against the maximum data
+;               value across all planes instead of just the current plane.
+;               This allows, for example, the display of RGB cubes, assuming
+;               the bands are correctly calibrated relative to one another.
+;
 ;      `exit`:  If set, GRIM immediately exits.  This can be used to kill an
 ;               existing GRIM window.
 ;
@@ -4123,7 +4129,7 @@ pro grim, arg1, arg2, _extra=keyvals, $
 	mode_init=mode_init, modal=modal, xzero=xzero, frame=frame, $
 	refresh_callbacks=refresh_callbacks, refresh_callback_data_ps=refresh_callback_data_ps, $
 	plane_callbacks=plane_callbacks, plane_callback_data_ps=plane_callback_data_ps, $
-	max=max, path=path, symsize=symsize, lights=lights, $
+	max=max, path=path, symsize=symsize, lights=lights, global_scaling=global_scaling, $
 	user_psym=user_psym, workdir=workdir, mode_args=mode_args, $
         save_path=save_path, load_path=load_path, overlays=overlays, exclude_overlays=exclude_overlays, pn=pn, $
 	menu_fname=menu_fname, cursor_swap=cursor_swap, fov=fov, clip=clip, hide=hide, $
@@ -4177,7 +4183,7 @@ common colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
 	render_minimum=render_minimum, slave_overlays=slave_overlays, rgb=rgb, $
 	delay_overlays=delay_overlays, auto_stretch=auto_stretch, guideline=guideline, $
 	render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, render_sky=render_sky, $
-        integer_zoom=integer_zoom
+        integer_zoom=integer_zoom, global_scaling=global_scaling
 
  if(keyword_set(ndd)) then dat_set_ndd, ndd
 
@@ -4334,7 +4340,7 @@ if(NOT defined(render_auto)) then render_auto = 0
        title=title, slave_overlays=slave_overlays, guideline=guideline, $
        render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_minimum=render_minimum, $
        render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
-       overlays=overlays, activate=activate)
+       overlays=overlays, activate=activate, global_scaling=global_scaling)
 
 
    ;----------------------------------------------

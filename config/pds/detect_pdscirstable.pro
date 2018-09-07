@@ -14,6 +14,7 @@ function detect_pdscirstable, filename=filename, header=header
   begin
    openr, unit, filename, /get_lun, error=error
    if(error NE 0) then return, 0
+   if((fstat(unit)).size LT 160) then return, 0
    record = assoc(unit, bytarr(160,/nozero))
    s = string(record[0])
    close, unit
@@ -30,7 +31,12 @@ function detect_pdscirstable, filename=filename, header=header
  if(strpos(s[0], 'XV_COMPATIBILITY') NE -1) then status = 1
  if keyword_set(status) then begin
   ;if got here, it is a PDS3 file, now must check for a table and variable length records
+
+  catch, errno
+  if(errno NE 0) then return, 0
   label=headpds(filename,/silent)
+  catch, /cancel
+
   status=0
   if total(stregex(label,'^[[:space:]]*OBJECT[[:space:]]*=[[:space:]]*TABLE[[:space:]]*$',/boolean)) then begin
     wi=where(stregex(label,'^[[:space:]]*OBJECT[[:space:]]*=[[:space:]]*FILE[[:space:]]*$',/boolean))
