@@ -6,7 +6,9 @@
 ;
 ; PURPOSE:
 ;	Calls input translators, supplying the given keyword, and builds 
-;	a list of returned descriptors.
+;	a list of returned descriptors.  Translators that crash are ignored 
+;	and a warning is issued.  This behavior is disabled if $NV_DEBUG is 
+;	set.
 ;
 ;
 ; CATEGORY:
@@ -60,7 +62,7 @@
 ;	Array of descriptors returned from all successful translator calls.
 ;	Descriptors are returned in the same order that the corresponding 
 ;	translators were called.  Each translator may produce multiple 
-;	descriptors.
+;	descriptors.  0 if no result.
 ;
 ;
 ; STATUS:
@@ -116,6 +118,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ;----------------------------------------------------------------
  ; call all translators, building a list of returned values
  ;----------------------------------------------------------------
+ catch_errors = NOT keyword_set(getenv('NV_DEBUG'))
  nv_suspend_events
  nv_message, verb=0.9, 'Data descriptors ' + str_comma_list(cor_name(dd))
  nv_message, verb=0.9, 'Keyword ' + keyword
@@ -126,10 +129,21 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
 
    stat = -1
    if(keyword_set(translators[i])) then $
-     xd = call_function(translators[i], dd, keyword, values=xds, stat=stat, $
+    begin
+     if(NOT catch_errors) then err = 0 $
+     else catch, err
+
+     if(err NE 0) then $
+          nv_message, /warning, $
+            'Translator ' + strupcase(translators[i]) + ' crashed; ignoring.' $
+     else $
+       xd = call_function(translators[i], dd, keyword, values=xds, stat=stat, $
 @dat_trs_keywords_include.pro
 @dat_trs_keywords1_include.pro
 		    end_keywords)
+
+     catch, /cancel
+    end
 
    ;--------------------------------------
    ; add values to list

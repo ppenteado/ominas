@@ -6,6 +6,8 @@
 ;
 ; PURPOSE:
 ;	Reads a data file of arbitrary format and produces a data descriptor.
+;	Input methods that crash are ignored and a warning is issued.  This 
+; 	behavior is disabled if $NV_DEBUG is set.
 ;
 ;
 ; CATEGORY:
@@ -245,11 +247,27 @@ function drd_read, filename, data, header, keyvals=keyvals, $
  ;-----------------------------------------
  ; read data parameters and header
  ;-----------------------------------------
+ catch_errors = NOT keyword_set(getenv('NV_DEBUG'))
  if(NOT keyword_set(nodata)) then $
 		 nv_message, verb=0.1, 'Reading ' + filename
- _data = call_function(input_fn, dd, $
-        	  _header, _dim, _typecode, _min, _max, $
-        			   /nodata, sample=sample, gff=gff)
+
+ if(NOT catch_errors) then err = 0 $
+ else catch, err
+
+ if(err EQ 0) then $
+     _data = call_function(input_fn, dd, $
+        	          _header, _dim, _typecode, _min, _max, $
+        	                            /nodata, sample=sample, gff=gff) $
+ else $
+  begin
+   nv_message, /warning, $
+              'Input method ' + strupcase(input_fn) + ' crashed; ignoring.'
+   return, 0
+  end
+
+ catch, /cancel
+
+
 
  if(NOT defined(_typecode)) then $
   begin

@@ -79,7 +79,8 @@
 ;				in this output, so use 0.9 instead.
 ;
 ;	warning:	If set, the output string is prepended with 'Warning:' .
-;			/continue is implied.
+;			/continue is implied.  Output is suppressed if the
+;			NV_NO_WARNINGS environent variable is set.
 ;
 ;	silent:		Suppressed printing of messages.
 ;
@@ -208,6 +209,7 @@ common nv_message_block, last_message, cb_tlp, verbosity
  if(NOT keyword_set(string)) then return
  if(keyword_set(warning)) then $
   begin
+   if(keyword_set(getenv('NV_NO_WARNINGS'))) then silence = 1
    continue = 1
    string = '[WARNING] ' + string
   end
@@ -231,8 +233,9 @@ common nv_message_block, last_message, cb_tlp, verbosity
 
  if((NOT silence) AND (NOT ptr_valid(cb_tlp))) then $
   begin
-;   message, string, /continue, /noname
-   print, string, format=format
+   message, string, /continue, /noname
+;   print, string, format=format
+
    if(keyword_set(explanation)) then print, '	' + explanation
    last_message = string
   end

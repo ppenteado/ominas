@@ -6,6 +6,8 @@
 ;
 ; PURPOSE:
 ;	Calls output translators, supplying the given keyword and value.
+;	Translators that crash are ignored and a warning is issued.  This 
+;	behavior is disabled if $NV_DEBUG is set.
 ;
 ;
 ; CATEGORY:
@@ -91,15 +93,28 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
  else translators = str_nsplit(tr_override, ',')
  n=n_elements(translators)
 
+ catch_errors = NOT keyword_set(getenv('NV_DEBUG'))
  for i=0, n-1 do $
   begin
    nv_message, verb=0.9, 'Calling translator ' + translators[i]
 
    if(keyword_set(translators[i])) then $
-     call_procedure, translators[i], dd, keyword, value, stat=stat, $
+    begin
+     if(NOT catch_errors) then err = 0 $
+     else catch, err
+
+     if(err NE 0) then $
+          nv_message, /warning, $
+              'Translator ' + strupcase(translators[i]) + ' crashed; ignoring.' $
+     else $
+       call_procedure, translators[i], dd, keyword, value, stat=stat, $
 @dat_trs_keywords_include.pro
 @dat_trs_keywords1_include.pro
                       end_keywords
+
+     catch, /cancel
+    end
+
    _dd = cor_dereference(dd)
   end
 

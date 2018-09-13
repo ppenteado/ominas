@@ -194,8 +194,12 @@ function grim_image, grim_data, plane=plane, pn=pn, colormap=colormap, $
  ; determine whether scaling is global or local
  ;------------------------------------------------------
  max = plane.max[0]
- if(NOT keyword_set(max)) then $
-              if(grim_data.global_scaling) then max = max(dat_max(planes.dd))
+;stop
+;help, planes
+; if(NOT keyword_set(max)) then $
+;              if(grim_data.global_scaling) then max = max(dat_max(planes.dd))
+ if(NOT keyword_set(max)) then max = max(dat_max(planes.dd))
+;max = 0.0361491
 
  ;---------------------------------------
  ; get appropriate channel if specified

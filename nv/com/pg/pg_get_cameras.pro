@@ -166,20 +166,18 @@ function pg_get_cameras, arg1, arg2, cd=_cd, od=od, pd=pd, _extra=keyvals, $
                               @dat_trs_keywords_include.pro
                               end_keywords)
 
-
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   ; Select relevant cds if this is a slice
-   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   cd = dat_slice_select(dd, cd)
-
    ;------------------------------------------------------------------------
    ; Free dd if pg_sort_args determined that it will not be used outside 
    ; this function.  Note that the object ID is not lost will still appear
    ; in the gd.
    ;------------------------------------------------------------------------
    if(keyword_set(free)) then nv_free, dd
-
    if(NOT keyword_set(cd)) then return, obj_new()
+
+   ;-----------------------------------------------
+   ; Select relevant cds if this is a slice
+   ;-----------------------------------------------
+   cd = dat_slice_select(dd, cd)
    n = n_elements(cd)
 
    ;---------------------------------------------------

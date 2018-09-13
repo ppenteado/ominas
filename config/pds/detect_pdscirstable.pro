@@ -31,12 +31,7 @@ function detect_pdscirstable, filename=filename, header=header
  if(strpos(s[0], 'XV_COMPATIBILITY') NE -1) then status = 1
  if keyword_set(status) then begin
   ;if got here, it is a PDS3 file, now must check for a table and variable length records
-
-  catch, errno
-  if(errno NE 0) then return, 0
   label=headpds(filename,/silent)
-  catch, /cancel
-
   status=0
   if total(stregex(label,'^[[:space:]]*OBJECT[[:space:]]*=[[:space:]]*TABLE[[:space:]]*$',/boolean)) then begin
     wi=where(stregex(label,'^[[:space:]]*OBJECT[[:space:]]*=[[:space:]]*FILE[[:space:]]*$',/boolean))

@@ -197,24 +197,47 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
 
 
  ;-------------------------------------------------------------------------
- ; compute data ranges -- not reliable if data array is being subsampled
+ ; Compute data and abscissa ranges for numeric data types
+ ;  These track the maximum and minimum values that have ever been loaded,
+ ;  so if the data array is being subsampled, these values are not 
+ ;  necessarily the true maxes and mins.  
  ;-------------------------------------------------------------------------
- if size(data,/type) ne 8 then begin
+
+ ;- - - - - - - - - - - - - - - - - -
+ ; data
+ ;- - - - - - - - - - - - - - - - - -
+ if(NOT isnum(data)) then $
+  begin
+   max = !values.d_nan
+   min = !values.d_nan
+  end $
+ else $
+  begin
    max = max(data)
    min = min(data)
- endif else begin
-  max=!values.d_nan
-  min=!values.d_nan
- endelse
- abmax = max(abscissa)
- abmin = min(abscissa)
+   if(max GT _dd.max) then _dd.max = max
+   if(min LT _dd.min) then _dd.min = min
+  end
 
- if(max GT _dd.max) then _dd.max = max
- if(min LT _dd.min) then _dd.min = min
+ ;- - - - - - - - - - - - - - - - - -
+ ; abscissa
+ ;- - - - - - - - - - - - - - - - - -
+ if(NOT isnum(abscissa)) then $
+  begin
+   abmax = !values.d_nan
+   abmin = !values.d_nan
+  end $
+ else $
+  begin
+   abmax = max(abscissa)
+   abmin = min(abscissa)
+   if(abmax GT _dd.abmax) then _dd.abmax = abmax
+   if(abmin LT _dd.abmin) then _dd.abmin = abmin
+  end
 
 
  ;-------------------------------------------------------------------------
- ; get abscissa
+ ; get abscissa for output
  ;-------------------------------------------------------------------------
  if(keyword_set(abscissa)) then _abscissa = abscissa $
  else $
@@ -223,8 +246,6 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
    else _abscissa = lindgen(dim)
   end
 
- if(abmax GT _dd.abmax) then _dd.abmax = abmax
- if(abmin LT _dd.abmin) then _dd.abmin = abmin
 
  cor_rereference, dd, _dd
 

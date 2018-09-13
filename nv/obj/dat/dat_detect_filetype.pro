@@ -7,7 +7,8 @@
 ; PURPOSE:
 ;	Attempts to detect the type of the file (or header) associated with the
 ;	given data descriptor by calling the detectors in the filetype detectors 
-;	table.
+;	table.  Detectors that crash are ignored and a warning is issued.  This
+;	behavior is disabled if $NV_DEBUG is set.
 ;
 ;
 ; CATEGORY:
@@ -92,20 +93,37 @@ function dat_detect_filetype, dd, filename=filename, header=header, $
  ;=====================================================
  if(keyword_set(all)) then return, table[*,1] 
 
- ;=====================================================
- ; call filetype detectors until true is returned
- ;=====================================================
+
+ ;======================================================================
+ ; Call filetype detectors until true is returned
+ ; 
+ ; Crashes in the detects are handled by issuing a warning and 
+ ; contnuing to the next detector.
+ ;======================================================================
  if(keyword_set(dd)) then $
   begin
    if(NOT keyword_set(filename)) then filename = dat_filename(dd)
    if(NOT keyword_set(header)) then header = dat_header(dd)
   end
 
+ catch_errors = NOT keyword_set(getenv('NV_DEBUG'))
  s = size(table)
  n_ftp = s[1]
  for i=0, n_ftp-1 do $
-   if(call_function(table[i,0], $
-             filename=filename, header=header)) then return, table[i,1]
+  begin
+   fn = table[i,0]
+   filetype = table[i,1]
+
+   if(NOT catch_errors) then err = 0 $
+   else catch, err
+   if(err EQ 0) then $
+           status = call_function(fn, filename=filename, header=header) $
+   else nv_message, /warning, $
+                'File type detector ' + strupcase(fn) + ' crashed; ignoring.'
+   catch, /cancel
+
+   if(status) then return, filetype
+  end
 
  return, ''
 end
