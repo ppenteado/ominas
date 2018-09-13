@@ -83,7 +83,7 @@ function dat_detect_instrument, dd
    else catch, err
    if(err EQ 0) then string = call_function(detect_fn, dd) $
    else nv_message, /warning, $
-              'Instrument detector ' + strupcase(fn) + ' crashed; ignoring.'
+           'Instrument detector ' + strupcase(detect_fn) + ' crashed; ignoring.'
    catch, /cancel
 
    if(keyword_set(string)) then return, string

@@ -233,8 +233,8 @@ common nv_message_block, last_message, cb_tlp, verbosity
 
  if((NOT silence) AND (NOT ptr_valid(cb_tlp))) then $
   begin
-   message, string, /continue, /noname
-;   print, string, format=format
+;   message, string, /continue, /noname
+   print, string, format=format
 
    if(keyword_set(explanation)) then print, '	' + explanation
    last_message = string

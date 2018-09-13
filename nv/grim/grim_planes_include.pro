@@ -649,7 +649,7 @@ pro grim_add_planes, grim_data, dd, pns=pns, filter=filter, fov=fov, clip=clip, 
 		load_path	:	load_path, $
 		save_path	:	save_path, $
 		rendering	:	0, $
-		prescaled	:	0, $			; overlays always visible?
+		prescaled	:	0, $	
 		visible		:	0, $			; overlays always visible?
 		image_visible	:	0, $
 		tvd_save_p	:	ptr_new(0), $

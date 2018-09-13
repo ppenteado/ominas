@@ -242,9 +242,20 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; First, attempt to read using input function (usually the fastest)
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- data = call_function(_dd.input_fn, _dd, $
-                       header, abscissa=abscissa, $
-                       sample=samples_to_load, returned_samples=returned_samples)
+ catch_errors = NOT keyword_set(getenv('NV_DEBUG'))
+
+ if(NOT catch_errors) then err = 0 $
+ else catch, err
+
+ if(err EQ 0) then $
+    data = call_function(_dd.input_fn, _dd, $
+                  header, abscissa=abscissa, $
+                   sample=samples_to_load, returned_samples=returned_samples) $
+ else nv_message, /warning, $
+              'Input method ' + strupcase(_dd.input_fn) + ' crashed; ignoring.'
+
+ catch, /cancel
+
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  ; If the input function fails (probably because it cannot subsample),
@@ -252,9 +263,13 @@ pro dat_load_data, dd, sample=sample, data=data, abscissa=abscissa
  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  if(NOT keyword_set(data)) then $
   begin
-   if(ptr_valid((*_dd.dd0p).gffp)) then $
+   if(keyword_set(*(*_dd.dd0p).gffp)) then $
         data = gff_read(*(*_dd.dd0p).gffp, subscripts=samples_to_load) $
-   else nv_message, 'Cannot load data array.'
+   else $
+    begin
+     nv_message, /warning, 'Cannot load data array.'
+     return
+    end
   end
 
 
