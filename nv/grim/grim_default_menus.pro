@@ -90,16 +90,16 @@ box = 1
  ;------------------------------------------------
  ; open a new grim window with the core
  ;------------------------------------------------
-;return
  grim_message, /clear
  dd = pg_core(planes.dd, sigma=sigma, cd=cd, outline_ptd, distance=distance)
  grim_message
  if(NOT keyword_set(dd)) then return
 
  widget_control, /hourglass
- grim, dd, xtitle='Plane', ytitle=['<DN>', 'Sigma'], $
+ grim, dd, xtitle=dat_label_abscissa(plane.dd), $
+           ytitle=dat_label_data(plane.dd) + ['', ' Sigma'], $
                                     title=['Core', 'Core sigma'], /new
- 
+
 end
 ;=============================================================================
 
@@ -170,7 +170,8 @@ pro grim_menu_image_profile_event, event
 
  widget_control, /hourglass
  grim, dd, tag='Image Profile', $
-             xtitle='Distance (pixels)', ytitle=['<DN>', 'Sigma'], $
+             xtitle='Distance (pixels)', $
+             ytitle=dat_label_data(plane.dd) + ['', ' Sigma'], $
                    title=['Image profile', 'Image profile sigma'], /new
  
 end
@@ -258,7 +259,7 @@ pro grim_menu_ring_box_profile_radial_event, event
 
  widget_control, /hourglass
  grim, tag='Ring Box Profile Radial', $
-      dd, xtitle='Radius', ytitle=['<DN>', 'Sigma'], $
+      dd, xtitle='Radius', ytitle=dat_label_data(plane.dd) + ['', ' Sigma'], $
           title=['Radial ring profile', 'Radial ring profile sigmas'], /new
  
 
@@ -347,7 +348,7 @@ pro grim_menu_ring_box_profile_longitudinal_event, event
 
  widget_control, /hourglass
  grim, tag='Ring Box Profile Azimuthal', dd, /new, $
-     xtitle='Longitude (deg)', ytitle=['<DN>', 'Sigma'], $
+     xtitle='Longitude (deg)', ytitle=dat_label_data(plane.dd) + ['', ' Sigma'], $
          title=['Longitudinal ring profile', 'Longitudinal ring profile sigmas']
  
 
@@ -450,7 +451,7 @@ pro grim_menu_ring_profile_radial_event, event
 
  widget_control, /hourglass
  grim, tag='Ring Profile Radial', $
-      dd, xtitle='Radius', ytitle=['<DN>', 'Sigma'], $
+      dd, xtitle='Radius', ytitle=dat_label_data(plane.dd) + ['', ' Sigma'], $
        title=['Radial ring profile', 'Radial ring profile sigmas'], /new
  
 
@@ -546,7 +547,7 @@ pro grim_menu_ring_profile_longitudinal_event, event
 
  widget_control, /hourglass
  grim, tag='Ring Profile Azimuthal', dd, /new, $
-     xtitle='Longitude (deg)', ytitle=['<DN>', 'Sigma'], $
+     xtitle='Longitude (deg)', ytitle=dat_label_data(plane.dd) + ['', ' Sigma'], $
          title=['Longitudinal ring profile', 'Longitudinal ring profile sigmas']
  
 
@@ -636,7 +637,7 @@ pro grim_menu_limb_profile_azimuthal_event, event
 
  widget_control, /hourglass
  grim, tag='Limb Profile Azimuthual', dd, /new, $
-     xtitle='Azimuth (deg)', ytitle=['<DN>', 'Sigma'], $
+     xtitle='Azimuth (deg)',ytitle=dat_label_data(plane.dd) + ['', ' Sigma'], $
          title=['Azimuthal limb profile', 'Azimuthal limb profile sigmas']
  
 
@@ -725,7 +726,7 @@ pro grim_menu_limb_profile_radial_event, event
 
  widget_control, /hourglass
  grim, tag='Limb Profile Radial', dd, /new, $
-     xtitle='Radius (m)', ytitle=['<DN>', 'Sigma'], $
+     xtitle='Radius (m)', ytitle=dat_label_data(plane.dd) + ['', ' Sigma'], $
          title=['Radial limb profile', 'Radial limb profile sigmas']
  
 

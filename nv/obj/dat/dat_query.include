@@ -31,6 +31,8 @@
  if(arg_present(input_translators)) then input_translators = dat_input_translators(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(output_translators)) then output_translators = dat_output_translators(_xd, cat=cat, condition=condition, /noevent)
  if(arg_present(tr_keyvals)) then tr_keyvals = dat_tr_keyvals(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(label_data)) then label_data = dat_label_data(_xd, cat=cat, condition=condition, /noevent)
+ if(arg_present(label_abscissa)) then label_abscissa = dat_label_abscissa(_xd, cat=cat, condition=condition, /noevent)
 
 @cor_query.include
 

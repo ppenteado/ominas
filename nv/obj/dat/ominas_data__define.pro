@@ -89,6 +89,16 @@ end_keywords)
  if(keyword_set(htype)) then (*self.dd0p).htype = htype $
  else (*self.dd0p).htype = dat_detect_filetype(/default)
 
+ ;----------------------------
+ ; data and abscissa labels
+ ;----------------------------
+ (*self.dd0p).label_data = 'Data'
+ if(keyword_set(label_data)) then (*self.dd0p).label_data = label_data
+
+ (*self.dd0p).label_abscissa = 'Abscissa'
+ if(keyword_set(label_abscissa)) then (*self.dd0p).label_abscissa = label_abscissa
+
+
  ;-----------------------
  ; I/O methods
  ;-----------------------
@@ -409,6 +419,9 @@ pro dat_dd0_struct__define
 	dhp:			nv_ptr_new(), $	; Pointer to detached header.
 	sample_p:		nv_ptr_new(), $	; Pointer to the array of loaded samples
 	order_p:		nv_ptr_new(), $	; Pointer to the sample load order array
+
+	label_data:		'', $		; Label for data array
+	label_abscissa:		'', $		; Label for abscissa array
 
 	filename:		'', $		; Name of source file.
 	filetype:		'', $		; File type string
