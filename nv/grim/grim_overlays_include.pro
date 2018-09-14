@@ -924,11 +924,11 @@ function grim_match_overlays, ptd, ptd0, general=general
  ; narrow by comparing descriptions, names, and possibly assoc xds
  ;-----------------------------------------------------------------
  if(NOT keyword_set(general)) then $
-   w = where(( pnt_desc(ptd) EQ pnt_desc(ptd0)) $
+   w = where( (pnt_desc(ptd) EQ pnt_desc(ptd0)) $
                  AND (cor_name(ptd) EQ cor_name(ptd0)) $
                     AND (pnt_assoc_xd(ptd) EQ pnt_assoc_xd(ptd0)) ) $
  else $
-   w = where(( pnt_desc(ptd) EQ pnt_desc(ptd0)) $
+   w = where( (pnt_desc(ptd) EQ pnt_desc(ptd0)) $
                  AND (cor_name(ptd) EQ cor_name(ptd0)) )
 
  ;----------------------------------------------------------
@@ -2345,56 +2345,26 @@ end
 ; grim_copy_activations
 ;
 ;=============================================================================
-pro _grim_copy_activations, grim_data, plane=plane0
-
- planes = grim_get_plane(grim_data, /all)
- ptd0 = grim_ptd(plane0)
- name0 = cor_name(ptd0)
-;; desc0 = pnt_desc(ptd0)
- active0 = cor_udata(ptd0, 'GRIM_ACTIVE_FLAG')
-
-
- for i=0, n_elements(planes)-1 do if(planes[i].pn NE plane0.pn) then $
-  begin
-   ptd = grim_ptd(planes[i])
-   if(keyword_set(ptd)) then $
-    begin
-     name = cor_name(ptd)
-;;     desc = pnt_desc(ptd)
-;     w = nwhere(name, name0, rev=w0)
-     w = nwhere1(name, name0, rev=w0)
-    if(w[0] NE -1) then $
-          cor_set_udata, ptd[w], 'GRIM_ACTIVE_FLAG', active0[w0], /noevent
-    end
-  end
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_copy_activations
-;
-;=============================================================================
 pro grim_copy_activations, grim_data, plane=plane0
 
  planes = grim_get_plane(grim_data, /all)
  ptd0 = grim_ptd(plane0)
+ if(NOT keyword_set(ptd0)) then return
+
  name0 = cor_name(ptd0)
  active0 = cor_udata(ptd0, 'GRIM_ACTIVE_FLAG')
-
 
  for i=0, n_elements(planes)-1 do if(planes[i].pn NE plane0.pn) then $
   begin
    ptd = grim_ptd(planes[i])
    if(keyword_set(ptd)) then $
-    begin
-     name = cor_name(ptd)
-     w = nwhere(name, name0, rev=w0)
-     if(w[0] NE -1) then $
-          cor_set_udata, ptd[w], 'GRIM_ACTIVE_FLAG', active0[w0], /noevent
-    end
+    for j=0, n_elements(ptd)-1 do $
+     begin
+      w = grim_match_overlays(ptd[j], ptd0, /general)
+      if(w[0] NE -1) then $
+           cor_set_udata, ptd[j], 'GRIM_ACTIVE_FLAG', active0[w], /noevent
+     end
+   grim_update_activations, grim_data, plane=planes[i], /no_sync
   end
 
 

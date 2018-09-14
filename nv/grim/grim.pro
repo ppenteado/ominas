@@ -4412,7 +4412,9 @@ if(NOT defined(render_auto)) then render_auto = 0
 
  if(NOT new) then if(keyword_set(dd)) then $
   begin
-   if(nplanes NE n_elements(dd)) then nv_message, 'Inconsistent inputs'
+   if(nplanes NE n_elements(dd)) then $
+         nv_message, 'Inconsistent inputs', $
+         explanation='Did you forget to specify /new?'
 
    for i=0, nplanes-1 do planes[i].dd = dd[i]
    grim_set_plane, grim_data, planes

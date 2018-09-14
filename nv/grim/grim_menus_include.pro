@@ -3108,10 +3108,9 @@ pro grim_menu_plane_coregister_event, event
  ;------------------------------------------------
  ; recenter image
  ;------------------------------------------------
-; we don't want one event for every registration here....
- nv_suspend_events;, /flush
+ grim_refresh, /disable
  pg_coregister, dd, cd=cd, bx=bx
- nv_resume_events;, /flush
+ grim_refresh, /enable
 
  grim_refresh, grim_data
 end
@@ -3686,6 +3685,7 @@ pro grim_menu_plane_toggle_activation_syncing_event, event
                       'grim_menu_plane_toggle_activation_syncing_event', flag
 
 ; grim_sync_activations, grim_data
+grim_copy_activations, grim_data, plane=plane
 ; grim_refresh, grim_data, /use_pixmap
 
 end
