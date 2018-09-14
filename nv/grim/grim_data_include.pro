@@ -30,7 +30,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, tag=tag, filter=
            visibility=visibility, channel=channel, title=title, slave_overlays=slave_overlays, $
            render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_minimum=render_minimum, $
            render_auto=render_auto, render_sky=render_sky, render_numbra=render_numbra, render_sampling=render_sampling, $
-           overlays=overlays, activate=activate, global_scaling=global_scaling
+           overlays=overlays, activate=activate
 @grim_block.include
 
   if(NOT keyword_set(keyvals)) then keyvals = ''
@@ -39,7 +39,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, tag=tag, filter=
 
   beta = keyword_set(beta)
   activate = keyword_set(activate)
-  global_scaling = keyword_set(global_scaling)
 
   if(NOT keyword_set(user_psym)) then user_psym = 3
   if(NOT keyword_set(user_fn_graphics)) then user_fn_graphics = 3
@@ -253,7 +252,6 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, tag=tag, filter=
 		lights_p		: ptr_new(lights), $
 
 		render_show		: 1b, $
-		global_scaling		: global_scaling, $
 
 		exclude_overlays_p	: ptr_new(0), $
 		enable_refresh		: 1b, $

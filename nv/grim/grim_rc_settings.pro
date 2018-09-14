@@ -35,8 +35,7 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
         render_numbra=render_numbra, render_sampling=render_sampling, render_minimum=render_minimum, slave_overlays=slave_overlays, $
         delay_overlays=delay_overlays, auto_stretch=auto_stretch, lights=lights, $
         render_rgb=render_rgb, render_current=render_current, render_spawn=render_spawn, render_auto=render_auto, render_sky=render_sky, $
-	guideline=guideline, integer_zoom=integer_zoom, exclude_overlays=exclude_overlays, $
-	global_scaling=global_scaling
+	guideline=guideline, integer_zoom=integer_zoom, exclude_overlays=exclude_overlays
 
 
  ;----------------------------------------------------
@@ -385,11 +384,6 @@ pro grim_rc_settings, rcfile=rcfile, keyvals=keyvals, $
                       _exclude_overlays = extra_value(kv, 'EXCLUDE_OVERLAYS') $
  else _exclude_overlays = exclude_overlays
  if(keyword_set(_exclude_overlays)) then exclude_overlays = _exclude_overlays
-
- if(n_elements(global_scaling) EQ 0) then $
-                      _global_scaling = extra_value(kv, 'GLOBAL_SCALING') $
- else _global_scaling = global_scaling
- if(keyword_set(_global_scaling)) then global_scaling = _global_scaling
 
 
  ;-----------------------------------------------------------------

@@ -216,7 +216,7 @@ grim, /new, './data/' + ['N1460072434_1.IMG', $
            'limb:SATURN', $
            'terminator:SATURN', $
            'planet_grid:SATURN', $
-           'ring'], /global_scaling
+           'ring']
 
 
 ;------------------------------------------------------------------------------

@@ -91,6 +91,8 @@ function dat_slices, dd0, slice, data, header, abscissa=abscissa
   begin
    dd[i] = nv_clone(dd0, protect='DD0P')
    dat_set_slice, dd[i], dd0, slice[*,i], /new
+   dat_set_max, dd[i], -1d100
+   dat_set_min, dd[i], 1d100
   end
 
  if(arg_present(data)) then data = dat_data(dd[n-1], abscissa=abscissa)

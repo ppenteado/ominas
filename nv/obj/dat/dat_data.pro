@@ -208,8 +208,10 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  ;- - - - - - - - - - - - - - - - - -
  if(NOT isnum(data)) then $
   begin
-   max = !values.d_nan
-   min = !values.d_nan
+;   max = !values.d_nan
+;   min = !values.d_nan
+   max = -1d100
+   min = 1d100
   end $
  else $
   begin
@@ -224,8 +226,10 @@ function dat_data, dd, samples=_samples, current=current, slice=slice, $
  ;- - - - - - - - - - - - - - - - - -
  if(NOT isnum(abscissa)) then $
   begin
-   abmax = !values.d_nan
-   abmin = !values.d_nan
+;   abmax = !values.d_nan
+;   abmin = !values.d_nan
+   abmax =-1d100
+   abmin = 1d100
   end $
  else $
   begin
