@@ -101,11 +101,11 @@ function strcat_construct_descriptors, dd, parm, stars, note=note
  pos = reform(transpose(pos),1,3,n, /over)
  vel = reform(transpose(vel),1,3,n, /over)
 
- ;---------------------------------------------------------
+ ;-------------------------------------------------------------
  ; Calculate "luminosity" from visual Magnitude using the 
  ; Sun as a model. If distance is unknown, lum will be 
- ; incorrect, but the magnitudes will work out.
- ;---------------------------------------------------------
+ ; incorrect, but the magnitudes will work out in str_get_mag.
+ ;-------------------------------------------------------------
  pc = const_get('parsec')
  Lsun = const_get('Lsun')
  m = stars.mag - 5d*alog10(dist/pc) + 5d

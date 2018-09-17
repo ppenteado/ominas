@@ -187,6 +187,14 @@ pro grim_draw_standard_points, grim_data, plane, _ptd, name, data, color, tshade
  ptd = pnt_cull(_ptd, /nofree)
  if(NOT keyword_set(ptd)) then return
 
+if(symsize LE 0) then $
+ begin
+  psize = call_function('grim_symsize_'+ name, data, ptd)
+  if(psize[0] NE -1) then symsize = abs(symsize)*psize $
+  else symsize = 1
+ end
+
+
  if(NOT tshade) then shade = 1.0 $
  else shade = call_function('grim_shade_'+ name, data, ptd)
  col = make_array(n_elements(shade), val=color)
@@ -226,12 +234,12 @@ pro grim_draw_standard_overlays, grim_data, plane, inactive_color, $
        active_ptd = grim_ptd(plane, type=name, /active)
        inactive_ptd = grim_ptd(plane, type=name, /inactive)
 
-       if(symsize LE 0) then $
-        begin
-         _symsize = call_function('grim_symsize_'+ name, data)
-         if(_symsize[0] NE -1) then symsize = abs(symsize)*_symsize $
-         else symsize = 1
-        end
+;       if(symsize LE 0) then $
+;        begin
+;         _symsize = call_function('grim_symsize_'+ name, data)
+;         if(_symsize[0] NE -1) then symsize = abs(symsize)*_symsize $
+;         else symsize = 1
+;        end
 
        ;- - - - - - - - - - - - - - - - - - - - - - -
        ; determine which overlays to actually draw

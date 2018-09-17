@@ -905,7 +905,7 @@
 ;	Target mode flips the camera orientation in the X direction.
 ;
 ;	File-> Save Postscript doesn't work right: the image order is
-;	sometimes wrong, and the overlays don't line up
+;	sometimes wrong, and the overlays don't line up.
 ;
 ;
 ;
