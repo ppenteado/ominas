@@ -1,0 +1,28 @@
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  DAWN_FC1	dawn_spice_input		dawn_spice_output \
+			                          klist=~/projects/dawn_review/dawn.kernels \
+							ck_in=auto \
+							spk_in=auto \
+#							pck_in=auto \
+							lsk_in=auto \
+							fk_in=auto \
+							ik_in=auto \
+							sck_in=auto \
+							xk_in=extra.tpc  \
+							/spk_strict
+
+  DAWN_FC2	dawn_spice_input		dawn_spice_output \
+			                          klist=~/projects/dawn_review/dawn.kernels \
+							ck_in=auto \
+							spk_in=auto \
+#							pck_in=auto \
+							lsk_in=auto \
+							fk_in=auto \
+							ik_in=auto \
+							sck_in=auto \
+							xk_in=extra.tpc  \
+							/spk_strict
+
+

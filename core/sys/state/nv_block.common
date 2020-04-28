@@ -1,0 +1,3 @@
+common nv_block, nv_state
+;if(NOT keyword_set(nv_state)) then nv_state=nv_init_state()
+nv_init_state

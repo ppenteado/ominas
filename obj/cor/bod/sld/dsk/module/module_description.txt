@@ -1,0 +1,3 @@
+DISK
+OMINAS Disk object
+

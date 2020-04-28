@@ -1,0 +1,4 @@
+# name				default?	fiducial?	opaque?	sma(m)		ecc		lp(deg)		dlpdt(deg/day)	inc(deg)	lan(deg)	dlandt(deg/day)	m	epoch(s past j2000)	description
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+JUPITER_RING_SYSTEM/inner	yes		no		yes	123740000	0		0		0		0		0		0		0	0
+JUPITER_RING_SYSTEM/outer	yes		no		yes	130215000	0		0		0		0		0		0		0	0

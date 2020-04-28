@@ -1,0 +1,6 @@
+CASSINI
+Cassini Mission Module
+
+  Kernel pool
+  Supported instruments: ISS, VIMS, CIRS, USIS, SAR 
+  Size: ~16 GB as of Dec/2016

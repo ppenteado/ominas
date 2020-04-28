@@ -3,10 +3,16 @@
 #------------------------------------------------------------------------------
   COMMON	strcat_sao_input		-	
   	-	strcat_common_input		-	
+  	- 	array_input 			-	
+  	- 	ring_input 			-	
+  	- 	station_input 			-	
+  	- 	orb_input 			-	suffix=-orb
+  	-	dh_std_input		dh_std_output
 
   DEFAULT	gen_spice_input			- 	klist=gen_demo.kernels \
                                                         lsk_in=auto
 
+  MAP                   -                       -
 
 
 

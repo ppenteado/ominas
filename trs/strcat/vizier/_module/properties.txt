@@ -1,0 +1,2 @@
+OMIN_EXCLUSIVE=       1
+PROTECTED=       1

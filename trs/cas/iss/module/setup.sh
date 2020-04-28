@@ -1,0 +1,1 @@
+#export CAS_ISS_PSF=${OMINAS_TRS_CAS_ISS_DATA}/psfs/

@@ -1,0 +1,4 @@
+# filetype	input function		output function		keyword function	Keyword arguments
+#		
+
+  GEOTIFF	dh_read_geotiff		dh_write_geotiff			dh_structpar

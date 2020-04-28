@@ -1,0 +1,7 @@
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  VG1_RSS-X	gen_spice_input			-	 
+
+  VG1_RSS-S	gen_spice_input			-	 
+

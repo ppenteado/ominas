@@ -1,0 +1,26 @@
+history = -1 / Current history value
+<updates>
+utime = 2456245.431319 / Julian day of update - Tue Nov 13 10:21:06 2012
+map_radii(0) = 256.6
+map_radii(1) = 251.4
+map_radii(2) = 248.3
+map_size(0) = 9166
+map_size(1) = 9166
+map_units(0) = 1.00000000000000
+map_units(1) = 1.00000000000000
+map_center(0) = -1.57079632679490
+map_center(1) = 0.00000000000000
+map_origin(0) = 4583.00000000000
+map_origin(1) = 4583.00000000000
+map_offset(0) = 0.00000000000000
+map_offset(1) = 0.00000000000000
+map_rotate = 7
+map_graphic = 0
+map_scale = 1.00000000000000
+map_projection = 'STEREOGRAPHIC'
+map_fn_image_to_map = 'map_image_to_map_STEREOGRAPHIC'
+map_fn_map_to_image = 'map_map_to_image_STEREOGRAPHIC'
+map_name = 'ENCELADUS'
+map_user = 'spitale'
+map_tasks = ''
+

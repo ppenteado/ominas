@@ -1,0 +1,6 @@
+JUNO
+Juno Mission Module
+
+  Kernel pool
+  Supported instruments: JUNOCAM 
+  Size: ~22 GB as of Feb/2018

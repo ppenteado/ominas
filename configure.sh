@@ -756,7 +756,7 @@ do
           echo "${ins[$d]}" >>${setting}
         fi
 done
-echo "export PG_MAPS=\${NV_MAPS_DATA}" >> ${setting}
+echo "#export PG_MAPS=\${NV_MAPS_DATA}" >> ${setting}
 echo ". ~/.ominas/ominas_postsetup.sh" >> ${setting}
 
 #make ominas script
@@ -768,9 +768,9 @@ cat ${OMINAS_DIR}/config/bashcomments.txt >> ~/.ominas/ominas
 asetting=`eval echo ${setting}`
 echo ". ${asetting}" >> ~/.ominas/ominas
 
-#echo "if [ "\$#" -eq 0 ]; then args=\"\${OMINAS_DIR}/util/printver.pro\"; else args=("\$@"); fi" >> ~/.ominas/ominas
-echo "if [ \$# -eq 0 ]; then args=\"\${OMINAS_DIR}/util/printver.pro\"" >> ~/.ominas/ominas
-echo "else" >> ~/.ominas/ominas
+##echo "if [ "\$#" -eq 0 ]; then args=\"\${OMINAS_DIR}/core/util/printver.pro\"; else args=("\$@"); fi" >> ~/.ominas/ominas
+#echo "if [ \$# -eq 0 ]; then args=\"\${OMINAS_DIR}/core/util/printver.pro\"" >> ~/.ominas/ominas
+#echo "else" >> ~/.ominas/ominas
 echo " for arg in \$@; do" >> ~/.ominas/ominas
 echo "  if [[ \$arg == --* ]] ; then _args+=(\$arg)" >> ~/.ominas/ominas
 echo "  elif [[ \$arg == *==* ]] ; then _args+=(\$arg)" >> ~/.ominas/ominas
@@ -778,7 +778,7 @@ echo "  elif [[ \$arg == +* ]] ; then export \${arg:1:127}" >> ~/.ominas/ominas
 echo "  else args+=(\$arg)" >> ~/.ominas/ominas
 echo "  fi" >> ~/.ominas/ominas
 echo " done" >> ~/.ominas/ominas
-echo "fi" >> ~/.ominas/ominas
+#echo "fi" >> ~/.ominas/ominas
 echo "args+=(\\-args)" >> ~/.ominas/ominas
 echo "args+=(\${_args[*]})" >> ~/.ominas/ominas
 
@@ -796,7 +796,7 @@ tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idl/g"
 cat ~/.ominas/ominas | sed -e "s|\"\$@\" \$APP_ARGS|-IDL_PROMPT \"'OMINAS\> '\" \"\${args[@]/#/}\" \$APP_ARGS |g" > ~/.ominas/ominas_tmp
 mv -f ~/.ominas/ominas_tmp ~/.ominas/ominas
 if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
-  ldp="LD_PRELOAD=${OMINAS_DIR}/util/downloader/libcurl.so.4"
+  ldp="LD_PRELOAD=${OMINAS_DIR}/core/util/downloader/libcurl.so.4"
   cat ~/.ominas/ominas | sed -e "s|exec |${ldp} exec |g" > ~/.ominas/ominas_tmp
   mv -f ~/.ominas/ominas_tmp ~/.ominas/ominas
 fi
@@ -825,7 +825,7 @@ tail -n +2 ${idlbin} | sed -e "s/APPLICATION=\`basename \$0\`/APPLICATION=idlde/
 cat ~/.ominas/ominasde | sed -e "s|\"\$@\" \$APP_ARGS|-IDL_PROMPT \"'OMINAS\> '\" \"\${args[@]/#/}\" \$APP_ARGS |g" > ~/.ominas/ominasde_tmp
 mv -f ~/.ominas/ominasde_tmp ~/.ominas/ominasde
 if [ "${idlversion}" \< "linux84" ] && [ "${idlversion}" \> "linux" ]; then
-  ldp="LD_PRELOAD=${OMINAS_DIR}/util/downloader/libcurl.so.4"
+  ldp="LD_PRELOAD=${OMINAS_DIR}/core/util/downloader/libcurl.so.4"
   cat ~/.ominas/ominasde | sed -e "s|exec |${ldp} exec |g" > ~/.ominas/ominasde_tmp
   mv -f ~/.ominas/ominasde_tmp ~/.ominas/ominasde
 fi
@@ -1432,7 +1432,7 @@ fi
 
 if [ "${corest}" == "${yes}" ]; then
   #$idlbin paths.pro
-  LD_PRELOAD=${OMINAS_LDP} $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
+  LD_PRELOAD=${OMINAS_LDP} $idlbin -e "!path+=':'+file_expand_path('./core/util/downloader')+':'+file_expand_path('./core/util/')& ominas_paths_add,'${icypath}',orc='${OMINAS_RC}'"
   . "${OMINAS_RC}/idlpath.sh"
 #  if [ -e idlpath.sh ]; then
 #    cat idlpath.sh >> $idlpathfile
@@ -1440,7 +1440,7 @@ if [ "${corest}" == "${yes}" ]; then
 #  fi
 else
   #export OMINAS_DIR=''
-  LD_PRELOAD=${OMINAS_LDP} $idlbin -e "!path+=':'+file_expand_path('./util/downloader')+':'+file_expand_path('./util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
+  LD_PRELOAD=${OMINAS_LDP} $idlbin -e "!path+=':'+file_expand_path('./core/util/downloader')+':'+file_expand_path('./core/util/')& ominas_paths_add,'${icypath}','',orc='${OMINAS_RC}'"
   . "${OMINAS_RC}/idlpath.sh"
 fi
 

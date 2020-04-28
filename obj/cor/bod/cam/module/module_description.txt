@@ -1,0 +1,3 @@
+CAMERA
+OMINAS Camera object
+

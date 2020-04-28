@@ -8,9 +8,9 @@ history = 0 / Current history value
 <updates>
 
 / -------------------------------------------------------------------- /
-/ MAP descriptor -- updated Mon Apr  1 10:28:33 2019
+/ MAP descriptor -- updated Wed Mar  4 15:30:09 2020
 / -------------------------------------------------------------------- /
-map_update_time = 2458575.43649306 
+map_update_time = 2458913.64593750 
 map_tasks = '' 
 map_notes = '' 
 map_name = 'SATURN' 
@@ -38,9 +38,9 @@ map_graphic = 1
 map_west = 0 
 map_rotate = 0 
 / -------------------------------------------------------------------- /
-/ CAMERA descriptor -- updated Mon Apr  1 10:28:33 2019
+/ CAMERA descriptor -- updated Wed Mar  4 15:30:09 2020
 / -------------------------------------------------------------------- /
-cam_update_time = 2458575.43649306 
+cam_update_time = 2458913.64593750 
 cam_tasks = 'pg_repoint' 
 cam_notes = '' 
 cam_name = 'CAS_ISS_NA' 

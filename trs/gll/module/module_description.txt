@@ -1,0 +1,7 @@
+GALILEO
+Galileo Mission Module
+
+  Kernel pool
+  Supported instruments: SSI 
+  Size: ~833 MB as of Dec/2016
+

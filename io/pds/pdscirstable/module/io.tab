@@ -1,0 +1,4 @@
+# filetype	input function		output function		keyword function	Keyword arguments
+#		
+
+  PDSCIRSTABLE	dh_read_pdscirstable	-			dh_pdspar

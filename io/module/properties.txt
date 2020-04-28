@@ -1,0 +1,3 @@
+locked                                  # Module may not be modified
+activate                                # Module should initialy be active
+order=['mask','occ','vicar','fits','vgr_cd','tdl','multi','isis','pds','pds4','geotiff','ext','w10n_pds']

@@ -1,0 +1,3 @@
+POINT
+OMINAS Point object
+

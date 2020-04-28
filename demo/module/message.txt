@@ -1,0 +1,9 @@
+
+This module is intended to be used with the OMINAS example scripts. Your modules and code will run, but may not function as expected because the DEMO module overrides the configuration tables, and defines its own SPICE and MAP configurations.  The DEMO module may be disabled for a single session by starting OMINAS with the OMINAS_DEMO_SUPPRESS variable set; e.g.:
+
+ominas ::OMINAS_DEMO_SUPPRESS
+
+or globally by using OMIN either graphically or in command mode.  The OMIN command-mode form would be:
+
+omin deactivate==demo
+

@@ -1,0 +1,4 @@
+CORE
+OMINAS Core 
+
+  Contains the OMINAS system code.

@@ -1,0 +1,16 @@
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  CAS_CIRS              cas_cirs_spice_input    cas_cirs_spice_output \
+#                                                 klist=cassini.kernels \
+                                                  spk_in=auto \
+                                                        ck_in=auto \
+                                                        pck_in=auto \
+                                                        lsk_in=auto \
+                                                        fk_in=auto \
+                                                        ik_in=auto \
+                                                        sck_in=auto \
+                                                        xk_in=extra.tpc  \
+                                                        /spk_strict \
+                                                        /tr_nosort                                                        
+

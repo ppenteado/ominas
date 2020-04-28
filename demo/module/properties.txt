@@ -1,0 +1,2 @@
+OMIN_FIXED=1
+activate			# Module should initialy be active

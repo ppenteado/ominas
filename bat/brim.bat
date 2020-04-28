@@ -60,6 +60,6 @@ ___argv = bat_parse_argv(___keys, ___val_ps, $
 ___filespecs = bat_expand(___argv, ___list, ___path, ___samp, ___sel)
 if(keyword_set(___filespecs)) then ___files = findfiles(___filespecs, /tolerant)
 
-call_procedure, 'brim',___files,_extra=pp_build_extra(___keys,___val_ps)
+call_procedure, 'brim', ___files, _extra=pp_build_extra(___keys,___val_ps), /bat
 ;=============================================================================
 

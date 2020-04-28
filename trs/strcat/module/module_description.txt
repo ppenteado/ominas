@@ -1,0 +1,4 @@
+STAR_CATALOG
+Star Catalog Module
+
+  Supported catalogs: GSC, SAO, UCAC4, TYCHO2, VIZIER 

@@ -1,0 +1,1 @@
+export OMINAS_TRS_ARR_DATA=${OMINAS_TRS_ARR}/dat

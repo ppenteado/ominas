@@ -1,0 +1,4 @@
+OMIN_FIXED=1
+locked								# Module may not be modified
+activate							# Module should initialy be active
+order = ['CORE', 'LIB', 'OBJ', 'IO', 'TRS', 'DAT', 'DEMO']	# Module order

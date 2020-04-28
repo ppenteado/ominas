@@ -1,0 +1,73 @@
+;=============================================================================
+; spice_download_kernels_by_type
+;
+;=============================================================================
+function spice_download_kernels_by_type, baseurl, kernel_dir, type, $
+           exclude=exclude, recursive=recursive, update=update, $
+           extension=extension, verbose=verbose
+
+ dir = kernel_dir + '/' + type
+ file_mkdir, dir
+
+ url = baseurl + '/' + type + '/'
+
+ if(keyword_set(update)) then nv_message, /con, /anon, 'Updating files from ' + url $
+ else nv_message, /con, /anon, 'Downloading files from ' + url
+
+ wcp, url, dir, $
+      update=update, extension=extension, verbose=verbose, status=status, $
+      exclude=exclude, recursive=recursive
+ if(status EQ 0) then nv_message, /con, /anon, strupcase(type) + ' finished.'
+
+ return, status
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; spice_download_kernels
+;
+;=============================================================================
+pro spice_download_kernels, mission, kernel_dir, $
+   update=update, verbose=verbose, basedir=basedir, recursive=recursive, $
+   exclude=exclude
+
+ naifurl = 'http://naif.jpl.nasa.gov/pub/naif/' + mission
+ baseurl = naifurl
+ if(NOT keyword_set(basedir)) then baseurl = baseurl + '/kernels'
+
+ if(spice_download_kernels_by_type(baseurl, kernel_dir, 'fk', ext='tf', $
+     exclude=exclude, recursive=recursive, update=update, verbose=verbose)) $
+                                                                    then return
+
+ if(spice_download_kernels_by_type(baseurl, kernel_dir, 'ik', ext='ti', $
+     exclude=exclude, recursive=recursive, update=update, verbose=verbose)) $
+                                                                    then return
+
+ if(spice_download_kernels_by_type(baseurl, kernel_dir, 'lsk', ext='tls', $
+     exclude=exclude, recursive=recursive, update=update, verbose=verbose)) $
+                                                                    then return
+
+ if(spice_download_kernels_by_type(baseurl, kernel_dir, 'pck', ext='tpc', $
+     exclude=exclude, recursive=recursive, update=update, verbose=verbose)) $
+                                                                    then return
+
+ if(spice_download_kernels_by_type(baseurl, kernel_dir, 'sclk', ext='tsc', $
+     exclude=exclude, recursive=recursive, update=update, verbose=verbose)) $
+                                                                    then return
+
+ if(spice_download_kernels_by_type(baseurl, kernel_dir, 'ck', ext=['bc','lbl'], $
+     exclude=exclude, recursive=recursive, update=update, verbose=verbose)) $
+                                                                    then return
+
+ if(spice_download_kernels_by_type(baseurl, kernel_dir, 'spk', ext=['bsp','lbl'], $
+     exclude=exclude, recursive=recursive, update=update, verbose=verbose)) $
+                                                                    then return
+
+ if(keyword_set(update)) then print, 'Update complete.' $
+ else print, 'Installation complete.'
+end
+;=============================================================================
+
+

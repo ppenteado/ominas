@@ -1,0 +1,4 @@
+# filetype	input function		output function		keyword function	Keyword arguments
+#		
+
+  SCAN_BIN	stn_read_scan_bin	stn_write_scan_bin	-

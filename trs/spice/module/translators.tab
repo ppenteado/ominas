@@ -1,0 +1,7 @@
+  DEFAULT	gen_spice_input			- 	ck_in=auto \
+                                                        pck_in=auto \
+                                                        lsk_in=auto \
+                                                        fk_in=auto \
+                                                        sck_in=auto \
+                                                        spk_in=auto
+

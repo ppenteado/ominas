@@ -1,0 +1,2 @@
+activate                                # Module should initialy be active
+ORDER=['gsc','sao','tycho2','ucac4','vizier','common']

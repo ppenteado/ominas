@@ -1,0 +1,6 @@
+DEMO
+OMINAS Demo package
+
+  Contains the demo scripts and the data required to run then.
+  These files are always present (in ominas/demo), this option
+  is to set up the environment so that the demos can be run.

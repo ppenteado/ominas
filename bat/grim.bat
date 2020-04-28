@@ -73,6 +73,6 @@ if(keyword__set(___files)) then $
    end &$
  end
 
-call_procedure,'grim',___files,_extra=pp_build_extra(___keys,___val_ps)
+call_procedure, 'grim', ___files, _extra=pp_build_extra(___keys,___val_ps), /bat
 ;=============================================================================
 

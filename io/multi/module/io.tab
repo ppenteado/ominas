@@ -1,0 +1,4 @@
+# filetype	input function		output function		keyword function	Keyword arguments
+#		
+
+  MULTI		dh_read_multi		dh_write_multi		-

@@ -1,0 +1,4 @@
+# filetype	input function		output function		keyword function	Keyword arguments
+#		
+
+  MASK		dh_read_mask		dh_write_mask		-

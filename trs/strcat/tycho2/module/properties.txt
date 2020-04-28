@@ -1,0 +1,2 @@
+activate = 1
+OMIN_EXCLUSIVE=       1

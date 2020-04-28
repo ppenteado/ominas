@@ -1,0 +1,148 @@
+/*---------------------------------------------------------------------------*
+* Default Xdefaults for GRIM.  Copy to your .ominas directory and edit as 
+* desired.  Add to your .Xdefaults file as:
+*
+*            #include ".ominas/Xdefaults-grim"
+*
+* Don't forget to reload the X resource database using:
+*
+*            xrdb ~/.Xdefaults
+*
+*---------------------------------------------------------------------------*/
+Idl*grim_base*insensitive:                              khaki4
+Idl*grim_base*background:                               khaki4
+Idl*grim_mbar*background:                               khaki4
+Idl*grim_base*foreground:                               white
+Idl*grim_mbar*foreground:                               white
+Idl*grim_modes_base*highlightThickness:                 0
+Idl*grim_shortcuts_base*highlightThickness:             0
+
+Idl*grim_header_base*background:                        white
+Idl*grim_header_text*foreground:                        black
+
+Idl*grim_notes_base*background:                         white
+Idl*grim_notes_text*foreground:                         black
+
+Idl*grim_menu_shift_left_event*accelerator:             Meta<Key>Left
+Idl*grim_menu_shift_left_event*acceleratorText:         Meta-Left
+Idl*grim_menu_shift_right_event*accelerator:            Meta<Key>Right
+Idl*grim_menu_shift_right_event*acceleratorText:        Meta-Right
+Idl*grim_menu_shift_up_event*accelerator:               Meta<Key>Up
+Idl*grim_menu_shift_up_event*acceleratorText:           Meta-Up
+Idl*grim_menu_shift_down_event*accelerator:             Meta<Key>Down
+Idl*grim_menu_shift_down_event*acceleratorText:         Meta-Down
+
+Idl*grim_menu_repeat_event*accelerator:			<Key>Tab
+Idl*grim_menu_repeat_event*acceleratorText:             Tab
+Idl*grim_menu_plane_next_event*accelerator:		<Key>Right
+Idl*grim_menu_plane_next_event*acceleratorText:		Right
+Idl*grim_menu_plane_previous_event*accelerator:		<Key>Left
+Idl*grim_menu_plane_previous_event*acceleratorText:	Left
+Idl*grim_menu_file_load_event*accelerator:		Meta<Key>L
+Idl*grim_menu_file_load_event*acceleratorText:		Meta-L
+Idl*grim_menu_file_browse_event*accelerator:		Meta<Key>B
+Idl*grim_menu_file_browse_event*acceleratorText:	Meta-B
+Idl*grim_menu_file_close_event*accelerator:		Meta<Key>O
+Idl*grim_menu_file_close_event*acceleratorText:		Meta-O
+Idl*grim_menu_data_adjust_event*accelerator:		<Key>J
+Idl*grim_menu_data_adjust_event*acceleratorText:	J
+Idl*grim_menu_view_frame_event*accelerator:		Meta<Key>F
+Idl*grim_menu_view_frame_event*acceleratorText:		Meta-F
+Idl*grim_menu_view_previous_event*accelerator:		Meta<Key>P
+Idl*grim_menu_view_previous_event*acceleratorText:	Meta-P
+Idl*grim_menu_view_entire_event*accelerator:		Meta<Key>A
+Idl*grim_menu_view_entire_event*acceleratorText:	Meta-A
+Idl*grim_menu_view_initial_event*accelerator:		Meta<Key>I
+Idl*grim_menu_view_initial_event*acceleratorText:	Meta-I
+Idl*grim_menu_view_refresh_event*accelerator:		Meta<Key>R
+Idl*grim_menu_view_refresh_event*acceleratorText:	Meta-R
+Idl*grim_menu_hide_all_event*accelerator:		Meta<Key>H
+Idl*grim_menu_hide_all_event*acceleratorText:		Meta-H
+Idl*grim_menu_view_colors_event*accelerator:		Meta<Key>C
+Idl*grim_menu_view_colors_event*acceleratorText:	Meta-C
+Idl*grim_menu_activate_all_event*accelerator:		Meta<Key>Z
+Idl*grim_menu_activate_all_event*acceleratorText:	Meta-Z
+Idl*grim_menu_deactivate_all_event*accelerator:		Meta<Key>Q
+Idl*grim_menu_deactivate_all_event*acceleratorText:	Meta-Q
+Idl*grim_menu_points_settings_event*accelerator:	Meta<Key>S
+Idl*grim_menu_points_settings_event*acceleratorText:	Meta-S
+Idl*grim_menu_plane_highlight_event*accelerator:        <Key>H
+Idl*grim_menu_plane_highlight_event*acceleratorText:    H
+
+Idl*grim_menu_view_recenter_event*accelerator:		<Key>Backspace
+Idl*grim_menu_view_recenter_event*acceleratorText:	Backspace
+
+Idl*grim_menu_view_zoom_double_event*accelerator:	<Key>Up
+Idl*grim_menu_view_zoom_double_event*acceleratorText:	Up
+Idl*grim_menu_view_zoom_half_event*accelerator:		<Key>Down
+Idl*grim_menu_view_zoom_half_event*acceleratorText:	Down
+
+Idl*grim_menu_view_zoom_1_event*accelerator:            <Key>F1
+Idl*grim_menu_view_zoom_1_event*acceleratorText:        F1
+Idl*grim_menu_view_zoom_2_event*accelerator:            <Key>F2
+Idl*grim_menu_view_zoom_2_event*acceleratorText:        F2
+Idl*grim_menu_view_zoom_3_event*accelerator:            <Key>F3
+Idl*grim_menu_view_zoom_3_event*acceleratorText:        F3
+Idl*grim_menu_view_zoom_4_event*accelerator:            <Key>F4
+Idl*grim_menu_view_zoom_4_event*acceleratorText:        F4
+Idl*grim_menu_view_zoom_5_event*accelerator:            <Key>F5
+Idl*grim_menu_view_zoom_5_event*acceleratorText:        F5
+Idl*grim_menu_view_zoom_6_event*accelerator:            <Key>F6
+Idl*grim_menu_view_zoom_6_event*acceleratorText:        F6
+Idl*grim_menu_view_zoom_7_event*accelerator:            <Key>F7
+Idl*grim_menu_view_zoom_7_event*acceleratorText:        F7
+Idl*grim_menu_view_zoom_8_event*accelerator:            <Key>F8
+Idl*grim_menu_view_zoom_8_event*acceleratorText:        F8
+Idl*grim_menu_view_zoom_9_event*accelerator:            <Key>F9
+Idl*grim_menu_view_zoom_9_event*acceleratorText:        F9
+Idl*grim_menu_view_zoom_10_event*accelerator:           <Key>F10
+Idl*grim_menu_view_zoom_10_event*acceleratorText:       F10
+
+Idl*grim_menu_view_zoom_1_2_event*accelerator:		Meta<Key>2
+Idl*grim_menu_view_zoom_1_2_event*acceleratorText:	Meta-2
+Idl*grim_menu_view_zoom_1_3_event*accelerator:		Meta<Key>3
+Idl*grim_menu_view_zoom_1_3_event*acceleratorText:	Meta-3
+Idl*grim_menu_view_zoom_1_4_event*accelerator:		Meta<Key>4
+Idl*grim_menu_view_zoom_1_4_event*acceleratorText:	Meta-4
+Idl*grim_menu_view_zoom_1_5_event*accelerator:		Meta<Key>5
+Idl*grim_menu_view_zoom_1_5_event*acceleratorText:	Meta-5
+Idl*grim_menu_view_zoom_1_6_event*accelerator:		Meta<Key>6
+Idl*grim_menu_view_zoom_1_6_event*acceleratorText:	Meta-6
+Idl*grim_menu_view_zoom_1_7_event*accelerator:		Meta<Key>7
+Idl*grim_menu_view_zoom_1_7_event*acceleratorText:	Meta-7
+Idl*grim_menu_view_zoom_1_8_event*accelerator:		Meta<Key>8
+Idl*grim_menu_view_zoom_1_8_event*acceleratorText:	Meta-8
+Idl*grim_menu_view_zoom_1_9_event*accelerator:		Meta<Key>9
+Idl*grim_menu_view_zoom_1_9_event*acceleratorText:	Meta-9
+Idl*grim_menu_view_zoom_1_10_event*accelerator:		Meta<Key>0
+Idl*grim_menu_view_zoom_1_10_event*acceleratorText:	Meta-0
+
+
+Idl*grim_context_event*accelerator:			<Key>C
+Idl*grim_context_event*acceleratorText:			C
+/*Idl*grim_axes_event*accelerator:            		<Key>A*/
+/*Idl*grim_axes_event*acceleratorText:       		A*/
+
+Idl*grim_mode_drag_button_event*accelerator:            Meta<Key>D
+Idl*grim_mode_drag_button_event*acceleratorText:        Meta-D
+Idl*grim_mode_mask_button_event*accelerator:		<Key>N
+Idl*grim_mode_mask_button_event*acceleratorText:	N	
+Idl*grim_mode_zoom_button_event*accelerator:		<Key>Z
+Idl*grim_mode_zoom_button_event*acceleratorText:	Z	
+Idl*grim_mode_pan_button_event*accelerator:		<Key>P
+Idl*grim_mode_pan_button_event*acceleratorText:		P
+Idl*grim_mode_curves_button_event*accelerator:		<Key>C
+Idl*grim_mode_curves_button_event*acceleratorText:	C
+Idl*grim_mode_tiepoints_button_event*accelerator:	<Key>T
+Idl*grim_mode_tiepoints_button_event*acceleratorText:	T
+Idl*grim_mode_activate_button_event*accelerator:	<Key>A
+Idl*grim_mode_activate_button_event*acceleratorText:	A
+Idl*grim_mode_readout_button_event*accelerator:		<Key>R
+Idl*grim_mode_readout_button_event*acceleratorText:	R
+Idl*grim_mode_magnify_button_event*accelerator:		<Key>M
+Idl*grim_mode_magnify_button_event*acceleratorText:	M
+Idl*grim_mode_navigate_button_event*accelerator:	<Key>V
+Idl*grim_mode_navigate_button_event*acceleratorText:	V
+
+Idl*grim_menu_pointing_manual_event*accelerator:	Meta<Key>M
+Idl*grim_menu_pointing_manual_event*acceleratorText:	Meta-M

@@ -1,0 +1,1 @@
+OMIN_EXCLUSIVE=       1

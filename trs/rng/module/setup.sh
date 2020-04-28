@@ -1,0 +1,1 @@
+export OMINAS_TRS_RNG_DATA=${OMINAS_TRS_RNG}/dat

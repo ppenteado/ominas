@@ -1,0 +1,3 @@
+STATION
+OMINAS Station object
+

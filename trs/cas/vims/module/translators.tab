@@ -1,0 +1,15 @@
+# Instrument	Input			Output		Keyword arguments
+# string	translator		translator
+#------------------------------------------------------------------------------
+  CAS_VIMS_IR	cas_vims_spice_input	cas_vims_spice_output \
+#                                                  klist=cassini.kernels \
+                                                        ck_in=auto \
+                                                        pck_in=auto \
+                                                        lsk_in=auto \
+                                                        fk_in=auto \
+                                                        ik_in=auto \
+                                                        sck_in=auto \
+                                                        xk_in=extra.tpc  \
+                                                        /spk_strict \
+                                                        spk_in=auto
+

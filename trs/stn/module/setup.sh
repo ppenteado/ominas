@@ -1,0 +1,1 @@
+export OMINAS_TRS_STN_DATA=${OMINAS_TRS_STN}/dat

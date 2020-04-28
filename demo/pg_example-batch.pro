@@ -102,10 +102,10 @@ tvim, im, zoom=0.75, /order, /new
 ;-------------------------------------------------------------------------
 cd = pg_get_cameras(dd)	
 pd = pg_get_planets(dd, od=cd, count=npd)
-rd = pg_get_rings(dd, pd=pd, od=cd, count=nrd)
+ii = where(cor_name(pd) EQ 'JUPITER') 
+rd = pg_get_rings(dd, pd=pd[ii], od=cd, count=nrd)
 ltd = pg_get_stars(dd, od=cd, name='SUN')
 
-ii = where(cor_name(pd) EQ 'JUPITER') 
 
 ;-------------------------------------------------------------------------
 ;+
@@ -138,12 +138,6 @@ ii = where(cor_name(pd) EQ 'JUPITER')
 ;                                                       ; separated by semicolons.
 ;-
 ;-------------------------------------------------------------------------
-
-
-
-
-
-
 
 
 

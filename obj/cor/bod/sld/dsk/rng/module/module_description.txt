@@ -1,0 +1,3 @@
+RING
+OMINAS Ring object
+

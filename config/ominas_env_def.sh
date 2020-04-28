@@ -28,6 +28,9 @@
 #  If this example does not work, then your OMINAS_DIR variable               #
 #  may not be set correctly.                                                  #
 #-----------------------------------------------------------------------------#
+export OMINAS_OBJ=$OMINAS_DIR/obj
+
+
 export NV_CONFIG=$OMINAS_DIR/config
 export NV_FTP_DETECT=$NV_CONFIG/tab/filetype_detectors.tab
 export NV_IO=$NV_CONFIG/tab/io.tab
@@ -39,7 +42,7 @@ export NV_INS_DETECT=$NV_CONFIG/tab/instrument_detectors.tab
 
 #echo "DFLAG=${DFLAG}"
 unset NV_SAO_DATA
-export PG_MAPS=${NV_MAPS_DATA}
+#export PG_MAPS=${NV_MAPS_DATA}
 if [ "${DFLAG}" = 'true' ]; then
     #-----------------------------------------------------------------------------------#
     # DEMO configuration: 																#
@@ -68,7 +71,7 @@ if [ "${DFLAG}" = 'true' ]; then
     export DEMO_SPICE_CK=$OMINAS_DIR/demo/data/kernels/ck/
     export DEMO_SPICE_SPK=$OMINAS_DIR/demo/data/kernels/spk/
     export DEMO_SPICE_XK=$NV_SPICE/
-    export PG_MAPS=$OMINAS_DIR/demo/data/maps
+    export NV_MAPS_DATA=$OMINAS_DATA/MAPS
 fi
 
 #-----------------------------------------------------------------------------------#
@@ -92,23 +95,23 @@ fi
 # This variable points to the location of the array catalogs, which are
 # provided in the default OMINAS installation.
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
-export NV_ARRAY_DATA=$OMINAS_DIR/config/arr/dat/
+export NV_ARRAY_DATA=$OMINAS_DIR/lib/arr/dat/
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
 # This variable points to the location of the ring catalogs, which are
 # provided in the default OMINAS installation.
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
-export NV_RING_DATA=$OMINAS_DIR/config/rings/
+export NV_RING_DATA=$OMINAS_DIR/lib/rings/
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
 # This variable points to the location of the orbit catalogs, which are
 # provided in the default OMINAS installation.
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
-export NV_ORBIT_DATA=$OMINAS_DIR/config/orb/
+export NV_ORBIT_DATA=$OMINAS_DIR/lib/orb/
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
 # This variable points to the location of the station catalogs, which are
 # provided in the default OMINAS installation.
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
-export NV_STATION_DATA=$OMINAS_DIR/config/stn/dat/
+export NV_STATION_DATA=$OMINAS_DIR/lib/stn/dat/
 

@@ -1,0 +1,4 @@
+# filetype	input function		output function		keyword function	Keyword arguments
+#		
+
+  VGR_CD	dh_read_vgr_cd		dh_write_vicar		dh_vicpar

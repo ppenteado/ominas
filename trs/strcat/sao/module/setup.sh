@@ -1,0 +1,1 @@
+export OMINAS_TRS_STRCAT_SAO_DATA=${OMINAS_DIR}/demo/data

@@ -1,0 +1,6 @@
+gsc
+sao
+tycho2
+ucac4
+vizier
+common

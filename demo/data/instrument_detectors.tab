@@ -1,16 +1,16 @@
-# detector fn			filetype
-# (returns instrument string)	(only detectors for the correct
-#				 filetype are called)
+# detector fn		
+# (returns instrument string)
+#			
 
-  detect_cas_iss		VICAR
-  detect_cas_uvis		PDS
-  detect_cas_radar		PDS
-  detect_gll_ssi		VICAR
-  detect_vgr_iss		VICAR
-  detect_vgr_cd			VGR_CD
-  detect_vgr_pps		VICAR
-  detect_vgr_rss		VICAR
-  detect_cas_vims               ISIS
-  detect_juno_epo_cam           PNG
-  detect_cas_cirs		PDSCIRSTABLE
-  detect_cas_cirscube		PDS
+  detect_dat_map		
+  detect_trs_cas_iss	
+  detect_trs_cas_uvis	
+  detect_trs_cas_radar	
+  detect_trs_gll_ssi	
+  detect_trs_vgr_iss	
+  detect_trs_vgr_pps	
+  detect_trs_vgr_rss	
+  detect_trs_cas_vims              
+  detect_trs_juno_epo_cam          
+  detect_trs_cas_cirs	
+  detect_trs_cas_cirscube	

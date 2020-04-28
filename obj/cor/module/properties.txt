@@ -1,0 +1,2 @@
+locked                                  # Module may not be modified
+activate                                # Module should initialy be active

@@ -1,17 +1,24 @@
 ;==============================================================================
-; Various methods of obtaining planet descriptors without having a data 
+; Test various methods of obtaining planet descriptors without having a data 
 ; descriptor.
 ;==============================================================================
-pd = pg_get_planets()                                             & help, pd
-pd = pg_get_planets(inst='CAS_ISS_NA')                            & help, pd
-pd = pg_get_planets(time=3d7)                                     & help, pd
-pd = pg_get_planets(time='2016-028T15:37:00')                     & help, pd
-pd = pg_get_planets(name='SATURN')                                & help, pd
-pd = pg_get_planets(inst='CAS_ISS_NA', time=3d7)                  & help, pd
-pd = pg_get_planets(inst='CAS_ISS_NA', name='SATURN')             & help, pd
-pd = pg_get_planets(time=3d7, name='MOON')                        & help, pd
+pd = pg_get_planets()						& help, pd
+pd = pg_get_planets(inst='CAS_ISS_NA')				& help, pd
+pd = pg_get_planets(time='2016-028T15:37:00')			& help, pd
+pd = pg_get_planets(name='SATURN')				& help, pd
+pd = pg_get_planets(inst='CAS_ISS_NA', time=3d7)		& help, pd
+pd = pg_get_planets(inst='CAS_ISS_NA', name='SATURN')		& help, pd
 pd = pg_get_planets(time=['2017-08-21T19:00:00', $
-                          '2017-08-21T20:00:00'], name='EARTH')   & help, pd
+			'2017-08-21T20:00:00'], name='EARTH')	& help, pd
+pd = pg_get_planets(time=3.15d7*17)				& help, pd
+pd = pg_get_planets(time=3.15d7*17, name='MOON')		& help, pd
+
+pd = pg_get_planets(name='SATURN')				& help, pd
+rd = pg_get_rings(pd=pd)					& help, rd
+
+pd = pg_get_planets(name='ENCELADUS')				& help, pd
+ard = pg_get_arrays(bx=pd)					& help, ard
+std = pg_get_stations(bx=pd)					& help, std
 
 
 ;==============================================================================
@@ -19,16 +26,18 @@ pd = pg_get_planets(time=['2017-08-21T19:00:00', $
 ; descriptor.
 ;==============================================================================
 cd = pg_get_cameras(inst='CAS_ISS_NA')                            & help, cd
-cd = pg_get_cameras(inst='CAS_ISS_NA', time=5*3.5d7)	          & help, cd
+cd = pg_get_cameras(inst='CAS_ISS_NA', time=5.0726d8)	          & help, cd
 cd = pg_get_cameras(inst='CAS_ISS_NA', time='2016-028T15:37:00')  & help, cd
-cd = pg_get_cameras(inst='CAS_ISS_NA', time=[4,5,6]*3.5d7)	  & help, cd
+cd = pg_get_cameras(inst='CAS_ISS_NA', time=['2016-028T15:37:00', $
+                                             '2016-028T15:42:00'])& help, cd
 
 
 
 ;==============================================================================
-; Tests of various GRIM inputs.
+; Tests of various GRIM inputs.  
+; (run from ominas/demo)
 ;==============================================================================
-grim, '$PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png', $
+grim, '$OMINAS_DAT_MAP_DATA/Saturn/enceladus/EN_120828_DLR_south_equator.png', $
                                      over=['planet_grid','station','array']
 grim, 'data/n*', over=['center','limb','terminator'], $
                              exclude=['center:europa,ganymede', 'limb:io']
@@ -36,21 +45,25 @@ grim, 'data/n*', over=['center','limb','terminator'], $
 
 ;==============================================================================
 ; Tests of shell aliases with various types of files and expressions.
+; (run from ominas/demo)
 ;==============================================================================
-grim '$PG_MAPS/Saturn/enceladus/EN_120828_DLR_south_equator.png' \
+grim '$OMINAS_DAT_MAP_DATA/Saturn/enceladus/EN_120828_DLR_south_equator.png' \
                                               over=planet_grid,station,array
 grim data/n* over=center,limb,terminator 'exclude=center:europa;ganymede,limb:io'
 grim data/n* over=center,limb,terminator -action_syncing -activation_syncing
 grim data/files.txt@ bat_path=data/
-grim ~/casIss/1800/N1800458665_1.IMG.cal str_trs=faint=12 -auto_stretch over=stars
+
+   grim ~/casIss/1800/N1800458665_1.IMG.cal str_trs=faint=12 -auto_stretch over=stars
+
 grim data/n* over=center
 grim https://pds-imaging.jpl.nasa.gov/w10n/cassini/cassini_orbiter/coiss_1001/data/1350045294_1350147054/N1350122987_2.IMG
 grim data/CM_1559100372_1_ir_eg.cub
+grim 'data/n*' +OM_VERBOSITY=0.9
+grim 'data/n*' ++OM_VERBOSITY
 
-grim 'data/n*' +NV_VERBOSITY=0.9
-grim 'data/*'
+   grim 'data/*'
 
-grim non_existent_file
+grim non_existent_file ; detect_map crashes
 grim data/c1138223.gem data/n1351469359.2 data/fake1 data/n1354897340.1 data/fake2
 grim data/N* ext=.cal
 grim data/N* ext=.[+]
@@ -61,7 +74,23 @@ grim data/c1138223 data/c3494022 data/fake1 ext=.gem,.img
 brim data/*.img data/*.IMG data/*.1 data/*.2 data/*.png data/*.cub 
 brim data/*.img data/*.IMG data/*.1 data/*.2 data/*.cub 
 brim https://pds-imaging.jpl.nasa.gov/w10n/cassini/cassini_orbiter/coiss_1001/data/1350045294_1350147054/N135012\*.IMG
-brim '$PG_MAPS'/Saturn/*/*
+brim '$OMINAS_DAT_MAP_DATA'/Saturn/*/*
+
+
+;==============================================================================
+; Test omin command mode
+;==============================================================================
+omin --list
+omin profile==Default
+omin uninstall==trs.vgr
+omin install==trs.vgr
+omin deactivate==trs.cas.iss,trs.dawn
+
+omin, /list
+omin, profile='Default'
+omin, uninstall='trs.vgr'
+omin, install='trs.vgr'
+omin, activate=['trs.cas.iss','trs.dawn']
 
 
 ;==============================================================================
