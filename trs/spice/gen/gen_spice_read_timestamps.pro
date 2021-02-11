@@ -67,7 +67,7 @@ function gen_spice_read_timestamps, path, filenames
  ; replace / with _
  ;--------------------------------
  fix_path = strjoin(strsplit(path,path_sep(),/extract),'_')
- tsfile = '~/.ominas/timestamps/' + fix_path
+ tsfile = '~/.ominas/spice/timestamps/' + fix_path
 
  ts_files = file_search(tsfile + '.json')
  if(NOT keyword_set(ts_files)) then return, -1

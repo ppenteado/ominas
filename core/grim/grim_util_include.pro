@@ -218,7 +218,7 @@ function grim_ptd_info, plane, ptd, type=type, class=class, genre=genre, ii=ii, 
 
  if(NOT defined(ii)) then $
   begin
-;   if(keyword_set(ptd)) then ii = ... $
+   if(keyword_set(ptd)) then type = cor_udata(ptd, 'GRIM_OVERLAY_NAME')
    if(keyword_set(type)) then ii = where(info.name EQ type) $
    else if(keyword_set(class)) then ii = where(info.class EQ class) $
    else if(keyword_set(genre)) then ii = where(info.genre EQ genre)
@@ -264,7 +264,7 @@ pro grim_set_ptd_info, plane, ptd, type=type, class=class, genre=genre, ii=ii, $
 
  if(NOT defined(ii)) then $
   begin
-;   if(keyword_set(ptd)) then ii = ... $
+   if(keyword_set(ptd)) then type = cor_udata(ptd, 'GRIM_OVERLAY_NAME')
    if(keyword_set(type)) then ii = where(info.name EQ type) $
    else if(keyword_set(class)) then ii = where(info.class EQ class) $
    else if(keyword_set(genre)) then ii = where(info.genre EQ genre)

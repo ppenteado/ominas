@@ -46,14 +46,14 @@
 ;
 ; PROCEDURE:		File unit is allocated for internal use, then released when finished
 ;                       Checks for existence of database, reads if so
-;                       Location of database is in ~/.ominas
+;                       Location of database is in ~/.ominas/spice/db/
 ;                       Filename is spice_<type>k_database.<kpath with / replaced by _ >
 ;                       (for a kpath with a wildcard, *, it is replaced by x)
 ;                       Compares/generates list of filename in kpath
 ;                       If file system time matches current database, uses that information
 ;                       Uses spice to calculate the range if so
 ;                       Calls gen_spice_read_label to read from LBL file for PRODUCT_CREATION_TIME
-;                       Calls gen_spice_read_timestamp to read OMINAS timestamp file in ~/.ominas/timestamps
+;                       Calls gen_spice_read_timestamp to read OMINAS timestamp file in ~/.ominas/spice/timestamps/
 ;                       Generates structure of information to return in data (optional if supplied)
 ;                       Writes database if it did not exist.
 ;
@@ -187,7 +187,7 @@ function gen_spice_build_db, _kpath, type, nocheck=nocheck
  ; replace * with x
  ;-------------------------------------
  fix_path = strjoin(strsplit(fix_path,'*',/extract,/preserve_null), 'x')
- dbfile = '~/.ominas/spice_' + type + 'k_database.' + fix_path
+ dbfile = '~/.ominas/spice/db/spice_' + type + 'k_database.' + fix_path
 
  ;-------------------------------------
  ; attempt to read db file

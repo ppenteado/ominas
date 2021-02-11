@@ -187,20 +187,31 @@ pro grim_draw_standard_points, grim_data, plane, _ptd, name, data, color, tshade
  ptd = pnt_cull(_ptd, /nofree)
  if(NOT keyword_set(ptd)) then return
 
-if(symsize LE 0) then $
- begin
-  psize = call_function('grim_symsize_'+ name, data, ptd)
-  if(psize[0] NE -1) then symsize = abs(symsize)*psize $
-  else symsize = 1
- end
+ ;-------------------------------------------
+ ; negative symbol size means use function 
+ ;-------------------------------------------
+ if(symsize LE 0) then $
+  begin
+   psize = call_function('grim_symsize_'+ name, data, ptd)
+   if(psize[0] NE -1) then symsize = abs(symsize)*psize $
+   else symsize = 1
+  end
 
 
+ ;-------------------------------------------
+ ; determine shade value 
+ ;-------------------------------------------
  if(NOT tshade) then shade = 1.0 $
  else shade = call_function('grim_shade_'+ name, data, ptd)
  col = make_array(n_elements(shade), val=color)
 
+
+ ;--------------------------------------
+ ; draw points
+ ;--------------------------------------
  pg_draw, ptd, col=col, shades=shade, label_color='yellow', $
            label_shade=label_shade, psym=psym, psize=symsize, plabels=plabels
+
 
 
 end
@@ -2615,12 +2626,13 @@ d2min = 25
 
  n = n_elements(ptds)
  mins = make_array(n, val=1d20)
+ subs = make_array(n, val=-1)
 
  q = (convert_coord(p[0], p[1], /data, /to_device))[0:1]
 
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ ;------------------------------------------------------
  ; find minimum distance to each object
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ ;------------------------------------------------------
  for i=0, n-1 do if(obj_valid(ptds[i])) then $
   begin
    pts = pnt_points(ptds[i], /visible)
@@ -2630,15 +2642,51 @@ d2min = 25
      pp = (convert_coord(pts[0,*], pts[1,*], /data, /to_device))[0:1,*]
      qq = q#make_array(npts,val=1d) 
      d2 = (qq[0,*]-pp[0,*])^2 + (qq[1,*]-pp[1,*])^2
-    mins[i] = min(d2)
+     mins[i] = min(d2, sub)
+     subs[i] = sub
     end
   end
 
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
+
+ ;------------------------------------------------------
  ; return closest in-range object
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ ;------------------------------------------------------
  mm = min(mins, ww)
  if(mm LE d2min) then return, ptds[ww]
+
+
+ ;----------------------------------------------------------------------
+ ; if no vertices in range, test for proximity to any connecting lines
+ ;----------------------------------------------------------------------
+ mins[*] = 1d20
+ for i=0, n-1 do if(obj_valid(ptds[i])) then $
+  begin
+   info = grim_ptd_info(plane, ptds[i], psym=psym)
+   pts = pnt_points(ptds[i], /visible)
+   npts = n_elements(pts)/2
+   if(subs[i] NE -1) then $
+    if(psym LT 0) then $
+     begin
+      ;- - - - - - - - - - - - - - - - - - - -
+      ; determine adjoining vertices
+      ;- - - - - - - - - - - - - - - - - - - -
+      sub = subs[i]
+      sub0 = sub EQ 0 ? npts-1 : subs[i]-1 
+      sub1 = sub EQ npts-1 ? 0 : subs[i]+1 
+      ii = [sub0, sub, sub1]
+
+      pp = (convert_coord(pts[0,ii], pts[1,ii], /data, /to_device))[0:1,*]
+
+      if((d=p_segment_distance(q, pp[*,[0,1]])) GE 0) then mins[i] = d $
+      else mins[i] = abs(p_segment_distance(q, pp[*,[1,2]]))
+     end
+  end
+
+ ;------------------------------------------------------
+ ; return closest in-range object
+ ;------------------------------------------------------
+ mm = min(mins, ww)
+ if(mm LE sqrt(d2min)) then return, ptds[ww]
 
 
  return, 0

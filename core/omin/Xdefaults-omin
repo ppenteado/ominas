@@ -1,0 +1,36 @@
+/*---------------------------------------------------------------------------*
+* Default Xdefaults for OMIN.  Copy to your .ominas directory and edit as 
+* desired.  Add to your .Xdefaults file as:
+*
+*            #include ".ominas/Xdefaults-omin"
+*
+* Don't forget to reload the X resource database using:
+*
+*            xrdb ~/.Xdefaults
+*
+*---------------------------------------------------------------------------*/
+Idl*omin_base*background:                     khaki4
+Idl*omin_base*foreground:                     white
+
+Idl*mbar*background:                          khaki4
+Idl*mbar*foreground:                          white
+
+Idl*omin_base*description_text*background:    palegoldenrod
+Idl*omin_base*description_text*foreground:    black
+
+Idl*omin_base*tab_base*background:	      gray20
+Idl*omin_base*tab_base*foreground:	      white
+
+Idl*omin_args_base*background:                white
+Idl*omin_args_text*foreground:                black
+
+Idl*omin_node_menu*background:                khaki4
+Idl*omin_node_menu*foreground:                white
+
+Idl*omin_interrupt_button*background:         red
+Idl*omin_interrupt_button*foreground:         white
+
+Idl*omin_dialog*background:                   khaki4
+Idl*omin_dialog*foreground:                   white
+
+
