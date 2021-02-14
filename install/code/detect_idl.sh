@@ -1,3 +1,9 @@
+
+idlbin=/usr/local/exelis/idl//bin/idl
+idlversion=linux82
+return
+
+
 #---------------------------------------------------------------------------#
 # detect IDL location
 #---------------------------------------------------------------------------#
@@ -40,3 +46,4 @@ export idlbin
 #---------------------------------------------------------------------------#
 idlversion=`$idlbin -e 'print,!version.os+strjoin((strsplit(!version.release,".",/extract))[0:1])'`
 export idlversion
+
