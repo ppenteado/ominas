@@ -174,6 +174,13 @@ export idlbin
 idlversion=`$idlbin -e 'print,!version.os+strjoin((strsplit(!version.release,".",/extract))[0:1])'`
 export idlversion
 
+
+
+
+
+
+
+
 ominassh="$HOME/.ominas/ominas_setup.sh"
 usersh=$setting
 setting=$ominassh
@@ -781,6 +788,9 @@ echo " done" >> ~/.ominas/ominas
 #echo "fi" >> ~/.ominas/ominas
 echo "args+=(\\-args)" >> ~/.ominas/ominas
 echo "args+=(\${_args[*]})" >> ~/.ominas/ominas
+
+
+
 
 
 if [ -e "/opt/X11/lib/flat_namespace/" ]; then

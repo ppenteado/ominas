@@ -87,6 +87,10 @@ common nv_block, nv_state
 
  nv_state.ptr_list_p = ptr_new(0)
 
+ setup_dir = getenv('OMINAS_SETUP_DIR')
+ if(NOT keyword_set(setup_dir)) then setup_dir = '$HOME/.ominas/'
+ nv_state.setup_dir = setup_dir
+
 
  ;-------------------------------------------------------------------
  ; initialize module API

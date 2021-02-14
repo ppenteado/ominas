@@ -80,6 +80,7 @@ pro nv_state_struct__define
 	ins_table_p:			ptr_new(), $	; Pointer to instruments table
 
 	modules_p:			ptr_new(), $	; Pointer to modules.
+	setup_dir:			'', $		; OMINAS setup directory
 
 	;------debugging------
 	ptr_list_p:			ptr_new(), $	; List of pointers

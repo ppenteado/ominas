@@ -42,7 +42,8 @@
 ;-
 ;==============================================================================
 function nv_module_get_setup_dir, setup_dir=setup_dir
+@nv_block.common
  if(keyword_set(setup_dir)) then return, setup_dir
- return, '$HOME/.ominas'
+ return, nv_state.setup_dir
 end
 ;=============================================================================

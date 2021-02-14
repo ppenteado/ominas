@@ -83,7 +83,7 @@ function nv_module_add, abbr, dir, parent=parent
  data_dir = ominas_data + '/' + strep_char(apibbr, '_', '/')
  working_dir = file_dirname(data_dir) + '/_' + file_basename(data_dir)
  profile_dir = strep_char(qbbr, '.', '/')
- method_dir = dir + '/module'
+ method_dir = dir + '/module'  ;;; seems like this should be called module_dir
 
  ;------------------------------------------------------------------
  ; find submodules
@@ -106,8 +106,8 @@ function nv_module_add, abbr, dir, parent=parent
 	qname:			strlowcase(qname), $	; Module fully qualified name
 	apiname:		strlowcase(apiname), $	; Name for use in API
 	submodules_p:		ptr_new(0), $		; Submodules
-	dir:			dir, $			; Module code directory
-	method_dir:		method_dir, $		; Module method directory
+	dir:			dir, $			; Module code directory -- should be called method_dir
+	method_dir:		method_dir, $		; Module setup directory -- should be called module_dir
 	data_dir:		data_dir, $		; Module data directory; from profile root
 	working_dir:		working_dir, $		; Module working data directory; from profile root
 	profile_dir:		profile_dir, $		; Module profile directory

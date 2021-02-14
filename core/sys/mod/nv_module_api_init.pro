@@ -73,14 +73,16 @@ pro nv_module_api_init, setup_dir=setup_dir, reset=reset
  ;-------------------------------------------------------------
  ; create directories
  ;-------------------------------------------------------------
- file_mkdir_decrapified, [setup_dir, profiles_dir]
+;;; setup_dir should already be created by omin.sh
+;;; file_mkdir_decrapified, [setup_dir, profiles_dir]
 
 
  ;-------------------------------------------------------------
  ; copy default files
  ;-------------------------------------------------------------
- default_files = file_search(ominas_defaults_dir + '/*')
- file_copy_decrapified, default_files, setup_dir, overwrite=reset
+;;; default files should already be copied by omin.sh
+;;; default_files = file_search(ominas_defaults_dir + '/*')
+;;; file_copy_decrapified, default_files, setup_dir, overwrite=reset
 
 
  ;-------------------------------------------------------------

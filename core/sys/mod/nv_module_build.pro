@@ -6,7 +6,7 @@
 ;
 ; PURPOSE:
 ;	Builds the ominas configuration, consisting of the setup script
-;	(.ominas/ominas_set.sh) and detector tables.
+;	(.ominas/ominas_setup.sh) and detector tables.
 ;
 ;
 ; CATEGORY:
@@ -90,7 +90,8 @@ pro nvmb_descend, module, lines, level
  ; add module methods to IDL_PATH
  ;------------------------------------------------------
  lines = append_array(lines, $
-                      indent + 'export IDL_PATH=${IDL_PATH}:' + module.method_dir)
+;;;                  indent + 'export IDL_PATH=${IDL_PATH}:' + module.method_dir)
+                  indent + 'export IDL_PATH=${IDL_PATH}:' + module.dir)
 
  ;------------------------------------------------------
  ; check for setup script, go no deeper if none present
