@@ -226,14 +226,15 @@ pro nv_module_build, setup_dir=setup_dir
  header = [header, '# Using profile: ' + profile]
       
 
-
  footer = [ $
    ' ', $
    ' ', $
    '###############################################################################', $
    '# User post-setup code', $
    '###############################################################################', $
-   '. ' + setup_dir + '/ominas_postsetup.sh']
+   'if [ -f "' + setup_dir + '/ominas_postsetup.sh' + '" ]; then', $
+   '. ' + setup_dir + '/ominas_postsetup.sh', $
+   'fi']
 
  ;------------------------------------------------
  ; write script
