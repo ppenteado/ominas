@@ -28,9 +28,6 @@
 ;	no_setup:	If set, the setup file is not copied, meaning
 ;			that it the module will not be considered active.
 ;
-;	reset:		If set, configuration files are overwritten with 
-;			defaults.
-;
 ;  OUTPUT: NONE
 ;
 ;
@@ -46,7 +43,7 @@
 ;	
 ;-
 ;==============================================================================
-pro nv_module_activate, module, no_setup=no_setup, reset=reset, force=force
+pro nv_module_activate, module, no_setup=no_setup, force=force
 
  profile_dir = nv_module_get_profile_dir(module)
  method_dir = module.method_dir
@@ -56,7 +53,6 @@ pro nv_module_activate, module, no_setup=no_setup, reset=reset, force=force
  ; check module lock
  ;-------------------------------------------------------------
  if(NOT keyword_set(force)) then $
-          if(NOT keyword_set(reset)) then $
                          if(nv_module_query(module, /locked)) then return
 
  ;-------------------------------------------------------------
@@ -68,21 +64,21 @@ pro nv_module_activate, module, no_setup=no_setup, reset=reset, force=force
  ; copy default properties file
  ;-------------------------------------------------------------
  prop_file = nv_module_get_properties_filename(module, dir=method_dir)
- file_copy_decrapified, prop_file, profile_dir, overwrite=reset
+ file_copy_decrapified, prop_file, profile_dir
 
  ;-------------------------------------------------------------
  ; copy detectors
  ;-------------------------------------------------------------
  detector_files = file_basename(file_search(method_dir + '/detect_*.pro'))
  if(keyword_set(detector_files)) then $
-  file_copy_decrapified, method_dir + '/' + detector_files, profile_dir, overwrite=reset
+  file_copy_decrapified, method_dir + '/' + detector_files, profile_dir
 
  ;-------------------------------------------------------------
  ; copy tables
  ;-------------------------------------------------------------
  table_files = file_basename(file_search(method_dir + '/*.tab'))
  if(keyword_set(table_files)) then $
-  file_copy_decrapified, method_dir + '/' + table_files, profile_dir, overwrite=reset
+  file_copy_decrapified, method_dir + '/' + table_files, profile_dir
 
  ;-------------------------------------------------------------
  ; copy setup code
@@ -93,7 +89,7 @@ pro nv_module_activate, module, no_setup=no_setup, reset=reset, force=force
    setup_dst = profile_dir + '/setup.sh'
    ff = file_search(setup_src)
    if(NOT keyword_set(ff)) then write_txt_file, setup_dst, '#' $
-   else file_copy_decrapified, setup_src, setup_dst, overwrite=reset
+   else file_copy_decrapified, setup_src, setup_dst
   end
 
  ;-------------------------------------------------------------

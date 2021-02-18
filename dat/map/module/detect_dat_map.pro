@@ -2,7 +2,9 @@
 ; detect_dat_map.pro
 ;
 ;===========================================================================
-function detect_dat_map, dd
+function detect_dat_map, dd, arg, query=query
+ if(keyword_set(query)) then return, 'INSTRUMENT'
+
  dh = dat_dh(dd)
 
  s = size(dh)

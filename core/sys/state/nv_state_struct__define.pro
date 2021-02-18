@@ -26,7 +26,7 @@
 ;	translators_filenames_p:	Pointer to names of translators 
 ;					tables.
 ;
-;	tr_table_p:	Pointer to loaded translators table.
+;	trs_table_p:	Pointer to loaded translators table.
 ;
 ;	transforms_filenames_p:	Pointer to names of transforms tables.
 ;
@@ -36,14 +36,9 @@
 ;
 ;	io_table_p:	Pointer to loaded I/O table.
 ;
-;	ftp_detectors_filenames_p:	Pointer to names of file types tables.
+;	ftp_detectors_p:	Pointer to names of file type detectors.
 ;
-;	ftp_table_p:	Pointer to loaded s table.
-;
-;	ins_detectors_filenames_p:	Pointer to names of instruments 
-;					tables.
-;
-;	ins_table_p:	Pointer to loaded instruments table.
+;	ins_detectors_p:	Pointer to names of instrument detectors.
 ;
 ;
 ;
@@ -69,18 +64,18 @@ pro nv_state_struct__define
 	dds_p:				ptr_new(), $	; loaded maintain=1 dds
 
 	translators_filenames_p:	ptr_new(), $	; translators filename
-	tr_table_p:			ptr_new(), $	; Pointer to translators table
+	trs_table_p:			ptr_new(), $	; Pointer to translators table
 	transforms_filenames_p:		ptr_new(), $	; transforms filename
 	trf_table_p:			ptr_new(), $	; Pointer to transforms table
+	detectors_p:			ptr_new(), $	; I/O filename
 	io_filenames_p:			ptr_new(), $	; I/O filename
 	io_table_p:			ptr_new(), $	; Pointer to I/O table
-	ftp_detectors_filenames_p:	ptr_new(), $	; File type detectors filename
-	ftp_table_p:			ptr_new(), $	; Pointer to file types table
-	ins_detectors_filenames_p:	ptr_new(), $	; Instrument detectors filename
-	ins_table_p:			ptr_new(), $	; Pointer to instruments table
+        ftp_detectors_p:		ptr_new(), $	; File type detectors
+	ins_detectors_p:		ptr_new(), $	; Instrument detectors
 
 	modules_p:			ptr_new(), $	; Pointer to modules.
 	setup_dir:			'', $		; OMINAS setup directory
+	new	:			0b, $		; New-installation flag
 
 	;------debugging------
 	ptr_list_p:			ptr_new(), $	; List of pointers

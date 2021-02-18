@@ -10,5 +10,17 @@
 *
 *---------------------------------------------------------------------------*/
 Idl*omin_base*background:                              khaki4
+Idl*omin_base*foreground:                              white
+Idl*omin_mbar*background:                              khaki4
+Idl*omin_mbar*foreground:                              white
+Idl*omin_node_menu*background:                         khaki4
+Idl*omin_node_menu*foreground:                         white
+Idl*omin_tab_base*background:                          khaki4
+Idl*omin_dialog*background:                            khaki4
+Idl*omin_dialog*foreground:                            white
+Idl*omin_args*background:                              khaki4
+Idl*omin_description_text*background:                  khaki2
+Idl*status_label*background:                           khaki4
+Idl*omin_intro*background:                             khaki2
 
 

@@ -92,7 +92,7 @@ function dat_get_value, dd, keyword, status=status, trs=trs, $
  ; record any transient keyvals
  ;--------------------------------------------
  nv_message, verb=0.8, 'Adding transient keywords: ' + trs
- dat_add_tr_transient_keyvals, dd, trs
+ dat_add_trs_transient_keyvals, dd, trs
 
 
  ;--------------------------------------------

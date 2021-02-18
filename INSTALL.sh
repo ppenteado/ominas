@@ -2,12 +2,19 @@
 ###############################################################################
 # OMINAS Installation script
 #
-#  This script sets up the ominas setup directory and then runs OMIN
-#  for module installation a
-#
-#  This script must be sourced from the OMINAS top directoryl e.g.:
+#  To install OMINAS, type:
 #
 #  source ./INSTALL.sh
+#
+#  This script will create the ominas setup directory $HOME/.ominas/ and
+#  then start the OMINAS installer OMIN, which sets up the default 
+#  configuration.  If you exit OMIN at this point, the demo configuration 
+#  should be active and functional.  [[actually need to install maps and spice?]] 
+#
+#  OMIN can be run at any time to reconfigure your installation using the
+#  'omin' shell alias.
+#
+#
 #
 #
 #  Options:

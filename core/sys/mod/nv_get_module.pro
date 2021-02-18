@@ -26,8 +26,8 @@
 ;
 ; KEYWORDS:
 ;  INPUT:  
-;	all:		If set, all modules beneasth the spcified module
-;			are returned.
+;	children:	If set, all modules beneath the specified module
+;			are returned. 
 ;
 ;	siblings:	If set, all sibling modules are returned (including
 ;			the input module) in the order specified by the ORDER 
@@ -48,13 +48,13 @@
 ;	
 ;-
 ;==============================================================================
-function ___nv_get_module, arg, all=all, siblings=siblings
+function ___nv_get_module, arg, children=children, siblings=siblings
 @nv_block.common
 
  modules = *nv_state.modules_p
  if(NOT keyword_set(modules)) then return, !null
 
- if(keyword_set(all)) then return, modules
+ if(keyword_set(children)) then return, modules
  if(NOT keyword_set(arg)) then arg = 'ominas'
 
  w = (where(modules.qbbr EQ strlowcase(arg)))[0]
@@ -93,7 +93,7 @@ end
 ;
 ;
 ;==============================================================================
-function nv_get_module, arg, all=all, siblings=siblings
+function nv_get_module, arg, children=children, siblings=siblings
 @nv_block.common
 
  modules = *nv_state.modules_p
@@ -109,7 +109,7 @@ function nv_get_module, arg, all=all, siblings=siblings
   end
  if(NOT keyword_set(module)) then return, !null
 
- if(keyword_set(all)) then return, nvgm_descend(module)
+ if(keyword_set(children)) then return, nvgm_descend(module)
 
  return, module
 end

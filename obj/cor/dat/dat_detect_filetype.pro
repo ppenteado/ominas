@@ -39,8 +39,7 @@
 ;
 ;	all:		If set, all filetypes in the table are returned.
 ;
-;  OUTPUT: 
-;	action:		Action string from matched file type entry.
+;  OUTPUT: NONE
 ;
 ;
 ; RETURN: 
@@ -61,7 +60,28 @@
 ;	
 ;-
 ;=============================================================================
-function dat_detect_filetype, dd, filename=filename, header=header, $
+function dat_detect_filetype, dd, $
+             filename=filename, header=header, all=all
+
+ dat_sort_detectors, filetype_detectors=filetype_detectors
+
+ if(keyword_set(dd)) then $
+  begin
+   if(NOT keyword_set(filename)) then filename = dat_filename(dd)
+   if(NOT keyword_set(header)) then header = dat_header(dd)
+  end
+ if(NOT keyword_set(filename)) then filename = ''
+ if(NOT keyword_set(header)) then header = ''
+
+ return, dat_detect(dd, filetype_detectors, $
+                               filename=filename, header=header, all=all)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+function _dat_detect_filetype, dd, filename=filename, header=header, $
                                                 default=default, all=all
 @nv_block.common
 @core.include
@@ -107,6 +127,8 @@ function dat_detect_filetype, dd, filename=filename, header=header, $
    if(NOT keyword_set(filename)) then filename = dat_filename(dd)
    if(NOT keyword_set(header)) then header = dat_header(dd)
   end
+ if(NOT keyword_set(filename)) then filename = ''
+ if(NOT keyword_set(header)) then header = ''
 
  catch_errors = NOT keyword_set(nv_getenv('OMINAS_DEBUG'))
  s = size(table)
@@ -120,13 +142,14 @@ function dat_detect_filetype, dd, filename=filename, header=header, $
    if(NOT catch_errors) then err = 0 $
    else catch, err
    if(err EQ 0) then $
-           status = call_function(fn, filename=filename, header=header) $
+;           result = call_function(fn, dd, filename=filename, header=header) $
+     result = call_function(fn, dd, {filename:filename, header:header}) $
    else nv_message, /warning, $
                 'File type detector ' + strupcase(fn) + ' crashed; ignoring.'
    catch, /cancel
 
-   if(status) then nv_message, verb=0.8, filetype + ' detected.'
-   if(status) then return, filetype
+   if(keyword_set(result)) then nv_message, verb=0.8, filetype + ' detected.'
+   if(keyword_set(result)) then return, filetype
   end
 
  return, ''

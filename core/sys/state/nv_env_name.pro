@@ -55,8 +55,8 @@ function nv_env_name, translator=translator, transform=transform, $
  if(keyword_set(translator)) then return, 'OMINAS_TRANSLATOR_TABLE'
  if(keyword_set(transform)) then return, 'OMINAS_TRANSFORM_TABLE'
  if(keyword_set(io)) then return, 'OMINAS_IO_TABLE'
- if(keyword_set(filetype)) then return, 'OMINAS_FILETYPE_TABLE'
- if(keyword_set(instrument)) then return, 'OMINAS_INSTRUMENT_TABLE'
+; if(keyword_set(filetype)) then return, 'OMINAS_FILETYPE_TABLE'
+; if(keyword_set(instrument)) then return, 'OMINAS_INSTRUMENT_TABLE'
  if(keyword_set(detector)) then return, 'OMINAS_DETECTORS'
 
 end

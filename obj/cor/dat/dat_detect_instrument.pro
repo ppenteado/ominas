@@ -46,6 +46,15 @@
 ;-
 ;=============================================================================
 function dat_detect_instrument, dd
+ dat_sort_detectors, instrument_detectors=instrument_detectors
+ return, dat_detect(dd, instrument_detectors, null='DEFAULT')
+end
+;=============================================================================
+
+
+
+;=============================================================================
+function _dat_detect_instrument, dd
 @nv_block.common
 @core.include
 

@@ -1,2 +1,4 @@
 TRS
 OMINAS Translator modules
+
+  This module is for translators.

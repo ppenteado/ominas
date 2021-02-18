@@ -1,2 +1,4 @@
 LIB
 OMINAS Library modules
+
+  This module is for external code libraries.  

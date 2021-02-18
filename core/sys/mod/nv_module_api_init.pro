@@ -25,11 +25,9 @@
 ; KEYWORDS:
 ;  INPUT: 
 ;	setup_dir:	Directory for setup files, default is ~/.ominas.
-;
-;	reset:		If set, configuration files are overwritten with 
-;			defaults.
 ;	
-;  OUTPUT: NONE
+;  OUTPUT: 
+;	new:		Indicates that this is a new OMINAS installation.
 ;
 ;
 ; RETURN: NONE
@@ -52,7 +50,7 @@
 ;
 ;
 ;==============================================================================
-pro nv_module_api_init, setup_dir=setup_dir, reset=reset
+pro nv_module_api_init, setup_dir=setup_dir, new=new
 
  setup_dir = nv_module_get_setup_dir(setup_dir=setup_dir)
  profiles_dir = setup_dir + '/profiles'
@@ -65,24 +63,13 @@ pro nv_module_api_init, setup_dir=setup_dir, reset=reset
  ;-------------------------------------------------------------
  profile_dir = nv_module_get_profile_dir(setup_dir=setup_dir)
  test = file_readlink_decrapified(profile_dir)
+ new = 0
  if(NOT keyword_set(test)) then $
-                       nv_module_select_profile, 'Default', setup_dir=setup_dir
+  begin
+   new = 1
+   nv_module_select_profile, 'Default', setup_dir=setup_dir
+  end
  print, 'Using profile "' + nv_module_get_profiles(/cur) + '"'
-
-
- ;-------------------------------------------------------------
- ; create directories
- ;-------------------------------------------------------------
-;;; setup_dir should already be created by omin.sh
-;;; file_mkdir_decrapified, [setup_dir, profiles_dir]
-
-
- ;-------------------------------------------------------------
- ; copy default files
- ;-------------------------------------------------------------
-;;; default files should already be copied by omin.sh
-;;; default_files = file_search(ominas_defaults_dir + '/*')
-;;; file_copy_decrapified, default_files, setup_dir, overwrite=reset
 
 
  ;-------------------------------------------------------------
@@ -94,7 +81,7 @@ pro nv_module_api_init, setup_dir=setup_dir, reset=reset
  ;-------------------------------------------------------------
  ; create the default profile if necessary
  ;-------------------------------------------------------------
- nv_module_create_profile, 'Default', reset=reset
+ nv_module_create_profile, 'Default'
 
 end
 ;=============================================================================

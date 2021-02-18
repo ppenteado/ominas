@@ -90,8 +90,7 @@ pro nvmb_descend, module, lines, level
  ; add module methods to IDL_PATH
  ;------------------------------------------------------
  lines = append_array(lines, $
-;;;                  indent + 'export IDL_PATH=${IDL_PATH}:' + module.method_dir)
-                  indent + 'export IDL_PATH=${IDL_PATH}:' + module.dir)
+                  indent + 'export IDL_PATH=${IDL_PATH}:+' + module.dir)
 
  ;------------------------------------------------------
  ; check for setup script, go no deeper if none present
@@ -111,12 +110,6 @@ pro nvmb_descend, module, lines, level
                       indent + 'export '+ module.vname + '_DATA=' + module.data_dir)
   end
 
- ;------------------------------------------------------
- ; add module code to IDL_PATH
- ;------------------------------------------------------
- plus = keyword_set(submodules) ? '' : '+'
- standard_lines = append_array(standard_lines, $
-                        indent + 'export IDL_PATH=${IDL_PATH}:' + plus + module.dir)
 
  ;------------------------------------------------------
  ; setup code
@@ -128,7 +121,7 @@ pro nvmb_descend, module, lines, level
  ; detectors 
  ;------------------------------------------------------
  det_env = nv_env_name(/detector)
- det_file = file_search(profile_dir + '/detect_*.pro')
+ det_file = file_basename(file_search(profile_dir + '/detect_*.pro'), '.pro')
  if(keyword_set(det_file)) then det_lines = indent + nvmb_add_table(det_env, det_file)
 
  ;------------------------------------------------------
@@ -137,8 +130,6 @@ pro nvmb_descend, module, lines, level
  trs_env = nv_env_name(/translator)
  trf_env = nv_env_name(/transform)
  io_env = nv_env_name(/io)
- ftp_env = nv_env_name(/filetype)
- ins_env = nv_env_name(/instrument)
 
  trs_file = file_search(profile_dir + '/translators.tab')
  if(keyword_set(trs_file)) then trs_lines = indent + nvmb_add_table(trs_env, trs_file)
@@ -149,16 +140,8 @@ pro nvmb_descend, module, lines, level
  io_file = file_search(profile_dir + '/io.tab')
  if(keyword_set(io_file)) then io_lines = indent + nvmb_add_table(io_env, io_file)
 
- ftp_file = file_search(profile_dir + '/filetype_detectors.tab')
- if(keyword_set(ftp_file)) then ftp_lines = indent + nvmb_add_table(ftp_env, ftp_file)
-
- ins_file = file_search(profile_dir + '/instrument_detectors.tab')
- if(keyword_set(ins_file)) then ins_lines = indent + nvmb_add_table(ins_env, ins_file)
-
  tab_lines = append_array(trs_lines, trf_lines)
  tab_lines = append_array(tab_lines, io_lines)
- tab_lines = append_array(tab_lines, ftp_lines)
- tab_lines = append_array(tab_lines, ins_lines)
 
 
  ;------------------------------------------------------

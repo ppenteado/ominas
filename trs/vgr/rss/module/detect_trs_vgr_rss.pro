@@ -2,7 +2,8 @@
 ; detect_trs_vgr_rss.pro
 ;
 ;===========================================================================
-function detect_trs_vgr_rss, dd
+function detect_trs_vgr_rss, dd, arg, query=query
+ if(keyword_set(query)) then return, 'INSTRUMENT'
 
  label = (dat_header(dd))[0]
  if ~isa(label,'string') then return,0

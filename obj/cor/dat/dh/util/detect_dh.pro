@@ -2,14 +2,16 @@
 ; detect_dh.pro
 ;
 ;===========================================================================
-function detect_dh, filename=filename, header=header, udata
+function detect_dh, dd, arg, query=query
+stop
+ if(keyword_set(query)) then return, 'FILETYPE'
 
  status = 0
 
  ;==============================
  ; open the file
  ;==============================
- openr, unit, filename, /get_lun, error=error
+ openr, unit, arg.filename, /get_lun, error=error
 ; if(error NE 0) then nv_message, /anonymous, !err_string
  if(error NE 0) then return, 0
 
@@ -27,6 +29,7 @@ function detect_dh, filename=filename, header=header, udata
  free_lun, unit
 
 
- return, status
+ if(status) then return, 'DH'
+ return, 0
 end
 ;===========================================================================

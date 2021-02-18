@@ -70,7 +70,7 @@ pro dat_put_value, dd, keyword, value, trs=trs, status=status, $
  ;--------------------------------------------
  ; record any transient keyvals
  ;--------------------------------------------
- dat_add_tr_transient_keyvals, dd, trs
+ dat_add_trs_transient_keyvals, dd, trs
 
 
  ;--------------------------------------------

@@ -98,9 +98,9 @@ pro dat_lookup_translators, instrument, $
  ; read the translators table if it doesn't exist
  ;=====================================================
  stat = 0
- if(NOT keyword_set(*nv_state.tr_table_p)) then $
+ if(NOT keyword_set(*nv_state.trs_table_p)) then $
    dat_read_config, 'OMINAS_TRANSLATOR_TABLE', stat=stat, $
-                      nv_state.tr_table_p, nv_state.translators_filenames_p
+                      nv_state.trs_table_p, nv_state.translators_filenames_p
  if(stat NE 0) then $
    nv_message, /con, $
      'No translators table.', $
@@ -108,7 +108,7 @@ pro dat_lookup_translators, instrument, $
             'instrument-specific information.  Without this table, OMINAS', $
             'cannot obtain geometry descriptors.']
 
- table = *nv_state.tr_table_p
+ table = *nv_state.trs_table_p
  if(NOT keyword_set(table)) then return
 
 
@@ -120,21 +120,21 @@ pro dat_lookup_translators, instrument, $
  ; Add COMMON translators first
  ;---------------------------------------------------------------------
  repeat begin
-  status = dat_tr_table_extract(table, 'COMMON', $
+  status = dat_trs_table_extract(table, 'COMMON', $
 		input_translators, output_translators, keyvals)
  endrep until status EQ -1
 
  ;---------------------------------------------------------------------
  ; Match instrument-specific translators
  ;---------------------------------------------------------------------
- status = dat_tr_table_extract(table, instrument, $
+ status = dat_trs_table_extract(table, instrument, $
                 input_translators, output_translators, keyvals)
 
  ;---------------------------------------------------------------------
  ; If no instrument-specific translators, check for DEFAULT translators
  ;---------------------------------------------------------------------
  if(status NE 0) then $
-   status = dat_tr_table_extract(table, 'DEFAULT', $
+   status = dat_trs_table_extract(table, 'DEFAULT', $
                 input_translators, output_translators, keyvals) $
 
  ;---------------------------------------------------------------------
@@ -142,7 +142,7 @@ pro dat_lookup_translators, instrument, $
  ;---------------------------------------------------------------------
  else $
  repeat begin
-  status = dat_tr_table_extract(table, instrument, $
+  status = dat_trs_table_extract(table, instrument, $
                      input_translators, output_translators, keyvals)
  endrep until status EQ -1
 

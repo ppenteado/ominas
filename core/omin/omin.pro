@@ -840,7 +840,7 @@ function omin_new_tab, omin_data, tab, title=title
  ;----------------------------------
  ; set up new widgets
  ;----------------------------------
- tab_base = widget_base(tab, /column, title=title, resource_name='tab_base')
+ tab_base = widget_base(tab, /column, title=title, resource_name='omin_tab_base')
  root = widget_tree(tab_base, /checkbox, /context_events, xsize=400, ysize=600)
 
  tab_data = {OMIN_TAB_DATA, $
@@ -2027,14 +2027,14 @@ end
 ;
 ;=============================================================================
 pro omin_mbar_profile_reset_event, event
- answer = dialog_message('Reset this profile?', /question, resource_name='omin_dialog')
- if(answer NE 'Yes') then return
 
  widget_control, event.top, get_uvalue=omin_data
  tab_base = omin_get_current_tab(omin_data, data=tab_data)
 
- nv_module_delete_profile, tab_data.name, /force
- nv_module_create_profile, tab_data.name
+ answer = dialog_message('Reset profile ' + tab_data.name + '?', /question, resource_name='omin_dialog')
+ if(answer NE 'Yes') then return
+
+ nv_module_reset_profile, tab_data.name
 
  omin_update_tree, omin_data
 end
@@ -2083,12 +2083,14 @@ end
 ;
 ;=============================================================================
 pro omin_mbar_profile_delete_event, event
- answer = dialog_message('Delete this profile?', /question, resource_name='omin_dialog')
- if(answer NE 'Yes') then return
-
  widget_control, event.top, get_uvalue=omin_data
  tab_base = omin_get_current_tab(omin_data, data=tab_data)
- nv_module_delete_profile, tab_data.name
+ name = tab_data.name
+
+ answer = dialog_message('Delete profile ' + name + '?', /question, resource_name='omin_dialog')
+ if(answer NE 'Yes') then return
+
+ nv_module_delete_profile, name
  omin_update_tree, omin_data
 end
 ;=============================================================================
@@ -2116,7 +2118,8 @@ end
 ; omin_tree_descend
 ;
 ;=============================================================================
-pro omin_tree_descend, omin_data, node, action, condition=condition
+pro omin_tree_descend, omin_data, node, action, $
+                                      condition=condition, result=result
 
  widget_control, node, get_uvalue=node_data
 
@@ -2149,7 +2152,8 @@ pro omin_tree_descend, omin_data, node, action, condition=condition
  if(NOT keyword_set(children)) then return
 
  for i=0, n_elements(children)-1 do $
-         omin_tree_descend, omin_data, children[i], action, condition=condition
+               omin_tree_descend, omin_data, children[i], action, $
+                                           condition=condition, result=result
 
 end
 ;=============================================================================
@@ -2469,6 +2473,18 @@ end
 
 
 ;=============================================================================
+; omin_command_reset
+;
+;=============================================================================
+pro omin_command_reset, reset
+ if(reset NE '0') then if(reset NE '1') then name = reset
+ nv_module_reset_profile, name
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; omin_command
 ;
 ;=============================================================================
@@ -2515,9 +2531,126 @@ pro omin_command, fg=fg, $
  if(keyword_set(list)) then nv_module_list
 
 
+ ;-----------------------------------------------------------------
+ ; reset to default configuration
+ ;-----------------------------------------------------------------
+ if(keyword_set(reset)) then omin_command_reset, reset
 
-; if(keyword_set(reset)) then nv_module_reset...
 
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; omin_get_dependencies
+;
+;=============================================================================
+function omin_get_dependencies, name
+
+   ;----------------------------------------------------
+   ; get modules
+   ;----------------------------------------------------
+   module = nv_get_module(name)
+   modules = nv_get_module(name, /children)
+   modules = append_array(module, modules)
+
+
+
+   ;----------------------------------------------------
+   ; get dependencies
+   ;----------------------------------------------------
+  for i=0, n_elements(modules)-1 do $
+    begin
+     tab =  file_search(modules[i].method_dir + '/*' + '_detectors.tab')
+if(keyword_set(tab)) then print, modules[i].qname
+    end
+
+return, ''
+ return, nodes
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; omin_intro_install
+;
+;=============================================================================
+pro omin_intro_install, options
+
+ ;--------------------------------------------------------
+ ; set variables corresponding to each returned option
+ ;--------------------------------------------------------
+ for i=0, n_elements(options)-1 do junk = execute(options[i] + '=1')
+
+
+ ;--------------------------------------------------------
+ ; install according to specified options
+ ;--------------------------------------------------------
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ ; default
+ ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ if(keyword_set(default)) then $
+  begin
+   print, 'Installing referenced modules...'
+   nodes = omin_get_dependencies('ominas')
+
+  end $
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ ; full
+ ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ else if(keyword_set(full)) then $
+  begin
+   print, 'Installing all modules...'
+  end $
+
+ ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ ; demo
+ ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ else if(keyword_set(demo)) then $
+  begin
+   print, 'Installing Modules Required by the OMINAS Demo...'
+   nodes = omin_get_dependencies('ominas.demo')
+
+;   omin_install, omin_data, node, callback='omin_intro_callback', data=data, update=update
+  end 
+
+
+
+ junk = dialog_message(title='OMINAS Installation Underway', $
+         ['Your modules are being installed.  Once the installation', $
+          'is complete, you may exit OMIN and begin using OMINAS.', $
+          'Use OMIN (this program) to modify your configuration in', $
+          'the future.'], $
+          /info, resource_name='omin_intro')
+
+
+;;;; dialog with info about testing demos once installation is complete
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; omin_intro
+;
+;=============================================================================
+pro omin_intro, base
+
+ widget_control, base, sensitive=0
+
+ options = omin_dialog_intro()
+
+ if(keyword_set(options)) then omin_intro_install, options $
+ else junk = dialog_message(title='Manual OMINAS Configuration', $
+         'You may now use the OMIN interface manually install modules.', $
+          /info, resource_name='omin_intro')
+
+ widget_control, base, sensitive=1
 
 end
 ;=============================================================================
@@ -2547,10 +2680,10 @@ pro omin, block=block, fg=fg, bat=bat, _extra=ex
  title = 'OMIN -- OMINAS Install/Config'
 
  base = widget_base(title=title, /column, mbar=mbar, /tracking_events, $
-            rname_mbar='mbar', resource_name='omin_base');, /tlb_size_events)
+            rname_mbar='omin_mbar', resource_name='omin_base');, /tlb_size_events)
  tab = widget_tab(base)
 
- description_text = widget_text(base, ysize=10, /scroll, /wrap, resource_name='description_text')
+ description_text = widget_text(base, ysize=10, /scroll, /wrap, resource_name='omin_description_text')
  status_label = widget_text(base, resource_name='status_label')
 
 
@@ -2617,6 +2750,7 @@ pro omin, block=block, fg=fg, bat=bat, _extra=ex
  omin_update_tree, omin_data
 
 
+
  ;----------------------------------
  ; set poll timer
  ;----------------------------------
@@ -2626,7 +2760,16 @@ pro omin, block=block, fg=fg, bat=bat, _extra=ex
   ;; folderwatch introduced in IDL 8.7.2
 
 
+ ;---------------------------------------------------------------------
+ ; Do initial module install if new OMINAS installation
+ ;---------------------------------------------------------------------
+ if(nv_state.new) then omin_intro, base
+omin_intro, base
+
+
  xmanager, 'omin', base;, /no_block
+
+
 
 end
 ;=============================================================================

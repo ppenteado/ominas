@@ -2,7 +2,9 @@
 ; detect_trs_cas_cirs.pro
 ;
 ;===========================================================================
-function detect_trs_cas_cirs, dd
+function detect_trs_cas_cirs, dd, arg, query=query
+ if(keyword_set(query)) then return, 'INSTRUMENT'
+
  compile_opt idl2,logical_predicate
  label = (dat_header(dd));[0]
  if size(label,/type) ne 8 then return,''

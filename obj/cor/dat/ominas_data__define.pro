@@ -89,10 +89,12 @@ end_keywords)
  ; file properties
  ;-----------------------
  if(keyword_set(filetype)) then (*self.dd0p).filetype = filetype $
- else (*self.dd0p).filetype = dat_detect_filetype(/default)
+; else (*self.dd0p).filetype = dat_detect_filetype(/default)
+else(*self.dd0p).filetype = 'EXT'
 
  if(keyword_set(htype)) then (*self.dd0p).htype = htype $
- else (*self.dd0p).htype = dat_detect_filetype(/default)
+; else (*self.dd0p).htype = dat_detect_filetype(/default)
+else(*self.dd0p).htype = 'EXT'
 
  ;----------------------------
  ; data and abscissa labels

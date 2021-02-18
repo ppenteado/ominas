@@ -1,1 +1,0 @@
-ominas_env_def.csh

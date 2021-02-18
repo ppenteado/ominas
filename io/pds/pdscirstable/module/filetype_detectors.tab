@@ -1,5 +1,0 @@
-# The first filetype in this list is treated as a default.
-# detector fn			filetype
-# (returns T/F)
-
-  detect_pdscirstable           PDSCIRSTABLE

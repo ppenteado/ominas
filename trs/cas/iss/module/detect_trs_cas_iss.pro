@@ -2,7 +2,8 @@
 ; detect_trs_cas_iss.pro
 ;
 ;===========================================================================
-function detect_trs_cas_iss, dd
+function detect_trs_cas_iss, dd, arg, query=query
+ if(keyword_set(query)) then return, 'INSTRUMENT'
 
  label = (dat_header(dd))[0]
  if(NOT keyword_set(label)) then return, ''

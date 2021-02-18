@@ -2,7 +2,8 @@
 ; detect_trs_cas_vims.pro
 ;
 ;===========================================================================
-function detect_trs_cas_vims, dd
+function detect_trs_cas_vims, dd, arg, query=query
+ if(keyword_set(query)) then return, 'INSTRUMENT'
 
  lab=dat_header(dd)
  if ~isa(lab,'string') then return,''

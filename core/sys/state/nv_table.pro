@@ -58,11 +58,9 @@ function nv_table_p, $
       instrument=instrument, translator=translator, transform=transform, io=io, filetype=filetype
 @nv_block.common
 
- if(keyword_set(translator)) then return, nv_state.tr_table_p
+ if(keyword_set(translator)) then return, nv_state.trs_table_p
  if(keyword_set(transform)) then return, nv_state.trf_table_p
  if(keyword_set(io)) then return, nv_state.io_table_p
- if(keyword_set(filetype)) then return, nv_state.ftp_table_p
- if(keyword_set(instrument)) then return, nv_state.ins_table_p
 
 end
 ;===========================================================================

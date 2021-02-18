@@ -28,9 +28,6 @@
 ;	force:		If set, the module is toggled even if the
 ;			setup file is locked.
 ;
-;	reset:		If set, all deactivated module files are removed from
-;			the profile directory.
-;
 ;  OUTPUT: NONE
 ;
 ;
@@ -46,12 +43,12 @@
 ;	
 ;-
 ;==============================================================================
-pro nv_module_toggle, module, reset=reset, force=force
+pro nv_module_toggle, module, force=force
 
  active = nv_module_query(module, /active)
 
- if(active) then nv_module_deactivate, module, reset=reset, force=force $
- else nv_module_activate, module, reset=reset, force=force
+ if(active) then nv_module_deactivate, module, force=force $
+ else nv_module_activate, module, force=force
 
 end
 ;=============================================================================

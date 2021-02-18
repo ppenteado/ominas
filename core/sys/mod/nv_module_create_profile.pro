@@ -29,8 +29,6 @@
 ;
 ;	clone:		Name of a profile to clone instead of using the default
 ;			setup.
-;
-;	reset:		If set, the profile is overwritten with defaults.
 ;	
 ;  OUTPUT: NONE
 ;
@@ -55,9 +53,9 @@
 ;
 ;
 ;==============================================================================
-pro nvmcp_descend, module, dir=dir, reset=reset
+pro nvmcp_descend, module, dir=dir
 
- nv_module_activate, module, /no_setup, reset=reset	; just create directory
+ nv_module_activate, module, /no_setup		; just create directory
  modules = nv_get_submodules(module)
  if(keyword_set(modules)) then $
       for i=0, n_elements(modules)-1 do nvmcp_descend, modules[i], dir=dir
@@ -75,7 +73,7 @@ pro nvmcvp_new, name, profile_dir, setup_dir=setup_dir
 
  file_mkdir_decrapified, profile_dir
  nv_module_select_profile, name, setup_dir=setup_dir
- nvmcp_descend, nv_get_module(), dir=profile_dir, reset=reset
+ nvmcp_descend, nv_get_module(), dir=profile_dir
 
 end
 ;==============================================================================
@@ -101,7 +99,7 @@ end
 ; nv_module_create_profile
 ;
 ;==============================================================================
-pro nv_module_create_profile, name, setup_dir=setup_dir, clone=clone, reset=reset
+pro nv_module_create_profile, name, setup_dir=setup_dir, clone=clone
 @nv_block.common
 
  profile_dir = nv_module_get_profile_dir(name=name, setup_dir=setup_dir)

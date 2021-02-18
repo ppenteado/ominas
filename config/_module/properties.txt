@@ -1,3 +1,0 @@
-OMIN_EXCLUSIVE=1
-OMIN_FIXED=1
-order = ['DAT', 'IO', 'TRS']	# Module order

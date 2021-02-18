@@ -129,12 +129,12 @@ pro nv_help_state, capture=capture
  nv_help_print, '   ' + transpose([*nv_state.io_filenames_p]), capture=capture
  nv_help_print, capture=capture
 
- nv_help_print, 'Filetype tables:', capture=capture
- nv_help_print, '   ' + transpose([*nv_state.ftp_detectors_filenames_p]), capture=capture
+ nv_help_print, 'Filetype detectors:', capture=capture
+ nv_help_print, '   ' + transpose([*nv_state.ftp_detectors_p]), capture=capture
  nv_help_print, capture=capture
 
- nv_help_print, 'Instrument detector tables:', capture=capture
- nv_help_print, '   ' + transpose([*nv_state.ins_detectors_filenames_p]), capture=capture
+ nv_help_print, 'Instrument detectors:', capture=capture
+ nv_help_print, '   ' + transpose([*nv_state.ins_detectors_p]), capture=capture
 
 end
 ;===========================================================================

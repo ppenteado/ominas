@@ -1,4 +1,4 @@
 CORE
-OMINAS Core 
+OMINAS Core module
 
-  Contains the OMINAS system code.
+  This module contains the OMINAS system code.  

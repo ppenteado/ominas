@@ -30,7 +30,7 @@
  if(defined(tf_keyvals)) then dat_set_tf_keyvals, _xd, tf_keyvals, /noevent
  if(defined(input_translators)) then dat_set_input_translators, _xd, input_translators, /noevent
  if(defined(output_translators)) then dat_set_output_translators, _xd, output_translators, /noevent
- if(defined(tr_keyvals)) then dat_set_tr_keyvals, _xd, tr_keyvals, /noevent
+ if(defined(tr_keyvals)) then dat_set_trs_keyvals, _xd, tr_keyvals, /noevent
  if(defined(label_data)) then dat_set_label_data, _xd, label_data, /noevent
  if(defined(label_abscissa)) then dat_set_label_abscissa, _xd, label_abscissa, /noevent
 

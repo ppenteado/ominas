@@ -61,7 +61,7 @@ common cor_class_info_block, _class, _abbrev, _tag
  ;------------------------------------------------
  ; get classes from directory structure
  ;------------------------------------------------
- modules = nv_get_module('ominas.obj', /all)
+ modules = nv_get_module('ominas.obj', /children)
  class = modules.name
  nclass = n_elements(class)
 

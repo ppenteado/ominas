@@ -1,0 +1,52 @@
+OMINAS
+Top level module
+
+  This is the OMINAS top-level module.  Modules may be
+  added to OMINAS as follows:
+
+  1. Create a directory at the appropriate point in the 
+     tree, e.g., $OMINAS/trs/cas/iss
+
+  2. Create a subdirectory named module/.
+
+  3. Place the relevant tables and code defining the module
+     (see below) in the module/ directory.  
+
+  4. Run OMIN.  OMIN will automatically detect the new
+     module and add it to the tree.  It will be available the
+     next time OMINAS is run.
+
+  The following files can be placed in the module directory.  
+  They are not all required depending on the purpose of the
+  module:
+
+  module_description.txt :
+	Contains text to be displayed by OMIN (e.g. the text
+	you are currently reading).  Note that the first line
+	is used as the label in the OMIN tree rather than 
+	being displayed in the description window.
+
+  setup.sh : 
+	Contains shell code to be copied to .ominas/ominas_setup.sh
+	for execution at startup.
+
+  properties.txt :
+	Contains directives to OMIN for default configuration of
+	the module.  [[list directives]]
+
+  detect_<module.pro : (e.g. detect_trs_cas_iss.pro)
+	Code for detecting whether a given data descriptor
+	pertains to this module.
+
+  module_install_<module>.pro : (e.g. module_install_trs_cas_iss.pro)
+	Contains code for downloading and installing any data
+	required by the module.
+
+	
+
+
+
+[[transforms.tab*]]
+[[translators.tab*]]
+[[instrument_detectors]]
+[[filetype detectors]]

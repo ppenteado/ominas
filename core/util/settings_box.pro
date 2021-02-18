@@ -68,6 +68,11 @@
 ;          desensitize - array of indices of input widgets to be made
 ;                        insensitive.
 ;
+;          message - Message to print above the settings widgets.
+;
+;          resource_name - X resource name.
+;
+;
 ;  OUTPUT : new_settings - array containing new settings in the same order
 ;                         in which they were specified.
 ;
@@ -122,8 +127,7 @@ pro settings_box_event, event
 
   'DROPLIST' :
 
-  'TOGGLE' : if(event.select) then widget_control, event.id, set_value='On ' $
-             else widget_control, event.id, set_value='Off'
+  'TOGGLE' : 
 
   'Done' : $
     begin
@@ -154,13 +158,20 @@ pro settings_box_event, event
 end
 ;===========================================================================
 
+
+
 ;===========================================================================
 ; settings_box
 ;
 ;===========================================================================
 function settings_box, setup, new_settings=new_settings, $
-   title=title, group_leader=group_leader, desensitize=desensitize
+   title=title, group_leader=group_leader, desensitize=desensitize, $
+   message=message, resource_name=resource_name, $
+   done_label=done_label, cancel_label=cancel_label
  common settings_box_block, settings, status, input_widgets
+
+ if(NOT keyword_set(done_label)) then done_label = 'Done'
+ if(NOT keyword_set(cancel_label)) then cancel_label = 'Cancel'
 
 
  DEFAULT_XSIZE=20
@@ -171,11 +182,25 @@ function settings_box, setup, new_settings=new_settings, $
 
 ;----------------draw settings box------------------
 
- base = widget_base(title = title, /column, /modal, group_leader=group_leader)
+ base = widget_base(title = title, /column, group_leader=group_leader, $
+                    resource_name=resource_name)
+
+
+;----------------message label------------------
+
+ if(keyword_set(message)) then $
+  begin
+   message_base = widget_base(base, /col)
+   message_label = widget_text(message_base, value=message, ysize=n_elements(message))
+  end
+
 
  non_base=widget_base()
 
  sub_base=widget_base(base, /row)
+
+
+
 
 ;-------------set up user defined fields-----------------
 
@@ -219,13 +244,14 @@ function settings_box, setup, new_settings=new_settings, $
        input_widgets(i)=widget_button(toggle_base, value='',  $
               uvalue='TOGGLE')
        case strupcase(setup(2,i)) of
-        'ON' : widget_control, input_widgets(i), set_value='On ', $
+        'ON' : widget_control, input_widgets(i), set_value=' ', $
                   /set_button
-
-        'OFF' : widget_control, input_widgets(i), set_value='Off', $
+        'OFF' : widget_control, input_widgets(i), set_value=' ', $
                   set_button=0
-
        endcase
+       if(keyword_set(setup(3,i))) then $
+                 widget_control, toggle_base, set_uvalue='EXCLUSIVE'
+
       end
 
 ;------------------------------------------------------
@@ -270,8 +296,8 @@ function settings_box, setup, new_settings=new_settings, $
   end
 
  button_base=widget_base(base, /row)
- done_button=widget_button(button_base, value='Done', uvalue='Done')
- cancel_button = widget_button(button_base, value='Cancel', uvalue='Cancel')
+ done_button=widget_button(button_base, value=done_label, uvalue='Done')
+ cancel_button = widget_button(button_base, value=cancel_label, uvalue='Cancel')
 
  widget_control, /realize, base
 

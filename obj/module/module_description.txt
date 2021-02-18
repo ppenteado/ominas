@@ -1,0 +1,4 @@
+OBJ
+OMINAS Object modules
+
+  This module contains the OMINAS object tree.

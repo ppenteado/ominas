@@ -1,2 +1,4 @@
 DAT
 OMINAS data modules
+
+  This module is for ancillary data sets.

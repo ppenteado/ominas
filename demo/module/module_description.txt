@@ -1,6 +1,25 @@
 DEMO
-OMINAS Demo package
+OMINAS Demo module
 
-  Contains the demo scripts and the data required to run then.
-  These files are always present (in ominas/demo), this option
-  is to set up the environment so that the demos can be run.
+  The demo scripts are a useful way to get started using 
+  OMINAS.  This module contains those scripts and the data 
+  (images, cubes, SPICE kernels, ...) required to run them. 
+  The scripts are located in $OMINAS_DIR/demo/ and may be
+  run from the shell prompt (from the demo/ directory) as:
+
+  % ominas <script>
+
+  Some demo scripts accept command-line arguments, which are 
+  described in the header at the top of the script file.  
+  You are encouraged to examine the demo scripts and use 
+  them as a basis for developing your own OMINAS tools.  
+ 
+  Note that some scripts require other modules (e.g., SPICE) 
+  to be installed and active to function properly.  All of
+  the required modules are installed and activated by the 
+  any of the initial installation options, but problems 
+  could be encountered with a custom installation or 
+  subsequent re-configuration.  
+
+
+

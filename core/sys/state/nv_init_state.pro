@@ -43,7 +43,6 @@
 ;	
 ;-
 ;=============================================================================
-;function nv_init_state
 pro nv_init_state
 common nv_block, nv_state
  if(keyword_set(nv_state)) then return
@@ -71,15 +70,13 @@ common nv_block, nv_state
 ; NOTE: nv_ptr_new not used here to avoid infinite recursion
 
  nv_state.translators_filenames_p = ptr_new('')
- nv_state.tr_table_p = ptr_new(0)
+ nv_state.trs_table_p = ptr_new(0)
  nv_state.transforms_filenames_p = ptr_new('')
  nv_state.trf_table_p = ptr_new(0)
  nv_state.io_filenames_p = ptr_new('')
  nv_state.io_table_p = ptr_new(0)
- nv_state.ftp_detectors_filenames_p = ptr_new('')
- nv_state.ftp_table_p = ptr_new(0)
- nv_state.ins_detectors_filenames_p = ptr_new('')
- nv_state.ins_table_p = ptr_new(0)
+ nv_state.ftp_detectors_p = ptr_new('')
+ nv_state.ins_detectors_p = ptr_new('')
 
  nv_state.modules_p = ptr_new(0)
 
@@ -95,8 +92,8 @@ common nv_block, nv_state
  ;-------------------------------------------------------------------
  ; initialize module API
  ;-------------------------------------------------------------------
- nv_module_api_init
+ nv_module_api_init, new=new
+ nv_state.new=new
 
-; return, nv_state	;;;;
 end
 ;===========================================================================

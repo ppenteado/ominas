@@ -29,7 +29,7 @@
 ;	name:		Profile name.  If not given, the OMINAS_PROFILE environment
 ;			variable is checked.  If that is not set, the top directory 
 ;			of the current profile is used.  If a non-existent profile
-;			is specified, it is created as a cloine of the Default profile.
+;			is specified, it is created as a clone of the Default profile.
 ;
 ;	setup_dir:	Directory for setup files, default is ~/.ominas.
 ;
