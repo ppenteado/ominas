@@ -77,9 +77,6 @@ box = 1
    pp = (convert_coord(/device, /to_data, double(_p[0,*]), double(_p[1,*])))[0:1,*]
    outline_ptd = pnt_create_descriptors(points=pp)
 
-;   dim = dat_dim(dd)
-;   sub = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
-
    grim_add_user_points, outline_ptd, color=color, psym=-3, plane=plane
   end $
  else return

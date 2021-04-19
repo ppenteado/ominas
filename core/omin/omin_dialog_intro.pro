@@ -200,8 +200,10 @@ function omin_dialog_intro, group_leader=group_leader
    '', $
    'Please select your preferred initial installation parameters and ', $
    'click "Begin Installation."  If you would rather install modules ', $
-   'manually, click "Continue With Manual Installation."' ]
-
+   'manually, click "Continue With Manual Installation."', $
+   '', $
+   'This message will not appear again.' ]
+; need an option to return here later.
 
  ;--------------------------------------------
  ; set up widgets

@@ -138,7 +138,8 @@ function pg_photom_globe, dd, outline_ptd=outline_ptd, $
   begin
    p = pnt_points(outline_ptd)
    p = poly_rectify(p)
-   indices = polyfillv(p[0,*], p[1,*], xsize, ysize)
+;   indices = polyfillv(p[0,*], p[1,*], xsize, ysize)
+   indices = poly_fillv(p, [xsize, ysize])
   end $
  else indices = lindgen(xysize)
 

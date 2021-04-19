@@ -42,11 +42,15 @@ Top level module
 	Contains code for downloading and installing any data
 	required by the module.
 
-	
+  transforms.tab :
+	Table specifying transform methods to call for a given
+	instruments (See User Guide).
+
+  translators.tab :
+	Table specifying translator methods to call for a given
+	instruments (See User Guide).
+
+  io.tab :
+	Table specifying I/O methods to call for given filetypes.
 
 
-
-[[transforms.tab*]]
-[[translators.tab*]]
-[[instrument_detectors]]
-[[filetype detectors]]

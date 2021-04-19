@@ -97,7 +97,8 @@ function pgd_compute, cd, od, dkx, desc, npoints, inner=inner, outer=outer, clip
 
  for i=0, n_disks-1 do $
   begin
-   ii = dsk_valid_edges(dkx[i,*], /outer)
+;;;   ii = dsk_valid_edges(dkx[i,*], /outer)
+   ii = dsk_valid_edges(dkx[i,*], inner=inner, outer=outer)
    if(ii[0] NE -1) then $
     begin
      xd = reform(dkx[i,ii], nt)

@@ -63,7 +63,8 @@ function mask_globe, cd, _gbx, oversample=oversample, slop=slop, sub=valid
                   bod_inertial_to_body_pos(gbx, bod_pos(cd)), 0, 0, 1))
 
  nxy = cam_size(cd)
- ii = polyfillv(limb_pts[0,*], limb_pts[1,*], nxy[0], nxy[1])
+; ii = polyfillv(limb_pts[0,*], limb_pts[1,*], nxy[0], nxy[1])
+ ii = poly_fillv(limb_pts, nxy)
  nii = n_elements(ii)
 
 

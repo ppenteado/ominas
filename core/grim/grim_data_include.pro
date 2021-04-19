@@ -223,6 +223,7 @@ function grim_init, dd, dd0=dd0, zoom=zoom, wnum=wnum, grn=grn, tag=tag, filter=
 		guideline_save_xy	: [-1d,-1d], $
 		axes_flag		: 0, $
 		readout_mark		: dblarr(2), $
+		stats_region_p	: ptr_new(), $
 		measure_mark		: dblarr(2,2), $
 		selected		: 0, $
 		scale_wnum		: 0, $

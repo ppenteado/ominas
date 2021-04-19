@@ -81,19 +81,19 @@ function pg_select_points, dd, psym=psym, noverbose=noverbose, color=color, $
     nv_message, 'LEFT: Select point, MIDDLE: Erase point, RIGHT: End', /continue
    end
 
- vv=tvpath(psym=psym, /copy, p0=p0, one=one, number=number, $
+ vv = tvpath(psym=psym, /copy, p0=p0, one=one, number=number, $
                                   cancelled=cancelled, color=color, /points)
  tvcursor, /restore
 
  if(cancelled) then return, ''
 
- xv=transpose(vv[0,*])
- yv=transpose(vv[1,*])
+ xv = transpose(vv[0,*])
+ yv = transpose(vv[1,*])
 
  ;------------------------------------------
  ; transform to data coords
  ;------------------------------------------
- points=convert_coord(double(xv), double(yv), /device, /to_data)
+ points = convert_coord(double(xv), double(yv), /device, /to_data)
 
 
 

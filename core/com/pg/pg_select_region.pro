@@ -137,7 +137,8 @@ function pg_select_region, dd, color=color, $
  
  xverts=transpose(points[0,*])
  yverts=transpose(points[1,*])
- indices=polyfillv(xverts, yverts, xsize, ysize)
+; indices=polyfillv(xverts, yverts, xsize, ysize)
+ indices=poly_fillv(points, [xsize, ysize])
 
  return, indices
 end

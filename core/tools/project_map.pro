@@ -397,7 +397,7 @@ function project_map, image, md=md, cd=cd, bx=bx, ltd=ltd, $
         map_pts[1,*] = map_pts[1,*] + offset[1]
 
         ;--------------------------
-        ; apply wind function
+        ; apply shear function
         ;--------------------------
         if(keyword_set(shear_fn)) then $
              map_pts = call_function('pm_shear_'+shear_fn, bx_map, map_pts, shear_data)

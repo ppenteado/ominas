@@ -71,7 +71,7 @@ pro grim_smooth, grim_data, plane=plane, box
    xmin = (ymin = 0)
    xmax = size[0]-1 & ymax = size[1]-1
    roi_ptd = grim_get_roi(grim_data, plane, /outline)
-   roi = lindgen(size[0], size[1])
+   roi = lindgen(size[0] * size[1])
 
    if(keyword_set(roi_ptd)) then $
     begin
@@ -87,7 +87,8 @@ pro grim_smooth, grim_data, plane=plane, box
      roi_pts_sub[0,*] = roi_pts_sub[0,*] - xmin
      roi_pts_sub[1,*] = roi_pts_sub[1,*] - ymin
 
-     roi = polyfillv(roi_pts[0,*], roi_pts[1,*], size[0], size[1])
+;     roi = polyfillv(roi_pts[0,*], roi_pts[1,*], size[0], size[1])
+     roi = poly_fillv(roi_pts, size)
     end
 
    subimage = data[xmin:xmax, ymin:ymax]

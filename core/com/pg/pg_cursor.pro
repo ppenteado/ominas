@@ -71,7 +71,9 @@
 ;		keyword remains valid.
 ;
 ;	xy:	If present, this image point is used and the user is not 
-;		prompted to select a point.
+;		prompted to select a point.  If an array of points (2xnp)
+;		is given, the reported DN is the average for the specified
+;		pixels, and data are reported for the centroid.
 ;
 ;
 ;  OUTPUT:
@@ -81,6 +83,8 @@
 ;	values: Array (nfn,2,npoints) giving the numerical results in the order
 ;		that they appear in the output.
 ;
+;	point:	Point at which quantities are reported (except regions).
+;
 ;
 ; RETURN:
 ;	NONE
@@ -88,6 +92,10 @@
 ;
 ; STATUS:
 ;	Ring photometry is not yet implemented.
+;
+; TODO:
+;	Allow user to select region
+;	Implement region reporting
 ;
 ;
 ; SEE ALSO: pg_measure
@@ -103,7 +111,7 @@
 ; _pgc_xy
 ;
 ;=============================================================================
-function _pgc_xy, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_xy, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  name = cor_name(dd)
  label = ['X', 'Y']
@@ -118,7 +126,7 @@ end
 ; _pgc_dn
 ;
 ;=============================================================================
-function __pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
+function __pgc_dn, p, pts, dd, gd=gd, format=format, label=label, name=name
 
 ; format = '(1i10)'
  format = '(d20.10)'
@@ -153,9 +161,10 @@ end
 ; _pgc_dn
 ;
 ;=============================================================================
-function _pgc_dn, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_dn, p, pts, dd, gd=gd, format=format, label=label, name=name
 
- format = '(d20.10)'
+; format = '(d20.10)'
+ format = '(g10.4)'
  label = ''
 
  pp = fix(p)
@@ -181,10 +190,84 @@ end
 
 
 ;=============================================================================
+; _pgc_mean
+;
+;=============================================================================
+function _pgc_mean, p, pts, dd, gd=gd, format=format, label=label, name=name
+
+; format = '(d20.10)'
+ format = '(g10.4)'
+ label = ''
+
+ if(n_elements(pts) LE 2) then return, ''
+
+ pp = fix(pts)
+
+ n = n_elements(dd)
+ dn = make_array(n, /double)
+
+ for i=0, n-1 do $
+  begin
+   dim = dat_dim(dd[i])
+   w = in_image(0, pp, xmin=0, ymin=0, xmax=dim[0]-1, ymax=dim[1]-1)
+   if(w[0] NE -1) then $
+    begin
+     pp = pp[*,w]
+     dat = dat_data(dd[i], sample=pp, /nd)
+     dn[i] = mean(dat)
+    end
+  end
+
+ label = 'MEAN'
+
+ return, dn
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; _pgc_stdev
+;
+;=============================================================================
+function _pgc_stdev, p, pts, dd, gd=gd, format=format, label=label, name=name
+
+; format = '(d20.10)'
+ format = '(g10.4)'
+ label = ''
+
+ if(n_elements(pts) LE 2) then return, ''
+
+ pp = fix(pts)
+
+ n = n_elements(dd)
+ sig = make_array(n, /double)
+
+ for i=0, n-1 do $
+  begin
+   dim = dat_dim(dd[i])
+   w = in_image(0, pp, xmin=0, ymin=0, xmax=dim[0]-1, ymax=dim[1]-1)
+   if(w[0] NE -1) then $
+    begin
+     pp = pp[*,w]
+     dat = dat_data(dd[i], sample=pp, /nd)
+     sig[i] = stddev(dat)
+    end
+  end
+
+ label = 'STDEV'
+
+ return, sig
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; _pgc_star
 ;
 ;=============================================================================
-function _pgc_star, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_star, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  sd = cor_dereference_gd(gd, /sd)
@@ -209,7 +292,7 @@ end
 ; _pgc_radec
 ;
 ;=============================================================================
-function _pgc_radec, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_radec, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
 
@@ -231,7 +314,7 @@ end
 ; _pgc_globe
 ;
 ;=============================================================================
-function _pgc_globe, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_globe, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  gbx = cor_dereference_gd(gd, /gbx)
@@ -286,7 +369,7 @@ end
 ; _pgc_map
 ;
 ;=============================================================================
-function _pgc_map, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_map, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
 
@@ -315,7 +398,7 @@ end
 ; _pgc_disk
 ;
 ;=============================================================================
-function _pgc_disk, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_disk, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  rd = cor_dereference_gd(gd, /dkx)
@@ -354,7 +437,7 @@ end
 ; _pgc_disk_scale
 ;
 ;=============================================================================
-function _pgc_disk_scale, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_disk_scale, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  rd = cor_dereference_gd(gd, /dkx)
@@ -396,7 +479,7 @@ end
 ; _pgc_eqplane
 ;
 ;=============================================================================
-function _pgc_eqplane, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_eqplane, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /gbx)
@@ -424,7 +507,7 @@ end
 ; _pgc_eqplane_scale
 ;
 ;=============================================================================
-function _pgc_eqplane_scale, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_eqplane_scale, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /gbx)
@@ -453,7 +536,7 @@ end
 ; _pgc_photom_globe
 ;
 ;=============================================================================
-function _pgc_photom_globe, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_photom_globe, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /gbx)
@@ -489,7 +572,7 @@ end
 ; _pgc_photom_disk
 ;
 ;=============================================================================
-function _pgc_photom_disk, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_photom_disk, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /gbx)
@@ -531,7 +614,7 @@ end
 ; _pgc_photom_eqplane
 ;
 ;=============================================================================
-function _pgc_photom_eqplane, p, dd, gd=gd, format=format, label=label, name=name
+function _pgc_photom_eqplane, p, pts, dd, gd=gd, format=format, label=label, name=name
 
  cd = cor_dereference_gd(gd, /cd)
  pd = cor_dereference_gd(gd, /gbx)
@@ -559,7 +642,7 @@ end
 
 
 ;=============================================================================
-; pg_table
+; pgc_table
 ;
 ;=============================================================================
 function pgc_table, name, name_p, value_p, label_p, format_p, $
@@ -612,12 +695,29 @@ end
 
 
 ;=============================================================================
+; pgc_center
+;
+;=============================================================================
+function pgc_center, dd, p
+
+ dim = dat_dim(dd)
+ w = poly_fillv(p, dim)
+ pp = w_to_xy(0, w, sx=dim[0], sy=dim[1])
+
+ n = n_elements(pp)/2
+ return, total(pp,2)/n
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; pg_cursor
 ;
 ;=============================================================================
 pro pg_cursor, dd, ptd, cd=cd, gbx=gbx, dkx=dkx, ltd=ltd, sd=sd, gd=_gd, fn=_fn, $
            radec=radec, photom=photom, xy=xy, string=string, $
-           silent=silent, values=values
+           silent=silent, values=values, point=point
 common pgc_table_block, last_labels, first
 
  first = 1
@@ -653,7 +753,7 @@ common pgc_table_block, last_labels, first
  ;- - - - - - - - 
  ; minimum set
  ;- - - - - - - -
- fn = ['_pgc_xy', '_pgc_dn']
+ fn = ['_pgc_xy', '_pgc_dn', '_pgc_mean', '_pgc_stdev']
 
  ;- - - - - - - - - 
  ; options 
@@ -686,17 +786,25 @@ common pgc_table_block, last_labels, first
 
 
  ;-----------------------------------------------
- ; select points until cancelled
+ ; select points until canceled
  ;-----------------------------------------------
  cancel = 0 
  values = dblarr(1,4,nfn)
  repeat $
   begin
-   if(keyword_set(xy)) then p = xy $
-   else p = pg_select_points(dd, /one, /nov, cancel=cancel)
+   if(keyword_set(xy)) then pp = xy $
+   else pp = pg_select_points(dd, /one, /nov, cancel=cancel)
    if(NOT cancel) then $
     begin
      val = dblarr(10,10,nfn)
+
+     ;- - - - - - - - - - - - - - - - - - - - -
+     ; compute center of figure of region
+     ;- - - - - - - - - - - - - - - - - - - - -
+     n = n_elements(pp)/2
+     p = pp
+     if(n GT 1) then p = pgc_center(dd, pp)
+     point = p
 
      ;- - - - - - - - - - - - - - - - -
      ; collect all the function data
@@ -704,7 +812,7 @@ common pgc_table_block, last_labels, first
      all_names = ''
      for i=0, nfn-1 do $
       begin
-       value = call_function(fn[i], p, dd, gd=gd, format=format, label=label, name=name)
+       value = call_function(fn[i], p, pp, dd, gd=gd, format=format, label=label, name=name)
        if(keyword_set(value)) then $
         begin
          value_p = append_array(value_p, nv_ptr_new(value))

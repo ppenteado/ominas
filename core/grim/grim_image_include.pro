@@ -1206,7 +1206,8 @@ pro grim_refresh, grim_data, wnum=wnum, plane=plane, $
    begin
     bm = grim_render_bitmap()
     if(plane.rendering) then bm = grim_unrender_bitmap()
-    widget_control, grim_data.render_button, set_value=bm
+    if(NOT grim_test_map(grim_data)) then $
+                      widget_control, grim_data.render_button, set_value=bm
    end
 
  ;-----------------------------------

@@ -619,7 +619,7 @@ end
 pro grim_draw, grim_data, planes=planes, $
        all=all, wnum=wnum, $
        user=user, tiepoints=tiepoints, mask=mask, curves=curves, $
-       label=labels, readout=readout, measure=measure, update=update, $
+       label=labels, stats=stats, readout=readout, measure=measure, update=update, $
        nopoints=nopoints, noxgraphics=noxgraphics, roi=roi, $
        no_user=no_user, override_color=override_color, utags=utags
 
@@ -644,7 +644,7 @@ pro grim_draw, grim_data, planes=planes, $
 
    if(keyword_set(all)) then $
     begin
-     roi=1 & user=1 & curves=1 & tiepoints=1 & mlab = 1 & readout = 1 & mask=1 & & measure = 1
+     roi=1 & user=1 & curves=1 & tiepoints=1 & mlab = 1 & stats = 1 & readout = 1 & mask=1 & & measure = 1
     end
 
    if(keyword_set(no_user)) then user = 0
@@ -698,6 +698,14 @@ pro grim_draw, grim_data, planes=planes, $
  ;--------------------------------
  if(keyword_set(readout)) then $
             plots, grim_data.readout_mark, psym=7, col=ctred()
+
+
+ ;--------------------------------
+ ; stats region
+ ;--------------------------------
+ if(keyword_set(stats)) then $
+   if(ptr_valid(grim_data.stats_region_p)) then $
+            plots, *grim_data.stats_region_p, psym=-3, col=ctred(0.5)
 
 
  ;--------------------------------
@@ -1432,6 +1440,35 @@ pro grim_place_readout_mark, grim_data, p
  ; add new mark
  ;------------------------
  grim_data.readout_mark = p
+
+
+ grim_set_data, grim_data, grim_data.base
+
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_place_stats_region
+;
+;=============================================================================
+pro grim_place_stats_region, grim_data, p
+
+ ;------------------------
+ ; erase old mark
+ ;------------------------
+; grim_refresh, grim_data, /use_pixmap
+; q = convert_coord(grim_data.readout_mark[0], grim_data.readout_mark[1], $
+;                                                           /data, /to_device)
+; grim_display, grim_data, /use_pixmap, $
+;                     pixmap_box_center=q[0:1], pixmap_box_side=10
+
+
+ ;------------------------
+ ; add new mark
+ ;------------------------
+ grim_data.stats_region_p = pointer_set(grim_data.stats_region_p, p)
 
 
  grim_set_data, grim_data, grim_data.base

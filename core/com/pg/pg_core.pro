@@ -110,7 +110,8 @@ function pg_core, dd, cd=cd, gd=gd, outline_ptd, distance=distance, $
  ;-----------------------------------
  outline_pts = pnt_points(outline_ptd)
  if(n_elements(outline_pts) EQ 2) then sub = xy_to_w(dim[0:1], outline_pts) $
- else sub = polyfillv(outline_pts[0,*], outline_pts[1,*], dim[0], dim[1])
+; else sub = polyfillv(outline_pts[0,*], outline_pts[1,*], dim[0], dim[1])
+ else sub = poly_fillv(outline_pts, dim)
  nsub = n_elements(sub)
 
  ;-----------------------------------------------

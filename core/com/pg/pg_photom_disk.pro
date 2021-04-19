@@ -124,11 +124,13 @@ function pg_photom_disk, dd, outline_ptd=outline_ptd, $
  if(keyword__set(outline_ptd)) then $
   begin
    p = pnt_points(outline_ptd[0])
-   ii0 = polyfillv(p[0,*], p[1,*], xsize, ysize)
+;   ii0 = polyfillv(p[0,*], p[1,*], xsize, ysize)
+   ii0 = poly_fillv(p, [xsize, ysize])
    if(n_elements(outline_ptd) GT 1) then $
     begin
      p = pnt_points(outline_ptd[1])
-     ii1 = polyfillv(p[0,*], p[1,*], xsize, ysize)
+;     ii1 = polyfillv(p[0,*], p[1,*], xsize, ysize)
+     ii1 = poly_fillv(p, [xsize, ysize])
      inner = ii0 & outer = ii1
      n0 = n_elements(ii0)
      n1 = n_elements(ii1)

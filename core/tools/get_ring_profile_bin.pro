@@ -97,7 +97,8 @@ function get_ring_profile_bin, image, cd, dkd, lon_pts, rad_pts, $
  outline_subs = im_pts[1,*,0]*s[1] + im_pts[0,*,0]
  outline_subs = reform(outline_subs,n_elements(outline_subs),/overwrite)
 
- subs = polyfillv(im_pts[0,*,0],im_pts[1,*,0],s[1],s[2])
+; subs = polyfillv(im_pts[0,*,0],im_pts[1,*,0],s[1],s[2])
+ subs = poly_fillv(im_pts, s)
 ;print, 'number of points in sector according to polyfillv ',n_elements(subs)
  subs = [subs,outline_subs]
 ;print, 'number of points in sector including outline ',n_elements(subs)

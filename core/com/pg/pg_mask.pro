@@ -192,13 +192,15 @@ function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, ltd=
 
      if(keyword_set(outer_pp)) then $
       begin
-         ii_outer = polyfillv(outer_pp[0,*], outer_pp[1,*], dim[0], dim[1])
+;         ii_outer = polyfillv(outer_pp[0,*], outer_pp[1,*], dim[0], dim[1])
+         ii_outer = poly_fillv(outer_pp, dim)
          if(ii_outer[0] NE -1) then dsk_mask[ii_outer] = 1
       end
 
      if(keyword_set(inner_pp)) then $
       begin
-         ii_inner = polyfillv(inner_pp[0,*], inner_pp[1,*], dim[0], dim[1])
+;         ii_inner = polyfillv(inner_pp[0,*], inner_pp[1,*], dim[0], dim[1])
+         ii_inner = poly_fillv(inner_pp, dim)
          if(ii_inner[0] NE -1) then dsk_mask[ii_inner] = 0
       end
     end
@@ -251,7 +253,8 @@ function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, ltd=
      for i=0, nw-1 do $
       begin
        pp = pnt_points(limb_ptd[i], /vis)
-       ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
+;       ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
+       ii = poly_fillv(pp, dim)
        if(ii[0] NE -1) then glb_mask[ii] = 1
       end
 
@@ -266,7 +269,8 @@ function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, ltd=
         begin
          p = pnt_points([limb_ptd[i], term_ptd[i]], /vis)
          pp = poly_rectify(p)
-         ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
+;         ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
+         ii = poly_fillv(pp, dim)
          if(ii[0] NE -1) then glb_mask[ii] = 1
         end
       end
@@ -314,7 +318,8 @@ function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, ltd=
     for i=0, nw-1 do $
      begin
       pp = circle(body_pts[*,w[i]], radii[w[i]])
-      ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
+;      ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
+      ii = poly_fillv(pp, dim)
       if(ii[0] NE -1) then bx_mask[ii] = 1
      end
 

@@ -116,7 +116,8 @@ function cm_combine_edge, maps, data
 
    ; this mask ignores holes in the map
    mask = masks[*,*,i]
-   ww = polyfillv([xmin, xmax, xmax, xmin], [ymin, ymin, ymax, ymax], s[1], s[2])
+;   ww = polyfillv([xmin, xmax, xmax, xmin], [ymin, ymin, ymax, ymax], s[1], s[2])
+   ww = poly_fillv([[[xmin], [xmax], [xmax], [xmin]], [[ymin], [ymin], [ymax], [ymax]]], s)
    xxx = lindgen(s[1])#make_array(s[2],val=1l)
    yyy = lindgen(s[2])##make_array(s[1],val=1l)
    ww = where((xxx GE xmin) AND (xxx LE xmax) AND (yyy GE ymin) AND (yyy LE ymax))
@@ -399,7 +400,8 @@ function cm_wt_edge, maps, data, aux
 
    ; this mask ignores holes in the map
    mask = masks[*,*,i]
-   ww = polyfillv([xmin, xmax, xmax, xmin], [ymin, ymin, ymax, ymax], s[1], s[2])
+;   ww = polyfillv([xmin, xmax, xmax, xmin], [ymin, ymin, ymax, ymax], s[1], s[2])
+   ww = poly_fillv([[[xmin], [xmax], [xmax], [xmin]], [[ymin], [ymin], [ymax], [ymax]]], s)
    xxx = lindgen(s[1])#make_array(s[2],val=1l)
    yyy = lindgen(s[2])##make_array(s[1],val=1l)
    ww = where((xxx GE xmin) AND (xxx LE xmax) AND (yyy GE ymin) AND (yyy LE ymax))

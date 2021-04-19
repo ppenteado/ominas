@@ -9,7 +9,8 @@ function poly_flux, image, p, ext_flux=ext_flux, norm=norm, show=show, $
 
  s = size(image)
 
- indices = polyfillv(p[0,*], p[1,*], s[1], s[2])
+; indices = polyfillv(p[0,*], p[1,*], s[1], s[2])
+ indices = poly_fillv(p, s)
  if(indices[0] EQ -1) then return, 0
 
  ext_indices = complement(image, indices)

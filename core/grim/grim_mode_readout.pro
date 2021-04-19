@@ -225,7 +225,7 @@ pro grim_mode_readout_mouse_event, event, data
 
 
  ;----------------------------------
- ; motion
+ ; motion /  left mouse
  ;----------------------------------
  if((data.pressed EQ 1) AND (struct NE 'WIDGET_TRACKING')) then $
   begin
@@ -248,15 +248,64 @@ pro grim_mode_readout_mouse_event, event, data
   end
 
 
-
-
  ;----------------------------------
  ; button press
  ;----------------------------------
  if(event.type EQ 0) then $
   begin
    data.pressed = event.press
-   if(event.press EQ 4) then $
+
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; Region stats
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   if(event.modifiers EQ 1) then $
+    begin
+
+     grim_wset, grim_data, input_wnum
+     grim_data.readout_top = $
+       grim_pixel_readout(grim_data.readout_top, text=text, grn=grim_data.grn)
+     grim_data.readout_text = text
+     grim_set_data, grim_data, event.top
+
+     if(event.press EQ 1) then $
+      begin
+       roi = pg_select_region(/box, 0, $
+  	      p0=[event.x,event.y], $
+  	      /silent, color=ctblue(), image_pts=p)
+      end $
+     else if(event.press EQ 4) then $
+      begin
+       roi = pg_select_region(0, $
+  	      p0=[event.x,event.y], $
+  	      /autoclose, /silent, color=ctblue(), $
+  	      cancel_button=2, end_button=-1, select_button=4, $
+  	      image_pts=p)
+      end 
+
+     xx = p[0,*] & yy = p[1,*]
+     p = (convert_coord(/device, /to_data, double(xx), double(yy)))[0:1,*]
+
+     planes = grim_get_plane(grim_data);, /visible)
+     pg_cursor, planes.dd, xy=p, /silent, fn=data.fn, point=pp, $
+       gd={cd:grim_xd(plane, /cd), gbx:*plane.pd_p, dkx:*plane.rd_p, $
+      	   ltd:*plane.ltd_p, sd:*plane.sd_p, std:*plane.std_p}, /radec, /photom, string=string 
+
+     sep = str_pad('', 80, c='-')
+     widget_control, grim_data.readout_text, get_value=ss    
+     widget_control, grim_data.readout_text, set_value=[string , sep, ss]   
+     grim_wset, grim_data, output_wnum
+
+
+     grim_place_readout_mark, grim_data, pp
+     grim_place_stats_region, grim_data, p
+;     grim_draw, grim_data, /measure
+     grim_refresh, grim_data, /use_pixmap, /noglass
+     data.pressed = 0
+    end $
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ; Measure
+   ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   else if(event.press EQ 4) then $
     begin
      widget_control, grim_data.draw, draw_motion_events=1
      grim_wset, grim_data, input_wnum
@@ -277,7 +326,7 @@ pro grim_mode_readout_mouse_event, event, data
 
      grim_place_measure_mark, grim_data, pp
 ;     grim_draw, grim_data, /measure
-     grim_refresh, grim_data, /use_pixmap
+     grim_refresh, grim_data, /use_pixmap, /noglass
      data.pressed = 0
     end
   end
@@ -297,9 +346,10 @@ pro grim_mode_readout_mouse_event, event, data
      grim_wset, grim_data, output_wnum
      grim_place_readout_mark, grim_data, p[0:1]
 ;     grim_draw, grim_data, /readout
-     grim_refresh, grim_data, /use_pixmap
+     grim_refresh, grim_data, /use_pixmap, /noglass
     end
   end
+
 
 
 
@@ -314,7 +364,8 @@ end
 pro grim_mode_readout_mode, grim_data, data_p
 
  grim_mode_readout_cursor, swap=swap
- grim_print, grim_data, 'READOUT -- L:Pixel Data R:Measure'
+ grim_print, grim_data, $
+        'READOUT -- L:Pixel Data R:Measure <Shift> L: Rectangular Region R: Irregular Region'
 
 end
 ;=============================================================================

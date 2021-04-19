@@ -145,7 +145,7 @@ function pg_profile_ring, dd, cd=cd, dkx=dkx, gd=gd, outline_ptd, $
 
 
  ;--------------------------------------------------------
- ; if sample given, then we'll do this using polyfillv
+ ; if sample given, then we'll do this using poly_fillv
  ;--------------------------------------------------------
  if(keyword_set(sample)) then $
   begin
@@ -157,7 +157,8 @@ function pg_profile_ring, dd, cd=cd, dkx=dkx, gd=gd, outline_ptd, $
    sy = si[2] * sample
    p = outline_pts * sample
 
-   ii = polyfillv(p[0,*], p[1,*], sx, sy)
+;   ii = polyfillv(p[0,*], p[1,*], sx, sy)
+   ii = poly_fillv(p, [sx, sy])
 
    im_pts = w_to_xy(0, ii, sx=sx, sy=sy) / sample
 

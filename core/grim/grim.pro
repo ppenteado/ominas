@@ -682,8 +682,8 @@
 ;
 ;                  Pixel Readout:
 ;                       In pixel readout mode, a text window appears
-;                       and displays data about the pixel selected
-;                       using the left mouse button.
+;                       and displays data about the selected pixel,
+;                       region, or path.
 ;
 ;                  Tiepoint:
 ;                       In tiepoint mode, tiepoints are added using the

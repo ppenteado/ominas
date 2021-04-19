@@ -2423,6 +2423,7 @@ end
 ;----------------------------------------------------------------------------
 pro grim_menu_file_close_event, event
 
+ widget_control, /hourglass
  grim_data = grim_get_data(event.top)
  grim_rm_plane, grim_data, grim_data.pn
 

@@ -2607,15 +2607,12 @@ pro omin_intro_install, options
    print, 'Installing all modules...'
   end $
 
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
- ; demo
- ;- - - - - - - - - - - - - - - - - - - - - - - - -
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ; demo -- do nothing because demo is setup by default 
+ ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  else if(keyword_set(demo)) then $
   begin
-   print, 'Installing Modules Required by the OMINAS Demo...'
-   nodes = omin_get_dependencies('ominas.demo')
-
-;   omin_install, omin_data, node, callback='omin_intro_callback', data=data, update=update
+   return
   end 
 
 

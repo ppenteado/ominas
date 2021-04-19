@@ -56,7 +56,7 @@ function dat_detect, dd, detectors, null=null, all=all, _extra=arg
  ; Call detectors until a name is obtained.
  ;
  ; Detector crashes are handled by issuing a warning and 
- ; contnuing to the next detector.
+ ; continuing to the next detector.
  ;==============================================================
  strings = ''
  catch_errors = NOT keyword_set(nv_getenv('OMINAS_DEBUG'))
@@ -81,6 +81,7 @@ function dat_detect, dd, detectors, null=null, all=all, _extra=arg
      strings = append_array(strings, string)
     end
   end
+
 
  if(NOT keyword_set(strings)) then if(keyword_set(null)) then return, null
  return, strings

@@ -11,7 +11,7 @@ function synth_image, cd, pd, ltd, rd=rd
  xysize = xsize*ysize
 ; limb_pts = ...
 ; term_pts = ...
-; indices = polyfillv(p[0,*], p[1,*], xsize, ysize)
+; indices = poly_fillv(p, [xsize, ysize])
 
  indices = lindgen(xysize)
 

@@ -192,11 +192,13 @@ function wcp_map_quad, cd=cd, image, p0, p1, quad, tri, qtri, size, interp=inter
    ; get output image subscripts in quadrilateral i
    ;----------------------------------------------------
    w = [0]
-   w0 = polyfillv(p0[0,tri[*,qtri[0,i]]], $
-                  p0[1,tri[*,qtri[0,i]]], size[0], size[1])
+;   w0 = polyfillv(p0[0,tri[*,qtri[0,i]]], $
+;                  p0[1,tri[*,qtri[0,i]]], size[0], size[1])
+   w0 = poly_fillv(p0[*,tri[*,qtri[0,i]]], size)
    if(w0[0] NE -1) then w = [w, w0]
-   w1 = polyfillv(p0[0,tri[*,qtri[1,i]]], $
-                  p0[1,tri[*,qtri[1,i]]], size[0], size[1])
+;   w1 = polyfillv(p0[0,tri[*,qtri[1,i]]], $
+;                  p0[1,tri[*,qtri[1,i]]], size[0], size[1])
+   w1 = poly_fillv(p0[*,tri[*,qtri[1,i]]], size)
    if(w1[0] NE -1) then w = [w, w1]
 
    ;----------------------------------------------------
@@ -322,7 +324,8 @@ function wcp_map_tri, cd=cd, image, p0, p1, tri, size
    ;----------------------------------------------------
    ; get output image subscripts in triangle i
    ;----------------------------------------------------
-   w = polyfillv(p0[0,tri[*,i]], p0[1,tri[*,i]], size[0], size[1])
+;   w = polyfillv(p0[0,tri[*,i]], p0[1,tri[*,i]], size[0], size[1])
+   w = poly_fillv(p0[*,tri[*,i]], size)
 
    ;----------------------------------------------------
    ; map back to input image
@@ -354,6 +357,7 @@ end
 ;
 ;=============================================================================
 function warp_cp, cd=cd, image, p0, p1, size=size, quad=quad, interp=interp
+stop
 
  if(NOT keyword__set(size)) then size = (size(image))[1:2]
 
