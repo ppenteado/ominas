@@ -296,15 +296,25 @@ pro grim_rm_plane, grim_data, pn
   end
 
  ;---------------------------------------------------------------
+ ; remove plane and renumber remaining planes
+ ;---------------------------------------------------------------
+;;;need to free pointers
+ *grim_data.planes_p = rm_list_item(*grim_data.planes_p, pn)
+ grim_data.n_planes = n_elements(*grim_data.planes_p)
+ for i=0, grim_data.n_planes-1 do (*grim_data.planes_p)[i].pn = i
+ grim_set_data, grim_data
+
+
+ ;---------------------------------------------------------------
  ; mark the specified plane as inactive
  ;  NOTE:  The data for the plane still exists and may continue
  ;         to be used from the command line.
  ;---------------------------------------------------------------
- plane = grim_get_plane(grim_data, pn=pn)
- plane.pn = -1
- grim_set_plane, grim_data, plane, pn=pn
+; plane = grim_get_plane(grim_data, pn=pn)
+; plane.pn = -1
+; grim_set_plane, grim_data, plane, pn=pn
 
- (*grim_data.pl_flags_p)[pn] = 0
+; (*grim_data.pl_flags_p)[pn] = 0
 
  ;---------------------------------------------------------------
  ; change to a valid plane
