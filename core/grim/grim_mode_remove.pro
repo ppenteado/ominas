@@ -88,6 +88,7 @@ pro grim_mode_remove_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 0) then return
  if(event.press EQ 2) then return
 
@@ -171,7 +172,7 @@ end
 pro grim_mode_remove_mode, grim_data, data_p
 
  grim_mode_remove_cursor, swap=swap
- grim_print, grim_data, 'REMOVE OVERLAYS -- L:Standard R:User'
+ grim_print, grim_data, '[REMOVE OVERLAYS] L:Standard R:User'
 
 end
 ;=============================================================================

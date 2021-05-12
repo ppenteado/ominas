@@ -317,7 +317,7 @@ function pg_mask, mask=mask, dd=dd, gd=gd, cd=cd, gbx=gbx, dkx=dkx, bx=_bx, ltd=
    if(w[0] NE -1) then $
     for i=0, nw-1 do $
      begin
-      pp = circle(body_pts[*,w[i]], radii[w[i]])
+      pp = image_circle(body_pts[*,w[i]], radii[w[i]])
 ;      ii = polyfillv(pp[0,*], pp[1,*], dim[0], dim[1])
       ii = poly_fillv(pp, dim)
       if(ii[0] NE -1) then bx_mask[ii] = 1

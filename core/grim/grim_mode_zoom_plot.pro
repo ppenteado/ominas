@@ -44,6 +44,7 @@ pro grim_mode_zoom_plot_mouse_event, event, data
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
  if(NOT keyword_set(event.press)) then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
 
  tvgr, input_wnum, get_info=tvd
@@ -94,7 +95,7 @@ end
 pro grim_mode_zoom_plot_mode, grim_data, data_p
 
  device, cursor_standard = 144
- grim_print, grim_data, 'ZOOM -- L:Increase R:Decrease'
+ grim_print, grim_data, '[ZOOM] L:Increase R:Decrease'
 
 end
 ;=============================================================================

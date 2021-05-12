@@ -74,6 +74,7 @@ pro pg_trim, dd, object_ptd, region, mask=mask, off=off
   begin
    image = dat_data(dd)
    s = size(image)
+;;s = dat_dim(dd)
    xsize = s[1]
    ysize = s[2]
    device = 0
@@ -92,8 +93,7 @@ pro pg_trim, dd, object_ptd, region, mask=mask, off=off
 
    if(keyword_set(flags) AND keyword_set(points)) then $
     begin
-     if(device) then $
-      points = (convert_coord(/data, /to_device, points))[0:1,*]
+     if(device) then points = (convert_coord(/data, /to_device, points))[0:1,*]
 
      nn = pnt_nv(object_ptd[i])
      nt = pnt_nt(object_ptd[i])

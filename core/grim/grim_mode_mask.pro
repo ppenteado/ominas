@@ -42,6 +42,7 @@ pro grim_mode_mask_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
 
 
@@ -82,7 +83,7 @@ end
 pro grim_mode_mask_mode, grim_data, data_p
 
  device, cursor_standard = 22
- grim_print, grim_data, 'MASK -- L:Add Pixels R:Remove Pixels'
+ grim_print, grim_data, '[MASK] L:Add Pixels R:Remove Pixels'
 
 end
 ;=============================================================================

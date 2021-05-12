@@ -76,6 +76,7 @@ pro grim_mode_notes_mouse_event, event, data
 
  if(struct NE 'WIDGET_DRAW') then return
  if(input_wnum NE grim_data.wnum) then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
  if(event.press EQ 0) then return
 
@@ -114,7 +115,7 @@ end
 pro grim_mode_notes_mode, grim_data, data_p
 
  device, cursor_standard = 85
- grim_print, grim_data, 'NOTES -- L:Overlay R:Geometry Object'
+ grim_print, grim_data, '[NOTES] L:Overlay R:Geometry Object'
 
 end
 ;=============================================================================

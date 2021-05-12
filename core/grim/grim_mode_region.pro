@@ -43,6 +43,7 @@ pro grim_mode_region_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
 
  if(input_wnum NE grim_data.wnum) then return
@@ -69,6 +70,7 @@ pro grim_mode_region_mouse_event, event, data
    xx = p[0,*] & yy = p[1,*]
    pp = convert_coord(/device, /to_data, double(xx), double(yy))
    grim_set_roi, grim_data, roi, pp[0:1,*]
+;stop
   end
 
  grim_refresh, grim_data, /use_pixmap
@@ -86,7 +88,7 @@ end
 pro grim_mode_region_mode, grim_data, data_p
 
  device, cursor_standard = 32
- grim_print, grim_data, 'DEFINE REGION -- L:Rectangular R:Irregular'
+ grim_print, grim_data, '[DEFINE REGION] L:Rectangular R:Irregular'
 
 end
 ;=============================================================================

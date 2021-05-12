@@ -123,6 +123,7 @@ pro grim_mode_target_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
 
  if(NOT keyword_set(grim_xd(plane, /cd))) then return
@@ -147,7 +148,7 @@ pro grim_mode_target_mode, grim_data, data_p
 
  grim_mode_target_cursor, swap=swap
  grim_print, grim_data, $
-      'Target CAMERA -- L:Target Cursor R:Target Body '
+      '[TARGET] L:Target Cursor R:Target Body '
 
 end
 ;=============================================================================

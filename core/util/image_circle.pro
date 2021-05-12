@@ -1,9 +1,9 @@
 ;=============================================================================
-; circle
+; image_circle
 ;
 ;
 ;=============================================================================
-function circle, center, radius, np=np, close=close
+function image_circle, center, radius, np=np, close=close
 
  radius = double(radius)
  n = n_elements(radius)

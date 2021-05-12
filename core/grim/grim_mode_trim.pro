@@ -42,6 +42,7 @@ pro grim_mode_trim_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
 
  if(input_wnum NE grim_data.wnum) then return
@@ -132,7 +133,7 @@ end
 pro grim_mode_trim_mode, grim_data, data_p
 
  grim_mode_trim_cursor, swap=swap
- grim_print, grim_data, 'TRIM OVERLAYS -- L:Standard M:Cancel R:User'
+ grim_print, grim_data, '[TRIM OVERLAYS] L:Standard M:Cancel R:User'
 
 end
 ;=============================================================================

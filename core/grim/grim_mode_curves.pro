@@ -42,6 +42,7 @@ pro grim_mode_curves_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
 
  if(input_wnum NE grim_data.wnum) then return
@@ -136,7 +137,7 @@ end
 pro grim_mode_curves_mode, grim_data, data_p
 
  grim_mode_curves_cursor, swap=swap
- grim_print, grim_data, 'CURVE -- L:Add M:Cancel R:Remove'
+ grim_print, grim_data, '[CURVE] L:Add M:Cancel R:Remove'
 
 end
 ;=============================================================================

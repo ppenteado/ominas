@@ -42,6 +42,7 @@ pro grim_mode_plane_mouse_event, event, data
 
  struct = tag_names(event, /struct)
  if(struct NE 'WIDGET_DRAW') then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
 
  widget_control, event.id, get_value=input_wnum
@@ -76,7 +77,7 @@ pro grim_mode_plane_mode, grim_data, data_p
 
  device, cursor_standard = 59
  grim_print, grim_data, $
-          'SELECT PLANE -- L:By Data R:By Overlay'
+          '[SELECT PLANE] L:By Data R:By Overlay'
 
 end
 ;=============================================================================

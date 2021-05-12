@@ -90,9 +90,9 @@ function pg_select_region, dd, color=color, $
  if(keyword_set(dd)) then $
   begin
    image=dat_data(dd)
-   s=size(image)
-   xsize=s[1]
-   ysize=s[2]
+   s = size(image)
+   xsize = s[1]
+   ysize = s[2]
    device = 0
   end
 
@@ -132,13 +132,10 @@ function pg_select_region, dd, color=color, $
  ;------------------------------------------
  ; transform to data coords
  ;------------------------------------------
- if(NOT device) then points=(convert_coord(points, /device, /to_data))[0:1,*]
+ if(NOT device) then points = (convert_coord(points, /device, /to_data))[0:1,*]
  if(keyword_set(_points)) then return, points
  
- xverts=transpose(points[0,*])
- yverts=transpose(points[1,*])
-; indices=polyfillv(xverts, yverts, xsize, ysize)
- indices=poly_fillv(points, [xsize, ysize])
+ indices = poly_fillv(points, [xsize, ysize])
 
  return, indices
 end

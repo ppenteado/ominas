@@ -1737,6 +1737,7 @@ end
 ;
 ;=============================================================================
 pro grim_draw_event, event
+;help, event, /str
 
  widget_control, event.id, get_value=value
  grim_data = grim_get_data(event.top)
@@ -1749,6 +1750,22 @@ pro grim_draw_event, event
  
  if(NOT grim_test_motion_event(event)) then grim_set_primary, grim_data.base
 ; grim_set_primary, grim_data.base
+
+
+ ;======================================
+ ; tracking event 
+ ;======================================
+ if(struct EQ 'WIDGET_TRACKING') then $
+  begin
+   widget_control, grim_data.draw, /input_focus
+   return
+  end
+
+
+ ;======================================
+ ; ESC key 
+ ;======================================
+ if(event.press EQ 1) then if(event.ch EQ 27) then print, 'ESC'
 
 
  ;======================================
@@ -3916,7 +3933,11 @@ pro grim_widgets, grim_data, xsize=xsize, ysize=ysize, cursor_modes=cursor_modes
                 event_pro='grim_draw_event', resource_name='grim_draw', $
                 retain=retain)
  if(idl_v_chrono(!version.release) GE idl_v_chrono('6.4')) then $
-                             widget_control, grim_data.draw, /draw_wheel_events
+  begin
+   widget_control, grim_data.draw, /draw_wheel_events
+   widget_control, grim_data.draw, draw_keyboard_events=2
+  end
+
 ; widget_control, grim_data.draw_base, map=0
 
 

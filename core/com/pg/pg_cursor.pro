@@ -24,6 +24,9 @@
 ;		be displayed.  However, descriptors for only one of the data
 ;		descriptors may be given.
 ;
+;	outline_ptd: Points descriptor or array of points defining a region
+;                    over which to compute average quantites.
+;
 ;  OUTPUT:
 ;	NONE
 ;
@@ -699,13 +702,47 @@ end
 ;
 ;=============================================================================
 function pgc_center, dd, p
+ return, total(p,2)/(n_elements(p)/2)
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; pgc_interior_points
+;
+;=============================================================================
+function pgc_interior_points, dd, outline_ptd, center=center
+
+ if(obj_valid(outline_ptd[0])) then outline_pts = pnt_points(outline_ptd) $
+ else outline_pts = outline_ptd 
 
  dim = dat_dim(dd)
- w = poly_fillv(p, dim)
- pp = w_to_xy(0, w, sx=dim[0], sy=dim[1])
+ dim_device = [!d.x_size, !d.y_size]
 
- n = n_elements(pp)/2
- return, total(pp,2)/n
+ ;----------------------------------------------------------
+ ; compute center in device coords if higher resolution
+ ;----------------------------------------------------------
+ if(data_vs_device()) then $
+  begin
+   outline_pts_device = convert_coord(outline_pts[0,*], outline_pts[1,*], /data, /to_device)
+   w = poly_fillv(outline_pts_device, dim_device)
+   pp = w_to_xy(0, w, sx=dim_device[0], sy=dim_device[1])
+   nn = n_elements(pp)/2
+   center_device = total(pp,2)/nn
+   center = (convert_coord(center_device[0,*], center_device[1,*], /device, /to_data))[0:1]
+  end 
+
+
+ ;----------------------------------------------------------
+ ; compute interior points
+ ;----------------------------------------------------------
+ w = poly_fillv(outline_pts, dim)
+ pp = w_to_xy(0, w, sx=dim[0], sy=dim[1])
+ nn = n_elements(pp)/2
+ if(NOT keyword_set(center)) then center = total(pp,2)/nn
+
+ return, pp
 end
 ;=============================================================================
 
@@ -715,7 +752,7 @@ end
 ; pg_cursor
 ;
 ;=============================================================================
-pro pg_cursor, dd, ptd, cd=cd, gbx=gbx, dkx=dkx, ltd=ltd, sd=sd, gd=_gd, fn=_fn, $
+pro pg_cursor, dd, outline_ptd, cd=cd, gbx=gbx, dkx=dkx, ltd=ltd, sd=sd, gd=_gd, fn=_fn, $
            radec=radec, photom=photom, xy=xy, string=string, $
            silent=silent, values=values, point=point
 common pgc_table_block, last_labels, first
@@ -792,8 +829,12 @@ common pgc_table_block, last_labels, first
  values = dblarr(1,4,nfn)
  repeat $
   begin
+   if(keyword_set(outline_ptd)) then $
+                xy = pgc_interior_points(dd, outline_ptd, center=p)
+
    if(keyword_set(xy)) then pp = xy $
    else pp = pg_select_points(dd, /one, /nov, cancel=cancel)
+
    if(NOT cancel) then $
     begin
      val = dblarr(10,10,nfn)
@@ -802,8 +843,12 @@ common pgc_table_block, last_labels, first
      ; compute center of figure of region
      ;- - - - - - - - - - - - - - - - - - - - -
      n = n_elements(pp)/2
-     p = pp
-     if(n GT 1) then p = pgc_center(dd, pp)
+
+     if(NOT keyword_set(p)) then $
+      begin
+       p = pp
+       if(n GT 1) then p = pgc_center(dd, pp)
+      end
      point = p
 
      ;- - - - - - - - - - - - - - - - -

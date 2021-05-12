@@ -45,6 +45,7 @@ pro grim_mode_activate_mouse_event, event, data
 
  if(struct NE 'WIDGET_DRAW') then return
  if(input_wnum NE grim_data.wnum) then return
+ if(NOT keyword_set(event.clicks)) then return
  if(event.press EQ 2) then return
  if(event.press EQ 0) then return
 
@@ -70,7 +71,7 @@ end
 pro grim_mode_activate_mode, grim_data, data_p
 
  device, cursor_standard = 60
- grim_print, grim_data, 'ACTIVATE OVERLAYS -- L:Activate R:Deactivate'
+ grim_print, grim_data, '[ACTIVATE OVERLAYS] L:Activate R:Deactivate'
 
 end
 ;=============================================================================
