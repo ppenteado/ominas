@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_region_print
+;
+;=============================================================================
+pro grim_mode_region_print, grim_data, s
+ grim_print, grim_data, prefix='[DEFINE REGION] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_region_bitmap
 ;
 ;=============================================================================
@@ -88,7 +99,7 @@ end
 pro grim_mode_region_mode, grim_data, data_p
 
  device, cursor_standard = 32
- grim_print, grim_data, '[DEFINE REGION] L:Rectangular R:Irregular'
+ grim_mode_region_print, grim_data, 'L:Rectangular M:Cancel R:Irregular'
 
 end
 ;=============================================================================

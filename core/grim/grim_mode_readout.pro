@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_readout_print
+;
+;=============================================================================
+pro grim_mode_readout_print, grim_data, s
+ grim_print, grim_data, prefix='[READOUT] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_readout_bitmap
 ;
 ;=============================================================================
@@ -32,7 +43,7 @@ end
 ; grim_mode_readout_cursor_default
 ;
 ;=============================================================================
-pro grim_mode_readout_cursor_default, swap=swap
+pro grim_mode_readout_cursor_default, grim_data, swap=swap
 
 
 
@@ -77,6 +88,7 @@ pro grim_mode_readout_cursor_default, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+ grim_mode_readout_print, grim_data, '{Point} L:Pixel R:Measure'
 end
 ;=============================================================================
 
@@ -86,7 +98,7 @@ end
 ; grim_mode_readout_cursor_region
 ;
 ;=============================================================================
-pro grim_mode_readout_cursor_region, swap=swap
+pro grim_mode_readout_cursor_region, grim_data, swap=swap
 
 
 
@@ -131,6 +143,7 @@ pro grim_mode_readout_cursor_region, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+ grim_mode_readout_print, grim_data, '{Region} L:Rectangle R:Irregular'
 end
 ;=============================================================================
 
@@ -140,7 +153,7 @@ end
 ; grim_mode_readout_cursor_fixed
 ;
 ;=============================================================================
-pro grim_mode_readout_cursor_fixed, swap=swap
+pro grim_mode_readout_cursor_fixed, grim_data, swap=swap
 
 
 
@@ -185,6 +198,7 @@ pro grim_mode_readout_cursor_fixed, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+ grim_mode_readout_print, grim_data, '{Fixed Region} L:Box R:Circle'
 end
 ;=============================================================================
 
@@ -194,7 +208,7 @@ end
 ; grim_mode_readout_cursor_radius
 ;
 ;=============================================================================
-pro grim_mode_readout_cursor_radius, swap=swap
+pro grim_mode_readout_cursor_radius, grim_data, swap=swap
 
 
 
@@ -239,6 +253,7 @@ pro grim_mode_readout_cursor_radius, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+ grim_print, grim_data,  '[READOUT] {Adjust} Wheel:Radius'
 end
 ;=============================================================================
 
@@ -248,14 +263,14 @@ end
 ; grim_mode_readout_cursor
 ;
 ;=============================================================================
-pro grim_mode_readout_cursor, data, swap=swap, mode=mode
+pro grim_mode_readout_cursor, grim_data, data, swap=swap, mode=mode
  if(NOT keyword_set(mode)) then mode = data.mode
 
- if(mode EQ 'default') then grim_mode_readout_cursor_default, swap=swap $
- else if(mode EQ 'region') then grim_mode_readout_cursor_region, swap=swap $
- else if(mode EQ 'fixed') then grim_mode_readout_cursor_fixed, swap=swap $
- else if(mode EQ 'radius') then grim_mode_readout_cursor_radius, swap=swap $
- else grim_mode_readout_cursor, data, swap=swap, mode=data.mode
+ if(mode EQ 'default') then grim_mode_readout_cursor_default, grim_data, swap=swap $
+ else if(mode EQ 'region') then grim_mode_readout_cursor_region, grim_data, swap=swap $
+ else if(mode EQ 'fixed') then grim_mode_readout_cursor_fixed, grim_data, swap=swap $
+ else if(mode EQ 'radius') then grim_mode_readout_cursor_radius, grim_data, swap=swap $
+ else grim_mode_readout_cursor, grim_data, data, swap=swap, mode=data.mode
 
  if(keyword_set(mode)) then data.mode = mode
 end
@@ -410,10 +425,10 @@ pro grim_mode_readout_mouse_event, event, data
  ;----------------------------------
  test = event.key + event.modifiers
  if(event.press EQ 0) then test = event.modifiers - event.key
- if(test EQ 0) then grim_mode_readout_cursor, data, swap=swap, mode='default'
- if(test EQ 1) then grim_mode_readout_cursor, data, swap=swap, mode='region'
- if(test EQ 2) then grim_mode_readout_cursor, data, swap=swap, mode='fixed'
- if(test EQ 3) then grim_mode_readout_cursor, data, swap=swap, mode='radius'
+ if(test EQ 0) then grim_mode_readout_cursor, grim_data, data, swap=swap, mode='default'
+ if(test EQ 1) then grim_mode_readout_cursor, grim_data, data, swap=swap, mode='region'
+ if(test EQ 2) then grim_mode_readout_cursor, grim_data, data, swap=swap, mode='fixed'
+ if(test EQ 3) then grim_mode_readout_cursor, grim_data, data, swap=swap, mode='radius'
 
 
  ;----------------------------------
@@ -607,11 +622,11 @@ end
 ;=============================================================================
 pro grim_mode_readout_mode, grim_data, data_p
 
- grim_mode_readout_cursor, *data_p, swap=swap
- grim_print, grim_data, $
-        '[READOUT] L:Pixel R:Measure '+ $
-        '<Shift>L:Rectangle R:Irregular ' + $
-        '<Ctrl>Fixed L:Box R:Circle <Shift+Ctrl>Wheel:Radius'
+ grim_mode_readout_cursor, grim_data, *data_p, swap=swap
+; grim_print, grim_data, $
+;        '[READOUT] L:Pixel R:Measure '+ $
+;        '<Shift>L:Rectangle R:Irregular ' + $
+;        '<Ctrl>Fixed L:Box R:Circle <Shift+Ctrl>Wheel:Radius'
 
 end
 ;=============================================================================

@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_mask_print
+;
+;=============================================================================
+pro grim_mode_mask_print, grim_data, s
+ grim_print, grim_data, prefix='[MASK] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_mask_bitmap
 ;
 ;=============================================================================
@@ -83,7 +94,7 @@ end
 pro grim_mode_mask_mode, grim_data, data_p
 
  device, cursor_standard = 22
- grim_print, grim_data, '[MASK] L:Add Pixels R:Remove Pixels'
+ grim_mode_mask_print, grim_data, 'L:Add Pixels R:Remove Pixels'
 
 end
 ;=============================================================================

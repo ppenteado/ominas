@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_plane_print
+;
+;=============================================================================
+pro grim_mode_plane_print, grim_data, s
+ grim_print, grim_data, prefix='[SELECT PLANE] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_plane_bitmap
 ;
 ;=============================================================================
@@ -76,8 +87,7 @@ end
 pro grim_mode_plane_mode, grim_data, data_p
 
  device, cursor_standard = 59
- grim_print, grim_data, $
-          '[SELECT PLANE] L:By Data R:By Overlay'
+ grim_mode_pan_print, grim_data, 'L:By Data R:By Overlay'
 
 end
 ;=============================================================================

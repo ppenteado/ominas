@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_magnify_print
+;
+;=============================================================================
+pro grim_mode_magnify_print, grim_data, s
+ grim_print, grim_data, prefix='[MAGNIFY] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_magnify_bitmap
 ;
 ;=============================================================================
@@ -299,7 +310,7 @@ end
 pro grim_mode_magnify_mode, grim_data, data_p
 
  grim_mode_magnify_cursor, swap=swap
- grim_print, grim_data, '[MAGNIFY] L:Magnify Data R:Magnify Display'
+ grim_mode_magnify_print, grim_data, 'L:Magnify Data R:Magnify Display'
 
 end
 ;=============================================================================

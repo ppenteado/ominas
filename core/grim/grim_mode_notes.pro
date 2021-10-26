@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_notes_print
+;
+;=============================================================================
+pro grim_mode_notes_print, grim_data, s
+ grim_print, grim_data, prefix='[NOTES] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_notes_bitmap
 ;
 ;=============================================================================
@@ -115,7 +126,7 @@ end
 pro grim_mode_notes_mode, grim_data, data_p
 
  device, cursor_standard = 85
- grim_print, grim_data, '[NOTES] L:Overlay R:Geometry Object'
+ grim_mode_notes_print, grim_data, 'L:Overlay R:Geometry Object'
 
 end
 ;=============================================================================

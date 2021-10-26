@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_navigate_print
+;
+;=============================================================================
+pro grim_mode_navigate_print, grim_data, s
+ grim_print, grim_data, prefix='[NAVIGATE] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_navigate_bitmap
 ;
 ;=============================================================================
@@ -64,33 +75,7 @@ end
 ; grim_mode_navigate_cursor_rotate
 ;
 ;=============================================================================
-pro __grim_mode_navigate_cursor_rotate, swap=swap
-
- device, cursor_standard = 142
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_mode_navigate_cursor_translate
-;
-;=============================================================================
-pro __grim_mode_navigate_cursor_translate, swap=swap
-
- device, cursor_standard = 143
-
-end
-;=============================================================================
-
-
-
-;=============================================================================
-; grim_mode_navigate_cursor_rotate
-;
-;=============================================================================
-pro __grim_mode_navigate_cursor_rotate, swap=swap
+pro __grim_mode_navigate_cursor_rotate, grim_data, swap=swap
 
 
 
@@ -135,6 +120,7 @@ pro __grim_mode_navigate_cursor_rotate, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+ grim_mode_navigate_print, grim_data, '{Rotate} L:Nod R:Twist'
 end
 ;=============================================================================
 
@@ -144,7 +130,7 @@ end
 ; grim_mode_navigate_cursor_rotate
 ;
 ;=============================================================================
-pro grim_mode_navigate_cursor_rotate, swap=swap
+pro grim_mode_navigate_cursor_rotate, grim_data, swap=swap
 
 
 
@@ -188,7 +174,7 @@ pro grim_mode_navigate_cursor_rotate, swap=swap
                                                             cursor_xy = [7,8]
 ;                                                            cursor_xy = [2,13]
 
-
+ grim_mode_navigate_print, grim_data, '{Rotate} L:Nod R:Twist'
 end
 ;=============================================================================
 
@@ -198,7 +184,7 @@ end
 ; grim_mode_navigate_cursor_translate
 ;
 ;=============================================================================
-pro __grim_mode_navigate_cursor_translate, swap=swap
+pro __grim_mode_navigate_cursor_translate, grim_data, swap=swap
 
 
 
@@ -243,6 +229,7 @@ pro __grim_mode_navigate_cursor_translate, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+ grim_mode_navigate_print, grim_data, '{Translate} L:XZ R:Track WHEEL:Y'
 end
 ;=============================================================================
 
@@ -252,7 +239,7 @@ end
 ; grim_mode_navigate_cursor_translate
 ;
 ;=============================================================================
-pro __grim_mode_navigate_cursor_translate, swap=swap
+pro __grim_mode_navigate_cursor_translate, grim_data, swap=swap
 
 
 
@@ -297,6 +284,7 @@ pro __grim_mode_navigate_cursor_translate, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+ grim_mode_navigate_print, grim_data, '{Translate} L:XZ R:Track WHEEL:Y'
 end
 ;=============================================================================
 
@@ -306,7 +294,7 @@ end
 ; grim_mode_navigate_cursor_translate
 ;
 ;=============================================================================
-pro grim_mode_navigate_cursor_translate, swap=swap
+pro grim_mode_navigate_cursor_translate, grim_data, swap=swap
 
 
 
@@ -351,6 +339,8 @@ pro grim_mode_navigate_cursor_translate, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+
+ grim_mode_navigate_print, grim_data, '{Translate} L:XZ R:Track WHEEL:Y'
 end
 ;=============================================================================
 
@@ -360,7 +350,7 @@ end
 ; grim_mode_navigate_cursor_nz
 ;
 ;=============================================================================
-pro grim_mode_navigate_cursor_nz, swap=swap
+pro grim_mode_navigate_cursor_nz, grim_data, swap=swap
 
 
 
@@ -370,12 +360,12 @@ pro grim_mode_navigate_cursor_nz, swap=swap
                       [[0,0,0,0,1,1,1,1] ,[1,1,1,1,0,0,0,0]], $
                       [[0,0,0,0,1,1,1,1] ,[1,1,1,1,0,0,0,0]], $
                       [[0,0,0,0,0,0,1,1] ,[1,1,0,0,0,0,0,0]], $
-                      [[0,0,0,0,0,0,1,1] ,[1,1,0,0,0,0,0,0]], $
-                      [[0,0,0,0,0,0,0,0] ,[0,0,0,0,0,0,0,0]], $
-                      [[0,0,0,0,0,0,0,0] ,[0,0,0,0,0,0,0,0]], $
-                      [[0,0,0,0,0,0,1,1] ,[1,1,0,0,0,0,0,0]], $
-                      [[0,0,0,0,0,0,1,1] ,[1,1,0,0,0,0,0,0]], $
+                      [[0,0,0,0,0,1,1,1] ,[1,1,1,0,0,0,0,0]], $
                       [[0,0,0,0,1,1,1,1] ,[1,1,1,1,0,0,0,0]], $
+                      [[0,0,0,1,1,1,1,1] ,[1,1,1,1,1,0,0,0]], $
+                      [[0,0,1,1,1,1,1,1] ,[1,1,1,1,1,1,0,0]], $
+                      [[0,1,1,1,0,0,1,1] ,[1,1,0,0,1,1,1,0]], $
+                      [[0,1,1,0,1,1,1,1] ,[1,1,1,1,0,1,1,0]], $
                       [[0,0,0,0,1,1,1,1] ,[1,1,1,1,0,0,0,0]], $
                       [[0,0,0,0,0,1,1,1] ,[1,1,1,0,0,0,0,0]], $
                       [[0,0,0,0,0,0,1,1] ,[1,1,0,0,0,0,0,0]], $
@@ -389,10 +379,10 @@ pro grim_mode_navigate_cursor_nz, swap=swap
                         [[0,0,0,0,0,0,0,1] ,[1,0,0,0,0,0,0,0]], $
                         [[0,0,0,0,0,0,0,1] ,[1,0,0,0,0,0,0,0]], $
                         [[0,0,0,0,0,0,0,0] ,[0,0,0,0,0,0,0,0]], $
-                        [[0,0,0,0,0,0,0,0] ,[0,0,0,0,0,0,0,0]], $
-                        [[0,0,0,0,0,0,0,0] ,[0,0,0,0,0,0,0,0]], $
-                        [[0,0,0,0,0,0,0,0] ,[0,0,0,0,0,0,0,0]], $
-                        [[0,0,0,0,0,0,0,1] ,[1,0,0,0,0,0,0,0]], $
+                        [[0,0,0,0,0,0,1,1] ,[1,1,0,0,0,0,0,0]], $
+                        [[0,0,0,0,1,1,0,0] ,[0,0,1,1,0,0,0,0]], $
+                        [[0,0,0,1,0,0,0,0] ,[0,0,0,0,1,0,0,0]], $
+                        [[0,0,1,0,0,0,0,1] ,[1,0,0,0,0,1,0,0]], $
                         [[0,0,0,0,0,0,0,1] ,[1,0,0,0,0,0,0,0]], $
                         [[0,0,0,0,0,1,1,1] ,[1,1,1,0,0,0,0,0]], $
                         [[0,0,0,0,0,0,1,1] ,[1,1,0,0,0,0,0,0]], $
@@ -405,6 +395,7 @@ pro grim_mode_navigate_cursor_nz, swap=swap
 ;                                                            cursor_xy = [2,13]
 
 
+ grim_mode_navigate_print, grim_data, '{Normal} L:Nadir R:Zenith'
 end
 ;=============================================================================
 
@@ -414,13 +405,13 @@ end
 ; grim_mode_navigate_cursor
 ;
 ;=============================================================================
-pro grim_mode_navigate_cursor, data, swap=swap, mode=mode
+pro grim_mode_navigate_cursor, grim_data, data, swap=swap, mode=mode
  if(NOT keyword_set(mode)) then mode = data.mode
 
- if(mode EQ 'rotate') then grim_mode_navigate_cursor_rotate, swap=swap $
- else if(mode EQ 'translate') then grim_mode_navigate_cursor_translate, swap=swap $
- else if(mode EQ 'nz') then grim_mode_navigate_cursor_nz, swap=swap $
- else grim_mode_navigate_cursor, data, swap=swap, mode=data.mode
+ if(mode EQ 'rotate') then grim_mode_navigate_cursor_rotate, grim_data, swap=swap $
+ else if(mode EQ 'translate') then grim_mode_navigate_cursor_translate, grim_data, swap=swap $
+ else if(mode EQ 'nz') then grim_mode_navigate_cursor_nz, grim_data, swap=swap $
+ else grim_mode_navigate_cursor, grim_data, data, swap=swap, mode=data.mode
 
  if(keyword_set(mode)) then data.mode = mode
 end
@@ -1091,9 +1082,9 @@ pro grim_mode_navigate_mouse_event, event, data
  ;----------------------------------
  test = event.key + event.modifiers
  if(event.press EQ 0) then test = event.modifiers - event.key
- if(test EQ 0) then grim_mode_navigate_cursor, data, swap=swap, mode='rotate'
- if(test EQ 1) then grim_mode_navigate_cursor, data, swap=swap, mode='translate'
- if(test EQ 2) then grim_mode_navigate_cursor, data, swap=swap, mode='nz'
+ if(test EQ 0) then grim_mode_navigate_cursor, grim_data, data, swap=swap, mode='rotate'
+ if(test EQ 1) then grim_mode_navigate_cursor, grim_data, data, swap=swap, mode='translate'
+ if(test EQ 2) then grim_mode_navigate_cursor, grim_data, data, swap=swap, mode='nz'
 
 
  ;---------------------------------------
@@ -1178,9 +1169,7 @@ end
 ;=============================================================================
 pro grim_mode_navigate_mode, grim_data, data_p
 
- grim_mode_navigate_cursor, *data_p, swap=swap
- grim_print, grim_data, $
-      '[NAVIGATE] L:Nod R:Twist <Shift>L:XZ R:Track WHEEL:Y <Ctrl>L:Nadir R:Zenith'
+ grim_mode_navigate_cursor, grim_data, *data_p, swap=swap
 
 end
 ;=============================================================================

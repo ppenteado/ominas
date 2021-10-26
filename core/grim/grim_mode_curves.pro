@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_curves_print
+;
+;=============================================================================
+pro grim_mode_curves_print, grim_data, s
+ grim_print, grim_data, prefix='[CURVE] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_curves_bitmap
 ;
 ;=============================================================================
@@ -137,7 +148,7 @@ end
 pro grim_mode_curves_mode, grim_data, data_p
 
  grim_mode_curves_cursor, swap=swap
- grim_print, grim_data, '[CURVE] L:Add M:Cancel R:Remove'
+ grim_mode_curves_print, grim_data, 'L:Add M:Cancel R:Remove'
 
 end
 ;=============================================================================

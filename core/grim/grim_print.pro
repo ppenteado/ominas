@@ -2,7 +2,7 @@
 ; grim_print
 ;
 ;=============================================================================
-pro grim_print, arg1, arg2, append=append
+pro grim_print, arg1, arg2, append=append, prefix=prefix, suffix=suffix
 
  grim_data = arg1
 
@@ -16,7 +16,12 @@ pro grim_print, arg1, arg2, append=append
  s0 = ''
  if(keyword_set(append)) then widget_control, grim_data.label, get_value=s0
 
- widget_control, grim_data.label, set_value=s0+s 
+ suff = ''
+ if(keyword_set(suffix)) then suff = suffix
+ pref = ''
+ if(keyword_set(prefix)) then pref = prefix
+
+ widget_control, grim_data.label, set_value=pref+s0+s+suff
 
 
 end

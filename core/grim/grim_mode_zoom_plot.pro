@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_zoom_plot_print
+;
+;=============================================================================
+pro grim_mode_zoom_plot_print, grim_data, s
+ grim_print, grim_data, prefix='[ZOOM] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_zoom_plot_bitmap
 ;
 ;=============================================================================
@@ -95,7 +106,7 @@ end
 pro grim_mode_zoom_plot_mode, grim_data, data_p
 
  device, cursor_standard = 144
- grim_print, grim_data, '[ZOOM] L:Increase R:Decrease'
+ grim_mode_zoom_plot_print, grim_data, 'L:Zoom In R:Zoom Out'
 
 end
 ;=============================================================================

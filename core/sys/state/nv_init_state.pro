@@ -93,7 +93,7 @@ common nv_block, nv_state
  ; initialize module API
  ;-------------------------------------------------------------------
  nv_module_api_init, new=new
- nv_state.new=new
+ nv_state.new = new
 
 end
 ;===========================================================================

@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_activate_print
+;
+;=============================================================================
+pro grim_mode_activate_print, grim_data, s
+ grim_print, grim_data, prefix='[ACTIVATE OVERLAYS] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_activate_bitmap
 ;
 ;=============================================================================
@@ -71,7 +82,7 @@ end
 pro grim_mode_activate_mode, grim_data, data_p
 
  device, cursor_standard = 60
- grim_print, grim_data, '[ACTIVATE OVERLAYS] L:Activate R:Deactivate'
+ grim_mode_activate_print, grim_data, 'L:Activate R:Deactivate'
 
 end
 ;=============================================================================

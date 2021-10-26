@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_tiepoints_print
+;
+;=============================================================================
+pro grim_mode_tiepoints_print, grim_data, s
+ grim_print, grim_data, prefix='[TIEPOINTS] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_tiepoints_bitmap
 ;
 ;=============================================================================
@@ -129,7 +140,7 @@ end
 pro grim_mode_tiepoints_mode, grim_data, data_p
 
  grim_mode_tiepoints_cursor, swap=swap
- grim_print, grim_data, '[TIEPOINTS] L:Add R:Remove <Space>:Add'
+ grim_mode_tiepoints_print, grim_data, 'L:Add R:Remove <Space>:Add'
 
 end
 ;=============================================================================

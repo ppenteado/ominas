@@ -1,8 +1,8 @@
 ;=============================================================================
-; grim_mode_smooth_print
+; grim_mode_smooth_plot_print
 ;
 ;=============================================================================
-pro grim_mode_smooth_print, grim_data, s
+pro grim_mode_smooth_plot_print, grim_data, s
  grim_print, grim_data, prefix='[SMOOTH] ', s
 end
 ;=============================================================================
@@ -10,10 +10,10 @@ end
 
 
 ;=============================================================================
-; grim_mode_smooth_bitmap
+; grim_mode_smooth_plot_bitmap
 ;
 ;=============================================================================
-function grim_mode_smooth_bitmap
+function grim_mode_smooth_plot_bitmap
 
  return, [                               $
                 [255B, 255B],                   $
@@ -41,63 +41,33 @@ end
 
 
 ;=============================================================================
-; grim_smooth
+; grim_smooth_plot
 ;
 ;=============================================================================
-pro grim_smooth, grim_data, plane=plane, box
+pro grim_smooth_plot, grim_data, plane=plane, box
 
  max = 30
 
  data = double(dat_data(plane.dd, abscissa=abscissa))
  size = size(data, /dim)
 
- dx = max(box[0,*]) - min(box[0,*])
- dy = max(box[1,*]) - min(box[1,*])
- nx = fix(dx)
- ny = fix(dy)
- if((nx LT 1) OR (ny LT 1)) then return
+ xx = abscissa & xx = xx[sort(xx)]
 
- xmin = (ymin = 0)
- xmax = size[0]-1 & ymax = size[1]-1
- roi_ptd = grim_get_roi(grim_data, plane, /outline)
- roi = lindgen(size[0] * size[1])
+ yy = data
+ x0 = min(where(xx GE min(box[0,*])))
+ x1 = max(where(xx LE max(box[0,*])))
 
- if(keyword_set(roi_ptd)) then $
-  begin
-   roi_pts = round(pnt_points(roi_ptd))
+ n = x1-x0
+ if(n LT 1) then return
 
-   xmin = min(roi_pts[0,*])-nx > 0
-   xmax = max(roi_pts[0,*])+nx < size[0]-1
-   ymin = min(roi_pts[1,*])-ny > 0
-   ymax = max(roi_pts[1,*])+ny < size[1]-1
-
-   subsize = [xmax-xmin, ymax-ymin] + 1
-   roi_pts_sub = roi_pts
-   roi_pts_sub[0,*] = roi_pts_sub[0,*] - xmin
-   roi_pts_sub[1,*] = roi_pts_sub[1,*] - ymin
-
-;   roi = polyfillv(roi_pts[0,*], roi_pts[1,*], size[0], size[1])
-   roi = poly_fillv(roi_pts, size)
-  end
-
- subimage = data[xmin:xmax, ymin:ymax]
- xy = w_to_xy(data, roi)
- xy[0,*] = xy[0,*] - xmin
- xy[1,*] = xy[1,*] - ymin
- roi_sub = xy_to_w(subimage, xy)
-
- kernel = dblarr(nx, ny)
- kernel[*] = 1d/(double(nx)*double(ny))
-
- n = max([nx,ny])
  result = 'Yes'
  if(n GE max) then $
      grim_message, /question, result=result, $
 	 ['The smoothing kernel is rather large.  Continue anyway?']
  if(result NE 'Yes') then return
 
- subimage = convol(subimage, kernel, /center)
- data[roi] = subimage[roi_sub]
+ yy = smooth(yy, n)
+ data = yy
 
  dat_set_data, plane.dd, data
  
@@ -107,10 +77,41 @@ end
 
 
 ;=============================================================================
-; grim_mode_smooth_mouse_event
+; grim_mode_smooth_plot_grid_reset
 ;
 ;=============================================================================
-pro grim_mode_smooth_mouse_event, event, data
+pro grim_mode_smooth_plot_grid_reset
+common grim_mode_smooth_plot_grid_block, p0
+ p0 = !null
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_mode_smooth_plot_grid
+;
+;=============================================================================
+function grim_mode_smooth_plot_grid, p
+common grim_mode_smooth_plot_grid_block, p0
+
+ if(NOT keyword_set(p0)) then $
+  begin 
+   p0 = p
+   return, p
+  end
+
+ return, [p[0], p0[1]]
+end
+;=============================================================================
+
+
+
+;=============================================================================
+; grim_mode_smooth_plot_mouse_event
+;
+;=============================================================================
+pro grim_mode_smooth_plot_mouse_event, event, data
 
  grim_data = grim_get_data(event.top)
  plane = grim_get_plane(grim_data)
@@ -125,16 +126,16 @@ pro grim_mode_smooth_mouse_event, event, data
 
  if(input_wnum NE grim_data.wnum) then return
 
- if(event.press EQ 1) then $
-     _box = tvrec(p0=[event.x, event.y], color=ctyellow(), aspect=1) $
- else if(event.press EQ 4) then $
-     _box = tvrec(p0=[event.x, event.y], color=ctyellow()) $
- else return
+ if(event.press NE 1) then return
+
+ _box = tvline(p0=[event.x, event.y], color=ctyellow(), $
+                                       grid='grim_mode_smooth_plot_grid')
+ grim_mode_smooth_plot_grid_reset
 
  xx = _box[0,*] & yy = _box[1,*]
  box = convert_coord(/device, /to_data, double(xx), double(yy))
  widget_control, /hourglass
- grim_smooth, grim_data, plane=plane, box
+ grim_smooth_plot, grim_data, plane=plane, box
 
 end
 ;=============================================================================
@@ -142,13 +143,13 @@ end
 
 
 ;=============================================================================
-; grim_mode_smooth_mode
+; grim_mode_smooth_plot_mode
 ;
 ;=============================================================================
-pro grim_mode_smooth_mode, grim_data, data_p
+pro grim_mode_smooth_plot_mode, grim_data, data_p
 
  device, cursor_standard = 64
- grim_mode_smooth_print, grim_data, 'L:Square Kernel R:Rectangular Kernel'
+ grim_mode_smooth_plot_print, grim_data, 'L:Drag Kernel'
 
 end
 ;=============================================================================
@@ -158,7 +159,7 @@ end
 ;=============================================================================
 ;+
 ; NAME:
-;	grim_mode_smooth_button_event
+;	grim_mode_smooth_plot_button_event
 ;
 ;
 ; PURPOSE:
@@ -180,13 +181,13 @@ end
 ;	
 ;-
 ;=============================================================================
-pro grim_mode_smooth_button_help_event, event
+pro grim_mode_smooth_plot_button_help_event, event
  text = ''
- nv_help, 'grim_mode_smooth_button_help_event', cap=text
+ nv_help, 'grim_mode_smooth_plot_button_help_event', cap=text
  if(keyword_set(text)) then grim_help, grim_get_data(event.top), text
 end
 ;----------------------------------------------------------------------------
-pro grim_mode_smooth_button_event, event
+pro grim_mode_smooth_plot_button_event, event
 
  grim_data = grim_get_data(event.top)
 
@@ -213,10 +214,10 @@ end
 
 
 ;=============================================================================
-; grim_mode_smooth_init
+; grim_mode_smooth_plot_init
 ;
 ;=============================================================================
-pro grim_mode_smooth_init, grim_data, data_p
+pro grim_mode_smooth_plot_init, grim_data, data_p
 
 
 
@@ -226,18 +227,18 @@ end
 
 
 ;=============================================================================
-; grim_mode_smooth
+; grim_mode_smooth_plot
 ;
 ;=============================================================================
-function grim_mode_smooth, arg
+function grim_mode_smooth_plot, arg
  
 data = 0
 
  return, $
      {grim_user_mode_struct, $
-		 name:		'grim_mode_smooth', $
-		 event_pro:	'*grim_mode_smooth_button_event', $
-                 bitmap:	 grim_mode_smooth_bitmap(), $
+		 name:		'grim_mode_smooth_plot', $
+		 event_pro:	'%grim_mode_smooth_plot_button_event', $
+                 bitmap:	 grim_mode_smooth_plot_bitmap(), $
                  menu:		'Smooth', $
                  data_p:	 nv_ptr_new(data) }
 

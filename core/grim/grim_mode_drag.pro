@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_drag_print
+;
+;=============================================================================
+pro grim_mode_drag_print, grim_data, s
+ grim_print, grim_data, prefix='[DRAG IMAGE] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_drag_bitmap
 ;
 ;=============================================================================
@@ -92,9 +103,8 @@ end
 pro grim_mode_drag_mode, grim_data, data_p
 
  device, cursor_standard = 52
- grim_print, grim_data, $
-;      '[DRAG IMAGE] L:Translate, R:Rotate'
-      '[DRAG IMAGE] L:Translate'
+; grim_mode_drag_print, grim_data, 'L:Translate, R:Rotate'
+ grim_mode_drag_print, grim_data, 'L:Translate'
 
 end
 ;=============================================================================

@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_target_print
+;
+;=============================================================================
+pro grim_mode_target_print, grim_data, s
+ grim_print, grim_data, prefix='[TARGET] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_target_bitmap
 ;
 ;=============================================================================
@@ -147,8 +158,7 @@ end
 pro grim_mode_target_mode, grim_data, data_p
 
  grim_mode_target_cursor, swap=swap
- grim_print, grim_data, $
-      '[TARGET] L:Target Cursor R:Target Body '
+ grim_mode_target_print, grim_data, 'L:Target Cursor R:Target Body '
 
 end
 ;=============================================================================

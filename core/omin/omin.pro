@@ -23,7 +23,8 @@
 ;
 ;
 ; KEYWORDS:
-;  INPUT: NONE
+;  INPUT: 
+;	new:	If set, OMIN assumes this is a new installation.
 ;
 ;  OUTPUT: NONE
 ;
@@ -2556,7 +2557,6 @@ function omin_get_dependencies, name
    modules = append_array(module, modules)
 
 
-
    ;----------------------------------------------------
    ; get dependencies
    ;----------------------------------------------------
@@ -2596,7 +2596,6 @@ pro omin_intro_install, options
   begin
    print, 'Installing referenced modules...'
    nodes = omin_get_dependencies('ominas')
-
   end $
 
  ;- - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2642,10 +2641,10 @@ pro omin_intro, base
 
  options = omin_dialog_intro()
 
- if(keyword_set(options)) then omin_intro_install, options $
- else junk = dialog_message(title='Manual OMINAS Configuration', $
-         'You may now use the OMIN interface manually install modules.', $
-          /info, resource_name='omin_intro')
+ if(keyword_set(options)) then omin_intro_install, options; $
+; else junk = dialog_message(title='Manual OMINAS Configuration', $
+;         'You may now use the OMIN interface manually install modules.', $
+;          /info, resource_name='omin_intro')
 
  widget_control, base, sensitive=1
 
@@ -2658,8 +2657,11 @@ end
 ; omin
 ;
 ;=============================================================================
-pro omin, block=block, fg=fg, bat=bat, _extra=ex
+pro omin, block=block, fg=fg, bat=bat, _extra=ex, new=new
 @nv_block.common
+
+ if(keyword_set(new)) then new = fix(new)
+ if(NOT keyword_set(new)) then new = nv_state.new
 
  ;---------------------------------------------------------------------
  ; if any shell arguments, execute those and exit IDL without starting
@@ -2747,7 +2749,6 @@ pro omin, block=block, fg=fg, bat=bat, _extra=ex
  omin_update_tree, omin_data
 
 
-
  ;----------------------------------
  ; set poll timer
  ;----------------------------------
@@ -2760,8 +2761,8 @@ pro omin, block=block, fg=fg, bat=bat, _extra=ex
  ;---------------------------------------------------------------------
  ; Do initial module install if new OMINAS installation
  ;---------------------------------------------------------------------
- if(nv_state.new) then omin_intro, base
-omin_intro, base
+new=1
+ if(new) then omin_intro, base
 
 
  xmanager, 'omin', base;, /no_block

@@ -4498,6 +4498,7 @@ if(NOT defined(render_auto)) then render_auto = 0
  cursor_modes = grim_create_cursor_mode('trim', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('select', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('region', mode_args, cursor_modes)
+ cursor_modes = grim_create_cursor_mode('smooth_plot', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('smooth', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('plane', mode_args, cursor_modes)
  cursor_modes = grim_create_cursor_mode('drag', mode_args, cursor_modes)

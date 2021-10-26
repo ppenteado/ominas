@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_trim_print
+;
+;=============================================================================
+pro grim_mode_trim_print, grim_data, s
+ grim_print, grim_data, prefix='[TRIM OVERLAYS] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_trim_bitmap
 ;
 ;=============================================================================
@@ -133,7 +144,7 @@ end
 pro grim_mode_trim_mode, grim_data, data_p
 
  grim_mode_trim_cursor, swap=swap
- grim_print, grim_data, '[TRIM OVERLAYS] L:Standard M:Cancel R:User'
+ grim_mode_trim_print, grim_data, 'L:Standard M:Cancel R:User'
 
 end
 ;=============================================================================

@@ -1,4 +1,15 @@
 ;=============================================================================
+; grim_mode_xyzoom_print
+;
+;=============================================================================
+pro grim_mode_xyzoom_print, grim_data, s
+ grim_print, grim_data, prefix='[XYZOOM] ', s
+end
+;=============================================================================
+
+
+
+;=============================================================================
 ; grim_mode_xyzoom_bitmap
 ;
 ;=============================================================================
@@ -126,7 +137,7 @@ end
 pro grim_mode_xyzoom_mode, grim_data, data_p
 
  grim_mode_xyzoom_cursor, swap=swap
- grim_print, grim_data, '[XYZOOM] L:Increase R:Decrease'
+ grim_mode_xyzoom_print, grim_data, 'L:Zoom In R:Zoom Out'
 
 end
 ;=============================================================================

@@ -12,6 +12,8 @@ pro pht_angles, image_pts, cd, bx, ltd, inertial=inertial, $
  else np = n_elements(image_pts)/2
  nt = n_elements(bx)
 
+ globe = where(cor_isa(bx, 'GLOBE'))
+
  ;-------------------------------
  ; construct view vectors
  ;-------------------------------
@@ -61,10 +63,14 @@ pro pht_angles, image_pts, cd, bx, ltd, inertial=inertial, $
  _g = v_inner(rww, sww)
 
  emm = dblarr(np,nt)
- emm[valid] = _emm < 1d > 0d
- 
+; emm[valid] = _emm < 1d > 0d
+ emm[valid] = _emm < 1d
+ if(globe[0] NE -1) then emm[globe] = emm[globe] > 0d
+
  inc = dblarr(np,nt)
- inc[valid] = _inc < 1d > 0d
+; inc[valid] = _inc < 1d > 0d
+ inc[valid] = _inc < 1d
+ if(globe[0] NE -1) then inc[globe] = inc[globe] > 0d
 
  g = dblarr(np,nt)
  g[valid] = _g < 1d
